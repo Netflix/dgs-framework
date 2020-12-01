@@ -1,0 +1,138 @@
+enum ErrorDetail {
+    """
+    Unknown error.
+
+    This error should only be returned when no other error detail applies.
+    If a client sees an unknown errorDetail, it will be interpreted as UNKNOWN.
+
+    HTTP Mapping: 500 Internal Server Error
+    """
+    UNKNOWN
+
+    """
+    The requested field is not found in the schema.
+
+    This differs from `NOT_FOUND` in that `NOT_FOUND` should be used when a
+    query is valid, but is unable to return a result (if, for example, a
+    specific video id doesn't exist). `FIELD_NOT_FOUND` is intended to be
+    returned by the server to signify that the requested field is not known to exist.
+    This may be returned in lieu of failing the entire query.
+    See also `PERMISSION_DENIED` for cases where the
+    requested field is invalid only for the given user or class of users.
+
+    HTTP Mapping: 404 Not Found
+    Error Type: BAD_REQUEST
+    """
+    FIELD_NOT_FOUND
+
+    """
+    The provided cursor is not valid.
+
+    The most common usage for this error is when a client is paginating
+    through a list that uses stateful cursors. In that case, the provided
+    cursor may be expired.
+
+    HTTP Mapping: 404 Not Found
+    Error Type: NOT_FOUND
+    """
+    INVALID_CURSOR
+
+    """
+    The operation is not implemented or is not currently supported/enabled.
+
+    HTTP Mapping: 501 Not Implemented
+    Error Type: BAD_REQUEST
+    """
+    UNIMPLEMENTED
+
+    """
+    The client specified an invalid argument.
+
+    Note that this differs from `FAILED_PRECONDITION`.
+    `INVALID_ARGUMENT` indicates arguments that are problematic
+    regardless of the state of the system (e.g., a malformed file name).
+
+    HTTP Mapping: 400 Bad Request
+    Error Type: BAD_REQUEST
+    """
+    INVALID_ARGUMENT
+
+    """
+    The deadline expired before the operation could complete.
+
+    For operations that change the state of the system, this error
+    may be returned even if the operation has completed successfully.
+    For example, a successful response from a server could have been
+    delayed long enough for the deadline to expire.
+
+    HTTP Mapping: 504 Gateway Timeout
+    Error Type: UNAVAILABLE
+    """
+    DEADLINE_EXCEEDED
+
+    """
+    Service Error.
+
+    There is a problem with an upstream service.
+
+    This may be returned if a gateway receives an unknown error from a service
+    or if a service is unreachable.
+    If a request times out which waiting on a response from a service,
+    `DEADLINE_EXCEEDED` may be returned instead.
+    If a service returns a more specific error Type, the specific error Type may
+    be returned instead.
+
+    HTTP Mapping: 502 Bad Gateway
+    Error Type: UNAVAILABLE
+    """
+    SERVICE_ERROR
+
+    """
+    Request throttled based on server CPU limits
+
+    HTTP Mapping: 503 Unavailable.
+    Error Type: UNAVAILABLE
+    """
+    THROTTLED_CPU
+
+    """
+    Request throttled based on server concurrency limits.
+
+    HTTP Mapping: 503 Unavailable
+    Error Type: UNAVAILABLE
+    """
+    THROTTLED_CONCURRENCY
+
+    """
+    The server detected that the client is exhibiting a behavior that
+    might be generating excessive load.
+
+    HTTP Mapping: 429 Too Many Requests or 420 Enhance Your Calm
+    Error Type: UNAVAILABLE
+    """
+    ENHANCE_YOUR_CALM
+
+    """
+    Request failed due to network errors.
+
+    HTTP Mapping: 503 Unavailable
+    Error Type: UNAVAILABLE
+    """
+    TCP_FAILURE
+
+    """
+    Unable to perform operation because a required resource is missing.
+
+    Example: Client is attempting to refresh a list, but the specified
+    list is expired. This requires an action by the client to get a new list.
+
+    If the user is simply trying GET a resource that is not found,
+    use the NOT_FOUND error type. FAILED_PRECONDITION.MISSING_RESOURCE
+    is to be used particularly when the user is performing an operation
+    that requires a particular resource to exist.
+
+    HTTP Mapping: 400 Bad Request or 500 Internal Server Error
+    Error Type: FAILED_PRECONDITION
+    """
+    MISSING_RESOURCE
+}
