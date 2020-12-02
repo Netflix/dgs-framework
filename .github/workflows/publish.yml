@@ -20,4 +20,4 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       - name: build
         run: |
-          ./gradlew build candidate
+          ./gradlew build candidate -Prelease.useLastTag=true
