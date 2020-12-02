@@ -39,3 +39,4 @@
 /.gradle/checksums/sha1-checksums.bin
 /.gradle/configuration-cache/gc.properties
 /.gradle/vcs-1/gc.properties
+buildSrc/.gradle/
