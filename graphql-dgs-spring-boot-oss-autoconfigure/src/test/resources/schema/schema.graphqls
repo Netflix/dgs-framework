@@ -1,0 +1,17 @@
+type Query {
+    hello(name: String): String
+
+    quotes(id: Int): String
+
+    names: [String]
+
+    namesFromMapped: [String]
+
+    #Security examples
+    deny: String
+    errorTest: String
+
+    withNullableNull: String
+
+    withNonNullableNull: String!
+}
