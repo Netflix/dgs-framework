@@ -20,4 +20,4 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       - name: build
         run: |
-          ./gradlew build candidate -Prelease.useLastTag=true
+          ./gradlew --info --stacktrace -Psonatype.username=${{ secrets.ORG_SONATYPE_USERNAME }} -Psonatype.password=${{ secrets.ORG_SONATYPE_PASSWORD }} -Pbintray.user=${{ secrets.ORG_BINTRAY_USER }} -Pbintray.apiKey=${{ secrets.ORG_BINTRAY_KEY }} -Prelease.travisci=true -Prelease.useLastTag=true candidate
