@@ -40,3 +40,4 @@
 /.gradle/configuration-cache/gc.properties
 /.gradle/vcs-1/gc.properties
 buildSrc/.gradle/
+/.idea/modules.xml

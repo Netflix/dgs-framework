@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-rootProject.name = "dgs-framework"
-include("graphql-dgs")
-include("graphql-error-types")
-include("graphql-dgs-mocking")
-include("graphql-dgs-client")
-include("graphql-dgs-graphiql-autoconfigure")
+plugins {
+    kotlin("jvm")
+}
+
+dependencies {
+    implementation("org.springframework.boot:spring-boot-autoconfigure:${Versions.SPRING_BOOT_VERSION}")
+    implementation("org.springframework:spring-webmvc:${Versions.SPRING_VERSION}")
+}
