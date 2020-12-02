@@ -1,0 +1,80 @@
+package com.netflix.graphql.dgs.client
+
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
+import org.springframework.http.MediaType
+import org.springframework.test.web.client.MockRestServiceServer
+import org.springframework.test.web.client.match.MockRestRequestMatchers.content
+import org.springframework.test.web.client.match.MockRestRequestMatchers.method
+import org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo
+import org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess
+import org.springframework.web.client.RestTemplate
+import java.time.OffsetDateTime
+
+class GraphQLResponseTest {
+
+    private val restTemplate = RestTemplate()
+    private val server = MockRestServiceServer.bindTo(restTemplate).build()
+
+    private val requestExecutor = RequestExecutor { url, headers, body ->
+        val httpHeaders = HttpHeaders()
+        headers.forEach { httpHeaders.addAll(it.key, it.value) }
+
+        val exchange = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
+        HttpResponse(exchange.statusCodeValue, exchange.body)
+    }
+
+    private val url = "http://localhost:8080/graphql"
+    private val client = DefaultGraphQLClient(url)
+
+    @Test
+    fun dateParse() {
+
+        val jsonResponse = """
+            {
+              "data": {
+                "submitReview": {
+                  "edges": [
+                    {
+                      "node": {
+                        "submittedBy": "pbakker@netflix.com",
+                        "postedDate": "2020-10-29T12:22:47.789933-07:00"
+                      }
+                    },
+                    {
+                      "node": {
+                        "submittedBy": "pbakker@netflix.com",
+                        "postedDate": "2020-10-29T12:22:54.327407-07:00"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+        """.trimIndent()
+
+        server.expect(requestTo(url))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
+
+        val graphQLResponse = client.executeQuery("""mutation {
+              submitReview(review:{movieId:1, starRating:5, description:""}) {
+                edges {
+                  node {
+                    submittedBy
+                    postedDate
+                  }
+                }
+              }
+            }""", emptyMap(), requestExecutor)
+
+        val offsetDateTime = graphQLResponse.extractValueAsObject("submitReview.edges[0].node.postedDate", OffsetDateTime::class.java)
+        assertThat(offsetDateTime).isInstanceOf(OffsetDateTime::class.java)
+        assertThat(offsetDateTime.dayOfMonth).isEqualTo(29)
+        server.verify()
+    }
+}
