@@ -36,6 +36,7 @@ allprojects {
     }
 
     apply(plugin = "java-library")
+    apply(plugin = "nebula.netflixoss")
 
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
