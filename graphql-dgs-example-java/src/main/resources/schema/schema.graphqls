@@ -1,0 +1,54 @@
+type Query {
+    hello(name: String): String
+    withContext: String
+    withDataLoaderContext: String
+    movies: [Movie]
+    messageFromBatchLoader: String
+
+    #To show how exceptions are handled
+    withGraphqlException: String
+    withRuntimeException: String
+
+    concurrent1: Int
+    concurrent2: Int
+}
+
+interface Movie {
+    title: String
+    director: String
+}
+
+type ScaryMovie implements Movie {
+    title: String
+    director: String
+    gory: Boolean
+    scareFactor: Int
+}
+
+type ActionMovie implements Movie {
+    title: String
+    director: String
+    nrOfExplosions: Int
+}
+
+type Mutation {
+    addRating(input: RatingInput):Rating
+}
+
+input RatingInput {
+    title: String,
+    stars: Int
+}
+
+type Rating {
+    avgStars: Float
+}
+
+type Subscription {
+    stocks: Stock
+}
+
+type Stock {
+    name: String
+    price: Float
+}
