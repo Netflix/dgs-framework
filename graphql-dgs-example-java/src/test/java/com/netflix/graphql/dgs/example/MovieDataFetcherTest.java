@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.example.types;
+package com.netflix.graphql.dgs.example;
 
-public class Rating {
-    private final double avgStars;
+import com.netflix.graphql.dgs.DgsQueryExecutor;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-    public Rating(double avgStars) {
-        this.avgStars = avgStars;
-    }
+import static org.assertj.core.api.Assertions.assertThat;
 
-    public double getAvgStars() {
-        return avgStars;
+@ExampleSpringBootTest
+public class MovieDataFetcherTest {
+
+    @Autowired
+    DgsQueryExecutor queryExecutor;
+
+    @Test
+    void moviesShouldHaveDirector() {
+        String director = queryExecutor.executeAndExtractJsonPath("{ movies { director } }", "data.movies[0].director");
+        assertThat(director).isEqualTo("some director");
     }
 }
