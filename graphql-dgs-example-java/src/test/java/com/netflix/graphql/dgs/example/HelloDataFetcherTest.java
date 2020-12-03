@@ -47,7 +47,7 @@ class HelloDataFetcherTest {
     @Test
     void helloShouldWorkWithoutName() {
         String message = queryExecutor.executeAndExtractJsonPath("{hello}", "data.hello");
-        assertThat(message).isEqualTo("hello, stranger!");
+        assertThat(message).isEqualTo("hello, Stranger!");
     }
 
     @Test
