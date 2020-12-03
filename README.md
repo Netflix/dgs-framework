@@ -24,14 +24,14 @@ Add the following dependency to your build.
 
 Gradle
 ```groovy
-implementation 'com.netflix.graphql.dgs:graphql-dgs:0.0.1-rc.9'
+implementation 'com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter:0.0.1-rc.9'
 ```
 
 Maven
 ```xml
 <dependency>
   <groupId>com.netflix.graphql.dgs</groupId>
-  <artifactId>graphql-dgs</artifactId>
+  <artifactId>graphql-dgs-spring-boot-starter</artifactId>
   <version>0.0.1-rc.9</version>
   <type>pom</type>
 </dependency>
