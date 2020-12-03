@@ -31,6 +31,7 @@ plugins {
 }
 
 allprojects {
+    group = "com.netflix.graphql.dgs"
     repositories {
         jcenter()
     }
