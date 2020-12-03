@@ -18,14 +18,17 @@ plugins {
     kotlin("jvm")
 }
 
+
 dependencies {
     implementation(project(":graphql-dgs"))
-    implementation(project(":graphql-dgs-subscriptions-websockets"))
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.+")
 
-    implementation("org.springframework.boot:spring-boot-autoconfigure:${Versions.SPRING_BOOT_VERSION}")
-    implementation("org.springframework:spring-websocket:${Versions.SPRING_VERSION}")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.+")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.+")
-    testImplementation("org.springframework.boot:spring-boot-starter-test:${Versions.SPRING_BOOT_VERSION}")
+    implementation("org.springframework:spring-web:${Versions.SPRING_VERSION}")
+    implementation("org.springframework:spring-webmvc:${Versions.SPRING_VERSION}")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.1")
     testImplementation("io.mockk:mockk:1.10.3-jdk8")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:${Versions.SPRING_BOOT_VERSION}")
+    testImplementation("io.projectreactor:reactor-test:3.4.0")
 }
