@@ -69,3 +69,4 @@ buildSrc/.gradle/
 /.idea/misc.xml
 /.idea/vcs.xml
 /graphql-dgs-example-java/ui-example/node_modules/
+/.idea/kotlinScripting.xml
