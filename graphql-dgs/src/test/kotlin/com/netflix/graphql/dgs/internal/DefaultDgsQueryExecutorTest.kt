@@ -239,6 +239,8 @@ internal class DefaultDgsQueryExecutorTest {
             }
         """.trimIndent())
 
+        val movieList = context.read("data.movies", object: TypeRef<List<Movie>>(){})
+        assertThat(movieList.size).isEqualTo(2)
         val movie = context.read("data.movies[0]", Movie::class.java)
         assertThat(movie).isNotNull
     }

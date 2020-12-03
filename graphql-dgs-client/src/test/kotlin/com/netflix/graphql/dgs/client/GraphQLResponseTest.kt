@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.client
 
+import com.jayway.jsonpath.TypeRef
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity

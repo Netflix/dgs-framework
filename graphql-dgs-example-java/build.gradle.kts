@@ -1,5 +1,7 @@
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-web:${Versions.SPRING_BOOT_VERSION}")
     implementation(project(":graphql-dgs-spring-boot-starter"))
+    implementation(project(":graphql-dgs-subscriptions-websockets-autoconfigure"))
 
     implementation("io.projectreactor:reactor-core:3.4.0")
 

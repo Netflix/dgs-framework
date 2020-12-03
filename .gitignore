@@ -68,3 +68,4 @@ buildSrc/.gradle/
 /.idea/.gitignore
 /.idea/misc.xml
 /.idea/vcs.xml
+/graphql-dgs-example-java/ui-example/node_modules/
