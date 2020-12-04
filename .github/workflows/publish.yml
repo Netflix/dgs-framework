@@ -20,4 +20,13 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       - name: build
         run: |
-          ./gradlew --info --stacktrace -Psonatype.username=${{ secrets.ORG_SONATYPE_USERNAME }} -Psonatype.password=${{ secrets.ORG_SONATYPE_PASSWORD }} -Pbintray.user=${{ secrets.ORG_BINTRAY_USER }} -Pbintray.apiKey=${{ secrets.ORG_BINTRAY_KEY }} -Prelease.travisci=true -Prelease.useLastTag=true candidate
+          case "$GITHUB_REF" in
+          *-rc\.*)
+            echo "Publishing Release Candidate $GITHUB_REF"
+            ./gradlew --info --stacktrace -Psonatype.username=${{ secrets.ORG_SONATYPE_USERNAME }} -Psonatype.password=${{ secrets.ORG_SONATYPE_PASSWORD }} -Pbintray.user=${{ secrets.ORG_BINTRAY_USER }} -Pbintray.apiKey=${{ secrets.ORG_BINTRAY_KEY }} -Prelease.travisci=true -Prelease.useLastTag=true candidate
+            ;;
+          *)
+            echo "Publishing Final Release $GITHUB_REF"
+            ./gradlew --info --stacktrace -Psonatype.username=${{ secrets.ORG_SONATYPE_USERNAME }} -Psonatype.password=${{ secrets.ORG_SONATYPE_PASSWORD }} -Pbintray.user=${{ secrets.ORG_BINTRAY_USER }} -Pbintray.apiKey=${{ secrets.ORG_BINTRAY_KEY }} -Prelease.travisci=true -Prelease.useLastTag=true final
+            ;;
+          esac
