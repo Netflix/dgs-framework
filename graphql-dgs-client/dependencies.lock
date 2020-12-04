@@ -1,0 +1,281 @@
+{
+    "apiDependenciesMetadata": {
+        "com.jayway.jsonpath:json-path": {
+            "locked": "2.4.0",
+            "requested": "2.4.+"
+        },
+        "io.projectreactor:reactor-core": {
+            "locked": "3.4.0",
+            "requested": "3.4.+"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.4.10"
+        }
+    },
+    "compileClasspath": {
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "locked": "2.10.5",
+            "requested": "2.10.+"
+        },
+        "com.fasterxml.jackson.module:jackson-module-kotlin": {
+            "locked": "2.11.3",
+            "requested": "2.11.+"
+        },
+        "com.jayway.jsonpath:json-path": {
+            "locked": "2.4.0",
+            "requested": "2.4.+"
+        },
+        "io.projectreactor:reactor-core": {
+            "locked": "3.4.0",
+            "requested": "3.4.+"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.4.10",
+            "requested": "1.4.10"
+        },
+        "org.springframework:spring-web": {
+            "locked": "5.3.1",
+            "requested": "5.3.1"
+        }
+    },
+    "implementationDependenciesMetadata": {
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "locked": "2.10.5",
+            "requested": "2.10.+"
+        },
+        "com.fasterxml.jackson.module:jackson-module-kotlin": {
+            "locked": "2.11.3",
+            "requested": "2.11.+"
+        },
+        "com.jayway.jsonpath:json-path": {
+            "locked": "2.4.0",
+            "requested": "2.4.+"
+        },
+        "io.projectreactor:reactor-core": {
+            "locked": "3.4.0",
+            "requested": "3.4.+"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.4.10",
+            "requested": "1.4.10"
+        },
+        "org.springframework:spring-web": {
+            "locked": "5.3.1",
+            "requested": "5.3.1"
+        }
+    },
+    "kotlinCompilerClasspath": {
+        "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
+            "locked": "1.4.10"
+        }
+    },
+    "kotlinCompilerPluginClasspath": {
+        "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
+            "locked": "1.4.10",
+            "requested": "1.4.10"
+        }
+    },
+    "kotlinKlibCommonizerClasspath": {
+        "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
+            "locked": "1.4.10"
+        }
+    },
+    "runtimeClasspath": {
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "locked": "2.10.5",
+            "requested": "2.10.+"
+        },
+        "com.fasterxml.jackson.module:jackson-module-kotlin": {
+            "locked": "2.11.3",
+            "requested": "2.11.+"
+        },
+        "com.jayway.jsonpath:json-path": {
+            "locked": "2.4.0",
+            "requested": "2.4.+"
+        },
+        "io.projectreactor:reactor-core": {
+            "locked": "3.4.0",
+            "requested": "3.4.+"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.4.10",
+            "requested": "1.4.10"
+        },
+        "org.springframework:spring-web": {
+            "locked": "5.3.1",
+            "requested": "5.3.1"
+        }
+    },
+    "testCompileClasspath": {
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "locked": "2.11.3",
+            "requested": "2.10.+"
+        },
+        "com.fasterxml.jackson.module:jackson-module-kotlin": {
+            "locked": "2.11.3",
+            "requested": "2.11.+"
+        },
+        "com.jayway.jsonpath:json-path": {
+            "locked": "2.4.0",
+            "requested": "2.4.+"
+        },
+        "io.mockk:mockk": {
+            "locked": "1.10.3-jdk8",
+            "requested": "1.10.3-jdk8"
+        },
+        "io.projectreactor:reactor-core": {
+            "locked": "3.4.0",
+            "requested": "3.4.+"
+        },
+        "org.assertj:assertj-core": {
+            "locked": "3.11.1",
+            "requested": "3.11.+"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.4.10",
+            "requested": "1.4.10"
+        },
+        "org.junit.jupiter:junit-jupiter-api": {
+            "locked": "5.7.0",
+            "requested": "5.7.+"
+        },
+        "org.slf4j:slf4j-simple": {
+            "locked": "1.7.30",
+            "requested": "1.7.30"
+        },
+        "org.springframework.boot:spring-boot-starter-web": {
+            "locked": "2.4.0",
+            "requested": "2.4.0"
+        },
+        "org.springframework.boot:spring-boot-starter-webflux": {
+            "locked": "2.4.0",
+            "requested": "2.4.0"
+        },
+        "org.springframework:spring-test": {
+            "locked": "5.3.1",
+            "requested": "5.3.1"
+        },
+        "org.springframework:spring-web": {
+            "locked": "5.3.1",
+            "requested": "5.3.1"
+        }
+    },
+    "testImplementationDependenciesMetadata": {
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "locked": "2.11.3",
+            "requested": "2.10.+"
+        },
+        "com.fasterxml.jackson.module:jackson-module-kotlin": {
+            "locked": "2.11.3",
+            "requested": "2.11.+"
+        },
+        "com.jayway.jsonpath:json-path": {
+            "locked": "2.4.0",
+            "requested": "2.4.+"
+        },
+        "io.mockk:mockk": {
+            "locked": "1.10.3-jdk8",
+            "requested": "1.10.3-jdk8"
+        },
+        "io.projectreactor:reactor-core": {
+            "locked": "3.4.0",
+            "requested": "3.4.+"
+        },
+        "org.assertj:assertj-core": {
+            "locked": "3.11.1",
+            "requested": "3.11.+"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.4.10",
+            "requested": "1.4.10"
+        },
+        "org.junit.jupiter:junit-jupiter-api": {
+            "locked": "5.7.0",
+            "requested": "5.7.+"
+        },
+        "org.slf4j:slf4j-simple": {
+            "locked": "1.7.30",
+            "requested": "1.7.30"
+        },
+        "org.springframework.boot:spring-boot-starter-web": {
+            "locked": "2.4.0",
+            "requested": "2.4.0"
+        },
+        "org.springframework.boot:spring-boot-starter-webflux": {
+            "locked": "2.4.0",
+            "requested": "2.4.0"
+        },
+        "org.springframework:spring-test": {
+            "locked": "5.3.1",
+            "requested": "5.3.1"
+        },
+        "org.springframework:spring-web": {
+            "locked": "5.3.1",
+            "requested": "5.3.1"
+        }
+    },
+    "testRuntimeClasspath": {
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "locked": "2.11.3",
+            "requested": "2.10.+"
+        },
+        "com.fasterxml.jackson.module:jackson-module-kotlin": {
+            "locked": "2.11.3",
+            "requested": "2.11.+"
+        },
+        "com.jayway.jsonpath:json-path": {
+            "locked": "2.4.0",
+            "requested": "2.4.+"
+        },
+        "io.mockk:mockk": {
+            "locked": "1.10.3-jdk8",
+            "requested": "1.10.3-jdk8"
+        },
+        "io.projectreactor:reactor-core": {
+            "locked": "3.4.0",
+            "requested": "3.4.+"
+        },
+        "org.assertj:assertj-core": {
+            "locked": "3.11.1",
+            "requested": "3.11.+"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.4.10",
+            "requested": "1.4.10"
+        },
+        "org.junit.jupiter:junit-jupiter-api": {
+            "locked": "5.7.0",
+            "requested": "5.7.+"
+        },
+        "org.junit.jupiter:junit-jupiter-engine": {
+            "locked": "5.7.0",
+            "requested": "5.7.+"
+        },
+        "org.slf4j:slf4j-simple": {
+            "locked": "1.7.30",
+            "requested": "1.7.30"
+        },
+        "org.springframework.boot:spring-boot-starter-web": {
+            "locked": "2.4.0",
+            "requested": "2.4.0"
+        },
+        "org.springframework.boot:spring-boot-starter-webflux": {
+            "locked": "2.4.0",
+            "requested": "2.4.0"
+        },
+        "org.springframework:spring-test": {
+            "locked": "5.3.1",
+            "requested": "5.3.1"
+        },
+        "org.springframework:spring-web": {
+            "locked": "5.3.1",
+            "requested": "5.3.1"
+        }
+    },
+    "testRuntimeOnlyDependenciesMetadata": {
+        "org.junit.jupiter:junit-jupiter-engine": {
+            "locked": "5.7.0",
+            "requested": "5.7.+"
+        }
+    }
+}
