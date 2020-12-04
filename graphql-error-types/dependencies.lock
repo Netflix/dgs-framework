@@ -1,0 +1,26 @@
+{
+    "compileClasspath": {
+        "com.graphql-java:graphql-java": {
+            "locked": "15.0",
+            "requested": "15.0"
+        }
+    },
+    "runtimeClasspath": {
+        "com.graphql-java:graphql-java": {
+            "locked": "15.0",
+            "requested": "15.0"
+        }
+    },
+    "testCompileClasspath": {
+        "com.graphql-java:graphql-java": {
+            "locked": "15.0",
+            "requested": "15.0"
+        }
+    },
+    "testRuntimeClasspath": {
+        "com.graphql-java:graphql-java": {
+            "locked": "15.0",
+            "requested": "15.0"
+        }
+    }
+}
