@@ -19,6 +19,6 @@ plugins {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-autoconfigure:${Versions.SPRING_BOOT_VERSION}")
-    implementation("org.springframework:spring-webmvc:${Versions.SPRING_VERSION}")
+    compileOnly("org.springframework.boot:spring-boot-autoconfigure:${Versions.SPRING_BOOT_VERSION}")
+    compileOnly("org.springframework:spring-webmvc:${Versions.SPRING_VERSION}")
 }

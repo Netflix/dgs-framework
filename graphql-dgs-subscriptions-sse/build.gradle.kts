@@ -23,8 +23,8 @@ dependencies {
     implementation(project(":graphql-dgs"))
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.+")
 
-    implementation("org.springframework:spring-web:${Versions.SPRING_VERSION}")
-    implementation("org.springframework:spring-webmvc:${Versions.SPRING_VERSION}")
+    compileOnly("org.springframework:spring-web:${Versions.SPRING_VERSION}")
+    compileOnly("org.springframework:spring-webmvc:${Versions.SPRING_VERSION}")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.1")

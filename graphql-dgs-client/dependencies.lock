@@ -38,6 +38,12 @@
             "requested": "5.+"
         }
     },
+    "compileOnlyDependenciesMetadata": {
+        "org.springframework:spring-web": {
+            "locked": "5.3.1",
+            "requested": "5.+"
+        }
+    },
     "implementationDependenciesMetadata": {
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.10.5",
@@ -58,10 +64,6 @@
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "1.4.10",
             "requested": "1.4.10"
-        },
-        "org.springframework:spring-web": {
-            "locked": "5.3.1",
-            "requested": "5.+"
         }
     },
     "kotlinCompilerClasspath": {
@@ -100,10 +102,6 @@
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "1.4.10",
             "requested": "1.4.10"
-        },
-        "org.springframework:spring-web": {
-            "locked": "5.3.1",
-            "requested": "5.+"
         }
     },
     "testCompileClasspath": {
@@ -154,10 +152,6 @@
         "org.springframework:spring-test": {
             "locked": "5.3.1",
             "requested": "5.+"
-        },
-        "org.springframework:spring-web": {
-            "locked": "5.3.1",
-            "requested": "5.+"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -206,10 +200,6 @@
             "requested": "2.+"
         },
         "org.springframework:spring-test": {
-            "locked": "5.3.1",
-            "requested": "5.+"
-        },
-        "org.springframework:spring-web": {
             "locked": "5.3.1",
             "requested": "5.+"
         }
@@ -264,10 +254,6 @@
             "requested": "2.+"
         },
         "org.springframework:spring-test": {
-            "locked": "5.3.1",
-            "requested": "5.+"
-        },
-        "org.springframework:spring-web": {
             "locked": "5.3.1",
             "requested": "5.+"
         }
