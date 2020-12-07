@@ -29,7 +29,7 @@ plugins {
     idea
     eclipse
     id("org.springframework.boot") version "2.3.6.RELEASE" apply false
-    id("io.spring.dependency-management") version "1.0.10.RELEASE"
+    id("io.spring.dependency-management") version "1.0.10.RELEASE" apply false
 }
 
 
