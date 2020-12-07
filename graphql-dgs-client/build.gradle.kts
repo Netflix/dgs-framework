@@ -22,18 +22,15 @@ dependencies {
 
     api("io.projectreactor:reactor-core:3.4.+")
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.+")
-    implementation("org.springframework:spring-web:${Versions.SPRING_VERSION}")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.+")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.springframework:spring-web")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.+")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.+")
-    testImplementation("org.assertj:assertj-core:3.11.+")
-    testImplementation("org.springframework.boot:spring-boot-starter-web:${Versions.SPRING_BOOT_VERSION}")
-    testImplementation("org.springframework:spring-test:${Versions.SPRING_VERSION}")
-    testImplementation(group = "org.slf4j", name = "slf4j-simple", version = "1.7.30")
+    testImplementation("org.springframework.boot:spring-boot-starter-web")
+    testImplementation("org.springframework:spring-test")
     testImplementation("io.mockk:mockk:1.10.3-jdk8")
 
-    testImplementation("org.springframework.boot:spring-boot-starter-webflux:${Versions.SPRING_BOOT_VERSION}")
+    testImplementation("org.springframework.boot:spring-boot-starter-webflux")
+
 }

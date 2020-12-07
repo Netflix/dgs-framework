@@ -28,7 +28,10 @@ plugins {
     kotlin("jvm") version Versions.KOTLIN_VERSON apply false
     idea
     eclipse
+    id("org.springframework.boot") version "2.3.6.RELEASE" apply false
+    id("io.spring.dependency-management") version "1.0.10.RELEASE"
 }
+
 
 allprojects {
     group = "com.netflix.graphql.dgs"
@@ -37,8 +40,17 @@ allprojects {
     }
 
     apply(plugin = "java-library")
+    apply(plugin = "io.spring.dependency-management")
     apply(plugin = "nebula.netflixoss")
 
+
+    dependencies {
+        implementation(platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES))
+
+        testImplementation("org.springframework.boot:spring-boot-starter-test") {
+            exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+        }
+    }
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -51,11 +63,8 @@ allprojects {
     }
 
 
-    tasks.test {
+    tasks.withType<Test> {
         useJUnitPlatform()
-        testLogging {
-            events("skipped", "failed")
-        }
     }
 
     configurations.all {

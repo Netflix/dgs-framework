@@ -1,3 +1,32 @@
 {
-    
+    "compileClasspath": {
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        }
+    },
+    "runtimeClasspath": {
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        }
+    },
+    "testCompileClasspath": {
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "2.3.6.RELEASE"
+        }
+    },
+    "testRuntimeClasspath": {
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "2.3.6.RELEASE"
+        }
+    }
 }

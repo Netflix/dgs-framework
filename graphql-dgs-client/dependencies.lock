@@ -5,7 +5,7 @@
             "requested": "2.4.+"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.0",
+            "locked": "3.4.1",
             "requested": "3.4.+"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
@@ -14,54 +14,56 @@
     },
     "compileClasspath": {
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.10.5",
-            "requested": "2.10.+"
+            "locked": "2.11.3"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.11.3",
-            "requested": "2.11.+"
+            "locked": "2.11.3"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.4.0",
             "requested": "2.4.+"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.0",
+            "locked": "3.4.1",
             "requested": "3.4.+"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "1.4.10",
             "requested": "1.4.10"
         },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
         "org.springframework:spring-web": {
-            "locked": "5.3.1",
-            "requested": "5.+"
+            "locked": "5.2.11.RELEASE"
         }
     },
     "implementationDependenciesMetadata": {
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.10.5",
-            "requested": "2.10.+"
+            "locked": "2.11.3"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.11.3",
-            "requested": "2.11.+"
+            "locked": "2.11.3"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.4.0",
             "requested": "2.4.+"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.0",
+            "locked": "3.4.1",
             "requested": "3.4.+"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "1.4.10",
             "requested": "1.4.10"
         },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
         "org.springframework:spring-web": {
-            "locked": "5.3.1",
-            "requested": "5.+"
+            "locked": "5.2.11.RELEASE"
         }
     },
     "kotlinCompilerClasspath": {
@@ -82,38 +84,37 @@
     },
     "runtimeClasspath": {
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.10.5",
-            "requested": "2.10.+"
+            "locked": "2.11.3"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.11.3",
-            "requested": "2.11.+"
+            "locked": "2.11.3"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.4.0",
             "requested": "2.4.+"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.0",
+            "locked": "3.4.1",
             "requested": "3.4.+"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "1.4.10",
             "requested": "1.4.10"
         },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
         "org.springframework:spring-web": {
-            "locked": "5.3.1",
-            "requested": "5.+"
+            "locked": "5.2.11.RELEASE"
         }
     },
     "testCompileClasspath": {
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.11.3",
-            "requested": "2.10.+"
+            "locked": "2.11.3"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.11.3",
-            "requested": "2.11.+"
+            "locked": "2.11.3"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.4.0",
@@ -124,50 +125,39 @@
             "requested": "1.10.3-jdk8"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.0",
+            "locked": "3.4.1",
             "requested": "3.4.+"
-        },
-        "org.assertj:assertj-core": {
-            "locked": "3.11.1",
-            "requested": "3.11.+"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "1.4.10",
             "requested": "1.4.10"
         },
-        "org.junit.jupiter:junit-jupiter-api": {
-            "locked": "5.7.0",
-            "requested": "5.7.+"
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         },
-        "org.slf4j:slf4j-simple": {
-            "locked": "1.7.30",
-            "requested": "1.7.30"
+        "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-webflux": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework:spring-test": {
-            "locked": "5.3.1",
-            "requested": "5.+"
+            "locked": "5.2.11.RELEASE"
         },
         "org.springframework:spring-web": {
-            "locked": "5.3.1",
-            "requested": "5.+"
+            "locked": "5.2.11.RELEASE"
         }
     },
     "testImplementationDependenciesMetadata": {
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.11.3",
-            "requested": "2.10.+"
+            "locked": "2.11.3"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.11.3",
-            "requested": "2.11.+"
+            "locked": "2.11.3"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.4.0",
@@ -178,50 +168,39 @@
             "requested": "1.10.3-jdk8"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.0",
+            "locked": "3.4.1",
             "requested": "3.4.+"
-        },
-        "org.assertj:assertj-core": {
-            "locked": "3.11.1",
-            "requested": "3.11.+"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "1.4.10",
             "requested": "1.4.10"
         },
-        "org.junit.jupiter:junit-jupiter-api": {
-            "locked": "5.7.0",
-            "requested": "5.7.+"
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         },
-        "org.slf4j:slf4j-simple": {
-            "locked": "1.7.30",
-            "requested": "1.7.30"
+        "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-webflux": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework:spring-test": {
-            "locked": "5.3.1",
-            "requested": "5.+"
+            "locked": "5.2.11.RELEASE"
         },
         "org.springframework:spring-web": {
-            "locked": "5.3.1",
-            "requested": "5.+"
+            "locked": "5.2.11.RELEASE"
         }
     },
     "testRuntimeClasspath": {
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.11.3",
-            "requested": "2.10.+"
+            "locked": "2.11.3"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.11.3",
-            "requested": "2.11.+"
+            "locked": "2.11.3"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.4.0",
@@ -232,50 +211,31 @@
             "requested": "1.10.3-jdk8"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.0",
+            "locked": "3.4.1",
             "requested": "3.4.+"
-        },
-        "org.assertj:assertj-core": {
-            "locked": "3.11.1",
-            "requested": "3.11.+"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "1.4.10",
             "requested": "1.4.10"
         },
-        "org.junit.jupiter:junit-jupiter-api": {
-            "locked": "5.7.0",
-            "requested": "5.7.+"
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         },
-        "org.junit.jupiter:junit-jupiter-engine": {
-            "locked": "5.7.0",
-            "requested": "5.7.+"
-        },
-        "org.slf4j:slf4j-simple": {
-            "locked": "1.7.30",
-            "requested": "1.7.30"
+        "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-webflux": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework:spring-test": {
-            "locked": "5.3.1",
-            "requested": "5.+"
+            "locked": "5.2.11.RELEASE"
         },
         "org.springframework:spring-web": {
-            "locked": "5.3.1",
-            "requested": "5.+"
-        }
-    },
-    "testRuntimeOnlyDependenciesMetadata": {
-        "org.junit.jupiter:junit-jupiter-engine": {
-            "locked": "5.7.0",
-            "requested": "5.7.+"
+            "locked": "5.2.11.RELEASE"
         }
     }
 }

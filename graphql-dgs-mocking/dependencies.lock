@@ -21,6 +21,10 @@
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "locked": "1.4.10",
             "requested": "1.4.10"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         }
     },
     "implementationDependenciesMetadata": {
@@ -35,6 +39,10 @@
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "locked": "1.4.10",
             "requested": "1.4.10"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         }
     },
     "kotlinCompilerClasspath": {
@@ -65,6 +73,10 @@
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "locked": "1.4.10",
             "requested": "1.4.10"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         }
     },
     "testCompileClasspath": {
@@ -76,17 +88,16 @@
             "locked": "15.0",
             "requested": "15.0"
         },
-        "org.assertj:assertj-core": {
-            "locked": "3.18.1",
-            "requested": "3.+"
-        },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "locked": "1.4.10",
             "requested": "1.4.10"
         },
-        "org.junit.jupiter:junit-jupiter-api": {
-            "locked": "5.7.0",
-            "requested": "5.+"
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "2.3.6.RELEASE"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -98,17 +109,16 @@
             "locked": "15.0",
             "requested": "15.0"
         },
-        "org.assertj:assertj-core": {
-            "locked": "3.18.1",
-            "requested": "3.+"
-        },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "locked": "1.4.10",
             "requested": "1.4.10"
         },
-        "org.junit.jupiter:junit-jupiter-api": {
-            "locked": "5.7.0",
-            "requested": "5.+"
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "2.3.6.RELEASE"
         }
     },
     "testRuntimeClasspath": {
@@ -120,27 +130,16 @@
             "locked": "15.0",
             "requested": "15.0"
         },
-        "org.assertj:assertj-core": {
-            "locked": "3.18.1",
-            "requested": "3.+"
-        },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "locked": "1.4.10",
             "requested": "1.4.10"
         },
-        "org.junit.jupiter:junit-jupiter-api": {
-            "locked": "5.7.0",
-            "requested": "5.+"
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         },
-        "org.junit.jupiter:junit-jupiter-engine": {
-            "locked": "5.7.0",
-            "requested": "5.+"
-        }
-    },
-    "testRuntimeOnlyDependenciesMetadata": {
-        "org.junit.jupiter:junit-jupiter-engine": {
-            "locked": "5.7.0",
-            "requested": "5.+"
+        "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "2.3.6.RELEASE"
         }
     }
 }

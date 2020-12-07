@@ -21,7 +21,7 @@ plugins {
 dependencies {
     implementation(project(":graphql-dgs"))
     implementation(project(":graphql-dgs-subscriptions-sse"))
-    implementation("org.springframework:spring-web:${Versions.SPRING_VERSION}")
-    implementation("org.springframework:spring-webmvc:${Versions.SPRING_VERSION}")
-    implementation("org.springframework.boot:spring-boot-autoconfigure:${Versions.SPRING_BOOT_VERSION}")
+    implementation("org.springframework:spring-web")
+    implementation("org.springframework:spring-webmvc")
+    implementation("org.springframework.boot:spring-boot-autoconfigure")
 }

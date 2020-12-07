@@ -102,9 +102,12 @@
             "locked": "1.4.10",
             "requested": "1.4.10"
         },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
         }
     },
     "implementationDependenciesMetadata": {
@@ -158,9 +161,12 @@
             "locked": "1.4.10",
             "requested": "1.4.10"
         },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
         }
     },
     "kotlinCompilerClasspath": {
@@ -191,7 +197,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
-            "locked": "2.10.5"
+            "locked": "2.11.3"
         },
         "com.github.javafaker:javafaker": {
             "firstLevelTransitive": [
@@ -259,18 +265,33 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "2.4.0"
+            "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.security:spring-security-core": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "5.3.5.RELEASE"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
-            "locked": "5.3.1"
+            "locked": "5.2.11.RELEASE"
         }
     },
     "testCompileClasspath": {
@@ -328,17 +349,15 @@
             "locked": "1.4.10",
             "requested": "1.4.10"
         },
-        "org.junit.jupiter:junit-jupiter-api": {
-            "locked": "5.7.0",
-            "requested": "5.+"
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -396,17 +415,15 @@
             "locked": "1.4.10",
             "requested": "1.4.10"
         },
-        "org.junit.jupiter:junit-jupiter-api": {
-            "locked": "5.7.0",
-            "requested": "5.+"
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
         }
     },
     "testRuntimeClasspath": {
@@ -421,7 +438,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
-            "locked": "2.10.5"
+            "locked": "2.11.3"
         },
         "com.github.javafaker:javafaker": {
             "firstLevelTransitive": [
@@ -489,40 +506,40 @@
             "locked": "1.4.10",
             "requested": "1.4.10"
         },
-        "org.junit.jupiter:junit-jupiter-api": {
-            "locked": "5.7.0",
-            "requested": "5.+"
-        },
-        "org.junit.jupiter:junit-jupiter-engine": {
-            "locked": "5.7.0",
-            "requested": "5.+"
-        },
         "org.springframework.boot:spring-boot": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "2.4.0"
+            "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.security:spring-security-core": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "5.3.5.RELEASE"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
-            "locked": "5.3.1"
-        }
-    },
-    "testRuntimeOnlyDependenciesMetadata": {
-        "org.junit.jupiter:junit-jupiter-engine": {
-            "locked": "5.7.0",
-            "requested": "5.+"
+            "locked": "5.2.11.RELEASE"
         }
     }
 }

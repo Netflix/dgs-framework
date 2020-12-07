@@ -34,8 +34,7 @@
             "requested": "0.5.0"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.10.5",
-            "requested": "2.10.+"
+            "locked": "2.11.3"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -66,22 +65,17 @@
             "locked": "1.4.10"
         },
         "org.springframework.boot:spring-boot": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "5.3.3.RELEASE",
-            "requested": "5.+"
+            "locked": "5.3.5.RELEASE"
         },
         "org.springframework:spring-web": {
-            "locked": "5.3.1",
-            "requested": "5.+"
-        }
-    },
-    "compileOnlyDependenciesMetadata": {
-        "org.springframework.security:spring-security-core": {
-            "locked": "5.3.3.RELEASE",
-            "requested": "5.+"
+            "locked": "5.2.11.RELEASE"
         }
     },
     "implementationDependenciesMetadata": {
@@ -90,8 +84,7 @@
             "requested": "0.5.0"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.10.5",
-            "requested": "2.10.+"
+            "locked": "2.11.3"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -122,12 +115,17 @@
             "locked": "1.4.10"
         },
         "org.springframework.boot:spring-boot": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
+        "org.springframework.security:spring-security-core": {
+            "locked": "5.3.5.RELEASE"
         },
         "org.springframework:spring-web": {
-            "locked": "5.3.1",
-            "requested": "5.+"
+            "locked": "5.2.11.RELEASE"
         }
     },
     "kotlinCompilerClasspath": {
@@ -152,8 +150,7 @@
             "requested": "0.5.0"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.10.5",
-            "requested": "2.10.+"
+            "locked": "2.11.3"
         },
         "com.github.javafaker:javafaker": {
             "firstLevelTransitive": [
@@ -190,12 +187,21 @@
             "locked": "1.4.10"
         },
         "org.springframework.boot:spring-boot": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
+        "org.springframework.security:spring-security-core": {
+            "locked": "5.3.5.RELEASE"
         },
         "org.springframework:spring-web": {
-            "locked": "5.3.1",
-            "requested": "5.+"
+            "locked": "5.2.11.RELEASE"
         }
     },
     "testCompileClasspath": {
@@ -204,8 +210,7 @@
             "requested": "0.5.0"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.10.5",
-            "requested": "2.10.+"
+            "locked": "2.11.3"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -233,10 +238,6 @@
             "locked": "3.0.8",
             "requested": "3.+"
         },
-        "org.assertj:assertj-core": {
-            "locked": "3.18.1",
-            "requested": "3.+"
-        },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "1.4.10",
             "requested": "1.4.10"
@@ -247,25 +248,21 @@
             ],
             "locked": "1.4.10"
         },
-        "org.junit.jupiter:junit-jupiter-api": {
-            "locked": "5.7.0",
-            "requested": "5.+"
-        },
         "org.springframework.boot:spring-boot": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "5.3.3.RELEASE",
-            "requested": "5.+"
+            "locked": "5.3.5.RELEASE"
         },
         "org.springframework:spring-web": {
-            "locked": "5.3.1",
-            "requested": "5.+"
+            "locked": "5.2.11.RELEASE"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -274,8 +271,7 @@
             "requested": "0.5.0"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.10.5",
-            "requested": "2.10.+"
+            "locked": "2.11.3"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -303,10 +299,6 @@
             "locked": "3.0.8",
             "requested": "3.+"
         },
-        "org.assertj:assertj-core": {
-            "locked": "3.18.1",
-            "requested": "3.+"
-        },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "1.4.10",
             "requested": "1.4.10"
@@ -317,25 +309,21 @@
             ],
             "locked": "1.4.10"
         },
-        "org.junit.jupiter:junit-jupiter-api": {
-            "locked": "5.7.0",
-            "requested": "5.+"
-        },
         "org.springframework.boot:spring-boot": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "5.3.3.RELEASE",
-            "requested": "5.+"
+            "locked": "5.3.5.RELEASE"
         },
         "org.springframework:spring-web": {
-            "locked": "5.3.1",
-            "requested": "5.+"
+            "locked": "5.2.11.RELEASE"
         }
     },
     "testRuntimeClasspath": {
@@ -344,8 +332,7 @@
             "requested": "0.5.0"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.10.5",
-            "requested": "2.10.+"
+            "locked": "2.11.3"
         },
         "com.github.javafaker:javafaker": {
             "firstLevelTransitive": [
@@ -379,10 +366,6 @@
             "locked": "3.0.8",
             "requested": "3.+"
         },
-        "org.assertj:assertj-core": {
-            "locked": "3.18.1",
-            "requested": "3.+"
-        },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "1.4.10",
             "requested": "1.4.10"
@@ -393,35 +376,25 @@
             ],
             "locked": "1.4.10"
         },
-        "org.junit.jupiter:junit-jupiter-api": {
-            "locked": "5.7.0",
-            "requested": "5.+"
-        },
-        "org.junit.jupiter:junit-jupiter-engine": {
-            "locked": "5.7.0",
-            "requested": "5.+"
-        },
         "org.springframework.boot:spring-boot": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.4.0",
-            "requested": "2.+"
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "5.3.3.RELEASE",
-            "requested": "5.+"
+            "locked": "5.3.5.RELEASE"
         },
         "org.springframework:spring-web": {
-            "locked": "5.3.1",
-            "requested": "5.+"
-        }
-    },
-    "testRuntimeOnlyDependenciesMetadata": {
-        "org.junit.jupiter:junit-jupiter-engine": {
-            "locked": "5.7.0",
-            "requested": "5.+"
+            "locked": "5.2.11.RELEASE"
         }
     }
 }

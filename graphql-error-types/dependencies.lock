@@ -3,24 +3,46 @@
         "com.graphql-java:graphql-java": {
             "locked": "15.0",
             "requested": "15.0"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         }
     },
     "runtimeClasspath": {
         "com.graphql-java:graphql-java": {
             "locked": "15.0",
             "requested": "15.0"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         }
     },
     "testCompileClasspath": {
         "com.graphql-java:graphql-java": {
             "locked": "15.0",
             "requested": "15.0"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "2.3.6.RELEASE"
         }
     },
     "testRuntimeClasspath": {
         "com.graphql-java:graphql-java": {
             "locked": "15.0",
             "requested": "15.0"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "2.3.6.RELEASE"
         }
     }
 }
