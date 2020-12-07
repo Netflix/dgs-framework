@@ -361,9 +361,62 @@
             ],
             "locked": "1.4.10"
         },
+        "org.springframework.boot:spring-boot": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "2.4.0"
+        },
+        "org.springframework.boot:spring-boot-autoconfigure": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-graphiql-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
+            ],
+            "locked": "2.4.0"
+        },
+        "org.springframework.boot:spring-boot-starter": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
+            ],
+            "locked": "2.4.0"
+        },
         "org.springframework.boot:spring-boot-starter-web": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter"
+            ],
             "locked": "2.4.0",
             "requested": "2.+"
+        },
+        "org.springframework.boot:spring-boot-starter-websocket": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter"
+            ],
+            "locked": "2.4.0"
+        },
+        "org.springframework:spring-web": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets"
+            ],
+            "locked": "5.3.1"
+        },
+        "org.springframework:spring-webmvc": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-graphiql-autoconfigure"
+            ],
+            "locked": "5.3.1"
+        },
+        "org.springframework:spring-websocket": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
+            ],
+            "locked": "5.3.1"
         }
     },
     "testCompileClasspath": {
@@ -731,13 +784,66 @@
             "locked": "5.7.0",
             "requested": "5.+"
         },
+        "org.springframework.boot:spring-boot": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "2.4.0"
+        },
+        "org.springframework.boot:spring-boot-autoconfigure": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-graphiql-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
+            ],
+            "locked": "2.4.0"
+        },
+        "org.springframework.boot:spring-boot-starter": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
+            ],
+            "locked": "2.4.0"
+        },
         "org.springframework.boot:spring-boot-starter-test": {
             "locked": "2.4.0",
             "requested": "2.+"
         },
         "org.springframework.boot:spring-boot-starter-web": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter"
+            ],
             "locked": "2.4.0",
             "requested": "2.+"
+        },
+        "org.springframework.boot:spring-boot-starter-websocket": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter"
+            ],
+            "locked": "2.4.0"
+        },
+        "org.springframework:spring-web": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets"
+            ],
+            "locked": "5.3.1"
+        },
+        "org.springframework:spring-webmvc": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-graphiql-autoconfigure"
+            ],
+            "locked": "5.3.1"
+        },
+        "org.springframework:spring-websocket": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
+            ],
+            "locked": "5.3.1"
         }
     },
     "testRuntimeOnlyDependenciesMetadata": {

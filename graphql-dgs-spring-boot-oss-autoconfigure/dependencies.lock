@@ -107,12 +107,6 @@
             "requested": "2.+"
         }
     },
-    "compileOnlyDependenciesMetadata": {
-        "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "2.4.0",
-            "requested": "2.+"
-        }
-    },
     "implementationDependenciesMetadata": {
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -163,6 +157,10 @@
             ],
             "locked": "1.4.10",
             "requested": "1.4.10"
+        },
+        "org.springframework.boot:spring-boot-starter-web": {
+            "locked": "2.4.0",
+            "requested": "2.+"
         }
     },
     "kotlinCompilerClasspath": {
@@ -256,6 +254,23 @@
             ],
             "locked": "1.4.10",
             "requested": "1.4.10"
+        },
+        "org.springframework.boot:spring-boot": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "2.4.0"
+        },
+        "org.springframework.boot:spring-boot-starter-web": {
+            "locked": "2.4.0",
+            "requested": "2.+"
+        },
+        "org.springframework:spring-web": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
+            ],
+            "locked": "5.3.1"
         }
     },
     "testCompileClasspath": {
@@ -320,6 +335,10 @@
         "org.springframework.boot:spring-boot-starter-test": {
             "locked": "2.4.0",
             "requested": "2.+"
+        },
+        "org.springframework.boot:spring-boot-starter-web": {
+            "locked": "2.4.0",
+            "requested": "2.+"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -382,6 +401,10 @@
             "requested": "5.+"
         },
         "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "2.4.0",
+            "requested": "2.+"
+        },
+        "org.springframework.boot:spring-boot-starter-web": {
             "locked": "2.4.0",
             "requested": "2.+"
         }
@@ -474,9 +497,26 @@
             "locked": "5.7.0",
             "requested": "5.+"
         },
+        "org.springframework.boot:spring-boot": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "2.4.0"
+        },
         "org.springframework.boot:spring-boot-starter-test": {
             "locked": "2.4.0",
             "requested": "2.+"
+        },
+        "org.springframework.boot:spring-boot-starter-web": {
+            "locked": "2.4.0",
+            "requested": "2.+"
+        },
+        "org.springframework:spring-web": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
+            ],
+            "locked": "5.3.1"
         }
     },
     "testRuntimeOnlyDependenciesMetadata": {

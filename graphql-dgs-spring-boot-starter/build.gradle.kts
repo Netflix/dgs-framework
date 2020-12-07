@@ -20,6 +20,6 @@ dependencies {
     api(project(":graphql-dgs-client"))
     api(project(":graphql-error-types"))
     runtimeOnly(project(":graphql-dgs-graphiql-autoconfigure"))
-    compileOnly("org.springframework.boot:spring-boot-starter-websocket:${Versions.SPRING_BOOT_VERSION}")
-    compileOnly("org.springframework.boot:spring-boot-starter-web:${Versions.SPRING_BOOT_VERSION}")
+    implementation("org.springframework.boot:spring-boot-starter-websocket:${Versions.SPRING_BOOT_VERSION}")
+    implementation("org.springframework.boot:spring-boot-starter-web:${Versions.SPRING_BOOT_VERSION}")
 }

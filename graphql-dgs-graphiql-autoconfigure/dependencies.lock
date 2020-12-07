@@ -19,7 +19,11 @@
             "requested": "5.+"
         }
     },
-    "compileOnlyDependenciesMetadata": {
+    "implementationDependenciesMetadata": {
+        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
+            "locked": "1.4.10",
+            "requested": "1.4.10"
+        },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "locked": "2.4.0",
             "requested": "2.+"
@@ -27,12 +31,6 @@
         "org.springframework:spring-webmvc": {
             "locked": "5.3.1",
             "requested": "5.+"
-        }
-    },
-    "implementationDependenciesMetadata": {
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.4.10",
-            "requested": "1.4.10"
         }
     },
     "kotlinCompilerClasspath": {
@@ -55,24 +53,56 @@
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "locked": "1.4.10",
             "requested": "1.4.10"
+        },
+        "org.springframework.boot:spring-boot-autoconfigure": {
+            "locked": "2.4.0",
+            "requested": "2.+"
+        },
+        "org.springframework:spring-webmvc": {
+            "locked": "5.3.1",
+            "requested": "5.+"
         }
     },
     "testCompileClasspath": {
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "locked": "1.4.10",
             "requested": "1.4.10"
+        },
+        "org.springframework.boot:spring-boot-autoconfigure": {
+            "locked": "2.4.0",
+            "requested": "2.+"
+        },
+        "org.springframework:spring-webmvc": {
+            "locked": "5.3.1",
+            "requested": "5.+"
         }
     },
     "testImplementationDependenciesMetadata": {
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "locked": "1.4.10",
             "requested": "1.4.10"
+        },
+        "org.springframework.boot:spring-boot-autoconfigure": {
+            "locked": "2.4.0",
+            "requested": "2.+"
+        },
+        "org.springframework:spring-webmvc": {
+            "locked": "5.3.1",
+            "requested": "5.+"
         }
     },
     "testRuntimeClasspath": {
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "locked": "1.4.10",
             "requested": "1.4.10"
+        },
+        "org.springframework.boot:spring-boot-autoconfigure": {
+            "locked": "2.4.0",
+            "requested": "2.+"
+        },
+        "org.springframework:spring-webmvc": {
+            "locked": "5.3.1",
+            "requested": "5.+"
         }
     }
 }

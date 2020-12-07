@@ -22,9 +22,8 @@ dependencies {
     implementation(project(":graphql-dgs"))
     implementation(project(":graphql-dgs-subscriptions-websockets"))
 
-    compileOnly("org.springframework.boot:spring-boot-autoconfigure:${Versions.SPRING_BOOT_VERSION}")
-    compileOnly("org.springframework:spring-websocket:${Versions.SPRING_VERSION}")
-
+    implementation("org.springframework.boot:spring-boot-autoconfigure:${Versions.SPRING_BOOT_VERSION}")
+    implementation("org.springframework:spring-websocket:${Versions.SPRING_VERSION}")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.+")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.+")
     testImplementation("org.springframework.boot:spring-boot-starter-test:${Versions.SPRING_BOOT_VERSION}")

@@ -65,20 +65,6 @@
             "requested": "5.+"
         }
     },
-    "compileOnlyDependenciesMetadata": {
-        "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "2.4.0",
-            "requested": "2.+"
-        },
-        "org.springframework:spring-web": {
-            "locked": "5.3.1",
-            "requested": "5.+"
-        },
-        "org.springframework:spring-websocket": {
-            "locked": "5.3.1",
-            "requested": "5.+"
-        }
-    },
     "implementationDependenciesMetadata": {
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "locked": "2.10.5",
@@ -125,6 +111,18 @@
             ],
             "locked": "1.4.10",
             "requested": "1.4.10"
+        },
+        "org.springframework.boot:spring-boot-autoconfigure": {
+            "locked": "2.4.0",
+            "requested": "2.+"
+        },
+        "org.springframework:spring-web": {
+            "locked": "5.3.1",
+            "requested": "5.+"
+        },
+        "org.springframework:spring-websocket": {
+            "locked": "5.3.1",
+            "requested": "5.+"
         }
     },
     "kotlinCompilerClasspath": {
@@ -204,6 +202,27 @@
             ],
             "locked": "1.4.10",
             "requested": "1.4.10"
+        },
+        "org.springframework.boot:spring-boot": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "2.4.0"
+        },
+        "org.springframework.boot:spring-boot-autoconfigure": {
+            "locked": "2.4.0",
+            "requested": "2.+"
+        },
+        "org.springframework:spring-web": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "5.3.1",
+            "requested": "5.+"
+        },
+        "org.springframework:spring-websocket": {
+            "locked": "5.3.1",
+            "requested": "5.+"
         }
     },
     "testCompileClasspath": {
@@ -268,6 +287,18 @@
         "org.junit.jupiter:junit-jupiter-api": {
             "locked": "5.5.1",
             "requested": "5.5.1"
+        },
+        "org.springframework.boot:spring-boot-autoconfigure": {
+            "locked": "2.4.0",
+            "requested": "2.+"
+        },
+        "org.springframework:spring-web": {
+            "locked": "5.3.1",
+            "requested": "5.+"
+        },
+        "org.springframework:spring-websocket": {
+            "locked": "5.3.1",
+            "requested": "5.+"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -332,6 +363,18 @@
         "org.junit.jupiter:junit-jupiter-api": {
             "locked": "5.5.1",
             "requested": "5.5.1"
+        },
+        "org.springframework.boot:spring-boot-autoconfigure": {
+            "locked": "2.4.0",
+            "requested": "2.+"
+        },
+        "org.springframework:spring-web": {
+            "locked": "5.3.1",
+            "requested": "5.+"
+        },
+        "org.springframework:spring-websocket": {
+            "locked": "5.3.1",
+            "requested": "5.+"
         }
     },
     "testRuntimeClasspath": {
@@ -415,6 +458,27 @@
         "org.junit.jupiter:junit-jupiter-engine": {
             "locked": "5.5.1",
             "requested": "5.5.1"
+        },
+        "org.springframework.boot:spring-boot": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "2.4.0"
+        },
+        "org.springframework.boot:spring-boot-autoconfigure": {
+            "locked": "2.4.0",
+            "requested": "2.+"
+        },
+        "org.springframework:spring-web": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "5.3.1",
+            "requested": "5.+"
+        },
+        "org.springframework:spring-websocket": {
+            "locked": "5.3.1",
+            "requested": "5.+"
         }
     },
     "testRuntimeOnlyDependenciesMetadata": {
