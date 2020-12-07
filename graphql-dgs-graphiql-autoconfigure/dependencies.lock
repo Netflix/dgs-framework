@@ -12,11 +12,11 @@
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework:spring-webmvc": {
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         }
     },
     "implementationDependenciesMetadata": {
@@ -26,11 +26,11 @@
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework:spring-webmvc": {
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         }
     },
     "kotlinCompilerClasspath": {
@@ -56,11 +56,11 @@
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework:spring-webmvc": {
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         }
     },
     "testCompileClasspath": {
@@ -70,11 +70,11 @@
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework:spring-webmvc": {
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -84,11 +84,11 @@
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework:spring-webmvc": {
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         }
     },
     "testRuntimeClasspath": {
@@ -98,11 +98,11 @@
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework:spring-webmvc": {
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         }
     }
 }

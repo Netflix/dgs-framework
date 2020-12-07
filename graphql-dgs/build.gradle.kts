@@ -24,8 +24,8 @@ dependencies {
 
     api("com.graphql-java:graphql-java:${Versions.GRAPHQL_JAVA}")
     api("com.jayway.jsonpath:json-path:2.+")
-    api("org.springframework:spring-web:${Versions.SPRING_VERSION}")
-    api("org.springframework.boot:spring-boot:${Versions.SPRING_BOOT_VERSION}")
+    implementation("org.springframework:spring-web:${Versions.SPRING_VERSION}")
+    implementation("org.springframework.boot:spring-boot:${Versions.SPRING_BOOT_VERSION}")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.+")
     implementation("com.apollographql.federation:federation-graphql-java-support:${Versions.GRAPHQL_JAVA_FEDERATION}")

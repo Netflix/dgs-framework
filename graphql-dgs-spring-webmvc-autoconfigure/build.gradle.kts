@@ -22,8 +22,8 @@ plugins {
 dependencies {
     api(project(":graphql-dgs"))
     api(project(":graphql-dgs-spring-webmvc"))
-    api("org.springframework.boot:spring-boot-starter:${Versions.SPRING_BOOT_VERSION}")
-    api("org.springframework:spring-web:$${Versions.SPRING_VERSION}")
+    implementation("org.springframework.boot:spring-boot-starter:${Versions.SPRING_BOOT_VERSION}")
+    implementation("org.springframework:spring-web:${Versions.SPRING_VERSION}")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.+")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.+")

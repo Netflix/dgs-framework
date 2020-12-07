@@ -26,14 +26,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
             "locked": "1.4.10"
-        },
-        "org.springframework.boot:spring-boot": {
-            "locked": "2.4.0",
-            "requested": "2.4.0"
-        },
-        "org.springframework:spring-web": {
-            "locked": "5.3.1",
-            "requested": "5.3.1"
         }
     },
     "compileClasspath": {
@@ -75,21 +67,21 @@
         },
         "org.springframework.boot:spring-boot": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "5.4.1",
-            "requested": "5.4.1"
+            "locked": "5.3.3.RELEASE",
+            "requested": "5.+"
         },
         "org.springframework:spring-web": {
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         }
     },
     "compileOnlyDependenciesMetadata": {
         "org.springframework.security:spring-security-core": {
-            "locked": "5.4.1",
-            "requested": "5.4.1"
+            "locked": "5.3.3.RELEASE",
+            "requested": "5.+"
         }
     },
     "implementationDependenciesMetadata": {
@@ -131,11 +123,11 @@
         },
         "org.springframework.boot:spring-boot": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework:spring-web": {
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         }
     },
     "kotlinCompilerClasspath": {
@@ -199,11 +191,11 @@
         },
         "org.springframework.boot:spring-boot": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework:spring-web": {
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         }
     },
     "testCompileClasspath": {
@@ -261,19 +253,19 @@
         },
         "org.springframework.boot:spring-boot": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework.boot:spring-boot-starter-test": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "5.4.1",
-            "requested": "5.4.1"
+            "locked": "5.3.3.RELEASE",
+            "requested": "5.+"
         },
         "org.springframework:spring-web": {
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -331,19 +323,19 @@
         },
         "org.springframework.boot:spring-boot": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework.boot:spring-boot-starter-test": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "5.4.1",
-            "requested": "5.4.1"
+            "locked": "5.3.3.RELEASE",
+            "requested": "5.+"
         },
         "org.springframework:spring-web": {
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         }
     },
     "testRuntimeClasspath": {
@@ -411,19 +403,19 @@
         },
         "org.springframework.boot:spring-boot": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework.boot:spring-boot-starter-test": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "5.4.1",
-            "requested": "5.4.1"
+            "locked": "5.3.3.RELEASE",
+            "requested": "5.+"
         },
         "org.springframework:spring-web": {
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         }
     },
     "testRuntimeOnlyDependenciesMetadata": {

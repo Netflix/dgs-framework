@@ -51,26 +51,17 @@
             ],
             "locked": "1.4.10"
         },
-        "org.springframework.boot:spring-boot": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
-            "locked": "2.4.0"
-        },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework:spring-web": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         },
         "org.springframework:spring-webmvc": {
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         }
     },
     "implementationDependenciesMetadata": {
@@ -120,26 +111,17 @@
             ],
             "locked": "1.4.10"
         },
-        "org.springframework.boot:spring-boot": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
-            "locked": "2.4.0"
-        },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework:spring-web": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         },
         "org.springframework:spring-webmvc": {
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         }
     },
     "kotlinCompilerClasspath": {
@@ -235,7 +217,7 @@
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
@@ -243,14 +225,14 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
             ],
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         },
         "org.springframework:spring-webmvc": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
             ],
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         }
     },
     "testCompileClasspath": {
@@ -300,26 +282,17 @@
             ],
             "locked": "1.4.10"
         },
-        "org.springframework.boot:spring-boot": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
-            "locked": "2.4.0"
-        },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework:spring-web": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         },
         "org.springframework:spring-webmvc": {
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -369,26 +342,17 @@
             ],
             "locked": "1.4.10"
         },
-        "org.springframework.boot:spring-boot": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
-            "locked": "2.4.0"
-        },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework:spring-web": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         },
         "org.springframework:spring-webmvc": {
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         }
     },
     "testRuntimeClasspath": {
@@ -468,7 +432,7 @@
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "locked": "2.4.0",
-            "requested": "2.4.0"
+            "requested": "2.+"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
@@ -476,14 +440,14 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
             ],
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         },
         "org.springframework:spring-webmvc": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
             ],
             "locked": "5.3.1",
-            "requested": "5.3.1"
+            "requested": "5.+"
         }
     }
 }
