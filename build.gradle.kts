@@ -31,13 +31,9 @@ plugins {
     eclipse
 }
 
-dependencyRecommendations {
-    mavenBom(module("org.springframework:spring-framework-bom:${Versions.SPRING_VERSION}"))
-//    mavenBom(module("org.springframework.boot:spring-boot-dependencies:${Versions.SPRING_BOOT_VERSION}"))
-//    mavenBom(module("org.springframework.security:spring-security-bom:${Versions.SPRING_SECURITY_VERSION}"))
-//    mavenBom(module("org.springframework.cloud:spring-cloud-dependencies:${Versions.SPRING_CLOUD_VERSION}"))
+dependencies {
+    nebulaRecommenderBom("org.springframework:spring-framework-bom:${Versions.SPRING_VERSION}")
 }
-
 
 allprojects {
     group = "com.netflix.graphql.dgs"
