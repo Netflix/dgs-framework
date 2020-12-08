@@ -31,15 +31,7 @@ plugins {
     eclipse
 }
 
-dependencyRecommendations {
-    mavenBom(mapOf(Pair("module","org.springframework:spring-framework-bom:${Versions.SPRING_VERSION}")))
-    mavenBom(mapOf(Pair("module","org.springframework.boot:spring-boot-dependencies:${Versions.SPRING_BOOT_VERSION}")))
-    mavenBom(mapOf(Pair("module", "org.springframework.security:spring-security-bom:${Versions.SPRING_SECURITY_VERSION}")))
-    mavenBom(mapOf(Pair("module","org.springframework.cloud:spring-cloud-dependencies:${Versions.SPRING_CLOUD_VERSION}")))
-//    mavenBom(module("org.springframework.boot:spring-boot-dependencies:${Versions.SPRING_BOOT_VERSION}"))
-//    mavenBom(module("org.springframework.security:spring-security-bom:${Versions.SPRING_SECURITY_VERSION}"))
-//    mavenBom(module("org.springframework.cloud:spring-cloud-dependencies:${Versions.SPRING_CLOUD_VERSION}"))
-}
+
 
 
 allprojects {
@@ -50,7 +42,14 @@ allprojects {
 
     apply(plugin = "java-library")
     apply(plugin = "nebula.netflixoss")
+        apply(plugin = "nebula.dependency-recommender")
 
+    dependencyRecommendations {
+        mavenBom(mapOf(Pair("module","org.springframework:spring-framework-bom:${Versions.SPRING_VERSION}")))
+        mavenBom(mapOf(Pair("module","org.springframework.boot:spring-boot-dependencies:${Versions.SPRING_BOOT_VERSION}")))
+        mavenBom(mapOf(Pair("module", "org.springframework.security:spring-security-bom:${Versions.SPRING_SECURITY_VERSION}")))
+        mavenBom(mapOf(Pair("module","org.springframework.cloud:spring-cloud-dependencies:${Versions.SPRING_CLOUD_VERSION}")))
+    }
 
     dependencies {
         testImplementation("org.springframework.boot:spring-boot-starter-test") {
