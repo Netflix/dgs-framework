@@ -25,11 +25,13 @@ group = "com.netflix.graphql.dgs"
 plugins {
     `java-library`
     id("nebula.netflixoss") version "8.8.1"
+    id("nebula.dependency-recommender") version "9.1.1"
     kotlin("jvm") version Versions.KOTLIN_VERSON apply false
     idea
     eclipse
-    id("org.springframework.boot") version "2.3.6.RELEASE" apply false
 }
+
+
 
 
 allprojects {
@@ -40,11 +42,16 @@ allprojects {
 
     apply(plugin = "java-library")
     apply(plugin = "nebula.netflixoss")
+        apply(plugin = "nebula.dependency-recommender")
 
+    dependencyRecommendations {
+        mavenBom(mapOf(Pair("module","org.springframework:spring-framework-bom:${Versions.SPRING_VERSION}")))
+        mavenBom(mapOf(Pair("module","org.springframework.boot:spring-boot-dependencies:${Versions.SPRING_BOOT_VERSION}")))
+        mavenBom(mapOf(Pair("module", "org.springframework.security:spring-security-bom:${Versions.SPRING_SECURITY_VERSION}")))
+        mavenBom(mapOf(Pair("module","org.springframework.cloud:spring-cloud-dependencies:${Versions.SPRING_CLOUD_VERSION}")))
+    }
 
     dependencies {
-        implementation(platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES))
-
         testImplementation("org.springframework.boot:spring-boot-starter-test") {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         }

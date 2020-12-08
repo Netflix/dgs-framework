@@ -1,30 +1,28 @@
 {
-    "compileClasspath": {
-        "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE",
-            "requested": "2.3.6.RELEASE"
-        }
-    },
-    "runtimeClasspath": {
-        "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE",
-            "requested": "2.3.6.RELEASE"
-        }
-    },
-    "testCompileClasspath": {
+    "nebulaRecommenderBom": {
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.6.RELEASE",
             "requested": "2.3.6.RELEASE"
         },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "Hoxton.SR9",
+            "requested": "Hoxton.SR9"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.3.6.RELEASE",
+            "requested": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.2.11.RELEASE",
+            "requested": "5.2.11.RELEASE"
+        }
+    },
+    "testCompileClasspath": {
         "org.springframework.boot:spring-boot-starter-test": {
             "locked": "2.3.6.RELEASE"
         }
     },
     "testRuntimeClasspath": {
-        "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE",
-            "requested": "2.3.6.RELEASE"
-        },
         "org.springframework.boot:spring-boot-starter-test": {
             "locked": "2.3.6.RELEASE"
         }
