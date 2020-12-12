@@ -3,6 +3,8 @@
 ![CI](https://github.com/Netflix/dgs-framework/workflows/CI/badge.svg?branch=master)
 [![Apache 2.0](https://img.shields.io/github/license/nebula-plugins/gradle-netflixoss-project-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
+Documentation can be found [here](https://netflix.github.io/dgs), including a getting started guide.
+
 The DGS Framework (Domain Graph Service) is a GraphQL server framework for Spring Boot, developed by Netflix.
 
 Features include:
@@ -19,61 +21,4 @@ Features include:
 
 # Getting Started
 
-Create a Spring Boot project (e.g. using the [Initializr](https://start.spring.io)).
-Add the following dependency to your build.
-
-Gradle
-```groovy
-implementation 'com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter:0.0.1-rc.9'
-```
-
-Maven
-```xml
-<dependency>
-  <groupId>com.netflix.graphql.dgs</groupId>
-  <artifactId>graphql-dgs-spring-boot-starter</artifactId>
-  <version>0.0.1-rc.9</version>
-  <type>pom</type>
-</dependency>
-```
-
-Add a schema file under `src/main/resources/schema`.
-
-```graphql
-# src/main/resources/schema/schema.graphqls
-type Query {
-    hello(name: String): String
-}
-```
-
-Add a data fetcher.
-
-Java
-```java
-package com.example.demo.datafetchers;
-import com.netflix.graphql.dgs.DgsComponent;
-import com.netflix.graphql.dgs.DgsData;
-
-@DgsComponent
-public class HelloDataFetcher {
-    @DgsData(parentType = "Query", field = "hello")
-    @DgsEnableDataFetcherInstrumentation(false)
-    public String hello(@InputArgument("name") String name) {
-        if (name == null) {
-            name = "Stranger";
-        }
-
-        return "hello, " + name + "!";
-    }
-}
-```
-
-Run the application and open http://localhost:8080/graphiql.
-Test your query! :shipit:
-
-```graphql
-{
- hello(name:"DGS User")
-}
-```
-
+Follow the [getting started guide]((https://netflix.github.io/dgs/getting-started/))!
