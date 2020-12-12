@@ -21,4 +21,4 @@ Features include:
 
 # Getting Started
 
-Follow the [getting started guide]((https://netflix.github.io/dgs/getting-started/))!
+Follow the [getting started guide](https://netflix.github.io/dgs/getting-started/)!
