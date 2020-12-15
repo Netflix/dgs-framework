@@ -1,7 +1,7 @@
 # dgs-framework
 
 ![CI](https://github.com/Netflix/dgs-framework/workflows/CI/badge.svg?branch=master)
-[![GitHub release](https://img.shields.io/github/release/Naereen/StrapDown.js.svg)](https://GitHub.com/Netflix/dgs-framework/releases)
+[![GitHub release](https://img.shields.io/github/v/release/Netflix/dgs-framework.svg)](https://GitHub.com/Netflix/dgs-framework/releases)
 [![Apache 2.0](https://img.shields.io/github/license/nebula-plugins/gradle-netflixoss-project-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
 Documentation can be found [here](https://netflix.github.io/dgs), including a getting started guide.
