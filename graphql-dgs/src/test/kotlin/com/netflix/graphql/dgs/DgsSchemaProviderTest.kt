@@ -41,6 +41,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 @Suppress("UNUSED_PARAMETER")
 @ExtendWith(MockKExtension::class)
@@ -642,6 +643,181 @@ internal class DgsSchemaProviderTest {
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         assertThat(dgsSchemaProvider.schema(schema)).isNotNull
 
+    }
+
+    @Test
+    fun enableInstrumentationForDataFetchers() {
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", defaultHelloFetcher))
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        provider.schema()
+        assertThat(provider.dataFetcherInstrumentationEnabled).containsKey("Query.hello")
+        assertThat(provider.dataFetcherInstrumentationEnabled["Query.hello"]).isTrue
+
+    }
+
+    @Test
+    fun disableInstrumentationForDataFetchersWithAnnotation() {
+
+        val noTracingDataFetcher = object : Any() {
+            @DgsEnableDataFetcherInstrumentation(false)
+            @DgsData(parentType="Query", field = "hello")
+            fun someFetcher(): String {
+                return "Hello"
+            }
+        }
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", noTracingDataFetcher))
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        provider.schema()
+        assertThat(provider.dataFetcherInstrumentationEnabled).containsKey("Query.hello")
+        assertThat(provider.dataFetcherInstrumentationEnabled["Query.hello"]).isFalse
+    }
+
+    @Test
+    fun disableInstrumentationForAsyncDataFetchers() {
+        val noTracingDataFetcher = object : Any() {
+            @DgsData(parentType="Query", field = "hello")
+            fun someFetcher(): CompletableFuture<String> {
+                return CompletableFuture.supplyAsync { "hello" }
+            }
+        }
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", noTracingDataFetcher))
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        provider.schema()
+        assertThat(provider.dataFetcherInstrumentationEnabled).containsKey("Query.hello")
+        assertThat(provider.dataFetcherInstrumentationEnabled["Query.hello"]).isFalse
+    }
+
+    @Test
+    fun enableInstrumentationForAsyncDataFetchersWithAnnotation() {
+        val noTracingDataFetcher = object : Any() {
+            @DgsEnableDataFetcherInstrumentation(true)
+            @DgsData(parentType="Query", field = "hello")
+            fun someFetcher(): CompletableFuture<String> {
+                return CompletableFuture.supplyAsync { "hello" }
+            }
+        }
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", noTracingDataFetcher))
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        provider.schema()
+        assertThat(provider.dataFetcherInstrumentationEnabled).containsKey("Query.hello")
+        assertThat(provider.dataFetcherInstrumentationEnabled["Query.hello"]).isTrue
+    }
+
+    @Test
+    fun enableInstrumentationForInterfaceDataFetcher() {
+
+        val schema = """
+              type Query {
+                video: Video
+            }
+
+            interface Video {
+                title: String
+            }
+
+            type Show implements Video {
+                title: String
+            }                   
+        """.trimIndent()
+
+        val titleFetcher = object : Any() {
+            @DgsData(parentType="Video", field = "title")
+            fun someFetcher():String  {
+                return "Title on Interface"
+            }
+        }
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("videoFetcher", defaultVideoFetcher))
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("titleFetcher", titleFetcher))
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        provider.schema(schema)
+        assertThat(provider.dataFetcherInstrumentationEnabled).containsKey("Video.title")
+        assertThat(provider.dataFetcherInstrumentationEnabled["Video.title"]).isTrue
+
+        assertThat(provider.dataFetcherInstrumentationEnabled).containsKey("Show.title")
+        assertThat(provider.dataFetcherInstrumentationEnabled["Show.title"]).isTrue
+    }
+
+    @Test
+    fun disableInstrumentationForInterfaceDataFetcherWithAnnotation() {
+
+        val schema = """
+              type Query {
+                video: Video
+            }
+
+            interface Video {
+                title: String
+            }
+
+            type Show implements Video {
+                title: String
+            }                   
+        """.trimIndent()
+
+        val titleFetcher = object : Any() {
+            @DgsEnableDataFetcherInstrumentation(false)
+            @DgsData(parentType="Video", field = "title")
+            fun someFetcher():String  {
+                return "Title on Interface"
+            }
+        }
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("videoFetcher", defaultVideoFetcher))
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("titleFetcher", titleFetcher))
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        provider.schema(schema)
+        assertThat(provider.dataFetcherInstrumentationEnabled).containsKey("Video.title")
+        assertThat(provider.dataFetcherInstrumentationEnabled["Video.title"]).isFalse
+
+        assertThat(provider.dataFetcherInstrumentationEnabled).containsKey("Show.title")
+        assertThat(provider.dataFetcherInstrumentationEnabled["Show.title"]).isFalse
+    }
+
+    @Test
+    fun disableInstrumentationForAsyncInterfaceDataFetcher() {
+
+        val schema = """
+              type Query {
+                video: Video
+            }
+
+            interface Video {
+                title: String
+            }
+
+            type Show implements Video {
+                title: String
+            }                   
+        """.trimIndent()
+
+        val titleFetcher = object : Any() {
+            @DgsData(parentType="Video", field = "title")
+            fun someFetcher():CompletableFuture<String>  {
+                return CompletableFuture.supplyAsync { "Title on Interface" }
+            }
+        }
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("videoFetcher", defaultVideoFetcher))
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("titleFetcher", titleFetcher))
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        provider.schema(schema)
+        assertThat(provider.dataFetcherInstrumentationEnabled).containsKey("Video.title")
+        assertThat(provider.dataFetcherInstrumentationEnabled["Video.title"]).isFalse
+
+        assertThat(provider.dataFetcherInstrumentationEnabled).containsKey("Show.title")
+        assertThat(provider.dataFetcherInstrumentationEnabled["Show.title"]).isFalse
     }
 
     private fun assertHello(build: GraphQL) {
