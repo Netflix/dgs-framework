@@ -168,11 +168,13 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext, priv
                         implementationsOf.forEach { implType ->
                             val dataFetcher = createBasicDataFetcher(method, dgsComponent)
                             codeRegistryBuilder.dataFetcher(FieldCoordinates.coordinates(implType.name, dgsDataAnnotation.field), dataFetcher)
+                            dataFetcherInstrumentationEnabled["${implType.name}.${dgsDataAnnotation.field}"] = enableInstrumentation
                         }
                     } else if (type is UnionTypeDefinition) {
                         type.memberTypes.filterIsInstance<TypeName>().forEach { memberType ->
                             val dataFetcher = createBasicDataFetcher(method, dgsComponent)
                             codeRegistryBuilder.dataFetcher(FieldCoordinates.coordinates(memberType.name, dgsDataAnnotation.field), dataFetcher)
+                            dataFetcherInstrumentationEnabled["${memberType.name}.${dgsDataAnnotation.field}"] = enableInstrumentation
                         }
                     } else {
                         val dataFetcher = createBasicDataFetcher(method, dgsComponent)
