@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package com.netflix.graphql.dgs.example;
 
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration;
 import com.netflix.graphql.dgs.example.datafetcher.*;
-import com.netflix.graphql.dgs.scalars.UploadScalar;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.lang.annotation.ElementType;
@@ -28,6 +27,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@SpringBootTest(classes = {HelloDataFetcher.class, MovieDataFetcher.class, UploadScalar.class, ConcurrentDataFetcher.class, RatingMutation.class, FileUploadMutation.class, DgsAutoConfiguration.class})
+@SpringBootTest(classes = {HelloDataFetcher.class, MovieDataFetcher.class, ConcurrentDataFetcher.class, RatingMutation.class, FileUploadMutation.class, DgsAutoConfiguration.class})
 public @interface ExampleSpringBootTest {
 }
