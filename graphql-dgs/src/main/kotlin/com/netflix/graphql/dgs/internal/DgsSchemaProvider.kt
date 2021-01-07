@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationContext
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
+import org.springframework.web.multipart.MultipartFile
 import java.io.InputStreamReader
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
@@ -237,7 +238,10 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext, priv
                             } catch (ex: Exception) {
                                 throw DgsInvalidInputArgumentException("Specified type '${collectionType}' is invalid for $parameterName.", ex)
                             }
-                        } else {
+                        } else if(parameterValue is MultipartFile) {
+                            parameterValue
+                        }
+                        else {
                             jacksonObjectMapper().convertValue(parameterValue, parameter.type)
                         }
 
