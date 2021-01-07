@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -831,7 +831,7 @@ internal class DgsSchemaProviderTest {
         val executionResult = build.execute("{video{title}}")
         assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
-        val video = data["video"] as Map<String, *>
+        val video = data["video"] as Map<*, *>
         assertEquals("ShowA", video["title"])
     }
 }
