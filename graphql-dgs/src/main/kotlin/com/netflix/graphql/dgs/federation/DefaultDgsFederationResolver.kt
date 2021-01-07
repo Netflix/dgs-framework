@@ -28,13 +28,31 @@ import graphql.schema.DataFetchingEnvironment
 import graphql.schema.TypeResolver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import java.util.concurrent.CompletableFuture
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
 @DgsComponent
-open class DefaultDgsFederationResolver(private val dgsSchemaProvider: DgsSchemaProvider) :
+open class DefaultDgsFederationResolver() :
     DgsFederationResolver {
+
+    /**
+     * This constructor is used by DgsSchemaProvider when no custom DgsFederationResolver is provided.
+     * This is the most common use case.
+     * The default constructor is used to extend the DefaultDgsFederationResolver. In that case injection is used to provide the schemaProvider.
+     */
+    constructor(providedDgsSchemaProvider: DgsSchemaProvider): this() {
+        dgsSchemaProvider = providedDgsSchemaProvider
+    }
+
+    /**
+     * Used when the DefaultDgsFederationResolver is extended.
+     */
+    @Suppress("JoinDeclarationAndAssignment")
+    @Autowired
+    lateinit var dgsSchemaProvider: DgsSchemaProvider
+
 
     val logger: Logger = LoggerFactory.getLogger(DefaultDgsFederationResolver::class.java)
 
