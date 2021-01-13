@@ -25,8 +25,6 @@ import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
-import com.netflix.graphql.dgs.logging.LogEvent
-import com.netflix.graphql.dgs.logging.LogService
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import com.netflix.graphql.mocking.MockProvider
 import graphql.execution.AsyncExecutionStrategy
@@ -38,7 +36,6 @@ import graphql.execution.instrumentation.Instrumentation
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.GraphQLSchema
 import graphql.schema.idl.TypeDefinitionRegistry
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -56,7 +53,6 @@ import java.util.*
 @Configuration
 @ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class])
 open class DgsAutoConfiguration {
-    private val log = LoggerFactory.getLogger(DgsAutoConfiguration::class.java)
 
     @Bean
     open fun dgsQueryExecutor(applicationContext: ApplicationContext, schema: GraphQLSchema, schemaProvider: DgsSchemaProvider, dgsDataLoaderProvider: DgsDataLoaderProvider, dgsContextBuilder: DgsContextBuilder, dataFetcherExceptionHandler: DataFetcherExceptionHandler, chainedInstrumentation: ChainedInstrumentation, environment: Environment, @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>, @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>): DgsQueryExecutor {
@@ -113,16 +109,6 @@ open class DgsAutoConfiguration {
     @ConditionalOnMissingBean
     open fun graphQLContextBuilder(dgsCustomContextBuilder: Optional<DgsCustomContextBuilder<*>>) : DgsContextBuilder {
         return DefaultDgsGraphQLContextBuilder(dgsCustomContextBuilder)
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    open fun basicLogService(environment: Environment): LogService {
-        return object : LogService {
-            override fun publishLog(logEvent: LogEvent) {
-                log.debug(logEvent.toString())
-            }
-        }
     }
 
     @Bean
