@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.dataloader.BatchLoaderEnvironment
  * Custom data can be added by providing a [DgsCustomContextBuilder].
  */
 open class DgsContext(val customContext: Any?) {
+    @Deprecated("logEvent is deprecated and will be removed in the next release. Please reach out asap if you do depend on this.")
     val logEvent = LogEvent()
 
     companion object {
