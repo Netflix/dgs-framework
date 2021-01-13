@@ -39,7 +39,7 @@ class ReactiveWebClientTest {
             .headers { consumer -> headers.forEach { consumer.addAll(it.key, it.value) } }
             .bodyValue(body)
             .exchange()
-            .map { HttpResponse(it.rawStatusCode(), it.bodyToMono(String::class.java).block()) }
+            .flatMap { cr -> cr.bodyToMono(String::class.java).map { json -> HttpResponse(cr.rawStatusCode(), json) } }
     }
 
     @Test
