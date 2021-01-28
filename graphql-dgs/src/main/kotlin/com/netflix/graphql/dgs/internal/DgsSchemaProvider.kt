@@ -241,6 +241,9 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext, priv
                         } else if(parameterValue is MultipartFile) {
                             parameterValue
                         }
+                        else if(environment.fieldDefinition.arguments.find { it.name == parameterName }?.type is GraphQLScalarType) {
+                            parameterValue
+                        }
                         else {
                             jacksonObjectMapper().convertValue(parameterValue, parameter.type)
                         }

@@ -45,6 +45,8 @@ import org.springframework.context.ApplicationContext
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.web.multipart.MultipartFile
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -624,6 +626,41 @@ internal class DgsSchemaProviderTest {
         assertEquals("Hello, null", data["hello"])
 
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun addFetchersWithScalarInputArgument() {
+        val schema = """
+            type Mutation {
+                setDate(date:DateTime): String
+            }                     
+            
+            scalar DateTime
+        """.trimIndent()
+
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Mutation", field = "setDate")
+            fun someFetcher(@InputArgument("date") date: LocalDateTime): String {
+                return "The date is: ${date.format(DateTimeFormatter.ISO_DATE)}"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(Pair("DateTime", LocalDateTimeScalar()))
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""mutation {setDate(date: "2021-01-27T10:15:30")}""")
+        assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        assertEquals("The date is: 2021-01-27", data["setDate"])
     }
 
     @Test
