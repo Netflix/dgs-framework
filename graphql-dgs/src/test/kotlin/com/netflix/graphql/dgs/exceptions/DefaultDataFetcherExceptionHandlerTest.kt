@@ -95,4 +95,18 @@ internal class DefaultDataFetcherExceptionHandlerTest {
         // We return null here because we don't want graphql-java to write classification field
         assertThat(result.errors[0].errorType).isNull()
     }
+
+    @Test
+    fun badRequestException() {
+        every { dataFetcherExceptionHandlerParameters.exception }.returns(DgsBadRequestException("Malformed movie request"))
+
+        val result = DefaultDataFetcherExceptionHandler().onException(dataFetcherExceptionHandlerParameters)
+        assertThat(result.errors.size).isEqualTo(1)
+
+        val extensions = result.errors[0].extensions
+        assertThat(extensions["errorType"]).isEqualTo("BAD_REQUEST")
+
+        // We return null here because we don't want graphql-java to write classification field
+        assertThat(result.errors[0].errorType).isNull()
+    }
 }
