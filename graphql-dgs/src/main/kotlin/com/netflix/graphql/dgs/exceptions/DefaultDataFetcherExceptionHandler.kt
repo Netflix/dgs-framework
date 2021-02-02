@@ -46,8 +46,10 @@ class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
         } else if(exception is DgsEntityNotFoundException) {
             TypedGraphQLError.NOT_FOUND.message("%s: %s", exception::class.java.name, exception.message)
                     .path(handlerParameters.path).build()
-        }
-        else {
+        } else if(exception is DgsBadRequestException) {
+            TypedGraphQLError.BAD_REQUEST.message("%s: %s", exception::class.java.name, exception.message)
+                .path(handlerParameters.path).build()
+        } else {
             TypedGraphQLError.INTERNAL.message("%s: %s", exception::class.java.name, exception.message)
                     .path(handlerParameters.path).build()
         }
