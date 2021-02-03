@@ -51,7 +51,10 @@ import java.util.concurrent.CompletionStage
 /**
  * Main framework class that scans for components and configures a runtime executable schema.
  */
-class DgsSchemaProvider(private val applicationContext: ApplicationContext, private val federationResolver: Optional<DgsFederationResolver>, private val existingTypeDefinitionRegistry: Optional<TypeDefinitionRegistry>, private val mockProviders: Optional<Set<MockProvider>>) {
+class DgsSchemaProvider(private val applicationContext: ApplicationContext,
+                        private val federationResolver: Optional<DgsFederationResolver>,
+                        private val existingTypeDefinitionRegistry: Optional<TypeDefinitionRegistry>,
+                        private val mockProviders: Optional<Set<MockProvider>>) {
 
     val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
     val entityFetchers = mutableMapOf<String, Pair<Any, Method>>()
@@ -232,25 +235,23 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext, priv
                         val collectionType = annotation.collectionType.java
                         val parameterValue: Any? = environment.getArgument(parameterName)
 
-                        val convertValue : Any? = if (parameterValue is List<*> && collectionType != Object::class.java) {
+                        val convertValue: Any? = if (parameterValue is List<*> && collectionType != Object::class.java) {
                             try {
                                 parameterValue.map { item -> jacksonObjectMapper().convertValue(item, collectionType) }.toList()
                             } catch (ex: Exception) {
                                 throw DgsInvalidInputArgumentException("Specified type '${collectionType}' is invalid for $parameterName.", ex)
                             }
-                        } else if(parameterValue is MultipartFile) {
+                        } else if (parameterValue is MultipartFile) {
                             parameterValue
-                        }
-                        else if(environment.fieldDefinition.arguments.find { it.name == parameterName }?.type is GraphQLScalarType) {
+                        } else if (environment.fieldDefinition.arguments.find { it.name == parameterName }?.type is GraphQLScalarType) {
                             parameterValue
-                        }
-                        else {
+                        } else {
                             jacksonObjectMapper().convertValue(parameterValue, parameter.type)
                         }
 
                         val paramType = parameter.type
 
-                        if(convertValue != null && !paramType.isPrimitive && !paramType.isAssignableFrom(convertValue.javaClass)) {
+                        if (convertValue != null && !paramType.isPrimitive && !paramType.isAssignableFrom(convertValue.javaClass)) {
                             throw DgsInvalidInputArgumentException("Specified type '${parameter.type}' is invalid. Found ${parameterValue?.javaClass?.name} instead.")
                         }
 
@@ -391,6 +392,5 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext, priv
 
         return schemas + testSchemas + metaInfSchemas
     }
-
 
 }
