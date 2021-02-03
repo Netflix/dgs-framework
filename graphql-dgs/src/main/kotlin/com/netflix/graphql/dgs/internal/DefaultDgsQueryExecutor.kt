@@ -36,14 +36,33 @@ import graphql.schema.GraphQLSchema
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Main Query executing functionality. This should be reused between different transport protocols and the testing framework.
  */
-class DefaultDgsQueryExecutor(private val schema: GraphQLSchema, private val schemaProvider: DgsSchemaProvider, private val dataLoaderProvider: DgsDataLoaderProvider, private val contextBuilder: DgsContextBuilder, private val chainedInstrumentation: ChainedInstrumentation, private val hotReload: Boolean = false, private val queryExecutionStrategy: ExecutionStrategy, val mutationExecutionStrategy: ExecutionStrategy) : DgsQueryExecutor {
-    private val parseContext: ParseContext = JsonPath.using(Configuration.defaultConfiguration().jsonProvider(JacksonJsonProvider(jacksonObjectMapper())).mappingProvider(JacksonMappingProvider(jacksonObjectMapper().enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE).disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES))).addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL))
+class DefaultDgsQueryExecutor(defaultSchema: GraphQLSchema,
+                              private val schemaProvider: DgsSchemaProvider,
+                              private val dataLoaderProvider: DgsDataLoaderProvider,
+                              private val contextBuilder: DgsContextBuilder,
+                              private val chainedInstrumentation: ChainedInstrumentation,
+                              private val queryExecutionStrategy: ExecutionStrategy,
+                              private val mutationExecutionStrategy: ExecutionStrategy,
+                              private val reloadIndicator: ReloadSchemaIndicator = ReloadSchemaIndicator{ false }
+) : DgsQueryExecutor {
+
+    private val parseContext: ParseContext =
+            JsonPath.using(Configuration.defaultConfiguration()
+                    .jsonProvider(JacksonJsonProvider(jacksonObjectMapper()))
+                    .mappingProvider(
+                            JacksonMappingProvider(jacksonObjectMapper()
+                                    .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+                                    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)))
+                    .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL))
 
     val logger: Logger = LoggerFactory.getLogger(DefaultDgsQueryExecutor::class.java)
+
+    val schema = AtomicReference(defaultSchema)
 
     override fun execute(query: String, variables: Map<String, Any>, extensions: Map<String, Any>?, headers: HttpHeaders, operationName: String?): ExecutionResult {
         if (contextBuilder is DefaultDgsGraphQLContextBuilder) {
@@ -56,8 +75,20 @@ class DefaultDgsQueryExecutor(private val schema: GraphQLSchema, private val sch
     }
 
     override fun execute(query: String, variables: Map<String, Any>, operationName: String?): ExecutionResult {
-        val graphQLSchema: GraphQLSchema = if(hotReload) schemaProvider.schema() else schema
-        val graphQL = GraphQL.newGraphQL(graphQLSchema).instrumentation(chainedInstrumentation).queryExecutionStrategy(queryExecutionStrategy).mutationExecutionStrategy(mutationExecutionStrategy).subscriptionExecutionStrategy(SubscriptionExecutionStrategy()).build()
+        val graphQLSchema: GraphQLSchema =
+                if(reloadIndicator.reloadSchema())
+                    schema.updateAndGet{ schemaProvider.schema() }
+                else
+                    schema.get()
+
+        val graphQL =
+                GraphQL.newGraphQL(graphQLSchema)
+                        .instrumentation(chainedInstrumentation)
+                        .queryExecutionStrategy(queryExecutionStrategy)
+                        .mutationExecutionStrategy(mutationExecutionStrategy)
+                        .subscriptionExecutionStrategy(SubscriptionExecutionStrategy())
+                        .build()
+
         val dgsContext = contextBuilder.build()
         val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier({ dgsContext })
         val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
@@ -148,5 +179,17 @@ class DefaultDgsQueryExecutor(private val schema: GraphQLSchema, private val sch
 
         val objectMapper = ObjectMapper()
         return objectMapper.writeValueAsString(executionResult.toSpecification())
+    }
+
+    /**
+     * Provides the means to identify if executor should reload the [GraphQLSchema] from the given [DgsSchemaProvider].
+     * If `true` the schema will be reloaded, else the default schema, provided in the cunstructor of the [DefaultDgsQueryExecutor],
+     * will be used.
+     *
+     * @implSpec The implementation should be thread-safe.
+     */
+    @FunctionalInterface
+    fun interface ReloadSchemaIndicator {
+        fun reloadSchema(): Boolean
     }
 }

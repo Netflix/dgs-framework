@@ -89,7 +89,13 @@ internal class DefaultDgsQueryExecutorTest {
         every { dgsDataLoaderProvider.buildRegistryWithContextSupplier(any<Supplier<Any>>()) } returns DataLoaderRegistry()
 
 
-        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val provider = DgsSchemaProvider(
+                applicationContextMock,
+                federationResolver = Optional.empty(),
+                existingTypeDefinitionRegistry = Optional.empty(),
+                mockProviders = Optional.empty()
+        )
+
         val schema = provider.schema("""
             type Query {
                 hello: String
@@ -108,7 +114,7 @@ internal class DefaultDgsQueryExecutorTest {
         """.trimIndent())
 
 
-        dgsQueryExecutor = DefaultDgsQueryExecutor(schema, provider, dgsDataLoaderProvider, DefaultDgsGraphQLContextBuilder(Optional.empty()), ChainedInstrumentation(), false, AsyncExecutionStrategy(), AsyncSerialExecutionStrategy())
+        dgsQueryExecutor = DefaultDgsQueryExecutor(schema, provider, dgsDataLoaderProvider, DefaultDgsGraphQLContextBuilder(Optional.empty()), ChainedInstrumentation(), AsyncExecutionStrategy(), AsyncSerialExecutionStrategy())
     }
 
     @Test
@@ -221,7 +227,7 @@ internal class DefaultDgsQueryExecutorTest {
             {
                 movies { title } 
             }
-        """.trimIndent(), "data.movies[0]", object: TypeRef<List<String>>() {})
+        """.trimIndent(), "data.movies[0]", object : TypeRef<List<String>>() {})
         }
 
         assertThat(assertThrows.message).isEqualTo("Error deserializing data from '{\"data\":{\"movies\":[{\"title\":\"Extraction\"},{\"title\":\"Da 5 Bloods\"}]}}' with JsonPath 'data.movies[0]' and target class java.util.List<? extends java.lang.String>")
@@ -239,7 +245,7 @@ internal class DefaultDgsQueryExecutorTest {
             }
         """.trimIndent())
 
-        val movieList = context.read("data.movies", object: TypeRef<List<Movie>>(){})
+        val movieList = context.read("data.movies", object : TypeRef<List<Movie>>() {})
         assertThat(movieList.size).isEqualTo(2)
         val movie = context.read("data.movies[0]", Movie::class.java)
         assertThat(movie).isNotNull
