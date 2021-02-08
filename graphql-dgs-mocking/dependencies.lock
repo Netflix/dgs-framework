@@ -1,12 +1,20 @@
 {
-    "apiDependenciesMetadata": {
-        "com.graphql-java:graphql-java": {
-            "locked": "15.0",
-            "requested": "15.0"
+    "annotationProcessor": {
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.4.10",
-            "requested": "1.4.10"
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "Hoxton.SR9",
+            "requested": "Hoxton.SR9"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.3.6.RELEASE",
+            "requested": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.2.11.RELEASE",
+            "requested": "5.2.11.RELEASE"
         }
     },
     "compileClasspath": {
@@ -21,36 +29,104 @@
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "locked": "1.4.10",
             "requested": "1.4.10"
-        }
-    },
-    "implementationDependenciesMetadata": {
-        "com.github.javafaker:javafaker": {
-            "locked": "1.0.2",
-            "requested": "1.+"
         },
-        "com.graphql-java:graphql-java": {
-            "locked": "15.0",
-            "requested": "15.0"
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.4.10",
-            "requested": "1.4.10"
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "Hoxton.SR9",
+            "requested": "Hoxton.SR9"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.3.6.RELEASE",
+            "requested": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.2.11.RELEASE",
+            "requested": "5.2.11.RELEASE"
         }
     },
     "kotlinCompilerClasspath": {
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
             "locked": "1.4.10"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "Hoxton.SR9",
+            "requested": "Hoxton.SR9"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.3.6.RELEASE",
+            "requested": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.2.11.RELEASE",
+            "requested": "5.2.11.RELEASE"
         }
     },
     "kotlinCompilerPluginClasspath": {
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
             "locked": "1.4.10",
             "requested": "1.4.10"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "Hoxton.SR9",
+            "requested": "Hoxton.SR9"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.3.6.RELEASE",
+            "requested": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.2.11.RELEASE",
+            "requested": "5.2.11.RELEASE"
         }
     },
     "kotlinKlibCommonizerClasspath": {
         "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
             "locked": "1.4.10"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "Hoxton.SR9",
+            "requested": "Hoxton.SR9"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.3.6.RELEASE",
+            "requested": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.2.11.RELEASE",
+            "requested": "5.2.11.RELEASE"
+        }
+    },
+    "kotlinNativeCompilerPluginClasspath": {
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "Hoxton.SR9",
+            "requested": "Hoxton.SR9"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.3.6.RELEASE",
+            "requested": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.2.11.RELEASE",
+            "requested": "5.2.11.RELEASE"
         }
     },
     "nebulaRecommenderBom": {
@@ -83,6 +159,40 @@
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "locked": "1.4.10",
             "requested": "1.4.10"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "Hoxton.SR9",
+            "requested": "Hoxton.SR9"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.3.6.RELEASE",
+            "requested": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.2.11.RELEASE",
+            "requested": "5.2.11.RELEASE"
+        }
+    },
+    "testAnnotationProcessor": {
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "Hoxton.SR9",
+            "requested": "Hoxton.SR9"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.3.6.RELEASE",
+            "requested": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.2.11.RELEASE",
+            "requested": "5.2.11.RELEASE"
         }
     },
     "testCompileClasspath": {
@@ -98,25 +208,24 @@
             "locked": "1.4.10",
             "requested": "1.4.10"
         },
-        "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.3.6.RELEASE"
-        }
-    },
-    "testImplementationDependenciesMetadata": {
-        "com.github.javafaker:javafaker": {
-            "locked": "1.0.2",
-            "requested": "1.+"
-        },
-        "com.graphql-java:graphql-java": {
-            "locked": "15.0",
-            "requested": "15.0"
-        },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.4.10",
-            "requested": "1.4.10"
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-test": {
             "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "Hoxton.SR9",
+            "requested": "Hoxton.SR9"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.3.6.RELEASE",
+            "requested": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.2.11.RELEASE",
+            "requested": "5.2.11.RELEASE"
         }
     },
     "testRuntimeClasspath": {
@@ -132,8 +241,24 @@
             "locked": "1.4.10",
             "requested": "1.4.10"
         },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE",
+            "requested": "2.3.6.RELEASE"
+        },
         "org.springframework.boot:spring-boot-starter-test": {
             "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "Hoxton.SR9",
+            "requested": "Hoxton.SR9"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.3.6.RELEASE",
+            "requested": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.2.11.RELEASE",
+            "requested": "5.2.11.RELEASE"
         }
     }
 }
