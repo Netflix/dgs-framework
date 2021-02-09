@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,6 @@ object Versions {
     const val SPRING_BOOT_VERSION = "2.3.6.RELEASE"
     const val SPRING_SECURITY_VERSION = "5.3.6.RELEASE"
     const val SPRING_CLOUD_VERSION = "Hoxton.SR9"
-    const val GRAPHQL_JAVA = "15.0"
-    const val GRAPHQL_JAVA_FEDERATION = "0.5.0"
+    const val GRAPHQL_JAVA = "16.2"
+    const val GRAPHQL_JAVA_FEDERATION = "0.6.1"
 }

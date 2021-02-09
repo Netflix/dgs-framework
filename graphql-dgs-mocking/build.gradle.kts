@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ plugins {
 dependencies {
     api("com.graphql-java:graphql-java:${Versions.GRAPHQL_JAVA}")
     implementation("com.github.javafaker:javafaker:1.+")
+    implementation("org.slf4j:slf4j-api")
 }
 
 
