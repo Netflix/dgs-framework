@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,14 @@
 package com.netflix.graphql.dgs.exceptions
 
 import graphql.execution.DataFetcherExceptionHandlerParameters
-import graphql.execution.ExecutionPath
+import graphql.execution.ResultPath
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.security.access.AccessDeniedException
-import java.lang.RuntimeException
 
 internal class DefaultDataFetcherExceptionHandlerTest {
 
@@ -36,7 +34,7 @@ internal class DefaultDataFetcherExceptionHandlerTest {
     @BeforeEach
     fun setup() {
         MockKAnnotations.init(this)
-        every { dataFetcherExceptionHandlerParameters.path }.returns(ExecutionPath.parse("/Query/test"))
+        every { dataFetcherExceptionHandlerParameters.path }.returns(ResultPath.parse("/Query/test"))
 
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.utils.MultipartVariableMapper
 import com.netflix.graphql.dgs.internal.utils.TimeTracer
 import graphql.*
+import graphql.execution.reactive.CompletionStageMappingPublisher
 import graphql.introspection.IntrospectionQuery
 import graphql.schema.GraphQLSchema
 import org.slf4j.Logger
@@ -138,18 +139,20 @@ class DgsRestController(private val schemaProvider: DgsSchemaProvider, private v
 
         val executionResult = TimeTracer.logTime({ dgsQueryExecutor.execute(inputQuery["query"] as String, queryVariables, extensions, headers, operationName = gqlOperationName) }, logger, "Executed query in {}ms")
         logger.debug("Execution result - Contains data: '{}' - Number of errors: {}", executionResult.isDataPresent, executionResult.errors.size)
+
+        if(executionResult.isDataPresent && executionResult.getData<Any>() is CompletionStageMappingPublisher<*,*>) {
+            return ResponseEntity.badRequest().body("Trying to execute subscription on /graphql. Use /subscriptions instead!")
+        }
+
         val result = try {
             TimeTracer.logTime({ mapper.writeValueAsString(executionResult.toSpecification()) }, logger, "Serialized JSON result in {}ms")
         } catch (ex: InvalidDefinitionException) {
-            if (ex.message?.contains("No serializer found for class graphql.execution.reactive.CompletionStageMappingPublisher") == true) {
-                return ResponseEntity.badRequest().body("Trying to execute subscription on /graphql. Use /subscriptions instead!")
-            } else {
-                val errorMessage = "Error serializing response: ${ex.message}"
-                val errorResponse = ExecutionResultImpl(GraphqlErrorBuilder.newError().message(errorMessage).build())
-                logger.error(errorMessage, ex)
-                mapper.writeValueAsString(errorResponse.toSpecification())
-            }
+            val errorMessage = "Error serializing response: ${ex.message}"
+            val errorResponse = ExecutionResultImpl(GraphqlErrorBuilder.newError().message(errorMessage).build())
+            logger.error(errorMessage, ex)
+            mapper.writeValueAsString(errorResponse.toSpecification())
         }
+
         return ResponseEntity.ok(result)
     }
 

@@ -61,7 +61,9 @@ class DgsFederationResolverTest {
     fun defaultTypeResolver() {
 
         val schema = """
-            type Query {}
+            type Query {
+                something: String #Empty queries are not allowed
+            }
             
             type Movie {
                movieID: ID
@@ -79,7 +81,9 @@ class DgsFederationResolverTest {
     fun typeNotFound() {
 
         val schema = """
-            type Query {}
+            type Query {
+                something: String
+            }
         """.trimIndent()
 
         val graphQLSchema: GraphQLSchema = buildGraphQLSchema(schema)
@@ -91,7 +95,9 @@ class DgsFederationResolverTest {
     @Test
     fun mappedType() {
         val schema = """
-            type Query {}
+            type Query {
+                something: String #Empty queries are not allowed
+            }
             
             #Represented by Java type Movie, but with a different name
             type DgsMovie {

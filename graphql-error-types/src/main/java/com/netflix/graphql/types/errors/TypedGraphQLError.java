@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.netflix.graphql.types.errors;
 
 import graphql.ErrorClassification;
 import graphql.GraphQLError;
-import graphql.execution.ExecutionPath;
+import graphql.execution.ResultPath;
 import graphql.language.SourceLocation;
 
 import java.util.ArrayList;
@@ -151,7 +151,7 @@ public class TypedGraphQLError implements GraphQLError {
             return this;
         }
 
-        public Builder path(ExecutionPath path) {
+        public Builder path(ResultPath path) {
             this.path = assertNotNull(path).toList();
             return this;
         }
