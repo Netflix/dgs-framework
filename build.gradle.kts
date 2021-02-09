@@ -24,7 +24,7 @@ group = "com.netflix.graphql.dgs"
 
 plugins {
     `java-library`
-    id("nebula.netflixoss") version "8.8.1"
+    id("nebula.netflixoss") version "8.10.0"
     id("nebula.dependency-recommender") version "9.1.1"
     kotlin("jvm") version Versions.KOTLIN_VERSON apply false
     idea
@@ -42,7 +42,7 @@ allprojects {
 
     apply(plugin = "java-library")
     apply(plugin = "nebula.netflixoss")
-        apply(plugin = "nebula.dependency-recommender")
+    apply(plugin = "nebula.dependency-recommender")
 
     /**
      * Remove once https://youtrack.jetbrains.com/issue/KT-34394
