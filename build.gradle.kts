@@ -44,6 +44,18 @@ allprojects {
     apply(plugin = "nebula.netflixoss")
         apply(plugin = "nebula.dependency-recommender")
 
+    /**
+     * Remove once https://youtrack.jetbrains.com/issue/KT-34394
+     * implementationDependenciesMetadata configuration should not be resolvable. This causes conflicts for resolution
+     */
+    tasks.named("generateLock") {
+        doFirst {
+            project.configurations.filter {  it.name.contains("DependenciesMetadata")}.forEach {
+                it.isCanBeResolved = false
+            }
+        }
+    }
+
     dependencyRecommendations {
         mavenBom(mapOf(Pair("module","org.springframework:spring-framework-bom:${Versions.SPRING_VERSION}")))
         mavenBom(mapOf(Pair("module","org.springframework.boot:spring-boot-dependencies:${Versions.SPRING_BOOT_VERSION}")))
