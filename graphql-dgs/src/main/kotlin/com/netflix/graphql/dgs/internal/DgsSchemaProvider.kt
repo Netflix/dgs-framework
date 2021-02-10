@@ -241,7 +241,7 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
                             } catch (ex: Exception) {
                                 throw DgsInvalidInputArgumentException("Specified type '${collectionType}' is invalid for $parameterName.", ex)
                             }
-                        } else if (parameterValue is MultipartFile) {
+                        } else if (parameterValue is List<*> || parameterValue is MultipartFile) {
                             parameterValue
                         } else if (environment.fieldDefinition.arguments.find { it.name == parameterName }?.type is GraphQLScalarType) {
                             parameterValue
