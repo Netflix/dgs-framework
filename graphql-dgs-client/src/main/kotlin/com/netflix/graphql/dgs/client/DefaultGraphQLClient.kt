@@ -96,10 +96,11 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
 
     private fun handleResponse(response: HttpResponse, requestBody: String): GraphQLResponse {
         val (statusCode, body) = response
+        val headers = response.headers
         if (statusCode !in 200..299) {
             throw GraphQLClientException(statusCode, url, body ?: "", requestBody)
         }
 
-        return GraphQLResponse(body ?: "")
+        return GraphQLResponse(body ?: "", headers)
     }
 }

@@ -39,7 +39,9 @@ fun interface RequestExecutor {
     fun execute(url: String, headers: Map<String, List<String>>, body: String): HttpResponse
 }
 
-data class HttpResponse(val statusCode: Int, val body: String?)
+data class HttpResponse(val statusCode: Int, val body: String?, val headers: Map<String, List<String>>) {
+    constructor(statusCode: Int, body: String?) : this(statusCode, body, emptyMap())
+}
 
 @FunctionalInterface
 /**
