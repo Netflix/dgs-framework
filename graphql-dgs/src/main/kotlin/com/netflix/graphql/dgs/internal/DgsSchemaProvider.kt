@@ -237,15 +237,21 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
 
                         val convertValue: Any? = if (parameterValue is List<*> && collectionType != Object::class.java) {
                             try {
+                                // Return a list of elements that are converted to their collection type, e.e.g. List<Person>, List<String> etc.
                                 parameterValue.map { item -> jacksonObjectMapper().convertValue(item, collectionType) }.toList()
                             } catch (ex: Exception) {
                                 throw DgsInvalidInputArgumentException("Specified type '${collectionType}' is invalid for $parameterName.", ex)
                             }
-                        } else if (parameterValue is List<*> || parameterValue is MultipartFile) {
+                        } else if (parameterValue is List<*>) {
+                            // Return as is for all other types of Lists, i.e. List<UUID>, List<Integer> etc. that have Object collection type
+                            parameterValue
+                        } else if (parameterValue is MultipartFile) {
                             parameterValue
                         } else if (environment.fieldDefinition.arguments.find { it.name == parameterName }?.type is GraphQLScalarType) {
+                            // Return the value with it's type for scalars
                             parameterValue
                         } else {
+                            // Return the converted value mapped to the defined type
                             jacksonObjectMapper().convertValue(parameterValue, parameter.type)
                         }
 
