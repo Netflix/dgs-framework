@@ -664,6 +664,75 @@ internal class DgsSchemaProviderTest {
     }
 
     @Test
+    fun addFetchersWithListOfScalarInputArgument() {
+        val schema = """
+            type Mutation {
+                setDate(date:[DateTime]): String
+            }                     
+            
+            scalar DateTime
+        """.trimIndent()
+
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Mutation", field = "setDate")
+            fun someFetcher(@InputArgument("date") date: List<LocalDateTime>): String {
+                return "The date is: ${date.get(0).format(DateTimeFormatter.ISO_DATE)}"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(Pair("DateTime", LocalDateTimeScalar()))
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""mutation {setDate(date: ["2021-01-27T10:15:30"])}""")
+        assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        assertEquals("The date is: 2021-01-27", data["setDate"])
+    }
+
+    @Test
+    fun addFetchersWithListOfPrimitiveTypeArgument() {
+        val schema = """
+            type Mutation {
+                setRatings(ratings:[Int!]): [Int]
+            }                     
+            
+        """.trimIndent()
+
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Mutation", field = "setRatings")
+            fun someFetcher(@InputArgument("ratings") ratings: List<Int>): List<Int> {
+                return listOf(1, 2, 3)
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""mutation {setRatings(ratings: [1, 2, 3])}""")
+        assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        assertEquals(listOf(1, 2, 3), data["setRatings"])
+    }
+
+    @Test
     fun addDefaultTypeResolvers() {
         val schema = """
             type Query {
