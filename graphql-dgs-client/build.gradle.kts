@@ -19,18 +19,15 @@ plugins {
 
 dependencies {
     api("com.jayway.jsonpath:json-path:2.4.+")
-
     api("io.projectreactor:reactor-core:3.4.+")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework:spring-web")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
-
     testImplementation("org.springframework.boot:spring-boot-starter-web")
     testImplementation("org.springframework:spring-test")
     testImplementation("io.mockk:mockk:1.10.3-jdk8")
 
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
-
 }
