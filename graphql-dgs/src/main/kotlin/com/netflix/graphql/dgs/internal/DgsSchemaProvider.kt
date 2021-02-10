@@ -243,7 +243,7 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
                                 throw DgsInvalidInputArgumentException("Specified type '${collectionType}' is invalid for $parameterName.", ex)
                             }
                         } else if (parameterValue is List<*>) {
-                            // Return as is for all other types of Lists, i.e. List<UUID>, List<Integer> etc. that have Object collection type
+                            // Return as is for all other types of Lists, i.e. custom scalars e.g. List<UUID>, and other types like List<Integer> etc. that have Object collection type
                             parameterValue
                         } else if (parameterValue is MultipartFile) {
                             parameterValue
