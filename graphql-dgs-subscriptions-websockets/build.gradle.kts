@@ -26,7 +26,7 @@ dependencies {
     implementation("org.springframework:spring-web")
     implementation("org.springframework:spring-websocket")
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.+")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     testImplementation("io.mockk:mockk:1.10.3-jdk8")
     testImplementation("io.reactivex.rxjava3:rxjava:3.+")
