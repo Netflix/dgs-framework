@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import com.netflix.graphql.dgs.DgsContextBuilder
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
+import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
 import graphql.*
 import graphql.execution.ExecutionStrategy
 import graphql.execution.NonNullableFieldWasNullError
@@ -52,12 +53,12 @@ class DefaultDgsQueryExecutor(defaultSchema: GraphQLSchema,
 ) : DgsQueryExecutor {
 
     private val parseContext: ParseContext =
-            JsonPath.using(Configuration.defaultConfiguration()
+            JsonPath.using(Configuration.builder()
                     .jsonProvider(JacksonJsonProvider(jacksonObjectMapper()))
                     .mappingProvider(
                             JacksonMappingProvider(jacksonObjectMapper()
                                     .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
-                                    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)))
+                                    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES))).build()
                     .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL))
 
     val logger: Logger = LoggerFactory.getLogger(DefaultDgsQueryExecutor::class.java)
