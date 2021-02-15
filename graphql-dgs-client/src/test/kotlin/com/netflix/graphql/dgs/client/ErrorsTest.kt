@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.test.web.client.MockRestServiceServer
-import org.springframework.test.web.client.match.MockRestRequestMatchers.content
-import org.springframework.test.web.client.match.MockRestRequestMatchers.method
-import org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo
+import org.springframework.test.web.client.match.MockRestRequestMatchers.*
 import org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess
 import org.springframework.web.client.RestTemplate
 
@@ -74,7 +72,7 @@ class ErrorsTest {
                 .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
 
         val graphQLResponse = client.executeQuery("""{ hello }""", emptyMap(), requestExecutor)
-        assertThat(graphQLResponse.errors[0].extensions.errorType).isEqualTo(ErrorType.UNKNOWN)
+        assertThat(graphQLResponse.errors[0].extensions?.errorType).isEqualTo(ErrorType.UNKNOWN)
 
         server.verify()
     }
@@ -107,7 +105,7 @@ class ErrorsTest {
                 .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
 
         val graphQLResponse = client.executeQuery("""{ hello }""", emptyMap(), requestExecutor)
-        assertThat(graphQLResponse.errors[0].extensions.errorType).isEqualTo(ErrorType.BAD_REQUEST)
+        assertThat(graphQLResponse.errors[0].extensions?.errorType).isEqualTo(ErrorType.BAD_REQUEST)
 
         server.verify()
     }
@@ -141,8 +139,38 @@ class ErrorsTest {
                 .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
 
         val graphQLResponse = client.executeQuery("""{ hello }""", emptyMap(), requestExecutor)
-        assertThat(graphQLResponse.errors[0].extensions.errorType).isEqualTo(ErrorType.BAD_REQUEST)
-        assertThat(graphQLResponse.errors[0].extensions.errorDetail).isEqualTo("FIELD_NOT_FOUND")
+        assertThat(graphQLResponse.errors[0].extensions?.errorType).isEqualTo(ErrorType.BAD_REQUEST)
+        assertThat(graphQLResponse.errors[0].extensions?.errorDetail).isEqualTo("FIELD_NOT_FOUND")
+
+        server.verify()
+    }
+
+    @Test
+    fun errorWithoutExtensions() {
+        val jsonResponse = """
+            {
+              "errors": [
+                {
+                  "message": "java.lang.RuntimeException: test",
+                  "locations": [],
+                  "path": [
+                    "hello"
+                  ]                 
+                }
+              ],
+              "data": {
+                "hello": null
+              }
+            }
+        """.trimIndent()
+
+        server.expect(requestTo(url))
+            .andExpect(method(HttpMethod.POST))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
+
+        val graphQLResponse = client.executeQuery("""{ hello }""", emptyMap(), requestExecutor)
+        assertThat(graphQLResponse.errors[0].extensions).isNull()
 
         server.verify()
     }
