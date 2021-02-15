@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.jayway.jsonpath.Configuration
-import com.jayway.jsonpath.DocumentContext
-import com.jayway.jsonpath.JsonPath
-import com.jayway.jsonpath.Option
-import com.jayway.jsonpath.TypeRef
+import com.jayway.jsonpath.*
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
 import org.slf4j.LoggerFactory
@@ -40,9 +36,9 @@ data class GraphQLResponse(val json: String) {
         private val mapper: ObjectMapper = jacksonObjectMapper()
                 .registerModule(JavaTimeModule())
                 .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
-        private val jsonPathConfig: Configuration = Configuration.defaultConfiguration()
+        private val jsonPathConfig: Configuration = Configuration.builder()
                 .jsonProvider(JacksonJsonProvider(mapper))
-                .mappingProvider(JacksonMappingProvider(mapper))
+                .mappingProvider(JacksonMappingProvider(mapper)).build()
                 .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)
     }
 

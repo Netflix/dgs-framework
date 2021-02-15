@@ -18,7 +18,9 @@ plugins {
 }
 
 dependencies {
-    api("com.jayway.jsonpath:json-path:2.4.+")
+    api("com.jayway.jsonpath:json-path:2.4.+") {
+        exclude(group = "net.minidev", module = "json-smart")
+    }
     api("io.projectreactor:reactor-core:3.4.+")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

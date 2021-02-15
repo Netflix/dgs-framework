@@ -23,7 +23,10 @@ dependencies {
     api(project(":graphql-dgs-mocking"))
 
     api("com.graphql-java:graphql-java:${Versions.GRAPHQL_JAVA}")
-    api("com.jayway.jsonpath:json-path:2.+")
+    api("com.jayway.jsonpath:json-path:2.+") {
+        exclude(group = "net.minidev", module = "json-smart")
+    }
+
     implementation("org.springframework:spring-web")
     implementation("org.springframework.boot:spring-boot")
 
