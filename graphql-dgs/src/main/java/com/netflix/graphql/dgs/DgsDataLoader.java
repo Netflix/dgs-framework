@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 /**
  * Marks a class or field as a DataLoader, which will be registered to the framework as a DataLoader.
  * The class or field must implement one of the BatchLoader interfaces.
- * See http://manuals.test.netflix.net/view/dgs/mkdocs/master/dataloaders/
+ * See https://netflix.github.io/dgs/data-loaders/
  */
 @Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

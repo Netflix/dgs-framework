@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import graphql.schema.TypeResolver
  * Required only when federation is used.
  * For federation the frameworks needs a mapping from __typename to an actual type which is done by the entitiesFetcher.
  * The typeResolver takes an instance of a concrete type, and returns its type name as defined in the schema.
- * See http://manuals.test.netflix.net/view/dgs/mkdocs/master/federation/
  */
 interface DgsFederationResolver {
     fun entitiesFetcher(): DataFetcher<Any?>

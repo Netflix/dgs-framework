@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import java.lang.annotation.*;
  * The "parentType" property is the type that contains this field.
  * For root queries that is "Query", and for root mutations "Mutation".
  * The field is the name of the field this data fetcher is responsible for.
- * See http://manuals.test.netflix.net/view/dgs/mkdocs/master/getting-started/
+ * See https://netflix.github.io/dgs/getting-started/
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

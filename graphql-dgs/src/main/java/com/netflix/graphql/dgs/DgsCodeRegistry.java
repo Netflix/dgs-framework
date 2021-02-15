@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation to mark a method a provider of a CodeRegistry, which is a programmatic way of creating a schema.
- * http://manuals.test.netflix.net/view/dgs/mkdocs/master/type-and-code-registry/
+ * https://netflix.github.io/dgs/advanced/schema-from-code/
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

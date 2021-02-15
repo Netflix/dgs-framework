@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import org.springframework.http.HttpHeaders
  * The executeAnd* methods use the [JsonPath library](https://github.com/json-path/JsonPath) library to easily get specific fields out of a nested Json structure.
  * The [executeAndGetDocumentContext] method sets up a DocumentContext, which can then be reused to get multiple fields.
  *
- * See http://manuals.test.netflix.net/view/dgs/mkdocs/master/testing/
+ * See https://netflix.github.io/dgs/query-execution-testing/
  */
 interface DgsQueryExecutor {
     fun execute(query: String): ExecutionResult = execute(query = query, variables = emptyMap())

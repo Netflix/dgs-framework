@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 
 /**
  * Mark a class as a custom Scalar implementation that gets registered to the framework.
- * See http://manuals.test.netflix.net/view/dgs/mkdocs/master//scalars/
+ * See https://netflix.github.io/dgs/scalars/
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
