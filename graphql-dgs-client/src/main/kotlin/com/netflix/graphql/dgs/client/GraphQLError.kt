@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * A representation of a GraphQL error, following the format used by a DGS and Gateway.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class GraphQLError(@JsonProperty val message: String = "", @JsonProperty val path: List<Any> = emptyList(), @JsonProperty val locations: List<Any> = emptyList(), @JsonProperty val extensions: GraphQLErrorExtensions) {
+data class GraphQLError(@JsonProperty val message: String = "", @JsonProperty val path: List<Any> = emptyList(), @JsonProperty val locations: List<Any> = emptyList(), @JsonProperty val extensions: GraphQLErrorExtensions?) {
     val pathAsString = path.joinToString(".")
 }
 
