@@ -63,11 +63,13 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
 
     fun schema(schema: String? = null): GraphQLSchema {
         val startTime = System.currentTimeMillis()
+        val dgsComponents = applicationContext.getBeansWithAnnotation(DgsComponent::class.java)
+        val hasDynamicTypeRegistry = dgsComponents.values.any { it.javaClass.methods.any { m -> m.isAnnotationPresent(DgsTypeDefinitionRegistry::class.java) }}
 
         var mergedRegistry = if (schema == null) {
-            findSchemaFiles().map {
+            findSchemaFiles(hasDynamicTypeRegistry=hasDynamicTypeRegistry).map {
                 InputStreamReader(it.inputStream, StandardCharsets.UTF_8).use { reader -> SchemaParser().parse(reader) }
-            }.reduce { a, b -> a.merge(b) }
+            }.fold(TypeDefinitionRegistry()) {a, b -> a.merge(b) }
         } else {
             SchemaParser().parse(schema)
         }
@@ -83,9 +85,9 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
         val entityFetcher = federationResolverInstance.entitiesFetcher()
         val typeResolver = federationResolverInstance.typeResolver()
         val codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry()
-        val dgsComponents = applicationContext.getBeansWithAnnotation(DgsComponent::class.java)
         val runtimeWiringBuilder = RuntimeWiring.newRuntimeWiring()
 
+        dgsComponents.values.mapNotNull { dgsComponent -> invokeDgsTypeDefinitionRegistry(dgsComponent) }.fold(mergedRegistry) { a, b -> a.merge(b)}
         findScalars(applicationContext, runtimeWiringBuilder)
         findDataFetchers(dgsComponents, codeRegistryBuilder, mergedRegistry)
         findTypeResolvers(dgsComponents, runtimeWiringBuilder, mergedRegistry)
@@ -109,6 +111,17 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
             graphQLSchema
         }
     }
+
+    private fun invokeDgsTypeDefinitionRegistry(dgsComponent: Any): TypeDefinitionRegistry? {
+        return dgsComponent.javaClass.methods.filter { it.isAnnotationPresent(DgsTypeDefinitionRegistry::class.java) }.map { method ->
+            if (method.returnType != TypeDefinitionRegistry::class.java) {
+                throw InvalidDgsConfigurationException("Method annotated with @DgsTypeDefinitionRegistry must have return type TypeDefinitionRegistry")
+            }
+
+            method.invoke(dgsComponent) as TypeDefinitionRegistry
+        }.reduceOrNull {a, b -> a.merge(b)}
+    }
+
 
     private fun invokeDgsCodeRegistry(dgsComponent: Any, codeRegistryBuilder: GraphQLCodeRegistry.Builder, registry: TypeDefinitionRegistry) {
         dgsComponent.javaClass.methods.filter { it.isAnnotationPresent(DgsCodeRegistry::class.java) }.forEach { method ->
@@ -363,7 +376,7 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
         }
     }
 
-    internal fun findSchemaFiles(basedir: String = "schema"): Array<Resource> {
+    internal fun findSchemaFiles(basedir: String = "schema", hasDynamicTypeRegistry: Boolean = false): Array<Resource> {
         val cl = Thread.currentThread().contextClassLoader
 
         val resolver = PathMatchingResourcePatternResolver(cl)
@@ -374,8 +387,7 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
             }
             resources
         } catch (ex: Exception) {
-            logger.error("No schema files found. Define schemas in src/main/resources/${basedir}/**/*.graphql*")
-            if (existingTypeDefinitionRegistry.isPresent) {
+            if (existingTypeDefinitionRegistry.isPresent || hasDynamicTypeRegistry) {
                 logger.info("No schema files found, but a schema was provided as an TypeDefinitionRegistry")
                 return arrayOf()
             } else {
