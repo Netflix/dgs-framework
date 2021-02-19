@@ -31,6 +31,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.apollographql.federation:federation-graphql-java-support:${Versions.GRAPHQL_JAVA_FEDERATION}")
     implementation("org.springframework.security:spring-security-core")
 

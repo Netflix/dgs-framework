@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.internal
 
 import com.apollographql.federation.graphqljava.Federation
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.*
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
@@ -60,6 +61,8 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
     val entityFetchers = mutableMapOf<String, Pair<Any, Method>>()
 
     private val logger = LoggerFactory.getLogger(DgsSchemaProvider::class.java)
+
+    private val objectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
 
     fun schema(schema: String? = null): GraphQLSchema {
         val startTime = System.currentTimeMillis()
@@ -251,7 +254,7 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
                         val convertValue: Any? = if (parameterValue is List<*> && collectionType != Object::class.java) {
                             try {
                                 // Return a list of elements that are converted to their collection type, e.e.g. List<Person>, List<String> etc.
-                                parameterValue.map { item -> jacksonObjectMapper().convertValue(item, collectionType) }.toList()
+                                parameterValue.map { item -> objectMapper.convertValue(item, collectionType) }.toList()
                             } catch (ex: Exception) {
                                 throw DgsInvalidInputArgumentException("Specified type '${collectionType}' is invalid for $parameterName.", ex)
                             }
@@ -265,7 +268,7 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
                             parameterValue
                         } else {
                             // Return the converted value mapped to the defined type
-                            jacksonObjectMapper().convertValue(parameterValue, parameter.type)
+                            objectMapper.convertValue(parameterValue, parameter.type)
                         }
 
                         val paramType = parameter.type
@@ -279,7 +282,7 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
                     //This only works if parameter names are present in the class file
                     environment.containsArgument(parameter.name) -> {
                         val parameterValue: Any = environment.getArgument(parameter.name)
-                        val convertValue = jacksonObjectMapper().convertValue(parameterValue, parameter.type)
+                        val convertValue = objectMapper.convertValue(parameterValue, parameter.type)
                         args.add(convertValue)
                     }
                     parameter.type == DataFetchingEnvironment::class.java || parameter.type == DgsDataFetchingEnvironment::class.java -> {
