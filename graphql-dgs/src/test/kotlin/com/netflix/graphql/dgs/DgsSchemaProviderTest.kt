@@ -699,6 +699,45 @@ internal class DgsSchemaProviderTest {
     }
 
     @Test
+    fun addFetchersWithNestedScalarInputArgument() {
+        val schema = """
+            type Mutation {
+                setDate(input:DateTimeInput): String
+            }
+            
+            input DateTimeInput {
+                date: DateTime
+            }
+            
+            scalar DateTime
+        """.trimIndent()
+
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Mutation", field = "setDate")
+            fun someFetcher(@InputArgument("input") input: DateTimeInput): String {
+                return "The date is: ${input.date.format(DateTimeFormatter.ISO_DATE)}"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+                Pair(
+                        "helloFetcher",
+                        fetcher
+                )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(Pair("DateTime", LocalDateTimeScalar()))
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""mutation {setDate(input: {date: "2021-01-27T10:15:30"})}""")
+        assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        assertEquals("The date is: 2021-01-27", data["setDate"])
+    }
+
+    @Test
     fun addFetchersWithListOfPrimitiveTypeArgument() {
         val schema = """
             type Mutation {
@@ -1156,3 +1195,4 @@ interface Video {
 
 data class Show(override val title: String) : Video
 data class Person(val name: String)
+data class DateTimeInput(val date: LocalDateTime)
