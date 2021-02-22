@@ -16,14 +16,11 @@
 
 package com.netflix.graphql.dgs.springdata
 
-import com.netflix.graphql.dgs.springdata.annotations.DgsSpringDataConfiguration
 import org.springframework.beans.factory.config.BeanDefinition
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.beans.factory.support.BeanDefinitionRegistry
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor
 import java.util.*
-import java.util.stream.Collectors
-import java.util.stream.Stream
 
 
 class DgsSpringDataPostProcessor : BeanDefinitionRegistryPostProcessor {
@@ -70,12 +67,12 @@ class DgsSpringDataPostProcessor : BeanDefinitionRegistryPostProcessor {
     }
 
     override fun postProcessBeanDefinitionRegistry(registry: BeanDefinitionRegistry){
-        val stream: Stream<String> = Arrays. of(registry.beanDefinitionNames)
-        stream
-                .map{ name:String -> getOptionalBeanDefinitionType(name, registry) }
-                .filter{Optional::isPresent}
-                .flatMap{ c -> c.get().beanClass.isAnnotationPresent( DgsSpringDataConfiguration::class)}
-                .collect{ Collectors.toSet()}
+//        val stream: Stream<String> = Arrays. of(registry.beanDefinitionNames)
+//        stream
+//                .map{ name:String -> getOptionalBeanDefinitionType(name, registry) }
+//                .filter{Optional::isPresent}
+//                .flatMap{ c -> c.get().beanClass.isAnnotationPresent( DgsSpringDataConfiguration::class)}
+//                .collect{ Collectors.toSet()}
 /*
 * Set<BeanAnnotatedReference<RequiresLeadership>> set = Stream.of(registry.getBeanDefinitionNames())
 				.map(name -> getOptionalBeanDefinitionType(name, registry)).filter(Optional::isPresent)
@@ -92,7 +89,7 @@ class DgsSpringDataPostProcessor : BeanDefinitionRegistryPostProcessor {
 }
 
 
-data class BeanDefinitionType(val beanName:String, val beanClass:Class<*>, val beanDefinition:BeanDefinition)
+data class BeanDefinitionType(val beanName:String, val beanClass:Class<*>, val beanDefinition:BeanDefinition? = null)
 /*
 /**
  * Represents a named bean and provides its resolved class along with its definition as

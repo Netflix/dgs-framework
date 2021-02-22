@@ -17,7 +17,9 @@
 package com.netflix.graphql.dgs.springdata
 
 import com.netflix.graphql.dgs.DgsComponent
+import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import graphql.language.FieldDefinition
+import graphql.language.ListType
 import graphql.language.ObjectTypeExtensionDefinition
 import graphql.language.TypeName
 import graphql.schema.idl.TypeDefinitionRegistry
@@ -26,27 +28,37 @@ import javax.annotation.PostConstruct
 
 @DgsComponent
 class RepositoryDatafetcherManager(private val repositoryBeans: List<BeanDefinitionType>) {
-    val typeDefinitionRegistry = TypeDefinitionRegistry()
+    private val typeDefinitionRegistry = TypeDefinitionRegistry()
 
     @PostConstruct
-    fun createDataFetchers() {
+    fun createQueryFields() {
         val queryTypeBuilder = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query")
 
         repositoryBeans.forEach { beanDefinitionType ->
-            beanDefinitionType.beanClass.methods.filter { m -> m.name.startsWith("filter") }
-                .forEach { createQueryField(it, queryTypeBuilder) }
+            beanDefinitionType.beanClass.methods.filter { m -> m.name.startsWith("find") }
+                .forEach {
+                    createQueryField(it, queryTypeBuilder)
+                }
         }
 
         typeDefinitionRegistry.add(queryTypeBuilder.build())
     }
 
+    @DgsTypeDefinitionRegistry
+    fun repositoryTypes(): TypeDefinitionRegistry {
+        return typeDefinitionRegistry
+    }
 
     private fun createQueryField(method: Method, queryTypeBuilder: ObjectTypeExtensionDefinition.Builder) {
-        val entityType = method.returnType
+        val entityType = if(method.returnType == Iterable::class.java) {
+            ListType(TypeName("test"))
+        } else {
+            TypeName(method.returnType.name)
+        }
 
         val fieldDefinition = FieldDefinition.newFieldDefinition()
                 .name(method.name)
-                .type(TypeName(entityType.name)).build()
+                .type(entityType).build()
 
         queryTypeBuilder.fieldDefinition(fieldDefinition)
     }
