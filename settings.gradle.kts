@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,3 +29,4 @@ include("graphql-dgs-subscriptions-websockets")
 include("graphql-dgs-subscriptions-websockets-autoconfigure")
 include("graphql-dgs-subscriptions-sse")
 include("graphql-dgs-subscriptions-sse-autoconfigure")
+include("graphql-dgs-spring-data")
