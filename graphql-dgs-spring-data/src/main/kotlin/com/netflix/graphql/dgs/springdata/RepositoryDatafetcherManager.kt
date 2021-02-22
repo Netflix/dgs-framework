@@ -44,7 +44,10 @@ class RepositoryDatafetcherManager(private val repositoryBeans: List<BeanDefinit
     private fun createQueryField(method: Method, queryTypeBuilder: ObjectTypeExtensionDefinition.Builder) {
         val entityType = method.returnType
 
-        val fieldDefinition = FieldDefinition.newFieldDefinition().name("randomNumber").type(TypeName(entityType.name)).build()
+        val fieldDefinition = FieldDefinition.newFieldDefinition()
+                .name(method.name)
+                .type(TypeName(entityType.name)).build()
+
         queryTypeBuilder.fieldDefinition(fieldDefinition)
     }
 }
