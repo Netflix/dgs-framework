@@ -89,7 +89,7 @@ class DgsSpringDataPostProcessor : BeanDefinitionRegistryPostProcessor {
 }
 
 
-data class BeanDefinitionType(val beanName:String, val beanClass:Class<*>, val beanDefinition:BeanDefinition? = null)
+data class BeanDefinitionType(val repositoryBeanName:String, val repositoryClass:Class<*>, val repositoryBeanDefinition:BeanDefinition? = null, val entityClass:Class<*>)
 /*
 /**
  * Represents a named bean and provides its resolved class along with its definition as

@@ -35,9 +35,9 @@ class RepositoryDatafetcherManager(private val repositoryBeans: List<BeanDefinit
         val queryTypeBuilder = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query")
 
         repositoryBeans.forEach { beanDefinitionType ->
-            beanDefinitionType.beanClass.methods.filter { m -> m.name.startsWith("find") }
+            beanDefinitionType.repositoryClass.methods.filter { m -> m.name.startsWith("find") }
                 .forEach {
-                    createQueryField(it, queryTypeBuilder)
+                    createQueryField(it, beanDefinitionType.entityClass, queryTypeBuilder)
                 }
         }
 
@@ -49,17 +49,29 @@ class RepositoryDatafetcherManager(private val repositoryBeans: List<BeanDefinit
         return typeDefinitionRegistry
     }
 
-    private fun createQueryField(method: Method, queryTypeBuilder: ObjectTypeExtensionDefinition.Builder) {
-        val entityType = if(method.returnType == Iterable::class.java) {
-            ListType(TypeName("test"))
+    private fun createQueryField(
+        method: Method,
+        entityClass: Class<*>,
+        queryTypeBuilder: ObjectTypeExtensionDefinition.Builder
+    ) {
+        val entityType = if (method.returnType == Iterable::class.java) {
+            ListType(TypeName(entityClass.name))
         } else {
             TypeName(method.returnType.name)
         }
 
         val fieldDefinition = FieldDefinition.newFieldDefinition()
-                .name(method.name)
-                .type(entityType).build()
+            .name(queryNamer(method.name, entityClass.name))
+            .type(entityType).build()
 
         queryTypeBuilder.fieldDefinition(fieldDefinition)
+    }
+
+    private fun queryNamer(fieldName: String, entityName: String): String {
+        return when (fieldName) {
+            "findAll" -> "all${entityName}"
+            "findById" -> entityName.decapitalize()
+            else -> entityName.decapitalize() + fieldName.substringAfter("find")
+        }
     }
 }
