@@ -16,6 +16,8 @@
 
 plugins {
     kotlin("jvm")
+    id("org.jetbrains.kotlin.plugin.jpa") version "1.4.30-RC"
+    id("org.springframework.boot") version "2.4.0"
 }
 
 dependencyRecommendations {
