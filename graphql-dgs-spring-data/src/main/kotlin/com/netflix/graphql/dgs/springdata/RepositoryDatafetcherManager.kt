@@ -21,30 +21,22 @@ import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import graphql.language.*
 import graphql.schema.GraphQLType
 import graphql.schema.idl.TypeDefinitionRegistry
-import org.springframework.context.ApplicationContext
 import org.springframework.data.repository.core.RepositoryMetadata
 import org.springframework.data.repository.support.Repositories
-import org.springframework.data.repository.support.RepositoryInvokerFactory
 import java.lang.reflect.Method
 import java.util.*
 import javax.annotation.PostConstruct
 
 @DgsComponent
-class RepositoryDatafetcherManager(
-        private val repositoryBeanDefinitions: List<SpringDataRepositoryBeanDefinition>,
-        private val applicationContext: ApplicationContext,
-        private val repositories: Repositories,
-        private val repositoryInvokerFactory: RepositoryInvokerFactory) {
+class RepositoryDatafetcherManager(val repositories: Repositories) {
 
     private val typeDefinitionRegistry = TypeDefinitionRegistry()
 
     @PostConstruct
     fun createQueryFields() {
-       // TODO[BGP]:
-       //  1. Resolve the beans from the applicationContext that match the bean definition in the candidates.
-        // 2. From the bean references, which are of kind RepositoryFactoryInformation::class.java fetch the backing interface by getObjectType
-        // 3. Filter the ones which interfaces are annotated with our Dgs Annotation.
-        // 4. With the metadata available we can now fetch the Repository and Invocation Factory (RepositoryInvokerFactory)
+
+        val repositoryInfos =  repositories.map { repositories.getRequiredRepositoryInformation(it) }.toList()
+        println(repositoryInfos)
 
         val queryTypeBuilder = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query")
 //        repositoryBeans.forEach { beanDefinitionType ->

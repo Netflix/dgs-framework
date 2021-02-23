@@ -16,62 +16,26 @@
 
 package com.netflix.graphql.dgs.springdata
 
-import com.netflix.graphql.dgs.springdata.DgsSpringDataPostProcessor
-import org.springframework.beans.factory.BeanClassLoaderAware
-import org.springframework.beans.factory.support.BeanDefinitionBuilder
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
 import org.springframework.context.ApplicationContext
-import org.springframework.context.ApplicationContextAware
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.convert.ConversionService
-import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Sort
-import org.springframework.data.mapping.context.PersistentEntities
-import org.springframework.data.repository.config.RepositoryBeanDefinitionRegistrarSupport
-import org.springframework.data.repository.config.RepositoryConfigurationExtension
-import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport
-import org.springframework.data.repository.config.RepositoryConfigurationSource
-import org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport
-import org.springframework.data.repository.support.DefaultRepositoryInvokerFactory
 import org.springframework.data.repository.support.Repositories
-import org.springframework.data.repository.support.RepositoryInvoker
-import org.springframework.data.repository.support.RepositoryInvokerFactory
-import org.springframework.format.support.DefaultFormattingConversionService
-import org.springframework.util.Assert
-import org.springframework.util.ClassUtils
-import org.springframework.util.MultiValueMap
-import org.springframework.util.StringUtils
-import java.lang.reflect.Method
-import java.util.*
-import java.util.function.Function
-import java.util.function.Supplier
-import org.springframework.data.util.Lazy as DataLazy
 
 @Configuration
 @AutoConfigureAfter(JpaRepositoriesAutoConfiguration::class)
 open class DgsSpringDataAutoconfiguration {
 
 
-
-    @ConditionalOnMissingBean
     @Bean
     open fun repositories(applicationContext: ApplicationContext): Repositories {
         return Repositories(applicationContext)
     }
 
-    @ConditionalOnMissingBean
     @Bean
-    open fun repositoryInvokerFactory(repositories: Repositories, conversionService: Optional<ConversionService>): RepositoryInvokerFactory {
-        return DefaultRepositoryInvokerFactory(repositories, conversionService.orElse(DefaultFormattingConversionService()))
-    }
-
-
-    @Bean
-    open fun dgsSpringDataPostProcessor():DgsSpringDataPostProcessor  {
-        return DgsSpringDataPostProcessor()
+    open fun queryAndMutationGenerator(repositories: Repositories): RepositoryDatafetcherManager {
+        return RepositoryDatafetcherManager(repositories)
     }
 }
 
