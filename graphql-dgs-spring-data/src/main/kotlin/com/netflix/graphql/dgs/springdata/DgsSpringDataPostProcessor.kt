@@ -28,16 +28,45 @@ import org.springframework.data.repository.core.RepositoryMetadata
 import org.springframework.data.repository.core.support.AbstractRepositoryMetadata
 import java.util.*
 import java.util.stream.Stream
+import org.springframework.beans.factory.config.BeanDefinition
+import org.springframework.beans.factory.config.BeanDefinitionHolder
+import org.springframework.beans.factory.support.BeanDefinitionBuilder
+import org.springframework.beans.factory.support.BeanDefinitionReaderUtils
+import java.util.stream.Collectors
 
 
 class DgsSpringDataPostProcessor : BeanDefinitionRegistryPostProcessor {
 
     override fun postProcessBeanDefinitionRegistry(registry: BeanDefinitionRegistry) {
         val streamOfDgsAnnotatedBeans = DgsDataBeanDefinitionRegistryUtils.streamsOfAnnotatedClassReferences(registry, DgsSpringDataConfiguration::class.java)
-        val streamOfGraphlRepositories = toStreamOfGraphqlRepositories(streamOfDgsAnnotatedBeans)
-        // Call other stuff that will build more intresting things.
+        val graphQLRepositories = toStreamOfGraphqlRepositories(streamOfDgsAnnotatedBeans).collect(Collectors.toList())
+        debugGraphqlRepositories(graphQLRepositories)
+        registerBean(registry, graphQLRepositories)
     }
 
+    private fun debugGraphqlRepositories(graphqlRepositories: List<GraphqlRepositoryBeanDefinitionType>){
+        logger.info("""
+        ===== DGS GraphQL Repositories =====
+        ------ TODO ADD ASCII ART     ------
+        ${graphqlRepositories.joinToString(prefix = "<<\n", postfix = "\n>>", separator = ",\n")}
+        ====================================
+        """.trimIndent())
+
+    }
+
+    private fun registerBean(registry: BeanDefinitionRegistry,
+                             graphqlRepositories: List<GraphqlRepositoryBeanDefinitionType>) {
+        val beanDefinition = BeanDefinitionBuilder
+                .genericBeanDefinition(RepositoryDatafetcherManager::class.java)
+                .setScope(BeanDefinition.SCOPE_SINGLETON)
+                .addConstructorArgValue(graphqlRepositories)
+                .beanDefinition
+
+        val beanDefHolder = BeanDefinitionHolder(beanDefinition , "dgsGraphqlRepositoryDataFetcherManager")
+        logger.debug("Attempting to register {} based on {}", beanDefHolder, beanDefinition)
+        BeanDefinitionReaderUtils.registerBeanDefinition(beanDefHolder, registry)
+        logger.info("Bean {} registered based on {}.", beanDefHolder, beanDefinition)
+    }
 
     override fun postProcessBeanFactory(beanFactory: ConfigurableListableBeanFactory) {
         //no-op
