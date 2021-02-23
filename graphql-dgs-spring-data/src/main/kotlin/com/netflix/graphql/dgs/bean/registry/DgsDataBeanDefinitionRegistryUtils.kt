@@ -99,19 +99,13 @@ object DgsDataBeanDefinitionRegistryUtils {
     }
 
 
-//    /**
-//	 * Returns the resolved class of a given bean fetched through the bean factory by its
-//	 * name. If the class can't be loaded, i.e. its not present in the classpath it will
-//	 * return empty.
-//	 */
-//	@NonNull
-//	public static Optional<BeanDefinitionType> getOptionalBeanDefinitionType(final String beanName,
-//			final ConfigurableListableBeanFactory beanFactory) {
-//		final BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanName);
-//		return getOptionalBeanDefinitionClass(beanName, beanDefinition)
-//				.map(aClass -> new BeanDefinitionType(beanName, beanDefinition, aClass));
-//	}
-
+    fun <T> streamsOfBeansOfKind(registry: BeanDefinitionRegistry, type: Class<T>): Stream<BeanDefinitionType> {
+        return Arrays.stream(registry.beanDefinitionNames)
+                .map { name: String -> getOptionalBeanDefinitionType(name, registry) }
+                .filter{ it.isPresent }
+                .map { it.get() }
+                .filter { type.isAssignableFrom(it.beanClass) }
+    }
 
 
     @Throws(ClassNotFoundException::class, LinkageError::class)

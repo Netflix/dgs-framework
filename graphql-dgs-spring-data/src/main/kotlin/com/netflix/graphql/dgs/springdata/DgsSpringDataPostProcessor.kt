@@ -16,35 +16,29 @@
 
 package com.netflix.graphql.dgs.springdata
 
-import com.netflix.graphql.dgs.bean.registry.AnnotatedBeanClassReference
-import com.netflix.graphql.dgs.bean.registry.DgsDataBeanDefinitionRegistryUtils
-import com.netflix.graphql.dgs.springdata.annotations.DgsSpringDataConfiguration
+import com.netflix.graphql.dgs.bean.registry.DgsDataBeanDefinitionRegistryUtils.streamsOfBeansOfKind
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.beans.factory.support.BeanDefinitionRegistry
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor
-import org.springframework.data.repository.Repository
-import org.springframework.data.repository.core.RepositoryMetadata
-import org.springframework.data.repository.core.support.AbstractRepositoryMetadata
-import java.util.*
-import java.util.stream.Stream
 import org.springframework.beans.factory.config.BeanDefinition
 import org.springframework.beans.factory.config.BeanDefinitionHolder
 import org.springframework.beans.factory.support.BeanDefinitionBuilder
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils
+import org.springframework.data.repository.core.support.RepositoryFactoryInformation
 import java.util.stream.Collectors
 
 
 class DgsSpringDataPostProcessor : BeanDefinitionRegistryPostProcessor {
 
     override fun postProcessBeanDefinitionRegistry(registry: BeanDefinitionRegistry) {
-        val streamOfDgsAnnotatedBeans = DgsDataBeanDefinitionRegistryUtils.streamsOfAnnotatedClassReferences(registry, DgsSpringDataConfiguration::class.java)
-        val graphQLRepositories = toStreamOfGraphqlRepositories(streamOfDgsAnnotatedBeans).collect(Collectors.toList())
-        debugGraphqlRepositories(graphQLRepositories)
-        registerBean(registry, graphQLRepositories)
+        val candidates = streamsOfBeansOfKind(registry, RepositoryFactoryInformation::class.java)
+                .map { SpringDataRepositoryBeanDefinition(it.beanClass, it) }.collect(Collectors.toList())
+        debugGraphqlRepositories(candidates)
+        registerBean(registry, candidates)
     }
 
-    private fun debugGraphqlRepositories(graphqlRepositories: List<GraphqlRepositoryBeanDefinitionType>){
+    private fun debugGraphqlRepositories(graphqlRepositories: List<SpringDataRepositoryBeanDefinition>) {
         logger.info("""
         |===== DGS GraphQL Repositories =====
         |------ TODO ADD ASCII ART     ------
@@ -55,14 +49,14 @@ class DgsSpringDataPostProcessor : BeanDefinitionRegistryPostProcessor {
     }
 
     private fun registerBean(registry: BeanDefinitionRegistry,
-                             graphqlRepositories: List<GraphqlRepositoryBeanDefinitionType>) {
+                             graphqlRepositories: List<SpringDataRepositoryBeanDefinition>) {
         val beanDefinition = BeanDefinitionBuilder
                 .genericBeanDefinition(RepositoryDatafetcherManager::class.java)
                 .setScope(BeanDefinition.SCOPE_SINGLETON)
                 .addConstructorArgValue(graphqlRepositories)
                 .beanDefinition
 
-        val beanDefHolder = BeanDefinitionHolder(beanDefinition , "dgsGraphqlRepositoryDataFetcherManager")
+        val beanDefHolder = BeanDefinitionHolder(beanDefinition, "dgsGraphqlRepositoryDataFetcherManager")
         logger.debug("Attempting to register {} based on {}", beanDefHolder, beanDefinition)
         BeanDefinitionReaderUtils.registerBeanDefinition(beanDefHolder, registry)
         logger.info("Bean {} registered based on {}.", beanDefHolder, beanDefinition)
@@ -74,32 +68,7 @@ class DgsSpringDataPostProcessor : BeanDefinitionRegistryPostProcessor {
 
     companion object {
         private val logger = LoggerFactory.getLogger(DgsSpringDataPostProcessor::class.java)
-
-        internal fun toStreamOfGraphqlRepositories(stream: Stream<AnnotatedBeanClassReference<DgsSpringDataConfiguration>>): Stream<GraphqlRepositoryBeanDefinitionType> {
-            return stream.map { annotatedBeanClassRef ->
-                val beanClass = annotatedBeanClassRef.beanClass
-                if (Repository::class.java.isAssignableFrom(beanClass)) {
-                    val repositoryMetadata = AbstractRepositoryMetadata.getMetadata(beanClass)
-                    if (repositoryMetadata == null) {
-                        logger.info("DGS SpringDataConfiguration bean found but no RepositoryMetadata is available for {}.", annotatedBeanClassRef)
-                        Optional.empty()
-                    } else {
-                        logger.info("DGS SpringDataConfiguration bean found{}, RepositoryMetadata available {}.", annotatedBeanClassRef, repositoryMetadata)
-                        Optional.of(GraphqlRepositoryBeanDefinitionType(annotatedBeanClassRef, repositoryMetadata))
-                    }
-                } else {
-                    logger.warn("DGS SpringDataConfiguration bean found {} but is not a Spring Data Repository!.", annotatedBeanClassRef)
-                    Optional.empty()
-                }
-            }.filter { it.isPresent }.map { it.get() }
-
-        }
-
     }
 
 }
 
-data class GraphqlRepositoryBeanDefinitionType(
-        val beanDefinition: AnnotatedBeanClassReference<DgsSpringDataConfiguration>?,
-        val repositoryMetadata: RepositoryMetadata
-)

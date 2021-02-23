@@ -36,7 +36,8 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-web")
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    testImplementation("com.h2database:h2")
+
+    testRuntimeOnly("com.h2database:h2")
 
     testImplementation("io.mockk:mockk:1.10.3-jdk8")
     testImplementation("net.minidev:json-smart:2.3")

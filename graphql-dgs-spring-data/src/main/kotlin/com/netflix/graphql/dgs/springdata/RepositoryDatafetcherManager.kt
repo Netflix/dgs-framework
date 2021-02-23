@@ -21,24 +21,38 @@ import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import graphql.language.*
 import graphql.schema.GraphQLType
 import graphql.schema.idl.TypeDefinitionRegistry
+import org.springframework.context.ApplicationContext
 import org.springframework.data.repository.core.RepositoryMetadata
+import org.springframework.data.repository.support.Repositories
+import org.springframework.data.repository.support.RepositoryInvokerFactory
 import java.lang.reflect.Method
+import java.util.*
 import javax.annotation.PostConstruct
 
 @DgsComponent
-class RepositoryDatafetcherManager(private val repositoryBeans: List<GraphqlRepositoryBeanDefinitionType>) {
+class RepositoryDatafetcherManager(
+        private val repositoryBeanDefinitions: List<SpringDataRepositoryBeanDefinition>,
+        private val applicationContext: ApplicationContext,
+        private val repositories: Repositories,
+        private val repositoryInvokerFactory: RepositoryInvokerFactory) {
+
     private val typeDefinitionRegistry = TypeDefinitionRegistry()
 
     @PostConstruct
     fun createQueryFields() {
-        val queryTypeBuilder = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query")
+       // TODO[BGP]:
+       //  1. Resolve the beans from the applicationContext that match the bean definition in the candidates.
+        // 2. From the bean references, which are of kind RepositoryFactoryInformation::class.java fetch the backing interface by getObjectType
+        // 3. Filter the ones which interfaces are annotated with our Dgs Annotation.
+        // 4. With the metadata available we can now fetch the Repository and Invocation Factory (RepositoryInvokerFactory)
 
-        repositoryBeans.forEach { beanDefinitionType ->
-            beanDefinitionType.repositoryMetadata.repositoryInterface.methods.filter { m -> m.name.startsWith("find") }
-                .forEach {
-                    createQueryField(it, beanDefinitionType.repositoryMetadata, queryTypeBuilder)
-                }
-        }
+        val queryTypeBuilder = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query")
+//        repositoryBeans.forEach { beanDefinitionType ->
+//            beanDefinitionType.repositoryMetadata.repositoryInterface.methods.filter { m -> m.name.startsWith("find") }
+//                .forEach {
+//                    createQueryField(it, beanDefinitionType.repositoryMetadata, queryTypeBuilder)
+//                }
+//        }
 
         typeDefinitionRegistry.add(queryTypeBuilder.build())
     }
@@ -100,6 +114,7 @@ class RepositoryDatafetcherManager(private val repositoryBeans: List<GraphqlRepo
 
     @PostConstruct
     fun createSchemaTypes() : Map<String, GraphQLType> {
-        return SchemaTypeGenerator().createSchemaTypes(repositoryBeans)
+//        return SchemaTypeGenerator().createSchemaTypes(repositoryBeans)
+        return Collections.emptyMap()
     }
 }
