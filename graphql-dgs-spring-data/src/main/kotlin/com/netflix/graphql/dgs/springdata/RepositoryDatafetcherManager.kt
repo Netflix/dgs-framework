@@ -19,16 +19,19 @@ package com.netflix.graphql.dgs.springdata
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import graphql.language.*
+import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.springframework.data.repository.core.RepositoryMetadata
 import org.springframework.data.repository.support.Repositories
 import java.lang.reflect.Method
 import javax.annotation.PostConstruct
 
+
 @DgsComponent
-class RepositoryDatafetcherManager(val repositories: Repositories) {
+class RepositoryDatafetcherManager(private val repositories: Repositories) {
 
     private val typeDefinitionRegistry = TypeDefinitionRegistry()
+    private val codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry()
 
     @PostConstruct
     fun createQueryFields() {
