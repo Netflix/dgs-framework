@@ -39,12 +39,15 @@ class RepositoryDatafetcherManager(val repositories: Repositories) {
         println(repositoryInfos)
 
         val queryTypeBuilder = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query")
-//        repositoryBeans.forEach { beanDefinitionType ->
-//            beanDefinitionType.repositoryMetadata.repositoryInterface.methods.filter { m -> m.name.startsWith("find") }
-//                .forEach {
-//                    createQueryField(it, beanDefinitionType.repositoryMetadata, queryTypeBuilder)
-//                }
-//        }
+        repositoryInfos.forEach { repoInfo ->
+            if(repoInfo.crudMethods.hasFindAllMethod()) {
+                createQueryField(repoInfo.crudMethods.findAllMethod.get(), repoInfo, queryTypeBuilder)
+            }
+
+            if(repoInfo.crudMethods.hasFindOneMethod()) {
+                createQueryField(repoInfo.crudMethods.findOneMethod.get(), repoInfo, queryTypeBuilder)
+            }
+        }
 
         typeDefinitionRegistry.add(queryTypeBuilder.build())
     }
