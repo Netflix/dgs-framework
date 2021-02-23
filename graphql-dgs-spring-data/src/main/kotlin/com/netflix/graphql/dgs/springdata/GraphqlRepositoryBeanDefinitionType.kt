@@ -17,7 +17,7 @@
 package com.netflix.graphql.dgs.springdata
 
 import com.netflix.graphql.dgs.bean.registry.AnnotatedBeanClassReference
-import com.netflix.graphql.dgs.bean.registry.DgsDataBeanDefinitionRegistryUtils
+import com.netflix.graphql.dgs.bean.registry.BeanDefinitionType
 import com.netflix.graphql.dgs.springdata.annotations.DgsSpringDataConfiguration
 import org.springframework.data.repository.core.RepositoryMetadata
 
@@ -28,5 +28,5 @@ data class GraphqlRepositoryBeanDefinitionType(
 
 data class SpringDataRepositoryBeanDefinition (
         val backingRepositoryClass: Class<*>,
-        val beanDefinition: DgsDataBeanDefinitionRegistryUtils.BeanDefinitionType
+        val beanDefinition: BeanDefinitionType
 )

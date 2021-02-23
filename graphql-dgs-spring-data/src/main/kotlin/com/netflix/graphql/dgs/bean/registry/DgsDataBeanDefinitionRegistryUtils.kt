@@ -23,7 +23,6 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry
 import org.springframework.core.annotation.AnnotationUtils
 import org.springframework.core.type.MethodMetadata
 import org.springframework.core.type.StandardMethodMetadata
-import org.springframework.core.type.filter.AnnotationTypeFilter
 import org.springframework.util.ClassUtils
 import java.lang.annotation.ElementType
 import java.lang.reflect.Method
@@ -45,8 +44,6 @@ object DgsDataBeanDefinitionRegistryUtils {
     fun interface MethodAnnotationHandler<T : Annotation> {
         fun handle(annotation: T, method: Method)
     }
-
-    open class BeanDefinitionType internal constructor(val beanName: String, val beanClass: Class<*>, val beanDefinition: BeanDefinition)
 
 
     private fun getOptionalBeanDefinitionType(beanName: String,
