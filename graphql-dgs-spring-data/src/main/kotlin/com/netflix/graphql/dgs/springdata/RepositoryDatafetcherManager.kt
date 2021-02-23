@@ -19,12 +19,10 @@ package com.netflix.graphql.dgs.springdata
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import graphql.language.*
-import graphql.schema.GraphQLType
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.springframework.data.repository.core.RepositoryMetadata
 import org.springframework.data.repository.support.Repositories
 import java.lang.reflect.Method
-import java.util.*
 import javax.annotation.PostConstruct
 
 @DgsComponent
@@ -36,8 +34,6 @@ class RepositoryDatafetcherManager(val repositories: Repositories) {
     fun createQueryFields() {
 
         val repositoryInfos =  repositories.map { repositories.getRequiredRepositoryInformation(it) }.toList()
-        println(repositoryInfos)
-
         val queryTypeBuilder = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query")
         repositoryInfos.forEach { repoInfo ->
             if(repoInfo.crudMethods.hasFindAllMethod()) {
@@ -105,11 +101,5 @@ class RepositoryDatafetcherManager(val repositories: Repositories) {
             "findById" -> entityName.decapitalize()
             else -> entityName.decapitalize() + fieldName.substringAfter("find")
         }
-    }
-
-    @PostConstruct
-    fun createSchemaTypes() : Map<String, GraphQLType> {
-//        return SchemaTypeGenerator().createSchemaTypes(repositoryBeans)
-        return Collections.emptyMap()
     }
 }
