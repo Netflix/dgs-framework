@@ -16,137 +16,61 @@
 
 package com.netflix.graphql.dgs.springdata
 
-import org.springframework.beans.factory.config.BeanDefinition
+import com.netflix.graphql.dgs.bean.registry.AnnotatedBeanClassReference
+import com.netflix.graphql.dgs.bean.registry.DgsDataBeanDefinitionRegistryUtils
+import com.netflix.graphql.dgs.springdata.annotations.DgsSpringDataConfiguration
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.beans.factory.support.BeanDefinitionRegistry
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor
+import org.springframework.data.repository.Repository
+import org.springframework.data.repository.core.RepositoryMetadata
+import org.springframework.data.repository.core.support.AbstractRepositoryMetadata
 import java.util.*
+import java.util.stream.Stream
 
 
 class DgsSpringDataPostProcessor : BeanDefinitionRegistryPostProcessor {
 
-    companion object {
-        /*
-        /**
-	 * Returns the resolved class of a given bean fetched through the bean factory by its
-	 * name. If the class can't be loaded, i.e. its not present in the classpath it will
-	 * return empty.
-	 */
-	@NonNull
-	public static Optional<BeanDefinitionType> getOptionalBeanDefinitionType(final String beanName,
-			final ConfigurableListableBeanFactory beanFactory) {
-		final BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanName);
-		return getOptionalBeanDefinitionClass(beanName, beanDefinition)
-				.map(aClass -> new BeanDefinitionType(beanName, beanDefinition, aClass));
-	}
-	/**
-	 * Returns the {@link Class}, if available, as defined by the {@link BeanDefinition}
-	 * wrapped in an {@link Optional} else an {@link Optional#empty()}.
-	 * @param beanName Name of the bean as defined in the registry.
-	 * @param beanDefinition Bean Definition that will provide the class.
-	 */
-	public static Optional<Class<?>> getOptionalBeanDefinitionClass(String beanName, BeanDefinition beanDefinition) {
-		try {
-			Class<?> beanClass = getBeanDefinitionClass(beanName, beanDefinition);
-			return Optional.ofNullable(beanClass);
-		}
-		catch (IllegalStateException | ClassNotFoundException error) {
-			logger.debug("Unable to resolve the class for bean {} with definition {}", beanName, beanDefinition, error);
-			return Optional.empty();
-		}
-		catch (RuntimeException error) {
-			logger.error("Unable to resolve the class for bean {} with definition {}", beanName, beanDefinition, error);
-			return Optional.empty();
-		}
-	}
-         */
-
-    }
-    fun getOptionalBeanDefinitionType(beanName: String, beanFactory: BeanDefinitionRegistry): Optional<BeanDefinitionType> {
-        return Optional.empty()
-    }
-
-    override fun postProcessBeanDefinitionRegistry(registry: BeanDefinitionRegistry){
-//        val stream: Stream<String> = Arrays. of(registry.beanDefinitionNames)
-//        stream
-//                .map{ name:String -> getOptionalBeanDefinitionType(name, registry) }
-//                .filter{Optional::isPresent}
-//                .flatMap{ c -> c.get().beanClass.isAnnotationPresent( DgsSpringDataConfiguration::class)}
-//                .collect{ Collectors.toSet()}
-/*
-* Set<BeanAnnotatedReference<RequiresLeadership>> set = Stream.of(registry.getBeanDefinitionNames())
-				.map(name -> getOptionalBeanDefinitionType(name, registry)).filter(Optional::isPresent)
-				.map(Optional::get).flatMap(this::streamsOfAnnotatedReferences).collect(Collectors.toSet());
-
-		annotatedReferences.addAll(set);
-* */
+    override fun postProcessBeanDefinitionRegistry(registry: BeanDefinitionRegistry) {
+        val streamOfDgsAnnotatedBeans = DgsDataBeanDefinitionRegistryUtils.streamsOfAnnotatedClassReferences(registry, DgsSpringDataConfiguration::class.java)
+        val streamOfGraphlRepositories = toStreamOfGraphqlRepositories(streamOfDgsAnnotatedBeans)
+        // Call other stuff that will build more intresting things.
     }
 
 
-    override fun postProcessBeanFactory(beanFactory: ConfigurableListableBeanFactory){
+    override fun postProcessBeanFactory(beanFactory: ConfigurableListableBeanFactory) {
         //no-op
     }
-}
 
+    companion object {
+        private val logger = LoggerFactory.getLogger(DgsSpringDataPostProcessor::class.java)
 
-data class BeanDefinitionType(val repositoryBeanName:String, val repositoryClass:Class<*>, val repositoryBeanDefinition:BeanDefinition? = null, val entityClass:Class<*>)
-/*
-/**
- * Represents a named bean and provides its resolved class along with its definition as
- * provided by the Spring Registry.
- */
-@NetflixSpringBootInternal()
-public class BeanDefinitionType {
+        internal fun toStreamOfGraphqlRepositories(stream: Stream<AnnotatedBeanClassReference<DgsSpringDataConfiguration>>): Stream<GraphqlRepositoryBeanDefinitionType> {
+            return stream.map { annotatedBeanClassRef ->
+                val beanClass = annotatedBeanClassRef.beanClass
+                if (Repository::class.java.isAssignableFrom(beanClass)) {
+                    val repositoryMetadata = AbstractRepositoryMetadata.getMetadata(beanClass)
+                    if (repositoryMetadata == null) {
+                        logger.info("DGS SpringDataConfiguration bean found but no RepositoryMetadata is available for {}.", annotatedBeanClassRef)
+                        Optional.empty()
+                    } else {
+                        logger.info("DGS SpringDataConfiguration bean found{}, RepositoryMetadata available {}.", annotatedBeanClassRef, repositoryMetadata)
+                        Optional.of(GraphqlRepositoryBeanDefinitionType(annotatedBeanClassRef, repositoryMetadata))
+                    }
+                } else {
+                    logger.warn("DGS SpringDataConfiguration bean found {} but is not a Spring Data Repository!.", annotatedBeanClassRef)
+                    Optional.empty()
+                }
+            }.filter { it.isPresent }.map { it.get() }
 
-	private final String beanName;
+        }
 
-	private final Class<?> beanClass;
-
-	private final BeanDefinition beanDefinition;
-
-	BeanDefinitionType(String beanName, BeanDefinition beanDefinition, Class<?> beanClass) {
-		this.beanName = beanName;
-		this.beanClass = beanClass;
-		this.beanDefinition = beanDefinition;
-	}
-
-	public String getBeanName() {
-		return beanName;
-	}
-
-	public boolean hasName() {
-		return !StringUtils.isEmpty(getBeanName());
-	}
-
-	public Class<?> getBeanClass() {
-		return beanClass;
-	}
-
-	public BeanDefinition getBeanDefinition() {
-		return beanDefinition;
-	}
-
-	/**
-	 * Returns true if this bean's class if of type {@link FactoryBean} and its
-	 * {@link FactoryBean#getObject()} returns a type that is the same as the given
-	 * {@code testClass} or where {@code testClass} is a super type of it.
-	 */
-	public <T> boolean isFactoryBeanFor(Class<T> testClass) {
-		if (!FactoryBean.class.isAssignableFrom(getBeanClass())) {
-			return false;
-		}
-		//
-		Optional<Method> optionalMethod = Arrays.stream(ReflectionUtils.getAllDeclaredMethods(getBeanClass()))
-				.filter(method -> method.getParameterCount() == 0 && "getObject".equals(method.getName())
-						&& testClass.isAssignableFrom(method.getReturnType()))
-				.findFirst();
-		return optionalMethod.isPresent();
-	}
-
-	public boolean isAssignable(Class<?> testClass) {
-		return testClass.isAssignableFrom(getBeanClass());
-	}
+    }
 
 }
-*
-* */
+
+data class GraphqlRepositoryBeanDefinitionType(
+        val beanDefinition: AnnotatedBeanClassReference<DgsSpringDataConfiguration>,
+        val repositoryMetadata: RepositoryMetadata
+)

@@ -27,7 +27,7 @@ import java.lang.reflect.Method
 import javax.annotation.PostConstruct
 
 @DgsComponent
-class RepositoryDatafetcherManager(private val repositoryBeans: List<BeanDefinitionType>) {
+class RepositoryDatafetcherManager(private val repositoryBeans: List<GraphqlRepositoryBeanDefinitionType>) {
     private val typeDefinitionRegistry = TypeDefinitionRegistry()
 
     @PostConstruct

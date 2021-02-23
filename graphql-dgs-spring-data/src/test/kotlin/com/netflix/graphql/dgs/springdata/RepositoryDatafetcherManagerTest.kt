@@ -29,7 +29,7 @@ internal class RepositoryDatafetcherManagerTest {
 
     @Test
     fun `Test creating query fields`() {
-        val repositoryBeans = listOf(BeanDefinitionType("personRepo", PersonRepository::class.java, null, Person::class.java))
+        val repositoryBeans = listOf(GraphqlRepositoryBeanDefinitionType("personRepo", PersonRepository::class.java, null, Person::class.java))
 
         val repositoryDatafetcherManager = RepositoryDatafetcherManager(repositoryBeans)
         repositoryDatafetcherManager.createQueryFields()

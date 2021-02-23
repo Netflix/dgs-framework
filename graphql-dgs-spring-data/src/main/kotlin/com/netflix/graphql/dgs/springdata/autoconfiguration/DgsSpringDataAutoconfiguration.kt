@@ -16,7 +16,7 @@
 
 package com.netflix.graphql.dgs.springdata.autoconfiguration
 
-import com.netflix.graphql.dgs.springdata.BeanDefinitionType
+import com.netflix.graphql.dgs.springdata.GraphqlRepositoryBeanDefinitionType
 import com.netflix.graphql.dgs.springdata.DgsSpringDataPostProcessor
 import com.netflix.graphql.dgs.springdata.RepositoryDatafetcherManager
 import org.springframework.context.annotation.Bean
@@ -32,7 +32,7 @@ open class DgsSpringDataAutoconfiguration {
     }
 
     @Bean
-    open fun repositoryDatafetcherManager(repositoryBeans: List<BeanDefinitionType>): RepositoryDatafetcherManager {
+    open fun repositoryDatafetcherManager(repositoryBeans: List<GraphqlRepositoryBeanDefinitionType>): RepositoryDatafetcherManager {
         return RepositoryDatafetcherManager(repositoryBeans)
     }
 }
