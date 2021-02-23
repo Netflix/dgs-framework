@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Configuration
 open class DgsSpringDataAutoconfiguration {
 
     @Bean
-    open fun DgsSpringDataPostProcessor():DgsSpringDataPostProcessor  {
+    open fun dgsSpringDataPostProcessor():DgsSpringDataPostProcessor  {
         return DgsSpringDataPostProcessor()
     }
 
