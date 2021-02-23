@@ -49,26 +49,26 @@ object DgsDataBeanDefinitionRegistryUtils {
     open class BeanDefinitionType internal constructor(val beanName: String, val beanClass: Class<*>, val beanDefinition: BeanDefinition)
 
 
-    fun getOptionalBeanDefinitionType(beanName: String,
+    private fun getOptionalBeanDefinitionType(beanName: String,
                                       beanFactory: BeanDefinitionRegistry): Optional<BeanDefinitionType> {
         val beanDefinition: BeanDefinition = beanFactory.getBeanDefinition(beanName)
         return getOptionalBeanDefinitionClass(beanName, beanDefinition)
                 .map{ aClass: Class<*> -> BeanDefinitionType(beanName, aClass,  beanDefinition) }
     }
 
-    fun getOptionalBeanDefinitionClass(beanName: String, beanDefinition: BeanDefinition): Optional<Class<*>> {
-        try {
+    private fun getOptionalBeanDefinitionClass(beanName: String, beanDefinition: BeanDefinition): Optional<Class<*>> {
+        return try {
             val beanClass = getBeanDefinitionClass(beanName, beanDefinition)
-            return Optional.ofNullable(beanClass)
+            Optional.ofNullable(beanClass)
         } catch (error: IllegalStateException) {
             logger.debug("Unable to resolve the class for bean {} with definition {}", beanName, beanDefinition, error)
-            return Optional.empty();
+            Optional.empty();
         } catch (error: ClassNotFoundException) {
             logger.debug("Unable to resolve the class for bean {} with definition {}", beanName, beanDefinition, error)
-            return Optional.empty();
+            Optional.empty();
         } catch (error: RuntimeException) {
             logger.error("Unable to resolve the class for bean {} with definition {}", beanName, beanDefinition, error)
-            return Optional.empty();
+            Optional.empty();
         }
     }
 

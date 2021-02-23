@@ -46,11 +46,11 @@ class DgsSpringDataPostProcessor : BeanDefinitionRegistryPostProcessor {
 
     private fun debugGraphqlRepositories(graphqlRepositories: List<GraphqlRepositoryBeanDefinitionType>){
         logger.info("""
-        ===== DGS GraphQL Repositories =====
-        ------ TODO ADD ASCII ART     ------
-        ${graphqlRepositories.joinToString(prefix = "<<\n", postfix = "\n>>", separator = ",\n")}
-        ====================================
-        """.trimIndent())
+        |===== DGS GraphQL Repositories =====
+        |------ TODO ADD ASCII ART     ------
+        |${graphqlRepositories.joinToString(prefix = "<<\n", postfix = "\n>>", separator = ",\n")}
+        |====================================
+        |""".trimMargin())
 
     }
 
