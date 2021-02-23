@@ -18,11 +18,9 @@ package com.netflix.graphql.dgs.springdata
 
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
-import graphql.language.FieldDefinition
-import graphql.language.ListType
-import graphql.language.ObjectTypeExtensionDefinition
-import graphql.language.TypeName
+import graphql.language.*
 import graphql.schema.idl.TypeDefinitionRegistry
+import org.springframework.data.repository.core.RepositoryMetadata
 import java.lang.reflect.Method
 import javax.annotation.PostConstruct
 
@@ -35,9 +33,9 @@ class RepositoryDatafetcherManager(private val repositoryBeans: List<GraphqlRepo
         val queryTypeBuilder = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query")
 
         repositoryBeans.forEach { beanDefinitionType ->
-            beanDefinitionType.repositoryClass.methods.filter { m -> m.name.startsWith("find") }
+            beanDefinitionType.repositoryMetadata.repositoryInterface.methods.filter { m -> m.name.startsWith("find") }
                 .forEach {
-                    createQueryField(it, beanDefinitionType.entityClass, queryTypeBuilder)
+                    createQueryField(it, beanDefinitionType.repositoryMetadata, queryTypeBuilder)
                 }
         }
 
@@ -51,25 +49,49 @@ class RepositoryDatafetcherManager(private val repositoryBeans: List<GraphqlRepo
 
     private fun createQueryField(
         method: Method,
-        entityClass: Class<*>,
+        repositoryMetadata: RepositoryMetadata,
         queryTypeBuilder: ObjectTypeExtensionDefinition.Builder
     ) {
         val entityType = if (method.returnType == Iterable::class.java) {
-            ListType(TypeName(entityClass.name))
+            ListType(TypeName(repositoryMetadata.domainType.simpleName))
         } else {
-            TypeName(method.returnType.name)
+            TypeName(repositoryMetadata.domainType.simpleName)
         }
 
         val fieldDefinition = FieldDefinition.newFieldDefinition()
-            .name(queryNamer(method.name, entityClass.name))
-            .type(entityType).build()
+            .name(queryNamer(method.name, repositoryMetadata.domainType.simpleName))
+            .type(entityType)
 
-        queryTypeBuilder.fieldDefinition(fieldDefinition)
+        if (method.parameterCount == 1) {
+            val idType = getGraphQLTypeForId(repositoryMetadata.idType)
+            val (paramName, typeName) = if (method.parameters[0].type == Iterable::class.java) {
+                Pair("ids", ListType(idType))
+            } else {
+                Pair("id", idType)
+            }
+
+            fieldDefinition.inputValueDefinition(
+                    InputValueDefinition.newInputValueDefinition().name(paramName).type(typeName).build())
+        }
+
+        queryTypeBuilder.fieldDefinition(fieldDefinition.build())
     }
 
+    private fun getGraphQLTypeForId(idType: Class<*>): Type<*> {
+        return when(idType) {
+            Integer::class.java -> TypeName("Int")
+            Long::class.java -> TypeName("Int")
+            String::class.java -> TypeName("String")
+            else -> TypeName("String")
+        }
+    }
+
+    /**
+     * Generate nice names for repository methods that are common
+     */
     private fun queryNamer(fieldName: String, entityName: String): String {
         return when (fieldName) {
-            "findAll" -> "all${entityName}"
+            "findAll" -> "all${entityName}s"
             "findById" -> entityName.decapitalize()
             else -> entityName.decapitalize() + fieldName.substringAfter("find")
         }

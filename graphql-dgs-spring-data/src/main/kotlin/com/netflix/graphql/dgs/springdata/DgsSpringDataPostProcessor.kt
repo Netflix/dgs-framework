@@ -71,6 +71,6 @@ class DgsSpringDataPostProcessor : BeanDefinitionRegistryPostProcessor {
 }
 
 data class GraphqlRepositoryBeanDefinitionType(
-        val beanDefinition: AnnotatedBeanClassReference<DgsSpringDataConfiguration>,
+        val beanDefinition: AnnotatedBeanClassReference<DgsSpringDataConfiguration>?,
         val repositoryMetadata: RepositoryMetadata
 )
