@@ -29,9 +29,11 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation("org.springframework.data:spring-data-commons")
 
+    compileOnly("org.springframework.boot:spring-boot-autoconfigure")
     compileOnly("org.springframework.boot:spring-boot-starter")
     compileOnly("org.springframework:spring-core")
-    compileOnly("org.springframework.boot:spring-boot-autoconfigure")
+
+    testImplementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-web")

@@ -16,12 +16,15 @@
 
 package com.netflix.graphql.dgs.springdata
 
+import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
+import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.springdata.exampleapp.DemoTestApplication
 import com.netflix.graphql.dgs.springdata.exampleapp.data.ReviewEntityRepository
 import com.netflix.graphql.dgs.springdata.exampleapp.data.ShowEntityRepository
 import graphql.language.FieldDefinition
 import graphql.language.ListType
 import graphql.language.TypeName
+import graphql.schema.GraphQLSchema
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -29,10 +32,17 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
+import org.springframework.test.context.event.annotation.BeforeTestMethod
 import javax.persistence.EntityManager
 
 @DataJpaTest
-@ContextConfiguration(classes = [DgsSpringDataAutoconfiguration::class, DemoTestApplication::class])
+@ContextConfiguration(classes = [
+    DgsSpringDataAutoconfiguration::class,
+    DgsAutoConfiguration::class,
+    DemoTestApplication::class
+])
+//@TestPropertySource(propeties = ["spring.jpa.hibernate.ddl-auto=validate"])
 open class DgsSpringDataIntegrationTest {
 
     @Autowired
@@ -50,6 +60,10 @@ open class DgsSpringDataIntegrationTest {
     @Autowired
     private lateinit var repositoryDatafetcherManager: RepositoryDatafetcherManager
 
+    @Autowired lateinit var schemaProvider: DgsSchemaProvider
+
+    @Autowired lateinit var schema: GraphQLSchema
+
     @Test
     fun `Application starts`() {
         assertThat(jdbcTemplate).isNotNull
@@ -59,7 +73,7 @@ open class DgsSpringDataIntegrationTest {
     }
 
     @Test
-    fun `Should create a allPersons query`() {
+    fun `Should create all* queries for ShowEntity`() {
         val fieldDefinition = getFieldDefinition("allShowEntitys")
 
         assertThat(fieldDefinition?.name).isEqualTo("allShowEntitys")
@@ -67,7 +81,7 @@ open class DgsSpringDataIntegrationTest {
     }
 
     @Test
-    fun `Should create a person Query`() {
+    fun `Should create a showEntity Query`() {
         val personQuery = getFieldDefinition("showEntity")
         assertThat(personQuery.name).isEqualTo("showEntity")
         assertThat(personQuery.type.toString()).isEqualTo(TypeName("ShowEntity").toString())
