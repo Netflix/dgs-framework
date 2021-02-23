@@ -79,9 +79,7 @@ object DgsDataBeanDefinitionRegistryUtils {
     fun <T : Annotation> streamsOfAnnotatedClassReferences(registry: BeanDefinitionRegistry,
                                                            annotationClass: Class<T>): Stream<AnnotatedBeanClassReference<T>> {
 
-        val annotationFinder = AnnotationTypeFilter(annotationClass)
-
-        val stream = Arrays.stream(registry.beanDefinitionNames)
+        return Arrays.stream(registry.beanDefinitionNames)
                 .map { name: String -> getOptionalBeanDefinitionType(name, registry) }
                 .filter{ it.isPresent }
                 .map { optBean ->
@@ -99,8 +97,6 @@ object DgsDataBeanDefinitionRegistryUtils {
                                         annotationReference = annotation))
 
                 }.map { it.get() }
-
-        return stream
     }
 
 
