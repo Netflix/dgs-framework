@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,7 @@ dependencies {
     api(project(":graphql-dgs-mocking"))
 
     api("com.graphql-java:graphql-java:${Versions.GRAPHQL_JAVA}")
-    api("com.jayway.jsonpath:json-path:2.+") {
-        exclude(group = "net.minidev", module = "json-smart")
-    }
+    api("com.jayway.jsonpath:json-path:2.+")
 
     implementation("org.springframework:spring-web")
     implementation("org.springframework.boot:spring-boot")
