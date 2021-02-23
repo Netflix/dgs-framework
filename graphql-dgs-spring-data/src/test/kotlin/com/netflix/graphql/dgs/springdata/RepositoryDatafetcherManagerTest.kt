@@ -109,6 +109,13 @@ internal class RepositoryDatafetcherManagerTest {
 
     }
 
+    @Test
+    fun `Should create person type`() {
+        val result = repositoryDatafetcherManager.createSchemaTypes()
+
+        assertThat(result.keys).contains("Person")
+    }
+
 
 
 }

@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.springdata
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import graphql.language.*
+import graphql.schema.GraphQLType
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.springframework.data.repository.core.RepositoryMetadata
 import java.lang.reflect.Method
@@ -95,5 +96,10 @@ class RepositoryDatafetcherManager(private val repositoryBeans: List<GraphqlRepo
             "findById" -> entityName.decapitalize()
             else -> entityName.decapitalize() + fieldName.substringAfter("find")
         }
+    }
+
+    @PostConstruct
+    fun createSchemaTypes() : Map<String, GraphQLType> {
+        return SchemaTypeGenerator().createSchemaTypes(repositoryBeans)
     }
 }
