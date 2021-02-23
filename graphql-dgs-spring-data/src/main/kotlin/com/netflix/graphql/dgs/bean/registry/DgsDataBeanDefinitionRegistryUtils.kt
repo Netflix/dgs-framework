@@ -81,7 +81,6 @@ object DgsDataBeanDefinitionRegistryUtils {
 
         return Arrays.stream(registry.beanDefinitionNames)
                 .map { name: String -> getOptionalBeanDefinitionType(name, registry) }
-                .filter{ it.isPresent }
                 .map { optBean ->
                     val bd = optBean.get()
                     val annotation = AnnotationUtils.findAnnotation(bd.beanClass, annotationClass)
@@ -96,7 +95,7 @@ object DgsDataBeanDefinitionRegistryUtils {
                                         beanDefinition = bd.beanDefinition,
                                         annotationReference = annotation))
 
-                }.map { it.get() }
+                }.filter{ it.isPresent }.map { it.get() }
     }
 
 
