@@ -1,0 +1,9 @@
+type ShowEntity {
+    title: String
+    releaseYear: Int
+    reviews: [ReviewEntity]
+}
+
+type ReviewEntity {
+    starScore: Int
+}

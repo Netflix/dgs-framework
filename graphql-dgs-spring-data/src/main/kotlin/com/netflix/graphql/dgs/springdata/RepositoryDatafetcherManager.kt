@@ -25,7 +25,6 @@ import graphql.schema.FieldCoordinates
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.springframework.data.domain.Sort
-import org.springframework.data.repository.core.RepositoryInformation
 import org.springframework.data.repository.core.RepositoryMetadata
 import org.springframework.data.repository.support.Repositories
 import org.springframework.data.repository.support.RepositoryInvokerFactory
@@ -48,27 +47,24 @@ class RepositoryDatafetcherManager(private val repositories: Repositories, priva
             if(repoInfo.crudMethods.hasFindAllMethod()) {
                 val fieldDefinition =
                     createQueryField(repoInfo.crudMethods.findAllMethod.get(), repoInfo, queryTypeBuilder)
-                createDataFetcher(repoInfo.crudMethods.findAllMethod.get(), repoInfo, fieldDefinition)
+                    datafetchers[FieldCoordinates.coordinates("Query", fieldDefinition.name)] = DataFetcher<Any> {
+                        repositoryInvoker.getInvokerFor(repoInfo.domainType).invokeFindAll(Sort.unsorted())
+                    }
             }
 
             if(repoInfo.crudMethods.hasFindOneMethod()) {
-                createQueryField(repoInfo.crudMethods.findOneMethod.get(), repoInfo, queryTypeBuilder)
+                val fieldDefinition = createQueryField(repoInfo.crudMethods.findOneMethod.get(), repoInfo, queryTypeBuilder)
+                datafetchers[FieldCoordinates.coordinates("Query", fieldDefinition.name)] = DataFetcher<Any> { dfe ->
+                    val idArg: Int = dfe.getArgument("id")
+                    repositoryInvoker.getInvokerFor(repoInfo.domainType).invokeFindById<Any>(idArg)
+                }
             }
         }
 
         typeDefinitionRegistry.add(queryTypeBuilder.build())
     }
 
-    private fun createDataFetcher(
-        repositoryMethod: Method,
-        repoInfo: RepositoryInformation,
-        fieldDefinition: FieldDefinition
-    ) {
-        val repository = repositories.getRepositoryFor(repoInfo.domainType).get()
-        datafetchers[FieldCoordinates.coordinates("Query", fieldDefinition.name)] = DataFetcher<Any> {
-            repositoryInvoker.getInvokerFor(repoInfo.domainType).invokeFindAll(Sort.unsorted())
-        }
-    }
+
 
     @DgsTypeDefinitionRegistry
     fun repositoryTypes(): TypeDefinitionRegistry {
