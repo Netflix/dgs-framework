@@ -73,7 +73,7 @@ class SchemaTypeGenerator(private val repositories: Repositories) {
 
     private fun createSchemaType(schemaType: Class<*>)  {
         if (!builtTypes.containsKey(sanitizeName(sanitizeName(schemaType.name)))) {
-            val fieldBuilder = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name(sanitizeName(schemaType.name))
+            val fieldBuilder = ObjectTypeDefinition.newObjectTypeDefinition().name(sanitizeName(schemaType.name))
             schemaType.declaredFields
                 .forEach {
                     fieldBuilder
