@@ -127,7 +127,7 @@ class RepositoryDatafetcherManager(private val repositories: Repositories, priva
      */
     private fun queryNamer(fieldName: String, entityName: String): String {
         return when (fieldName) {
-            "findAll" -> "all${entityName}s"
+            "findAll" -> "${entityName.decapitalize()}s"
             "findById" -> entityName.decapitalize()
             else -> entityName.decapitalize() + fieldName.substringAfter("find")
         }
