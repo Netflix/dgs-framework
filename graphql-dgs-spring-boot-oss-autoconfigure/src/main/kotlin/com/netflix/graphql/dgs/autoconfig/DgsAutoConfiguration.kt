@@ -32,6 +32,7 @@ import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.ExecutionStrategy
+import graphql.execution.ExecutionIdProvider
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
 import graphql.schema.GraphQLCodeRegistry
@@ -66,6 +67,7 @@ open class DgsAutoConfiguration {
                               environment: Environment,
                               @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
                               @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
+                              idProvider: Optional<ExecutionIdProvider>,
                               reloadSchemaIndicator: ReloadSchemaIndicator
     ): DgsQueryExecutor {
 
@@ -80,6 +82,7 @@ open class DgsAutoConfiguration {
                 chainedInstrumentation,
                 queryExecutionStrategy,
                 mutationExecutionStrategy,
+                idProvider,
                 reloadSchemaIndicator
         )
     }
