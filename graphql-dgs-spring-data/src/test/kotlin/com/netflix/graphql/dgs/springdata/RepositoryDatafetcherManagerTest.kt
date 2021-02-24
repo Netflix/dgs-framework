@@ -46,7 +46,7 @@ internal open class RepositoryDatafetcherManagerTest {
 
     @BeforeEach
     fun before() {
-        repositoryDatafetcherManager = RepositoryDatafetcherManager(repositories)
+        repositoryDatafetcherManager = RepositoryDatafetcherManager(repositories, repositoryInvoker)
         repositoryDatafetcherManager.createQueryFields()
     }
 

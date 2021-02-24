@@ -45,8 +45,8 @@ open class DgsSpringDataAutoconfiguration {
     }
 
     @Bean
-    open fun queryAndMutationGenerator(repositories: Repositories): RepositoryDatafetcherManager {
-        return RepositoryDatafetcherManager(repositories)
+    open fun queryAndMutationGenerator(repositories: Repositories, repositoryInvoker: RepositoryInvokerFactory): RepositoryDatafetcherManager {
+        return RepositoryDatafetcherManager(repositories, repositoryInvoker)
     }
 }
 

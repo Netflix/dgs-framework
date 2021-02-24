@@ -16,22 +16,28 @@
 
 package com.netflix.graphql.dgs.springdata
 
+import com.netflix.graphql.dgs.DgsCodeRegistry
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import graphql.language.*
+import graphql.schema.DataFetcher
+import graphql.schema.FieldCoordinates
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.idl.TypeDefinitionRegistry
+import org.springframework.data.domain.Sort
+import org.springframework.data.repository.core.RepositoryInformation
 import org.springframework.data.repository.core.RepositoryMetadata
 import org.springframework.data.repository.support.Repositories
+import org.springframework.data.repository.support.RepositoryInvokerFactory
 import java.lang.reflect.Method
 import javax.annotation.PostConstruct
 
 
 @DgsComponent
-class RepositoryDatafetcherManager(private val repositories: Repositories) {
+class RepositoryDatafetcherManager(private val repositories: Repositories, private val repositoryInvoker: RepositoryInvokerFactory) {
 
     private val typeDefinitionRegistry = TypeDefinitionRegistry()
-    private val codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry()
+    private val datafetchers: MutableMap<FieldCoordinates, DataFetcher<Any>> = mutableMapOf()
 
     @PostConstruct
     fun createQueryFields() {
@@ -40,7 +46,9 @@ class RepositoryDatafetcherManager(private val repositories: Repositories) {
         val queryTypeBuilder = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query")
         repositoryInfos.forEach { repoInfo ->
             if(repoInfo.crudMethods.hasFindAllMethod()) {
-                createQueryField(repoInfo.crudMethods.findAllMethod.get(), repoInfo, queryTypeBuilder)
+                val fieldDefinition =
+                    createQueryField(repoInfo.crudMethods.findAllMethod.get(), repoInfo, queryTypeBuilder)
+                createDataFetcher(repoInfo.crudMethods.findAllMethod.get(), repoInfo, fieldDefinition)
             }
 
             if(repoInfo.crudMethods.hasFindOneMethod()) {
@@ -51,16 +59,36 @@ class RepositoryDatafetcherManager(private val repositories: Repositories) {
         typeDefinitionRegistry.add(queryTypeBuilder.build())
     }
 
+    private fun createDataFetcher(
+        repositoryMethod: Method,
+        repoInfo: RepositoryInformation,
+        fieldDefinition: FieldDefinition
+    ) {
+        val repository = repositories.getRepositoryFor(repoInfo.domainType).get()
+        datafetchers[FieldCoordinates.coordinates("Query", fieldDefinition.name)] = DataFetcher<Any> {
+            repositoryInvoker.getInvokerFor(repoInfo.domainType).invokeFindAll(Sort.unsorted())
+        }
+    }
+
     @DgsTypeDefinitionRegistry
     fun repositoryTypes(): TypeDefinitionRegistry {
         return typeDefinitionRegistry
+    }
+
+    @DgsCodeRegistry
+    fun codeRegistry(builder: GraphQLCodeRegistry.Builder, registry: TypeDefinitionRegistry): GraphQLCodeRegistry.Builder {
+        datafetchers.forEach {
+            builder.dataFetcher(it.key, it.value)
+        }
+
+        return builder
     }
 
     private fun createQueryField(
         method: Method,
         repositoryMetadata: RepositoryMetadata,
         queryTypeBuilder: ObjectTypeExtensionDefinition.Builder
-    ) {
+    ): FieldDefinition {
         val entityType = if (method.returnType == Iterable::class.java) {
             ListType(TypeName(repositoryMetadata.domainType.simpleName))
         } else {
@@ -83,7 +111,10 @@ class RepositoryDatafetcherManager(private val repositories: Repositories) {
                     InputValueDefinition.newInputValueDefinition().name(paramName).type(typeName).build())
         }
 
-        queryTypeBuilder.fieldDefinition(fieldDefinition.build())
+        val build = fieldDefinition.build()
+        queryTypeBuilder.fieldDefinition(build)
+
+        return build
     }
 
     private fun getGraphQLTypeForId(idType: Class<*>): Type<*> {
