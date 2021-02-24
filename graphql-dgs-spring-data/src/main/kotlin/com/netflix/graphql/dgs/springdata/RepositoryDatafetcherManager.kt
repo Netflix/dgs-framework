@@ -136,4 +136,5 @@ class RepositoryDatafetcherManager(private val repositories: Repositories, priva
             else -> entityName.decapitalize() + fieldName.substringAfter("find")
         }
     }
+
 }

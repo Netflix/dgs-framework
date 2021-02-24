@@ -16,62 +16,106 @@
 
 package com.netflix.graphql.dgs.springdata
 
+import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import graphql.Scalars
+import graphql.language.FieldDefinition
 import graphql.schema.GraphQLFieldDefinition
+import graphql.schema.GraphQLList.list
 import graphql.schema.GraphQLObjectType
 import graphql.schema.GraphQLOutputType
 import graphql.schema.GraphQLType
 import graphql.schema.GraphQLTypeReference.typeRef
+import graphql.schema.idl.TypeDefinitionRegistry
 import org.springframework.data.repository.core.RepositoryInformation
+import org.springframework.data.repository.support.Repositories
+import java.lang.reflect.Field
+import java.lang.reflect.ParameterizedType
+import java.time.OffsetDateTime
+import javax.annotation.PostConstruct
 
 
-class SchemaTypeGenerator {
+class SchemaTypeGenerator(private val repositories: Repositories) {
 
     private val builtTypes = emptyMap<String, GraphQLType>().toMutableMap()
+    private val typeDefinitionRegistry = TypeDefinitionRegistry()
 
-    fun createSchemaTypes(repositoriesMetadata: List<RepositoryInformation>) : Map<String, GraphQLType> {
-        repositoriesMetadata.forEach { repoMetadata ->
-            val entityBuilder = GraphQLObjectType.newObject().name(sanitizeName(repoMetadata.domainType.simpleName))
-            repoMetadata.domainType.declaredFields
+    @PostConstruct
+    fun createSchemaTypes() {
+        val repositoryInfos =  repositories.map { repositories.getRequiredRepositoryInformation(it) }.toList()
+        repositoryInfos.forEach { repoMetadata ->
+            if (! builtTypes.containsKey(sanitizeName(repoMetadata.domainType.simpleName))) {
+                val domainTypeBuilder =
+                    GraphQLObjectType.newObject().name(sanitizeName(repoMetadata.domainType.simpleName))
+                repoMetadata.domainType.declaredFields
+                    .forEach {
+                        domainTypeBuilder.field(createFieldDefinition(it))
+                    }
+                builtTypes.putIfAbsent(sanitizeName(repoMetadata.domainType.simpleName), domainTypeBuilder.build())
+            }
+        }
+        // TODO: How to wire up these created object types?
+        //builtTypes.forEach{ it -> typeDefinitionRegistry.add(it.value)}
+    }
+
+    @DgsTypeDefinitionRegistry
+    fun schemaTypes(): TypeDefinitionRegistry {
+        return typeDefinitionRegistry
+    }
+
+    private fun createSchemaType(schemaType: Class<*>) : Map<String, GraphQLType> {
+        if (!builtTypes.containsKey(sanitizeName(sanitizeName(schemaType.name)))) {
+            val fieldBuilder = GraphQLObjectType.newObject().name(sanitizeName(schemaType.name))
+            schemaType.declaredFields
                 .forEach {
-                    entityBuilder
-                        .field(
-                            GraphQLFieldDefinition
-                                    .newFieldDefinition()
-                                    .name(sanitizeName(it.name))
-                                    .type(getScalarType(it.type))
-                                .build()
-                        )
+                    fieldBuilder
+                        .field(createFieldDefinition(it))
                 }
-            builtTypes.putIfAbsent(sanitizeName(repoMetadata.domainType.simpleName), entityBuilder.build())
+            builtTypes.putIfAbsent(sanitizeName(schemaType.name), fieldBuilder.build())
         }
         return builtTypes
     }
 
-    private fun createSchemaType(schemaType: Class<*>) : Map<String, GraphQLType> {
-        val fieldBuilder = GraphQLObjectType.newObject().name(sanitizeName(schemaType.name))
-        schemaType.declaredFields
-            .forEach {
-                fieldBuilder
-                    .field(
-                        GraphQLFieldDefinition.newFieldDefinition().name(sanitizeName(it.name)).type(getScalarType(it.type))
-                            .build()
-                    )
-                }
-        builtTypes.putIfAbsent(sanitizeName(schemaType.name), fieldBuilder.build())
-        return builtTypes
+    private fun createFieldDefinition(field: Field) : GraphQLFieldDefinition {
+
+        // TODO: handle custom scalars - do we need to create the scalar type ?
+        // if(field.type == OffsetDateTime::class.java) {
+        //  }
+
+        return GraphQLFieldDefinition.newFieldDefinition().name(sanitizeName(field.name)).type(getGraphQLType(field)).build()
     }
 
-    private fun getScalarType(typeName: Class<*>) : GraphQLOutputType {
-        // TODO handle collections, enums, unboxed types
-        return when(typeName)  {
+    private fun getGraphQLType(field: Field) : GraphQLOutputType {
+        if (field.type.isPrimitive) {
+            return when (field.type.simpleName) {
+                "int" -> Scalars.GraphQLInt
+                "float" -> Scalars.GraphQLFloat
+                "boolean" -> Scalars.GraphQLBoolean
+                else -> Scalars.GraphQLString
+            }
+        }
+
+        if (field.type == List::class.java) {
+            return when(val typeName = (field.genericType as ParameterizedType).actualTypeArguments[0] as Class<*>)  {
+                String::class.java  -> list(Scalars.GraphQLString)
+                Integer::class.java -> list(Scalars.GraphQLInt)
+                Boolean::class.java -> list(Scalars.GraphQLBoolean)
+                Float::class.java -> list(Scalars.GraphQLFloat)
+                else -> {
+                    createSchemaType(typeName)
+                    list(typeRef(sanitizeName(typeName.simpleName)))
+                }
+            }
+        }
+
+        return when(field.type)  {
             String::class.java  -> Scalars.GraphQLString
             Integer::class.java -> Scalars.GraphQLInt
             Boolean::class.java -> Scalars.GraphQLBoolean
             Float::class.java -> Scalars.GraphQLFloat
+            OffsetDateTime::class.java -> typeRef("DateTime")
             else -> {
-                createSchemaType(typeName)
-                typeRef(sanitizeName(typeName.simpleName))
+                createSchemaType(field.type)
+                typeRef(sanitizeName(field.type.simpleName))
             }
         }
     }
