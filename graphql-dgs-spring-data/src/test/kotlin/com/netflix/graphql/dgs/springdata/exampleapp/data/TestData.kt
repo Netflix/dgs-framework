@@ -23,8 +23,10 @@ import javax.annotation.PostConstruct
 @Component
 class TestData {
 
-    @Autowired lateinit var showsRepository: ShowEntityRepository
-    @Autowired lateinit var reviewRepository: ReviewEntityRepository
+    @Autowired
+    lateinit var showsRepository: ShowEntityRepository
+    @Autowired
+    lateinit var reviewRepository: ReviewEntityRepository
 
     @PostConstruct
     fun createTestData() {

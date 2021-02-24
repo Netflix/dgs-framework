@@ -29,21 +29,21 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation("org.springframework.data:spring-data-commons")
 
+    compileOnly(project(":graphql-dgs-spring-boot-starter"))
     compileOnly("org.springframework.boot:spring-boot-autoconfigure")
     compileOnly("org.springframework.boot:spring-boot-starter")
     compileOnly("org.springframework:spring-core")
 
     testImplementation(project(":graphql-dgs-spring-boot-starter"))
-
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-web")
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa")
-
-    testRuntimeOnly("com.h2database:h2")
 
     testImplementation("io.mockk:mockk:1.10.3-jdk8")
     testImplementation("net.minidev:json-smart:2.3")
     testImplementation("com.graphql-java:graphql-java-extended-scalars:1.0")
     testImplementation("com.github.javafaker:javafaker:1.+")
+
+    testRuntimeOnly("com.h2database:h2")
 }
 

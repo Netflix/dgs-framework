@@ -16,10 +16,12 @@
 
 package com.netflix.graphql.dgs.springdata
 
+import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import graphql.Scalars
 import graphql.language.FieldDefinition
 import graphql.language.ListType
+import graphql.language.ObjectTypeDefinition
 import graphql.language.ObjectTypeExtensionDefinition
 import graphql.language.TypeName
 import graphql.schema.GraphQLFieldDefinition
@@ -38,10 +40,16 @@ import java.time.OffsetDateTime
 import javax.annotation.PostConstruct
 
 
+@DgsComponent
 class SchemaTypeGenerator(private val repositories: Repositories) {
 
-    private val builtTypes = emptyMap<String, ObjectTypeExtensionDefinition>().toMutableMap()
+    private val builtTypes = emptyMap<String, ObjectTypeDefinition>().toMutableMap()
     private val typeDefinitionRegistry = TypeDefinitionRegistry()
+
+    @DgsTypeDefinitionRegistry
+    fun schemaTypes(): TypeDefinitionRegistry {
+        return typeDefinitionRegistry
+    }
 
     @PostConstruct
     fun createSchemaTypes() {
@@ -49,7 +57,7 @@ class SchemaTypeGenerator(private val repositories: Repositories) {
         repositoryInfos.forEach { repoMetadata ->
             if (! builtTypes.containsKey(sanitizeName(repoMetadata.domainType.simpleName))) {
                 val domainTypeBuilder =
-                    ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name(sanitizeName(repoMetadata.domainType.simpleName))
+                    ObjectTypeDefinition.newObjectTypeDefinition().name(sanitizeName(repoMetadata.domainType.simpleName))
                 repoMetadata.domainType.declaredFields
                     .forEach {
                         domainTypeBuilder.fieldDefinition(createFieldDefinition(it))
@@ -62,10 +70,6 @@ class SchemaTypeGenerator(private val repositories: Repositories) {
         }
     }
 
-    @DgsTypeDefinitionRegistry
-    fun schemaTypes(): TypeDefinitionRegistry {
-        return typeDefinitionRegistry
-    }
 
     private fun createSchemaType(schemaType: Class<*>)  {
         if (!builtTypes.containsKey(sanitizeName(sanitizeName(schemaType.name)))) {

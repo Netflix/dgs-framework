@@ -16,7 +16,9 @@
 
 package com.netflix.graphql.dgs.springdata
 
+import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
+import org.springframework.boot.autoconfigure.AutoConfigureBefore
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
 import org.springframework.context.ApplicationContext
@@ -30,7 +32,7 @@ import org.springframework.format.support.DefaultFormattingConversionService
 import java.util.*
 
 @Configuration
-@AutoConfigureAfter(JpaRepositoriesAutoConfiguration::class)
+@AutoConfigureBefore(DgsAutoConfiguration::class)
 open class DgsSpringDataAutoconfiguration {
 
     @Bean
