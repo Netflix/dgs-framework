@@ -17,20 +17,31 @@
 package com.netflix.graphql.dgs.springdata
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.convert.ConversionService
+import org.springframework.data.repository.support.DefaultRepositoryInvokerFactory
 import org.springframework.data.repository.support.Repositories
+import org.springframework.data.repository.support.RepositoryInvokerFactory
+import org.springframework.format.support.DefaultFormattingConversionService
+import java.util.*
 
 @Configuration
 @AutoConfigureAfter(JpaRepositoriesAutoConfiguration::class)
 open class DgsSpringDataAutoconfiguration {
 
-
     @Bean
     open fun repositories(applicationContext: ApplicationContext): Repositories {
         return Repositories(applicationContext)
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun repositoryInvokerFactory(repositories: Repositories, optConversionService: Optional<ConversionService>): RepositoryInvokerFactory {
+        return DefaultRepositoryInvokerFactory(repositories, optConversionService.orElse(DefaultFormattingConversionService()))
     }
 
     @Bean

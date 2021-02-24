@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.data.repository.support.RepositoryInvokerFactory
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
@@ -60,9 +61,14 @@ open class DgsSpringDataIntegrationTest {
     @Autowired
     private lateinit var repositoryDatafetcherManager: RepositoryDatafetcherManager
 
-    @Autowired lateinit var schemaProvider: DgsSchemaProvider
+    @Autowired
+    private lateinit var repositoryInvokerFactory: RepositoryInvokerFactory
 
-    @Autowired lateinit var schema: GraphQLSchema
+    @Autowired
+    private lateinit var schemaProvider: DgsSchemaProvider
+
+    @Autowired
+    private lateinit var schema: GraphQLSchema
 
     @Test
     fun `Application starts`() {
@@ -70,6 +76,10 @@ open class DgsSpringDataIntegrationTest {
         assertThat(entityManager).isNotNull
         assertThat(reviewEntityRepository).isNotNull
         assertThat(showEntityRepository).isNotNull
+        assertThat(repositoryDatafetcherManager).isNotNull
+        assertThat(repositoryInvokerFactory).isNotNull
+        assertThat(schemaProvider).isNotNull
+        assertThat(schema).isNotNull
     }
 
     @Test
