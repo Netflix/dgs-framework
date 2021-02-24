@@ -42,13 +42,13 @@ internal open class SchemaTypeGeneratorTest {
     @BeforeEach
     fun before() {
         schemaTypeGenerator = SchemaTypeGenerator(repositories)
-        schemaTypeGenerator.createSchemaTypes()
+
     }
 
 
     @Test
     fun `Should create a person type`() {
-
+        schemaTypeGenerator.createSchemaTypes()
     }
 
 }
