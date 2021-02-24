@@ -33,7 +33,7 @@ dependencies {
     compileOnly("org.springframework.boot:spring-boot-starter")
     compileOnly("org.springframework:spring-core")
 
-    testImplementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
+    testImplementation(project(":graphql-dgs-spring-boot-starter"))
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-web")

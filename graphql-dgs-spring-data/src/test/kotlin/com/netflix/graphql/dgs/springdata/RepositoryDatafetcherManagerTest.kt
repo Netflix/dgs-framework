@@ -29,6 +29,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.support.Repositories
+import org.springframework.data.repository.support.RepositoryInvokerFactory
 
 @SpringBootTest
 @SpringBootConfiguration
@@ -41,6 +42,9 @@ internal open class RepositoryDatafetcherManagerTest {
 
     @Autowired
     private lateinit var repositories: Repositories
+
+    @Autowired
+    private lateinit var repositoryInvoker: RepositoryInvokerFactory
 
     private lateinit var repositoryDatafetcherManager: RepositoryDatafetcherManager
 
