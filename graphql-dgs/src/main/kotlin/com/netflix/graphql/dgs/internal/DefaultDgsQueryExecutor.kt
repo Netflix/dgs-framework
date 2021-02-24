@@ -29,6 +29,7 @@ import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionExcepti
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
 import graphql.*
+import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
 import graphql.execution.NonNullableFieldWasNullError
 import graphql.execution.SubscriptionExecutionStrategy
@@ -37,6 +38,7 @@ import graphql.schema.GraphQLSchema
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
+import java.util.Optional
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -49,6 +51,7 @@ class DefaultDgsQueryExecutor(defaultSchema: GraphQLSchema,
                               private val chainedInstrumentation: ChainedInstrumentation,
                               private val queryExecutionStrategy: ExecutionStrategy,
                               private val mutationExecutionStrategy: ExecutionStrategy,
+                              private val idProvider: Optional<ExecutionIdProvider>,
                               private val reloadIndicator: ReloadSchemaIndicator = ReloadSchemaIndicator{ false }
 ) : DgsQueryExecutor {
 
@@ -82,13 +85,16 @@ class DefaultDgsQueryExecutor(defaultSchema: GraphQLSchema,
                 else
                     schema.get()
 
-        val graphQL =
-                GraphQL.newGraphQL(graphQLSchema)
-                        .instrumentation(chainedInstrumentation)
-                        .queryExecutionStrategy(queryExecutionStrategy)
-                        .mutationExecutionStrategy(mutationExecutionStrategy)
-                        .subscriptionExecutionStrategy(SubscriptionExecutionStrategy())
-                        .build()
+        val graphQLBuilder =
+            GraphQL.newGraphQL(graphQLSchema)
+                .instrumentation(chainedInstrumentation)
+                .queryExecutionStrategy(queryExecutionStrategy)
+                .mutationExecutionStrategy(mutationExecutionStrategy)
+                .subscriptionExecutionStrategy(SubscriptionExecutionStrategy())
+        if (idProvider.isPresent) {
+            graphQLBuilder.executionIdProvider(idProvider.get())
+        }
+        val graphQL = graphQLBuilder.build()
 
         val dgsContext = contextBuilder.build()
         val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier({ dgsContext })
