@@ -17,6 +17,9 @@
         }
     },
     "compileClasspath": {
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "locked": "2.11.4"
+        },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.11.4"
         },
@@ -146,6 +149,9 @@
         }
     },
     "runtimeClasspath": {
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "locked": "2.11.4"
+        },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.11.4"
         },
@@ -198,6 +204,9 @@
         }
     },
     "testCompileClasspath": {
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "locked": "2.11.4"
+        },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.11.4"
         },
@@ -248,6 +257,9 @@
         }
     },
     "testRuntimeClasspath": {
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "locked": "2.11.4"
+        },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.11.4"
         },
