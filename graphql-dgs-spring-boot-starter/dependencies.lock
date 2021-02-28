@@ -17,6 +17,12 @@
         }
     },
     "compileClasspath": {
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "locked": "2.11.4"
+        },
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.11.4"
         },
@@ -134,10 +140,17 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "0.6.1"
+            "locked": "0.6.3"
+        },
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "locked": "2.11.4"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
             "locked": "2.11.4"
@@ -323,6 +336,12 @@
         }
     },
     "testCompileClasspath": {
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "locked": "2.11.4"
+        },
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.11.4"
         },
@@ -426,10 +445,17 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "0.6.1"
+            "locked": "0.6.3"
+        },
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "locked": "2.11.4"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
             "locked": "2.11.4"

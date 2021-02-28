@@ -18,7 +18,10 @@
     },
     "compileClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "0.6.1"
+            "locked": "0.6.3"
+        },
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "locked": "2.11.4"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "locked": "2.11.4"
@@ -166,7 +169,10 @@
     },
     "runtimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "0.6.1"
+            "locked": "0.6.3"
+        },
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "locked": "2.11.4"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "locked": "2.11.4"
@@ -249,7 +255,10 @@
     },
     "testCompileClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "0.6.1"
+            "locked": "0.6.3"
+        },
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "locked": "2.11.4"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "locked": "2.11.4"
@@ -277,7 +286,7 @@
             "locked": "1.10.3-jdk8"
         },
         "io.reactivex.rxjava3:rxjava": {
-            "locked": "3.0.10"
+            "locked": "3.0.11-RC5"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "firstLevelTransitive": [
@@ -312,7 +321,10 @@
     },
     "testRuntimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "0.6.1"
+            "locked": "0.6.3"
+        },
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "locked": "2.11.4"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "locked": "2.11.4"
@@ -346,7 +358,7 @@
             "locked": "1.10.3-jdk8"
         },
         "io.reactivex.rxjava3:rxjava": {
-            "locked": "3.0.10"
+            "locked": "3.0.11-RC5"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "firstLevelTransitive": [

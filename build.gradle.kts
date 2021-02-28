@@ -16,7 +16,7 @@
 
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
     }
 }
 
@@ -35,7 +35,7 @@ plugins {
 allprojects {
     group = "com.netflix.graphql.dgs"
     repositories {
-        jcenter()
+        mavenCentral()
     }
 
     apply(plugin = "java-library")

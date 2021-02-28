@@ -181,7 +181,13 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "0.6.1"
+            "locked": "0.6.3"
+        },
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "2.11.4"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "firstLevelTransitive": [
@@ -380,7 +386,13 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "0.6.1"
+            "locked": "0.6.3"
+        },
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "2.11.4"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "firstLevelTransitive": [
