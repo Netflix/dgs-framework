@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-plugins {
-    kotlin("jvm")
-}
-
-
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation(project(":graphql-dgs-spring-boot-starter"))

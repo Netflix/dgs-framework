@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-plugins {
-    kotlin("jvm")
-}
 
 dependencies {
     api("com.jayway.jsonpath:json-path:2.4.+")
     api("io.projectreactor:reactor-core:3.4.+")
     api("com.fasterxml.jackson.core:jackson-annotations")
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework:spring-web")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     testImplementation("org.springframework.boot:spring-boot-starter-web")

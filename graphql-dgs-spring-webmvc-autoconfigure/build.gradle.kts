@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-plugins {
-    kotlin("jvm")
-}
-
-
 dependencies {
     api(project(":graphql-dgs"))
     api(project(":graphql-dgs-spring-webmvc"))

@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-plugins {
-    kotlin("jvm")
-}
-
 dependencies {
     implementation(project(":graphql-dgs"))
     implementation(project(":graphql-dgs-subscriptions-sse"))

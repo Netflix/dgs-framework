@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-plugins {
-    kotlin("jvm")
-}
-
 dependencies {
     api("com.graphql-java:graphql-java:${Versions.GRAPHQL_JAVA}")
     implementation("com.github.javafaker:javafaker:1.+")

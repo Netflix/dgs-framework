@@ -26,11 +26,11 @@ plugins {
     `java-library`
     id("nebula.netflixoss") version "8.10.0"
     id("nebula.dependency-recommender") version "9.1.1"
-    kotlin("jvm") version Versions.KOTLIN_VERSON apply false
+    kotlin("jvm") version Versions.KOTLIN_VERSION
+    kotlin("kapt") version Versions.KOTLIN_VERSION
     idea
     eclipse
 }
-
 
 allprojects {
     group = "com.netflix.graphql.dgs"
@@ -38,7 +38,6 @@ allprojects {
         mavenCentral()
     }
 
-    apply(plugin = "java-library")
     apply(plugin = "nebula.netflixoss")
     apply(plugin = "nebula.dependency-recommender")
 
@@ -48,7 +47,7 @@ allprojects {
      */
     tasks.named("generateLock") {
         doFirst {
-            project.configurations.filter {  it.name.contains("DependenciesMetadata")}.forEach {
+            project.configurations.filter { it.name.contains("DependenciesMetadata") }.forEach {
                 it.isCanBeResolved = false
             }
         }
@@ -62,30 +61,66 @@ allprojects {
         mavenBom(mapOf(Pair("module", "com.fasterxml.jackson:jackson-bom:${Versions.JACKSON_BOM}")))
     }
 
+    configurations.all {
+        resolutionStrategy {
+            force("org.jetbrains.kotlin:kotlin-reflect:${Versions.KOTLIN_VERSION}")
+        }
+    }
+}
+
+subprojects {
+    apply {
+        plugin("java-library")
+        plugin("kotlin")
+        plugin("kotlin-kapt")
+    }
+
     dependencies {
+        // Speed up processing of AutoConfig's produced by Spring Boot
+        annotationProcessor("org.springframework.boot:spring-boot-autoconfigure-processor")
+        // Produce Config Metadata for properties used in Spring Boot
+        annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+        // Speed up processing of AutoConfig's produced by Spring Boot for Kotlin
+        kapt("org.springframework.boot:spring-boot-autoconfigure-processor:${Versions.SPRING_BOOT_VERSION}")
+        // Produce Config Metadata for properties used in Spring Boot for Kotlin
+        kapt("org.springframework.boot:spring-boot-configuration-processor:${Versions.SPRING_BOOT_VERSION}")
+
         testImplementation("org.springframework.boot:spring-boot-starter-test") {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         }
+        testImplementation("io.mockk:mockk:1.10.3-jdk8")
     }
+
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = "1.8"
+    kapt {
+        arguments {
+            arg("org.springframework.boot.configurationprocessor.additionalMetadataLocations",
+                    "$projectDir/src/main/resources"
+            )
         }
     }
 
+    tasks {
+        compileKotlin {
+            kotlinOptions {
+                // freeCompilerArgs = listOf("-Xjsr305=strict")
+                jvmTarget = "1.8"
+            }
+        }
 
-    tasks.withType<Test> {
-        useJUnitPlatform()
-    }
+        compileTestKotlin {
+            kotlinOptions {
+                // freeCompilerArgs = listOf("-Xjsr305=strict")
+                jvmTarget = "1.8"
+            }
+        }
 
-    configurations.all {
-        resolutionStrategy {
-            force("org.jetbrains.kotlin:kotlin-reflect:${Versions.KOTLIN_VERSON}")
+        test {
+            useJUnitPlatform()
         }
     }
 }

@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-plugins {
-    kotlin("jvm")
-}
-
-
 dependencies {
     implementation(project(":graphql-dgs"))
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
