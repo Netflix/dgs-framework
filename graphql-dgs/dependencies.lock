@@ -58,9 +58,6 @@
             ],
             "locked": "1.4.10"
         },
-        "org.springframework.boot:spring-boot": {
-            "locked": "2.3.6.RELEASE"
-        },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.6.RELEASE"
         },
@@ -72,6 +69,9 @@
         },
         "org.springframework.security:spring-security-core": {
             "locked": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-context": {
+            "locked": "5.2.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.2.12.RELEASE"
@@ -246,9 +246,6 @@
             ],
             "locked": "1.7.30"
         },
-        "org.springframework.boot:spring-boot": {
-            "locked": "2.3.6.RELEASE"
-        },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.6.RELEASE"
         },
@@ -260,6 +257,9 @@
         },
         "org.springframework.security:spring-security-core": {
             "locked": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-context": {
+            "locked": "5.2.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.2.12.RELEASE"
@@ -327,9 +327,6 @@
             ],
             "locked": "1.4.10"
         },
-        "org.springframework.boot:spring-boot": {
-            "locked": "2.3.6.RELEASE"
-        },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.6.RELEASE"
         },
@@ -344,6 +341,9 @@
         },
         "org.springframework.security:spring-security-core": {
             "locked": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-context": {
+            "locked": "5.2.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.2.12.RELEASE"
@@ -406,9 +406,6 @@
             ],
             "locked": "1.7.30"
         },
-        "org.springframework.boot:spring-boot": {
-            "locked": "2.3.6.RELEASE"
-        },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.6.RELEASE"
         },
@@ -423,6 +420,9 @@
         },
         "org.springframework.security:spring-security-core": {
             "locked": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-context": {
+            "locked": "5.2.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.2.12.RELEASE"
