@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "dgs.graphql.graphiql.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enables GraphiQL functionality.",
+      "defaultValue": "true"
+    }
+  ]
+}

@@ -374,6 +374,9 @@
         "org.springframework.boot:spring-boot-starter-test": {
             "locked": "2.3.8.RELEASE"
         },
+        "org.springframework.boot:spring-boot-starter-web": {
+            "locked": "2.3.8.RELEASE"
+        },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
         },
@@ -488,6 +491,9 @@
             "locked": "2.3.8.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "2.3.8.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-starter-web": {
             "locked": "2.3.8.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {

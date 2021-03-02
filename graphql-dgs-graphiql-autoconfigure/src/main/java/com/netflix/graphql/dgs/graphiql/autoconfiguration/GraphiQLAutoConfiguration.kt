@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.graphiql.autoconfiguration
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -25,6 +26,7 @@ import org.springframework.web.servlet.DispatcherServlet
 @Configuration
 @ConditionalOnWebApplication
 @ConditionalOnClass(DispatcherServlet::class)
+@ConditionalOnProperty(name = ["dgs.graphql.graphiql.enabled"], havingValue = "true", matchIfMissing = true)
 open class GraphiQLAutoConfiguration {
     @Bean
     open fun graphiQLConfigurer(): GraphiQLConfigurer {

@@ -18,7 +18,6 @@ package com.netflix.graphql.dgs.mvc
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import graphql.ExecutionResultImpl
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -40,10 +39,6 @@ import org.springframework.web.multipart.MultipartFile
 class DgsMultipartPostControllerTest {
     @MockK
     lateinit var dgsQueryExecutor: DgsQueryExecutor
-
-    @MockK
-    lateinit var dgsSchemaProvider: DgsSchemaProvider
-
 
     @Test
     fun singleFileUpload() {
@@ -69,7 +64,7 @@ class DgsMultipartPostControllerTest {
 
         every { dgsQueryExecutor.execute(queryString, variablesMap, any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("Response", "success"))).build()
 
-        val result = DgsRestController(dgsSchemaProvider, dgsQueryExecutor).graphql(null, Maps.newHashMap("0", file1), operation, map, HttpHeaders())
+        val result = DgsRestController(dgsQueryExecutor).graphql(null, Maps.newHashMap("0", file1), operation, map, HttpHeaders())
 
         val mapper = jacksonObjectMapper()
         val (data, errors) = mapper.readValue(result.body, GraphQLResponse::class.java)
@@ -107,7 +102,7 @@ class DgsMultipartPostControllerTest {
 
         every { dgsQueryExecutor.execute(queryString, Maps.newHashMap("input", queryInputMap), any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("Response", "success"))).build()
 
-        val result = DgsRestController(dgsSchemaProvider, dgsQueryExecutor).graphql(null, mapOf("0" to file1, "1" to file2), operation, map, HttpHeaders())
+        val result = DgsRestController(dgsQueryExecutor).graphql(null, mapOf("0" to file1, "1" to file2), operation, map, HttpHeaders())
 
         val mapper = jacksonObjectMapper()
         val (data, errors) = mapper.readValue(result.body, GraphQLResponse::class.java)
@@ -141,7 +136,7 @@ class DgsMultipartPostControllerTest {
 
         every { dgsQueryExecutor.execute(queryString, variablesMap, any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("Response", "success"))).build()
 
-        val result = DgsRestController(dgsSchemaProvider, dgsQueryExecutor).graphql(null, mapOf("0" to file1, "1" to file2), operation, map, HttpHeaders())
+        val result = DgsRestController(dgsQueryExecutor).graphql(null, mapOf("0" to file1, "1" to file2), operation, map, HttpHeaders())
 
         val mapper = jacksonObjectMapper()
         val (data, errors) = mapper.readValue(result.body, GraphQLResponse::class.java)
@@ -169,15 +164,15 @@ class DgsMultipartPostControllerTest {
         val file: MultipartFile = MockMultipartFile("foo", "foo.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".toByteArray())
 
         // missing operation part
-        var responseEntity = DgsRestController(dgsSchemaProvider, dgsQueryExecutor).graphql(null, mapOf("0" to file), null, map, HttpHeaders())
+        var responseEntity = DgsRestController(dgsQueryExecutor).graphql(null, mapOf("0" to file), null, map, HttpHeaders())
         assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
 
         // missing file parts
-        responseEntity = DgsRestController(dgsSchemaProvider, dgsQueryExecutor).graphql(null, null, operation, map, HttpHeaders())
+        responseEntity = DgsRestController(dgsQueryExecutor).graphql(null, null, operation, map, HttpHeaders())
         assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
 
         // missing mapped object paths part
-        responseEntity = DgsRestController(dgsSchemaProvider, dgsQueryExecutor).graphql(null, mapOf("0" to file), operation, null, HttpHeaders())
+        responseEntity = DgsRestController(dgsQueryExecutor).graphql(null, mapOf("0" to file), operation, null, HttpHeaders())
         assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
 
     }
@@ -203,7 +198,7 @@ class DgsMultipartPostControllerTest {
         val file: MultipartFile = MockMultipartFile("foo", "foo.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".toByteArray())
 
         assertThrows(RuntimeException::class.java) {
-            DgsRestController(dgsSchemaProvider, dgsQueryExecutor).graphql(null, mapOf("0" to file), operation, map, HttpHeaders())
+            DgsRestController(dgsQueryExecutor).graphql(null, mapOf("0" to file), operation, map, HttpHeaders())
         }
     }
 }

@@ -17,4 +17,6 @@
 dependencies {
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("org.springframework:spring-webmvc")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-web")
 }
