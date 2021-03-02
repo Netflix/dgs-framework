@@ -1,1 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
+org.springframework.boot.diagnostics.FailureAnalyzer=com.netflix.graphql.dgs.diagnostics.SchemaFailureAnalyzer

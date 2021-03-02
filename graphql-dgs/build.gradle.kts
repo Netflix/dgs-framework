@@ -22,7 +22,7 @@ dependencies {
     api("com.jayway.jsonpath:json-path:2.+")
 
     implementation("org.springframework:spring-web")
-    implementation("org.springframework.boot:spring-boot")
+    implementation("org.springframework:spring-context")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")

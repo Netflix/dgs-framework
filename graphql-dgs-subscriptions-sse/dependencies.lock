@@ -274,12 +274,6 @@
             ],
             "locked": "1.7.30"
         },
-        "org.springframework.boot:spring-boot": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
-            "locked": "2.3.6.RELEASE"
-        },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.6.RELEASE"
         },
@@ -294,6 +288,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
             "locked": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-context": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "5.2.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.2.12.RELEASE"
@@ -474,12 +474,6 @@
             ],
             "locked": "1.7.30"
         },
-        "org.springframework.boot:spring-boot": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
-            "locked": "2.3.6.RELEASE"
-        },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.6.RELEASE"
         },
@@ -497,6 +491,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
             "locked": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-context": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "5.2.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.2.12.RELEASE"
