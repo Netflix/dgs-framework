@@ -4,7 +4,7 @@
             "locked": "2.11.4"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.8.RELEASE"
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -20,8 +20,96 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.11.4"
         },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.4.10"
+        },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.8.RELEASE"
+            "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "Hoxton.SR9"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.2.12.RELEASE"
+        }
+    },
+    "kotlinCompilerClasspath": {
+        "com.fasterxml.jackson:jackson-bom": {
+            "locked": "2.11.4"
+        },
+        "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
+            "locked": "1.4.10"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "Hoxton.SR9"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.2.12.RELEASE"
+        }
+    },
+    "kotlinCompilerPluginClasspath": {
+        "com.fasterxml.jackson:jackson-bom": {
+            "locked": "2.11.4"
+        },
+        "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
+            "locked": "1.4.10"
+        },
+        "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
+            "locked": "1.4.10"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "Hoxton.SR9"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.2.12.RELEASE"
+        }
+    },
+    "kotlinKaptWorkerDependencies": {
+        "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
+            "locked": "1.4.10"
+        }
+    },
+    "kotlinKlibCommonizerClasspath": {
+        "com.fasterxml.jackson:jackson-bom": {
+            "locked": "2.11.4"
+        },
+        "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
+            "locked": "1.4.10"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "Hoxton.SR9"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.3.6.RELEASE"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.2.12.RELEASE"
+        }
+    },
+    "kotlinNativeCompilerPluginClasspath": {
+        "com.fasterxml.jackson:jackson-bom": {
+            "locked": "2.11.4"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -38,7 +126,7 @@
             "locked": "2.11.4"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.8.RELEASE"
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -54,8 +142,11 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.11.4"
         },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.4.10"
+        },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.8.RELEASE"
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -72,7 +163,7 @@
             "locked": "2.11.4"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.8.RELEASE"
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -88,11 +179,11 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.11.4"
         },
-        "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.8.RELEASE"
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.4.10"
         },
-        "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.3.8.RELEASE"
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -108,11 +199,11 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.11.4"
         },
-        "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.8.RELEASE"
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.4.10"
         },
-        "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.3.8.RELEASE"
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
