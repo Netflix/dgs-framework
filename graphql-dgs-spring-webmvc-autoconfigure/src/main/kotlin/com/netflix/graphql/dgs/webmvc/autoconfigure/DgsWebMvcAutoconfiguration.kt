@@ -19,6 +19,8 @@ package com.netflix.graphql.dgs.webmvc.autoconfigure
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.mvc.DgsRestController
+import com.netflix.graphql.dgs.mvc.DgsRestSchemaJsonController
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -27,7 +29,16 @@ import org.springframework.context.annotation.Configuration
 @ConditionalOnWebApplication
 open class DgsWebMvcAutoconfiguration {
     @Bean
-    open fun dgsRestController(dgsSchemaProvider: DgsSchemaProvider, dgsQueryExecutor: DgsQueryExecutor): DgsRestController {
-        return DgsRestController(dgsSchemaProvider, dgsQueryExecutor)
+    open fun dgsRestController(dgsQueryExecutor: DgsQueryExecutor): DgsRestController {
+        return DgsRestController(dgsQueryExecutor)
+    }
+
+    @Configuration
+    @ConditionalOnProperty(name = ["dgs.graphql.schema-json.enabled"], havingValue = "true", matchIfMissing = true)
+    open class DgsWebMvcSchemaJsonConfiguration {
+        @Bean
+        open fun dgsRestSchemaJsonController(dgsSchemaProvider: DgsSchemaProvider): DgsRestSchemaJsonController {
+            return DgsRestSchemaJsonController(dgsSchemaProvider)
+        }
     }
 }

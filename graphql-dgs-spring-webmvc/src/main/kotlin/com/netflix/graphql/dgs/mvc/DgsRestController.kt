@@ -21,13 +21,10 @@ import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.utils.MultipartVariableMapper
 import com.netflix.graphql.dgs.internal.utils.TimeTracer
 import graphql.*
 import graphql.execution.reactive.CompletionStageMappingPublisher
-import graphql.introspection.IntrospectionQuery
-import graphql.schema.GraphQLSchema
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
@@ -64,7 +61,7 @@ import org.springframework.web.multipart.MultipartFile
  */
 
 @RestController
-class DgsRestController(private val schemaProvider: DgsSchemaProvider, private val dgsQueryExecutor: DgsQueryExecutor) {
+class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
     val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
 
     @RequestMapping("/graphql", produces = ["application/json"])
@@ -155,19 +152,5 @@ class DgsRestController(private val schemaProvider: DgsSchemaProvider, private v
 
         return ResponseEntity.ok(result)
     }
-
-    @RequestMapping("/schema.json", produces = ["application/json"])
-    fun schema(): String {
-        val mapper = jacksonObjectMapper()
-
-        val graphQLSchema: GraphQLSchema = schemaProvider.schema()
-        val graphQL = GraphQL.newGraphQL(graphQLSchema).build()
-
-        val executionInput: ExecutionInput = ExecutionInput.newExecutionInput().query(IntrospectionQuery.INTROSPECTION_QUERY)
-                .build()
-        val execute: ExecutionResult = graphQL.execute(executionInput)
-
-        return mapper.writeValueAsString(execute.toSpecification())
-
-    }
 }
+

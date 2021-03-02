@@ -19,7 +19,6 @@ package com.netflix.graphql.dgs.mvc
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import graphql.ExecutionResultImpl
 import graphql.execution.reactive.CompletionStageMappingPublisher
 import io.mockk.every
@@ -38,9 +37,6 @@ class DgsRestControllerTest {
     @MockK
     lateinit var dgsQueryExecutor: DgsQueryExecutor
 
-    @MockK
-    lateinit var dgsSchemaProvider: DgsSchemaProvider
-
     @Test
     fun errorForSubscriptionOnGraphqlEndpoint() {
         val queryString = "subscription { stocks { name } }"
@@ -52,7 +48,7 @@ class DgsRestControllerTest {
 
         every { dgsQueryExecutor.execute(queryString, emptyMap(), any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(CompletionStageMappingPublisher<String,String>(null, null)).build()
 
-        val result = DgsRestController(dgsSchemaProvider, dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders())
+        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders())
         assertThat(result.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
         assertThat(result.body).isEqualTo("Trying to execute subscription on /graphql. Use /subscriptions instead!")
     }
@@ -68,7 +64,7 @@ class DgsRestControllerTest {
 
         every { dgsQueryExecutor.execute(queryString, emptyMap(), any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).build()
 
-        val result = DgsRestController(dgsSchemaProvider, dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders())
+        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders())
         val mapper = jacksonObjectMapper()
         val (data, errors) = mapper.readValue(result.body, GraphQLResponse::class.java)
         assertThat(errors.size).isEqualTo(0)
@@ -88,7 +84,7 @@ class DgsRestControllerTest {
         val capturedOperationName = slot<String>()
         every { dgsQueryExecutor.execute(queryString, emptyMap(), any(), any(), capture(capturedOperationName)) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hi", "there"))).build()
 
-        val result = DgsRestController(dgsSchemaProvider, dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders())
+        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders())
         val mapper = jacksonObjectMapper()
         val (data, errors) = mapper.readValue(result.body, GraphQLResponse::class.java)
         assertThat(errors.size).isEqualTo(0)
@@ -100,6 +96,7 @@ class DgsRestControllerTest {
 
 
 data class GraphQLResponse(val data: Map<String, Any> = emptyMap(), val errors: List<GraphQLError> = emptyList())
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class GraphQLError(val message: String)
 
