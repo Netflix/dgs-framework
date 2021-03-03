@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,8 +37,8 @@ class UnionDataFetcherTest {
 
     data class SeriesSearchResult(val name: String, val episodes: Int)
 
-    val searchResultTypeResolver = object: Any() {
-        @DgsTypeResolver(name="SearchResult")
+    val searchResultTypeResolver = object : Any() {
+        @DgsTypeResolver(name = "SearchResult")
         fun searchResultTypes(result: Any): String {
             return when (result) {
                 is MovieSearchResult -> "MovieSearchResult"
@@ -48,17 +48,17 @@ class UnionDataFetcherTest {
         }
     }
 
-    val queryFetcher = object: Any() {
-        @DgsData(parentType="Query", field="search")
-        fun searchFetcher():List<Any> {
+    val queryFetcher = object : Any() {
+        @DgsData(parentType = "Query", field = "search")
+        fun searchFetcher(): List<Any> {
             return listOf(MovieSearchResult("Extraction", 90), SeriesSearchResult("The Witcher", 15))
         }
     }
 
-    val imdbFetcher = object: Any() {
-        @DgsData(parentType="SearchResult", field="imdbRating")
-        fun imdbRating():Int {
-            return Random.nextInt(1,5)
+    val imdbFetcher = object : Any() {
+        @DgsData(parentType = "SearchResult", field = "imdbRating")
+        fun imdbRating(): Int {
+            return Random.nextInt(1, 5)
         }
     }
 

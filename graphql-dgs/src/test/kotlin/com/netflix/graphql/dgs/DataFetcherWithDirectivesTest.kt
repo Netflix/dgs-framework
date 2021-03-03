@@ -31,12 +31,13 @@ import java.util.*
 class DataFetcherWithDirectivesTest {
     @MockK
     lateinit var applicationContextMock: ApplicationContext
+
     @Test
     fun addFetchersWithConvertedArguments() {
 
-        val queryFetcher = object: Any() {
-            @DgsData(parentType="Query", field="hello")
-            fun hellOFetcher(dataFetchingEnvironment: DgsDataFetchingEnvironment):String {
+        val queryFetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun hellOFetcher(dataFetchingEnvironment: DgsDataFetchingEnvironment): String {
                 val directive = dataFetchingEnvironment.fieldDefinition.directives[0]
                 return "hello ${directive.arguments[0].value}"
             }
@@ -47,7 +48,7 @@ class DataFetcherWithDirectivesTest {
 
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
         val schema = provider.schema(
-            """
+                """
             directive @someDirective(name: String) on FIELD_DEFINITION
             type Query {
                 hello: String @someDirective(name: "some name")
@@ -58,7 +59,7 @@ class DataFetcherWithDirectivesTest {
 
         val build = GraphQL.newGraphQL(schema).build()
         val executionResult = build.execute("{ hello }")
-        val data: Map<String,String> = executionResult.getData()
+        val data: Map<String, String> = executionResult.getData()
         assertThat(data["hello"]).isEqualTo("hello some name")
     }
 }

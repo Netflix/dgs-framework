@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,10 @@ import com.netflix.graphql.mocking.testobjects.MyObject
 import com.netflix.graphql.mocking.testobjects.SomeObject
 import graphql.ExecutionInput
 import graphql.GraphQL
-import graphql.schema.*
+import graphql.schema.DataFetcher
+import graphql.schema.FieldCoordinates
+import graphql.schema.GraphQLCodeRegistry
+import graphql.schema.GraphQLSchema
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.SchemaGenerator
 import graphql.schema.idl.SchemaParser
@@ -174,8 +177,8 @@ internal class MockGraphQLVisitorTest {
 
         val someObject = data["someObject"] as Map<*, *>
 
-        when(val value = someObject["someKey"]!!) {
-            is List<*> -> value.forEach { Assertions.assertTrue(it is String)}
+        when (val value = someObject["someKey"]!!) {
+            is List<*> -> value.forEach { Assertions.assertTrue(it is String) }
             else -> Assertions.fail("Returned mock is not a List")
         }
     }
@@ -202,7 +205,7 @@ internal class MockGraphQLVisitorTest {
         val data = execute(schema, "query { someObject {someKey { name} } }", mockConfig)
 
         val someObject = data["someObject"] as Map<*, *>
-        val someKey = someObject["someKey"] as Map<*,*>
+        val someKey = someObject["someKey"] as Map<*, *>
         Assertions.assertNotNull(someKey)
         Assertions.assertTrue(someKey["name"] is String)
     }
@@ -230,7 +233,7 @@ internal class MockGraphQLVisitorTest {
 
         val someObject = data["someObject"] as Map<*, *>
         val myObjectArr = someObject["someKey"] as List<*>
-        Assertions.assertTrue(((myObjectArr[0] as Map<*,*>)["name"] as String).isNotBlank())
+        Assertions.assertTrue(((myObjectArr[0] as Map<*, *>)["name"] as String).isNotBlank())
 
     }
 
@@ -279,7 +282,7 @@ internal class MockGraphQLVisitorTest {
         val someKeyList = someObject["someKey"] as List<*>
         Assertions.assertNotNull(someKeyList)
         Assertions.assertEquals(1, someKeyList.size)
-        Assertions.assertEquals("mymockedvalue", (someKeyList[0] as Map<*,*>)["name"])
+        Assertions.assertEquals("mymockedvalue", (someKeyList[0] as Map<*, *>)["name"])
     }
 
     @Test
@@ -324,7 +327,7 @@ internal class MockGraphQLVisitorTest {
         Assertions.assertEquals(listOf("listNameMock"), names)
     }
 
-  private fun execute(schema: GraphQLSchema, query: String, mockConfig: Map<String, Any?>): Map<String, *> {
+    private fun execute(schema: GraphQLSchema, query: String, mockConfig: Map<String, Any?>): Map<String, *> {
         val transform = DgsSchemaTransformer().transformSchema(schema, mockConfig)
 
         val graphQL = GraphQL.newGraphQL(transform)
@@ -337,7 +340,7 @@ internal class MockGraphQLVisitorTest {
         return executionResult.getData()
     }
 
-    private fun createSchema(schema : String): GraphQLSchema {
+    private fun createSchema(schema: String): GraphQLSchema {
         val schemaParser = SchemaParser()
         val typeDefinitionRegistry = schemaParser.parse(schema.trimIndent())
 

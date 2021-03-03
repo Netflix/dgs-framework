@@ -67,12 +67,12 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
     fun schema(schema: String? = null): GraphQLSchema {
         val startTime = System.currentTimeMillis()
         val dgsComponents = applicationContext.getBeansWithAnnotation(DgsComponent::class.java)
-        val hasDynamicTypeRegistry = dgsComponents.values.any { it.javaClass.methods.any { m -> m.isAnnotationPresent(DgsTypeDefinitionRegistry::class.java) }}
+        val hasDynamicTypeRegistry = dgsComponents.values.any { it.javaClass.methods.any { m -> m.isAnnotationPresent(DgsTypeDefinitionRegistry::class.java) } }
 
         var mergedRegistry = if (schema == null) {
-            findSchemaFiles(hasDynamicTypeRegistry=hasDynamicTypeRegistry).map {
+            findSchemaFiles(hasDynamicTypeRegistry = hasDynamicTypeRegistry).map {
                 InputStreamReader(it.inputStream, StandardCharsets.UTF_8).use { reader -> SchemaParser().parse(reader) }
-            }.fold(TypeDefinitionRegistry()) {a, b -> a.merge(b) }
+            }.fold(TypeDefinitionRegistry()) { a, b -> a.merge(b) }
         } else {
             SchemaParser().parse(schema)
         }
@@ -90,7 +90,7 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
         val codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry()
         val runtimeWiringBuilder = RuntimeWiring.newRuntimeWiring()
 
-        dgsComponents.values.mapNotNull { dgsComponent -> invokeDgsTypeDefinitionRegistry(dgsComponent) }.fold(mergedRegistry) { a, b -> a.merge(b)}
+        dgsComponents.values.mapNotNull { dgsComponent -> invokeDgsTypeDefinitionRegistry(dgsComponent) }.fold(mergedRegistry) { a, b -> a.merge(b) }
         findScalars(applicationContext, runtimeWiringBuilder)
         findDataFetchers(dgsComponents, codeRegistryBuilder, mergedRegistry)
         findTypeResolvers(dgsComponents, runtimeWiringBuilder, mergedRegistry)
@@ -122,7 +122,7 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
             }
 
             method.invoke(dgsComponent) as TypeDefinitionRegistry
-        }.reduceOrNull {a, b -> a.merge(b)}
+        }.reduceOrNull { a, b -> a.merge(b) }
     }
 
 

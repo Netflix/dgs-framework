@@ -38,7 +38,7 @@ import graphql.schema.GraphQLSchema
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
-import java.util.Optional
+import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -52,7 +52,7 @@ class DefaultDgsQueryExecutor(defaultSchema: GraphQLSchema,
                               private val queryExecutionStrategy: ExecutionStrategy,
                               private val mutationExecutionStrategy: ExecutionStrategy,
                               private val idProvider: Optional<ExecutionIdProvider>,
-                              private val reloadIndicator: ReloadSchemaIndicator = ReloadSchemaIndicator{ false }
+                              private val reloadIndicator: ReloadSchemaIndicator = ReloadSchemaIndicator { false }
 ) : DgsQueryExecutor {
 
     private val parseContext: ParseContext =
@@ -80,17 +80,17 @@ class DefaultDgsQueryExecutor(defaultSchema: GraphQLSchema,
 
     override fun execute(query: String, variables: Map<String, Any>, operationName: String?): ExecutionResult {
         val graphQLSchema: GraphQLSchema =
-                if(reloadIndicator.reloadSchema())
-                    schema.updateAndGet{ schemaProvider.schema() }
+                if (reloadIndicator.reloadSchema())
+                    schema.updateAndGet { schemaProvider.schema() }
                 else
                     schema.get()
 
         val graphQLBuilder =
-            GraphQL.newGraphQL(graphQLSchema)
-                .instrumentation(chainedInstrumentation)
-                .queryExecutionStrategy(queryExecutionStrategy)
-                .mutationExecutionStrategy(mutationExecutionStrategy)
-                .subscriptionExecutionStrategy(SubscriptionExecutionStrategy())
+                GraphQL.newGraphQL(graphQLSchema)
+                        .instrumentation(chainedInstrumentation)
+                        .queryExecutionStrategy(queryExecutionStrategy)
+                        .mutationExecutionStrategy(mutationExecutionStrategy)
+                        .subscriptionExecutionStrategy(SubscriptionExecutionStrategy())
         if (idProvider.isPresent) {
             graphQLBuilder.executionIdProvider(idProvider.get())
         }
@@ -115,9 +115,9 @@ class DefaultDgsQueryExecutor(defaultSchema: GraphQLSchema,
         }
 
         //Check for NonNullableFieldWasNull errors, and log them explicitly because they don't run through the exception handlers.
-        if(executionResult.errors.size > 0) {
+        if (executionResult.errors.size > 0) {
             val nullValueError = executionResult.errors.find { it is NonNullableFieldWasNullError }
-            if(nullValueError != null) {
+            if (nullValueError != null) {
                 logger.error(nullValueError.message)
             }
         }
@@ -133,7 +133,7 @@ class DefaultDgsQueryExecutor(defaultSchema: GraphQLSchema,
         return JsonPath.read(getJsonResult(query, variables), jsonPath)
     }
 
-    override fun <T> executeAndExtractJsonPathAsObject(query: String, jsonPath: String, clazz: Class<T> ): T {
+    override fun <T> executeAndExtractJsonPathAsObject(query: String, jsonPath: String, clazz: Class<T>): T {
         val jsonResult = getJsonResult(query, emptyMap())
         return try {
             parseContext.parse(jsonResult).read(jsonPath, clazz)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ import graphql.schema.CoercingSerializeException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-@DgsScalar(name="DateTime")
-class LocalDateTimeScalar: Coercing<LocalDateTime, String> {
+@DgsScalar(name = "DateTime")
+class LocalDateTimeScalar : Coercing<LocalDateTime, String> {
     override fun parseValue(input: Any?): LocalDateTime {
         return LocalDateTime.parse(input.toString(), DateTimeFormatter.ISO_DATE_TIME)
     }

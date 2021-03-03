@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,6 @@ package com.netflix.graphql.dgs.client.codegen
 import java.util.stream.Collectors
 
 
-
-
-
 class GraphQLQueryRequest(private val query: GraphQLQuery, private val projection: BaseProjectionNode?) {
 
     constructor(query: GraphQLQuery) : this(query, null)
@@ -39,12 +36,12 @@ class GraphQLQueryRequest(private val query: GraphQLQuery, private val projectio
                 if (inputEntry.value != null) {
                     builder.append(inputEntry.key)
                     builder.append(": ")
-                    if(inputEntry.value is String) {
+                    if (inputEntry.value is String) {
                         builder.append("\"")
                         builder.append(inputEntry.value.toString())
                         builder.append("\"")
                     } else if (inputEntry.value is List<*>) {
-                        val listValues =  inputEntry.value as List<*>
+                        val listValues = inputEntry.value as List<*>
                         if (listValues.isNotEmpty() && listValues[0] is String) {
                             builder.append("[")
                             val elements = inputEntry.value as List<String>

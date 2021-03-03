@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,19 +41,19 @@ class TypeResolverTest {
         var title: String
     }
 
-    class ScaryMovie: Movie {
+    class ScaryMovie : Movie {
         override var title: String = ""
         var gory = true
     }
 
-    class ActionMovie: Movie {
+    class ActionMovie : Movie {
         override var title: String = ""
         var nrOfExplosions = 0
     }
 
-    val queryFetcher = object: Any() {
-        @DgsData(parentType="Query", field="movies")
-        fun moviesFetcher():List<Movie> {
+    val queryFetcher = object : Any() {
+        @DgsData(parentType = "Query", field = "movies")
+        fun moviesFetcher(): List<Movie> {
             return listOf(ScaryMovie(), ActionMovie())
         }
     }
@@ -146,14 +146,14 @@ class TypeResolverTest {
                         }
                     }
                 }""".trimIndent())
-            }
+        }
 
     }
 
     @Test
     fun testCustomTypeResolver() {
-        val movieTypeResolver = object: Any() {
-            @DgsTypeResolver(name="Movie")
+        val movieTypeResolver = object : Any() {
+            @DgsTypeResolver(name = "Movie")
             fun movieTypes(movie: Movie): String {
                 return when (movie) {
                     is ScaryMovie -> "ScaryMovie"

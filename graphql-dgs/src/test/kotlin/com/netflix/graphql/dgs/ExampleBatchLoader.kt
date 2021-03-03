@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import org.dataloader.BatchLoader
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
-@DgsDataLoader(name="exampleLoader")
-class ExampleBatchLoader: BatchLoader<String, String> {
+@DgsDataLoader(name = "exampleLoader")
+class ExampleBatchLoader : BatchLoader<String, String> {
     override fun load(keys: MutableList<String>?): CompletionStage<MutableList<String>> {
         return CompletableFuture.supplyAsync { mutableListOf("a", "b", "c") }
     }

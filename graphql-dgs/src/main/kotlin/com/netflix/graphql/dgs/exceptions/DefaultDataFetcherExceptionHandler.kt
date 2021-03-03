@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,17 +38,19 @@ class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
         val springSecurityAvailable = try {
             Class.forName("org.springframework.security.access.AccessDeniedException")
             true
-        } catch (ex: ClassNotFoundException) { false }
+        } catch (ex: ClassNotFoundException) {
+            false
+        }
 
-        val graphqlError = if(springSecurityAvailable && exception is org.springframework.security.access.AccessDeniedException) {
+        val graphqlError = if (springSecurityAvailable && exception is org.springframework.security.access.AccessDeniedException) {
             TypedGraphQLError.PERMISSION_DENIED.message("%s: %s", exception::class.java.name, exception.message)
                     .path(handlerParameters.path).build()
-        } else if(exception is DgsEntityNotFoundException) {
+        } else if (exception is DgsEntityNotFoundException) {
             TypedGraphQLError.NOT_FOUND.message("%s: %s", exception::class.java.name, exception.message)
                     .path(handlerParameters.path).build()
-        } else if(exception is DgsBadRequestException) {
+        } else if (exception is DgsBadRequestException) {
             TypedGraphQLError.BAD_REQUEST.message("%s: %s", exception::class.java.name, exception.message)
-                .path(handlerParameters.path).build()
+                    .path(handlerParameters.path).build()
         } else {
             TypedGraphQLError.INTERNAL.message("%s: %s", exception::class.java.name, exception.message)
                     .path(handlerParameters.path).build()

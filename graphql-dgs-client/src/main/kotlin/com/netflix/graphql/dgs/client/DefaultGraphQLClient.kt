@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ import reactor.core.publisher.Mono
  * @sample com.netflix.graphql.dgs.client.StandaloneDgsGraphQLClientTest
  * @sample com.netflix.graphql.dgs.client.GatewayGraphQLClientTest
  */
-class DefaultGraphQLClient(private val url: String): GraphQLClient, MonoGraphQLClient {
+class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQLClient {
 
     companion object {
         private val objectMapper: ObjectMapper = try {
@@ -56,6 +56,7 @@ class DefaultGraphQLClient(private val url: String): GraphQLClient, MonoGraphQLC
         private val defaultHeaders = mapOf(
                 "Accept" to listOf("application/json"),
                 "Content-type" to listOf("application/json"))
+
         private data class Request(val query: String, val variables: Map<String, Any>)
     }
 

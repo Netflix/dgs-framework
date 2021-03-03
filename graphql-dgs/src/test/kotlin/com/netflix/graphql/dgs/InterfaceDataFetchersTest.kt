@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,12 +39,12 @@ class InterfaceDataFetchersTest {
         var title: String
     }
 
-    class ScaryMovie: Movie {
+    class ScaryMovie : Movie {
         override var title: String = ""
         var gory = true
     }
 
-    class ActionMovie: Movie {
+    class ActionMovie : Movie {
         override var title: String = ""
         var nrOfExplosions = 0
     }
@@ -52,8 +52,8 @@ class InterfaceDataFetchersTest {
     @Test
     fun testDataFetchersOnInterface() {
 
-        val movieTypeResolver = object: Any() {
-            @DgsTypeResolver(name="Movie")
+        val movieTypeResolver = object : Any() {
+            @DgsTypeResolver(name = "Movie")
             fun movieTypes(movie: Movie): String {
                 return when (movie) {
                     is ScaryMovie -> "ScaryMovie"
@@ -64,16 +64,16 @@ class InterfaceDataFetchersTest {
 
         }
 
-        val fetcher = object: Any() {
-            @DgsData(parentType="Movie", field="director")
-            fun directorFetcher(dfe: DataFetchingEnvironment):String {
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Movie", field = "director")
+            fun directorFetcher(dfe: DataFetchingEnvironment): String {
                 return "The Director"
             }
         }
 
-        val queryFetcher = object: Any() {
-            @DgsData(parentType="Query", field="movies")
-            fun moviesFetcher(dfe: DataFetchingEnvironment):List<Movie> {
+        val queryFetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "movies")
+            fun moviesFetcher(dfe: DataFetchingEnvironment): List<Movie> {
                 return listOf(ScaryMovie(), ActionMovie())
             }
         }
@@ -107,7 +107,7 @@ class InterfaceDataFetchersTest {
 
         val build = GraphQL.newGraphQL(schema).build()
         val executionResult = build.execute("{movies {director}}")
-         assertEquals(0, executionResult.errors.size)
+        assertEquals(0, executionResult.errors.size)
         assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, List<Map<String, *>>>>()
         assertEquals("The Director", data["movies"]!![0]["director"])

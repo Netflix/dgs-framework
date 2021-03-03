@@ -45,15 +45,15 @@ class DgsFederationResolverTest {
     @MockK
     lateinit var applicationContextMock: ApplicationContext
 
-    lateinit var dgsSchemaProvider:DgsSchemaProvider
+    lateinit var dgsSchemaProvider: DgsSchemaProvider
 
     @BeforeEach
     fun setup() {
         dgsSchemaProvider = DgsSchemaProvider(
                 applicationContextMock,
-        Optional.empty(),
-        Optional.empty(),
-        Optional.empty()
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty()
         )
     }
 
@@ -107,7 +107,7 @@ class DgsFederationResolverTest {
         """.trimIndent()
 
         val graphQLSchema: GraphQLSchema = buildGraphQLSchema(schema)
-        val customTypeResolver = object: DefaultDgsFederationResolver(dgsSchemaProvider) {
+        val customTypeResolver = object : DefaultDgsFederationResolver(dgsSchemaProvider) {
             override fun typeMapping(): Map<Class<*>, String> {
                 return mapOf(Pair(Movie::class.java, "DgsMovie"))
             }
@@ -119,14 +119,14 @@ class DgsFederationResolverTest {
 
     @Test
     fun missingDgsEntityFetcher() {
-        val arguments = mapOf<String,Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("__typename", "Movie")))))
+        val arguments = mapOf<String, Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("__typename", "Movie")))))
         val dataFetchingEnvironment = DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build()
         assertThrows<MissingDgsEntityFetcherException> { DefaultDgsFederationResolver(dgsSchemaProvider).entitiesFetcher().get(dataFetchingEnvironment) }
     }
 
     @Test
     fun missingTypeNameForEntitiesQuery() {
-        val arguments = mapOf<String,Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("something", "Else")))))
+        val arguments = mapOf<String, Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("something", "Else")))))
         val dataFetchingEnvironment = DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build()
         assertThrows<RuntimeException> { DefaultDgsFederationResolver(dgsSchemaProvider).entitiesFetcher().get(dataFetchingEnvironment) }
     }
@@ -149,7 +149,7 @@ class DgsFederationResolverTest {
         val movieEntityFetcher = object {
             @DgsEntityFetcher(name = "Movie")
             fun movieEntityFetcher(values: Map<String, Any>, dfe: DataFetchingEnvironment?): Movie {
-                if(dfe == null) {
+                if (dfe == null) {
                     throw RuntimeException()
                 }
                 return Movie(values["movieId"].toString())
@@ -165,7 +165,7 @@ class DgsFederationResolverTest {
         val movieEntityFetcher = object {
             @DgsEntityFetcher(name = "Movie")
             fun movieEntityFetcher(values: Map<String, Any>, dfe: DgsDataFetchingEnvironment?): Movie {
-                if(dfe == null) {
+                if (dfe == null) {
                     throw RuntimeException()
                 }
                 return Movie(values["movieId"].toString())
@@ -183,7 +183,7 @@ class DgsFederationResolverTest {
                 throw RuntimeException("Should not be called")
             }
         }
-        val arguments = mapOf<String,Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("__typename", "Movie")))))
+        val arguments = mapOf<String, Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("__typename", "Movie")))))
         val dataFetchingEnvironment = DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build()
         assertThrows<RuntimeException> { DefaultDgsFederationResolver(dgsSchemaProvider).entitiesFetcher().get(dataFetchingEnvironment) }
     }
@@ -193,7 +193,7 @@ class DgsFederationResolverTest {
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("MovieEntityFetcher", movieEntityFetcher))
         dgsSchemaProvider.schema("""type Query {}""")
 
-        val arguments = mapOf<String,Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("__typename", "Movie"), Pair("movieId", "1")))))
+        val arguments = mapOf<String, Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("__typename", "Movie"), Pair("movieId", "1")))))
         val dataFetchingEnvironment = DgsDataFetchingEnvironment(DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build())
 
         val result = (DefaultDgsFederationResolver(dgsSchemaProvider).entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<List<*>>).get()
@@ -212,4 +212,4 @@ class DgsFederationResolverTest {
     }
 }
 
-data class Movie(val movieId:String = "", val title:String = "")
+data class Movie(val movieId: String = "", val title: String = "")

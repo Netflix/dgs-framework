@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,5 @@
 
 package com.netflix.graphql.dgs.exceptions
 
-import java.lang.RuntimeException
-
-class NoDgsFederationResolverFoundException: RuntimeException("@key directive was used in schema, but could not find DgsComponent implementing DgsFederationResolver.")
+class NoDgsFederationResolverFoundException : RuntimeException("@key directive was used in schema, but could not find DgsComponent implementing DgsFederationResolver.")
 

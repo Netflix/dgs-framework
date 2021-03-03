@@ -75,10 +75,10 @@ internal class DgsSchemaProviderTest {
     @Test
     fun findSchemaFiles() {
         val findSchemaFiles = DgsSchemaProvider(
-            applicationContextMock,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty()
+                applicationContextMock,
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty()
         ).findSchemaFiles()
         assertThat(findSchemaFiles.size).isGreaterThan(1)
         assertEquals("schema1.graphqls", findSchemaFiles[0].filename)
@@ -88,10 +88,10 @@ internal class DgsSchemaProviderTest {
     fun findSchemaFilesEmptyDir() {
         assertThrows<NoSchemaFoundException> {
             DgsSchemaProvider(
-                applicationContextMock,
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty()
+                    applicationContextMock,
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty()
             ).findSchemaFiles("notexists")
         }
     }
@@ -99,10 +99,10 @@ internal class DgsSchemaProviderTest {
     @Test
     fun allowNoSchemasWhenTypeRegistryProvided() {
         val findSchemaFiles = DgsSchemaProvider(
-            applicationContextMock,
-            Optional.empty(),
-            Optional.of(TypeDefinitionRegistry()),
-            Optional.empty()
+                applicationContextMock,
+                Optional.empty(),
+                Optional.of(TypeDefinitionRegistry()),
+                Optional.empty()
         ).findSchemaFiles("noexists")
         assertEquals(0, findSchemaFiles.size)
     }
@@ -117,10 +117,10 @@ internal class DgsSchemaProviderTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        fetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -142,10 +142,10 @@ internal class DgsSchemaProviderTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        fetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -182,10 +182,10 @@ internal class DgsSchemaProviderTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        fetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -217,10 +217,10 @@ internal class DgsSchemaProviderTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        fetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -256,10 +256,10 @@ internal class DgsSchemaProviderTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        fetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -295,10 +295,10 @@ internal class DgsSchemaProviderTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        fetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -338,10 +338,10 @@ internal class DgsSchemaProviderTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        fetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -385,10 +385,10 @@ internal class DgsSchemaProviderTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        fetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -419,8 +419,8 @@ internal class DgsSchemaProviderTest {
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(
-                @InputArgument("capitalize") capitalize: Boolean,
-                @InputArgument("person") person: Person
+                    @InputArgument("capitalize") capitalize: Boolean,
+                    @InputArgument("person") person: Person
             ): String {
                 return if (capitalize) {
                     "hello, ${person.name}".capitalize()
@@ -431,10 +431,10 @@ internal class DgsSchemaProviderTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        fetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -465,9 +465,9 @@ internal class DgsSchemaProviderTest {
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(
-                dfe: DataFetchingEnvironment,
-                @InputArgument("capitalize") capitalize: Boolean,
-                @InputArgument("person") person: Person
+                    dfe: DataFetchingEnvironment,
+                    @InputArgument("capitalize") capitalize: Boolean,
+                    @InputArgument("person") person: Person
             ): String {
                 val otherArg: String = dfe.getArgument("otherArg")
 
@@ -481,10 +481,10 @@ internal class DgsSchemaProviderTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        fetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -515,9 +515,9 @@ internal class DgsSchemaProviderTest {
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(
-                @InputArgument("capitalize") capitalize: Boolean,
-                @InputArgument("person") person: Person,
-                dfe: DataFetchingEnvironment
+                    @InputArgument("capitalize") capitalize: Boolean,
+                    @InputArgument("person") person: Person,
+                    dfe: DataFetchingEnvironment
             ): String {
                 val otherArg: String = dfe.getArgument("otherArg")
 
@@ -531,10 +531,10 @@ internal class DgsSchemaProviderTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        fetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -568,11 +568,11 @@ internal class DgsSchemaProviderTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            ),
-            Pair("Upload", UploadScalar()),
+                Pair(
+                        "helloFetcher",
+                        fetcher
+                ),
+                Pair("Upload", UploadScalar()),
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -580,12 +580,12 @@ internal class DgsSchemaProviderTest {
 
 
         val file: MultipartFile =
-            MockMultipartFile("hello.txt", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".toByteArray())
+                MockMultipartFile("hello.txt", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".toByteArray())
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute(
-            ExecutionInput.newExecutionInput().query("mutation(\$input: Upload!)  { upload(file: \$input) }")
-                .variables(mapOf(Pair("input", file)))
+                ExecutionInput.newExecutionInput().query("mutation(\$input: Upload!)  { upload(file: \$input) }")
+                        .variables(mapOf(Pair("input", file)))
         )
         assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
@@ -610,10 +610,10 @@ internal class DgsSchemaProviderTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        fetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -647,10 +647,10 @@ internal class DgsSchemaProviderTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        fetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(Pair("DateTime", LocalDateTimeScalar()))
 
@@ -682,10 +682,10 @@ internal class DgsSchemaProviderTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        fetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(Pair("DateTime", LocalDateTimeScalar()))
 
@@ -755,10 +755,10 @@ internal class DgsSchemaProviderTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        fetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -793,8 +793,8 @@ internal class DgsSchemaProviderTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair("defaultResolver", resolverDefault),
-            Pair("videoFetcher", defaultVideoFetcher)
+                Pair("defaultResolver", resolverDefault),
+                Pair("videoFetcher", defaultVideoFetcher)
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -837,8 +837,8 @@ internal class DgsSchemaProviderTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair("defaultResolver", resolverDefault),
-            Pair("overrideResolver", resolverOverride), Pair("videoFetcher", defaultVideoFetcher)
+                Pair("defaultResolver", resolverDefault),
+                Pair("overrideResolver", resolverOverride), Pair("videoFetcher", defaultVideoFetcher)
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -850,10 +850,10 @@ internal class DgsSchemaProviderTest {
     @Test
     fun addFetchersWithoutDataFetchingEnvironment() {
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                defaultHelloFetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        defaultHelloFetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -870,8 +870,8 @@ internal class DgsSchemaProviderTest {
         val codeRegistry = object : Any() {
             @DgsCodeRegistry
             fun registry(
-                codeRegistryBuilder: GraphQLCodeRegistry.Builder,
-                registry: TypeDefinitionRegistry?
+                    codeRegistryBuilder: GraphQLCodeRegistry.Builder,
+                    registry: TypeDefinitionRegistry?
             ): GraphQLCodeRegistry.Builder? {
                 val df = DataFetcher { "Runtime added field" }
                 val coordinates = FieldCoordinates.coordinates("Query", "myField")
@@ -881,29 +881,29 @@ internal class DgsSchemaProviderTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                defaultHelloFetcher
-            ), Pair("codeRegistry", codeRegistry)
+                Pair(
+                        "helloFetcher",
+                        defaultHelloFetcher
+                ), Pair("codeRegistry", codeRegistry)
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
         val typeDefinitionFactory = TypeDefinitionRegistry()
         val objectTypeExtensionDefinition = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition()
-            .name("Query")
-            .fieldDefinition(
-                FieldDefinition.newFieldDefinition()
-                    .name("myField")
-                    .type(TypeName("String")).build()
-            )
-            .build()
+                .name("Query")
+                .fieldDefinition(
+                        FieldDefinition.newFieldDefinition()
+                                .name("myField")
+                                .type(TypeName("String")).build()
+                )
+                .build()
 
         typeDefinitionFactory.add(objectTypeExtensionDefinition)
         val provider = DgsSchemaProvider(
-            applicationContextMock,
-            Optional.empty(),
-            Optional.of(typeDefinitionFactory),
-            Optional.empty()
+                applicationContextMock,
+                Optional.empty(),
+                Optional.of(typeDefinitionFactory),
+                Optional.empty()
         )
         val schema = provider.schema()
         val build = GraphQL.newGraphQL(schema).build()
@@ -941,7 +941,7 @@ internal class DgsSchemaProviderTest {
         """.trimIndent()
 
         val dgsSchemaProvider =
-            DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+                DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf()
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         assertThat(dgsSchemaProvider.schema(schema)).isNotNull
@@ -951,10 +951,10 @@ internal class DgsSchemaProviderTest {
     @Test
     fun enableInstrumentationForDataFetchers() {
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                defaultHelloFetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        defaultHelloFetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -976,10 +976,10 @@ internal class DgsSchemaProviderTest {
             }
         }
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                noTracingDataFetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        noTracingDataFetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -998,10 +998,10 @@ internal class DgsSchemaProviderTest {
             }
         }
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                noTracingDataFetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        noTracingDataFetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -1021,10 +1021,10 @@ internal class DgsSchemaProviderTest {
             }
         }
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                noTracingDataFetcher
-            )
+                Pair(
+                        "helloFetcher",
+                        noTracingDataFetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -1058,16 +1058,16 @@ internal class DgsSchemaProviderTest {
             }
         }
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "videoFetcher",
-                defaultVideoFetcher
-            )
+                Pair(
+                        "videoFetcher",
+                        defaultVideoFetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "titleFetcher",
-                titleFetcher
-            )
+                Pair(
+                        "titleFetcher",
+                        titleFetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -1105,16 +1105,16 @@ internal class DgsSchemaProviderTest {
             }
         }
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "videoFetcher",
-                defaultVideoFetcher
-            )
+                Pair(
+                        "videoFetcher",
+                        defaultVideoFetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "titleFetcher",
-                titleFetcher
-            )
+                Pair(
+                        "titleFetcher",
+                        titleFetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
@@ -1151,16 +1151,16 @@ internal class DgsSchemaProviderTest {
             }
         }
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "videoFetcher",
-                defaultVideoFetcher
-            )
+                Pair(
+                        "videoFetcher",
+                        defaultVideoFetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "titleFetcher",
-                titleFetcher
-            )
+                Pair(
+                        "titleFetcher",
+                        titleFetcher
+                )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
