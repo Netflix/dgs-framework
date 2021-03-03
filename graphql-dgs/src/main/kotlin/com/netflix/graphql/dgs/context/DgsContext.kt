@@ -16,7 +16,6 @@
 
 package com.netflix.graphql.dgs.context
 
-import com.netflix.graphql.dgs.logging.LogEvent
 import graphql.schema.DataFetchingEnvironment
 import org.dataloader.BatchLoaderEnvironment
 
@@ -25,8 +24,6 @@ import org.dataloader.BatchLoaderEnvironment
  * Custom data can be added by providing a [DgsCustomContextBuilder].
  */
 open class DgsContext(val customContext: Any?) {
-    @Deprecated("logEvent is deprecated and will be removed in the next release. Please reach out asap if you do depend on this.")
-    val logEvent = LogEvent()
 
     companion object {
         @JvmStatic
