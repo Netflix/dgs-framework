@@ -50,8 +50,8 @@ data class GraphQLResponse(val json: String) {
     /**
      * Map representation of data
      */
-    val data: Map<String, Any> = parsed.read("data")?: emptyMap()
-    val errors : List<GraphQLError> = parsed.read("errors", object: TypeRef<List<GraphQLError>>() {})?: emptyList()
+    val data: Map<String, Any> = parsed.read("data") ?: emptyMap()
+    val errors: List<GraphQLError> = parsed.read("errors", object : TypeRef<List<GraphQLError>>() {}) ?: emptyList()
 
     private val logger = LoggerFactory.getLogger(GraphQLResponse::class.java)
 
@@ -87,7 +87,7 @@ data class GraphQLResponse(val json: String) {
 
         try {
             return parsed.read(dataPath, clazz)
-        } catch(ex: Exception) {
+        } catch (ex: Exception) {
             logger.error("Error extracting path '${path}' from data: '${data}'")
             throw ex
         }
@@ -102,7 +102,7 @@ data class GraphQLResponse(val json: String) {
 
         try {
             return parsed.read(dataPath, typeRef)
-        } catch(ex: Exception) {
+        } catch (ex: Exception) {
             logger.error("Error extracting path '${path}' from data: '${data}'")
             throw ex
         }

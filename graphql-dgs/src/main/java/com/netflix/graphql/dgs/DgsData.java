@@ -31,5 +31,6 @@ import java.lang.annotation.*;
 @Inherited
 public @interface DgsData {
     String parentType();
+
     String field();
 }

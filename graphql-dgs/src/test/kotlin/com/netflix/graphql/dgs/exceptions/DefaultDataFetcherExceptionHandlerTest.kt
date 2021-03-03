@@ -40,7 +40,7 @@ internal class DefaultDataFetcherExceptionHandlerTest {
 
     @Test
     fun securityError() {
-        every { dataFetcherExceptionHandlerParameters.exception}.returns(AccessDeniedException("Denied"))
+        every { dataFetcherExceptionHandlerParameters.exception }.returns(AccessDeniedException("Denied"))
 
         val result = DefaultDataFetcherExceptionHandler().onException(dataFetcherExceptionHandlerParameters)
         assertThat(result.errors.size).isEqualTo(1)
@@ -54,7 +54,7 @@ internal class DefaultDataFetcherExceptionHandlerTest {
 
     @Test
     fun normalError() {
-        every { dataFetcherExceptionHandlerParameters.exception}.returns(RuntimeException("Something broke"))
+        every { dataFetcherExceptionHandlerParameters.exception }.returns(RuntimeException("Something broke"))
 
         val result = DefaultDataFetcherExceptionHandler().onException(dataFetcherExceptionHandlerParameters)
         assertThat(result.errors.size).isEqualTo(1)
@@ -68,7 +68,7 @@ internal class DefaultDataFetcherExceptionHandlerTest {
 
     @Test
     fun normalErrorWithSpecialCharacterString() {
-        every { dataFetcherExceptionHandlerParameters.exception}.returns(RuntimeException("/bgt_budgetingProject/specificPass: not a PassId: bdgt%3Apass%2F3"))
+        every { dataFetcherExceptionHandlerParameters.exception }.returns(RuntimeException("/bgt_budgetingProject/specificPass: not a PassId: bdgt%3Apass%2F3"))
 
         val result = DefaultDataFetcherExceptionHandler().onException(dataFetcherExceptionHandlerParameters)
         assertThat(result.errors.size).isEqualTo(1)

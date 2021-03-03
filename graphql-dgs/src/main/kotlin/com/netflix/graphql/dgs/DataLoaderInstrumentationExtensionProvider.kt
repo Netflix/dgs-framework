@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import org.dataloader.MappedBatchLoader
 import org.dataloader.MappedBatchLoaderWithContext
 
 interface DataLoaderInstrumentationExtensionProvider {
-    fun provide(original: BatchLoader<*, *>, name: String) : BatchLoader<*, *>
-    fun provide(original: BatchLoaderWithContext<*, *>, name: String) : BatchLoaderWithContext<*, *>
-    fun provide(original: MappedBatchLoader<*, *>, name: String) : MappedBatchLoader<*, *>
-    fun provide(original: MappedBatchLoaderWithContext<*, *>, name: String) : MappedBatchLoaderWithContext<*, *>
+    fun provide(original: BatchLoader<*, *>, name: String): BatchLoader<*, *>
+    fun provide(original: BatchLoaderWithContext<*, *>, name: String): BatchLoaderWithContext<*, *>
+    fun provide(original: MappedBatchLoader<*, *>, name: String): MappedBatchLoader<*, *>
+    fun provide(original: MappedBatchLoaderWithContext<*, *>, name: String): MappedBatchLoaderWithContext<*, *>
 }

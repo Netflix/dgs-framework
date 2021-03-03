@@ -33,8 +33,11 @@ import java.lang.annotation.Target;
 @Component
 public @interface DgsDataLoader {
     String name();
+
     boolean caching() default true;
+
     boolean batching() default true;
+
     int maxBatchSize() default 0;
 }
 

@@ -48,9 +48,9 @@ class DgsTypeRegistryDefinitionTest {
                 val newRegistry = TypeDefinitionRegistry()
 
                 val query =
-                    ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query").fieldDefinition(
-                        FieldDefinition.newFieldDefinition().name("dynamicField").type(TypeName("String")).build()
-                    ).build()
+                        ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query").fieldDefinition(
+                                FieldDefinition.newFieldDefinition().name("dynamicField").type(TypeName("String")).build()
+                        ).build()
 
                 newRegistry.add(query);
 
@@ -58,9 +58,9 @@ class DgsTypeRegistryDefinitionTest {
             }
         }
 
-        val queryFetcher = object: Any() {
-            @DgsData(parentType="Query", field="dynamicField")
-            fun dynamicField():String {
+        val queryFetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "dynamicField")
+            fun dynamicField(): String {
                 return "hello from dgs"
             }
         }
@@ -72,7 +72,7 @@ class DgsTypeRegistryDefinitionTest {
         val schema = provider.schema()
         val graphql = GraphQL.newGraphQL(schema).build()
         val result = graphql.execute(
-            """
+                """
             {
                 dynamicField
             }
@@ -91,9 +91,9 @@ class DgsTypeRegistryDefinitionTest {
                 val newRegistry = TypeDefinitionRegistry()
 
                 val query =
-                    ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query").fieldDefinition(
-                        FieldDefinition.newFieldDefinition().name("dynamicField").type(TypeName("String")).build()
-                    ).build()
+                        ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query").fieldDefinition(
+                                FieldDefinition.newFieldDefinition().name("dynamicField").type(TypeName("String")).build()
+                        ).build()
 
                 newRegistry.add(query);
 
@@ -107,9 +107,9 @@ class DgsTypeRegistryDefinitionTest {
                 val newRegistry = TypeDefinitionRegistry()
 
                 val query =
-                    ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query").fieldDefinition(
-                        FieldDefinition.newFieldDefinition().name("number").type(TypeName("Int")).build()
-                    ).build()
+                        ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query").fieldDefinition(
+                                FieldDefinition.newFieldDefinition().name("number").type(TypeName("Int")).build()
+                        ).build()
 
                 newRegistry.add(query);
 
@@ -117,16 +117,16 @@ class DgsTypeRegistryDefinitionTest {
             }
         }
 
-        val queryFetcher = object: Any() {
-            @DgsData(parentType="Query", field="dynamicField")
-            fun dynamicField():String {
+        val queryFetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "dynamicField")
+            fun dynamicField(): String {
                 return "hello from dgs"
             }
         }
 
-        val numberFetcher = object: Any() {
-            @DgsData(parentType="Query", field="number")
-            fun dynamicField():Int {
+        val numberFetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "number")
+            fun dynamicField(): Int {
                 return 1
             }
         }
@@ -138,7 +138,7 @@ class DgsTypeRegistryDefinitionTest {
         val schema = provider.schema()
         val graphql = GraphQL.newGraphQL(schema).build()
         val result = graphql.execute(
-            """
+                """
             {
                 dynamicField
                 number

@@ -38,10 +38,11 @@ interface DgsQueryExecutor {
 
     fun execute(query: String, variables: Map<String, Any>, extensions: Map<String, Any>?, headers: HttpHeaders): ExecutionResult =
             execute(query = query, variables = variables, extensions = extensions, headers = headers, operationName = null)
+
     fun execute(query: String, variables: Map<String, Any>, extensions: Map<String, Any>?, headers: HttpHeaders, operationName: String? = null): ExecutionResult
 
-    fun <T> executeAndExtractJsonPath(query: String, jsonPath: String):T
-    fun <T> executeAndExtractJsonPath(query: String, jsonPath: String, variables: Map<String, Any>):T
+    fun <T> executeAndExtractJsonPath(query: String, jsonPath: String): T
+    fun <T> executeAndExtractJsonPath(query: String, jsonPath: String, variables: Map<String, Any>): T
 
     fun executeAndGetDocumentContext(query: String): DocumentContext
     fun executeAndGetDocumentContext(query: String, variables: Map<String, Any>): DocumentContext

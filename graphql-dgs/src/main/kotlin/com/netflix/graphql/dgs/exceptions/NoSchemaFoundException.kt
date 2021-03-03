@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,4 @@
 
 package com.netflix.graphql.dgs.exceptions
 
-import java.lang.RuntimeException
-
-class NoSchemaFoundException: RuntimeException("No schema files found. Define schemas in src/main/resources/schema/*.graphqls")
+class NoSchemaFoundException : RuntimeException("No schema files found. Define schemas in src/main/resources/schema/*.graphqls")

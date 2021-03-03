@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,11 @@ import org.dataloader.MappedBatchLoader
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
-@DgsDataLoader(name="exampleMappedLoader")
+@DgsDataLoader(name = "exampleMappedLoader")
 class ExampleMappedBatchLoader : MappedBatchLoader<String, String> {
     override fun load(keys: MutableSet<String>?): CompletionStage<MutableMap<String, String>> {
-        return CompletableFuture.supplyAsync  {
-          val result = mutableMapOf<String,String>()
+        return CompletableFuture.supplyAsync {
+            val result = mutableMapOf<String, String>()
             keys?.forEach { result[it] = it.toUpperCase() }
             result
         }

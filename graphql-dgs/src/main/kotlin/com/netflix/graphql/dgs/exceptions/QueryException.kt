@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,5 @@
 package com.netflix.graphql.dgs.exceptions
 
 import graphql.GraphQLError
-import java.lang.RuntimeException
 
-class QueryException(val errors: List<GraphQLError>): RuntimeException(errors.joinToString(separator = ", ") { it.message })
+class QueryException(val errors: List<GraphQLError>) : RuntimeException(errors.joinToString(separator = ", ") { it.message })

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import org.dataloader.DataLoader
 import org.dataloader.DataLoaderRegistry
 import java.util.*
 
-class DgsDataFetchingEnvironment(private val dfe :DataFetchingEnvironment) : DataFetchingEnvironment {
+class DgsDataFetchingEnvironment(private val dfe: DataFetchingEnvironment) : DataFetchingEnvironment {
 
     fun <K, V> getDataLoader(loaderClass: Class<*>): DataLoader<K, V> {
         val annotation = loaderClass.getAnnotation(DgsDataLoader::class.java)
@@ -77,7 +77,7 @@ class DgsDataFetchingEnvironment(private val dfe :DataFetchingEnvironment) : Dat
     }
 
     override fun <T : Any?> getRoot(): T {
-       return dfe.getRoot()
+        return dfe.getRoot()
     }
 
     override fun getFieldDefinition(): GraphQLFieldDefinition {
@@ -91,7 +91,7 @@ class DgsDataFetchingEnvironment(private val dfe :DataFetchingEnvironment) : Dat
     }
 
     override fun getMergedField(): MergedField {
-       return dfe.mergedField
+        return dfe.mergedField
     }
 
     override fun getField(): Field {

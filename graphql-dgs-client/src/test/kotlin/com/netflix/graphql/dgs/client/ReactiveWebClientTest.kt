@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,18 +28,18 @@ class ReactiveWebClientTest {
 
     private val requestExecutor = MonoRequestExecutor { url, headers, body ->
         WebClient.builder()
-            .exchangeFunction {
-                Mono.just(ClientResponse.create(HttpStatus.OK)
-                    .header("content-type", "application/json")
-                    .body("""{ "data": { "hello": "Hi!"}}""")
-                    .build())
-            }.build()
-            .post()
-            .uri(url)
-            .headers { consumer -> headers.forEach { consumer.addAll(it.key, it.value) } }
-            .bodyValue(body)
-            .exchange()
-            .flatMap { cr -> cr.bodyToMono(String::class.java).map { json -> HttpResponse(cr.rawStatusCode(), json) } }
+                .exchangeFunction {
+                    Mono.just(ClientResponse.create(HttpStatus.OK)
+                            .header("content-type", "application/json")
+                            .body("""{ "data": { "hello": "Hi!"}}""")
+                            .build())
+                }.build()
+                .post()
+                .uri(url)
+                .headers { consumer -> headers.forEach { consumer.addAll(it.key, it.value) } }
+                .bodyValue(body)
+                .exchange()
+                .flatMap { cr -> cr.bodyToMono(String::class.java).map { json -> HttpResponse(cr.rawStatusCode(), json) } }
     }
 
     @Test

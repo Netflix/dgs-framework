@@ -16,5 +16,5 @@
 
 package com.netflix.graphql.dgs.exceptions
 
-class InvalidDgsEntityFetcher(message: String): RuntimeException(message) {
+class InvalidDgsEntityFetcher(message: String) : RuntimeException(message) {
 }

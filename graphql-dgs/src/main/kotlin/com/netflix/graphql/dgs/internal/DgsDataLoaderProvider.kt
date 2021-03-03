@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,10 +36,10 @@ import javax.annotation.PostConstruct
 class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) {
     val logger: Logger = LoggerFactory.getLogger(DgsDataLoaderProvider::class.java)
 
-    private val batchLoaders = mutableListOf<Pair<BatchLoader<*,*>, DgsDataLoader>>()
-    private val batchLoadersWithContext = mutableListOf<Pair<BatchLoaderWithContext<*,*>, DgsDataLoader>>()
-    private val mappedBatchLoaders = mutableListOf<Pair<MappedBatchLoader<*,*>, DgsDataLoader>>()
-    private val mappedBatchLoadersWithContext = mutableListOf<Pair<MappedBatchLoaderWithContext<*,*>, DgsDataLoader>>()
+    private val batchLoaders = mutableListOf<Pair<BatchLoader<*, *>, DgsDataLoader>>()
+    private val batchLoadersWithContext = mutableListOf<Pair<BatchLoaderWithContext<*, *>, DgsDataLoader>>()
+    private val mappedBatchLoaders = mutableListOf<Pair<MappedBatchLoader<*, *>, DgsDataLoader>>()
+    private val mappedBatchLoadersWithContext = mutableListOf<Pair<MappedBatchLoaderWithContext<*, *>, DgsDataLoader>>()
 
     fun buildRegistry(): DataLoaderRegistry {
         return buildRegistryWithContextSupplier({ null })
@@ -50,9 +50,9 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
 
         val dataLoaderRegistry = DataLoaderRegistry()
         batchLoaders.forEach { dataLoaderRegistry.register(it.second.name, createDataLoader(it.first, it.second)) }
-        mappedBatchLoaders.forEach { dataLoaderRegistry.register(it.second.name, createDataLoader(it.first, it.second))}
+        mappedBatchLoaders.forEach { dataLoaderRegistry.register(it.second.name, createDataLoader(it.first, it.second)) }
         batchLoadersWithContext.forEach { dataLoaderRegistry.register(it.second.name, createDataLoader(it.first, it.second, contextSupplier)) }
-        mappedBatchLoadersWithContext.forEach { dataLoaderRegistry.register(it.second.name, createDataLoader(it.first, it.second, contextSupplier))}
+        mappedBatchLoadersWithContext.forEach { dataLoaderRegistry.register(it.second.name, createDataLoader(it.first, it.second, contextSupplier)) }
 
         val endTime = System.currentTimeMillis()
         val totalTime = endTime - startTime
@@ -77,11 +77,11 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
 
                 val annotation = field.getAnnotation(DgsDataLoader::class.java)
                 field.isAccessible = true
-                when(val get = field.get(dgsComponent)) {
+                when (val get = field.get(dgsComponent)) {
                     is BatchLoader<*, *> -> batchLoaders.add(Pair(get, annotation))
-                    is BatchLoaderWithContext<*,*> -> batchLoadersWithContext.add(Pair(get, annotation))
+                    is BatchLoaderWithContext<*, *> -> batchLoadersWithContext.add(Pair(get, annotation))
                     is MappedBatchLoader<*, *> -> mappedBatchLoaders.add(Pair(get, annotation))
-                    is MappedBatchLoaderWithContext<*,*> -> mappedBatchLoadersWithContext.add(Pair(get, annotation))
+                    is MappedBatchLoaderWithContext<*, *> -> mappedBatchLoadersWithContext.add(Pair(get, annotation))
                     else -> throw InvalidDataLoaderTypeException(dgsComponent::class.java)
                 }
             }
@@ -94,10 +94,10 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
             val javaClass = DgsComponentUtils.getClassEnhancedBySpringCGLib(dgsComponent)
             val annotation = javaClass.getAnnotation(DgsDataLoader::class.java)
             when (dgsComponent) {
-                is BatchLoader<*,*> -> batchLoaders.add(Pair(dgsComponent, annotation))
-                is BatchLoaderWithContext<*,*> -> batchLoadersWithContext.add(Pair(dgsComponent, annotation))
-                is MappedBatchLoader<*,*> -> mappedBatchLoaders.add(Pair(dgsComponent, annotation))
-                is MappedBatchLoaderWithContext<*,*> -> mappedBatchLoadersWithContext.add(Pair(dgsComponent, annotation))
+                is BatchLoader<*, *> -> batchLoaders.add(Pair(dgsComponent, annotation))
+                is BatchLoaderWithContext<*, *> -> batchLoadersWithContext.add(Pair(dgsComponent, annotation))
+                is MappedBatchLoader<*, *> -> mappedBatchLoaders.add(Pair(dgsComponent, annotation))
+                is MappedBatchLoaderWithContext<*, *> -> mappedBatchLoadersWithContext.add(Pair(dgsComponent, annotation))
                 else -> throw InvalidDataLoaderTypeException(dgsComponent::class.java)
             }
         }
@@ -107,14 +107,14 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         val options = DataLoaderOptions.newOptions()
                 .setBatchingEnabled(dgsDataLoader.batching)
                 .setCachingEnabled(dgsDataLoader.caching)
-        if(dgsDataLoader.maxBatchSize > 0) {
+        if (dgsDataLoader.maxBatchSize > 0) {
             options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
         }
 
         val extendedBatchLoader = try {
             val extensionProvider = applicationContext.getBean(DataLoaderInstrumentationExtensionProvider::class.java)
             extensionProvider.provide(batchLoader, dgsDataLoader.name)
-        } catch(ex: NoSuchBeanDefinitionException) {
+        } catch (ex: NoSuchBeanDefinitionException) {
             batchLoader
         }
 
@@ -125,14 +125,14 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         val options = DataLoaderOptions.newOptions()
                 .setBatchingEnabled(dgsDataLoader.batching)
                 .setCachingEnabled(dgsDataLoader.caching)
-        if(dgsDataLoader.maxBatchSize > 0) {
+        if (dgsDataLoader.maxBatchSize > 0) {
             options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
         }
 
         val extendedBatchLoader = try {
             val extensionProvider = applicationContext.getBean(DataLoaderInstrumentationExtensionProvider::class.java)
             extensionProvider.provide(batchLoader, dgsDataLoader.name)
-        } catch(ex: NoSuchBeanDefinitionException) {
+        } catch (ex: NoSuchBeanDefinitionException) {
             batchLoader
         }
 
@@ -145,14 +145,14 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
                 .setBatchLoaderContextProvider(supplier::get)
                 .setCachingEnabled(dgsDataLoader.caching)
 
-        if(dgsDataLoader.maxBatchSize > 0) {
+        if (dgsDataLoader.maxBatchSize > 0) {
             options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
         }
 
         val extendedBatchLoader = try {
             val extensionProvider = applicationContext.getBean(DataLoaderInstrumentationExtensionProvider::class.java)
             extensionProvider.provide(batchLoader, dgsDataLoader.name)
-        } catch(ex: NoSuchBeanDefinitionException) {
+        } catch (ex: NoSuchBeanDefinitionException) {
             batchLoader
         }
 
@@ -165,14 +165,14 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
                 .setBatchLoaderContextProvider(supplier::get)
                 .setCachingEnabled(dgsDataLoader.caching)
 
-        if(dgsDataLoader.maxBatchSize > 0) {
+        if (dgsDataLoader.maxBatchSize > 0) {
             options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
         }
 
         val extendedBatchLoader = try {
             val extensionProvider = applicationContext.getBean(DataLoaderInstrumentationExtensionProvider::class.java)
             extensionProvider.provide(batchLoader, dgsDataLoader.name)
-        } catch(ex: NoSuchBeanDefinitionException) {
+        } catch (ex: NoSuchBeanDefinitionException) {
             batchLoader
         }
 

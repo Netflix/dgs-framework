@@ -30,9 +30,9 @@ open class DgsContext(val customContext: Any?) {
 
     companion object {
         @JvmStatic
-        fun <T> getCustomContext(dgsContext: Any) : T {
+        fun <T> getCustomContext(dgsContext: Any): T {
             @Suppress("UNCHECKED_CAST")
-            return when(dgsContext) {
+            return when (dgsContext) {
                 is DgsContext -> dgsContext.customContext as T
                 else -> throw RuntimeException("The context object passed to getCustomContext is not a DgsContext. It is a ${dgsContext::class.java.name} instead.")
             }

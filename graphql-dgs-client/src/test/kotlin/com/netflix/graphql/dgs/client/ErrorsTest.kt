@@ -165,9 +165,9 @@ class ErrorsTest {
         """.trimIndent()
 
         server.expect(requestTo(url))
-            .andExpect(method(HttpMethod.POST))
-            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
 
         val graphQLResponse = client.executeQuery("""{ hello }""", emptyMap(), requestExecutor)
         assertThat(graphQLResponse.errors[0].extensions).isNull()

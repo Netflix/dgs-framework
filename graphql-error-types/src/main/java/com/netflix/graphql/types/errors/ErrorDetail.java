@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,11 @@ import static com.netflix.graphql.types.errors.ErrorType.*;
  * This allows the ErrorType enumeration to be small and mostly static so that application branching logic
  * can depend on it. The ErrorDetail provides a more specific cause for the error. This enumeration will
  * be much larger and likely change/grow over time.
- *
+ * <p>
  * For example, a service may be unavailable, resulting in ErrorType UNAVAILABLE. The ErrorDetail may be
  * more specific, such as THROTTLED_CPU. The ErrorType should be sufficient to control client behavior,
  * while the ErrorDetail is more useful for debugging and real-time operations.
- *
+ * <p>
  * The example below is not to be considered canonical. This enumeration may be defined by the server,
  * and should be included with the server schema.
  */
