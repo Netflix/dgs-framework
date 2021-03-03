@@ -1,0 +1,37 @@
+{
+  "groups": [
+    {
+      "name": "management.metrics.dgs-graphql",
+      "type": "com.netflix.graphql.dgs.metrics.micrometer.DgsGraphQLMetricsProperties",
+      "sourceType": "com.netflix.graphql.dgs.metrics.micrometer.DgsGraphQLMicrometerAutoConfiguration"
+    }
+  ],
+  "properties": [
+    {
+      "name": "management.metrics.dgs-graphql.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enables DGS' GraphQL metrics, via micrometer.",
+      "defaultValue": true
+    },
+    {
+      "name": "management.metrics.dgs-graphql.tag-customizers.outcome.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enables DGS' GraphQL Outcome tag customizer. This adds an OUTCOME tag that is ether SUCCESS or ERROR.",
+      "defaultValue": true
+    },
+    {
+      "name": "management.metrics.dgs-graphql.instrumentation.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enables DGS' GraphQL's base instrumentation; emits gql.query, gql.resolver, and gql.error meters.",
+      "defaultValue": true
+    },
+    {
+      "name": "management.metrics.dgs-graphql.data-loader-instrumentation.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enables DGS' instrumentation for DataLoader; emits gql.dataLoader meters.",
+      "defaultValue": true
+    }
+
+  ],
+  "hints": []
+}
