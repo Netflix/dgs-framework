@@ -26,6 +26,7 @@ plugins {
     `java-library`
     id("nebula.netflixoss") version "9.1.0"
     id("nebula.dependency-recommender") version "9.1.1"
+    id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
     kotlin("jvm") version Versions.KOTLIN_VERSION
     kotlin("kapt") version Versions.KOTLIN_VERSION
     idea
@@ -98,8 +99,9 @@ subprojects {
 
     kapt {
         arguments {
-            arg("org.springframework.boot.configurationprocessor.additionalMetadataLocations",
-                    "$projectDir/src/main/resources"
+            arg(
+                "org.springframework.boot.configurationprocessor.additionalMetadataLocations",
+                "$projectDir/src/main/resources"
             )
         }
     }
