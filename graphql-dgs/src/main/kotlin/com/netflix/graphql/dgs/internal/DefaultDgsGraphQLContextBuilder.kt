@@ -39,7 +39,8 @@ open class DefaultDgsGraphQLContextBuilder(private val dgsCustomContextBuilder: 
         val customContext = if (dgsCustomContextBuilder.isPresent)
             dgsCustomContextBuilder.get().build()
         else
-            null
+        //This is for backwards compatibility - we previously made DefaultRequestData the custom context if no custom context was provided.
+            DefaultRequestData(extensions ?: mapOf(), headers ?: HttpHeaders())
 
         return DgsContext(customContext, DefaultRequestData(extensions ?: mapOf(), headers ?: HttpHeaders()))
     }
