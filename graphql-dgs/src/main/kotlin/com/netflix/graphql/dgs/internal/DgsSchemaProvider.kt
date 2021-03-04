@@ -20,6 +20,7 @@ import com.apollographql.federation.graphqljava.Federation
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.*
+import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
 import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
 import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
@@ -38,8 +39,10 @@ import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.idl.TypeRuntimeWiring
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationContext
+import org.springframework.core.DefaultParameterNameDiscoverer
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.multipart.MultipartFile
 import java.io.InputStreamReader
 import java.lang.reflect.InvocationTargetException
@@ -241,13 +244,13 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
     private fun invokeDataFetcher(method: Method, dgsComponent: Any, environment: DataFetchingEnvironment): Any? {
         return try {
             val args = mutableListOf<Any?>()
-
-            method.parameters.forEach { parameter ->
+            val parameterNames = DefaultParameterNameDiscoverer().getParameterNames(method) ?: emptyArray()
+            method.parameters.forEachIndexed { idx, parameter ->
 
                 when {
                     parameter.isAnnotationPresent(InputArgument::class.java) -> {
                         val annotation = parameter.getAnnotation(InputArgument::class.java)
-                        val parameterName = annotation.value
+                        val parameterName = annotation.value.ifBlank { parameterNames[idx] }
                         val collectionType = annotation.collectionType.java
                         val parameterValue: Any? = environment.getArgument(parameterName)
 
@@ -277,19 +280,37 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
                             throw DgsInvalidInputArgumentException("Specified type '${parameter.type}' is invalid. Found ${parameterValue?.javaClass?.name} instead.")
                         }
 
+                        if (convertValue == null && environment.fieldDefinition.arguments.none { it.name == parameterName }) {
+                            logger.warn("Unknown argument '${parameterName}' on data fetcher ${dgsComponent.javaClass.name}.${method.name}")
+                        }
+
                         args.add(convertValue)
                     }
-                    //This only works if parameter names are present in the class file
-                    environment.containsArgument(parameter.name) -> {
-                        val parameterValue: Any = environment.getArgument(parameter.name)
+
+                    parameter.isAnnotationPresent(RequestHeader::class.java) -> {
+                        val annotation = parameter.getAnnotation(RequestHeader::class.java)
+                        val parameterName = annotation.value.ifBlank { parameterNames[idx] }
+
+                        args.add(DgsContext.getRequestData(environment)?.headers?.get(parameterName)?.let {
+                            if (parameter.type.isAssignableFrom(List::class.java)) {
+                                it
+                            } else {
+                                it.joinToString()
+                            }
+                        })
+                    }
+
+                    environment.containsArgument(parameterNames[idx]) -> {
+                        val parameterValue: Any = environment.getArgument(parameterNames[idx])
                         val convertValue = objectMapper.convertValue(parameterValue, parameter.type)
                         args.add(convertValue)
                     }
+
                     parameter.type == DataFetchingEnvironment::class.java || parameter.type == DgsDataFetchingEnvironment::class.java -> {
                         args.add(environment)
                     }
                     else -> {
-                        logger.warn("Unknown argument '${parameter.name}' on data fetcher ${dgsComponent.javaClass.name}.${method.name}")
+                        logger.warn("Unknown argument '${parameterNames[idx]}' on data fetcher ${dgsComponent.javaClass.name}.${method.name}")
                         //This might cause an exception, but parameter's the best effort we can do
                         args.add(null)
                     }

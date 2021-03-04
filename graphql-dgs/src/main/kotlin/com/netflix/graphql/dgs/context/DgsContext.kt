@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.context
 
+import com.netflix.graphql.dgs.internal.DefaultRequestData
 import graphql.schema.DataFetchingEnvironment
 import org.dataloader.BatchLoaderEnvironment
 
@@ -23,7 +24,7 @@ import org.dataloader.BatchLoaderEnvironment
  * Context class that is created per request, and is added to both DataFetchingEnvironment and BatchLoaderEnvironment.
  * Custom data can be added by providing a [DgsCustomContextBuilder].
  */
-open class DgsContext(val customContext: Any?) {
+open class DgsContext(val customContext: Any?, val requestData: DefaultRequestData?) {
 
     companion object {
         @JvmStatic
@@ -45,6 +46,18 @@ open class DgsContext(val customContext: Any?) {
         fun <T> getCustomContext(batchLoaderEnvironment: BatchLoaderEnvironment): T {
             val dgsContext = batchLoaderEnvironment.getContext<DgsContext>()
             return getCustomContext(dgsContext)
+        }
+
+        @JvmStatic
+        fun getRequestData(dataFetchingEnvironment: DataFetchingEnvironment): DefaultRequestData? {
+            val dgsContext = dataFetchingEnvironment.getContext<DgsContext>()
+            return dgsContext.requestData
+        }
+
+        @JvmStatic
+        fun getRequestData(batchLoaderEnvironment: BatchLoaderEnvironment): DefaultRequestData? {
+            val dgsContext = batchLoaderEnvironment.getContext<DgsContext>()
+            return dgsContext.requestData
         }
     }
 }

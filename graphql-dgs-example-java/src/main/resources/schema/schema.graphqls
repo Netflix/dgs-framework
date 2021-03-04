@@ -17,6 +17,9 @@ type Query {
     concurrent2: Int
 
     nested: [NestedA!]!
+
+    headers: String
+    referer: String
 }
 
 type NestedA {

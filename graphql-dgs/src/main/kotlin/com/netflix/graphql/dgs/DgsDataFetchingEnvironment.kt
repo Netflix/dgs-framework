@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs
 
+import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.MultipleDataLoadersDefinedException
 import com.netflix.graphql.dgs.exceptions.NoDataLoaderFoundException
 import graphql.cachecontrol.CacheControl
@@ -33,6 +34,15 @@ import org.dataloader.DataLoaderRegistry
 import java.util.*
 
 class DgsDataFetchingEnvironment(private val dfe: DataFetchingEnvironment) : DataFetchingEnvironment {
+
+    fun getDgsContext(): DgsContext {
+        val context = dfe.getContext<Any>()
+        if (context is DgsContext) {
+            return context
+        } else {
+            throw RuntimeException("Context object is not a DgsContext. This method does not work if you have a custom implementation of DgsContextBuilder")
+        }
+    }
 
     fun <K, V> getDataLoader(loaderClass: Class<*>): DataLoader<K, V> {
         val annotation = loaderClass.getAnnotation(DgsDataLoader::class.java)
