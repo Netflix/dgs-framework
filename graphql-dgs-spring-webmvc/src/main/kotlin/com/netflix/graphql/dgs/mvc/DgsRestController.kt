@@ -23,13 +23,15 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.internal.utils.MultipartVariableMapper
 import com.netflix.graphql.dgs.internal.utils.TimeTracer
-import graphql.*
+import graphql.ExecutionResultImpl
+import graphql.GraphqlErrorBuilder
 import graphql.execution.reactive.CompletionStageMappingPublisher
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.context.request.WebRequest
 import org.springframework.web.multipart.MultipartFile
 
 
@@ -65,8 +67,8 @@ class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
     val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
 
     @RequestMapping("/graphql", produces = ["application/json"])
-    fun graphql(@RequestBody body: String?, @RequestParam fileParams: Map<String, MultipartFile>?, @RequestParam(name="operations") operation: String?,
-                    @RequestParam(name="map") mapParam:String?, @RequestHeader headers: HttpHeaders): ResponseEntity<String> {
+    fun graphql(@RequestBody body: String?, @RequestParam fileParams: Map<String, MultipartFile>?, @RequestParam(name = "operations") operation: String?,
+                @RequestParam(name = "map") mapParam: String?, @RequestHeader headers: HttpHeaders, webRequest: WebRequest): ResponseEntity<String> {
 
         logger.debug("Starting /graphql handling")
 
@@ -134,7 +136,7 @@ class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
             return ResponseEntity.badRequest().body("Invalid GraphQL request - operationName must be a String")
         }
 
-        val executionResult = TimeTracer.logTime({ dgsQueryExecutor.execute(inputQuery["query"] as String, queryVariables, extensions, headers, operationName = gqlOperationName) }, logger, "Executed query in {}ms")
+        val executionResult = TimeTracer.logTime({ dgsQueryExecutor.execute(inputQuery["query"] as String, queryVariables, extensions, headers, operationName = gqlOperationName, webRequest) }, logger, "Executed query in {}ms")
         logger.debug("Execution result - Contains data: '{}' - Number of errors: {}", executionResult.isDataPresent, executionResult.errors.size)
 
         if(executionResult.isDataPresent && executionResult.getData<Any>() is CompletionStageMappingPublisher<*,*>) {
