@@ -19,7 +19,6 @@ package com.netflix.graphql.dgs.client.codegen
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.util.*
 
-
 class EntitiesGraphQLQuery : GraphQLQuery {
     val variables: MutableMap<String, Any> = LinkedHashMap()
 

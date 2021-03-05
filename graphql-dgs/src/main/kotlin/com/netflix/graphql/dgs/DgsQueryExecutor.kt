@@ -38,7 +38,7 @@ interface DgsQueryExecutor {
     fun execute(query: String, variables: Map<String, Any> = mutableMapOf(), operationName: String? = null): ExecutionResult
 
     fun execute(query: String, variables: Map<String, Any>, extensions: Map<String, Any>?, headers: HttpHeaders): ExecutionResult =
-            execute(query = query, variables = variables, extensions = extensions, headers = headers, operationName = null)
+        execute(query = query, variables = variables, extensions = extensions, headers = headers, operationName = null)
 
     fun execute(query: String, variables: Map<String, Any>, extensions: Map<String, Any>?, headers: HttpHeaders, operationName: String? = null, webRequest: WebRequest? = null): ExecutionResult
 

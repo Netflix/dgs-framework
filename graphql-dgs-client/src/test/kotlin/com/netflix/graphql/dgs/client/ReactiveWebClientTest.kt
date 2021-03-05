@@ -28,18 +28,20 @@ class ReactiveWebClientTest {
 
     private val requestExecutor = MonoRequestExecutor { url, headers, body ->
         WebClient.builder()
-                .exchangeFunction {
-                    Mono.just(ClientResponse.create(HttpStatus.OK)
-                            .header("content-type", "application/json")
-                            .body("""{ "data": { "hello": "Hi!"}}""")
-                            .build())
-                }.build()
-                .post()
-                .uri(url)
-                .headers { consumer -> headers.forEach { consumer.addAll(it.key, it.value) } }
-                .bodyValue(body)
-                .exchange()
-                .flatMap { cr -> cr.bodyToMono(String::class.java).map { json -> HttpResponse(cr.rawStatusCode(), json) } }
+            .exchangeFunction {
+                Mono.just(
+                    ClientResponse.create(HttpStatus.OK)
+                        .header("content-type", "application/json")
+                        .body("""{ "data": { "hello": "Hi!"}}""")
+                        .build()
+                )
+            }.build()
+            .post()
+            .uri(url)
+            .headers { consumer -> headers.forEach { consumer.addAll(it.key, it.value) } }
+            .bodyValue(body)
+            .exchange()
+            .flatMap { cr -> cr.bodyToMono(String::class.java).map { json -> HttpResponse(cr.rawStatusCode(), json) } }
     }
 
     @Test

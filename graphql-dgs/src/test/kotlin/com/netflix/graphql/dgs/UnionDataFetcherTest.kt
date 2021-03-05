@@ -69,7 +69,8 @@ class UnionDataFetcherTest {
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("queryResolver", queryFetcher), Pair("searchResultTypeResolver", searchResultTypeResolver), Pair("imdbFetcher", imdbFetcher))
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
-        val schema = provider.schema("""
+        val schema = provider.schema(
+            """
             type Query {
                 search: [SearchResult]
             }
@@ -87,10 +88,12 @@ class UnionDataFetcherTest {
                 episodes: Int
                 imdbRating: Int
             }
-        """.trimIndent())
+            """.trimIndent()
+        )
 
         val build = GraphQL.newGraphQL(schema).build()
-        val executionResult = build.execute("""
+        val executionResult = build.execute(
+            """
             query {
                 search {
                     ...on MovieSearchResult {
@@ -105,7 +108,8 @@ class UnionDataFetcherTest {
                     }
                 }
             }
-        """.trimIndent())
+            """.trimIndent()
+        )
         Assertions.assertEquals(0, executionResult.errors.size)
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, List<Map<String, *>>>>()

@@ -19,5 +19,3 @@ dependencies {
     implementation("com.github.javafaker:javafaker:1.+")
     implementation("org.slf4j:slf4j-api")
 }
-
-

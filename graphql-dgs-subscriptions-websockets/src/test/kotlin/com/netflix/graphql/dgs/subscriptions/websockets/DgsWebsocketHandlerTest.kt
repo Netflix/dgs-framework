@@ -57,7 +57,8 @@ class DgsWebsocketHandlerTest {
     @MockK
     lateinit var executionResult: ExecutionResult
 
-    private val queryMessage = TextMessage("""{
+    private val queryMessage = TextMessage(
+        """{
                 "type": "$GQL_START",
                 "payload": {
                    "query": "{ hello }",
@@ -65,7 +66,8 @@ class DgsWebsocketHandlerTest {
                    "extensions": {}
                 }
             }
-            """.trimIndent())
+        """.trimIndent()
+    )
 
     @Test
     fun testMultipleClients() {
@@ -106,10 +108,12 @@ class DgsWebsocketHandlerTest {
         val slot = slot<TextMessage>()
         every { webSocketSession.sendMessage(capture(slot)) } just Runs
 
-        val textMessage = TextMessage("""{
+        val textMessage = TextMessage(
+            """{
                 "type": "$GQL_CONNECTION_INIT"
             }
-            """.trimIndent())
+            """.trimIndent()
+        )
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, textMessage)
 
@@ -123,10 +127,12 @@ class DgsWebsocketHandlerTest {
         val currentNrOfSessions = dgsWebsocketHandler.sessions.size
         every { webSocketSession.close() } just Runs
 
-        val textMessage = TextMessage("""{
+        val textMessage = TextMessage(
+            """{
                 "type": "$GQL_CONNECTION_TERMINATE"
             }
-            """.trimIndent())
+            """.trimIndent()
+        )
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, textMessage)
 
@@ -137,12 +143,11 @@ class DgsWebsocketHandlerTest {
 
     private fun start(webSocketSession: WebSocketSession, nrOfResults: Int) {
 
-
         every { webSocketSession.isOpen } returns true
 
         val results = (1..nrOfResults).map {
             val result1 = mockkClass(ExecutionResult::class)
-            every { result1.getData<Any>()} returns it
+            every { result1.getData<Any>() } returns it
             result1
         }
 
@@ -150,8 +155,6 @@ class DgsWebsocketHandlerTest {
         every { dgsQueryExecutor.execute("{ hello }") } returns executionResult
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessage)
-
-
     }
 
     private fun startWithError(webSocketSession: WebSocketSession) {

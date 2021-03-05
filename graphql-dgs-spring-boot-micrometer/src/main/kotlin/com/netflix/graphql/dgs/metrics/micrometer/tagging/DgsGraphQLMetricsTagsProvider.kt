@@ -27,12 +27,10 @@ interface DgsGraphQLMetricsTagsProvider {
     fun getContextualTags(): Iterable<Tag> = Tags.empty()
 
     fun getExecutionTags(
-            parameters: InstrumentationExecutionParameters,
-            result: ExecutionResult,
-            exception: Throwable?
+        parameters: InstrumentationExecutionParameters,
+        result: ExecutionResult,
+        exception: Throwable?
     ): Iterable<Tag> = Tags.empty()
 
     fun getFieldFetchTags(parameters: InstrumentationFieldFetchParameters, exception: Throwable?): Iterable<Tag> = Tags.empty()
 }
-
-

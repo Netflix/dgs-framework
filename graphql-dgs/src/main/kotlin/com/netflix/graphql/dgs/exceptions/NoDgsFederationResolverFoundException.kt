@@ -17,4 +17,3 @@
 package com.netflix.graphql.dgs.exceptions
 
 class NoDgsFederationResolverFoundException : RuntimeException("@key directive was used in schema, but could not find DgsComponent implementing DgsFederationResolver.")
-

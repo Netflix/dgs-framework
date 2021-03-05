@@ -30,7 +30,10 @@ class MultipartFileSerializer @JvmOverloads constructor(t: Class<MultipartFile>?
 
     @Throws(IOException::class, JsonProcessingException::class)
     override fun serialize(
-            value: MultipartFile, jgen: JsonGenerator, provider: SerializerProvider) {
+        value: MultipartFile,
+        jgen: JsonGenerator,
+        provider: SerializerProvider
+    ) {
         jgen.writeStartObject()
         jgen.writeStringField("name", value.originalFilename)
         jgen.writeEndObject()

@@ -15,4 +15,3 @@
  */
 
 package com.netflix.graphql.dgs.autoconfig
-

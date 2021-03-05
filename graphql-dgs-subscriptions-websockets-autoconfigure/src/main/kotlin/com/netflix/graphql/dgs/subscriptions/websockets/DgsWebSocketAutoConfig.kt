@@ -38,7 +38,6 @@ open class DgsWebSocketAutoConfig {
     @EnableWebSocket
     internal open class WebSocketConfig(@Suppress("SpringJavaInjectionPointsAutowiringInspection") private val webSocketHandler: WebSocketHandler) : WebSocketConfigurer {
 
-
         override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
             val defaultHandshakeHandler = DefaultHandshakeHandler()
             defaultHandshakeHandler.setSupportedProtocols("graphql-ws")

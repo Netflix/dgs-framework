@@ -27,8 +27,8 @@ import org.springframework.context.annotation.Configuration
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
-@DgsDataLoader(name="testloader")
-class TestDataLoader: BatchLoader<String,String> {
+@DgsDataLoader(name = "testloader")
+class TestDataLoader : BatchLoader<String, String> {
     override fun load(keys: MutableList<String>?): CompletionStage<MutableList<String>> {
         return CompletableFuture.supplyAsync { keys?.map { it.toUpperCase() }?.toMutableList() }
     }
@@ -43,9 +43,8 @@ class FetcherUsingDataLoader {
     }
 }
 
-
-@DgsDataLoader(name="testMappedLoader")
-class TestMappedDataLoader: MappedBatchLoader<String,String> {
+@DgsDataLoader(name = "testMappedLoader")
+class TestMappedDataLoader : MappedBatchLoader<String, String> {
     override fun load(keys: MutableSet<String>?): CompletionStage<MutableMap<String, String>> {
         return CompletableFuture.supplyAsync { keys?.map { it to it.toUpperCase() }?.toMap()?.toMutableMap() }
     }
@@ -63,7 +62,7 @@ class FetcherUsingMappedDataLoader {
 @Configuration
 open class DataLoaderConfig {
     @Bean
-    open fun createDataLoader(): BatchLoader<String,String> {
+    open fun createDataLoader(): BatchLoader<String, String> {
         return TestDataLoader()
     }
 

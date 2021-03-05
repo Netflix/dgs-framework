@@ -32,6 +32,4 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-core")
     testImplementation("io.reactivex.rxjava3:rxjava:3.+")
     testImplementation("io.mockk:mockk:1.10.3-jdk8")
-
 }
-

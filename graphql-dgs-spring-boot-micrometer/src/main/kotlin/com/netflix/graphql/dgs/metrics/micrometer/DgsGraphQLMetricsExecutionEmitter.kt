@@ -6,5 +6,5 @@ import graphql.ExecutionResult
 @FunctionalInterface
 @Unstable(message = "The usage of this interface is discouraged, its API will most likely change.")
 fun interface DgsGraphQLMetricsExecutionEmitter {
-        fun emit(result: ExecutionResult, exc: Throwable?)
+    fun emit(result: ExecutionResult, exc: Throwable?)
 }

@@ -86,7 +86,6 @@ class GraphQLQueryRequestTest {
     }
 }
 
-
 class TestGraphQLQuery : GraphQLQuery() {
     override fun getOperationName(): String {
         return "test"

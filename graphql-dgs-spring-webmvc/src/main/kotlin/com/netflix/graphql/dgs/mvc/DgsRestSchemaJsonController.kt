@@ -25,7 +25,6 @@ import graphql.introspection.IntrospectionQuery
 import graphql.schema.GraphQLSchema
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import javax.annotation.PostConstruct
 
 /**
  * Provides an HTTP endpoint to retrieve the available schema.

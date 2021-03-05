@@ -44,7 +44,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 class DgsWebMvcAutoConfigurationTest {
 
     private val context = WebApplicationContextRunner().withConfiguration(
-        AutoConfigurations.of(DgsWebMvcAutoconfiguration::class.java, MockAutoConfiguration::class.java))!!
+        AutoConfigurations.of(DgsWebMvcAutoconfiguration::class.java, MockAutoConfiguration::class.java)
+    )!!
 
     @Test
     fun graphqlControllerAvailable() {
@@ -79,8 +80,10 @@ class DgsWebMvcAutoConfigurationTest {
         context.withConfiguration(AutoConfigurations.of(JacksonAutoConfiguration::class.java, WebMvcAutoConfiguration::class.java, DispatcherServletAutoConfiguration::class.java))
             .run { ctx ->
                 val mockMvc = MockMvcBuilders.webAppContextSetup(ctx).build()
-                mockMvc.perform(MockMvcRequestBuilders.get("/schema.json")
-                    .accept(MediaType.APPLICATION_JSON))
+                mockMvc.perform(
+                    MockMvcRequestBuilders.get("/schema.json")
+                        .accept(MediaType.APPLICATION_JSON)
+                )
                     .andExpect(MockMvcResultMatchers.status().isOk)
                     .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
             }
@@ -92,8 +95,10 @@ class DgsWebMvcAutoConfigurationTest {
             .withPropertyValues("dgs.graphql.schema-json.path: /foo.json")
             .run { ctx ->
                 val mockMvc = MockMvcBuilders.webAppContextSetup(ctx).build()
-                mockMvc.perform(MockMvcRequestBuilders.get("/foo.json")
-                    .accept(MediaType.APPLICATION_JSON))
+                mockMvc.perform(
+                    MockMvcRequestBuilders.get("/foo.json")
+                        .accept(MediaType.APPLICATION_JSON)
+                )
                     .andExpect(MockMvcResultMatchers.status().isOk)
                     .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
             }
@@ -105,9 +110,10 @@ class DgsWebMvcAutoConfigurationTest {
         open fun dgsSchemaProvider(): DgsSchemaProvider {
             val objectType: GraphQLObjectType = GraphQLObjectType.newObject()
                 .name("helloType")
-                .field(GraphQLFieldDefinition.newFieldDefinition()
-                    .name("hello")
-                    .type(Scalars.GraphQLString)
+                .field(
+                    GraphQLFieldDefinition.newFieldDefinition()
+                        .name("hello")
+                        .type(Scalars.GraphQLString)
                 )
                 .build()
             val schema = GraphQLSchema.newSchema()

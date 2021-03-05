@@ -45,25 +45,31 @@ import java.util.concurrent.atomic.AtomicReference
 /**
  * Main Query executing functionality. This should be reused between different transport protocols and the testing framework.
  */
-class DefaultDgsQueryExecutor(defaultSchema: GraphQLSchema,
-                              private val schemaProvider: DgsSchemaProvider,
-                              private val dataLoaderProvider: DgsDataLoaderProvider,
-                              private val contextBuilder: DgsContextBuilder,
-                              private val chainedInstrumentation: ChainedInstrumentation,
-                              private val queryExecutionStrategy: ExecutionStrategy,
-                              private val mutationExecutionStrategy: ExecutionStrategy,
-                              private val idProvider: Optional<ExecutionIdProvider>,
-                              private val reloadIndicator: ReloadSchemaIndicator = ReloadSchemaIndicator { false }
+class DefaultDgsQueryExecutor(
+    defaultSchema: GraphQLSchema,
+    private val schemaProvider: DgsSchemaProvider,
+    private val dataLoaderProvider: DgsDataLoaderProvider,
+    private val contextBuilder: DgsContextBuilder,
+    private val chainedInstrumentation: ChainedInstrumentation,
+    private val queryExecutionStrategy: ExecutionStrategy,
+    private val mutationExecutionStrategy: ExecutionStrategy,
+    private val idProvider: Optional<ExecutionIdProvider>,
+    private val reloadIndicator: ReloadSchemaIndicator = ReloadSchemaIndicator { false }
 ) : DgsQueryExecutor {
 
     private val parseContext: ParseContext =
-            JsonPath.using(Configuration.builder()
-                    .jsonProvider(JacksonJsonProvider(jacksonObjectMapper()))
-                    .mappingProvider(
-                            JacksonMappingProvider(jacksonObjectMapper()
-                                    .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
-                                    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES))).build()
-                    .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL))
+        JsonPath.using(
+            Configuration.builder()
+                .jsonProvider(JacksonJsonProvider(jacksonObjectMapper()))
+                .mappingProvider(
+                    JacksonMappingProvider(
+                        jacksonObjectMapper()
+                            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+                            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                    )
+                ).build()
+                .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)
+        )
 
     val logger: Logger = LoggerFactory.getLogger(DefaultDgsQueryExecutor::class.java)
 
@@ -82,17 +88,17 @@ class DefaultDgsQueryExecutor(defaultSchema: GraphQLSchema,
 
     override fun execute(query: String, variables: Map<String, Any>, operationName: String?): ExecutionResult {
         val graphQLSchema: GraphQLSchema =
-                if (reloadIndicator.reloadSchema())
-                    schema.updateAndGet { schemaProvider.schema() }
-                else
-                    schema.get()
+            if (reloadIndicator.reloadSchema())
+                schema.updateAndGet { schemaProvider.schema() }
+            else
+                schema.get()
 
         val graphQLBuilder =
-                GraphQL.newGraphQL(graphQLSchema)
-                        .instrumentation(chainedInstrumentation)
-                        .queryExecutionStrategy(queryExecutionStrategy)
-                        .mutationExecutionStrategy(mutationExecutionStrategy)
-                        .subscriptionExecutionStrategy(SubscriptionExecutionStrategy())
+            GraphQL.newGraphQL(graphQLSchema)
+                .instrumentation(chainedInstrumentation)
+                .queryExecutionStrategy(queryExecutionStrategy)
+                .mutationExecutionStrategy(mutationExecutionStrategy)
+                .subscriptionExecutionStrategy(SubscriptionExecutionStrategy())
         if (idProvider.isPresent) {
             graphQLBuilder.executionIdProvider(idProvider.get())
         }
@@ -101,12 +107,12 @@ class DefaultDgsQueryExecutor(defaultSchema: GraphQLSchema,
         val dgsContext = contextBuilder.build()
         val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier({ dgsContext })
         val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
-                .query(query)
-                .dataLoaderRegistry(dataLoaderRegistry)
-                .variables(variables)
-                .operationName(operationName)
-                .context(dgsContext)
-                .build()
+            .query(query)
+            .dataLoaderRegistry(dataLoaderRegistry)
+            .variables(variables)
+            .operationName(operationName)
+            .context(dgsContext)
+            .build()
 
         val executionResult = try {
             graphQL.execute(executionInput)
@@ -116,7 +122,7 @@ class DefaultDgsQueryExecutor(defaultSchema: GraphQLSchema,
             ExecutionResultImpl(null, errors)
         }
 
-        //Check for NonNullableFieldWasNull errors, and log them explicitly because they don't run through the exception handlers.
+        // Check for NonNullableFieldWasNull errors, and log them explicitly because they don't run through the exception handlers.
         if (executionResult.errors.size > 0) {
             val nullValueError = executionResult.errors.find { it is NonNullableFieldWasNullError }
             if (nullValueError != null) {

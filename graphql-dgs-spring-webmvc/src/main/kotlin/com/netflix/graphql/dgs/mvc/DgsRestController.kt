@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.multipart.MultipartFile
 
-
 /**
  * HTTP entrypoint for the framework. Functionality in this class should be limited, so that as much code as possible
  * is reused between different transport protocols and the testing framework.
@@ -67,8 +66,14 @@ class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
     val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
 
     @RequestMapping("/graphql", produces = ["application/json"])
-    fun graphql(@RequestBody body: String?, @RequestParam fileParams: Map<String, MultipartFile>?, @RequestParam(name = "operations") operation: String?,
-                @RequestParam(name = "map") mapParam: String?, @RequestHeader headers: HttpHeaders, webRequest: WebRequest): ResponseEntity<String> {
+    fun graphql(
+        @RequestBody body: String?,
+        @RequestParam fileParams: Map<String, MultipartFile>?,
+        @RequestParam(name = "operations") operation: String?,
+        @RequestParam(name = "map") mapParam: String?,
+        @RequestHeader headers: HttpHeaders,
+        webRequest: WebRequest
+    ): ResponseEntity<String> {
 
         logger.debug("Starting /graphql handling")
 
@@ -80,8 +85,8 @@ class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
             logger.debug("Reading input value: '{}'", body)
             try {
                 inputQuery = body.let { mapper.readValue(it) }
-            } catch(ex: JsonParseException) {
-                return ResponseEntity.badRequest ().body(ex.message?:"Error parsing query - no details found in the error message")
+            } catch (ex: JsonParseException) {
+                return ResponseEntity.badRequest().body(ex.message ?: "Error parsing query - no details found in the error message")
             }
 
             queryVariables = if (inputQuery.get("variables") != null) {
@@ -99,7 +104,7 @@ class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
             }
 
             logger.debug("Parsed variables: {}", queryVariables)
-        } else if (fileParams!= null && mapParam != null && operation !=null) {
+        } else if (fileParams != null && mapParam != null && operation != null) {
             inputQuery = operation.let { mapper.readValue(it) }
 
             queryVariables = if (inputQuery.get("variables") != null) {
@@ -139,7 +144,7 @@ class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
         val executionResult = TimeTracer.logTime({ dgsQueryExecutor.execute(inputQuery["query"] as String, queryVariables, extensions, headers, operationName = gqlOperationName, webRequest) }, logger, "Executed query in {}ms")
         logger.debug("Execution result - Contains data: '{}' - Number of errors: {}", executionResult.isDataPresent, executionResult.errors.size)
 
-        if(executionResult.isDataPresent && executionResult.getData<Any>() is CompletionStageMappingPublisher<*,*>) {
+        if (executionResult.isDataPresent && executionResult.getData<Any>() is CompletionStageMappingPublisher<*, *>) {
             return ResponseEntity.badRequest().body("Trying to execute subscription on /graphql. Use /subscriptions instead!")
         }
 
@@ -155,4 +160,3 @@ class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
         return ResponseEntity.ok(result)
     }
 }
-

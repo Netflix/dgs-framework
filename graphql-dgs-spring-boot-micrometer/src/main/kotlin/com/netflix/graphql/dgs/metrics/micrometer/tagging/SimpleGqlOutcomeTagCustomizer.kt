@@ -16,7 +16,6 @@
 
 package com.netflix.graphql.dgs.metrics.micrometer.tagging
 
-import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlMetric
 import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlTag
 import graphql.ExecutionResult
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
@@ -32,9 +31,9 @@ class SimpleGqlOutcomeTagCustomizer : DgsExecutionTagCustomizer, DgsFieldFetchTa
     }
 
     override fun getExecutionTags(
-            parameters: InstrumentationExecutionParameters,
-            result: ExecutionResult,
-            exception: Throwable?
+        parameters: InstrumentationExecutionParameters,
+        result: ExecutionResult,
+        exception: Throwable?
     ): Iterable<Tag> {
         return if (result.errors.isNotEmpty() || exception != null) {
             Tags.of(OUTCOME_ERROR)
@@ -44,8 +43,8 @@ class SimpleGqlOutcomeTagCustomizer : DgsExecutionTagCustomizer, DgsFieldFetchTa
     }
 
     override fun getFieldFetchTags(
-            parameters: InstrumentationFieldFetchParameters,
-            error: Throwable?
+        parameters: InstrumentationFieldFetchParameters,
+        error: Throwable?
     ): Iterable<Tag> {
         return if (error != null) {
             Tags.of(OUTCOME_ERROR)

@@ -36,7 +36,8 @@ internal class MockGraphQLVisitorTest {
     fun generateDataForStringScalar() {
         val mockConfig = mapOf(Pair("someObject.someKey", null))
 
-        val schema = createSchema("""
+        val schema = createSchema(
+            """
             type Query {
                someObject: SomeObject
             }
@@ -44,8 +45,8 @@ internal class MockGraphQLVisitorTest {
             type SomeObject {
                 someKey: String
             }
-        """)
-
+        """
+        )
 
         val data = execute(schema, "query { someObject {someKey} }", mockConfig)
 
@@ -57,7 +58,8 @@ internal class MockGraphQLVisitorTest {
     fun generateDataForBooleanScalar() {
         val mockConfig = mapOf(Pair("someObject.someKey", null))
 
-        val schema = createSchema("""
+        val schema = createSchema(
+            """
             type Query {
                someObject: SomeObject
             }
@@ -65,8 +67,8 @@ internal class MockGraphQLVisitorTest {
             type SomeObject {
                 someKey: Boolean
             }
-        """)
-
+        """
+        )
 
         val data = execute(schema, "query { someObject {someKey} }", mockConfig)
 
@@ -78,7 +80,8 @@ internal class MockGraphQLVisitorTest {
     fun generateDataForIntScalar() {
         val mockConfig = mapOf(Pair("someObject.someKey", null))
 
-        val schema = createSchema("""
+        val schema = createSchema(
+            """
             type Query {
                someObject: SomeObject
             }
@@ -86,8 +89,8 @@ internal class MockGraphQLVisitorTest {
             type SomeObject {
                 someKey: Int
             }
-        """)
-
+        """
+        )
 
         val data = execute(schema, "query { someObject {someKey} }", mockConfig)
 
@@ -99,7 +102,8 @@ internal class MockGraphQLVisitorTest {
     fun generateDataForFloatScalar() {
         val mockConfig = mapOf(Pair("someObject.someKey", null))
 
-        val schema = createSchema("""
+        val schema = createSchema(
+            """
             type Query {
                someObject: SomeObject
             }
@@ -107,8 +111,8 @@ internal class MockGraphQLVisitorTest {
             type SomeObject {
                 someKey: Float
             }
-        """)
-
+        """
+        )
 
         val data = execute(schema, "query { someObject {someKey} }", mockConfig)
 
@@ -120,7 +124,8 @@ internal class MockGraphQLVisitorTest {
     fun generateDataForIDScalar() {
         val mockConfig = mapOf(Pair("someObject.someKey", null))
 
-        val schema = createSchema("""
+        val schema = createSchema(
+            """
             type Query {
                someObject: SomeObject
             }
@@ -128,8 +133,8 @@ internal class MockGraphQLVisitorTest {
             type SomeObject {
                 someKey: ID
             }
-        """)
-
+        """
+        )
 
         val data = execute(schema, "query { someObject {someKey} }", mockConfig)
 
@@ -141,7 +146,8 @@ internal class MockGraphQLVisitorTest {
     fun generateDataForNonNullableString() {
         val mockConfig = mapOf(Pair("someObject.someKey", null))
 
-        val schema = createSchema("""
+        val schema = createSchema(
+            """
             type Query {
                someObject: SomeObject
             }
@@ -149,8 +155,8 @@ internal class MockGraphQLVisitorTest {
             type SomeObject {
                 someKey: String!
             }
-        """)
-
+        """
+        )
 
         val data = execute(schema, "query { someObject {someKey} }", mockConfig)
 
@@ -162,7 +168,8 @@ internal class MockGraphQLVisitorTest {
     fun generateDataForStringList() {
         val mockConfig = mapOf(Pair("someObject.someKey", null))
 
-        val schema = createSchema("""
+        val schema = createSchema(
+            """
             type Query {
                someObject: SomeObject
             }
@@ -170,8 +177,8 @@ internal class MockGraphQLVisitorTest {
             type SomeObject {
                 someKey: [String]
             }
-        """)
-
+        """
+        )
 
         val data = execute(schema, "query { someObject {someKey} }", mockConfig)
 
@@ -187,7 +194,8 @@ internal class MockGraphQLVisitorTest {
     fun generateDataForObject() {
         val mockConfig = mapOf(Pair("someObject.someKey", null))
 
-        val schema = createSchema("""
+        val schema = createSchema(
+            """
             type Query {
                someObject: SomeObject
             }
@@ -199,8 +207,8 @@ internal class MockGraphQLVisitorTest {
             type MyObject {
                 name: String
             }
-        """)
-
+        """
+        )
 
         val data = execute(schema, "query { someObject {someKey { name} } }", mockConfig)
 
@@ -214,7 +222,8 @@ internal class MockGraphQLVisitorTest {
     fun generateDataForObjectList() {
         val mockConfig = mapOf(Pair("someObject.someKey", null))
 
-        val schema = createSchema("""
+        val schema = createSchema(
+            """
             type Query {
                someObject: SomeObject
             }
@@ -226,22 +235,22 @@ internal class MockGraphQLVisitorTest {
             type MyObject {
                 name: String
             }
-        """)
-
+        """
+        )
 
         val data = execute(schema, "query { someObject {someKey { name} } }", mockConfig)
 
         val someObject = data["someObject"] as Map<*, *>
         val myObjectArr = someObject["someKey"] as List<*>
         Assertions.assertTrue(((myObjectArr[0] as Map<*, *>)["name"] as String).isNotBlank())
-
     }
 
     @Test
     fun providedMockData() {
         val mockConfig = mapOf(Pair("someObject.someKey", listOf("a", "b", "c")))
 
-        val schema = createSchema("""
+        val schema = createSchema(
+            """
             type Query {
                someObject: SomeObject
             }
@@ -249,8 +258,8 @@ internal class MockGraphQLVisitorTest {
             type SomeObject {
                 someKey: [String]
             }
-        """)
-
+        """
+        )
 
         val data = execute(schema, "query { someObject {someKey} }", mockConfig)
 
@@ -262,7 +271,8 @@ internal class MockGraphQLVisitorTest {
     fun providedMockDataForObject() {
         val mockConfig = mapOf(Pair("someObject.someKey", listOf(MyObject(name = "mymockedvalue"))))
 
-        val schema = createSchema("""
+        val schema = createSchema(
+            """
             type Query {
                someObject: SomeObject
             }
@@ -274,7 +284,8 @@ internal class MockGraphQLVisitorTest {
             type MyObject {
                 name: String
             }
-        """)
+        """
+        )
 
         val data = execute(schema, "query { someObject {someKey { name} } }", mockConfig)
 
@@ -290,7 +301,8 @@ internal class MockGraphQLVisitorTest {
         val dataFetcher = DataFetcher { listOf("a", "b", "c") }
         val mockConfig = mapOf(Pair("someObject.someKey", dataFetcher))
 
-        val schema = createSchema("""
+        val schema = createSchema(
+            """
             type Query {
                someObject: SomeObject
             }
@@ -298,8 +310,8 @@ internal class MockGraphQLVisitorTest {
             type SomeObject {
                 someKey: [String]
             }
-        """)
-
+        """
+        )
 
         val data = execute(schema, "query { someObject {someKey} }", mockConfig)
 
@@ -313,13 +325,14 @@ internal class MockGraphQLVisitorTest {
         val namesFetcher = DataFetcher { listOf("listNameMock") }
         val mockConfig = mapOf(Pair("name", nameFetcher), Pair("names", namesFetcher))
 
-        val schema = createSchema("""
+        val schema = createSchema(
+            """
             type Query {
                name: String
                names: [String]
             }
-        """)
-
+        """
+        )
 
         val data = execute(schema, "query { names }", mockConfig)
 
@@ -331,10 +344,10 @@ internal class MockGraphQLVisitorTest {
         val transform = DgsSchemaTransformer().transformSchema(schema, mockConfig)
 
         val graphQL = GraphQL.newGraphQL(transform)
-                .build()
+            .build()
 
         val executionInput = ExecutionInput.newExecutionInput().query(query)
-                .build()
+            .build()
 
         val executionResult = graphQL.execute(executionInput)
         return executionResult.getData()
@@ -347,13 +360,11 @@ internal class MockGraphQLVisitorTest {
         val someObjectDf = DataFetcher { SomeObject() }
 
         val codeRegistry = GraphQLCodeRegistry.newCodeRegistry()
-                .dataFetcher(FieldCoordinates.coordinates("Query", "someObject"), someObjectDf)
+            .dataFetcher(FieldCoordinates.coordinates("Query", "someObject"), someObjectDf)
 
         val runtimeWiring = RuntimeWiring.newRuntimeWiring().codeRegistry(codeRegistry).build()
 
         val schemaGenerator = SchemaGenerator()
         return schemaGenerator.makeExecutableSchema(typeDefinitionRegistry, runtimeWiring)
     }
-
-
 }

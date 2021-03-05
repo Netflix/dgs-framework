@@ -22,12 +22,11 @@ import graphql.schema.*
 import graphql.schema.idl.RuntimeWiring
 import org.springframework.web.multipart.MultipartFile
 
-
 @DgsComponent
 class UploadScalar {
     val upload: GraphQLScalarType = GraphQLScalarType.newScalar().name("Upload")
-            .description("A custom scalar that represents files")
-            .coercing(MultipartFileCoercing).build()
+        .description("A custom scalar that represents files")
+        .coercing(MultipartFileCoercing).build()
 
     object MultipartFileCoercing : Coercing<MultipartFile, Void> {
         @Throws(CoercingSerializeException::class)
@@ -40,16 +39,19 @@ class UploadScalar {
             return if (input is MultipartFile) {
                 input
             } else run {
-                throw CoercingParseValueException("Expected type " +
+                throw CoercingParseValueException(
+                    "Expected type " +
                         MultipartFile::class.java.name +
                         " but was " +
-                        input.javaClass.name)
+                        input.javaClass.name
+                )
             }
         }
 
         override fun parseLiteral(input: Any): MultipartFile {
             throw CoercingParseLiteralException(
-                    "Must use variables to specify Upload values")
+                "Must use variables to specify Upload values"
+            )
         }
     }
 
@@ -59,4 +61,3 @@ class UploadScalar {
         return builder.scalar(upload)
     }
 }
-

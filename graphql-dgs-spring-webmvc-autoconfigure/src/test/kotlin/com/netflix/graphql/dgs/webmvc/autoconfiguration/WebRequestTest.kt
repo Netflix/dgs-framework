@@ -46,21 +46,23 @@ class WebRequestTest {
 
     @Test
     fun `WebRequest should be available on DgsContext`() {
-        mockMvc.perform(MockMvcRequestBuilders.post("/graphql")
-                .content("""{"query": "{ usingWebRequest }" }"""))
-                .andExpect(MockMvcResultMatchers.status().isOk)
-                .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingWebRequest": "localhost"}}"""))
-
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ usingWebRequest }" }""")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingWebRequest": "localhost"}}"""))
     }
 
     @Test
     fun `@RequestHeader should be available`() {
-        mockMvc.perform(MockMvcRequestBuilders.post("/graphql")
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
                 .content("""{"query": "{ usingHeader }" }""")
-                .header("myheader", "hello"))
-                .andExpect(MockMvcResultMatchers.status().isOk)
-                .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingHeader": "hello"}}"""))
-
+                .header("myheader", "hello")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingHeader": "hello"}}"""))
     }
 
     @DgsComponent
@@ -71,22 +73,24 @@ class WebRequestTest {
             val newRegistry = TypeDefinitionRegistry()
 
             val query =
-                    ObjectTypeDefinition
-                            .newObjectTypeDefinition()
-                            .name("Query")
-                            .fieldDefinition(
-                                    FieldDefinition
-                                            .newFieldDefinition()
-                                            .name("usingWebRequest")
-                                            .type(TypeName("String"))
-                                            .build())
-                            .fieldDefinition(
-                                    FieldDefinition
-                                            .newFieldDefinition()
-                                            .name("usingHeader")
-                                            .type(TypeName("String"))
-                                            .build())
+                ObjectTypeDefinition
+                    .newObjectTypeDefinition()
+                    .name("Query")
+                    .fieldDefinition(
+                        FieldDefinition
+                            .newFieldDefinition()
+                            .name("usingWebRequest")
+                            .type(TypeName("String"))
                             .build()
+                    )
+                    .fieldDefinition(
+                        FieldDefinition
+                            .newFieldDefinition()
+                            .name("usingHeader")
+                            .type(TypeName("String"))
+                            .build()
+                    )
+                    .build()
             newRegistry.add(query)
 
             return newRegistry

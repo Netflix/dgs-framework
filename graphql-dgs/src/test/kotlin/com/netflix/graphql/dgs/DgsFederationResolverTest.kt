@@ -50,10 +50,10 @@ class DgsFederationResolverTest {
     @BeforeEach
     fun setup() {
         dgsSchemaProvider = DgsSchemaProvider(
-                applicationContextMock,
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty()
+            applicationContextMock,
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty()
         )
     }
 
@@ -141,7 +141,6 @@ class DgsFederationResolverTest {
         }
 
         testEntityFetcher(movieEntityFetcher)
-
     }
 
     @Test
@@ -157,7 +156,6 @@ class DgsFederationResolverTest {
         }
 
         testEntityFetcher(movieEntityFetcher)
-
     }
 
     @Test

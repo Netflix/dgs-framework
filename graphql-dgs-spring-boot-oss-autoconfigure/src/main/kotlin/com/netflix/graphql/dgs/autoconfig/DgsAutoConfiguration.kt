@@ -31,8 +31,8 @@ import com.netflix.graphql.mocking.MockProvider
 import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
 import graphql.execution.DataFetcherExceptionHandler
-import graphql.execution.ExecutionStrategy
 import graphql.execution.ExecutionIdProvider
+import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
 import graphql.schema.GraphQLCodeRegistry
@@ -57,33 +57,33 @@ import java.util.*
 open class DgsAutoConfiguration {
 
     @Bean
-    open fun dgsQueryExecutor(applicationContext: ApplicationContext,
-                              schema: GraphQLSchema,
-                              schemaProvider: DgsSchemaProvider,
-                              dgsDataLoaderProvider: DgsDataLoaderProvider,
-                              dgsContextBuilder: DgsContextBuilder,
-                              dataFetcherExceptionHandler: DataFetcherExceptionHandler,
-                              chainedInstrumentation: ChainedInstrumentation,
-                              environment: Environment,
-                              @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
-                              @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
-                              idProvider: Optional<ExecutionIdProvider>,
-                              reloadSchemaIndicator: ReloadSchemaIndicator
+    open fun dgsQueryExecutor(
+        applicationContext: ApplicationContext,
+        schema: GraphQLSchema,
+        schemaProvider: DgsSchemaProvider,
+        dgsDataLoaderProvider: DgsDataLoaderProvider,
+        dgsContextBuilder: DgsContextBuilder,
+        dataFetcherExceptionHandler: DataFetcherExceptionHandler,
+        chainedInstrumentation: ChainedInstrumentation,
+        environment: Environment,
+        @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
+        @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
+        idProvider: Optional<ExecutionIdProvider>,
+        reloadSchemaIndicator: ReloadSchemaIndicator
     ): DgsQueryExecutor {
-
 
         val queryExecutionStrategy = providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
         val mutationExecutionStrategy = providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
         return DefaultDgsQueryExecutor(
-                schema,
-                schemaProvider,
-                dgsDataLoaderProvider,
-                dgsContextBuilder,
-                chainedInstrumentation,
-                queryExecutionStrategy,
-                mutationExecutionStrategy,
-                idProvider,
-                reloadSchemaIndicator
+            schema,
+            schemaProvider,
+            dgsDataLoaderProvider,
+            dgsContextBuilder,
+            chainedInstrumentation,
+            queryExecutionStrategy,
+            mutationExecutionStrategy,
+            idProvider,
+            reloadSchemaIndicator
         )
     }
 
@@ -132,12 +132,12 @@ open class DgsAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     open fun dgsSchemaProvider(
-            applicationContext: ApplicationContext,
-            federationResolver: Optional<DgsFederationResolver>,
-            dataFetcherExceptionHandler: DataFetcherExceptionHandler,
-            existingTypeDefinitionFactory: Optional<TypeDefinitionRegistry>,
-            existingCodeRegistry: Optional<GraphQLCodeRegistry>,
-            mockProviders: Optional<Set<MockProvider>>
+        applicationContext: ApplicationContext,
+        federationResolver: Optional<DgsFederationResolver>,
+        dataFetcherExceptionHandler: DataFetcherExceptionHandler,
+        existingTypeDefinitionFactory: Optional<TypeDefinitionRegistry>,
+        existingCodeRegistry: Optional<GraphQLCodeRegistry>,
+        mockProviders: Optional<Set<MockProvider>>
     ): DgsSchemaProvider {
         return DgsSchemaProvider(applicationContext, federationResolver, existingTypeDefinitionFactory, mockProviders)
     }

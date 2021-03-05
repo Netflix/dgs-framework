@@ -12,7 +12,7 @@ import org.dataloader.MappedBatchLoader
 import org.dataloader.MappedBatchLoaderWithContext
 
 class DgsDataLoaderInstrumentationProvider(
-        private val meterRegistrySupplier: DgsMeterRegistrySupplier,
+    private val meterRegistrySupplier: DgsMeterRegistrySupplier,
 ) : DataLoaderInstrumentationExtensionProvider {
 
     private val batchLoaderClasses = mutableMapOf<String, Class<out BatchLoader<*, *>>>()
@@ -23,65 +23,64 @@ class DgsDataLoaderInstrumentationProvider(
     override fun provide(original: BatchLoader<*, *>, name: String): BatchLoader<*, *> {
         return batchLoaderClasses.getOrPut(name) {
             val withBinders =
-                    MethodDelegation
-                            .withDefaultConfiguration()
-                            .withBinders(Pipe.Binder.install(Forwarder::class.java))
-                            .to(BatchLoaderInterceptor(original, name, meterRegistrySupplier.get()))
+                MethodDelegation
+                    .withDefaultConfiguration()
+                    .withBinders(Pipe.Binder.install(Forwarder::class.java))
+                    .to(BatchLoaderInterceptor(original, name, meterRegistrySupplier.get()))
             ByteBuddy()
-                    .subclass(BatchLoader::class.java)
-                    .method(ElementMatchers.named("load")).intercept(withBinders)
-                    .make()
-                    .load(javaClass.classLoader)
-                    .loaded
+                .subclass(BatchLoader::class.java)
+                .method(ElementMatchers.named("load")).intercept(withBinders)
+                .make()
+                .load(javaClass.classLoader)
+                .loaded
         }.newInstance()
     }
 
     override fun provide(original: BatchLoaderWithContext<*, *>, name: String): BatchLoaderWithContext<*, *> {
         return batchLoaderWithContextClasses.getOrPut(name) {
             val withBinders = MethodDelegation.withDefaultConfiguration()
-                    .withBinders(Pipe.Binder.install(Forwarder::class.java))
-                    .to(BatchLoaderWithContextInterceptor(original, name, meterRegistrySupplier.get()))
+                .withBinders(Pipe.Binder.install(Forwarder::class.java))
+                .to(BatchLoaderWithContextInterceptor(original, name, meterRegistrySupplier.get()))
 
             ByteBuddy()
-                    .subclass(BatchLoaderWithContext::class.java)
-                    .method(ElementMatchers.named("load")).intercept(withBinders)
-                    .make()
-                    .load(javaClass.classLoader)
-                    .loaded
+                .subclass(BatchLoaderWithContext::class.java)
+                .method(ElementMatchers.named("load")).intercept(withBinders)
+                .make()
+                .load(javaClass.classLoader)
+                .loaded
         }.newInstance()
     }
 
     override fun provide(original: MappedBatchLoader<*, *>, name: String): MappedBatchLoader<*, *> {
         return mappedBatchLoaderClasses.getOrPut(name) {
             val withBinders = MethodDelegation.withDefaultConfiguration()
-                    .withBinders(Pipe.Binder.install(Forwarder::class.java)).to(
-                            MappedBatchLoaderInterceptor(original, name, meterRegistrySupplier.get())
-                    )
+                .withBinders(Pipe.Binder.install(Forwarder::class.java)).to(
+                    MappedBatchLoaderInterceptor(original, name, meterRegistrySupplier.get())
+                )
 
             ByteBuddy()
-                    .subclass(MappedBatchLoader::class.java)
-                    .method(ElementMatchers.named("load")).intercept(withBinders)
-                    .make()
-                    .load(javaClass.classLoader)
-                    .loaded
+                .subclass(MappedBatchLoader::class.java)
+                .method(ElementMatchers.named("load")).intercept(withBinders)
+                .make()
+                .load(javaClass.classLoader)
+                .loaded
         }.newInstance()
     }
 
     override fun provide(
-            original: MappedBatchLoaderWithContext<*, *>,
-            name: String
+        original: MappedBatchLoaderWithContext<*, *>,
+        name: String
     ): MappedBatchLoaderWithContext<*, *> {
         return mappedBatchLoaderWithContextClasses.getOrPut(name) {
             val withBinders = MethodDelegation.withDefaultConfiguration()
-                    .withBinders(Pipe.Binder.install(Forwarder::class.java))
-                    .to(MappedBatchLoaderWithContextInterceptor(original, name, meterRegistrySupplier.get()))
+                .withBinders(Pipe.Binder.install(Forwarder::class.java))
+                .to(MappedBatchLoaderWithContextInterceptor(original, name, meterRegistrySupplier.get()))
             ByteBuddy()
-                    .subclass(MappedBatchLoaderWithContext::class.java)
-                    .method(ElementMatchers.named("load")).intercept(withBinders)
-                    .make()
-                    .load(javaClass.classLoader)
-                    .loaded
+                .subclass(MappedBatchLoaderWithContext::class.java)
+                .method(ElementMatchers.named("load")).intercept(withBinders)
+                .make()
+                .load(javaClass.classLoader)
+                .loaded
         }.newInstance()
     }
 }
-

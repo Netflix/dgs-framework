@@ -39,8 +39,10 @@ class DgsSchemaTransformer {
             val newCodeRegistry = GraphQLCodeRegistry.newCodeRegistry(schema.codeRegistry)
             mockFetchers.forEach { (coordinates, dataFetcher) -> newCodeRegistry.dataFetcher(coordinates, dataFetcher) }
 
-            b.codeRegistry(newCodeRegistry
-                    .build())
+            b.codeRegistry(
+                newCodeRegistry
+                    .build()
+            )
         }
     }
 }

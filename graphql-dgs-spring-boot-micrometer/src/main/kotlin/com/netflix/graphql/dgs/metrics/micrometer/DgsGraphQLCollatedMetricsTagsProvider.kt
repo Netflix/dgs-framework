@@ -26,34 +26,32 @@ import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchPar
 import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Tags
 
-
 internal class DgsGraphQLCollatedMetricsTagsProvider(
-        private val contextualTagCustomizer: Collection<DgsContextualTagCustomizer>,
-        private val executionTagCustomizer: Collection<DgsExecutionTagCustomizer>,
-        private val fieldFetchTagCustomizer: Collection<DgsFieldFetchTagCustomizer>
+    private val contextualTagCustomizer: Collection<DgsContextualTagCustomizer>,
+    private val executionTagCustomizer: Collection<DgsExecutionTagCustomizer>,
+    private val fieldFetchTagCustomizer: Collection<DgsFieldFetchTagCustomizer>
 ) : DgsGraphQLMetricsTagsProvider {
 
     override fun getContextualTags(): Iterable<Tag> {
         return contextualTagCustomizer.stream().map { it.getContextualTags() }
-                .collect(Tags::empty, { a, b -> a.and(b) }, { a, b -> a.and(b) })
+            .collect(Tags::empty, { a, b -> a.and(b) }, { a, b -> a.and(b) })
     }
 
     override fun getExecutionTags(
-            parameters: InstrumentationExecutionParameters,
-            result: ExecutionResult,
-            exception: Throwable?
+        parameters: InstrumentationExecutionParameters,
+        result: ExecutionResult,
+        exception: Throwable?
     ): Iterable<Tag> {
         return executionTagCustomizer
-                .stream()
-                .map{ it.getExecutionTags(parameters, result, exception) }
-                .reduce(Tags.empty(), { a, b -> a.and(b) }, { a, b -> a.and(b) })
-
+            .stream()
+            .map { it.getExecutionTags(parameters, result, exception) }
+            .reduce(Tags.empty(), { a, b -> a.and(b) }, { a, b -> a.and(b) })
     }
 
     override fun getFieldFetchTags(parameters: InstrumentationFieldFetchParameters, error: Throwable?): Iterable<Tag> {
         return fieldFetchTagCustomizer
-                .stream()
-                .map { it.getFieldFetchTags(parameters, error) }
-                .reduce(Tags.empty(), { a, b -> a.and(b) }, { a, b -> a.and(b) })
+            .stream()
+            .map { it.getFieldFetchTags(parameters, error) }
+            .reduce(Tags.empty(), { a, b -> a.and(b) }, { a, b -> a.and(b) })
     }
 }

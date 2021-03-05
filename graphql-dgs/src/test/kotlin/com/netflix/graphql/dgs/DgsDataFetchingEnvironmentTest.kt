@@ -96,7 +96,7 @@ class DgsDataFetchingEnvironmentTest {
     val helloFetcherWithBasicDFE = object : Any() {
         @DgsData(parentType = "Query", field = "hello")
         fun someFetcher(dfe: DataFetchingEnvironment): CompletableFuture<String> {
-            //val loader: DataLoader<String, String> = dfe.getDataLoader<String, String>(ExampleBatchLoader::class.java)
+            // val loader: DataLoader<String, String> = dfe.getDataLoader<String, String>(ExampleBatchLoader::class.java)
             val loader = dfe.getDataLoader<String, String>("exampleLoader")
             loader.load("a")
             loader.load("b")
@@ -120,9 +120,9 @@ class DgsDataFetchingEnvironmentTest {
         val build = GraphQL.newGraphQL(schema).build()
 
         val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
-                .query("{hello}")
-                .dataLoaderRegistry(dataLoaderRegistry)
-                .build()
+            .query("{hello}")
+            .dataLoaderRegistry(dataLoaderRegistry)
+            .build()
         val executionResult = build.execute(executionInput)
         Assertions.assertTrue(executionResult.isDataPresent)
         val result = executionResult.getData() as Map<String, String>
@@ -145,9 +145,9 @@ class DgsDataFetchingEnvironmentTest {
         val build = GraphQL.newGraphQL(schema).build()
 
         val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
-                .query("{hello}")
-                .dataLoaderRegistry(dataLoaderRegistry)
-                .build()
+            .query("{hello}")
+            .dataLoaderRegistry(dataLoaderRegistry)
+            .build()
         val executionResult = build.execute(executionInput)
         Assertions.assertTrue(executionResult.isDataPresent)
         val result = executionResult.getData() as Map<String, String>
@@ -170,9 +170,9 @@ class DgsDataFetchingEnvironmentTest {
         val build = GraphQL.newGraphQL(schema).build()
 
         val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
-                .query("{hello}")
-                .dataLoaderRegistry(dataLoaderRegistry)
-                .build()
+            .query("{hello}")
+            .dataLoaderRegistry(dataLoaderRegistry)
+            .build()
         val executionResult = build.execute(executionInput)
         Assertions.assertTrue(executionResult.isDataPresent)
         val result = executionResult.getData() as Map<String, String>
@@ -195,9 +195,9 @@ class DgsDataFetchingEnvironmentTest {
         val build = GraphQL.newGraphQL(schema).build()
 
         val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
-                .query("{hello}")
-                .dataLoaderRegistry(dataLoaderRegistry)
-                .build()
+            .query("{hello}")
+            .dataLoaderRegistry(dataLoaderRegistry)
+            .build()
         val executionResult = build.execute(executionInput)
         assert(executionResult.errors.size > 0)
     }
@@ -218,9 +218,9 @@ class DgsDataFetchingEnvironmentTest {
         val build = GraphQL.newGraphQL(schema).build()
 
         val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
-                .query("{hello}")
-                .dataLoaderRegistry(dataLoaderRegistry)
-                .build()
+            .query("{hello}")
+            .dataLoaderRegistry(dataLoaderRegistry)
+            .build()
         val executionResult = build.execute(executionInput)
         Assertions.assertTrue(executionResult.isDataPresent)
         val result = executionResult.getData() as Map<String, String>
@@ -243,9 +243,9 @@ class DgsDataFetchingEnvironmentTest {
         val build = GraphQL.newGraphQL(schema).build()
 
         val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
-                .query("{hello}")
-                .dataLoaderRegistry(dataLoaderRegistry)
-                .build()
+            .query("{hello}")
+            .dataLoaderRegistry(dataLoaderRegistry)
+            .build()
         val executionResult = build.execute(executionInput)
         Assertions.assertTrue(executionResult.isDataPresent)
         val result = executionResult.getData() as Map<String, String>

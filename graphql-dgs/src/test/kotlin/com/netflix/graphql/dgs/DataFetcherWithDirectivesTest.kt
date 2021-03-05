@@ -48,13 +48,13 @@ class DataFetcherWithDirectivesTest {
 
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
         val schema = provider.schema(
-                """
+            """
             directive @someDirective(name: String) on FIELD_DEFINITION
             type Query {
                 hello: String @someDirective(name: "some name")
             }
             
-        """.trimIndent()
+            """.trimIndent()
         )
 
         val build = GraphQL.newGraphQL(schema).build()

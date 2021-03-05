@@ -16,5 +16,4 @@
 
 package com.netflix.graphql.dgs.exceptions
 
-class MissingDgsEntityFetcherException(type: String) : RuntimeException("Missing @DgsEntityFetcher for type $type") {
-}
+class MissingDgsEntityFetcherException(type: String) : RuntimeException("Missing @DgsEntityFetcher for type $type")

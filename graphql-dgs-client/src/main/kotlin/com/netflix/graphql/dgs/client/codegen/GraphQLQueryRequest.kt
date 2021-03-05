@@ -18,7 +18,6 @@ package com.netflix.graphql.dgs.client.codegen
 
 import java.util.stream.Collectors
 
-
 class GraphQLQueryRequest(private val query: GraphQLQuery, private val projection: BaseProjectionNode?) {
 
     constructor(query: GraphQLQuery) : this(query, null)
@@ -46,7 +45,7 @@ class GraphQLQueryRequest(private val query: GraphQLQuery, private val projectio
                             builder.append("[")
                             val elements = inputEntry.value as List<String>
                             val result: String = elements.stream()
-                                    .collect(Collectors.joining("\", \"", "\"", "\""))
+                                .collect(Collectors.joining("\", \"", "\"", "\""))
                             builder.append(result)
                             builder.append("]")
                         } else {

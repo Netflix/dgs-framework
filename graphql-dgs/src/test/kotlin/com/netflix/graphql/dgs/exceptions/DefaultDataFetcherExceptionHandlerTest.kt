@@ -35,7 +35,6 @@ internal class DefaultDataFetcherExceptionHandlerTest {
     fun setup() {
         MockKAnnotations.init(this)
         every { dataFetcherExceptionHandlerParameters.path }.returns(ResultPath.parse("/Query/test"))
-
     }
 
     @Test

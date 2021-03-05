@@ -71,11 +71,12 @@ class GraphQLResponseTest {
         """.trimIndent()
 
         server.expect(requestTo(url))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
+            .andExpect(method(HttpMethod.POST))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
 
-        val graphQLResponse = client.executeQuery("""mutation {
+        val graphQLResponse = client.executeQuery(
+            """mutation {
               submitReview(review:{movieId:1, starRating:5, description:""}) {
                 edges {
                   node {
@@ -84,7 +85,9 @@ class GraphQLResponseTest {
                   }
                 }
               }
-            }""", emptyMap(), requestExecutor)
+            }""",
+            emptyMap(), requestExecutor
+        )
 
         val offsetDateTime = graphQLResponse.extractValueAsObject("submitReview.edges[0].node.postedDate", OffsetDateTime::class.java)
         assertThat(offsetDateTime).isInstanceOf(OffsetDateTime::class.java)
