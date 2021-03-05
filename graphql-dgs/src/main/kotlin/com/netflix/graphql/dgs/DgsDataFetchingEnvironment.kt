@@ -40,7 +40,7 @@ class DgsDataFetchingEnvironment(private val dfe: DataFetchingEnvironment) : Dat
         if (context is DgsContext) {
             return context
         } else {
-            throw RuntimeException("Context object is not a DgsContext. This method does not work if you have a custom implementation of DgsContextBuilder")
+            throw RuntimeException("""Context object of type '${context::class.java.name}' is not a DgsContext. This method does not work if you have a custom implementation of DgsContextBuilder""")
         }
     }
 
