@@ -38,6 +38,7 @@ import graphql.schema.GraphQLSchema
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
+import org.springframework.web.context.request.WebRequest
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
@@ -68,12 +69,13 @@ class DefaultDgsQueryExecutor(defaultSchema: GraphQLSchema,
 
     val schema = AtomicReference(defaultSchema)
 
-    override fun execute(query: String, variables: Map<String, Any>, extensions: Map<String, Any>?, headers: HttpHeaders, operationName: String?): ExecutionResult {
+    override fun execute(query: String, variables: Map<String, Any>, extensions: Map<String, Any>?, headers: HttpHeaders, operationName: String?, webRequest: WebRequest?): ExecutionResult {
         if (contextBuilder is DefaultDgsGraphQLContextBuilder) {
             extensions.let {
                 contextBuilder.extensions = it
             }
             contextBuilder.headers = headers
+            contextBuilder.webRequest = webRequest
         }
         return execute(query, variables, operationName)
     }

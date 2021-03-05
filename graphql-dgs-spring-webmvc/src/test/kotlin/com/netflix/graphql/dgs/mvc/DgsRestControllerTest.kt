@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,12 +30,16 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.web.context.request.WebRequest
 
 
 @ExtendWith(MockKExtension::class)
 class DgsRestControllerTest {
     @MockK
     lateinit var dgsQueryExecutor: DgsQueryExecutor
+
+    @MockK
+    lateinit var webRequest: WebRequest
 
     @Test
     fun errorForSubscriptionOnGraphqlEndpoint() {
@@ -46,9 +50,9 @@ class DgsRestControllerTest {
             }
         """.trimIndent()
 
-        every { dgsQueryExecutor.execute(queryString, emptyMap(), any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(CompletionStageMappingPublisher<String,String>(null, null)).build()
+        every { dgsQueryExecutor.execute(queryString, emptyMap(), any(), any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(CompletionStageMappingPublisher<String, String>(null, null)).build()
 
-        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders())
+        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
         assertThat(result.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
         assertThat(result.body).isEqualTo("Trying to execute subscription on /graphql. Use /subscriptions instead!")
     }
@@ -62,9 +66,9 @@ class DgsRestControllerTest {
             }
         """.trimIndent()
 
-        every { dgsQueryExecutor.execute(queryString, emptyMap(), any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).build()
+        every { dgsQueryExecutor.execute(queryString, emptyMap(), any(), any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).build()
 
-        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders())
+        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
         val mapper = jacksonObjectMapper()
         val (data, errors) = mapper.readValue(result.body, GraphQLResponse::class.java)
         assertThat(errors.size).isEqualTo(0)
@@ -82,9 +86,9 @@ class DgsRestControllerTest {
         """.trimIndent()
 
         val capturedOperationName = slot<String>()
-        every { dgsQueryExecutor.execute(queryString, emptyMap(), any(), any(), capture(capturedOperationName)) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hi", "there"))).build()
+        every { dgsQueryExecutor.execute(queryString, emptyMap(), any(), any(), capture(capturedOperationName), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hi", "there"))).build()
 
-        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders())
+        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
         val mapper = jacksonObjectMapper()
         val (data, errors) = mapper.readValue(result.body, GraphQLResponse::class.java)
         assertThat(errors.size).isEqualTo(0)

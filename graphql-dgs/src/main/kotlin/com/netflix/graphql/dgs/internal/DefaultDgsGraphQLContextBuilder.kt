@@ -23,6 +23,7 @@ import com.netflix.graphql.dgs.internal.utils.TimeTracer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
+import org.springframework.web.context.request.WebRequest
 import java.util.*
 
 
@@ -30,18 +31,25 @@ open class DefaultDgsGraphQLContextBuilder(private val dgsCustomContextBuilder: 
     val logger: Logger = LoggerFactory.getLogger(DefaultDgsGraphQLContextBuilder::class.java)
     var extensions: Map<String, Any>? = null
     var headers: HttpHeaders? = null
+    var webRequest: WebRequest? = null
 
     override fun build(): DgsContext {
         return TimeTracer.logTime({ buildDgsContext() }, logger, "Created DGS context in {}ms")
     }
 
     private fun buildDgsContext(): DgsContext {
-        val customContext = if (dgsCustomContextBuilder.isPresent)
+        @Suppress("DEPRECATION") val customContext = if (dgsCustomContextBuilder.isPresent)
             dgsCustomContextBuilder.get().build()
         else
+        //This is for backwards compatibility - we previously made DefaultRequestData the custom context if no custom context was provided.
             DefaultRequestData(extensions ?: mapOf(), headers ?: HttpHeaders())
-        return DgsContext(customContext)
+
+        return DgsContext(customContext, DgsRequestData(extensions ?: mapOf(), HttpHeaders.readOnlyHttpHeaders(headers
+                ?: HttpHeaders()), webRequest))
     }
 }
 
-data class DefaultRequestData(val extensions: Map<String, Any>, val headers: HttpHeaders)
+@Deprecated("Use DgsContext.requestData instead")
+data class DefaultRequestData(@Deprecated("Use DgsContext.requestData instead") val extensions: Map<String, Any>, @Deprecated("Use DgsContext.requestData instead") val headers: HttpHeaders)
+
+data class DgsRequestData(val extensions: Map<String, Any>? = emptyMap(), val headers: HttpHeaders? = HttpHeaders.readOnlyHttpHeaders(HttpHeaders()), val webRequest: WebRequest? = null)

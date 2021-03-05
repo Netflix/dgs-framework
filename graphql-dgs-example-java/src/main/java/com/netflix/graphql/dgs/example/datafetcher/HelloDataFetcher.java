@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ import java.util.concurrent.CompletableFuture;
 public class HelloDataFetcher {
     @DgsData(parentType = "Query", field = "hello")
     @DgsEnableDataFetcherInstrumentation(false)
-    public String hello(@InputArgument("name") String name) {
-        if(name == null) {
+    public String hello(@InputArgument String name) {
+        if (name == null) {
             name = "Stranger";
         }
 
