@@ -50,7 +50,7 @@ class DgsRestControllerTest {
             }
         """.trimIndent()
 
-        every { dgsQueryExecutor.execute(queryString, emptyMap(), any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(CompletionStageMappingPublisher<String, String>(null, null)).build()
+        every { dgsQueryExecutor.execute(queryString, emptyMap(), any(), any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(CompletionStageMappingPublisher<String, String>(null, null)).build()
 
         val result = DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
         assertThat(result.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
@@ -66,7 +66,7 @@ class DgsRestControllerTest {
             }
         """.trimIndent()
 
-        every { dgsQueryExecutor.execute(queryString, emptyMap(), any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).build()
+        every { dgsQueryExecutor.execute(queryString, emptyMap(), any(), any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).build()
 
         val result = DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
         val mapper = jacksonObjectMapper()
@@ -86,7 +86,7 @@ class DgsRestControllerTest {
         """.trimIndent()
 
         val capturedOperationName = slot<String>()
-        every { dgsQueryExecutor.execute(queryString, emptyMap(), any(), any(), capture(capturedOperationName)) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hi", "there"))).build()
+        every { dgsQueryExecutor.execute(queryString, emptyMap(), any(), any(), capture(capturedOperationName), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hi", "there"))).build()
 
         val result = DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
         val mapper = jacksonObjectMapper()

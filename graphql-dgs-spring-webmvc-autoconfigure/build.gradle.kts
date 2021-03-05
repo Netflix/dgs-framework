@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,4 +22,5 @@ dependencies {
 
     testImplementation("io.mockk:mockk:1.10.3-jdk8")
     testImplementation("org.springframework.boot:spring-boot-starter-web")
+    testImplementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
 }

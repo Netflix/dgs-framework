@@ -66,7 +66,7 @@ class DgsMultipartPostControllerTest {
         val queryString = "mutation(${'$'}file: Upload!) {uploadFile(file: ${'$'}file)}"
         val variablesMap: MutableMap<String, Any> = Maps.newHashMap("file", file1)
 
-        every { dgsQueryExecutor.execute(queryString, variablesMap, any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("Response", "success"))).build()
+        every { dgsQueryExecutor.execute(queryString, variablesMap, any(), any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("Response", "success"))).build()
 
         val result = DgsRestController(dgsQueryExecutor).graphql(null, Maps.newHashMap("0", file1), operation, map, HttpHeaders(), webRequest)
 
@@ -104,7 +104,7 @@ class DgsMultipartPostControllerTest {
         val queryInputMap = Maps.newHashMap<String, Any>("description", "test")
         queryInputMap["files"] = Lists.newArrayList(file1, file2)
 
-        every { dgsQueryExecutor.execute(queryString, Maps.newHashMap("input", queryInputMap), any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("Response", "success"))).build()
+        every { dgsQueryExecutor.execute(queryString, Maps.newHashMap("input", queryInputMap), any(), any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("Response", "success"))).build()
 
         val result = DgsRestController(dgsQueryExecutor).graphql(null, mapOf("0" to file1, "1" to file2), operation, map, HttpHeaders(), webRequest)
 
@@ -138,7 +138,7 @@ class DgsMultipartPostControllerTest {
         val queryString = "mutation(${'$'}files: [Upload!]!) {uploadFile(files: ${'$'}files)}"
         val variablesMap: MutableMap<String, Any> = Maps.newHashMap("files", Lists.newArrayList(file1, file2))
 
-        every { dgsQueryExecutor.execute(queryString, variablesMap, any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("Response", "success"))).build()
+        every { dgsQueryExecutor.execute(queryString, variablesMap, any(), any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("Response", "success"))).build()
 
         val result = DgsRestController(dgsQueryExecutor).graphql(null, mapOf("0" to file1, "1" to file2), operation, map, HttpHeaders(), webRequest)
 
