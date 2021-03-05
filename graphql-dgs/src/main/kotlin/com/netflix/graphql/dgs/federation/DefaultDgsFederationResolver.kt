@@ -30,6 +30,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionStage
 
 @DgsComponent
 open class DefaultDgsFederationResolver() :
@@ -81,8 +82,8 @@ open class DefaultDgsFederationResolver() :
                     throw MissingDgsEntityFetcherException(typename.toString())
                 }
 
-                if (result is CompletableFuture<*>) {
-                    result
+                if (result is CompletionStage<*>) {
+                    result.toCompletableFuture()
                 } else {
                     CompletableFuture.completedFuture(result)
                 }

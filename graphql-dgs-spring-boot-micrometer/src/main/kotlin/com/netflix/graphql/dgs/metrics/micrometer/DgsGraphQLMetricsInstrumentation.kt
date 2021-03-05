@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.metrics.AutoTimer
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionStage
 
 class DgsGraphQLMetricsInstrumentation(
     private val registrySupplier: DgsMeterRegistrySupplier,
@@ -100,7 +101,7 @@ class DgsGraphQLMetricsInstrumentation(
             val sampler = Timer.start(registry)
             try {
                 val result = dataFetcher.get(environment)
-                if (result is CompletableFuture<*>) {
+                if (result is CompletionStage<*>) {
                     result.whenComplete { _, error -> recordDataFetcherMetrics(registry, sampler, parameters, error, baseTags) }
                 } else {
                     recordDataFetcherMetrics(registry, sampler, parameters, null, baseTags)
@@ -136,7 +137,7 @@ class DgsGraphQLMetricsInstrumentation(
         }
 
         fun stopTimer(timer: Timer.Builder) {
-            this.timerSample.map { it.stop(timer.register(this.registry)) }
+            this.timerSample.ifPresent { it.stop(timer.register(this.registry)) }
         }
     }
 }
