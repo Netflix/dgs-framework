@@ -4,6 +4,10 @@ on:
     tags:
       - v*.*.*
       - v*.*.*-rc.*
+  release:
+    types:
+      - created
+      - prereleased
 
 jobs:
   build:
