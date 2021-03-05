@@ -112,20 +112,10 @@ open class DgsAutoConfiguration {
     @ConditionalOnMissingBean
     open fun defaultReloadSchemaIndicator(environment: Environment): ReloadSchemaIndicator {
         val isLaptopProfile = environment.activeProfiles.contains("laptop")
-        val hotReloadSetting = environment.getProperty("dgs.reload")
+        val hotReloadSetting = environment.getProperty("dgs.reload", Boolean::class.java, isLaptopProfile)
 
         return ReloadSchemaIndicator {
-            when (hotReloadSetting) {
-                "true" -> {
-                    true
-                }
-                "false" -> {
-                    false
-                }
-                else -> {
-                    isLaptopProfile
-                }
-            }
+            hotReloadSetting
         }
     }
 
