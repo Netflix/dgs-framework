@@ -58,11 +58,7 @@ import org.springframework.context.annotation.FilterType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.util.LinkedMultiValueMap
-import org.springframework.util.MultiValueMap
 import java.util.concurrent.CompletableFuture
-import java.util.stream.Collectors
-import kotlin.streams.toList
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.MOCK,
@@ -82,16 +78,16 @@ class MicrometerServletSmokeTest {
 
     @BeforeEach
     fun resetMeterRegistry() {
-        meterRegistry?.clear()
+        meterRegistry.clear()
     }
 
-    @Test()
+    @Test
     fun `Assert the type of MeterRegistry we require for the test`() {
         assertThat(meterRegistry).isNotNull
         assertThat(meterRegistry).isExactlyInstanceOf(SimpleMeterRegistry::class.java)
     }
 
-    @Test()
+    @Test
     fun `Metrics for a successful request`() {
         mvc.perform(
             MockMvcRequestBuilders
@@ -107,6 +103,7 @@ class MicrometerServletSmokeTest {
             .extracting({ it?.id?.tags }, asTags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
+                    .and("contextual-tag", "foo")
                     .and("outcome", "SUCCESS")
             )
 
@@ -114,12 +111,13 @@ class MicrometerServletSmokeTest {
             .extracting({ it?.id?.tags }, asTags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("field-fetch-tag", "foo")
+                    .and("contextual-tag", "foo")
                     .and("gql.field", "Query.ping")
                     .and("outcome", "SUCCESS")
             )
     }
 
-    @Test()
+    @Test
     fun `Metrics for a successful request with data loaders`() {
         mvc.perform(
             MockMvcRequestBuilders
@@ -142,6 +140,7 @@ class MicrometerServletSmokeTest {
             .extracting({ it?.id?.tags }, asTags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
+                    .and("contextual-tag", "foo")
                     .and("outcome", "SUCCESS")
             )
 
@@ -149,12 +148,13 @@ class MicrometerServletSmokeTest {
             .extracting({ it?.id?.tags }, asTags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("field-fetch-tag", "foo")
+                    .and("contextual-tag", "foo")
                     .and("gql.field", "Query.upperCased")
                     .and("outcome", "SUCCESS")
             )
     }
 
-    @Test()
+    @Test
     fun `Assert metrics for a syntax error`() {
         mvc.perform(
             MockMvcRequestBuilders
@@ -170,6 +170,7 @@ class MicrometerServletSmokeTest {
             .extracting({ it?.id?.tags }, asTags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
+                    .and("contextual-tag", "foo")
                     .and("gql.errorDetail", "none")
                     .and("gql.errorCode", "InvalidSyntax")
                     .and("gql.path", "[]")
@@ -180,11 +181,12 @@ class MicrometerServletSmokeTest {
             .extracting({ it?.id?.tags }, asTags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
+                    .and("contextual-tag", "foo")
                     .and("outcome", "ERROR")
             )
     }
 
-    @Test()
+    @Test
     fun `Assert metrics for internal error`() {
         mvc.perform(
             MockMvcRequestBuilders
@@ -200,6 +202,7 @@ class MicrometerServletSmokeTest {
             .extracting({ it?.id?.tags }, asTags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
+                    .and("contextual-tag", "foo")
                     .and("gql.errorCode", "INTERNAL")
                     .and("gql.errorDetail", "none")
                     .and("gql.path", "[triggerInternalFailure]")
@@ -210,6 +213,7 @@ class MicrometerServletSmokeTest {
             .extracting({ it?.id?.tags }, asTags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
+                    .and("contextual-tag", "foo")
                     .and("outcome", "ERROR")
             )
 
@@ -217,12 +221,13 @@ class MicrometerServletSmokeTest {
             .extracting({ it?.id?.tags }, asTags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("field-fetch-tag", "foo")
+                    .and("contextual-tag", "foo")
                     .and("gql.field", "Query.triggerInternalFailure")
                     .and("outcome", "ERROR")
             )
     }
 
-    @Test()
+    @Test
     fun `Assert metrics for a DGS bad-request error`() {
         mvc.perform(
             MockMvcRequestBuilders
@@ -238,6 +243,7 @@ class MicrometerServletSmokeTest {
             .extracting({ it?.id?.tags }, asTags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
+                    .and("contextual-tag", "foo")
                     .and("gql.errorCode", "BAD_REQUEST")
                     .and("gql.errorDetail", "none")
                     .and("gql.path", "[triggerBadRequestFailure]")
@@ -248,6 +254,7 @@ class MicrometerServletSmokeTest {
             .extracting({ it?.id?.tags }, asTags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
+                    .and("contextual-tag", "foo")
                     .and("outcome", "ERROR")
             )
 
@@ -255,12 +262,13 @@ class MicrometerServletSmokeTest {
             .extracting({ it?.id?.tags }, asTags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("field-fetch-tag", "foo")
+                    .and("contextual-tag", "foo")
                     .and("gql.field", "Query.triggerBadRequestFailure")
                     .and("outcome", "ERROR")
             )
     }
 
-    @Test()
+    @Test
     fun `Assert metrics for custom error`() {
         mvc.perform(
             MockMvcRequestBuilders
@@ -276,6 +284,7 @@ class MicrometerServletSmokeTest {
             .extracting({ it?.id?.tags }, asTags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
+                    .and("contextual-tag", "foo")
                     .and("gql.errorCode", "UNAVAILABLE")
                     .and("gql.errorDetail", "ENHANCE_YOUR_CALM")
                     .and("gql.path", "[triggerCustomFailure]")
@@ -286,6 +295,7 @@ class MicrometerServletSmokeTest {
             .extracting({ it?.id?.tags }, asTags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
+                    .and("contextual-tag", "foo")
                     .and("outcome", "ERROR")
             )
 
@@ -293,12 +303,13 @@ class MicrometerServletSmokeTest {
             .extracting({ it?.id?.tags }, asTags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("field-fetch-tag", "foo")
+                    .and("contextual-tag", "foo")
                     .and("gql.field", "Query.triggerCustomFailure")
                     .and("outcome", "ERROR")
             )
     }
 
-    @Test()
+    @Test
     fun `Assert metrics for request with multiple errors`() {
         mvc.perform(
             MockMvcRequestBuilders
@@ -310,23 +321,26 @@ class MicrometerServletSmokeTest {
 
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
 
-        assertThat(meters.get("gql.query")).hasSize(1)
-        assertThat(meters.get("gql.error")).hasSize(3)
-        assertThat(meters.get("gql.resolver")).hasSize(3)
+        assertThat(meters["gql.query"]).hasSize(1)
+        assertThat(meters["gql.error"]).hasSize(3)
+        assertThat(meters["gql.resolver"]).hasSize(3)
 
-        val errors = meters.get("gql.error")!!.stream().map { it.id.tags }.toList()
+        val errors = meters.getValue("gql.error").map { it.id.tags }
         assertThat(errors).containsExactlyInAnyOrder(
             Tags.of("execution-tag", "foo")
+                .and("contextual-tag", "foo")
                 .and("gql.errorCode", "BAD_REQUEST")
                 .and("gql.errorDetail", "none")
                 .and("gql.path", "[triggerBadRequestFailure]")
                 .and("outcome", "ERROR").toList(),
             Tags.of("execution-tag", "foo")
+                .and("contextual-tag", "foo")
                 .and("gql.errorCode", "INTERNAL")
                 .and("gql.errorDetail", "none")
                 .and("gql.path", "[triggerInternalFailure]")
                 .and("outcome", "ERROR").toList(),
             Tags.of("execution-tag", "foo")
+                .and("contextual-tag", "foo")
                 .and("gql.errorCode", "UNAVAILABLE")
                 .and("gql.errorDetail", "ENHANCE_YOUR_CALM")
                 .and("gql.path", "[triggerCustomFailure]")
@@ -336,20 +350,16 @@ class MicrometerServletSmokeTest {
 
     private fun qglMeters(): Map<String, Meter> {
         return meterRegistry.meters
-            .stream()
+            .asSequence()
             .filter { it.id.name.startsWith("gql.") }
-            .collect(Collectors.toMap({ a -> a.id.name }, { it }))
+            .associateBy { it.id.name }
     }
 
-    private fun qglMetersMultiMap(): MultiValueMap<String, Meter> {
+    private fun qglMetersMultiMap(): Map<String, List<Meter>> {
         return meterRegistry.meters
-            .stream()
+            .asSequence()
             .filter { it.id.name.startsWith("gql.") }
-            .collect(
-                { LinkedMultiValueMap<String, Meter>() },
-                { a, b -> a.add(b.id.name, b) },
-                { a, b -> a.addAll(b) }
-            )
+            .groupBy { it.id.name }
     }
 
     @TestConfiguration(proxyBeanMethods = false)

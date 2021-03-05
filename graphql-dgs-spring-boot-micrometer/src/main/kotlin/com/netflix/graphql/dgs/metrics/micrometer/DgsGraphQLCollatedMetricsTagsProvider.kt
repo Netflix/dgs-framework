@@ -33,8 +33,7 @@ internal class DgsGraphQLCollatedMetricsTagsProvider(
 ) : DgsGraphQLMetricsTagsProvider {
 
     override fun getContextualTags(): Iterable<Tag> {
-        return contextualTagCustomizer.stream().map { it.getContextualTags() }
-            .collect(Tags::empty, { a, b -> a.and(b) }, { a, b -> a.and(b) })
+        return Tags.of(contextualTagCustomizer.flatMap { it.getContextualTags() })
     }
 
     override fun getExecutionTags(
@@ -42,16 +41,10 @@ internal class DgsGraphQLCollatedMetricsTagsProvider(
         result: ExecutionResult,
         exception: Throwable?
     ): Iterable<Tag> {
-        return executionTagCustomizer
-            .stream()
-            .map { it.getExecutionTags(parameters, result, exception) }
-            .reduce(Tags.empty(), { a, b -> a.and(b) }, { a, b -> a.and(b) })
+        return Tags.of(executionTagCustomizer.flatMap { it.getExecutionTags(parameters, result, exception) })
     }
 
-    override fun getFieldFetchTags(parameters: InstrumentationFieldFetchParameters, error: Throwable?): Iterable<Tag> {
-        return fieldFetchTagCustomizer
-            .stream()
-            .map { it.getFieldFetchTags(parameters, error) }
-            .reduce(Tags.empty(), { a, b -> a.and(b) }, { a, b -> a.and(b) })
+    override fun getFieldFetchTags(parameters: InstrumentationFieldFetchParameters, exception: Throwable?): Iterable<Tag> {
+        return Tags.of(fieldFetchTagCustomizer.flatMap { it.getFieldFetchTags(parameters, exception) })
     }
 }
