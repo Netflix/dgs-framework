@@ -30,8 +30,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.concurrent.CompletableFuture
-import java.util.stream.Collectors
-import java.util.stream.Stream
 
 @DgsComponent
 open class DefaultDgsFederationResolver() :
@@ -63,7 +61,6 @@ open class DefaultDgsFederationResolver() :
 
     private fun dgsEntityFetchers(env: DataFetchingEnvironment): CompletableFuture<List<Any?>> {
         val resultList = env.getArgument<List<Map<String, Any>>>(_Entity.argumentName)
-            .stream()
             .map { values ->
                 val typename = values["__typename"] ?: throw RuntimeException("__typename missing from arguments in federated query")
                 val fetcher = dgsSchemaProvider.entityFetchers[typename]
@@ -89,13 +86,13 @@ open class DefaultDgsFederationResolver() :
                 } else {
                     CompletableFuture.completedFuture(result)
                 }
-            }.collect(Collectors.toList())
+            }
 
         return CompletableFuture.allOf(*resultList.toTypedArray()).thenApply {
-            resultList.stream()
+            resultList.asSequence()
                 .map { cf -> cf.join() }
-                .flatMap { r -> if (r is Collection<*>) r.stream() else Stream.of(r) }
-                .collect(Collectors.toList())
+                .flatMap { r -> if (r is Collection<*>) r.asSequence() else sequenceOf(r) }
+                .toList()
         }
     }
 
