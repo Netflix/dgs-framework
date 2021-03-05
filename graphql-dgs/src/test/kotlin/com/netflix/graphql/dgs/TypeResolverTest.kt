@@ -65,7 +65,8 @@ class TypeResolverTest {
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
-        val schema = provider.schema("""
+        val schema = provider.schema(
+            """
             type Query {
                 movies: [Movie]            
             }
@@ -86,10 +87,12 @@ class TypeResolverTest {
                 director: String
                 nrOfExplosions: Int
             }
-        """.trimIndent())
+            """.trimIndent()
+        )
 
         val build = GraphQL.newGraphQL(schema).build()
-        val executionResult = build.execute("""
+        val executionResult = build.execute(
+            """
             {
                 movies { 
                     title 
@@ -97,7 +100,9 @@ class TypeResolverTest {
                         gory
                     }
                 }
-            }""".trimIndent())
+            }
+            """.trimIndent()
+        )
         Assertions.assertEquals(0, executionResult.errors.size)
     }
 
@@ -111,7 +116,8 @@ class TypeResolverTest {
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
-        val schema = provider.schema("""
+        val schema = provider.schema(
+            """
             type Query {
                 movies: [Movie]            
             }
@@ -132,12 +138,14 @@ class TypeResolverTest {
                 director: String
                 nrOfExplosions: Int
             }
-        """.trimIndent())
+            """.trimIndent()
+        )
 
         val build = GraphQL.newGraphQL(schema).build()
 
         assertThrows<InvalidTypeResolverException> {
-            build.execute("""
+            build.execute(
+                """
                 {
                     movies { 
                         title 
@@ -145,9 +153,10 @@ class TypeResolverTest {
                             nrOfExplosions
                         }
                     }
-                }""".trimIndent())
+                }
+                """.trimIndent()
+            )
         }
-
     }
 
     @Test
@@ -161,7 +170,6 @@ class TypeResolverTest {
                     else -> throw RuntimeException("Unknown movie type")
                 }
             }
-
         }
 
         val typeResolverSpy = spyk(movieTypeResolver)
@@ -169,7 +177,8 @@ class TypeResolverTest {
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
-        val schema = provider.schema("""
+        val schema = provider.schema(
+            """
             type Query {
                 movies: [Movie]            
             }
@@ -190,10 +199,12 @@ class TypeResolverTest {
                 director: String
                 nrOfExplosions: Int
             }
-        """.trimIndent())
+            """.trimIndent()
+        )
 
         val build = GraphQL.newGraphQL(schema).build()
-        val executionResult = build.execute("""
+        val executionResult = build.execute(
+            """
             {
                 movies { 
                     title 
@@ -201,7 +212,9 @@ class TypeResolverTest {
                         gory
                     }
                 }
-            }""".trimIndent())
+            }
+            """.trimIndent()
+        )
         Assertions.assertEquals(0, executionResult.errors.size)
 
         verify { typeResolverSpy.movieTypes(any()) }

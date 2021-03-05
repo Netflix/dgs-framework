@@ -45,23 +45,23 @@ class DgsSSESubscriptionHandler(private val dgsQueryExecutor: DgsQueryExecutor) 
         val sessionId = UUID.randomUUID().toString()
         val query = try {
             String(Base64.getDecoder().decode(queryBase64), StandardCharsets.UTF_8)
-        } catch(ex: IllegalArgumentException) {
+        } catch (ex: IllegalArgumentException) {
             emitter.send("Error decoding base64 encoded query")
             emitter.complete()
             return ResponseEntity.badRequest().body(emitter)
         }
 
         val queryPayload = try {
-             mapper.readValue(query, QueryPayload::class.java)
-        } catch(ex: Exception) {
+            mapper.readValue(query, QueryPayload::class.java)
+        } catch (ex: Exception) {
             emitter.send("Error parsing query: ${ex.message}")
             emitter.complete()
             return ResponseEntity.badRequest().body(emitter)
         }
 
         val executionResult: ExecutionResult = dgsQueryExecutor.execute(queryPayload.query, queryPayload.variables)
-        if(executionResult.errors.isNotEmpty()) {
-            return if(executionResult.errors.filterIsInstance<ValidationError>().isNotEmpty()) {
+        if (executionResult.errors.isNotEmpty()) {
+            return if (executionResult.errors.filterIsInstance<ValidationError>().isNotEmpty()) {
                 val errorMessage = "Subscription query failed to validate: ${executionResult.errors.joinToString(", ")}"
                 emitter.send(errorMessage)
                 emitter.complete()
@@ -87,8 +87,8 @@ class DgsSSESubscriptionHandler(private val dgsQueryExecutor: DgsQueryExecutor) 
             override fun onNext(t: ExecutionResult) {
 
                 val event = SseEmitter.event()
-                        .data(mapper.writeValueAsString(SubscriptionData(t.getData(), sessionId)), MediaType.APPLICATION_JSON)
-                        .id(UUID.randomUUID().toString())
+                    .data(mapper.writeValueAsString(SubscriptionData(t.getData(), sessionId)), MediaType.APPLICATION_JSON)
+                    .id(UUID.randomUUID().toString())
                 emitter.send(event)
 
                 subscription.request(1)
@@ -116,8 +116,8 @@ class DgsSSESubscriptionHandler(private val dgsQueryExecutor: DgsQueryExecutor) 
 
         val publisher = try {
             executionResult.getData<Publisher<ExecutionResult>>()
-        } catch(ex: ClassCastException) {
-            return if(query.contains("subscription")) {
+        } catch (ex: ClassCastException) {
+            return if (query.contains("subscription")) {
                 logger.error("Invalid return type for subscription datafetcher. A subscription datafetcher must return a Publisher<ExecutionResult>. The query was $query", ex)
                 emitter.send("Invalid return type for subscription datafetcher. Was a non-subscription query send to the subscription endpoint?")
                 emitter.complete()

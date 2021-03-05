@@ -1,0 +1,2 @@
+[{*.kt,*.kts}]
+ij_kotlin_code_style_defaults = KOTLIN_OFFICIAL

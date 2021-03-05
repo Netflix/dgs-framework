@@ -23,17 +23,16 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.resource.PathResourceResolver
 
-
 @Configuration
 @EnableWebMvc
 open class GraphiQLConfigurer : WebMvcConfigurer {
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         registry
-                .addResourceHandler("/graphiql/**")
-                .addResourceLocations("classpath:/static/graphiql/")
-                .setCachePeriod(3600)
-                .resourceChain(true)
-                .addResolver(PathResourceResolver())
+            .addResourceHandler("/graphiql/**")
+            .addResourceLocations("classpath:/static/graphiql/")
+            .setCachePeriod(3600)
+            .resourceChain(true)
+            .addResolver(PathResourceResolver())
     }
 
     override fun addViewControllers(registry: ViewControllerRegistry) {

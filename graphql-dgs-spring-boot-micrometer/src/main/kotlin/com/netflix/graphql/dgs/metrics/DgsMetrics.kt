@@ -63,5 +63,4 @@ object DgsMetrics {
         /** Used to capture the result of an action, e.g. `ERROR` or `SUCCESS`.*/
         OUTCOME("outcome")
     }
-
 }

@@ -35,10 +35,9 @@ open class CustomContextBuilderConfig {
     open fun createDataFetcher(): CustomContextDataFetcher {
         return CustomContextDataFetcher()
     }
-
 }
 
-class MyCustomDgsContextBuilder: DgsCustomContextBuilder<MyCustomContext> {
+class MyCustomDgsContextBuilder : DgsCustomContextBuilder<MyCustomContext> {
     override fun build(): MyCustomContext {
         return MyCustomContext("Hello custom context")
     }

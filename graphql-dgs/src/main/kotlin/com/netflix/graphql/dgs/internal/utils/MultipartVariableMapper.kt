@@ -19,7 +19,6 @@ package com.netflix.graphql.dgs.internal.utils
 import org.springframework.web.multipart.MultipartFile
 import java.util.regex.Pattern
 
-
 /**
  * This implementation has borrowed heavily from graphql-servlet-java implementation of the variable mapper.
  * It handles populating the query variables with the files specified by object paths in the multi-part request.

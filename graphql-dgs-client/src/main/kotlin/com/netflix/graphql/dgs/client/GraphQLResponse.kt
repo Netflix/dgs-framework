@@ -34,12 +34,12 @@ data class GraphQLResponse(val json: String) {
 
     companion object {
         private val mapper: ObjectMapper = jacksonObjectMapper()
-                .registerModule(JavaTimeModule())
-                .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+            .registerModule(JavaTimeModule())
+            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
         private val jsonPathConfig: Configuration = Configuration.builder()
-                .jsonProvider(JacksonJsonProvider(mapper))
-                .mappingProvider(JacksonMappingProvider(mapper)).build()
-                .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)
+            .jsonProvider(JacksonJsonProvider(mapper))
+            .mappingProvider(JacksonMappingProvider(mapper)).build()
+            .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)
     }
 
     /**
@@ -74,7 +74,7 @@ data class GraphQLResponse(val json: String) {
         try {
             return parsed.read(dataPath)
         } catch (ex: Exception) {
-            logger.error("Error extracting path '${path}' from data: '${data}'")
+            logger.error("Error extracting path '$path' from data: '$data'")
             throw ex
         }
     }
@@ -88,7 +88,7 @@ data class GraphQLResponse(val json: String) {
         try {
             return parsed.read(dataPath, clazz)
         } catch (ex: Exception) {
-            logger.error("Error extracting path '${path}' from data: '${data}'")
+            logger.error("Error extracting path '$path' from data: '$data'")
             throw ex
         }
     }
@@ -103,7 +103,7 @@ data class GraphQLResponse(val json: String) {
         try {
             return parsed.read(dataPath, typeRef)
         } catch (ex: Exception) {
-            logger.error("Error extracting path '${path}' from data: '${data}'")
+            logger.error("Error extracting path '$path' from data: '$data'")
             throw ex
         }
     }

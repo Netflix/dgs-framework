@@ -32,7 +32,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.web.context.request.WebRequest
 
-
 @ExtendWith(MockKExtension::class)
 class DgsRestControllerTest {
     @MockK
@@ -98,9 +97,7 @@ class DgsRestControllerTest {
     }
 }
 
-
 data class GraphQLResponse(val data: Map<String, Any> = emptyMap(), val errors: List<GraphQLError> = emptyList())
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class GraphQLError(val message: String)
-

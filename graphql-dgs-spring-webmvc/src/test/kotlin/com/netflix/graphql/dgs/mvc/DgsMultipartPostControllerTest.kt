@@ -35,7 +35,6 @@ import org.springframework.mock.web.MockMultipartFile
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.multipart.MultipartFile
 
-
 @ExtendWith(MockKExtension::class)
 class DgsMultipartPostControllerTest {
     @MockK
@@ -59,7 +58,7 @@ class DgsMultipartPostControllerTest {
             { 
                 "0": ["variables.file"]
             }
-            """.trimIndent()
+        """.trimIndent()
 
         val file1: MultipartFile = MockMultipartFile("foo", "foo.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".toByteArray())
 
@@ -95,7 +94,7 @@ class DgsMultipartPostControllerTest {
                 "0": ["variables.input.files.0"], 
                 "1": ["variables.input.files.1"] 
             }
-            """.trimIndent()
+        """.trimIndent()
 
         val file1: MultipartFile = MockMultipartFile("foo", "foo.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".toByteArray())
         val file2: MultipartFile = MockMultipartFile("example", "example.txt", MediaType.TEXT_PLAIN_VALUE, "This is an example".toByteArray())
@@ -130,7 +129,7 @@ class DgsMultipartPostControllerTest {
                 "0": ["variables.files.0"], 
                 "1": ["variables.files.1"]
             }
-            """.trimIndent()
+        """.trimIndent()
 
         val file1: MultipartFile = MockMultipartFile("foo", "foo.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".toByteArray())
         val file2: MultipartFile = MockMultipartFile("example", "example.txt", MediaType.TEXT_PLAIN_VALUE, "This is an example".toByteArray())
@@ -163,7 +162,7 @@ class DgsMultipartPostControllerTest {
             { 
                 "0": ["variables.file"]
             }
-            """.trimIndent()
+        """.trimIndent()
 
         val file: MultipartFile = MockMultipartFile("foo", "foo.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".toByteArray())
 
@@ -178,7 +177,6 @@ class DgsMultipartPostControllerTest {
         // missing mapped object paths part
         responseEntity = DgsRestController(dgsQueryExecutor).graphql(null, mapOf("0" to file), operation, null, HttpHeaders(), webRequest)
         assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
-
     }
 
     @Test
@@ -197,7 +195,7 @@ class DgsMultipartPostControllerTest {
             { 
                 "0": ["variables.file.0"]
             }
-            """.trimIndent()
+        """.trimIndent()
 
         val file: MultipartFile = MockMultipartFile("foo", "foo.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".toByteArray())
 

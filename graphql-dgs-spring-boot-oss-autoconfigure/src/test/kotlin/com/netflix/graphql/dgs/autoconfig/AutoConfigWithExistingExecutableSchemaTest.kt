@@ -33,29 +33,30 @@ import org.springframework.boot.test.context.runner.WebApplicationContextRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-
 class AutoConfigWithExistingExecutableSchemaTest {
     private val context = WebApplicationContextRunner().withConfiguration(AutoConfigurations.of(DgsAutoConfiguration::class.java))!!
 
     @Configuration
     open class ConfigWithSchema {
         @Bean
-        open fun schema() : GraphQLSchema {
+        open fun schema(): GraphQLSchema {
             val helloDataFetcher: DataFetcher<String> = DataFetcher { "Hello" }
 
             val objectType: GraphQLObjectType = newObject()
-                    .name("QueryType")
-                    .field(newFieldDefinition()
-                            .name("hello")
-                            .type(GraphQLString)
-                    )
-                    .build()
+                .name("QueryType")
+                .field(
+                    newFieldDefinition()
+                        .name("hello")
+                        .type(GraphQLString)
+                )
+                .build()
 
             val codeRegistry: GraphQLCodeRegistry = newCodeRegistry()
-                    .dataFetcher(
-                            coordinates("QueryType", "hello"),
-                            helloDataFetcher)
-                    .build()
+                .dataFetcher(
+                    coordinates("QueryType", "hello"),
+                    helloDataFetcher
+                )
+                .build()
 
             return GraphQLSchema.newSchema().query(objectType).codeRegistry(codeRegistry).build()
         }

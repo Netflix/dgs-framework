@@ -64,10 +64,10 @@ import java.util.concurrent.CompletableFuture
 import java.util.stream.Collectors
 import kotlin.streams.toList
 
-
 @SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.MOCK,
-        classes = [MicrometerServletSmokeTest.LocalApp::class, MicrometerServletSmokeTest.LocalTestConfiguration::class])
+    webEnvironment = SpringBootTest.WebEnvironment.MOCK,
+    classes = [MicrometerServletSmokeTest.LocalApp::class, MicrometerServletSmokeTest.LocalTestConfiguration::class]
+)
 @EnableAutoConfiguration
 @AutoConfigureMockMvc
 class MicrometerServletSmokeTest {
@@ -93,7 +93,8 @@ class MicrometerServletSmokeTest {
 
     @Test()
     fun `Metrics for a successful request`() {
-        mvc.perform(MockMvcRequestBuilders
+        mvc.perform(
+            MockMvcRequestBuilders
                 .post("/graphql")
                 .content("""{ "query": "{ping}" }""")
         ).andExpect(status().isOk)
@@ -103,22 +104,25 @@ class MicrometerServletSmokeTest {
         assertThat(meters).containsOnlyKeys("gql.query", "gql.resolver")
 
         assertThat(meters["gql.query"]).isNotNull
-                .extracting({ it?.id?.tags }, asTags)
-                .containsExactlyInAnyOrderElementsOf(
-                        Tags.of("execution-tag", "foo")
-                                .and("outcome", "SUCCESS"))
+            .extracting({ it?.id?.tags }, asTags)
+            .containsExactlyInAnyOrderElementsOf(
+                Tags.of("execution-tag", "foo")
+                    .and("outcome", "SUCCESS")
+            )
 
         assertThat(meters["gql.resolver"]).isNotNull
-                .extracting({ it?.id?.tags }, asTags)
-                .containsExactlyInAnyOrderElementsOf(
-                        Tags.of("field-fetch-tag", "foo")
-                                .and("gql.field", "Query.ping")
-                                .and("outcome", "SUCCESS"))
+            .extracting({ it?.id?.tags }, asTags)
+            .containsExactlyInAnyOrderElementsOf(
+                Tags.of("field-fetch-tag", "foo")
+                    .and("gql.field", "Query.ping")
+                    .and("outcome", "SUCCESS")
+            )
     }
 
     @Test()
     fun `Metrics for a successful request with data loaders`() {
-        mvc.perform(MockMvcRequestBuilders
+        mvc.perform(
+            MockMvcRequestBuilders
                 .post("/graphql")
                 .content("""{ "query": "{upperCased}" }""")
         ).andExpect(status().isOk)
@@ -128,28 +132,32 @@ class MicrometerServletSmokeTest {
         assertThat(meters).containsOnlyKeys("gql.dataLoader", "gql.query", "gql.resolver")
 
         assertThat(meters["gql.dataLoader"]).isNotNull
-                .extracting({ it?.id?.tags }, asTags)
-                .containsExactlyInAnyOrderElementsOf(
-                        Tags.of("gql.loaderBatchSize", "3")
-                                .and("gql.loaderName", "upperCaseLoader"))
+            .extracting({ it?.id?.tags }, asTags)
+            .containsExactlyInAnyOrderElementsOf(
+                Tags.of("gql.loaderBatchSize", "3")
+                    .and("gql.loaderName", "upperCaseLoader")
+            )
 
         assertThat(meters["gql.query"]).isNotNull
-                .extracting({ it?.id?.tags }, asTags)
-                .containsExactlyInAnyOrderElementsOf(
-                        Tags.of("execution-tag", "foo")
-                                .and("outcome", "SUCCESS"))
+            .extracting({ it?.id?.tags }, asTags)
+            .containsExactlyInAnyOrderElementsOf(
+                Tags.of("execution-tag", "foo")
+                    .and("outcome", "SUCCESS")
+            )
 
         assertThat(meters["gql.resolver"]).isNotNull
-                .extracting({ it?.id?.tags }, asTags)
-                .containsExactlyInAnyOrderElementsOf(
-                        Tags.of("field-fetch-tag", "foo")
-                                .and("gql.field", "Query.upperCased")
-                                .and("outcome", "SUCCESS"))
+            .extracting({ it?.id?.tags }, asTags)
+            .containsExactlyInAnyOrderElementsOf(
+                Tags.of("field-fetch-tag", "foo")
+                    .and("gql.field", "Query.upperCased")
+                    .and("outcome", "SUCCESS")
+            )
     }
 
     @Test()
     fun `Assert metrics for a syntax error`() {
-        mvc.perform(MockMvcRequestBuilders
+        mvc.perform(
+            MockMvcRequestBuilders
                 .post("/graphql")
                 .content("""{ "query": "fail" }""")
         ).andExpect(status().isOk)
@@ -159,26 +167,27 @@ class MicrometerServletSmokeTest {
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query")
 
         assertThat(meters["gql.error"]).isNotNull
-                .extracting({ it?.id?.tags }, asTags)
-                .containsExactlyInAnyOrderElementsOf(
-                        Tags.of("execution-tag", "foo")
-                                .and("gql.errorDetail", "none")
-                                .and("gql.errorCode", "InvalidSyntax")
-                                .and("gql.path", "[]")
-                                .and("outcome", "ERROR")
-                )
+            .extracting({ it?.id?.tags }, asTags)
+            .containsExactlyInAnyOrderElementsOf(
+                Tags.of("execution-tag", "foo")
+                    .and("gql.errorDetail", "none")
+                    .and("gql.errorCode", "InvalidSyntax")
+                    .and("gql.path", "[]")
+                    .and("outcome", "ERROR")
+            )
 
         assertThat(meters["gql.query"]).isNotNull
-                .extracting({ it?.id?.tags }, asTags)
-                .containsExactlyInAnyOrderElementsOf(
-                        Tags.of("execution-tag", "foo")
-                                .and("outcome", "ERROR"))
-
+            .extracting({ it?.id?.tags }, asTags)
+            .containsExactlyInAnyOrderElementsOf(
+                Tags.of("execution-tag", "foo")
+                    .and("outcome", "ERROR")
+            )
     }
 
     @Test()
     fun `Assert metrics for internal error`() {
-        mvc.perform(MockMvcRequestBuilders
+        mvc.perform(
+            MockMvcRequestBuilders
                 .post("/graphql")
                 .content("""{ "query": "{triggerInternalFailure}" }""")
         ).andExpect(status().isOk)
@@ -188,32 +197,35 @@ class MicrometerServletSmokeTest {
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
 
         assertThat(meters["gql.error"]).isNotNull
-                .extracting({ it?.id?.tags }, asTags)
-                .containsExactlyInAnyOrderElementsOf(
-                        Tags.of("execution-tag", "foo")
-                                .and("gql.errorCode", "INTERNAL")
-                                .and("gql.errorDetail", "none")
-                                .and("gql.path", "[triggerInternalFailure]")
-                                .and("outcome", "ERROR")
-                )
+            .extracting({ it?.id?.tags }, asTags)
+            .containsExactlyInAnyOrderElementsOf(
+                Tags.of("execution-tag", "foo")
+                    .and("gql.errorCode", "INTERNAL")
+                    .and("gql.errorDetail", "none")
+                    .and("gql.path", "[triggerInternalFailure]")
+                    .and("outcome", "ERROR")
+            )
 
         assertThat(meters["gql.query"]).isNotNull
-                .extracting({ it?.id?.tags }, asTags)
-                .containsExactlyInAnyOrderElementsOf(
-                        Tags.of("execution-tag", "foo")
-                                .and("outcome", "ERROR"))
+            .extracting({ it?.id?.tags }, asTags)
+            .containsExactlyInAnyOrderElementsOf(
+                Tags.of("execution-tag", "foo")
+                    .and("outcome", "ERROR")
+            )
 
         assertThat(meters["gql.resolver"]).isNotNull
-                .extracting({ it?.id?.tags }, asTags)
-                .containsExactlyInAnyOrderElementsOf(
-                        Tags.of("field-fetch-tag", "foo")
-                                .and("gql.field", "Query.triggerInternalFailure")
-                                .and("outcome", "ERROR"))
+            .extracting({ it?.id?.tags }, asTags)
+            .containsExactlyInAnyOrderElementsOf(
+                Tags.of("field-fetch-tag", "foo")
+                    .and("gql.field", "Query.triggerInternalFailure")
+                    .and("outcome", "ERROR")
+            )
     }
 
     @Test()
     fun `Assert metrics for a DGS bad-request error`() {
-        mvc.perform(MockMvcRequestBuilders
+        mvc.perform(
+            MockMvcRequestBuilders
                 .post("/graphql")
                 .content("""{ "query": "{triggerBadRequestFailure}" }""")
         ).andExpect(status().isOk)
@@ -223,32 +235,35 @@ class MicrometerServletSmokeTest {
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
 
         assertThat(meters["gql.error"]).isNotNull
-                .extracting({ it?.id?.tags }, asTags)
-                .containsExactlyInAnyOrderElementsOf(
-                        Tags.of("execution-tag", "foo")
-                                .and("gql.errorCode", "BAD_REQUEST")
-                                .and("gql.errorDetail", "none")
-                                .and("gql.path", "[triggerBadRequestFailure]")
-                                .and("outcome", "ERROR")
-                )
+            .extracting({ it?.id?.tags }, asTags)
+            .containsExactlyInAnyOrderElementsOf(
+                Tags.of("execution-tag", "foo")
+                    .and("gql.errorCode", "BAD_REQUEST")
+                    .and("gql.errorDetail", "none")
+                    .and("gql.path", "[triggerBadRequestFailure]")
+                    .and("outcome", "ERROR")
+            )
 
         assertThat(meters["gql.query"]).isNotNull
-                .extracting({ it?.id?.tags }, asTags)
-                .containsExactlyInAnyOrderElementsOf(
-                        Tags.of("execution-tag", "foo")
-                                .and("outcome", "ERROR"))
+            .extracting({ it?.id?.tags }, asTags)
+            .containsExactlyInAnyOrderElementsOf(
+                Tags.of("execution-tag", "foo")
+                    .and("outcome", "ERROR")
+            )
 
         assertThat(meters["gql.resolver"]).isNotNull
-                .extracting({ it?.id?.tags }, asTags)
-                .containsExactlyInAnyOrderElementsOf(
-                        Tags.of("field-fetch-tag", "foo")
-                                .and("gql.field", "Query.triggerBadRequestFailure")
-                                .and("outcome", "ERROR"))
+            .extracting({ it?.id?.tags }, asTags)
+            .containsExactlyInAnyOrderElementsOf(
+                Tags.of("field-fetch-tag", "foo")
+                    .and("gql.field", "Query.triggerBadRequestFailure")
+                    .and("outcome", "ERROR")
+            )
     }
 
     @Test()
     fun `Assert metrics for custom error`() {
-        mvc.perform(MockMvcRequestBuilders
+        mvc.perform(
+            MockMvcRequestBuilders
                 .post("/graphql")
                 .content("""{ "query": "{triggerCustomFailure}" }""")
         ).andExpect(status().isOk)
@@ -258,32 +273,35 @@ class MicrometerServletSmokeTest {
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
 
         assertThat(meters["gql.error"]).isNotNull
-                .extracting({ it?.id?.tags }, asTags)
-                .containsExactlyInAnyOrderElementsOf(
-                        Tags.of("execution-tag", "foo")
-                                .and("gql.errorCode", "UNAVAILABLE")
-                                .and("gql.errorDetail", "ENHANCE_YOUR_CALM")
-                                .and("gql.path", "[triggerCustomFailure]")
-                                .and("outcome", "ERROR")
-                )
+            .extracting({ it?.id?.tags }, asTags)
+            .containsExactlyInAnyOrderElementsOf(
+                Tags.of("execution-tag", "foo")
+                    .and("gql.errorCode", "UNAVAILABLE")
+                    .and("gql.errorDetail", "ENHANCE_YOUR_CALM")
+                    .and("gql.path", "[triggerCustomFailure]")
+                    .and("outcome", "ERROR")
+            )
 
         assertThat(meters["gql.query"]).isNotNull
-                .extracting({ it?.id?.tags }, asTags)
-                .containsExactlyInAnyOrderElementsOf(
-                        Tags.of("execution-tag", "foo")
-                                .and("outcome", "ERROR"))
+            .extracting({ it?.id?.tags }, asTags)
+            .containsExactlyInAnyOrderElementsOf(
+                Tags.of("execution-tag", "foo")
+                    .and("outcome", "ERROR")
+            )
 
         assertThat(meters["gql.resolver"]).isNotNull
-                .extracting({ it?.id?.tags }, asTags)
-                .containsExactlyInAnyOrderElementsOf(
-                        Tags.of("field-fetch-tag", "foo")
-                                .and("gql.field", "Query.triggerCustomFailure")
-                                .and("outcome", "ERROR"))
+            .extracting({ it?.id?.tags }, asTags)
+            .containsExactlyInAnyOrderElementsOf(
+                Tags.of("field-fetch-tag", "foo")
+                    .and("gql.field", "Query.triggerCustomFailure")
+                    .and("outcome", "ERROR")
+            )
     }
 
     @Test()
     fun `Assert metrics for request with multiple errors`() {
-        mvc.perform(MockMvcRequestBuilders
+        mvc.perform(
+            MockMvcRequestBuilders
                 .post("/graphql")
                 .content("""{ "query": "{ triggerInternalFailure triggerBadRequestFailure triggerCustomFailure }" }""")
         ).andExpect(status().isOk)
@@ -298,40 +316,40 @@ class MicrometerServletSmokeTest {
 
         val errors = meters.get("gql.error")!!.stream().map { it.id.tags }.toList()
         assertThat(errors).containsExactlyInAnyOrder(
-                Tags.of("execution-tag", "foo")
-                        .and("gql.errorCode", "BAD_REQUEST")
-                        .and("gql.errorDetail", "none")
-                        .and("gql.path", "[triggerBadRequestFailure]")
-                        .and("outcome", "ERROR").toList(),
-                Tags.of("execution-tag", "foo")
-                        .and("gql.errorCode", "INTERNAL")
-                        .and("gql.errorDetail", "none")
-                        .and("gql.path", "[triggerInternalFailure]")
-                        .and("outcome", "ERROR").toList(),
-                Tags.of("execution-tag", "foo")
-                        .and("gql.errorCode", "UNAVAILABLE")
-                        .and("gql.errorDetail", "ENHANCE_YOUR_CALM")
-                        .and("gql.path", "[triggerCustomFailure]")
-                        .and("outcome", "ERROR").toList(),
+            Tags.of("execution-tag", "foo")
+                .and("gql.errorCode", "BAD_REQUEST")
+                .and("gql.errorDetail", "none")
+                .and("gql.path", "[triggerBadRequestFailure]")
+                .and("outcome", "ERROR").toList(),
+            Tags.of("execution-tag", "foo")
+                .and("gql.errorCode", "INTERNAL")
+                .and("gql.errorDetail", "none")
+                .and("gql.path", "[triggerInternalFailure]")
+                .and("outcome", "ERROR").toList(),
+            Tags.of("execution-tag", "foo")
+                .and("gql.errorCode", "UNAVAILABLE")
+                .and("gql.errorDetail", "ENHANCE_YOUR_CALM")
+                .and("gql.path", "[triggerCustomFailure]")
+                .and("outcome", "ERROR").toList(),
         )
-
-
     }
 
     private fun qglMeters(): Map<String, Meter> {
         return meterRegistry.meters
-                .stream()
-                .filter { it.id.name.startsWith("gql.") }
-                .collect(Collectors.toMap({ a -> a.id.name }, { it }))
+            .stream()
+            .filter { it.id.name.startsWith("gql.") }
+            .collect(Collectors.toMap({ a -> a.id.name }, { it }))
     }
 
     private fun qglMetersMultiMap(): MultiValueMap<String, Meter> {
         return meterRegistry.meters
-                .stream()
-                .filter { it.id.name.startsWith("gql.") }
-                .collect({ LinkedMultiValueMap<String, Meter>() },
-                        { a, b -> a.add(b.id.name, b) },
-                        { a, b -> a.addAll(b) })
+            .stream()
+            .filter { it.id.name.startsWith("gql.") }
+            .collect(
+                { LinkedMultiValueMap<String, Meter>() },
+                { a, b -> a.add(b.id.name, b) },
+                { a, b -> a.addAll(b) }
+            )
     }
 
     @TestConfiguration(proxyBeanMethods = false)
@@ -356,15 +374,16 @@ class MicrometerServletSmokeTest {
         open fun fieldFetchTagCustomizer(): DgsFieldFetchTagCustomizer {
             return DgsFieldFetchTagCustomizer { _, _ -> Tags.of("field-fetch-tag", "foo") }
         }
-
     }
 
     @SpringBootApplication(
-            proxyBeanMethods = false,
-            scanBasePackages = ["com.netflix.graphql.dgs.metrics.micrometer.none"])
+        proxyBeanMethods = false,
+        scanBasePackages = ["com.netflix.graphql.dgs.metrics.micrometer.none"]
+    )
     @ComponentScan(
-            useDefaultFilters = false,
-            includeFilters = [ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = [])])
+        useDefaultFilters = false,
+        includeFilters = [ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = [])]
+    )
     open class LocalApp {
 
         @DgsComponent
@@ -375,40 +394,45 @@ class MicrometerServletSmokeTest {
                 val newRegistry = TypeDefinitionRegistry()
 
                 val query =
-                        ObjectTypeDefinition
-                                .newObjectTypeDefinition()
-                                .name("Query")
-                                .fieldDefinition(
-                                        FieldDefinition
-                                                .newFieldDefinition()
-                                                .name("ping")
-                                                .type(TypeName("String"))
-                                                .build())
-                                .fieldDefinition(
-                                        FieldDefinition
-                                                .newFieldDefinition()
-                                                .name("upperCased")
-                                                .type(TypeName("String"))
-                                                .build())
-                                .fieldDefinition(
-                                        FieldDefinition
-                                                .newFieldDefinition()
-                                                .name("triggerInternalFailure")
-                                                .type(TypeName("String"))
-                                                .build())
-                                .fieldDefinition(
-                                        FieldDefinition
-                                                .newFieldDefinition()
-                                                .name("triggerBadRequestFailure")
-                                                .type(TypeName("String"))
-                                                .build())
-                                .fieldDefinition(
-                                        FieldDefinition
-                                                .newFieldDefinition()
-                                                .name("triggerCustomFailure")
-                                                .type(TypeName("String"))
-                                                .build())
+                    ObjectTypeDefinition
+                        .newObjectTypeDefinition()
+                        .name("Query")
+                        .fieldDefinition(
+                            FieldDefinition
+                                .newFieldDefinition()
+                                .name("ping")
+                                .type(TypeName("String"))
                                 .build()
+                        )
+                        .fieldDefinition(
+                            FieldDefinition
+                                .newFieldDefinition()
+                                .name("upperCased")
+                                .type(TypeName("String"))
+                                .build()
+                        )
+                        .fieldDefinition(
+                            FieldDefinition
+                                .newFieldDefinition()
+                                .name("triggerInternalFailure")
+                                .type(TypeName("String"))
+                                .build()
+                        )
+                        .fieldDefinition(
+                            FieldDefinition
+                                .newFieldDefinition()
+                                .name("triggerBadRequestFailure")
+                                .type(TypeName("String"))
+                                .build()
+                        )
+                        .fieldDefinition(
+                            FieldDefinition
+                                .newFieldDefinition()
+                                .name("triggerCustomFailure")
+                                .type(TypeName("String"))
+                                .build()
+                        )
+                        .build()
 
                 newRegistry.add(query)
                 return newRegistry
@@ -450,7 +474,6 @@ class MicrometerServletSmokeTest {
         open fun customDataFetchingExceptionHandler(): DataFetcherExceptionHandler {
             return CustomDataFetchingExceptionHandler()
         }
-
     }
 
     class CustomDataFetchingExceptionHandler : DataFetcherExceptionHandler {
@@ -461,14 +484,14 @@ class MicrometerServletSmokeTest {
             return if (handlerParameters.exception is CustomException) {
                 val exception = handlerParameters.exception
                 val graphqlError: GraphQLError =
-                        TypedGraphQLError
-                                .ENHANCE_YOUR_CALM
-                                .message(exception.message)
-                                .path(handlerParameters.path)
-                                .build()
-                DataFetcherExceptionHandlerResult.newResult()
-                        .error(graphqlError)
+                    TypedGraphQLError
+                        .ENHANCE_YOUR_CALM
+                        .message(exception.message)
+                        .path(handlerParameters.path)
                         .build()
+                DataFetcherExceptionHandlerResult.newResult()
+                    .error(graphqlError)
+                    .build()
             } else {
                 defaultHandler.onException(handlerParameters)
             }

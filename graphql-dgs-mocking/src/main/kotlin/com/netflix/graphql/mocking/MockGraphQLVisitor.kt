@@ -50,10 +50,9 @@ class MockGraphQLVisitor(private val mockConfig: Map<String, Any?>, private val 
                         }
 
                         val mockedValues = (0..Faker().number().numberBetween(0, 10))
-                                .map { generateDataForScalar(wrappedType) }
-                                .toList()
+                            .map { generateDataForScalar(wrappedType) }
+                            .toList()
                         DataFetcher { mockedValues }
-
                     }
                     else -> DataFetcher { Object() }
                 }
@@ -64,7 +63,6 @@ class MockGraphQLVisitor(private val mockConfig: Map<String, Any?>, private val 
 
         return super.visitGraphQLFieldDefinition(node, context)
     }
-
 
     private fun generateDataForScalar(type: String): Any {
         return when (type) {
@@ -86,6 +84,4 @@ class MockGraphQLVisitor(private val mockConfig: Map<String, Any?>, private val 
     }
 
     private val getPathForNode = { parents: List<GraphQLSchemaElement>?, node: GraphQLFieldDefinition? -> parents?.filterIsInstance<GraphQLFieldDefinition>()?.map { it.name }?.fold(node?.name) { n, result -> "$result.$n" } }
-
-
 }

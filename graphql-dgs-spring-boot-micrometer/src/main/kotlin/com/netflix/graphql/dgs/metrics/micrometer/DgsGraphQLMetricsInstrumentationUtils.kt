@@ -71,7 +71,7 @@ internal object DgsGraphQLMetricsInstrumentationUtils {
             // in case of batch loaders, eliminate duplicate instances of the same error at different indices
             if (!dedupeErrorPaths.contains(sanitizedPath)) {
                 dedupeErrorPaths = dedupeErrorPaths
-                        .plus(Pair(sanitizedPath, ErrorTagValues(sanitizedPath, errorType, errorDetail)))
+                    .plus(Pair(sanitizedPath, ErrorTagValues(sanitizedPath, errorType, errorDetail)))
             }
         }
         return dedupeErrorPaths.values
@@ -92,7 +92,6 @@ internal object DgsGraphQLMetricsInstrumentationUtils {
     private fun <T : GraphQLError> extension(error: T, key: String, default: String): String {
         return error.extensions?.get(key)?.toString() ?: default
     }
-
 
     internal data class ErrorTagValues(val path: String, val type: String, val detail: String)
 }

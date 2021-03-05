@@ -24,8 +24,8 @@ import io.micrometer.core.instrument.Tag
 fun interface DgsExecutionTagCustomizer {
 
     fun getExecutionTags(
-            parameters: InstrumentationExecutionParameters,
-            result: ExecutionResult,
-            exception: Throwable?
+        parameters: InstrumentationExecutionParameters,
+        result: ExecutionResult,
+        exception: Throwable?
     ): Iterable<Tag>
 }

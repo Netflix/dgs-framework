@@ -30,7 +30,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-
 @ExtendWith(MockKExtension::class)
 class CustomScalarsTest {
     @MockK
@@ -57,21 +56,25 @@ class CustomScalarsTest {
 
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
 
-        val schema = provider.schema("""
+        val schema = provider.schema(
+            """
             type Query {
                 now: DateTime
                  schedule(time: DateTime): Boolean
             }
             
             scalar DateTime
-        """.trimIndent())
+            """.trimIndent()
+        )
 
         val build = GraphQL.newGraphQL(schema).build()
-        val executionResult = build.execute("""
+        val executionResult = build.execute(
+            """
             {
                 now
             }
-            """.trimIndent())
+            """.trimIndent()
+        )
 
         Assertions.assertEquals(0, executionResult.errors.size)
         val data = executionResult.getData<Map<String, String>>()

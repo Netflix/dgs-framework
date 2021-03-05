@@ -31,26 +31,30 @@ class MutationTest {
 
     @Test
     fun testMutation() {
-        val executionResult = dgsQueryExecutor.execute("""
+        val executionResult = dgsQueryExecutor.execute(
+            """
             mutation {
                 addRating(input: {stars: 5, title: "Stranger Things"}) {
                     avgStars
                 }
             }
-        """.trimIndent())
+            """.trimIndent()
+        )
 
         assertThat(executionResult.errors.size).isEqualTo(0)
     }
 
     @Test
     fun testInvalidMutation() {
-        val executionResult = dgsQueryExecutor.execute("""
+        val executionResult = dgsQueryExecutor.execute(
+            """
             mutation {
                 addRating(input: {stars: -1, title: "Stranger Things"}) {
                     avgStars
                 }
             }
-        """.trimIndent())
+            """.trimIndent()
+        )
 
         assertThat(executionResult.errors.size).isEqualTo(1)
         assertThat(executionResult.errors[0].message).isEqualTo("java.lang.IllegalArgumentException: Stars must be 1-5")

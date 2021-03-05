@@ -37,50 +37,53 @@ open class DgsGraphQLMicrometerAutoConfiguration {
 
     @Bean
     @ConditionalOnProperty(
-            prefix = "${AUTO_CONF_PREFIX}.tag-customizers.outcome",
-            name = ["enabled"], havingValue = "true", matchIfMissing = true)
+        prefix = "$AUTO_CONF_PREFIX.tag-customizers.outcome",
+        name = ["enabled"], havingValue = "true", matchIfMissing = true
+    )
     open fun simpleGqlOutcomeTagCustomizer(): SimpleGqlOutcomeTagCustomizer {
         return SimpleGqlOutcomeTagCustomizer()
     }
 
     @Bean
     @ConditionalOnProperty(
-            prefix = "${AUTO_CONF_PREFIX}.instrumentation",
-            name = ["enabled"], havingValue = "true", matchIfMissing = true)
+        prefix = "$AUTO_CONF_PREFIX.instrumentation",
+        name = ["enabled"], havingValue = "true", matchIfMissing = true
+    )
     open fun metricsInstrumentation(
-            meterRegistrySupplier: DgsMeterRegistrySupplier,
-            tagsProvider: DgsGraphQLMetricsTagsProvider,
-            properties: DgsGraphQLMetricsProperties,
-            metricsExecutionEmitters: List<DgsGraphQLMetricsExecutionEmitter>
+        meterRegistrySupplier: DgsMeterRegistrySupplier,
+        tagsProvider: DgsGraphQLMetricsTagsProvider,
+        properties: DgsGraphQLMetricsProperties,
+        metricsExecutionEmitters: List<DgsGraphQLMetricsExecutionEmitter>
     ): DgsGraphQLMetricsInstrumentation {
         return DgsGraphQLMetricsInstrumentation(
-                meterRegistrySupplier,
-                tagsProvider,
-                properties.autotime,
-                metricsExecutionEmitters
+            meterRegistrySupplier,
+            tagsProvider,
+            properties.autotime,
+            metricsExecutionEmitters
         )
     }
 
     @Bean
     @ConditionalOnProperty(
-            prefix = "${AUTO_CONF_PREFIX}.data-loader-instrumentation",
-            name = ["enabled"], havingValue = "true", matchIfMissing = true)
+        prefix = "$AUTO_CONF_PREFIX.data-loader-instrumentation",
+        name = ["enabled"], havingValue = "true", matchIfMissing = true
+    )
     open fun dataLoaderInstrumentationProvider(
-            meterRegistrySupplier: DgsMeterRegistrySupplier
+        meterRegistrySupplier: DgsMeterRegistrySupplier
     ): DgsDataLoaderInstrumentationProvider {
         return DgsDataLoaderInstrumentationProvider(meterRegistrySupplier)
     }
 
     @Bean
     open fun collatedMetricsTagsProvider(
-            contextualTagCustomizer: Collection<DgsContextualTagCustomizer>,
-            executionTagCustomizer: Collection<DgsExecutionTagCustomizer>,
-            fieldFetchTagCustomizer: Collection<DgsFieldFetchTagCustomizer>
+        contextualTagCustomizer: Collection<DgsContextualTagCustomizer>,
+        executionTagCustomizer: Collection<DgsExecutionTagCustomizer>,
+        fieldFetchTagCustomizer: Collection<DgsFieldFetchTagCustomizer>
     ): DgsGraphQLMetricsTagsProvider {
         return DgsGraphQLCollatedMetricsTagsProvider(
-                contextualTagCustomizer,
-                executionTagCustomizer,
-                fieldFetchTagCustomizer
+            contextualTagCustomizer,
+            executionTagCustomizer,
+            fieldFetchTagCustomizer
         )
     }
 
@@ -90,8 +93,9 @@ open class DgsGraphQLMicrometerAutoConfiguration {
         return DefaultMeterRegistrySupplier(meterRegistryProvider)
     }
 
-   internal class DefaultMeterRegistrySupplier(
-            val meterRegistryProvider: ObjectProvider<MeterRegistry>): DgsMeterRegistrySupplier {
+    internal class DefaultMeterRegistrySupplier(
+        val meterRegistryProvider: ObjectProvider<MeterRegistry>
+    ) : DgsMeterRegistrySupplier {
 
         companion object {
             /** Fallback Micrometer [MeterRegistry] used in case the [ObjectProvider] doesn't define one. */
@@ -101,5 +105,4 @@ open class DgsGraphQLMicrometerAutoConfiguration {
             return meterRegistryProvider.ifAvailable ?: DEFAULT_METER_REGISTRY
         }
     }
-
 }

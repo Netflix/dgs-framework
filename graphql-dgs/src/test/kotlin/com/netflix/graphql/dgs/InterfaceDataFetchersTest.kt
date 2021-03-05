@@ -61,7 +61,6 @@ class InterfaceDataFetchersTest {
                     else -> throw RuntimeException("Unknown movie type")
                 }
             }
-
         }
 
         val fetcher = object : Any() {
@@ -82,7 +81,8 @@ class InterfaceDataFetchersTest {
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
-        val schema = provider.schema("""
+        val schema = provider.schema(
+            """
             type Query {
                 movies: [Movie]            
             }
@@ -103,7 +103,8 @@ class InterfaceDataFetchersTest {
                 director: String
                 nrOfExplosions: Int
             }
-        """.trimIndent())
+            """.trimIndent()
+        )
 
         val build = GraphQL.newGraphQL(schema).build()
         val executionResult = build.execute("{movies {director}}")

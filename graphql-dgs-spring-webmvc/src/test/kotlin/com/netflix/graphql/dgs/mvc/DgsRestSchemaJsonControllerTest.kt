@@ -40,9 +40,10 @@ class DgsRestSchemaJsonControllerTest {
     fun normalFlow() {
         val objectType: GraphQLObjectType = GraphQLObjectType.newObject()
             .name("helloType")
-            .field(GraphQLFieldDefinition.newFieldDefinition()
-                .name("hello")
-                .type(Scalars.GraphQLString)
+            .field(
+                GraphQLFieldDefinition.newFieldDefinition()
+                    .name("hello")
+                    .type(Scalars.GraphQLString)
             )
             .build()
         val schema = GraphQLSchema.newSchema()
@@ -59,5 +60,4 @@ class DgsRestSchemaJsonControllerTest {
         assertThat(jsonPath.read<String>("$.data.__schema.queryType.name")).isEqualTo("helloType")
         assertThat(jsonPath.read<String>("$.errors")).isNullOrEmpty()
     }
-
 }

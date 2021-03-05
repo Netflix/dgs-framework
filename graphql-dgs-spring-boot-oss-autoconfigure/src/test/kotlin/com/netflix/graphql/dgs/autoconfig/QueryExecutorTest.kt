@@ -97,7 +97,7 @@ class QueryExecutorTest {
     @Test
     fun queryDocumentWithError() {
 
-        val error : QueryException = assertThrows {
+        val error: QueryException = assertThrows {
             context.withUserConfiguration(HelloDatFetcherConfig::class.java).run { ctx ->
                 assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
                     it.executeAndGetDocumentContext("{unknown }")

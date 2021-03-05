@@ -105,8 +105,8 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
 
     private fun createDataLoader(batchLoader: BatchLoader<*, *>, dgsDataLoader: DgsDataLoader): DataLoader<out Any, out Any>? {
         val options = DataLoaderOptions.newOptions()
-                .setBatchingEnabled(dgsDataLoader.batching)
-                .setCachingEnabled(dgsDataLoader.caching)
+            .setBatchingEnabled(dgsDataLoader.batching)
+            .setCachingEnabled(dgsDataLoader.caching)
         if (dgsDataLoader.maxBatchSize > 0) {
             options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
         }
@@ -123,8 +123,8 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
 
     private fun createDataLoader(batchLoader: MappedBatchLoader<*, *>, dgsDataLoader: DgsDataLoader): DataLoader<out Any, out Any>? {
         val options = DataLoaderOptions.newOptions()
-                .setBatchingEnabled(dgsDataLoader.batching)
-                .setCachingEnabled(dgsDataLoader.caching)
+            .setBatchingEnabled(dgsDataLoader.batching)
+            .setCachingEnabled(dgsDataLoader.caching)
         if (dgsDataLoader.maxBatchSize > 0) {
             options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
         }
@@ -141,9 +141,9 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
 
     private fun <T> createDataLoader(batchLoader: BatchLoaderWithContext<*, *>, dgsDataLoader: DgsDataLoader, supplier: Supplier<T>): DataLoader<out Any, out Any>? {
         val options = DataLoaderOptions.newOptions()
-                .setBatchingEnabled(dgsDataLoader.batching)
-                .setBatchLoaderContextProvider(supplier::get)
-                .setCachingEnabled(dgsDataLoader.caching)
+            .setBatchingEnabled(dgsDataLoader.batching)
+            .setBatchLoaderContextProvider(supplier::get)
+            .setCachingEnabled(dgsDataLoader.caching)
 
         if (dgsDataLoader.maxBatchSize > 0) {
             options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
@@ -161,9 +161,9 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
 
     private fun <T> createDataLoader(batchLoader: MappedBatchLoaderWithContext<*, *>, dgsDataLoader: DgsDataLoader, supplier: Supplier<T>): DataLoader<out Any, out Any>? {
         val options = DataLoaderOptions.newOptions()
-                .setBatchingEnabled(dgsDataLoader.batching)
-                .setBatchLoaderContextProvider(supplier::get)
-                .setCachingEnabled(dgsDataLoader.caching)
+            .setBatchingEnabled(dgsDataLoader.batching)
+            .setBatchLoaderContextProvider(supplier::get)
+            .setCachingEnabled(dgsDataLoader.caching)
 
         if (dgsDataLoader.maxBatchSize > 0) {
             options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
@@ -178,5 +178,4 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
 
         return DataLoader.newMappedDataLoader(extendedBatchLoader, options)
     }
-
 }

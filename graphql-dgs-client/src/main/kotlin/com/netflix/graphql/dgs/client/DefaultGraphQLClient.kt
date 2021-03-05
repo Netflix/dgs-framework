@@ -54,8 +54,9 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
             ObjectMapper().registerKotlinModule()
         }
         private val defaultHeaders = mapOf(
-                "Accept" to listOf("application/json"),
-                "Content-type" to listOf("application/json"))
+            "Accept" to listOf("application/json"),
+            "Content-type" to listOf("application/json")
+        )
 
         private data class Request(val query: String, val variables: Map<String, Any>)
     }
@@ -106,4 +107,3 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
         return GraphQLResponse(body ?: "")
     }
 }
-

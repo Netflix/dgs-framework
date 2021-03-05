@@ -57,4 +57,4 @@ fun interface MonoRequestExecutor {
 /**
  * A transport level exception (e.g. a failed connection). This does *not* represent successful GraphQL responses that contain errors.
  */
-class GraphQLClientException(statusCode: Int, url: String, response: String, request: String) : RuntimeException("GraphQL server $url responded with status code ${statusCode}: '${response}'. The request sent to the server was \n${request}")
+class GraphQLClientException(statusCode: Int, url: String, response: String, request: String) : RuntimeException("GraphQL server $url responded with status code $statusCode: '$response'. The request sent to the server was \n$request")

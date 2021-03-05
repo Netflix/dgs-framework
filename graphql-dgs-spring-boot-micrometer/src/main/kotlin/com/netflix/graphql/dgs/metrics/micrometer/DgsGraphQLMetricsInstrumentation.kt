@@ -1,6 +1,5 @@
 package com.netflix.graphql.dgs.metrics.micrometer
 
-
 import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlMetric
 import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlTag
 import com.netflix.graphql.dgs.metrics.micrometer.DgsGraphQLMetricsInstrumentationUtils.resolveDataFetcherTagValue
@@ -26,10 +25,10 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 
 class DgsGraphQLMetricsInstrumentation(
-        private val registrySupplier: DgsMeterRegistrySupplier,
-        private val tagsProvider: DgsGraphQLMetricsTagsProvider,
-        private val autoTimer: AutoTimer,
-        private val resultExecutionEmitter: List<DgsGraphQLMetricsExecutionEmitter>
+    private val registrySupplier: DgsMeterRegistrySupplier,
+    private val tagsProvider: DgsGraphQLMetricsTagsProvider,
+    private val autoTimer: AutoTimer,
+    private val resultExecutionEmitter: List<DgsGraphQLMetricsExecutionEmitter>
 ) : SimpleInstrumentation() {
 
     private companion object {
@@ -49,42 +48,45 @@ class DgsGraphQLMetricsInstrumentation(
 
                 resultExecutionEmitter.forEach {
                     kotlin.runCatching { it.emit(result, exc) }
-                            .onFailure { logger.error("Failed to emit execution result!", it) }
+                        .onFailure { logger.error("Failed to emit execution result!", it) }
                 }
 
                 state.stopTimer(
-                        autoTimer.builder(GqlMetric.QUERY.key)
-                                .tags(tagsProvider.getContextualTags())
-                                .tags(tagsProvider.getExecutionTags(parameters, result, exc)))
+                    autoTimer.builder(GqlMetric.QUERY.key)
+                        .tags(tagsProvider.getContextualTags())
+                        .tags(tagsProvider.getExecutionTags(parameters, result, exc))
+                )
             }
         }
     }
 
     override fun instrumentExecutionResult(
-            executionResult: ExecutionResult,
-            parameters: InstrumentationExecutionParameters
+        executionResult: ExecutionResult,
+        parameters: InstrumentationExecutionParameters
     ): CompletableFuture<ExecutionResult> {
 
         val tags =
-                Tags.empty()
-                        .and(tagsProvider.getContextualTags())
-                        .and(tagsProvider.getExecutionTags(parameters, executionResult, null))
+            Tags.empty()
+                .and(tagsProvider.getContextualTags())
+                .and(tagsProvider.getExecutionTags(parameters, executionResult, null))
 
         sanitizeErrorPaths(executionResult).forEach {
             registrySupplier
-                    .get()
-                    .counter(GqlMetric.ERROR.key,
-                            tags.and(GqlTag.ERROR_PATH.key, it.path)
-                                    .and(GqlTag.ERROR_CODE.key, it.type)
-                                    .and(GqlTag.ERROR_DETAIL.key, it.detail)).increment()
+                .get()
+                .counter(
+                    GqlMetric.ERROR.key,
+                    tags.and(GqlTag.ERROR_PATH.key, it.path)
+                        .and(GqlTag.ERROR_CODE.key, it.type)
+                        .and(GqlTag.ERROR_DETAIL.key, it.detail)
+                ).increment()
         }
 
         return CompletableFuture.completedFuture(executionResult)
     }
 
     override fun instrumentDataFetcher(
-            dataFetcher: DataFetcher<*>,
-            parameters: InstrumentationFieldFetchParameters
+        dataFetcher: DataFetcher<*>,
+        parameters: InstrumentationFieldFetchParameters
     ): DataFetcher<*> {
         val gqlField = resolveDataFetcherTagValue(parameters)
         if (parameters.isTrivialDataFetcher || shouldIgnoreTag(gqlField)) {
@@ -110,17 +112,20 @@ class DgsGraphQLMetricsInstrumentation(
         }
     }
 
-    private fun recordDataFetcherMetrics(registry: MeterRegistry,
-                                         timerSampler: Timer.Sample,
-                                         parameters: InstrumentationFieldFetchParameters,
-                                         error: Throwable?,
-                                         baseTags: Iterable<Tag>) {
+    private fun recordDataFetcherMetrics(
+        registry: MeterRegistry,
+        timerSampler: Timer.Sample,
+        parameters: InstrumentationFieldFetchParameters,
+        error: Throwable?,
+        baseTags: Iterable<Tag>
+    ) {
 
         val recordedTags = Tags.of(baseTags).and(tagsProvider.getFieldFetchTags(parameters, error))
 
         timerSampler.stop(
-                registry,
-                Timer.builder(GqlMetric.RESOLVER.key).tags(recordedTags))
+            registry,
+            Timer.builder(GqlMetric.RESOLVER.key).tags(recordedTags)
+        )
     }
 
     class MetricsInstrumentationState(private val registry: MeterRegistry) : InstrumentationState {
@@ -135,4 +140,3 @@ class DgsGraphQLMetricsInstrumentation(
         }
     }
 }
-

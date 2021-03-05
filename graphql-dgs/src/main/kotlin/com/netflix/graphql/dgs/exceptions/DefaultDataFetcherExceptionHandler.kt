@@ -44,20 +44,20 @@ class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
 
         val graphqlError = if (springSecurityAvailable && exception is org.springframework.security.access.AccessDeniedException) {
             TypedGraphQLError.PERMISSION_DENIED.message("%s: %s", exception::class.java.name, exception.message)
-                    .path(handlerParameters.path).build()
+                .path(handlerParameters.path).build()
         } else if (exception is DgsEntityNotFoundException) {
             TypedGraphQLError.NOT_FOUND.message("%s: %s", exception::class.java.name, exception.message)
-                    .path(handlerParameters.path).build()
+                .path(handlerParameters.path).build()
         } else if (exception is DgsBadRequestException) {
             TypedGraphQLError.BAD_REQUEST.message("%s: %s", exception::class.java.name, exception.message)
-                    .path(handlerParameters.path).build()
+                .path(handlerParameters.path).build()
         } else {
             TypedGraphQLError.INTERNAL.message("%s: %s", exception::class.java.name, exception.message)
-                    .path(handlerParameters.path).build()
+                .path(handlerParameters.path).build()
         }
 
         return DataFetcherExceptionHandlerResult.newResult()
-                .error(graphqlError)
-                .build()
+            .error(graphqlError)
+            .build()
     }
 }

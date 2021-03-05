@@ -55,10 +55,12 @@ import java.util.concurrent.CompletionStage
 /**
  * Main framework class that scans for components and configures a runtime executable schema.
  */
-class DgsSchemaProvider(private val applicationContext: ApplicationContext,
-                        private val federationResolver: Optional<DgsFederationResolver>,
-                        private val existingTypeDefinitionRegistry: Optional<TypeDefinitionRegistry>,
-                        private val mockProviders: Optional<Set<MockProvider>>) {
+class DgsSchemaProvider(
+    private val applicationContext: ApplicationContext,
+    private val federationResolver: Optional<DgsFederationResolver>,
+    private val existingTypeDefinitionRegistry: Optional<TypeDefinitionRegistry>,
+    private val mockProviders: Optional<Set<MockProvider>>
+) {
 
     val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
     val entityFetchers = mutableMapOf<String, Pair<Any, Method>>()
@@ -127,7 +129,6 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
             method.invoke(dgsComponent) as TypeDefinitionRegistry
         }.reduceOrNull { a, b -> a.merge(b) }
     }
-
 
     private fun invokeDgsCodeRegistry(dgsComponent: Any, codeRegistryBuilder: GraphQLCodeRegistry.Builder, registry: TypeDefinitionRegistry) {
         dgsComponent.javaClass.methods.filter { it.isAnnotationPresent(DgsCodeRegistry::class.java) }.forEach { method ->
@@ -226,7 +227,7 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
                 val dgsEntityFetcherAnnotation = method.getAnnotation(DgsEntityFetcher::class.java)
 
                 val enableInstrumentation = method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)?.value
-                        ?: false
+                    ?: false
                 dataFetcherInstrumentationEnabled["${"__entities"}.${dgsEntityFetcherAnnotation.name}"] = enableInstrumentation
 
                 entityFetchers[dgsEntityFetcherAnnotation.name] = Pair(dgsComponent, method)
@@ -259,7 +260,7 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
                                 // Return a list of elements that are converted to their collection type, e.e.g. List<Person>, List<String> etc.
                                 parameterValue.map { item -> objectMapper.convertValue(item, collectionType) }.toList()
                             } catch (ex: Exception) {
-                                throw DgsInvalidInputArgumentException("Specified type '${collectionType}' is invalid for $parameterName.", ex)
+                                throw DgsInvalidInputArgumentException("Specified type '$collectionType' is invalid for $parameterName.", ex)
                             }
                         } else if (parameterValue is List<*>) {
                             // Return as is for all other types of Lists, i.e. custom scalars e.g. List<UUID>, and other types like List<Integer> etc. that have Object collection type
@@ -281,7 +282,7 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
                         }
 
                         if (convertValue == null && environment.fieldDefinition.arguments.none { it.name == parameterName }) {
-                            logger.warn("Unknown argument '${parameterName}' on data fetcher ${dgsComponent.javaClass.name}.${method.name}")
+                            logger.warn("Unknown argument '$parameterName' on data fetcher ${dgsComponent.javaClass.name}.${method.name}")
                         }
 
                         args.add(convertValue)
@@ -291,13 +292,15 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
                         val annotation = parameter.getAnnotation(RequestHeader::class.java)
                         val parameterName = annotation.value.ifBlank { parameterNames[idx] }
 
-                        args.add(DgsContext.getRequestData(environment)?.headers?.get(parameterName)?.let {
-                            if (parameter.type.isAssignableFrom(List::class.java)) {
-                                it
-                            } else {
-                                it.joinToString()
+                        args.add(
+                            DgsContext.getRequestData(environment)?.headers?.get(parameterName)?.let {
+                                if (parameter.type.isAssignableFrom(List::class.java)) {
+                                    it
+                                } else {
+                                    it.joinToString()
+                                }
                             }
-                        })
+                        )
                     }
 
                     environment.containsArgument(parameterNames[idx]) -> {
@@ -311,7 +314,7 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
                     }
                     else -> {
                         logger.warn("Unknown argument '${parameterNames[idx]}' on data fetcher ${dgsComponent.javaClass.name}.${method.name}")
-                        //This might cause an exception, but parameter's the best effort we can do
+                        // This might cause an exception, but parameter's the best effort we can do
                         args.add(null)
                     }
                 }
@@ -348,9 +351,8 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
                     overrideTypeResolver = dgsComponents.values.any { component ->
                         component.javaClass.methods.any { method ->
                             method.isAnnotationPresent(DgsTypeResolver::class.java) &&
-                                    method.getAnnotation(DgsTypeResolver::class.java).name == annotation.name &&
-                                    component != dgsComponent
-
+                                method.getAnnotation(DgsTypeResolver::class.java).name == annotation.name &&
+                                component != dgsComponent
                         }
                     }
                 }
@@ -359,11 +361,11 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
                     registeredTypeResolvers.add(annotation.name)
 
                     runtimeWiringBuilder.type(
-                            TypeRuntimeWiring.newTypeWiring(annotation.name)
-                                    .typeResolver { env: TypeResolutionEnvironment ->
-                                        val typeName = method.invoke(dgsComponent, env.getObject()) as String
-                                        env.schema.getObjectType(typeName)
-                                    }
+                        TypeRuntimeWiring.newTypeWiring(annotation.name)
+                            .typeResolver { env: TypeResolutionEnvironment ->
+                                val typeName = method.invoke(dgsComponent, env.getObject()) as String
+                                env.schema.getObjectType(typeName)
+                            }
                     )
                 }
             }
@@ -372,18 +374,18 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
         // Add a fallback type resolver for types that don't have a type resolver registered.
         // This works when the Java type has the same name as the GraphQL type.
         val unregisteredTypes = mergedRegistry.types()
-                .filterValues { it is InterfaceTypeDefinition || it is UnionTypeDefinition }
-                .map { it.key }
-                .filter { !registeredTypeResolvers.contains(it) }
+            .filterValues { it is InterfaceTypeDefinition || it is UnionTypeDefinition }
+            .map { it.key }
+            .filter { !registeredTypeResolvers.contains(it) }
         unregisteredTypes.forEach {
             runtimeWiringBuilder.type(
-                    TypeRuntimeWiring.newTypeWiring(it)
-                            .typeResolver { env: TypeResolutionEnvironment ->
-                                val instance = env.getObject<Any>()
-                                val resolvedType = env.schema.getObjectType(instance::class.java.simpleName)
-                                resolvedType
-                                        ?: throw InvalidTypeResolverException("The default type resolver could not find a suitable Java type for GraphQL type `${instance::class.java.simpleName}. Provide a @DgsTypeResolver.`")
-                            }
+                TypeRuntimeWiring.newTypeWiring(it)
+                    .typeResolver { env: TypeResolutionEnvironment ->
+                        val instance = env.getObject<Any>()
+                        val resolvedType = env.schema.getObjectType(instance::class.java.simpleName)
+                        resolvedType
+                            ?: throw InvalidTypeResolverException("The default type resolver could not find a suitable Java type for GraphQL type `${instance::class.java.simpleName}. Provide a @DgsTypeResolver.`")
+                    }
             )
         }
     }
@@ -396,7 +398,6 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
                 is Coercing<*, *> -> runtimeWiringBuilder.scalar(GraphQLScalarType.newScalar().name(annotation.name).coercing(scalarComponent).build())
                 else -> throw RuntimeException("Invalid @DgsScalar type: the class must implement graphql.schema.Coercing")
             }
-
         }
     }
 
@@ -405,7 +406,7 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
 
         val resolver = PathMatchingResourcePatternResolver(cl)
         val schemas = try {
-            val resources = resolver.getResources("classpath*:${basedir}/**/*.graphql*")
+            val resources = resolver.getResources("classpath*:$basedir/**/*.graphql*")
             if (resources.isEmpty()) {
                 throw NoSchemaFoundException()
             }
@@ -415,24 +416,23 @@ class DgsSchemaProvider(private val applicationContext: ApplicationContext,
                 logger.info("No schema files found, but a schema was provided as an TypeDefinitionRegistry")
                 return arrayOf()
             } else {
-                logger.error("No schema files found. Define schemas in src/main/resources/${basedir}/**/*.graphqls")
+                logger.error("No schema files found. Define schemas in src/main/resources/$basedir/**/*.graphqls")
                 throw NoSchemaFoundException()
             }
         }
 
         val testSchemas = try {
-            resolver.getResources("classpath:${basedir}-test/**/*.graphql*")
+            resolver.getResources("classpath:$basedir-test/**/*.graphql*")
         } catch (ex: Exception) {
             arrayOf<Resource>()
         }
 
         val metaInfSchemas = try {
-            resolver.getResources("classpath*:META-INF/${basedir}/**/*.graphql*")
+            resolver.getResources("classpath*:META-INF/$basedir/**/*.graphql*")
         } catch (ex: Exception) {
             arrayOf<Resource>()
         }
 
         return schemas + testSchemas + metaInfSchemas
     }
-
 }

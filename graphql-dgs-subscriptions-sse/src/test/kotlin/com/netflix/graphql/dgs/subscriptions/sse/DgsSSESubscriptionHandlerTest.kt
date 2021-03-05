@@ -32,7 +32,6 @@ import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
 import java.util.*
 
-
 @ExtendWith(MockKExtension::class)
 internal class DgsSSESubscriptionHandlerTest {
 
@@ -49,7 +48,7 @@ internal class DgsSSESubscriptionHandlerTest {
         val queryPayload = DgsSSESubscriptionHandler.QueryPayload(operationName = "MySubscription", query = query)
         val base64 = Base64.getEncoder().encodeToString(jacksonObjectMapper().writeValueAsBytes(queryPayload))
 
-        every { dgsQueryExecutor.execute(query, any())} returns executionResultMock
+        every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
         every { executionResultMock.errors } returns listOf(GraphqlErrorBuilder.newError().message("broken").build())
 
         val responseEntity = DgsSSESubscriptionHandler(dgsQueryExecutor).subscriptionWithId(base64)
@@ -62,7 +61,7 @@ internal class DgsSSESubscriptionHandlerTest {
         val query = "subscription { stocks { name, price }}"
         val base64 = "notbase64"
 
-        every { dgsQueryExecutor.execute(query, any())} returns executionResultMock
+        every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
 
         val responseEntity = DgsSSESubscriptionHandler(dgsQueryExecutor).subscriptionWithId(base64)
         assertThat(responseEntity.statusCode.is4xxClientError).isTrue
@@ -75,7 +74,7 @@ internal class DgsSSESubscriptionHandlerTest {
         val queryPayload = DgsSSESubscriptionHandler.QueryPayload(operationName = "MySubscription", query = query)
         val base64 = Base64.getEncoder().encodeToString(jacksonObjectMapper().writeValueAsBytes(queryPayload))
 
-        every { dgsQueryExecutor.execute(query, any())} returns executionResultMock
+        every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
         every { executionResultMock.errors } returns listOf(ValidationError.newValidationError().build())
 
         val responseEntity = DgsSSESubscriptionHandler(dgsQueryExecutor).subscriptionWithId(base64)
@@ -87,7 +86,7 @@ internal class DgsSSESubscriptionHandlerTest {
 
         val query = "subscription { stocks { name, price }}"
         val base64 = Base64.getEncoder().encodeToString("not json".toByteArray())
-        every { dgsQueryExecutor.execute(query, any())} returns executionResultMock
+        every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
         val responseEntity = DgsSSESubscriptionHandler(dgsQueryExecutor).subscriptionWithId(base64)
         assertThat(responseEntity.statusCode.is4xxClientError).isTrue
     }
@@ -99,7 +98,7 @@ internal class DgsSSESubscriptionHandlerTest {
         val queryPayload = DgsSSESubscriptionHandler.QueryPayload(operationName = "MySubscription", query = query)
         val base64 = Base64.getEncoder().encodeToString(jacksonObjectMapper().writeValueAsBytes(queryPayload))
 
-        every { dgsQueryExecutor.execute(query, any())} returns executionResultMock
+        every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
         every { executionResultMock.errors } returns emptyList()
         every { executionResultMock.getData<Publisher<ExecutionResult>>() } throws ClassCastException()
 
@@ -109,12 +108,12 @@ internal class DgsSSESubscriptionHandlerTest {
 
     @Test
     fun notAPublisherClientError() {
-        //Not a subscription query
+        // Not a subscription query
         val query = "query { stocks { name, price }}"
         val queryPayload = DgsSSESubscriptionHandler.QueryPayload(operationName = "MySubscription", query = query)
         val base64 = Base64.getEncoder().encodeToString(jacksonObjectMapper().writeValueAsBytes(queryPayload))
 
-        every { dgsQueryExecutor.execute(query, any())} returns executionResultMock
+        every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
         every { executionResultMock.errors } returns emptyList()
         every { executionResultMock.getData<Publisher<ExecutionResult>>() } throws ClassCastException()
 
@@ -131,7 +130,7 @@ internal class DgsSSESubscriptionHandlerTest {
 
         val nestedExecutionResult = mockk<ExecutionResult>()
 
-        every { dgsQueryExecutor.execute(query, any())} returns executionResultMock
+        every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
         every { executionResultMock.errors } returns emptyList()
         every { executionResultMock.getData<Publisher<ExecutionResult>>() } returns Flux.just(nestedExecutionResult)
         every { nestedExecutionResult.getData<String>() } returns "message 1"

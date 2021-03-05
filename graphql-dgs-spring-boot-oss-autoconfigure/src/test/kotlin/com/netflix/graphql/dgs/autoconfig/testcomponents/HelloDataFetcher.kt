@@ -38,7 +38,7 @@ open class HelloDatFetcherConfig {
 class HelloDataFetcher {
     @DgsData(parentType = "Query", field = "hello")
     fun hello(dfe: DataFetchingEnvironment): String {
-        if(dfe.arguments["name"] != null) {
+        if (dfe.arguments["name"] != null) {
             return "Hello, ${dfe.arguments["name"]}!"
         }
 

@@ -26,7 +26,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.web.context.request.WebRequest
 import java.util.*
 
-
 open class DefaultDgsGraphQLContextBuilder(private val dgsCustomContextBuilder: Optional<DgsCustomContextBuilder<*>>) : DgsContextBuilder {
     val logger: Logger = LoggerFactory.getLogger(DefaultDgsGraphQLContextBuilder::class.java)
     var extensions: Map<String, Any>? = null
@@ -41,11 +40,20 @@ open class DefaultDgsGraphQLContextBuilder(private val dgsCustomContextBuilder: 
         @Suppress("DEPRECATION") val customContext = if (dgsCustomContextBuilder.isPresent)
             dgsCustomContextBuilder.get().build()
         else
-        //This is for backwards compatibility - we previously made DefaultRequestData the custom context if no custom context was provided.
+        // This is for backwards compatibility - we previously made DefaultRequestData the custom context if no custom context was provided.
             DefaultRequestData(extensions ?: mapOf(), headers ?: HttpHeaders())
 
-        return DgsContext(customContext, DgsRequestData(extensions ?: mapOf(), HttpHeaders.readOnlyHttpHeaders(headers
-                ?: HttpHeaders()), webRequest))
+        return DgsContext(
+            customContext,
+            DgsRequestData(
+                extensions ?: mapOf(),
+                HttpHeaders.readOnlyHttpHeaders(
+                    headers
+                        ?: HttpHeaders()
+                ),
+                webRequest
+            )
+        )
     }
 }
 

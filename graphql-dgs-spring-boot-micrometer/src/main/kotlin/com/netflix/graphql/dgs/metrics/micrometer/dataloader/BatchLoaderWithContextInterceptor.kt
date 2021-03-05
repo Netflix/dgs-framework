@@ -1,8 +1,7 @@
 package com.netflix.graphql.dgs.metrics.micrometer.dataloader
 
-
-import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlTag
 import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlMetric
+import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlTag
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Tags
@@ -13,9 +12,9 @@ import org.slf4j.LoggerFactory
 import java.util.concurrent.CompletionStage
 
 internal class BatchLoaderWithContextInterceptor(
-        private val batchLoader: BatchLoaderWithContext<*, *>,
-        private val name: String,
-        private val registry: MeterRegistry
+    private val batchLoader: BatchLoaderWithContext<*, *>,
+    private val name: String,
+    private val registry: MeterRegistry
 ) {
     companion object {
         private val ID = GqlMetric.DATA_LOADER.key
@@ -28,11 +27,16 @@ internal class BatchLoaderWithContextInterceptor(
         return try {
             pipe.to(batchLoader).whenComplete { result, _ ->
                 logger.debug("Stopping timer[{}] for {}", ID, javaClass.simpleName)
-                timerSampler.stop(registry,
-                        Timer.builder(ID)
-                                .tags(Tags.of(
-                                        Tag.of(GqlTag.LOADER_NAME.key, name),
-                                        Tag.of(GqlTag.LOADER_BATCH_SIZE.key, result.size.toString()))))
+                timerSampler.stop(
+                    registry,
+                    Timer.builder(ID)
+                        .tags(
+                            Tags.of(
+                                Tag.of(GqlTag.LOADER_NAME.key, name),
+                                Tag.of(GqlTag.LOADER_BATCH_SIZE.key, result.size.toString())
+                            )
+                        )
+                )
             }
         } catch (exception: Exception) {
             logger.warn("Error creating timer interceptor '{}' for {}", ID, javaClass.simpleName)

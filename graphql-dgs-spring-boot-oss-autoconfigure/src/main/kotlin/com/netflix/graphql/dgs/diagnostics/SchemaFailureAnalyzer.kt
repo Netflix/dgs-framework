@@ -26,12 +26,14 @@ import java.util.stream.Collectors
  */
 class SchemaFailureAnalyzer : AbstractFailureAnalyzer<SchemaProblem?>() {
     override fun analyze(rootFailure: Throwable?, cause: SchemaProblem?): FailureAnalysis {
-        return FailureAnalysis("There are problems with the GraphQL Schema:\n" +
+        return FailureAnalysis(
+            "There are problems with the GraphQL Schema:\n" +
                 cause!!.errors
-                        .stream()
-                        .map(Any::toString)
-                        .collect(Collectors.joining("\n\t * ", "\t * ", "\n")),
-                null,
-                cause)
+                    .stream()
+                    .map(Any::toString)
+                    .collect(Collectors.joining("\n\t * ", "\t * ", "\n")),
+            null,
+            cause
+        )
     }
 }
