@@ -28,7 +28,6 @@ import reactor.core.publisher.Mono
  *
  * Example:
  *
- *     @Metatron("exampleapp")
  *     @Autowired
  *     RestTemplate restTemplate;
  *
@@ -40,9 +39,6 @@ import reactor.core.publisher.Mono
  *       ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<String>(body, httpHeaders), String.class);
  *       return new HttpResponse(exchange.getStatusCodeValue(), exchange.getBody());
  *    });
- *
- * @sample com.netflix.graphql.dgs.client.StandaloneDgsGraphQLClientTest
- * @sample com.netflix.graphql.dgs.client.GatewayGraphQLClientTest
  */
 class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQLClient {
 
