@@ -65,7 +65,7 @@ import org.springframework.web.multipart.MultipartFile
 class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
     val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
 
-    @RequestMapping("/graphql", produces = ["application/json"])
+    @RequestMapping("\${dgs.graphql.path:/graphql}", produces = ["application/json"])
     fun graphql(
         @RequestBody body: String?,
         @RequestParam fileParams: Map<String, MultipartFile>?,

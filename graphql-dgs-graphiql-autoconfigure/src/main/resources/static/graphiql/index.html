@@ -37,7 +37,7 @@
 
 <script>
     const graphQLFetcher = (graphQLParams, headers) =>
-        fetch('/graphql', {
+        fetch('<DGS_GRAPHQL_PATH>', {
             method: 'post',
             headers: headers.headers || {},
             body: JSON.stringify(graphQLParams),

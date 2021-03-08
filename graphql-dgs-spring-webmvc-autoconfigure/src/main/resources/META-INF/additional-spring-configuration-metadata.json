@@ -1,6 +1,12 @@
 {
   "properties": [
     {
+      "name": "dgs.graphql.path",
+      "type": "java.lang.String",
+      "description": "Path to the GraphQL endpoint without trailing slash.",
+      "defaultValue": "/graphql"
+    },
+    {
       "name": "dgs.graphql.schema-json.enabled",
       "type": "java.lang.Boolean",
       "description": "Enables schema-json endpoint functionality.",
@@ -9,7 +15,7 @@
     {
       "name": "dgs.graphql.schema-json.path",
       "type": "java.lang.String",
-      "description": "Path to the schema-json endpoint.",
+      "description": "Path to the schema-json endpoint without trailing slash.",
       "defaultValue": "/schema.json"
     }
   ]
