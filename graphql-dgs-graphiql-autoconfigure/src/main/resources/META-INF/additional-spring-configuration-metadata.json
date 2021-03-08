@@ -5,6 +5,12 @@
       "type": "java.lang.Boolean",
       "description": "Enables GraphiQL functionality.",
       "defaultValue": "true"
+    },
+    {
+      "name": "dgs.graphql.graphiql.path",
+      "type": "java.lang.String",
+      "description": "Path to the GraphiQL endpoint without trailing slash.",
+      "defaultValue": "/graphiql"
     }
   ]
 }
