@@ -52,14 +52,12 @@ open class DgsGraphQLMicrometerAutoConfiguration {
     open fun metricsInstrumentation(
         meterRegistrySupplier: DgsMeterRegistrySupplier,
         tagsProvider: DgsGraphQLMetricsTagsProvider,
-        properties: DgsGraphQLMetricsProperties,
-        metricsExecutionEmitters: List<DgsGraphQLMetricsExecutionEmitter>
+        properties: DgsGraphQLMetricsProperties
     ): DgsGraphQLMetricsInstrumentation {
         return DgsGraphQLMetricsInstrumentation(
             meterRegistrySupplier,
             tagsProvider,
-            properties.autotime,
-            metricsExecutionEmitters
+            properties.autotime
         )
     }
 

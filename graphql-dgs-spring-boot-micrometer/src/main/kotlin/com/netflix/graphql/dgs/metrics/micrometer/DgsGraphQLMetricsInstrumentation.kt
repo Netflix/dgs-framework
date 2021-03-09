@@ -18,8 +18,6 @@ import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Tags
 import io.micrometer.core.instrument.Timer
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.metrics.AutoTimer
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -28,13 +26,8 @@ import java.util.concurrent.CompletionStage
 class DgsGraphQLMetricsInstrumentation(
     private val registrySupplier: DgsMeterRegistrySupplier,
     private val tagsProvider: DgsGraphQLMetricsTagsProvider,
-    private val autoTimer: AutoTimer,
-    private val resultExecutionEmitter: List<DgsGraphQLMetricsExecutionEmitter>
+    private val autoTimer: AutoTimer
 ) : SimpleInstrumentation() {
-
-    private companion object {
-        val logger: Logger = LoggerFactory.getLogger(DgsGraphQLMetricsInstrumentation::class.java)
-    }
 
     override fun createState(): InstrumentationState {
         return MetricsInstrumentationState(registrySupplier.get())
@@ -46,11 +39,6 @@ class DgsGraphQLMetricsInstrumentation(
 
         return object : SimpleInstrumentationContext<ExecutionResult>() {
             override fun onCompleted(result: ExecutionResult, exc: Throwable?) {
-
-                resultExecutionEmitter.forEach {
-                    kotlin.runCatching { it.emit(result, exc) }
-                        .onFailure { logger.error("Failed to emit execution result!", it) }
-                }
 
                 state.stopTimer(
                     autoTimer.builder(GqlMetric.QUERY.key)
@@ -106,6 +94,7 @@ class DgsGraphQLMetricsInstrumentation(
                 } else {
                     recordDataFetcherMetrics(registry, sampler, parameters, null, baseTags)
                 }
+                result
             } catch (throwable: Throwable) {
                 recordDataFetcherMetrics(registry, sampler, parameters, throwable, baseTags)
                 throw throwable
@@ -120,7 +109,6 @@ class DgsGraphQLMetricsInstrumentation(
         error: Throwable?,
         baseTags: Iterable<Tag>
     ) {
-
         val recordedTags = Tags.of(baseTags).and(tagsProvider.getFieldFetchTags(parameters, error))
 
         timerSampler.stop(
