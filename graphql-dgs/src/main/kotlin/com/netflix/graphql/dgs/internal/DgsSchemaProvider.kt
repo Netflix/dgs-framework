@@ -414,7 +414,7 @@ class DgsSchemaProvider(
         } catch (ex: Exception) {
             if (existingTypeDefinitionRegistry.isPresent || hasDynamicTypeRegistry) {
                 logger.info("No schema files found, but a schema was provided as an TypeDefinitionRegistry")
-                return arrayOf()
+                arrayOf()
             } else {
                 logger.error("No schema files found. Define schemas in src/main/resources/$basedir/**/*.graphqls")
                 throw NoSchemaFoundException()
