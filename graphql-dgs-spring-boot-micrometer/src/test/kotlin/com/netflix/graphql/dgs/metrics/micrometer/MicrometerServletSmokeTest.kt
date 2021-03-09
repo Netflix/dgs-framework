@@ -57,6 +57,7 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.concurrent.CompletableFuture
 
@@ -94,6 +95,7 @@ class MicrometerServletSmokeTest {
                 .post("/graphql")
                 .content("""{ "query": "{ping}" }""")
         ).andExpect(status().isOk)
+            .andExpect(content().json("""{"data":{"ping":"pong"}}""", false))
 
         val meters = qglMeters()
 
@@ -124,6 +126,7 @@ class MicrometerServletSmokeTest {
                 .post("/graphql")
                 .content("""{ "query": "{upperCased}" }""")
         ).andExpect(status().isOk)
+            .andExpect(content().json("""{"data":{"upperCased":"[A, B, C]"}}""", false))
 
         val meters = qglMeters()
 
@@ -161,7 +164,18 @@ class MicrometerServletSmokeTest {
                 .post("/graphql")
                 .content("""{ "query": "fail" }""")
         ).andExpect(status().isOk)
-
+            .andExpect(
+                content().json(
+                    """
+                        |{
+                        |   "errors":[
+                        |       {"message":"Invalid Syntax : offending token 'fail' at line 1 column 1",
+                        |           "locations":[{"line":1,"column":1}],"extensions":{"classification":"InvalidSyntax"}}
+                        |   ]
+                        |}""".trimMargin(),
+                    false
+                )
+            )
         val meters = qglMeters()
 
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query")
@@ -193,6 +207,19 @@ class MicrometerServletSmokeTest {
                 .post("/graphql")
                 .content("""{ "query": "{triggerInternalFailure}" }""")
         ).andExpect(status().isOk)
+            .andExpect(
+                content().json(
+                    """
+                       |{
+                       |    "errors":[
+                       |       {"message":"java.lang.IllegalStateException: Exception triggered.","locations":[],
+                       |           "path":["triggerInternalFailure"],"extensions":{"errorType":"INTERNAL"}}
+                       |    ],
+                       |    "data":{"triggerInternalFailure":null}
+                       |}""".trimMargin(),
+                    false
+                )
+            )
 
         val meters = qglMeters()
 
@@ -234,6 +261,19 @@ class MicrometerServletSmokeTest {
                 .post("/graphql")
                 .content("""{ "query": "{triggerBadRequestFailure}" }""")
         ).andExpect(status().isOk)
+            .andExpect(
+                content().json(
+                    """
+                        |{
+                        |"errors":[
+                        |   {"message":"com.netflix.graphql.dgs.exceptions.DgsBadRequestException: Exception triggered.",
+                        |       "locations":[],"path":["triggerBadRequestFailure"],"extensions":{"errorType":"BAD_REQUEST"}}
+                        |],
+                        |"data":{"triggerBadRequestFailure":null}
+                        |}""".trimMargin(),
+                    false
+                )
+            )
 
         val meters = qglMeters()
 
@@ -275,6 +315,22 @@ class MicrometerServletSmokeTest {
                 .post("/graphql")
                 .content("""{ "query": "{triggerCustomFailure}" }""")
         ).andExpect(status().isOk)
+            .andExpect(
+                content().json(
+                    """
+                    |{
+                    |   "errors":[
+                    |       { 
+                    |           "message":"Exception triggered.","locations":[],
+                    |           "path":["triggerCustomFailure"],
+                    |           "extensions":{"errorType":"UNAVAILABLE","errorDetail":"ENHANCE_YOUR_CALM"}
+                    |       }
+                    |   ],
+                    |   "data":{"triggerCustomFailure":null}
+                    |}""".trimMargin(),
+                    false
+                )
+            )
 
         val meters = qglMeters()
 
@@ -316,6 +372,25 @@ class MicrometerServletSmokeTest {
                 .post("/graphql")
                 .content("""{ "query": "{ triggerInternalFailure triggerBadRequestFailure triggerCustomFailure }" }""")
         ).andExpect(status().isOk)
+            .andExpect(
+                content().json(
+                    """
+                    |{
+                    |    "errors":[
+                    |        {"message":"java.lang.IllegalStateException: Exception triggered.","locations":[],
+                    |            "path":["triggerInternalFailure"],"extensions":{"errorType":"INTERNAL"}},
+                    |        {"message":"com.netflix.graphql.dgs.exceptions.DgsBadRequestException: Exception triggered.","locations":[],
+                    |            "path":["triggerBadRequestFailure"],"extensions":{"errorType":"BAD_REQUEST"}},
+                    |        {"message":"Exception triggered.","locations":[],
+                    |            "path":["triggerCustomFailure"],
+                    |            "extensions":{"errorType":"UNAVAILABLE","errorDetail":"ENHANCE_YOUR_CALM"}}
+                    |    ],
+                    |    "data":{"triggerInternalFailure":null,"triggerBadRequestFailure":null,"triggerCustomFailure":null}
+                    |}
+                     """.trimMargin(),
+                    false
+                )
+            )
 
         val meters = qglMetersMultiMap()
 
