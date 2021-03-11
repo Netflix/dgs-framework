@@ -67,7 +67,7 @@ input FileUploadInput {
     files: [Upload]
 }
 
-#metatron curl -a exampledgs https://localhost:8443/subscriptions\?query\=ewoicXVlcnkiOiAic3Vic2NyaXB0aW9uIHsgIHN0b2NrcyB7bmFtZX0gfSIKfQ==
+#curl -a https://localhost:8080/subscriptions\?query\=ewoicXVlcnkiOiAic3Vic2NyaXB0aW9uIHsgIHN0b2NrcyB7bmFtZX0gfSIKfQ==
 type Subscription {
     stocks: Stock
 }
