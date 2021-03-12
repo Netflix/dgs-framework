@@ -16,10 +16,7 @@
 
 package com.netflix.graphql.dgs.metrics.micrometer
 
-import com.netflix.graphql.dgs.DgsComponent
-import com.netflix.graphql.dgs.DgsData
-import com.netflix.graphql.dgs.DgsDataLoader
-import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
+import com.netflix.graphql.dgs.*
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
 import com.netflix.graphql.dgs.exceptions.DgsBadRequestException
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsContextualTagCustomizer
@@ -30,10 +27,8 @@ import graphql.GraphQLError
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherExceptionHandlerParameters
 import graphql.execution.DataFetcherExceptionHandlerResult
-import graphql.language.FieldDefinition
-import graphql.language.ObjectTypeDefinition
-import graphql.language.TypeName
 import graphql.schema.DataFetchingEnvironment
+import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import io.micrometer.core.instrument.Meter
 import io.micrometer.core.instrument.MeterRegistry
@@ -44,9 +39,11 @@ import org.assertj.core.api.Assertions.`as`
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.InstanceOfAssertFactories
 import org.dataloader.BatchLoader
+import org.dataloader.MappedBatchLoader
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -55,11 +52,14 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionStage
+import java.util.concurrent.Executor
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.MOCK,
@@ -97,25 +97,25 @@ class MicrometerServletSmokeTest {
         ).andExpect(status().isOk)
             .andExpect(content().json("""{"data":{"ping":"pong"}}""", false))
 
-        val meters = qglMeters()
+        val meters = fetchMeters()
 
         assertThat(meters).containsOnlyKeys("gql.query", "gql.resolver")
 
-        assertThat(meters["gql.query"]).isNotNull
-            .extracting({ it?.id?.tags }, asTags)
+        assertThat(meters["gql.query"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.query"]?.first()?.id?.tags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
-                    .and("outcome", "SUCCESS")
+                    .and("outcome", "success")
             )
 
-        assertThat(meters["gql.resolver"]).isNotNull
-            .extracting({ it?.id?.tags }, asTags)
+        assertThat(meters["gql.resolver"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.resolver"]?.first()?.id?.tags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("field-fetch-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("gql.field", "Query.ping")
-                    .and("outcome", "SUCCESS")
+                    .and("outcome", "success")
             )
     }
 
@@ -124,36 +124,75 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
-                .content("""{ "query": "{upperCased}" }""")
+                .content(
+                    """{"query": 
+                    |   "{transform(input: [\"A madam in a racecar.\", \"A man, a plan, a canal - Panama\" ]){ index value upperCased reversed } }" }""".trimMargin()
+                )
         ).andExpect(status().isOk)
-            .andExpect(content().json("""{"data":{"upperCased":"[A, B, C]"}}""", false))
+            .andExpect(
+                content().json(
+                    """
+                    |{
+                    |   "data":{
+                    |       "transform":[
+                    |           {
+                    |               "index":0,
+                    |               "value":"A madam in a racecar.",
+                    |               "upperCased":"A MADAM IN A RACECAR.",
+                    |               "reversed":".racecar a ni madam A"
+                    |           },
+                    |           {
+                    |               "index":1,
+                    |               "value":"A man, a plan, a canal - Panama",
+                    |               "upperCased":"A MAN, A PLAN, A CANAL - PANAMA",
+                    |               "reversed":"amanaP - lanac a ,nalp a ,nam A"
+                    |            }
+                    |       ]
+                    |   }
+                    |}
+                    """.trimMargin(),
+                    false
+                )
+            )
 
-        val meters = qglMeters()
+        val meters = fetchMeters()
 
         assertThat(meters).containsOnlyKeys("gql.dataLoader", "gql.query", "gql.resolver")
 
-        assertThat(meters["gql.dataLoader"]).isNotNull
-            .extracting({ it?.id?.tags }, asTags)
+        assertThat(meters["gql.dataLoader"]).isNotNull.hasSize(2)
+        assertThat(meters["gql.dataLoader"]?.map { it.id.tags })
             .containsExactlyInAnyOrderElementsOf(
-                Tags.of("gql.loaderBatchSize", "3")
-                    .and("gql.loaderName", "upperCaseLoader")
+                listOf(
+                    Tags.of("gql.loaderBatchSize", "2").and("gql.loaderName", "reverser").toList(),
+                    Tags.of("gql.loaderBatchSize", "2").and("gql.loaderName", "upperCaseLoader").toList()
+                )
             )
 
-        assertThat(meters["gql.query"]).isNotNull
-            .extracting({ it?.id?.tags }, asTags)
+        assertThat(meters["gql.query"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.query"]?.first()?.id?.tags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
-                    .and("outcome", "SUCCESS")
+                    .and("outcome", "success")
             )
 
-        assertThat(meters["gql.resolver"]).isNotNull
-            .extracting({ it?.id?.tags }, asTags)
+        assertThat(meters["gql.resolver"]).isNotNull.hasSize(3)
+        assertThat(meters["gql.resolver"]?.map { it.id.tags })
             .containsExactlyInAnyOrderElementsOf(
-                Tags.of("field-fetch-tag", "foo")
-                    .and("contextual-tag", "foo")
-                    .and("gql.field", "Query.upperCased")
-                    .and("outcome", "SUCCESS")
+                listOf(
+                    Tags.of("contextual-tag", "foo")
+                        .and("field-fetch-tag", "foo")
+                        .and("gql.field", "StringTransformation.reversed")
+                        .and("outcome", "success").toList(),
+                    Tags.of("contextual-tag", "foo")
+                        .and("field-fetch-tag", "foo")
+                        .and("gql.field", "StringTransformation.upperCased")
+                        .and("outcome", "success").toList(),
+                    Tags.of("contextual-tag", "foo")
+                        .and("field-fetch-tag", "foo")
+                        .and("gql.field", "Query.transform")
+                        .and("outcome", "success").toList(),
+                )
             )
     }
 
@@ -176,27 +215,27 @@ class MicrometerServletSmokeTest {
                     false
                 )
             )
-        val meters = qglMeters()
+        val meters = fetchMeters("gql.")
 
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query")
 
-        assertThat(meters["gql.error"]).isNotNull
-            .extracting({ it?.id?.tags }, asTags)
+        assertThat(meters["gql.error"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("gql.errorDetail", "none")
                     .and("gql.errorCode", "InvalidSyntax")
                     .and("gql.path", "[]")
-                    .and("outcome", "ERROR")
+                    .and("outcome", "failure")
             )
 
-        assertThat(meters["gql.query"]).isNotNull
-            .extracting({ it?.id?.tags }, asTags)
+        assertThat(meters["gql.query"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.query"]?.first()?.id?.tags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
-                    .and("outcome", "ERROR")
+                    .and("outcome", "failure")
             )
     }
 
@@ -221,36 +260,36 @@ class MicrometerServletSmokeTest {
                 )
             )
 
-        val meters = qglMeters()
+        val meters = fetchMeters("gql.")
 
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
 
-        assertThat(meters["gql.error"]).isNotNull
-            .extracting({ it?.id?.tags }, asTags)
+        assertThat(meters["gql.error"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("gql.errorCode", "INTERNAL")
                     .and("gql.errorDetail", "none")
                     .and("gql.path", "[triggerInternalFailure]")
-                    .and("outcome", "ERROR")
+                    .and("outcome", "failure")
             )
 
-        assertThat(meters["gql.query"]).isNotNull
-            .extracting({ it?.id?.tags }, asTags)
+        assertThat(meters["gql.query"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.query"]?.first()?.id?.tags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
-                    .and("outcome", "ERROR")
+                    .and("outcome", "failure")
             )
 
-        assertThat(meters["gql.resolver"]).isNotNull
-            .extracting({ it?.id?.tags }, asTags)
+        assertThat(meters["gql.resolver"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.resolver"]?.first()?.id?.tags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("field-fetch-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("gql.field", "Query.triggerInternalFailure")
-                    .and("outcome", "ERROR")
+                    .and("outcome", "failure")
             )
     }
 
@@ -265,46 +304,47 @@ class MicrometerServletSmokeTest {
                 content().json(
                     """
                         |{
-                        |"errors":[
-                        |   {"message":"com.netflix.graphql.dgs.exceptions.DgsBadRequestException: Exception triggered.",
-                        |       "locations":[],"path":["triggerBadRequestFailure"],"extensions":{"errorType":"BAD_REQUEST"}}
-                        |],
-                        |"data":{"triggerBadRequestFailure":null}
+                        |   "errors":[
+                        |      {"message":"com.netflix.graphql.dgs.exceptions.DgsBadRequestException: Exception triggered.",
+                        |          "locations":[],"path":["triggerBadRequestFailure"],
+                        |          "extensions":{"errorType":"BAD_REQUEST"}}
+                        |   ],
+                        |   "data":{"triggerBadRequestFailure":null}
                         |}""".trimMargin(),
                     false
                 )
             )
 
-        val meters = qglMeters()
+        val meters = fetchMeters("gql.")
 
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
 
-        assertThat(meters["gql.error"]).isNotNull
-            .extracting({ it?.id?.tags }, asTags)
+        assertThat(meters["gql.error"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("gql.errorCode", "BAD_REQUEST")
                     .and("gql.errorDetail", "none")
                     .and("gql.path", "[triggerBadRequestFailure]")
-                    .and("outcome", "ERROR")
+                    .and("outcome", "failure")
             )
 
-        assertThat(meters["gql.query"]).isNotNull
-            .extracting({ it?.id?.tags }, asTags)
+        assertThat(meters["gql.query"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.query"]?.first()?.id?.tags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
-                    .and("outcome", "ERROR")
+                    .and("outcome", "failure")
             )
 
-        assertThat(meters["gql.resolver"]).isNotNull
-            .extracting({ it?.id?.tags }, asTags)
+        assertThat(meters["gql.resolver"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.resolver"]?.first()?.id?.tags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("field-fetch-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("gql.field", "Query.triggerBadRequestFailure")
-                    .and("outcome", "ERROR")
+                    .and("outcome", "failure")
             )
     }
 
@@ -332,36 +372,36 @@ class MicrometerServletSmokeTest {
                 )
             )
 
-        val meters = qglMeters()
+        val meters = fetchMeters()
 
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
 
-        assertThat(meters["gql.error"]).isNotNull
-            .extracting({ it?.id?.tags }, asTags)
+        assertThat(meters["gql.error"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("gql.errorCode", "UNAVAILABLE")
                     .and("gql.errorDetail", "ENHANCE_YOUR_CALM")
                     .and("gql.path", "[triggerCustomFailure]")
-                    .and("outcome", "ERROR")
+                    .and("outcome", "failure")
             )
 
-        assertThat(meters["gql.query"]).isNotNull
-            .extracting({ it?.id?.tags }, asTags)
+        assertThat(meters["gql.query"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.query"]?.first()?.id?.tags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
-                    .and("outcome", "ERROR")
+                    .and("outcome", "failure")
             )
 
-        assertThat(meters["gql.resolver"]).isNotNull
-            .extracting({ it?.id?.tags }, asTags)
+        assertThat(meters["gql.resolver"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.resolver"]?.first()?.id?.tags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("field-fetch-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("gql.field", "Query.triggerCustomFailure")
-                    .and("outcome", "ERROR")
+                    .and("outcome", "failure")
             )
     }
 
@@ -392,7 +432,7 @@ class MicrometerServletSmokeTest {
                 )
             )
 
-        val meters = qglMetersMultiMap()
+        val meters = fetchMeters()
 
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
 
@@ -407,33 +447,26 @@ class MicrometerServletSmokeTest {
                 .and("gql.errorCode", "BAD_REQUEST")
                 .and("gql.errorDetail", "none")
                 .and("gql.path", "[triggerBadRequestFailure]")
-                .and("outcome", "ERROR").toList(),
+                .and("outcome", "failure").toList(),
             Tags.of("execution-tag", "foo")
                 .and("contextual-tag", "foo")
                 .and("gql.errorCode", "INTERNAL")
                 .and("gql.errorDetail", "none")
                 .and("gql.path", "[triggerInternalFailure]")
-                .and("outcome", "ERROR").toList(),
+                .and("outcome", "failure").toList(),
             Tags.of("execution-tag", "foo")
                 .and("contextual-tag", "foo")
                 .and("gql.errorCode", "UNAVAILABLE")
                 .and("gql.errorDetail", "ENHANCE_YOUR_CALM")
                 .and("gql.path", "[triggerCustomFailure]")
-                .and("outcome", "ERROR").toList(),
+                .and("outcome", "failure").toList(),
         )
     }
 
-    private fun qglMeters(): Map<String, Meter> {
+    private fun fetchMeters(prefix: String = "gql."): Map<String, List<Meter>> {
         return meterRegistry.meters
             .asSequence()
-            .filter { it.id.name.startsWith("gql.") }
-            .associateBy { it.id.name }
-    }
-
-    private fun qglMetersMultiMap(): Map<String, List<Meter>> {
-        return meterRegistry.meters
-            .asSequence()
-            .filter { it.id.name.startsWith("gql.") }
+            .filter { it.id.name.startsWith(prefix) }
             .groupBy { it.id.name }
     }
 
@@ -469,6 +502,7 @@ class MicrometerServletSmokeTest {
         useDefaultFilters = false,
         includeFilters = [ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = [])]
     )
+    @SuppressWarnings("unused")
     open class LocalApp {
 
         @DgsComponent
@@ -476,56 +510,35 @@ class MicrometerServletSmokeTest {
 
             @DgsTypeDefinitionRegistry
             fun typeDefinitionRegistry(): TypeDefinitionRegistry {
-                val newRegistry = TypeDefinitionRegistry()
+                val schemaParser = SchemaParser()
 
-                val query =
-                    ObjectTypeDefinition
-                        .newObjectTypeDefinition()
-                        .name("Query")
-                        .fieldDefinition(
-                            FieldDefinition
-                                .newFieldDefinition()
-                                .name("ping")
-                                .type(TypeName("String"))
-                                .build()
-                        )
-                        .fieldDefinition(
-                            FieldDefinition
-                                .newFieldDefinition()
-                                .name("upperCased")
-                                .type(TypeName("String"))
-                                .build()
-                        )
-                        .fieldDefinition(
-                            FieldDefinition
-                                .newFieldDefinition()
-                                .name("triggerInternalFailure")
-                                .type(TypeName("String"))
-                                .build()
-                        )
-                        .fieldDefinition(
-                            FieldDefinition
-                                .newFieldDefinition()
-                                .name("triggerBadRequestFailure")
-                                .type(TypeName("String"))
-                                .build()
-                        )
-                        .fieldDefinition(
-                            FieldDefinition
-                                .newFieldDefinition()
-                                .name("triggerCustomFailure")
-                                .type(TypeName("String"))
-                                .build()
-                        )
-                        .build()
-
-                newRegistry.add(query)
-                return newRegistry
+                val gqlSchema = """
+                |type Query{
+                |    ping:String
+                |    transform(input:[String]): [StringTransformation]
+                |    triggerInternalFailure: String
+                |    triggerBadRequestFailure:String
+                |    triggerCustomFailure: String
+                |}
+                |
+                |type StringTransformation {
+                |    index: Int
+                |    value: String
+                |    upperCased: String
+                |    reversed: String
+                |}
+                """.trimMargin()
+                return schemaParser.parse(gqlSchema)
             }
 
             @DgsData(parentType = "Query", field = "ping")
             fun ping(): String {
                 return "pong"
+            }
+
+            @DgsData(parentType = "Query", field = "transform")
+            fun transform(@InputArgument input: List<String>): List<Map<String, String>> {
+                return input.mapIndexed { i, v -> mapOf("index" to "$i", "value" to v) }
             }
 
             @DgsData(parentType = "Query", field = "triggerInternalFailure")
@@ -543,21 +556,59 @@ class MicrometerServletSmokeTest {
                 throw CustomException("Exception triggered.")
             }
 
-            @DgsData(parentType = "Query", field = "upperCased")
-            fun upperCased(dfe: DataFetchingEnvironment): CompletableFuture<MutableList<String>>? {
+            @DgsData(parentType = "StringTransformation", field = "upperCased")
+            fun upperCased(dfe: DataFetchingEnvironment): CompletableFuture<String>? {
                 val dataLoader = dfe.getDataLoader<String, String>("upperCaseLoader")
-                return dataLoader.loadMany(listOf("a", "b", "c"))
+                val input = dfe.getSource<Map<String, String>>()
+                return dataLoader.load(input.getOrDefault("value", ""))
+            }
+
+            @DgsData(parentType = "StringTransformation", field = "reversed")
+            fun reversed(dfe: DataFetchingEnvironment): CompletableFuture<String>? {
+                val dataLoader = dfe.getDataLoader<String, String>("reverser")
+                val input = dfe.getSource<Map<String, String>>()
+                return dataLoader.load(input.getOrDefault("value", ""))
             }
 
             @DgsDataLoader(name = "upperCaseLoader")
             var batchLoader = BatchLoader { keys: List<String?>? ->
                 CompletableFuture.supplyAsync { keys?.map { it?.toUpperCase() }?.toList() }
             }
+
+            @DgsDataLoader(name = "reverser")
+            class ReverseStringDataLoader(
+                @Qualifier("dataLoaderTaskExecutor") private val dataLoaderTaskExecutor: Executor
+            ) : MappedBatchLoader<String, String> {
+                override fun load(keys: Set<String>): CompletionStage<Map<String, String>> {
+                    return CompletableFuture.supplyAsync(
+                        { keys.map { it to it.reversed() }.toMap() },
+                        dataLoaderTaskExecutor
+                    )
+                }
+            }
         }
 
         @Bean
         open fun customDataFetchingExceptionHandler(): DataFetcherExceptionHandler {
             return CustomDataFetchingExceptionHandler()
+        }
+
+        @Bean
+        open fun reverserDataLoader(
+            @Qualifier("dataLoaderTaskExecutor") executor: Executor
+        ): ExampleImplementation.ReverseStringDataLoader {
+            return ExampleImplementation.ReverseStringDataLoader(executor)
+        }
+
+        @Bean
+        open fun dataLoaderTaskExecutor(): Executor {
+            val executor = ThreadPoolTaskExecutor()
+            executor.corePoolSize = 1
+            executor.maxPoolSize = 1
+            executor.threadNamePrefix = "${MicrometerServletSmokeTest::class.java.simpleName}-test-"
+            executor.setQueueCapacity(10)
+            executor.initialize()
+            return executor
         }
     }
 
