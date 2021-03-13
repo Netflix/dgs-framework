@@ -291,6 +291,12 @@
             ],
             "locked": "1.7.30"
         },
+        "org.springframework.boot:spring-boot": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "2.3.6.RELEASE"
+        },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "locked": "2.3.6.RELEASE"
         },
@@ -503,6 +509,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
             "locked": "1.7.30"
+        },
+        "org.springframework.boot:spring-boot": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "locked": "2.3.6.RELEASE"

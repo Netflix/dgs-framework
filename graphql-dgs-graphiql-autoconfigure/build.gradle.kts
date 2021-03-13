@@ -21,5 +21,4 @@ dependencies {
     implementation(project(":graphql-dgs"))
 
     testImplementation("org.springframework.boot:spring-boot-starter-web")
-    testImplementation("org.springframework.boot:spring-boot-starter-web")
 }
