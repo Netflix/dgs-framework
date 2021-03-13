@@ -28,15 +28,16 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import org.dataloader.DataLoader
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.beans.factory.NoSuchBeanDefinitionException
+import org.springframework.beans.factory.support.StaticListableBeanFactory
 import org.springframework.context.ApplicationContext
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
 @ExtendWith(MockKExtension::class)
-class DgsDataFetchingEnvironmentTest {
+internal class DgsDataFetchingEnvironmentTest {
     @MockK
     lateinit var applicationContextMock: ApplicationContext
 
@@ -104,12 +105,19 @@ class DgsDataFetchingEnvironmentTest {
         }
     }
 
+    @BeforeEach
+    fun setDataLoaderInstrumentationExtensionProvider() {
+        val listableBeanFactory = StaticListableBeanFactory()
+        every { applicationContextMock.getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java) } returns
+            listableBeanFactory.getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java)
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+    }
+
     @Test
     fun getDataLoader() {
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", helloFetcher))
         every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns mapOf(Pair("helloLoader", ExampleBatchLoader()))
-        every { applicationContextMock.getBean(DataLoaderInstrumentationExtensionProvider::class.java) } throws NoSuchBeanDefinitionException(DataLoaderInstrumentationExtensionProvider::class.java)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
         val provider = DgsDataLoaderProvider(applicationContextMock)
         provider.findDataLoaders()
@@ -133,8 +141,6 @@ class DgsDataFetchingEnvironmentTest {
     fun getDataLoaderWithBasicDFE() {
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", helloFetcherWithBasicDFE))
         every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns mapOf(Pair("helloLoader", ExampleBatchLoader()))
-        every { applicationContextMock.getBean(DataLoaderInstrumentationExtensionProvider::class.java) } throws NoSuchBeanDefinitionException(DataLoaderInstrumentationExtensionProvider::class.java)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
         val provider = DgsDataLoaderProvider(applicationContextMock)
         provider.findDataLoaders()
@@ -158,8 +164,6 @@ class DgsDataFetchingEnvironmentTest {
     fun getDataLoaderFromField() {
         every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", helloFetcherWithField), Pair("helloLoader", ExampleBatchLoaderFromField()))
-        every { applicationContextMock.getBean(DataLoaderInstrumentationExtensionProvider::class.java) } throws NoSuchBeanDefinitionException(DataLoaderInstrumentationExtensionProvider::class.java)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
         val provider = DgsDataLoaderProvider(applicationContextMock)
         provider.findDataLoaders()
@@ -183,8 +187,6 @@ class DgsDataFetchingEnvironmentTest {
     fun getMultipleDataLoadersFromField() {
         every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", helloFetcherWithMultipleField), Pair("helloLoader", ExampleMultipleBatchLoadersAsField()))
-        every { applicationContextMock.getBean(DataLoaderInstrumentationExtensionProvider::class.java) } throws NoSuchBeanDefinitionException(DataLoaderInstrumentationExtensionProvider::class.java)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
         val provider = DgsDataLoaderProvider(applicationContextMock)
         provider.findDataLoaders()
@@ -206,8 +208,6 @@ class DgsDataFetchingEnvironmentTest {
     fun getMappedDataLoader() {
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", helloFetcherMapped))
         every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns mapOf(Pair("helloLoader", ExampleMappedBatchLoader()))
-        every { applicationContextMock.getBean(DataLoaderInstrumentationExtensionProvider::class.java) } throws NoSuchBeanDefinitionException(DataLoaderInstrumentationExtensionProvider::class.java)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
         val provider = DgsDataLoaderProvider(applicationContextMock)
         provider.findDataLoaders()
@@ -231,8 +231,6 @@ class DgsDataFetchingEnvironmentTest {
     fun getMappedDataLoaderFromField() {
         every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", helloFetcherWithFieldMapped), Pair("helloLoader", ExampleMappedBatchLoaderFromField()))
-        every { applicationContextMock.getBean(DataLoaderInstrumentationExtensionProvider::class.java) } throws NoSuchBeanDefinitionException(DataLoaderInstrumentationExtensionProvider::class.java)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
         val provider = DgsDataLoaderProvider(applicationContextMock)
         provider.findDataLoaders()
