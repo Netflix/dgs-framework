@@ -32,7 +32,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class DgsRestSchemaJsonController(private val schemaProvider: DgsSchemaProvider) {
 
-    @RequestMapping("\${dgs.graphql.schema-json.path:/schema.json}", produces = ["application/json"])
+    // The @ConfigurationProperties bean name is <prefix>-<fqcn>
+    @RequestMapping("#{@'dgs.graphql-com.netflix.graphql.dgs.DgsGraphQLConfigurationProperties'.schemaJson.path}", produces = ["application/json"])
     fun schema(): String {
         val mapper = jacksonObjectMapper()
 

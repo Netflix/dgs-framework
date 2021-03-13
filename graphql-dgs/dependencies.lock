@@ -58,6 +58,9 @@
             ],
             "locked": "1.4.31"
         },
+        "org.springframework.boot:spring-boot": {
+            "locked": "2.3.6.RELEASE"
+        },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.6.RELEASE"
         },
@@ -251,6 +254,9 @@
             ],
             "locked": "1.7.30"
         },
+        "org.springframework.boot:spring-boot": {
+            "locked": "2.3.6.RELEASE"
+        },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.6.RELEASE"
         },
@@ -332,6 +338,9 @@
             ],
             "locked": "1.4.31"
         },
+        "org.springframework.boot:spring-boot": {
+            "locked": "2.3.6.RELEASE"
+        },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.6.RELEASE"
         },
@@ -410,6 +419,9 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
             "locked": "1.7.30"
+        },
+        "org.springframework.boot:spring-boot": {
+            "locked": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.6.RELEASE"

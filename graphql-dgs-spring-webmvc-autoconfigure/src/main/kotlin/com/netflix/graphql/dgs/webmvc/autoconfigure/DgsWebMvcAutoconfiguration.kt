@@ -16,17 +16,20 @@
 
 package com.netflix.graphql.dgs.webmvc.autoconfigure
 
+import com.netflix.graphql.dgs.DgsGraphQLConfigurationProperties
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.mvc.DgsRestController
 import com.netflix.graphql.dgs.mvc.DgsRestSchemaJsonController
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
 @ConditionalOnWebApplication
+@EnableConfigurationProperties(DgsGraphQLConfigurationProperties::class)
 open class DgsWebMvcAutoconfiguration {
     @Bean
     open fun dgsRestController(dgsQueryExecutor: DgsQueryExecutor): DgsRestController {
