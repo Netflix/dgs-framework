@@ -19,14 +19,12 @@ package com.netflix.graphql.dgs
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
-import org.springframework.validation.annotation.Validated
 
 /**
  * Configuration properties for DGS.
  */
 @ConstructorBinding
 @ConfigurationProperties(prefix = "dgs.graphql")
-@Validated
 @Suppress("ConfigurationProperties")
 data class DgsGraphQLConfigurationProperties(
     /** Path to the GraphQL endpoint without trailing slash. */
