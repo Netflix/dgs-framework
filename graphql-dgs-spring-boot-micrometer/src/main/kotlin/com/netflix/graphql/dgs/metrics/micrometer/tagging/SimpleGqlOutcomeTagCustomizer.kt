@@ -16,7 +16,7 @@
 
 package com.netflix.graphql.dgs.metrics.micrometer.tagging
 
-import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlTag
+import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlTagValue
 import graphql.ExecutionResult
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
@@ -25,20 +25,15 @@ import io.micrometer.core.instrument.Tags
 
 class SimpleGqlOutcomeTagCustomizer : DgsExecutionTagCustomizer, DgsFieldFetchTagCustomizer {
 
-    companion object {
-        val OUTCOME_SUCCESS: Tag = Tag.of(GqlTag.OUTCOME.key, "SUCCESS")
-        val OUTCOME_ERROR: Tag = Tag.of(GqlTag.OUTCOME.key, "ERROR")
-    }
-
     override fun getExecutionTags(
         parameters: InstrumentationExecutionParameters,
         result: ExecutionResult,
         exception: Throwable?
     ): Iterable<Tag> {
         return if (result.errors.isNotEmpty() || exception != null) {
-            Tags.of(OUTCOME_ERROR)
+            Tags.of(GqlTagValue.FAILURE.tag)
         } else {
-            Tags.of(OUTCOME_SUCCESS)
+            Tags.of(GqlTagValue.SUCCESS.tag)
         }
     }
 
@@ -46,10 +41,10 @@ class SimpleGqlOutcomeTagCustomizer : DgsExecutionTagCustomizer, DgsFieldFetchTa
         parameters: InstrumentationFieldFetchParameters,
         error: Throwable?
     ): Iterable<Tag> {
-        return if (error != null) {
-            Tags.of(OUTCOME_ERROR)
+        return if (error == null) {
+            Tags.of(GqlTagValue.SUCCESS.tag)
         } else {
-            Tags.of(OUTCOME_SUCCESS)
+            Tags.of(GqlTagValue.FAILURE.tag)
         }
     }
 }

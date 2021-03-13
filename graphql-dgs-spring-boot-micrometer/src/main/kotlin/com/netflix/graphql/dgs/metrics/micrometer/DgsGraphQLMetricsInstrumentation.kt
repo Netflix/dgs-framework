@@ -64,7 +64,7 @@ class DgsGraphQLMetricsInstrumentation(
                 .get()
                 .counter(
                     GqlMetric.ERROR.key,
-                    tags.and(GqlTag.ERROR_PATH.key, it.path)
+                    tags.and(GqlTag.PATH.key, it.path)
                         .and(GqlTag.ERROR_CODE.key, it.type)
                         .and(GqlTag.ERROR_DETAIL.key, it.detail)
                 ).increment()

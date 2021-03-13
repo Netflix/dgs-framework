@@ -16,6 +16,8 @@
 
 package com.netflix.graphql.dgs.metrics
 
+import io.micrometer.core.instrument.Tag
+
 object DgsMetrics {
 
     /** Defines the GQL Metrics emitted by the framework. */
@@ -42,8 +44,8 @@ object DgsMetrics {
 
     /** Defines the tags applied to the [GqlMetric] emitted by the framework. */
     enum class GqlTag(val key: String) {
-        /** The sanitized query path that resulted in the error. */
-        ERROR_PATH("gql.path"),
+        /** The sanitized query path. */
+        PATH("gql.path"),
 
         /** The GraphQL error code, such as VALIDATION, INTERNAL, etc. */
         ERROR_CODE("gql.errorCode"),
@@ -62,5 +64,14 @@ object DgsMetrics {
 
         /** Used to capture the result of an action, e.g. `ERROR` or `SUCCESS`.*/
         OUTCOME("outcome")
+    }
+
+    enum class GqlTagValue(val owner: GqlTag, val value: String) {
+        /** Value used to reflect as successful  outcome.*/
+        SUCCESS(GqlTag.OUTCOME, "success"),
+        /** Value used to reflect a general failure.*/
+        FAILURE(GqlTag.OUTCOME, "failure");
+
+        val tag: Tag = Tag.of(owner.key, value)
     }
 }
