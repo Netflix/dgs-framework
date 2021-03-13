@@ -189,6 +189,11 @@
             "locked": "5.2.12.RELEASE"
         }
     },
+    "ktlint": {
+        "com.pinterest:ktlint": {
+            "locked": "0.40.0"
+        }
+    },
     "nebulaRecommenderBom": {
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.11.4"
@@ -371,7 +376,7 @@
             "locked": "1.10.3-jdk8"
         },
         "io.reactivex.rxjava3:rxjava": {
-            "locked": "3.0.11-RC5"
+            "locked": "3.0.11"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "firstLevelTransitive": [
@@ -467,7 +472,7 @@
             "locked": "1.10.3-jdk8"
         },
         "io.reactivex.rxjava3:rxjava": {
-            "locked": "3.0.11-RC5"
+            "locked": "3.0.11"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "firstLevelTransitive": [
