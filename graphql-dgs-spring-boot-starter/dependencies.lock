@@ -331,6 +331,9 @@
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-graphiql-autoconfigure"
+            ],
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-error-types": {
@@ -647,6 +650,9 @@
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-graphiql-autoconfigure"
+            ],
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-error-types": {

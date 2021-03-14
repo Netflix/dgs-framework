@@ -610,6 +610,7 @@
         },
         "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-graphiql-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter"
             ],
             "project": true
