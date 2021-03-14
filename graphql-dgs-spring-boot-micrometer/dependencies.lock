@@ -580,12 +580,6 @@
             ],
             "project": true
         },
-        "com.netflix.graphql.dgs:graphql-dgs-graphiql-autoconfigure": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter"
-            ],
-            "project": true
-        },
         "com.netflix.graphql.dgs:graphql-dgs-mocking": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
@@ -636,7 +630,7 @@
         },
         "jakarta.servlet:jakarta.servlet-api": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-graphiql-autoconfigure"
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
             "locked": "4.0.4"
         },
@@ -653,7 +647,6 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
-                "com.netflix.graphql.dgs:graphql-dgs-graphiql-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter",
@@ -670,12 +663,6 @@
             "locked": "1.7.30"
         },
         "org.springframework.boot:spring-boot-actuator-autoconfigure": {
-            "locked": "2.3.6.RELEASE"
-        },
-        "org.springframework.boot:spring-boot-autoconfigure": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-graphiql-autoconfigure"
-            ],
             "locked": "2.3.6.RELEASE"
         },
         "org.springframework.boot:spring-boot-dependencies": {
@@ -728,14 +715,13 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
             "locked": "5.2.12.RELEASE"
         },
         "org.springframework:spring-webmvc": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-graphiql-autoconfigure"
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
             "locked": "5.2.12.RELEASE"
         }

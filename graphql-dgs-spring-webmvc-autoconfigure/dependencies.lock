@@ -62,6 +62,9 @@
             ],
             "project": true
         },
+        "jakarta.servlet:jakarta.servlet-api": {
+            "locked": "4.0.4"
+        },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -86,7 +89,7 @@
         "org.springframework:spring-framework-bom": {
             "locked": "5.2.12.RELEASE"
         },
-        "org.springframework:spring-web": {
+        "org.springframework:spring-webmvc": {
             "locked": "5.2.12.RELEASE"
         }
     },
@@ -278,6 +281,9 @@
             ],
             "project": true
         },
+        "jakarta.servlet:jakarta.servlet-api": {
+            "locked": "4.0.4"
+        },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
@@ -331,6 +337,9 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
+            "locked": "5.2.12.RELEASE"
+        },
+        "org.springframework:spring-webmvc": {
             "locked": "5.2.12.RELEASE"
         }
     },
@@ -401,6 +410,9 @@
         "io.mockk:mockk": {
             "locked": "1.10.3-jdk8"
         },
+        "jakarta.servlet:jakarta.servlet-api": {
+            "locked": "4.0.4"
+        },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -432,7 +444,7 @@
         "org.springframework:spring-framework-bom": {
             "locked": "5.2.12.RELEASE"
         },
-        "org.springframework:spring-web": {
+        "org.springframework:spring-webmvc": {
             "locked": "5.2.12.RELEASE"
         }
     },
@@ -511,6 +523,9 @@
         "io.mockk:mockk": {
             "locked": "1.10.3-jdk8"
         },
+        "jakarta.servlet:jakarta.servlet-api": {
+            "locked": "4.0.4"
+        },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
@@ -574,6 +589,9 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
+            "locked": "5.2.12.RELEASE"
+        },
+        "org.springframework:spring-webmvc": {
             "locked": "5.2.12.RELEASE"
         }
     }
