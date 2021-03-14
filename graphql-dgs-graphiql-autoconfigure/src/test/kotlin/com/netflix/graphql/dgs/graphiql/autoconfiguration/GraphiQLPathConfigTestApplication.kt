@@ -22,8 +22,11 @@ import io.mockk.mockk
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Bean
 
+/**
+ * Used indirectly by the 'GraphiQLPathConfig**' tests for configuration.
+ */
 @SpringBootApplication
-open class GraphiQLPathTestApplication {
+open class GraphiQLPathConfigTestApplication {
     @Bean
     open fun dgsSchemaProvider(): DgsSchemaProvider {
         return mockk()
