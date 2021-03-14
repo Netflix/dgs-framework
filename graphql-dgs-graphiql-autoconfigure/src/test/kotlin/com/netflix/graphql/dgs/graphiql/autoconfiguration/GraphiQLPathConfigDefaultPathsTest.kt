@@ -16,13 +16,12 @@
 
 package com.netflix.graphql.dgs.graphiql.autoconfiguration
 
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.context.annotation.Configuration
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
@@ -36,10 +35,6 @@ class GraphiQLPathConfigDefaultPathsTest(@Autowired val restTemplate: TestRestTe
             String::class.java
         )
         assertTrue(entity.statusCode.is2xxSuccessful)
-        assertTrue(entity.body.contains("fetch('/graphql'"))
+        Assertions.assertThat(entity.body).isNotNull.contains("fetch('/graphql'")
     }
-
-    @SpringBootApplication
-    @Configuration
-    open class MockAutoConfiguration
 }

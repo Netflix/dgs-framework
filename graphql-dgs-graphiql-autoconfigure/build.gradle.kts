@@ -18,7 +18,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("org.springframework:spring-webmvc")
     implementation("jakarta.servlet:jakarta.servlet-api")
+    implementation(project(":graphql-dgs-spring-webmvc-autoconfigure"))
 
-    testImplementation("org.springframework.boot:spring-boot-starter-web")
     testImplementation("org.springframework.boot:spring-boot-starter-web")
 }
