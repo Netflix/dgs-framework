@@ -63,9 +63,11 @@ import org.springframework.web.multipart.MultipartFile
 
 @RestController
 class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
+
     val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
 
-    @RequestMapping("\${dgs.graphql.path:/graphql}", produces = ["application/json"])
+    // The @ConfigurationProperties bean name is <prefix>-<fqn>
+    @RequestMapping("#{@'dgs.graphql-com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcConfigurationProperties'.path}", produces = ["application/json"])
     fun graphql(
         @RequestBody body: String?,
         @RequestParam fileParams: Map<String, MultipartFile>?,

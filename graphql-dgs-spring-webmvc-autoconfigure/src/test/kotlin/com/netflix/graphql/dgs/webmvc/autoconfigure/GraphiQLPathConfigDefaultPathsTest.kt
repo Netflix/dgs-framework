@@ -14,33 +14,27 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.graphiql.autoconfiguration
+package com.netflix.graphql.dgs.webmvc.autoconfigure
 
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.context.annotation.Configuration
 
 @SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = ["dgs.graphql.graphiql.path=/magic/things"]
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-class GraphiQLPathConfigCustomGraphiQLPathTest(@Autowired val restTemplate: TestRestTemplate) {
+class GraphiQLPathConfigDefaultPathsTest(@Autowired val restTemplate: TestRestTemplate) {
 
     @Test
-    fun customGraphiQLPath() {
+    fun defaultPaths() {
         val entity = restTemplate.getForEntity(
-            "/magic/things",
+            "/graphiql",
             String::class.java
         )
         assertTrue(entity.statusCode.is2xxSuccessful)
-        assertTrue(entity.body.contains("fetch('/graphql'"))
+        Assertions.assertThat(entity.body).isNotNull.contains("fetch('/graphql'")
     }
-
-    @SpringBootApplication
-    @Configuration
-    open class MockAutoConfiguration
 }

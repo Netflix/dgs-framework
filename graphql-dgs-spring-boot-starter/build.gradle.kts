@@ -20,7 +20,6 @@ dependencies {
     api(project(":graphql-dgs-client"))
     api(project(":graphql-error-types"))
 
-    implementation(project(":graphql-dgs-graphiql-autoconfigure"))
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.springframework.boot:spring-boot-starter-web")
 }

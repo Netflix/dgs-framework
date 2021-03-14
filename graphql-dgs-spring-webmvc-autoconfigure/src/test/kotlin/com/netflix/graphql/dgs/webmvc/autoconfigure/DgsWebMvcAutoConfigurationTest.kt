@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.webmvc.autoconfiguration
+package com.netflix.graphql.dgs.webmvc.autoconfigure
 
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.mvc.DgsRestController
 import com.netflix.graphql.dgs.mvc.DgsRestSchemaJsonController
-import com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcAutoconfiguration
 import graphql.ExecutionResultImpl
 import graphql.Scalars
 import graphql.schema.GraphQLFieldDefinition
@@ -46,7 +45,7 @@ class DgsWebMvcAutoConfigurationTest {
 
     private val context = WebApplicationContextRunner().withConfiguration(
         AutoConfigurations.of(
-            DgsWebMvcAutoconfiguration::class.java,
+            DgsWebMvcAutoConfiguration::class.java,
             MockAutoConfiguration::class.java
         )
     )!!
@@ -55,6 +54,27 @@ class DgsWebMvcAutoConfigurationTest {
     fun graphqlControllerAvailable() {
         context.run { ctx ->
             Assertions.assertThat(ctx).hasSingleBean(DgsRestController::class.java)
+        }
+    }
+
+    @Test
+    fun graphiqlAvailableWhenEnabledPropertyNotSpecified() {
+        context.run { ctx ->
+            Assertions.assertThat(ctx).hasSingleBean(GraphiQLConfigurer::class.java)
+        }
+    }
+
+    @Test
+    fun graphiqlAvailableWhenEnabledPropertySetToTrue() {
+        context.withPropertyValues("dgs.graphql.graphiql.enabled: true").run { ctx ->
+            Assertions.assertThat(ctx).hasSingleBean(GraphiQLConfigurer::class.java)
+        }
+    }
+
+    @Test
+    fun graphiqlNotAvailableWhenEnabledPropertySetToFalse() {
+        context.withPropertyValues("dgs.graphql.graphiql.enabled: false").run { ctx ->
+            Assertions.assertThat(ctx).doesNotHaveBean(GraphiQLConfigurer::class.java)
         }
     }
 

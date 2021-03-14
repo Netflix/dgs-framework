@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.graphiql.autoconfiguration
+package com.netflix.graphql.dgs.webmvc.autoconfigure
 
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.context.annotation.Configuration
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -37,10 +36,6 @@ class GraphiQLPathConfigCustomPathsTest(@Autowired val restTemplate: TestRestTem
             String::class.java
         )
         assertTrue(entity.statusCode.is2xxSuccessful)
-        assertTrue(entity.body.contains("fetch('/zuzu'"))
+        Assertions.assertThat(entity.body).isNotNull.contains("fetch('/zuzu'")
     }
-
-    @SpringBootApplication
-    @Configuration
-    open class MockAutoConfiguration
 }
