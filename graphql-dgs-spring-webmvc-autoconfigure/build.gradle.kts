@@ -18,7 +18,8 @@ dependencies {
     api(project(":graphql-dgs"))
     api(project(":graphql-dgs-spring-webmvc"))
     implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.springframework:spring-web")
+    implementation("org.springframework:spring-webmvc")
+    implementation("jakarta.servlet:jakarta.servlet-api")
 
     testImplementation("io.mockk:mockk:1.10.3-jdk8")
     testImplementation("org.springframework.boot:spring-boot-starter-web")

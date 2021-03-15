@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.graphiql.autoconfiguration
+package com.netflix.graphql.dgs.webmvc.autoconfigure
 
-import com.netflix.graphql.dgs.graphiql.autoconfiguration.GraphiQLConfigurer.Constants.PATH_TO_GRAPHIQL_INDEX_HTML
-import org.springframework.beans.factory.annotation.Value
+import com.netflix.graphql.dgs.webmvc.autoconfigure.GraphiQLConfigurer.Constants.PATH_TO_GRAPHIQL_INDEX_HTML
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.Resource
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
@@ -33,10 +33,10 @@ import java.nio.charset.StandardCharsets.UTF_8
 import javax.servlet.http.HttpServletRequest
 
 @Configuration
+@EnableConfigurationProperties(DgsWebMvcConfigurationProperties::class)
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 open class GraphiQLConfigurer(
-    @Value("\${dgs.graphql.graphiql.path:/graphiql}") private val graphiqlPath: String,
-    @Value("\${dgs.graphql.path:/graphql}") private val graphqlPath: String
+    private val configProps: DgsWebMvcConfigurationProperties
 ) : WebMvcConfigurer {
 
     object Constants {
@@ -44,8 +44,8 @@ open class GraphiQLConfigurer(
     }
 
     override fun addViewControllers(registry: ViewControllerRegistry) {
-        registry.addViewController(graphiqlPath).setViewName("forward:$PATH_TO_GRAPHIQL_INDEX_HTML")
-        registry.addViewController("$graphiqlPath/").setViewName("forward:$PATH_TO_GRAPHIQL_INDEX_HTML")
+        registry.addViewController(configProps.graphiql.path).setViewName("forward:$PATH_TO_GRAPHIQL_INDEX_HTML")
+        registry.addViewController("${configProps.graphiql.path}/").setViewName("forward:$PATH_TO_GRAPHIQL_INDEX_HTML")
     }
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
@@ -55,7 +55,7 @@ open class GraphiQLConfigurer(
             .setCachePeriod(3600)
             .resourceChain(true)
             .addResolver(PathResourceResolver())
-            .addTransformer(TokenReplacingTransformer("<DGS_GRAPHQL_PATH>", graphqlPath))
+            .addTransformer(TokenReplacingTransformer("<DGS_GRAPHQL_PATH>", configProps.path))
     }
 
     class TokenReplacingTransformer(private val replaceToken: String, private val replaceValue: String) :
