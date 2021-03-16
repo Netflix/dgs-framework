@@ -23,3 +23,7 @@ Features include:
 # Getting Started
 
 Follow the [getting started guide](https://netflix.github.io/dgs/getting-started/)!
+
+# Contribution, asking questions and reporting issues.
+
+Please read our [contributor guide](CONTRIBUTING.md)!
