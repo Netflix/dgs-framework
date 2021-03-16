@@ -14,9 +14,10 @@ designed to have minimal external dependencies aside from Spring.
 I have a question!
 -----
 
-We have dedicated [discussion forum](https://github.com/Netflix/dgs-framework/discussions) for asking "how to" questions
-and to discuss ideas. The discussion forum is a great place to start if you're considering creating a feature request or
-work on a Pull Request. Please do not create issues to ask questions.
+We have a dedicated [discussion forum](https://github.com/Netflix/dgs-framework/discussions) for asking "how to"
+questions and to discuss ideas. The discussion forum is a great place to start if you're considering creating a feature
+request or work on a Pull Request.
+*Please do not create issues to ask questions.*
 
 Please also consider if a question is directly related to DGS. Questions such as "how do I persist my data" are
 unrelated to DGS, and it's better to find an answer in general Spring Boot documentation.
@@ -68,7 +69,7 @@ Provide as much relevant context to why and when the feature would be helpful. P
 for "Support XYZ" issues since we might not be familiar with what "XYZ" is and why it's useful. If you have an idea of
 how to implement the feature, include that as well.
 
-Once we decided on a direction, it's time to summarize the idea in an issue.
+Once we have decided on a direction, it's time to summarize the idea by creating a new issue.
 
 
 Working on the code base
