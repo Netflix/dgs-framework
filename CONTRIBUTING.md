@@ -1,6 +1,11 @@
 Thanks for being interested in the DGS framework!
 This guide helps to find the most efficient way to contribute, ask questions, and report issues.
 
+Code of conduct
+-----
+
+Please review our [code of conduct](code_of_conduct.md).
+
 What is the DGS framework
 ----
 
