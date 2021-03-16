@@ -8,10 +8,8 @@ The DGS framework aims to make GraphQL server development easy, based on Spring 
 It also comes with a code generation plugin to generate Java/Kotlin code from a GraphQL schema.
 
 The DGS framework is written in Kotlin, but primarily targets Java developers. Each feature must work equally well in
-Java and Kotlin. r The framework is based on Spring Boot, and does not target other environments. The framework is
+Java and Kotlin. The framework is based on Spring Boot, and does not target other environments. The framework is
 designed to have minimal external dependencies aside from Spring.
-
-For the foreseeable future
 
 I have a question!
 -----
