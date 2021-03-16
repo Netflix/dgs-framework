@@ -65,6 +65,7 @@ class DgsSchemaProvider(
     val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
     val entityFetchers = mutableMapOf<String, Pair<Any, Method>>()
 
+    private val defaultParameterNameDiscoverer = DefaultParameterNameDiscoverer()
     private val logger = LoggerFactory.getLogger(DgsSchemaProvider::class.java)
 
     private val objectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
@@ -245,7 +246,7 @@ class DgsSchemaProvider(
     private fun invokeDataFetcher(method: Method, dgsComponent: Any, environment: DataFetchingEnvironment): Any? {
         return try {
             val args = mutableListOf<Any?>()
-            val parameterNames = DefaultParameterNameDiscoverer().getParameterNames(method) ?: emptyArray()
+            val parameterNames = defaultParameterNameDiscoverer.getParameterNames(method) ?: emptyArray()
             method.parameters.forEachIndexed { idx, parameter ->
 
                 when {
