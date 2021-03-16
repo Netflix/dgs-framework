@@ -4,7 +4,7 @@ This guide helps to find the most efficient way to contribute, ask questions, an
 Code of conduct
 -----
 
-Please review our [code of conduct](code_of_conduct.md).
+Please review our [code of conduct](CODE_OF_CONDUCT.md).
 
 What is the DGS framework
 ----
