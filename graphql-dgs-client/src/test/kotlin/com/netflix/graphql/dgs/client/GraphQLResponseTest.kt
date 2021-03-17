@@ -41,6 +41,14 @@ class GraphQLResponseTest {
         HttpResponse(exchange.statusCodeValue, exchange.body)
     }
 
+    private val requestExecutorWithResponseHeaders = RequestExecutor { url, headers, body ->
+        val httpHeaders = HttpHeaders()
+        headers.forEach { httpHeaders.addAll(it.key, it.value) }
+
+        val exchange = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
+        HttpResponse(exchange.statusCodeValue, exchange.body, exchange.headers.toMap())
+    }
+
     private val url = "http://localhost:8080/graphql"
     private val client = DefaultGraphQLClient(url)
 
@@ -92,6 +100,38 @@ class GraphQLResponseTest {
         val offsetDateTime = graphQLResponse.extractValueAsObject("submitReview.edges[0].node.postedDate", OffsetDateTime::class.java)
         assertThat(offsetDateTime).isInstanceOf(OffsetDateTime::class.java)
         assertThat(offsetDateTime.dayOfMonth).isEqualTo(29)
+        server.verify()
+    }
+
+    @Test
+    fun populateResponseHeaders() {
+        val jsonResponse = """
+            {
+              "data": {
+                "submitReview": {
+                   "submittedBy": "abc@netflix.com"
+                }
+              }
+            }
+        """.trimIndent()
+
+        server.expect(requestTo(url))
+            .andExpect(method(HttpMethod.POST))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
+
+        val graphQLResponse = client.executeQuery(
+            """query {
+              submitReview(review:{movieId:1, description:""}) {
+                submittedBy
+              }
+            }""",
+            emptyMap(), requestExecutorWithResponseHeaders
+        )
+
+        val submittedBy = graphQLResponse.extractValueAsObject("submitReview.submittedBy", String::class.java)
+        assertThat(submittedBy).isEqualTo("abc@netflix.com")
+        assertThat(graphQLResponse.headers["Content-Type"]?.get(0)).isEqualTo("application/json")
         server.verify()
     }
 }

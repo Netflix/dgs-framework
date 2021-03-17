@@ -264,7 +264,7 @@ class DgsSchemaProvider(
                                 throw DgsInvalidInputArgumentException("Specified type '$collectionType' is invalid for $parameterName.", ex)
                             }
                         } else if (parameterValue is List<*>) {
-                            // Return as is for all other types of Lists, i.e. custom scalars e.g. List<UUID>, and other types like List<Integer> etc. that have Object collection type
+                            // Return as is for all other types of Lists, i.e. custom scalars e.g. List<UUID>, and other scalar types like List<Integer> etc.
                             parameterValue
                         } else if (parameterValue is MultipartFile) {
                             parameterValue
