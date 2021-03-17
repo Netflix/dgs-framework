@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.web.context.request.WebRequest
 
 @ExtendWith(MockKExtension::class)
@@ -85,15 +86,53 @@ class DgsRestControllerTest {
         """.trimIndent()
 
         val capturedOperationName = slot<String>()
-        every { dgsQueryExecutor.execute(queryString, emptyMap(), any(), any(), capture(capturedOperationName), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hi", "there"))).build()
+        every {
+            dgsQueryExecutor.execute(
+                queryString,
+                emptyMap(),
+                any(),
+                any(),
+                capture(capturedOperationName),
+                any()
+            )
+        } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hi", "there"))).build()
 
-        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
+        val result =
+            DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
         val mapper = jacksonObjectMapper()
         val (data, errors) = mapper.readValue(result.body, GraphQLResponse::class.java)
         assertThat(errors.size).isEqualTo(0)
         assertThat(data["hi"]).isEqualTo("there")
 
         assertThat(capturedOperationName.captured).isEqualTo("operationB")
+    }
+
+    @Test
+    fun `Content-type application graphql should be handled correctly`() {
+        val requestBody = """
+            {
+               hello
+            }
+        """.trimIndent()
+
+        every {
+            dgsQueryExecutor.execute(
+                requestBody,
+                emptyMap(),
+                any(),
+                any(),
+                any(),
+                any()
+            )
+        } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).build()
+
+        val headers = HttpHeaders()
+        headers.contentType = MediaType("application", "graphql")
+        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, headers, webRequest)
+        val mapper = jacksonObjectMapper()
+        val (data, errors) = mapper.readValue(result.body, GraphQLResponse::class.java)
+        assertThat(errors.size).isEqualTo(0)
+        assertThat(data["hello"]).isEqualTo("hello")
     }
 }
 
