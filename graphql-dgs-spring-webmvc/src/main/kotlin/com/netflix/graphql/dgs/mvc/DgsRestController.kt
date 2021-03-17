@@ -67,7 +67,10 @@ class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
     val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
 
     // The @ConfigurationProperties bean name is <prefix>-<fqn>
-    @RequestMapping("#{@'dgs.graphql-com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcConfigurationProperties'.path}", produces = ["application/json"])
+    @RequestMapping(
+        "#{@'dgs.graphql-com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcConfigurationProperties'.path}",
+        produces = ["application/json"]
+    )
     fun graphql(
         @RequestBody body: String?,
         @RequestParam fileParams: Map<String, MultipartFile>?,
@@ -85,27 +88,35 @@ class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
         val extensions: Map<String, Any>
         if (body != null) {
             logger.debug("Reading input value: '{}'", body)
-            try {
-                inputQuery = body.let { mapper.readValue(it) }
-            } catch (ex: JsonParseException) {
-                return ResponseEntity.badRequest().body(ex.message ?: "Error parsing query - no details found in the error message")
-            }
 
-            queryVariables = if (inputQuery.get("variables") != null) {
-                @Suppress("UNCHECKED_CAST")
-                inputQuery["variables"] as Map<String, String>
+            if ("application/graphql" == headers.getFirst("Content-Type")) {
+                inputQuery = mapOf(Pair("query", body))
+                queryVariables = emptyMap()
+                extensions = emptyMap()
             } else {
-                emptyMap()
-            }
+                try {
+                    inputQuery = body.let { mapper.readValue(it) }
+                } catch (ex: JsonParseException) {
+                    return ResponseEntity.badRequest()
+                        .body(ex.message ?: "Error parsing query - no details found in the error message")
+                }
 
-            extensions = if (inputQuery.get("extensions") != null) {
-                @Suppress("UNCHECKED_CAST")
-                inputQuery["extensions"] as Map<String, Any>
-            } else {
-                emptyMap()
-            }
+                queryVariables = if (inputQuery.get("variables") != null) {
+                    @Suppress("UNCHECKED_CAST")
+                    inputQuery["variables"] as Map<String, String>
+                } else {
+                    emptyMap()
+                }
 
-            logger.debug("Parsed variables: {}", queryVariables)
+                extensions = if (inputQuery.get("extensions") != null) {
+                    @Suppress("UNCHECKED_CAST")
+                    inputQuery["extensions"] as Map<String, Any>
+                } else {
+                    emptyMap()
+                }
+
+                logger.debug("Parsed variables: {}", queryVariables)
+            }
         } else if (fileParams != null && mapParam != null && operation != null) {
             inputQuery = operation.let { mapper.readValue(it) }
 
@@ -129,7 +140,13 @@ class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
                 val file = fileParams[fileKey]
                 if (file != null) {
                     // the variable mapper takes each multipart file and replaces the null portion of the query variables with the file
-                    objectPaths.forEach { objectPath -> MultipartVariableMapper.mapVariable(objectPath, queryVariables, file) }
+                    objectPaths.forEach { objectPath ->
+                        MultipartVariableMapper.mapVariable(
+                            objectPath,
+                            queryVariables,
+                            file
+                        )
+                    }
                 }
             }
         } else {
@@ -143,15 +160,36 @@ class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
             return ResponseEntity.badRequest().body("Invalid GraphQL request - operationName must be a String")
         }
 
-        val executionResult = TimeTracer.logTime({ dgsQueryExecutor.execute(inputQuery["query"] as String, queryVariables, extensions, headers, operationName = gqlOperationName, webRequest) }, logger, "Executed query in {}ms")
-        logger.debug("Execution result - Contains data: '{}' - Number of errors: {}", executionResult.isDataPresent, executionResult.errors.size)
+        val executionResult = TimeTracer.logTime(
+            {
+                dgsQueryExecutor.execute(
+                    inputQuery["query"] as String,
+                    queryVariables,
+                    extensions,
+                    headers,
+                    operationName = gqlOperationName,
+                    webRequest
+                )
+            },
+            logger, "Executed query in {}ms"
+        )
+        logger.debug(
+            "Execution result - Contains data: '{}' - Number of errors: {}",
+            executionResult.isDataPresent,
+            executionResult.errors.size
+        )
 
         if (executionResult.isDataPresent && executionResult.getData<Any>() is CompletionStageMappingPublisher<*, *>) {
-            return ResponseEntity.badRequest().body("Trying to execute subscription on /graphql. Use /subscriptions instead!")
+            return ResponseEntity.badRequest()
+                .body("Trying to execute subscription on /graphql. Use /subscriptions instead!")
         }
 
         val result = try {
-            TimeTracer.logTime({ mapper.writeValueAsString(executionResult.toSpecification()) }, logger, "Serialized JSON result in {}ms")
+            TimeTracer.logTime(
+                { mapper.writeValueAsString(executionResult.toSpecification()) },
+                logger,
+                "Serialized JSON result in {}ms"
+            )
         } catch (ex: InvalidDefinitionException) {
             val errorMessage = "Error serializing response: ${ex.message}"
             val errorResponse = ExecutionResultImpl(GraphqlErrorBuilder.newError().message(errorMessage).build())
