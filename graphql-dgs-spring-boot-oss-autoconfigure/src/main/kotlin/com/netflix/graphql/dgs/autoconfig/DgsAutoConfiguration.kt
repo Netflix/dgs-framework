@@ -28,11 +28,7 @@ import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import com.netflix.graphql.mocking.MockProvider
-import graphql.execution.AsyncExecutionStrategy
-import graphql.execution.AsyncSerialExecutionStrategy
-import graphql.execution.DataFetcherExceptionHandler
-import graphql.execution.ExecutionIdProvider
-import graphql.execution.ExecutionStrategy
+import graphql.execution.*
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
 import graphql.schema.GraphQLCodeRegistry
@@ -133,8 +129,13 @@ open class DgsAutoConfiguration(
         existingCodeRegistry: Optional<GraphQLCodeRegistry>,
         mockProviders: Optional<Set<MockProvider>>
     ): DgsSchemaProvider {
-        return DgsSchemaProvider(applicationContext, federationResolver, existingTypeDefinitionFactory, mockProviders,
-            configProps.schemaBaseDir)
+        return DgsSchemaProvider(
+            applicationContext,
+            federationResolver,
+            existingTypeDefinitionFactory,
+            mockProviders,
+            configProps.schemaBaseDir
+        )
     }
 
     @Bean
