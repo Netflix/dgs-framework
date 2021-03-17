@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.mvc
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import graphql.ExecutionInput
 import graphql.ExecutionResult
 import graphql.GraphQL
@@ -29,13 +30,14 @@ import org.springframework.web.bind.annotation.RestController
  * Provides an HTTP endpoint to retrieve the available schema.
  */
 @RestController
-class DgsRestSchemaJsonController(private val graphQLSchema: GraphQLSchema) {
+class DgsRestSchemaJsonController(private val schemaProvider: DgsSchemaProvider) {
 
     // The @ConfigurationProperties bean name is <prefix>-<fqn>
     @RequestMapping("#{@'dgs.graphql-com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcConfigurationProperties'.schemaJson.path}", produces = ["application/json"])
     fun schema(): String {
         val mapper = jacksonObjectMapper()
 
+        val graphQLSchema: GraphQLSchema = schemaProvider.schema()
         val graphQL = GraphQL.newGraphQL(graphQLSchema).build()
 
         val executionInput: ExecutionInput = ExecutionInput.newExecutionInput().query(IntrospectionQuery.INTROSPECTION_QUERY)

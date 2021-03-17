@@ -133,7 +133,8 @@ open class DgsAutoConfiguration(
         existingCodeRegistry: Optional<GraphQLCodeRegistry>,
         mockProviders: Optional<Set<MockProvider>>
     ): DgsSchemaProvider {
-        return DgsSchemaProvider(applicationContext, federationResolver, existingTypeDefinitionFactory, mockProviders)
+        return DgsSchemaProvider(applicationContext, federationResolver, existingTypeDefinitionFactory, mockProviders,
+            configProps.schemaBaseDir)
     }
 
     @Bean
@@ -145,7 +146,7 @@ open class DgsAutoConfiguration(
     @Bean
     @ConditionalOnMissingBean
     open fun schema(dgsSchemaProvider: DgsSchemaProvider): GraphQLSchema {
-        return dgsSchemaProvider.schema(basedir = configProps.schemaBaseDir)
+        return dgsSchemaProvider.schema()
     }
 
     @Bean

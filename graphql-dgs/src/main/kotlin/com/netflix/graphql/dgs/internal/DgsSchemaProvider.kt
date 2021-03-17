@@ -59,7 +59,8 @@ class DgsSchemaProvider(
     private val applicationContext: ApplicationContext,
     private val federationResolver: Optional<DgsFederationResolver>,
     private val existingTypeDefinitionRegistry: Optional<TypeDefinitionRegistry>,
-    private val mockProviders: Optional<Set<MockProvider>>
+    private val mockProviders: Optional<Set<MockProvider>>,
+    private val basedir: String = "schema"
 ) {
 
     val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
@@ -69,7 +70,7 @@ class DgsSchemaProvider(
 
     private val objectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
 
-    fun schema(schema: String? = null, basedir: String = "schema"): GraphQLSchema {
+    fun schema(schema: String? = null): GraphQLSchema {
         val startTime = System.currentTimeMillis()
         val dgsComponents = applicationContext.getBeansWithAnnotation(DgsComponent::class.java)
         val hasDynamicTypeRegistry = dgsComponents.values.any { it.javaClass.methods.any { m -> m.isAnnotationPresent(DgsTypeDefinitionRegistry::class.java) } }
