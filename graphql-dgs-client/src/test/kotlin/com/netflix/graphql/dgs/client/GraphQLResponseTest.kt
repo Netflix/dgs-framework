@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.client
 
+import com.jayway.jsonpath.TypeRef
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity
@@ -132,6 +133,60 @@ class GraphQLResponseTest {
         val submittedBy = graphQLResponse.extractValueAsObject("submitReview.submittedBy", String::class.java)
         assertThat(submittedBy).isEqualTo("abc@netflix.com")
         assertThat(graphQLResponse.headers["Content-Type"]?.get(0)).isEqualTo("application/json")
+        server.verify()
+    }
+
+    @Test
+    fun listAsObject() {
+
+        val jsonResponse = """
+            {
+              "data": {
+                "submitReview": {
+                  "edges": [
+                    {
+                      "node": {
+                        "submittedBy": "pbakker@netflix.com",
+                        "postedDate": "2020-10-29T12:22:47.789933-07:00"
+                      }
+                    },
+                    {
+                      "node": {
+                        "submittedBy": "pbakker@netflix.com",
+                        "postedDate": "2020-10-29T12:22:54.327407-07:00"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+        """.trimIndent()
+
+        server.expect(requestTo(url))
+            .andExpect(method(HttpMethod.POST))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
+
+        val graphQLResponse = client.executeQuery(
+            """mutation {
+              submitReview(review:{movieId:1, starRating:5, description:""}) {
+                edges {
+                  node {
+                    submittedBy
+                    postedDate
+                  }
+                }
+              }
+            }""",
+            emptyMap(), requestExecutor
+        )
+
+        val listOfSubmittedBy: List<String> = graphQLResponse.extractValueAsObject(
+            "submitReview.edges[*].node.submittedBy",
+            object : TypeRef<List<String>>() {}
+        )
+        assertThat(listOfSubmittedBy).isInstanceOf(ArrayList::class.java)
+        assertThat(listOfSubmittedBy.size).isEqualTo(2)
         server.verify()
     }
 }
