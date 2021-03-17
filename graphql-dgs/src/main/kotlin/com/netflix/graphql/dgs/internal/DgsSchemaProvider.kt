@@ -69,13 +69,13 @@ class DgsSchemaProvider(
 
     private val objectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
 
-    fun schema(schema: String? = null): GraphQLSchema {
+    fun schema(schema: String? = null, basedir: String = "schema"): GraphQLSchema {
         val startTime = System.currentTimeMillis()
         val dgsComponents = applicationContext.getBeansWithAnnotation(DgsComponent::class.java)
         val hasDynamicTypeRegistry = dgsComponents.values.any { it.javaClass.methods.any { m -> m.isAnnotationPresent(DgsTypeDefinitionRegistry::class.java) } }
 
         var mergedRegistry = if (schema == null) {
-            findSchemaFiles(hasDynamicTypeRegistry = hasDynamicTypeRegistry).map {
+            findSchemaFiles(basedir = basedir, hasDynamicTypeRegistry = hasDynamicTypeRegistry).map {
                 InputStreamReader(it.inputStream, StandardCharsets.UTF_8).use { reader -> SchemaParser().parse(reader) }
             }.fold(TypeDefinitionRegistry()) { a, b -> a.merge(b) }
         } else {

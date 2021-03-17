@@ -42,6 +42,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -53,8 +54,11 @@ import java.util.*
  * This does NOT have logging, tracing, metrics and security integration.
  */
 @Configuration
+@EnableConfigurationProperties(DgsConfigurationProperties::class)
 @ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class])
-open class DgsAutoConfiguration {
+open class DgsAutoConfiguration(
+    private val configProps: DgsConfigurationProperties
+) {
 
     @Bean
     open fun dgsQueryExecutor(
@@ -141,7 +145,7 @@ open class DgsAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     open fun schema(dgsSchemaProvider: DgsSchemaProvider): GraphQLSchema {
-        return dgsSchemaProvider.schema()
+        return dgsSchemaProvider.schema(basedir = configProps.schemaBaseDir)
     }
 
     @Bean
