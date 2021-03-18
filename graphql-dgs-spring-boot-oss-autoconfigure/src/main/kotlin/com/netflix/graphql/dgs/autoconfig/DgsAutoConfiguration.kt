@@ -20,6 +20,7 @@ import com.netflix.graphql.dgs.DgsContextBuilder
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
+import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
 import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
@@ -28,11 +29,7 @@ import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import com.netflix.graphql.mocking.MockProvider
-import graphql.execution.AsyncExecutionStrategy
-import graphql.execution.AsyncSerialExecutionStrategy
-import graphql.execution.DataFetcherExceptionHandler
-import graphql.execution.ExecutionIdProvider
-import graphql.execution.ExecutionStrategy
+import graphql.execution.*
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
 import graphql.schema.GraphQLCodeRegistry
@@ -146,8 +143,11 @@ open class DgsAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    open fun graphQLContextBuilder(dgsCustomContextBuilder: Optional<DgsCustomContextBuilder<*>>): DgsContextBuilder {
-        return DefaultDgsGraphQLContextBuilder(dgsCustomContextBuilder)
+    open fun graphQLContextBuilder(
+        dgsCustomContextBuilder: Optional<DgsCustomContextBuilder<*>>,
+        dgsCustomContextBuilderWithRequest: Optional<DgsCustomContextBuilderWithRequest<*>>
+    ): DgsContextBuilder {
+        return DefaultDgsGraphQLContextBuilder(dgsCustomContextBuilder, dgsCustomContextBuilderWithRequest)
     }
 
     @Bean
