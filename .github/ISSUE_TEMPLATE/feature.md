@@ -1,3 +1,8 @@
+---
+name: Feature Request about: Propose a new feature title: 'feature: '
+labels: 'enhancement' assignees: ''
+---
+
 Please read our [contributor guide](https://github.com/Netflix/dgs-framework/blob/master/CONTRIBUTING.md) before
 creating an issue. Also consider discussing your idea on
 the [discussion forum](https://github.com/Netflix/dgs-framework/discussions) first.

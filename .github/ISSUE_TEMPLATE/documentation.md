@@ -1,3 +1,8 @@
+---
+name: Documentation about: Something to improve in the docs title: 'documentation: '
+labels: 'documentation' assignees: ''
+---
+
 What are you missing in the docs
 ----
 

@@ -1,3 +1,8 @@
+---
+name: Bug Report about: Create a bug report title: 'bug: '
+labels: 'bug' assignees: ''
+---
+
 Please read our [contributor guide](https://github.com/Netflix/dgs-framework/blob/master/CONTRIBUTING.md) before
 creating an issue.
 
