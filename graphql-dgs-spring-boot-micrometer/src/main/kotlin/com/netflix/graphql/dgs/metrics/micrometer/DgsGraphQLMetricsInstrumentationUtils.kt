@@ -37,7 +37,7 @@ internal object DgsGraphQLMetricsInstrumentationUtils {
             type as GraphQLObjectType
         }
 
-        return "${parentType.name}.${parameters.executionStepInfo.path.segmentName}"
+        return "${parentType.name}.${parameters.executionStepInfo.field.singleField.name}"
     }
 
     fun shouldIgnoreTag(tag: String): Boolean {
