@@ -91,11 +91,13 @@ class MicrometerServletSmokeTest {
     @Test
     fun `Metrics for a successful request`() {
         mvc.perform(
+            // Note that the query below uses an aliased field, aliasing `ping` to `not_ping`.
+            // We will also assert that the tag reflected by the metric is not affected by the alias.
             MockMvcRequestBuilders
                 .post("/graphql")
-                .content("""{ "query": "{ping}" }""")
+                .content("""{ "query": "{not_ping: ping}" }""")
         ).andExpect(status().isOk)
-            .andExpect(content().json("""{"data":{"ping":"pong"}}""", false))
+            .andExpect(content().json("""{"data":{"not_ping":"pong"}}""", false))
 
         val meters = fetchMeters()
 
