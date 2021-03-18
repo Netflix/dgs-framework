@@ -22,6 +22,7 @@ import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
 import com.netflix.graphql.dgs.context.DgsContext
+import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
 import graphql.language.FieldDefinition
 import graphql.language.ObjectTypeDefinition
 import graphql.language.TypeName
@@ -30,13 +31,19 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpHeaders
+import org.springframework.stereotype.Component
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.context.request.ServletWebRequest
+import org.springframework.web.context.request.WebRequest
 
-@SpringBootTest(classes = [DgsWebMvcAutoConfiguration::class, DgsAutoConfiguration::class, WebRequestTest.ExampleImplementation::class], webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@SpringBootTest(
+    classes = [DgsWebMvcAutoConfiguration::class, DgsAutoConfiguration::class, WebRequestTest.ExampleImplementation::class, WebRequestTest.TestCustomContextBuilder::class],
+    webEnvironment = SpringBootTest.WebEnvironment.MOCK
+)
 @AutoConfigureMockMvc
 class WebRequestTest {
 
@@ -64,6 +71,17 @@ class WebRequestTest {
             .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingHeader": "hello"}}"""))
     }
 
+    @Test
+    fun `Custom context builder should have access to headers`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ usingContextWithRequest }" }""")
+                .header("myheader", "hello")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingContextWithRequest": "hello"}}"""))
+    }
+
     @DgsComponent
     class ExampleImplementation {
 
@@ -89,6 +107,13 @@ class WebRequestTest {
                             .type(TypeName("String"))
                             .build()
                     )
+                    .fieldDefinition(
+                        FieldDefinition
+                            .newFieldDefinition()
+                            .name("usingContextWithRequest")
+                            .type(TypeName("String"))
+                            .build()
+                    )
                     .build()
             newRegistry.add(query)
 
@@ -101,8 +126,26 @@ class WebRequestTest {
         }
 
         @DgsData(parentType = "Query", field = "usingHeader")
-        fun usingRequestHeader(@RequestHeader myheader: String?, dataFetchingEnvironment: DgsDataFetchingEnvironment): String {
+        fun usingRequestHeader(
+            @RequestHeader myheader: String?,
+            dataFetchingEnvironment: DgsDataFetchingEnvironment
+        ): String {
             return myheader ?: "empty"
         }
+
+        @DgsData(parentType = "Query", field = "usingContextWithRequest")
+        fun usingContextWithRequest(dataFetchingEnvironment: DgsDataFetchingEnvironment): String {
+            val customContext: TestContext = DgsContext.getCustomContext(dataFetchingEnvironment)
+            return customContext.myheader
+        }
     }
+
+    @Component
+    class TestCustomContextBuilder : DgsCustomContextBuilderWithRequest<TestContext> {
+        override fun build(extensions: Map<String, Any>?, headers: HttpHeaders?, webRequest: WebRequest?): TestContext {
+            return TestContext(headers?.getFirst("myheader") ?: "not set")
+        }
+    }
+
+    data class TestContext(val myheader: String)
 }
