@@ -1,5 +1,6 @@
 ---
-name: Question about: Ask a question
+name: Question 
+about: Ask a question
 ---
 
 Please do not create issues for questions. Use
