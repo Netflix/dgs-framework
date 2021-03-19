@@ -1,0 +1,1 @@
+## 👉 [Please follow one of these issue templates](https://github.com/netflix/dgs-framework/issues/new/choose) 👈
