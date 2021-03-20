@@ -1,7 +1,7 @@
 {
     "annotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
@@ -27,7 +27,7 @@
     },
     "compileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -113,7 +113,7 @@
     },
     "kotlinCompilerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
@@ -136,7 +136,7 @@
     },
     "kotlinCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
             "locked": "1.4.31"
@@ -167,7 +167,7 @@
     },
     "kotlinKlibCommonizerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
@@ -190,7 +190,7 @@
     },
     "kotlinNativeCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
@@ -215,7 +215,7 @@
     },
     "nebulaRecommenderBom": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
@@ -244,17 +244,17 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
             ],
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "com.github.javafaker:javafaker": {
             "firstLevelTransitive": [
@@ -358,7 +358,7 @@
     },
     "testAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
@@ -378,7 +378,7 @@
     },
     "testCompileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -463,17 +463,17 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
             ],
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "com.github.javafaker:javafaker": {
             "firstLevelTransitive": [

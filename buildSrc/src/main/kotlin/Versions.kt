@@ -22,5 +22,5 @@ object Versions {
     const val SPRING_CLOUD_VERSION = "Hoxton.SR9"
     const val GRAPHQL_JAVA = "16.2"
     const val GRAPHQL_JAVA_FEDERATION = "0.6.3"
-    const val JACKSON_BOM = "2.11.4"
+    const val JACKSON_BOM = "2.12.2"
 }

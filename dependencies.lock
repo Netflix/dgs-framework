@@ -1,7 +1,7 @@
 {
     "annotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
@@ -21,7 +21,7 @@
     },
     "compileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
@@ -44,7 +44,7 @@
     },
     "kotlinCompilerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
@@ -67,7 +67,7 @@
     },
     "kotlinCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
             "locked": "1.4.31"
@@ -98,7 +98,7 @@
     },
     "kotlinKlibCommonizerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
@@ -121,7 +121,7 @@
     },
     "kotlinNativeCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
@@ -146,7 +146,7 @@
     },
     "nebulaRecommenderBom": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
@@ -166,7 +166,7 @@
     },
     "runtimeClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
@@ -189,7 +189,7 @@
     },
     "testAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
@@ -209,7 +209,7 @@
     },
     "testCompileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
@@ -232,7 +232,7 @@
     },
     "testRuntimeClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.11.4"
+            "locked": "2.12.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
