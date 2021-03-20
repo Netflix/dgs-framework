@@ -16,10 +16,10 @@
 
 object Versions {
     const val KOTLIN_VERSION = "1.4.31"
-    const val SPRING_VERSION = "5.2.12.RELEASE"
-    const val SPRING_BOOT_VERSION = "2.3.6.RELEASE"
-    const val SPRING_SECURITY_VERSION = "5.3.6.RELEASE"
-    const val SPRING_CLOUD_VERSION = "Hoxton.SR9"
+    const val SPRING_VERSION = "5.2.13.RELEASE"
+    const val SPRING_BOOT_VERSION = "2.3.7.RELEASE"
+    const val SPRING_SECURITY_VERSION = "5.3.8.RELEASE"
+    const val SPRING_CLOUD_VERSION = "Hoxton.SR10"
     const val GRAPHQL_JAVA = "16.2"
     const val GRAPHQL_JAVA_FEDERATION = "0.6.3"
     const val JACKSON_BOM = "2.11.4"
