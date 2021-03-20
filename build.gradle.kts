@@ -55,17 +55,12 @@ allprojects {
     }
 
     dependencyRecommendations {
-        mavenBom(mapOf(Pair("module", "org.springframework:spring-framework-bom:${Versions.SPRING_VERSION}")))
-        mavenBom(mapOf(Pair("module", "org.springframework.boot:spring-boot-dependencies:${Versions.SPRING_BOOT_VERSION}")))
-        mavenBom(mapOf(Pair("module", "org.springframework.security:spring-security-bom:${Versions.SPRING_SECURITY_VERSION}")))
-        mavenBom(mapOf(Pair("module", "org.springframework.cloud:spring-cloud-dependencies:${Versions.SPRING_CLOUD_VERSION}")))
-        mavenBom(mapOf(Pair("module", "com.fasterxml.jackson:jackson-bom:${Versions.JACKSON_BOM}")))
-    }
-
-    configurations.all {
-        resolutionStrategy {
-            force("org.jetbrains.kotlin:kotlin-reflect:${Versions.KOTLIN_VERSION}")
-        }
+        mavenBom(mapOf("module" to "org.springframework:spring-framework-bom:${Versions.SPRING_VERSION}"))
+        mavenBom(mapOf("module" to "org.springframework.boot:spring-boot-dependencies:${Versions.SPRING_BOOT_VERSION}"))
+        mavenBom(mapOf("module" to "org.springframework.security:spring-security-bom:${Versions.SPRING_SECURITY_VERSION}"))
+        mavenBom(mapOf("module" to "org.springframework.cloud:spring-cloud-dependencies:${Versions.SPRING_CLOUD_VERSION}"))
+        mavenBom(mapOf("module" to "com.fasterxml.jackson:jackson-bom:${Versions.JACKSON_BOM}"))
+        mavenBom(mapOf("module" to "org.jetbrains.kotlin:kotlin-bom:${Versions.KOTLIN_VERSION}"))
     }
 }
 
