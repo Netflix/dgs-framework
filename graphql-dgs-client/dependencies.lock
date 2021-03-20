@@ -3,6 +3,9 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.11.4"
         },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.4.31"
+        },
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
             "locked": "2.3.6.RELEASE"
         },
@@ -39,7 +42,10 @@
             "locked": "2.4.0"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.3"
+            "locked": "3.4.4"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.4.31"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "locked": "1.4.31"
@@ -80,6 +86,9 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.11.4"
         },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.4.31"
+        },
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
             "locked": "1.4.31"
         },
@@ -101,6 +110,9 @@
             "locked": "2.11.4"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
+            "locked": "1.4.31"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
@@ -128,6 +140,9 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.11.4"
         },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.4.31"
+        },
         "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
             "locked": "1.4.31"
         },
@@ -147,6 +162,9 @@
     "kotlinNativeCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.11.4"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.6.RELEASE"
@@ -169,6 +187,9 @@
     "nebulaRecommenderBom": {
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.11.4"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.6.RELEASE"
@@ -200,7 +221,10 @@
             "locked": "2.4.0"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.3"
+            "locked": "3.4.4"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.4.31"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "locked": "1.4.31"
@@ -224,6 +248,9 @@
     "testAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.11.4"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.6.RELEASE"
@@ -258,7 +285,10 @@
             "locked": "1.10.3-jdk8"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.3"
+            "locked": "3.4.4"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.4.31"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "locked": "1.4.31"
@@ -311,7 +341,10 @@
             "locked": "1.10.3-jdk8"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.3"
+            "locked": "3.4.4"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.4.31"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "locked": "1.4.31"
