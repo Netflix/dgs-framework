@@ -30,13 +30,15 @@ import org.springframework.web.servlet.resource.TransformedResource
 import java.io.BufferedReader
 import java.io.IOException
 import java.nio.charset.StandardCharsets.UTF_8
+import javax.servlet.ServletContext
 import javax.servlet.http.HttpServletRequest
 
 @Configuration
 @EnableConfigurationProperties(DgsWebMvcConfigurationProperties::class)
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 open class GraphiQLConfigurer(
-    private val configProps: DgsWebMvcConfigurationProperties
+    private val configProps: DgsWebMvcConfigurationProperties,
+    private val servletContext: ServletContext
 ) : WebMvcConfigurer {
 
     object Constants {
@@ -49,13 +51,14 @@ open class GraphiQLConfigurer(
     }
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
+        val graphqlPath = servletContext.contextPath + configProps.path
         registry
             .addResourceHandler("/graphiql/**")
             .addResourceLocations("classpath:/static/graphiql/")
             .setCachePeriod(3600)
             .resourceChain(true)
             .addResolver(PathResourceResolver())
-            .addTransformer(TokenReplacingTransformer("<DGS_GRAPHQL_PATH>", configProps.path))
+            .addTransformer(TokenReplacingTransformer("<DGS_GRAPHQL_PATH>", graphqlPath))
     }
 
     class TokenReplacingTransformer(private val replaceToken: String, private val replaceValue: String) :
