@@ -16,7 +16,7 @@
 
 package com.netflix.graphql.dgs.webmvc.autoconfigure
 
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.boot.context.properties.bind.Binder
 import org.springframework.boot.context.properties.source.ConfigurationPropertySource
@@ -28,37 +28,37 @@ class DgsWebMvcConfigurationPropertiesTest {
     @Test
     fun graphQLPathDefault() {
         val properties = bind(Collections.emptyMap())
-        Assertions.assertThat(properties.path).isEqualTo("/graphql")
+        assertThat(properties.path).isEqualTo("/graphql")
     }
 
     @Test
     fun graphQLPathCustom() {
         val properties = bind("dgs.graphql.path", "/private/gql")
-        Assertions.assertThat(properties.path).isEqualTo("/private/gql")
+        assertThat(properties.path).isEqualTo("/private/gql")
     }
 
     @Test
     fun graphiQLPathDefault() {
         val properties = bind(Collections.emptyMap())
-        Assertions.assertThat(properties.graphiql.path).isEqualTo("/graphiql")
+        assertThat(properties.graphiql.path).isEqualTo("/graphiql")
     }
 
     @Test
     fun graphiQLPathCustom() {
         val properties = bind("dgs.graphql.graphiql.path", "/private/giql")
-        Assertions.assertThat(properties.graphiql.path).isEqualTo("/private/giql")
+        assertThat(properties.graphiql.path).isEqualTo("/private/giql")
     }
 
     @Test
     fun schemaJsonPathDefault() {
         val properties = bind(Collections.emptyMap())
-        Assertions.assertThat(properties.schemaJson.path).isEqualTo("/schema.json")
+        assertThat(properties.schemaJson.path).isEqualTo("/schema.json")
     }
 
     @Test
     fun schemaJsonPathCustom() {
         val properties = bind("dgs.graphql.schema-json.path", "/private/schema.json")
-        Assertions.assertThat(properties.schemaJson.path).isEqualTo("/private/schema.json")
+        assertThat(properties.schemaJson.path).isEqualTo("/private/schema.json")
     }
 
     @Test
@@ -68,9 +68,9 @@ class DgsWebMvcConfigurationPropertiesTest {
         propertyValues["dgs.graphql.graphiql.path"] = "/private/giql"
         propertyValues["dgs.graphql.schema-json.path"] = "/private/sj"
         val properties = bind(propertyValues)
-        Assertions.assertThat(properties.path).isEqualTo("/private/gql")
-        Assertions.assertThat(properties.graphiql.path).isEqualTo("/private/giql")
-        Assertions.assertThat(properties.schemaJson.path).isEqualTo("/private/sj")
+        assertThat(properties.path).isEqualTo("/private/gql")
+        assertThat(properties.graphiql.path).isEqualTo("/private/giql")
+        assertThat(properties.schemaJson.path).isEqualTo("/private/sj")
     }
 
     private fun bind(name: String, value: String): DgsWebMvcConfigurationProperties {

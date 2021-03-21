@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
+plugins {
+    id("org.jetbrains.kotlin.plugin.allopen") version Versions.KOTLIN_VERSION
+}
+
 dependencies {
     api(project(":graphql-dgs"))
     api(project(":graphql-dgs-spring-webmvc"))
+    api("org.hibernate.validator:hibernate-validator")
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework:spring-webmvc")
     implementation("jakarta.servlet:jakarta.servlet-api")
@@ -24,4 +29,8 @@ dependencies {
     testImplementation("io.mockk:mockk:1.10.3-jdk8")
     testImplementation("org.springframework.boot:spring-boot-starter-web")
     testImplementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
+}
+
+configure<org.jetbrains.kotlin.allopen.gradle.AllOpenExtension> {
+    annotations("org.springframework.boot.context.properties.ConfigurationProperties")
 }
