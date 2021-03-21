@@ -93,6 +93,12 @@
             ],
             "locked": "3.4.4"
         },
+        "org.hibernate.validator:hibernate-validator": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
+            ],
+            "locked": "6.1.6.Final"
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
         },
@@ -366,6 +372,12 @@
             ],
             "locked": "4.0.4"
         },
+        "org.hibernate.validator:hibernate-validator": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
+            ],
+            "locked": "6.1.6.Final"
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
         },
@@ -538,6 +550,12 @@
             ],
             "locked": "3.4.4"
         },
+        "org.hibernate.validator:hibernate-validator": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
+            ],
+            "locked": "6.1.6.Final"
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
         },
@@ -678,6 +696,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
             "locked": "4.0.4"
+        },
+        "org.hibernate.validator:hibernate-validator": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
+            ],
+            "locked": "6.1.6.Final"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"

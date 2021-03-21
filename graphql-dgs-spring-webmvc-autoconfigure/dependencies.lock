@@ -68,6 +68,9 @@
         "jakarta.servlet:jakarta.servlet-api": {
             "locked": "4.0.4"
         },
+        "org.hibernate.validator:hibernate-validator": {
+            "locked": "6.1.6.Final"
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
         },
@@ -141,6 +144,9 @@
     "kotlinCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.11.4"
+        },
+        "org.jetbrains.kotlin:kotlin-allopen": {
+            "locked": "1.4.31"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
             "locked": "1.4.31"
@@ -305,6 +311,9 @@
         "jakarta.servlet:jakarta.servlet-api": {
             "locked": "4.0.4"
         },
+        "org.hibernate.validator:hibernate-validator": {
+            "locked": "6.1.6.Final"
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
         },
@@ -440,6 +449,9 @@
         "jakarta.servlet:jakarta.servlet-api": {
             "locked": "4.0.4"
         },
+        "org.hibernate.validator:hibernate-validator": {
+            "locked": "6.1.6.Final"
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
         },
@@ -555,6 +567,9 @@
         },
         "jakarta.servlet:jakarta.servlet-api": {
             "locked": "4.0.4"
+        },
+        "org.hibernate.validator:hibernate-validator": {
+            "locked": "6.1.6.Final"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
