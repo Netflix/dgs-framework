@@ -17,6 +17,8 @@
 package com.netflix.graphql.dgs.webmvc.autoconfigure
 
 import com.netflix.graphql.dgs.webmvc.autoconfigure.GraphiQLConfigurer.Constants.PATH_TO_GRAPHIQL_INDEX_HTML
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.Resource
@@ -41,6 +43,8 @@ open class GraphiQLConfigurer(
     private val servletContext: ServletContext
 ) : WebMvcConfigurer {
 
+    val logger: Logger = LoggerFactory.getLogger(GraphiQLConfigurer::class.java)
+
     object Constants {
         const val PATH_TO_GRAPHIQL_INDEX_HTML = "/graphiql/index.html"
     }
@@ -52,6 +56,7 @@ open class GraphiQLConfigurer(
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         val graphqlPath = servletContext.contextPath + configProps.path
+        logger.info("Configuring GraphiQL to use GraphQL endpoint at '{}'", graphqlPath)
         registry
             .addResourceHandler("/graphiql/**")
             .addResourceLocations("classpath:/static/graphiql/")
