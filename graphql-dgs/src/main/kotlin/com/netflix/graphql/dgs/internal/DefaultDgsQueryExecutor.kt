@@ -75,18 +75,14 @@ class DefaultDgsQueryExecutor(
 
     val schema = AtomicReference(defaultSchema)
 
-    override fun execute(query: String, variables: Map<String, Any>, extensions: Map<String, Any>?, headers: HttpHeaders, operationName: String?, webRequest: WebRequest?): ExecutionResult {
-        if (contextBuilder is DefaultDgsGraphQLContextBuilder) {
-            extensions.let {
-                contextBuilder.extensions = it
-            }
-            contextBuilder.headers = headers
-            contextBuilder.webRequest = webRequest
-        }
-        return execute(query, variables, operationName)
-    }
-
-    override fun execute(query: String, variables: Map<String, Any>, operationName: String?): ExecutionResult {
+    override fun execute(
+        query: String,
+        variables: Map<String, Any>,
+        extensions: Map<String, Any>?,
+        headers: HttpHeaders?,
+        operationName: String?,
+        webRequest: WebRequest?
+    ): ExecutionResult {
         val graphQLSchema: GraphQLSchema =
             if (reloadIndicator.reloadSchema())
                 schema.updateAndGet { schemaProvider.schema() }
@@ -104,7 +100,7 @@ class DefaultDgsQueryExecutor(
         }
         val graphQL = graphQLBuilder.build()
 
-        val dgsContext = contextBuilder.build()
+        val dgsContext = contextBuilder.build(DgsRequestData(extensions, headers, webRequest))
         val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier({ dgsContext })
         val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
             .query(query)
@@ -131,6 +127,17 @@ class DefaultDgsQueryExecutor(
         }
 
         return executionResult
+    }
+
+    override fun execute(query: String, variables: Map<String, Any>, operationName: String?): ExecutionResult {
+        return execute(
+            query = query,
+            variables = variables,
+            operationName = operationName,
+            extensions = null,
+            headers = null,
+            webRequest = null
+        )
     }
 
     override fun <T> executeAndExtractJsonPath(query: String, jsonPath: String): T {

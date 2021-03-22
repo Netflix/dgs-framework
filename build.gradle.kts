@@ -105,14 +105,14 @@ subprojects {
     tasks {
         compileKotlin {
             kotlinOptions {
-                // freeCompilerArgs = listOf("-Xjsr305=strict")
+                freeCompilerArgs = listOf("-Xjvm-default=all")
                 jvmTarget = "1.8"
             }
         }
 
         compileTestKotlin {
             kotlinOptions {
-                // freeCompilerArgs = listOf("-Xjsr305=strict")
+                freeCompilerArgs = listOf("-Xjvm-default=all")
                 jvmTarget = "1.8"
             }
         }
