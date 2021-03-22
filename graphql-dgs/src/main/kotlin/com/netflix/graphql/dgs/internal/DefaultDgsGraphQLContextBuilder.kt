@@ -32,40 +32,34 @@ open class DefaultDgsGraphQLContextBuilder(
     private val dgsCustomContextBuilderWithRequest: Optional<DgsCustomContextBuilderWithRequest<*>> = Optional.empty()
 ) : DgsContextBuilder {
     val logger: Logger = LoggerFactory.getLogger(DefaultDgsGraphQLContextBuilder::class.java)
-    var extensions: Map<String, Any>? = null
-    var headers: HttpHeaders? = null
-    var webRequest: WebRequest? = null
 
     override fun build(): DgsContext {
-        return TimeTracer.logTime({ buildDgsContext() }, logger, "Created DGS context in {}ms")
+        return TimeTracer.logTime({ buildDgsContext(null) }, logger, "Created DGS context in {}ms")
     }
 
-    private fun buildDgsContext(): DgsContext {
+    override fun build(dgsRequestData: DgsRequestData): DgsContext {
+        return TimeTracer.logTime({ buildDgsContext(dgsRequestData) }, logger, "Created DGS context in {}ms")
+    }
+
+    private fun buildDgsContext(dgsRequestData: DgsRequestData?): DgsContext {
         @Suppress("DEPRECATION") val customContext = when {
             dgsCustomContextBuilderWithRequest.isPresent -> dgsCustomContextBuilderWithRequest.get().build(
-                extensions ?: mapOf(),
+                dgsRequestData?.extensions ?: mapOf(),
                 HttpHeaders.readOnlyHttpHeaders(
-                    headers
+                    dgsRequestData?.headers
                         ?: HttpHeaders()
                 ),
-                webRequest
+                dgsRequestData?.webRequest
             )
             dgsCustomContextBuilder.isPresent -> dgsCustomContextBuilder.get().build()
             else
             // This is for backwards compatibility - we previously made DefaultRequestData the custom context if no custom context was provided.
-            -> DefaultRequestData(extensions ?: mapOf(), headers ?: HttpHeaders())
+            -> dgsRequestData
         }
 
         return DgsContext(
             customContext,
-            DgsRequestData(
-                extensions ?: mapOf(),
-                HttpHeaders.readOnlyHttpHeaders(
-                    headers
-                        ?: HttpHeaders()
-                ),
-                webRequest
-            )
+            dgsRequestData
         )
     }
 }
