@@ -17,6 +17,8 @@
 package com.netflix.graphql.dgs.webmvc.autoconfigure
 
 import com.netflix.graphql.dgs.webmvc.autoconfigure.GraphiQLConfigurer.Constants.PATH_TO_GRAPHIQL_INDEX_HTML
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.Resource
@@ -30,14 +32,18 @@ import org.springframework.web.servlet.resource.TransformedResource
 import java.io.BufferedReader
 import java.io.IOException
 import java.nio.charset.StandardCharsets.UTF_8
+import javax.servlet.ServletContext
 import javax.servlet.http.HttpServletRequest
 
 @Configuration
 @EnableConfigurationProperties(DgsWebMvcConfigurationProperties::class)
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 open class GraphiQLConfigurer(
-    private val configProps: DgsWebMvcConfigurationProperties
+    private val configProps: DgsWebMvcConfigurationProperties,
+    private val servletContext: ServletContext
 ) : WebMvcConfigurer {
+
+    val logger: Logger = LoggerFactory.getLogger(GraphiQLConfigurer::class.java)
 
     object Constants {
         const val PATH_TO_GRAPHIQL_INDEX_HTML = "/graphiql/index.html"
@@ -49,13 +55,15 @@ open class GraphiQLConfigurer(
     }
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
+        val graphqlPath = servletContext.contextPath + configProps.path
+        logger.info("Configuring GraphiQL to use GraphQL endpoint at '{}'", graphqlPath)
         registry
             .addResourceHandler("/graphiql/**")
             .addResourceLocations("classpath:/static/graphiql/")
             .setCachePeriod(3600)
             .resourceChain(true)
             .addResolver(PathResourceResolver())
-            .addTransformer(TokenReplacingTransformer("<DGS_GRAPHQL_PATH>", configProps.path))
+            .addTransformer(TokenReplacingTransformer("<DGS_GRAPHQL_PATH>", graphqlPath))
     }
 
     class TokenReplacingTransformer(private val replaceToken: String, private val replaceValue: String) :
