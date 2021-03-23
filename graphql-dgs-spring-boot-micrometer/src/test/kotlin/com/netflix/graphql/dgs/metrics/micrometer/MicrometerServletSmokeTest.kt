@@ -22,6 +22,7 @@ import com.netflix.graphql.dgs.exceptions.DgsBadRequestException
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsContextualTagCustomizer
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsExecutionTagCustomizer
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsFieldFetchTagCustomizer
+import com.netflix.graphql.types.errors.ErrorDetail
 import com.netflix.graphql.types.errors.TypedGraphQLError
 import graphql.GraphQLError
 import graphql.execution.DataFetcherExceptionHandler
@@ -623,7 +624,8 @@ class MicrometerServletSmokeTest {
                 val exception = handlerParameters.exception
                 val graphqlError: GraphQLError =
                     TypedGraphQLError
-                        .ENHANCE_YOUR_CALM
+                        .newBuilder()
+                        .errorDetail(ErrorDetail.Common.ENHANCE_YOUR_CALM)
                         .message(exception.message)
                         .path(handlerParameters.path)
                         .build()

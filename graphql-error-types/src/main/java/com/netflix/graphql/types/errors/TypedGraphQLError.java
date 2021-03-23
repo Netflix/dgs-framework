@@ -70,29 +70,83 @@ public class TypedGraphQLError implements GraphQLError {
         return extensions;
     }
 
+    @Deprecated
     public static Builder UNKNOWN = newBuilder();
+    @Deprecated
     public static Builder INTERNAL = newBuilder().errorType(ErrorType.INTERNAL);
+    @Deprecated
     public static Builder NOT_FOUND = newBuilder().errorType(ErrorType.NOT_FOUND);
+    @Deprecated
     public static Builder UNAUTHENTICATED = newBuilder().errorType(ErrorType.UNAUTHENTICATED);
+    @Deprecated
     public static Builder PERMISSION_DENIED = newBuilder().errorType(ErrorType.PERMISSION_DENIED);
+    @Deprecated
     public static Builder BAD_REQUEST = newBuilder().errorType(ErrorType.BAD_REQUEST);
+    @Deprecated
     public static Builder UNAVAILABLE = newBuilder().errorType(ErrorType.UNAVAILABLE);
+    @Deprecated
     public static Builder FAILED_PRECONDITION = newBuilder().errorType(ErrorType.FAILED_PRECONDITION);
 
+    @Deprecated
     public static Builder FIELD_NOT_FOUND = newBuilder().errorDetail(ErrorDetail.Common.FIELD_NOT_FOUND);
+    @Deprecated
     public static Builder INVALID_CURSOR = newBuilder().errorDetail(ErrorDetail.Common.INVALID_CURSOR);
+    @Deprecated
     public static Builder UNIMPLEMENTED = newBuilder().errorDetail(ErrorDetail.Common.UNIMPLEMENTED);
+    @Deprecated
     public static Builder INVALID_ARGUMENT = newBuilder().errorDetail(ErrorDetail.Common.INVALID_ARGUMENT);
+    @Deprecated
     public static Builder DEADLINE_EXCEEDED = newBuilder().errorDetail(ErrorDetail.Common.DEADLINE_EXCEEDED);
+    @Deprecated
     public static Builder SERVICE_ERROR = newBuilder().errorDetail(ErrorDetail.Common.SERVICE_ERROR);
+    @Deprecated
     public static Builder ENHANCE_YOUR_CALM = newBuilder().errorDetail(ErrorDetail.Common.ENHANCE_YOUR_CALM);
+    @Deprecated
     public static Builder THROTTLED_CPU = newBuilder().errorDetail(ErrorDetail.Common.THROTTLED_CPU);
+    @Deprecated
     public static Builder THROTTLED_CONCURRENCY = newBuilder().errorDetail(ErrorDetail.Common.THROTTLED_CONCURRENCY);
+    @Deprecated
     public static Builder MISSING_RESOURCE = newBuilder().errorDetail(ErrorDetail.Common.MISSING_RESOURCE);
 
+    /**
+     * Create new Builder instance to customize error.
+     */
     public static Builder newBuilder() {
         return new Builder();
     }
+
+    /**
+     * Create new Builder instance to customize error.
+     * Pre-sets ErrorType.INTERNAL.
+     */
+    public static Builder newInternalErrorBuilder() {
+        return new Builder().errorType(ErrorType.INTERNAL);
+    }
+
+    /**
+     * Create new Builder instance to customize error.
+     * Pre-sets ErrorType.NOT_FOUND.
+     */
+    public static Builder newNotFoundBuilder() {
+        return new Builder().errorType(ErrorType.NOT_FOUND);
+    }
+
+    /**
+     * Create new Builder instance to customize error.
+     * Pre-sets ErrorType.PERMISSION_DENIED.
+     */
+    public static Builder newPermissionDeniedBuilder() {
+        return new Builder().errorType(ErrorType.PERMISSION_DENIED);
+    }
+
+    /**
+     * Create new Builder instance to customize error.
+     * Pre-sets ErrorType.BAD_REQUEST.
+     */
+    public static Builder newBadRequestBuilder() {
+        return new Builder().errorType(ErrorType.BAD_REQUEST);
+    }
+
 
     @Override
     public String toString() {
