@@ -20,10 +20,22 @@ import reactor.core.publisher.Mono
 
 interface GraphQLClient {
     fun executeQuery(query: String, variables: Map<String, Any>, requestExecutor: RequestExecutor): GraphQLResponse
+    fun executeQuery(
+        query: String,
+        variables: Map<String, Any>,
+        operationName: String?,
+        requestExecutor: RequestExecutor
+    ): GraphQLResponse
 }
 
 interface MonoGraphQLClient {
     fun reactiveExecuteQuery(query: String, variables: Map<String, Any>, requestExecutor: MonoRequestExecutor): Mono<GraphQLResponse>
+    fun reactiveExecuteQuery(
+        query: String,
+        variables: Map<String, Any>,
+        operationName: String?,
+        requestExecutor: MonoRequestExecutor
+    ): Mono<GraphQLResponse>
 }
 
 @FunctionalInterface

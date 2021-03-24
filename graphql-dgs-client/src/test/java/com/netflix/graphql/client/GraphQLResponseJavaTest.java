@@ -63,15 +63,16 @@ public class GraphQLResponseJavaTest {
         server.expect(requestTo(url))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{\"operationName\":\"SubmitReview\"}"))
                 .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
 
         GraphQLResponse graphQLResponse = client.executeQuery(
-                "query {" +
+                "query SubmitReview {" +
                         "submitReview(review:{movieId:1, description:\"\"}) {" +
                         "submittedBy" +
                         "}" +
                         "}",
-                emptyMap(), requestExecutor
+                emptyMap(), "SubmitReview", requestExecutor
         );
 
         String submittedBy = graphQLResponse.extractValueAsObject("submitReview.submittedBy", String.class);

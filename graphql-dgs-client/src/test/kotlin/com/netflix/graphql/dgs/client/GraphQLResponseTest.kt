@@ -189,4 +189,33 @@ class GraphQLResponseTest {
         assertThat(listOfSubmittedBy.size).isEqualTo(2)
         server.verify()
     }
+
+    @Test
+    fun useOperationName() {
+
+        val jsonResponse = """
+            {
+              "data": {
+                "submitReview": {
+                  "edges": []
+                }
+              }
+            }
+        """.trimIndent()
+
+        server.expect(requestTo(url))
+            .andExpect(method(HttpMethod.POST))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(content().json("""{"operationName":"SubmitUserReview"}"""))
+            .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
+
+        val graphQLResponse = client.executeQuery(
+            """mutation SubmitUserReview {
+              submitReview(review:{movieId:1, starRating:5, description:""}) {}
+            }""",
+            emptyMap(), "SubmitUserReview", requestExecutor
+        )
+
+        server.verify()
+    }
 }
