@@ -69,7 +69,12 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
      * @return GraphQLResponse
      * @throws GraphQLClientException when the HTTP response code is not 2xx.
      */
-    override fun executeQuery(query: String, variables: Map<String, Any>, operationName: String?, requestExecutor: RequestExecutor): GraphQLResponse {
+    override fun executeQuery(
+        query: String,
+        variables: Map<String, Any>,
+        operationName: String?,
+        requestExecutor: RequestExecutor
+    ): GraphQLResponse {
         val serializedRequest = objectMapper.writeValueAsString(Request(query, variables, operationName))
 
         val response = requestExecutor.execute(url, defaultHeaders, serializedRequest)
@@ -87,7 +92,11 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
      * @return GraphQLResponse
      * @throws GraphQLClientException when the HTTP response code is not 2xx.
      */
-    override fun executeQuery(query: String, variables: Map<String, Any>, requestExecutor: RequestExecutor): GraphQLResponse {
+    override fun executeQuery(
+        query: String,
+        variables: Map<String, Any>,
+        requestExecutor: RequestExecutor
+    ): GraphQLResponse {
         return executeQuery(query, variables, null, requestExecutor)
     }
 
@@ -102,7 +111,11 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
      * @return Mono<GraphQLResponse>
      * @throws GraphQLClientException when the HTTP response code is not 2xx.
      */
-    override fun reactiveExecuteQuery(query: String, variables: Map<String, Any>, requestExecutor: MonoRequestExecutor): Mono<GraphQLResponse> {
+    override fun reactiveExecuteQuery(
+        query: String,
+        variables: Map<String, Any>,
+        requestExecutor: MonoRequestExecutor
+    ): Mono<GraphQLResponse> {
         return reactiveExecuteQuery(query, variables, null, requestExecutor)
     }
 
@@ -118,7 +131,12 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
      * @return Mono<GraphQLResponse>
      * @throws GraphQLClientException when the HTTP response code is not 2xx.
      */
-    override fun reactiveExecuteQuery(query: String, variables: Map<String, Any>, operationName: String?, requestExecutor: MonoRequestExecutor): Mono<GraphQLResponse> {
+    override fun reactiveExecuteQuery(
+        query: String,
+        variables: Map<String, Any>,
+        operationName: String?,
+        requestExecutor: MonoRequestExecutor
+    ): Mono<GraphQLResponse> {
         val serializedRequest = objectMapper.writeValueAsString(Request(query, variables, operationName))
 
         return requestExecutor.execute(url, defaultHeaders, serializedRequest).map { response ->

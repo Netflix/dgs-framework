@@ -24,15 +24,29 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * A representation of a GraphQL error, following the format used by a DGS and Gateway.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class GraphQLError(@JsonProperty val message: String = "", @JsonProperty val path: List<Any> = emptyList(), @JsonProperty val locations: List<Any> = emptyList(), @JsonProperty val extensions: GraphQLErrorExtensions?) {
+data class GraphQLError(
+    @JsonProperty val message: String = "",
+    @JsonProperty val path: List<Any> = emptyList(),
+    @JsonProperty val locations: List<Any> = emptyList(),
+    @JsonProperty val extensions: GraphQLErrorExtensions?
+) {
     val pathAsString = path.joinToString(".")
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class GraphQLErrorExtensions(@JsonProperty val errorType: ErrorType? = null, @JsonProperty val errorDetail: String? = null, @JsonProperty val origin: String = "", @JsonProperty val debugInfo: GraphQLErrorDebugInfo = GraphQLErrorDebugInfo(), @JsonProperty val classification: String = "")
+data class GraphQLErrorExtensions(
+    @JsonProperty val errorType: ErrorType? = null,
+    @JsonProperty val errorDetail: String? = null,
+    @JsonProperty val origin: String = "",
+    @JsonProperty val debugInfo: GraphQLErrorDebugInfo = GraphQLErrorDebugInfo(),
+    @JsonProperty val classification: String = ""
+)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class GraphQLErrorDebugInfo(@JsonProperty val subquery: String = "", @JsonProperty val variables: Map<String, Any> = emptyMap())
+data class GraphQLErrorDebugInfo(
+    @JsonProperty val subquery: String = "",
+    @JsonProperty val variables: Map<String, Any> = emptyMap()
+)
 
 /**
 The value of the errorType field is an enumeration of error types.
