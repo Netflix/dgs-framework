@@ -84,9 +84,25 @@ class GraphQLQueryRequestTest {
         val result = request.serialize()
         assertThat(result).isEqualTo("mutation {testMutation(movie: {movieId:1234, name:\"testMovie\" }){ name movieId } }")
     }
+
+    @Test
+    fun serializeWithName() {
+        val query = TestNamedGraphQLQuery().apply {
+            input["movie"] = Movie(123, "greatMovie")
+        }
+        val request = GraphQLQueryRequest(query, MovieProjection().name().movieId())
+        val result = request.serialize()
+        assertThat(result).isEqualTo("query TestNamedQuery {test(movie: {movieId:123, name:\"greatMovie\" }){ name movieId } }")
+    }
 }
 
 class TestGraphQLQuery : GraphQLQuery() {
+    override fun getOperationName(): String {
+        return "test"
+    }
+}
+
+class TestNamedGraphQLQuery : GraphQLQuery("query", "TestNamedQuery") {
     override fun getOperationName(): String {
         return "test"
     }
