@@ -18,9 +18,10 @@ package com.netflix.graphql.dgs.client.codegen
 
 import java.util.*
 
-abstract class GraphQLQuery(val operation: String) {
+abstract class GraphQLQuery(val operation: String, val name: String?) {
     val input: MutableMap<String, Any> = LinkedHashMap()
 
+    constructor(operation: String) : this(operation, null)
     constructor() : this("query")
 
     open fun getOperationType(): String? {
