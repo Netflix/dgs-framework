@@ -16,10 +16,7 @@
 
 package com.netflix.graphql.dgs.example.datafetcher;
 
-import com.netflix.graphql.dgs.DgsComponent;
-import com.netflix.graphql.dgs.DgsData;
-import com.netflix.graphql.dgs.DgsEnableDataFetcherInstrumentation;
-import com.netflix.graphql.dgs.InputArgument;
+import com.netflix.graphql.dgs.*;
 import com.netflix.graphql.dgs.context.DgsContext;
 import com.netflix.graphql.dgs.example.context.MyContext;
 import graphql.GraphQLException;
@@ -30,7 +27,7 @@ import java.util.concurrent.CompletableFuture;
 
 @DgsComponent
 public class HelloDataFetcher {
-    @DgsData(parentType = "Query", field = "hello")
+    @DgsQuery
     @DgsEnableDataFetcherInstrumentation(false)
     public String hello(@InputArgument String name) {
         if (name == null) {

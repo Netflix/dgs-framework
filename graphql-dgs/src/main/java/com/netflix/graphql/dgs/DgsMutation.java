@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.example.datafetcher;
+package com.netflix.graphql.dgs;
 
-import com.netflix.graphql.dgs.DgsComponent;
-import com.netflix.graphql.dgs.DgsSubscription;
-import com.netflix.graphql.dgs.example.types.Stock;
-import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.time.Duration;
-
-@DgsComponent
-public class SubscriptionDataFetcher {
-    @DgsSubscription
-    public Publisher<Stock> stocks() {
-        return Flux.interval(Duration.ofSeconds(0), Duration.ofSeconds(1)).map(t -> new Stock("NFLX", t));
-    }
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@DgsData(parentType = "Mutation")
+public @interface DgsMutation {
+    String field() default "";
 }
-

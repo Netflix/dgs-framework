@@ -26,11 +26,11 @@ import java.lang.annotation.*;
  * The field is the name of the field this data fetcher is responsible for.
  * See https://netflix.github.io/dgs/getting-started/
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface DgsData {
     String parentType();
 
-    String field();
+    String field() default "";
 }
