@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.webmvc.autoconfigure
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
+import javax.annotation.PostConstruct
 
 /**
  * Configuration properties for DGS web controllers.
@@ -46,4 +47,17 @@ data class DgsWebMvcConfigurationProperties(
         /** Path to the schema-json endpoint without trailing slash. */
         @DefaultValue("/schema.json") val path: String
     )
+
+    @PostConstruct
+    fun validatePaths() {
+        validatePath(this.path, "dgs.graphql.path")
+        validatePath(this.graphiql.path, "dgs.graphql.graphiql.path")
+        validatePath(this.schemaJson.path, "dgs.graphql.schema-json.path")
+    }
+
+    private fun validatePath(path: String, pathProperty: String) {
+        if (!path.startsWith("/") || path.endsWith("/")) {
+            throw IllegalArgumentException("$pathProperty must start with '/' and not end with '/' but was '$path'")
+        }
+    }
 }
