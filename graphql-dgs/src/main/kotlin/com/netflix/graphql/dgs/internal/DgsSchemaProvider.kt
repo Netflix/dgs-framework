@@ -38,15 +38,16 @@ import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.idl.TypeRuntimeWiring
 import org.slf4j.LoggerFactory
+import org.springframework.aop.support.AopUtils
 import org.springframework.context.ApplicationContext
 import org.springframework.core.DefaultParameterNameDiscoverer
 import org.springframework.core.annotation.MergedAnnotations
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
+import org.springframework.util.ReflectionUtils
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.multipart.MultipartFile
 import java.io.InputStreamReader
-import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -162,16 +163,10 @@ class DgsSchemaProvider(
 
     private fun findDataFetchers(dgsComponents: Map<String, Any>, codeRegistryBuilder: GraphQLCodeRegistry.Builder, typeDefinitionRegistry: TypeDefinitionRegistry) {
         dgsComponents.values.forEach { dgsComponent ->
-            val javaClass = when {
-                dgsComponent.javaClass.name.contains("EnhancerBySpringCGLIB") -> {
-                    dgsComponent.javaClass.superclass
-                }
-                else -> {
-                    dgsComponent.javaClass
-                }
-            }
+            val javaClass = AopUtils.getTargetClass(dgsComponent)
 
-            javaClass.methods.filter { method -> MergedAnnotations.from(method).isPresent(DgsData::class.java) }
+            javaClass.methods.asSequence()
+                .filter { method -> MergedAnnotations.from(method).isPresent(DgsData::class.java) }
                 .forEach { method ->
 
                     val dgsDataAnnotation = MergedAnnotations.from(method).get(DgsData::class.java)
@@ -228,24 +223,19 @@ class DgsSchemaProvider(
 
     private fun findEntityFetchers(dgsComponents: Map<String, Any>) {
         dgsComponents.values.forEach { dgsComponent ->
-            val javaClass = when {
-                dgsComponent.javaClass.name.contains("EnhancerBySpringCGLIB") -> {
-                    dgsComponent.javaClass.superclass
+            val javaClass = AopUtils.getTargetClass(dgsComponent)
+
+            ReflectionUtils.getDeclaredMethods(javaClass).asSequence()
+                .filter { it.isAnnotationPresent(DgsEntityFetcher::class.java) }
+                .forEach { method ->
+                    val dgsEntityFetcherAnnotation = method.getAnnotation(DgsEntityFetcher::class.java)
+
+                    val enableInstrumentation = method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)?.value
+                        ?: false
+                    dataFetcherInstrumentationEnabled["${"__entities"}.${dgsEntityFetcherAnnotation.name}"] = enableInstrumentation
+
+                    entityFetchers[dgsEntityFetcherAnnotation.name] = dgsComponent to method
                 }
-                else -> {
-                    dgsComponent.javaClass
-                }
-            }
-
-            javaClass.methods.filter { it.isAnnotationPresent(DgsEntityFetcher::class.java) }.forEach { method ->
-                val dgsEntityFetcherAnnotation = method.getAnnotation(DgsEntityFetcher::class.java)
-
-                val enableInstrumentation = method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)?.value
-                    ?: false
-                dataFetcherInstrumentationEnabled["${"__entities"}.${dgsEntityFetcherAnnotation.name}"] = enableInstrumentation
-
-                entityFetchers[dgsEntityFetcherAnnotation.name] = Pair(dgsComponent, method)
-            }
         }
     }
 
@@ -257,87 +247,83 @@ class DgsSchemaProvider(
     }
 
     private fun invokeDataFetcher(method: Method, dgsComponent: Any, environment: DataFetchingEnvironment): Any? {
-        return try {
-            val args = mutableListOf<Any?>()
-            val parameterNames = defaultParameterNameDiscoverer.getParameterNames(method) ?: emptyArray()
-            method.parameters.forEachIndexed { idx, parameter ->
+        val args = mutableListOf<Any?>()
+        val parameterNames = defaultParameterNameDiscoverer.getParameterNames(method) ?: emptyArray()
+        method.parameters.forEachIndexed { idx, parameter ->
 
-                when {
-                    parameter.isAnnotationPresent(InputArgument::class.java) -> {
-                        val annotation = parameter.getAnnotation(InputArgument::class.java)
-                        val parameterName = annotation.value.ifBlank { parameterNames[idx] }
-                        val collectionType = annotation.collectionType.java
-                        val parameterValue: Any? = environment.getArgument(parameterName)
+            when {
+                parameter.isAnnotationPresent(InputArgument::class.java) -> {
+                    val annotation = parameter.getAnnotation(InputArgument::class.java)
+                    val parameterName = annotation.value.ifBlank { parameterNames[idx] }
+                    val collectionType = annotation.collectionType.java
+                    val parameterValue: Any? = environment.getArgument(parameterName)
 
-                        val convertValue: Any? = if (parameterValue is List<*> && collectionType != Object::class.java) {
-                            try {
-                                // Return a list of elements that are converted to their collection type, e.e.g. List<Person>, List<String> etc.
-                                parameterValue.map { item -> objectMapper.convertValue(item, collectionType) }.toList()
-                            } catch (ex: Exception) {
-                                throw DgsInvalidInputArgumentException("Specified type '$collectionType' is invalid for $parameterName.", ex)
+                    val convertValue: Any? = if (parameterValue is List<*> && collectionType != Object::class.java) {
+                        try {
+                            // Return a list of elements that are converted to their collection type, e.e.g. List<Person>, List<String> etc.
+                            parameterValue.map { item -> objectMapper.convertValue(item, collectionType) }.toList()
+                        } catch (ex: Exception) {
+                            throw DgsInvalidInputArgumentException("Specified type '$collectionType' is invalid for $parameterName.", ex)
+                        }
+                    } else if (parameterValue is List<*>) {
+                        // Return as is for all other types of Lists, i.e. custom scalars e.g. List<UUID>, and other scalar types like List<Integer> etc.
+                        parameterValue
+                    } else if (parameterValue is MultipartFile) {
+                        parameterValue
+                    } else if (environment.fieldDefinition.arguments.find { it.name == parameterName }?.type is GraphQLScalarType) {
+                        // Return the value with it's type for scalars
+                        parameterValue
+                    } else {
+                        // Return the converted value mapped to the defined type
+                        objectMapper.convertValue(parameterValue, parameter.type)
+                    }
+
+                    val paramType = parameter.type
+
+                    if (convertValue != null && !paramType.isPrimitive && !paramType.isAssignableFrom(convertValue.javaClass)) {
+                        throw DgsInvalidInputArgumentException("Specified type '${parameter.type}' is invalid. Found ${parameterValue?.javaClass?.name} instead.")
+                    }
+
+                    if (convertValue == null && environment.fieldDefinition.arguments.none { it.name == parameterName }) {
+                        logger.warn("Unknown argument '$parameterName' on data fetcher ${dgsComponent.javaClass.name}.${method.name}")
+                    }
+
+                    args.add(convertValue)
+                }
+
+                parameter.isAnnotationPresent(RequestHeader::class.java) -> {
+                    val annotation = parameter.getAnnotation(RequestHeader::class.java)
+                    val parameterName = annotation.value.ifBlank { parameterNames[idx] }
+
+                    args.add(
+                        DgsContext.getRequestData(environment)?.headers?.get(parameterName)?.let {
+                            if (parameter.type.isAssignableFrom(List::class.java)) {
+                                it
+                            } else {
+                                it.joinToString()
                             }
-                        } else if (parameterValue is List<*>) {
-                            // Return as is for all other types of Lists, i.e. custom scalars e.g. List<UUID>, and other scalar types like List<Integer> etc.
-                            parameterValue
-                        } else if (parameterValue is MultipartFile) {
-                            parameterValue
-                        } else if (environment.fieldDefinition.arguments.find { it.name == parameterName }?.type is GraphQLScalarType) {
-                            // Return the value with it's type for scalars
-                            parameterValue
-                        } else {
-                            // Return the converted value mapped to the defined type
-                            objectMapper.convertValue(parameterValue, parameter.type)
                         }
+                    )
+                }
 
-                        val paramType = parameter.type
+                environment.containsArgument(parameterNames[idx]) -> {
+                    val parameterValue: Any = environment.getArgument(parameterNames[idx])
+                    val convertValue = objectMapper.convertValue(parameterValue, parameter.type)
+                    args.add(convertValue)
+                }
 
-                        if (convertValue != null && !paramType.isPrimitive && !paramType.isAssignableFrom(convertValue.javaClass)) {
-                            throw DgsInvalidInputArgumentException("Specified type '${parameter.type}' is invalid. Found ${parameterValue?.javaClass?.name} instead.")
-                        }
-
-                        if (convertValue == null && environment.fieldDefinition.arguments.none { it.name == parameterName }) {
-                            logger.warn("Unknown argument '$parameterName' on data fetcher ${dgsComponent.javaClass.name}.${method.name}")
-                        }
-
-                        args.add(convertValue)
-                    }
-
-                    parameter.isAnnotationPresent(RequestHeader::class.java) -> {
-                        val annotation = parameter.getAnnotation(RequestHeader::class.java)
-                        val parameterName = annotation.value.ifBlank { parameterNames[idx] }
-
-                        args.add(
-                            DgsContext.getRequestData(environment)?.headers?.get(parameterName)?.let {
-                                if (parameter.type.isAssignableFrom(List::class.java)) {
-                                    it
-                                } else {
-                                    it.joinToString()
-                                }
-                            }
-                        )
-                    }
-
-                    environment.containsArgument(parameterNames[idx]) -> {
-                        val parameterValue: Any = environment.getArgument(parameterNames[idx])
-                        val convertValue = objectMapper.convertValue(parameterValue, parameter.type)
-                        args.add(convertValue)
-                    }
-
-                    parameter.type == DataFetchingEnvironment::class.java || parameter.type == DgsDataFetchingEnvironment::class.java -> {
-                        args.add(environment)
-                    }
-                    else -> {
-                        logger.warn("Unknown argument '${parameterNames[idx]}' on data fetcher ${dgsComponent.javaClass.name}.${method.name}")
-                        // This might cause an exception, but parameter's the best effort we can do
-                        args.add(null)
-                    }
+                parameter.type == DataFetchingEnvironment::class.java || parameter.type == DgsDataFetchingEnvironment::class.java -> {
+                    args.add(environment)
+                }
+                else -> {
+                    logger.warn("Unknown argument '${parameterNames[idx]}' on data fetcher ${dgsComponent.javaClass.name}.${method.name}")
+                    // This might cause an exception, but parameter's the best effort we can do
+                    args.add(null)
                 }
             }
-
-            method.invoke(dgsComponent, *args.toTypedArray())
-        } catch (ex: InvocationTargetException) {
-            throw ex.targetException
         }
+
+        return ReflectionUtils.invokeMethod(method, dgsComponent, *args.toTypedArray())
     }
 
     private fun findTypeResolvers(dgsComponents: Map<String, Any>, runtimeWiringBuilder: RuntimeWiring.Builder, mergedRegistry: TypeDefinitionRegistry) {
@@ -377,7 +363,7 @@ class DgsSchemaProvider(
                     runtimeWiringBuilder.type(
                         TypeRuntimeWiring.newTypeWiring(annotation.name)
                             .typeResolver { env: TypeResolutionEnvironment ->
-                                val typeName = method.invoke(dgsComponent, env.getObject()) as String
+                                val typeName = ReflectionUtils.invokeMethod(method, dgsComponent, env.getObject()) as String
                                 env.schema.getObjectType(typeName)
                             }
                     )
