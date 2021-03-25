@@ -37,6 +37,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
 
@@ -69,6 +70,39 @@ class WebRequestTest {
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingHeader": "hello"}}"""))
+    }
+
+    @Test
+    fun `@RequestParam should be available`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ usingParam }" }""")
+                .param("myParam", "paramValue")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingParam": "paramValue"}}"""))
+    }
+
+    @Test
+    fun `@RequestParam should properly handle multiple param values`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ usingParam }" }""")
+                .param("myParam", "paramValue")
+                .param("myParam", "paramValue2")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingParam": "paramValue, paramValue2"}}"""))
+    }
+
+    @Test
+    fun `@RequestParam should properly handle unavailable param`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ usingParam }" }""")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{}"""))
     }
 
     @Test
@@ -114,6 +148,13 @@ class WebRequestTest {
                             .type(TypeName("String"))
                             .build()
                     )
+                    .fieldDefinition(
+                        FieldDefinition
+                            .newFieldDefinition()
+                            .name("usingParam")
+                            .type(TypeName("String"))
+                            .build()
+                    )
                     .build()
             newRegistry.add(query)
 
@@ -137,6 +178,14 @@ class WebRequestTest {
         fun usingContextWithRequest(dataFetchingEnvironment: DgsDataFetchingEnvironment): String {
             val customContext: TestContext = DgsContext.getCustomContext(dataFetchingEnvironment)
             return customContext.myheader
+        }
+
+        @DgsData(parentType = "Query", field = "usingParam")
+        fun usingRequestParam(
+            @RequestParam myParam: String?,
+            dataFetchingEnvironment: DgsDataFetchingEnvironment
+        ): String {
+            return myParam ?: "empty"
         }
     }
 
