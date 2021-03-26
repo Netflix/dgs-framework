@@ -15,9 +15,8 @@
  */
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation(project(":graphql-dgs-spring-boot-starter"))
     implementation(project(":graphql-dgs-subscriptions-websockets-autoconfigure"))
-
-    implementation("io.projectreactor:reactor-core:3.4.0")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("io.projectreactor:reactor-core")
 }

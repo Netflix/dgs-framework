@@ -17,10 +17,8 @@
 dependencies {
     implementation(project(":graphql-dgs"))
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-
     implementation("org.springframework:spring-web")
     implementation("org.springframework:spring-webmvc")
 
-    testImplementation("io.mockk:mockk:1.10.3-jdk8")
-    testImplementation("io.projectreactor:reactor-test:3.4.0")
+    testImplementation("io.projectreactor:reactor-test")
 }

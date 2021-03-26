@@ -20,5 +20,4 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("org.springframework:spring-websocket")
-    testImplementation("io.mockk:mockk:1.10.3-jdk8")
 }

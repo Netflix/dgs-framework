@@ -19,6 +19,11 @@
             "locked": "5.2.12.RELEASE"
         }
     },
+    "apiDependenciesMetadata": {
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.4.31"
+        }
+    },
     "compileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.2"
@@ -40,6 +45,11 @@
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.2.12.RELEASE"
+        }
+    },
+    "implementationDependenciesMetadata": {
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.4.31"
         }
     },
     "kotlinCompilerClasspath": {
@@ -228,6 +238,11 @@
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.2.12.RELEASE"
+        }
+    },
+    "testImplementationDependenciesMetadata": {
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.4.31"
         }
     },
     "testRuntimeClasspath": {

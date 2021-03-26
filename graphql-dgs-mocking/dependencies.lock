@@ -35,6 +35,9 @@
         "com.graphql-java:graphql-java": {
             "locked": "16.2"
         },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
         },
@@ -58,6 +61,14 @@
         }
     },
     "kapt": {
+        "org.springframework.boot:spring-boot-autoconfigure-processor": {
+            "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-configuration-processor": {
+            "locked": "2.3.6.RELEASE"
+        }
+    },
+    "kaptClasspath_kaptKotlin": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
             "locked": "2.3.6.RELEASE"
         },
@@ -205,6 +216,9 @@
         "com.graphql-java:graphql-java": {
             "locked": "16.2"
         },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
         },
@@ -257,6 +271,9 @@
         "com.graphql-java:graphql-java": {
             "locked": "16.2"
         },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
+        },
         "io.mockk:mockk": {
             "locked": "1.10.3-jdk8"
         },
@@ -294,6 +311,9 @@
         },
         "com.graphql-java:graphql-java": {
             "locked": "16.2"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
         },
         "io.mockk:mockk": {
             "locked": "1.10.3-jdk8"

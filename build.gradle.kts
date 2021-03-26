@@ -42,18 +42,6 @@ allprojects {
     apply(plugin = "nebula.netflixoss")
     apply(plugin = "nebula.dependency-recommender")
 
-    /**
-     * Remove once https://youtrack.jetbrains.com/issue/KT-34394
-     * implementationDependenciesMetadata configuration should not be resolvable. This causes conflicts for resolution
-     */
-    tasks.named("generateLock") {
-        doFirst {
-            project.configurations.filter { it.name.contains("DependenciesMetadata") }.forEach {
-                it.isCanBeResolved = false
-            }
-        }
-    }
-
     dependencyRecommendations {
         mavenBom(mapOf("module" to "org.springframework:spring-framework-bom:${Versions.SPRING_VERSION}"))
         mavenBom(mapOf("module" to "org.springframework.boot:spring-boot-dependencies:${Versions.SPRING_BOOT_VERSION}"))
@@ -64,7 +52,15 @@ allprojects {
     }
 }
 
-subprojects {
+val internalBomModules by extra(
+    listOf(
+        project(":graphql-dgs-platform"),
+        project(":graphql-dgs-platform-dependencies")
+    )
+)
+
+configure(subprojects.filterNot { it in internalBomModules }) {
+
     apply {
         plugin("java-library")
         plugin("kotlin")
@@ -72,7 +68,22 @@ subprojects {
         plugin("org.jlleitschuh.gradle.ktlint")
     }
 
+    /**
+     * Remove once the following ticket is closed:
+     *  Kotlin-JVM: runtimeOnlyDependenciesMetadata, implementationDependenciesMetadata should be marked with isCanBeResolved=false
+     *  https://youtrack.jetbrains.com/issue/KT-34394
+     */
+    tasks.named("generateLock") {
+        doFirst {
+            project.configurations.filter { it.name.contains("DependenciesMetadata") }.forEach {
+                it.isCanBeResolved = false
+            }
+        }
+    }
+
     dependencies {
+        // Apply the BOM to applicable subprojects.
+        api(platform(project(":graphql-dgs-platform")))
         // Speed up processing of AutoConfig's produced by Spring Boot
         annotationProcessor("org.springframework.boot:spring-boot-autoconfigure-processor")
         // Produce Config Metadata for properties used in Spring Boot
