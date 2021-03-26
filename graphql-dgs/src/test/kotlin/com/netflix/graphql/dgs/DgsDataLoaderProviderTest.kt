@@ -39,6 +39,8 @@ class DgsDataLoaderProviderTest {
         val listableBeanFactory = StaticListableBeanFactory()
         every { applicationContextMock.getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java) } returns
             listableBeanFactory.getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java)
+        every { applicationContextMock.getBeanProvider(DgsDataLoaderOptionsCustomizer::class.java) } returns
+            listableBeanFactory.getBeanProvider(DgsDataLoaderOptionsCustomizer::class.java)
     }
 
     @Test

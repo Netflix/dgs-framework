@@ -112,6 +112,8 @@ internal class DgsDataFetchingEnvironmentTest {
             listableBeanFactory.getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java)
 
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeanProvider(DgsDataLoaderOptionsCustomizer::class.java) } returns
+            listableBeanFactory.getBeanProvider(DgsDataLoaderOptionsCustomizer::class.java)
     }
 
     @Test
