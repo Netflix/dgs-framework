@@ -194,10 +194,10 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         return DataLoader.newMappedDataLoader(extendedBatchLoader, options)
     }
 
-    private fun customizeDataLoaderOptions(dgsDataLoader: DgsDataLoader, dataLoaderOptions: DataLoaderOptions){
+    private fun customizeDataLoaderOptions(dgsDataLoader: DgsDataLoader, dataLoaderOptions: DataLoaderOptions) {
         applicationContext
             .getBeanProvider(DgsDataLoaderOptionsCustomizer::class.java)
-            .forEach{
+            .forEach {
                 it.customize(dgsDataLoader, dataLoaderOptions)
             }
     }
