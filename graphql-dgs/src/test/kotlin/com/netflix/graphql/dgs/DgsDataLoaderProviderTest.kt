@@ -21,6 +21,8 @@ import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import org.dataloader.DataLoader
+import org.dataloader.DataLoaderOptions
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -34,9 +36,19 @@ class DgsDataLoaderProviderTest {
     @MockK
     lateinit var applicationContextMock: ApplicationContext
 
+    val notMinusOne = 10
+
     @BeforeEach
     fun setDataLoaderInstrumentationExtensionProvider() {
         val listableBeanFactory = StaticListableBeanFactory()
+        listableBeanFactory.addBean(
+            "testDgsDataLoaderOptionsCustomizer",
+            object : DgsDataLoaderOptionsCustomizer {
+                override fun customize(dgsDataLoader: DgsDataLoader, dataLoaderOptions: DataLoaderOptions) {
+                    dataLoaderOptions.setMaxBatchSize(notMinusOne)
+                }
+            }
+        )
         every { applicationContextMock.getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java) } returns
             listableBeanFactory.getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java)
         every { applicationContextMock.getBeanProvider(DgsDataLoaderOptionsCustomizer::class.java) } returns
@@ -52,6 +64,12 @@ class DgsDataLoaderProviderTest {
         provider.findDataLoaders()
         val dataLoaderRegistry = provider.buildRegistry()
         Assertions.assertEquals(1, dataLoaderRegistry.dataLoaders.size)
+        dataLoaderRegistry.dataLoaders.forEach {
+            val field = DataLoader::class.java.getDeclaredField("loaderOptions")
+            field.isAccessible = true
+            val dataLoaderOptions = field.get(it) as DataLoaderOptions
+            Assertions.assertEquals(dataLoaderOptions.maxBatchSize(), notMinusOne)
+        }
         val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleLoader")
         Assertions.assertNotNull(dataLoader)
     }

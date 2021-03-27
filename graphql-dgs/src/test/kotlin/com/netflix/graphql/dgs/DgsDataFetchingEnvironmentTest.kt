@@ -27,6 +27,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import org.dataloader.DataLoader
+import org.dataloader.DataLoaderOptions
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -108,6 +109,14 @@ internal class DgsDataFetchingEnvironmentTest {
     @BeforeEach
     fun setDataLoaderInstrumentationExtensionProvider() {
         val listableBeanFactory = StaticListableBeanFactory()
+        listableBeanFactory.addBean(
+            "testDgsDataLoaderOptionsCustomizer",
+            object : DgsDataLoaderOptionsCustomizer {
+                override fun customize(dgsDataLoader: DgsDataLoader, dataLoaderOptions: DataLoaderOptions) {
+                    dataLoaderOptions.setCacheKeyFunction { input -> dgsDataLoader.name + "-" + input }
+                }
+            }
+        )
         every { applicationContextMock.getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java) } returns
             listableBeanFactory.getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java)
 
