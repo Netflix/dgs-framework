@@ -38,7 +38,7 @@ class DgsConfigurationPropertiesTest {
     }
 
     @Test
-    fun schemaLocationsMultiple() {
+    fun schemaLocationsCustomMultiple() {
         val properties = bind("dgs.graphql.schema-locations", "foo.graphqls, bar.graphqls")
         Assertions.assertThat(properties.schemaLocations).containsExactly("foo.graphqls", "bar.graphqls")
     }

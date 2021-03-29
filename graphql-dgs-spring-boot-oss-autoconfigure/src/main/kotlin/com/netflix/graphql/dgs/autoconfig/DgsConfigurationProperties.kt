@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.autoconfig
 
+import com.netflix.graphql.dgs.internal.DgsSchemaProvider.Companion.DEFAULT_SCHEMA_LOCATION
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
@@ -28,5 +29,5 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 @Suppress("ConfigurationProperties")
 data class DgsConfigurationProperties(
     /** Location of the GraphQL schema files. */
-    @DefaultValue("classpath*:schema/**/*.graphql*") val schemaLocations: List<String>
+    @DefaultValue(DEFAULT_SCHEMA_LOCATION) val schemaLocations: List<String>
 )
