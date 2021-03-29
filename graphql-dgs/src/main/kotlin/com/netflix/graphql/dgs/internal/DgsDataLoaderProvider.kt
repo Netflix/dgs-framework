@@ -21,12 +21,13 @@ import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsDataLoader
 import com.netflix.graphql.dgs.exceptions.InvalidDataLoaderTypeException
 import com.netflix.graphql.dgs.exceptions.UnsupportedSecuredDataLoaderException
-import com.netflix.graphql.dgs.internal.utils.DgsComponentUtils
 import org.dataloader.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.aop.support.AopUtils
 import org.springframework.beans.factory.NoSuchBeanDefinitionException
 import org.springframework.context.ApplicationContext
+import org.springframework.util.ReflectionUtils
 import java.util.function.Supplier
 import javax.annotation.PostConstruct
 
@@ -84,23 +85,25 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
 
     private fun addDataLoaderFields() {
         applicationContext.getBeansWithAnnotation(DgsComponent::class.java).values.forEach { dgsComponent ->
-            val javaClass = DgsComponentUtils.getClassEnhancedBySpringCGLib(dgsComponent)
-            javaClass.declaredFields.filter { it.isAnnotationPresent(DgsDataLoader::class.java) }.forEach { field ->
-                if (dgsComponent.javaClass.name.contains("EnhancerBySpringCGLIB")) {
+            val javaClass = AopUtils.getTargetClass(dgsComponent)
+
+            javaClass.declaredFields.asSequence().filter { it.isAnnotationPresent(DgsDataLoader::class.java) }.forEach { field ->
+                if (AopUtils.isAopProxy(dgsComponent)) {
                     throw UnsupportedSecuredDataLoaderException(dgsComponent::class.java)
                 }
 
                 val annotation = field.getAnnotation(DgsDataLoader::class.java)
-                field.isAccessible = true
+                ReflectionUtils.makeAccessible(field)
+
                 when (val get = field.get(dgsComponent)) {
                     is BatchLoader<*, *> ->
-                        batchLoaders.add(Pair(get, annotation))
+                        batchLoaders.add(get to annotation)
                     is BatchLoaderWithContext<*, *> ->
-                        batchLoadersWithContext.add(Pair(get, annotation))
+                        batchLoadersWithContext.add(get to annotation)
                     is MappedBatchLoader<*, *> ->
-                        mappedBatchLoaders.add(Pair(get, annotation))
+                        mappedBatchLoaders.add(get to annotation)
                     is MappedBatchLoaderWithContext<*, *> ->
-                        mappedBatchLoadersWithContext.add(Pair(get, annotation))
+                        mappedBatchLoadersWithContext.add(get to annotation)
                     else -> throw InvalidDataLoaderTypeException(dgsComponent::class.java)
                 }
             }
@@ -110,7 +113,7 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
     private fun addDataLoaderComponents() {
         val dataLoaders = applicationContext.getBeansWithAnnotation(DgsDataLoader::class.java)
         dataLoaders.values.forEach { dgsComponent ->
-            val javaClass = DgsComponentUtils.getClassEnhancedBySpringCGLib(dgsComponent)
+            val javaClass = AopUtils.getTargetClass(dgsComponent)
             val annotation = javaClass.getAnnotation(DgsDataLoader::class.java)
             when (dgsComponent) {
                 is BatchLoader<*, *> ->
