@@ -55,7 +55,7 @@ class HelloDataFetcherTest {
         try {
             queryExecutor.executeAndExtractJsonPath("{greeting}", "data.greeting");
             fail("Exception should have been thrown");
-        } catch(QueryException ex) {
+        } catch (QueryException ex) {
             assertThat(ex.getMessage()).contains("Validation error of type FieldUndefined: Field 'greeting' in type 'Query' is undefined @ 'greeting'");
             assertThat(ex.getErrors().size()).isEqualTo(1);
         }
@@ -66,7 +66,7 @@ class HelloDataFetcherTest {
         try {
             queryExecutor.executeAndExtractJsonPath("{withGraphqlException}", "data.greeting");
             fail("Exception should have been thrown");
-        } catch(QueryException ex) {
+        } catch (QueryException ex) {
             assertThat(ex.getErrors().get(0).getMessage()).isEqualTo("graphql.GraphQLException: that's not going to work!");
             assertThat(ex.getErrors().size()).isEqualTo(1);
         }
@@ -77,7 +77,7 @@ class HelloDataFetcherTest {
         try {
             queryExecutor.executeAndExtractJsonPath("{withRuntimeException}", "data.greeting");
             fail("Exception should have been thrown");
-        } catch(QueryException ex) {
+        } catch (QueryException ex) {
             assertThat(ex.getErrors().get(0).getMessage()).isEqualTo("java.lang.RuntimeException: That's broken!");
             assertThat(ex.getErrors().size()).isEqualTo(1);
         }
@@ -88,7 +88,7 @@ class HelloDataFetcherTest {
         try {
             queryExecutor.executeAndExtractJsonPath("{withRuntimeException, withGraphqlException}", "data.greeting");
             fail("Exception should have been thrown");
-        } catch(QueryException ex) {
+        } catch (QueryException ex) {
             assertThat(ex.getErrors().get(0).getMessage()).isEqualTo("java.lang.RuntimeException: That's broken!");
             assertThat(ex.getErrors().get(1).getMessage()).isEqualTo("graphql.GraphQLException: that's not going to work!");
             assertThat(ex.getMessage()).isEqualTo("java.lang.RuntimeException: That's broken!, graphql.GraphQLException: that's not going to work!");
