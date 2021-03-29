@@ -307,7 +307,6 @@ class DgsSchemaProvider(
                     )
                 }
 
-
                 parameter.isAnnotationPresent(RequestParam::class.java) -> {
                     val annotation = parameter.getAnnotation(RequestParam::class.java)
                     val parameterName = annotation.value.ifBlank { parameterNames[idx] }
@@ -328,7 +327,6 @@ class DgsSchemaProvider(
                     val convertValue = objectMapper.convertValue(parameterValue, parameter.type)
                     args.add(convertValue)
                 }
-
 
                 parameter.type == DataFetchingEnvironment::class.java || parameter.type == DgsDataFetchingEnvironment::class.java -> {
                     args.add(environment)
