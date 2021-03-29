@@ -39,7 +39,10 @@
             "locked": "2.12.2"
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.4.0"
+            "locked": "2.5.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.4.4"
@@ -67,6 +70,14 @@
         }
     },
     "kapt": {
+        "org.springframework.boot:spring-boot-autoconfigure-processor": {
+            "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-configuration-processor": {
+            "locked": "2.3.6.RELEASE"
+        }
+    },
+    "kaptClasspath_kaptKotlin": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
             "locked": "2.3.6.RELEASE"
         },
@@ -218,7 +229,10 @@
             "locked": "2.12.2"
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.4.0"
+            "locked": "2.5.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.4.4"
@@ -279,7 +293,10 @@
             "locked": "2.12.2"
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.4.0"
+            "locked": "2.5.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
         },
         "io.mockk:mockk": {
             "locked": "1.10.3-jdk8"
@@ -335,7 +352,10 @@
             "locked": "2.12.2"
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.4.0"
+            "locked": "2.5.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
         },
         "io.mockk:mockk": {
             "locked": "1.10.3-jdk8"

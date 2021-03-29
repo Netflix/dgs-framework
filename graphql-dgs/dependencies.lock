@@ -51,6 +51,13 @@
         "com.netflix.graphql.dgs:graphql-dgs-mocking": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-error-types": {
             "project": true
         },
@@ -87,6 +94,14 @@
         }
     },
     "kapt": {
+        "org.springframework.boot:spring-boot-autoconfigure-processor": {
+            "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-configuration-processor": {
+            "locked": "2.3.6.RELEASE"
+        }
+    },
+    "kaptClasspath_kaptKotlin": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
             "locked": "2.3.6.RELEASE"
         },
@@ -256,6 +271,13 @@
         "com.netflix.graphql.dgs:graphql-dgs-mocking": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-error-types": {
             "project": true
         },
@@ -343,11 +365,21 @@
         "com.netflix.graphql.dgs:graphql-dgs-mocking": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-error-types": {
             "project": true
         },
         "io.mockk:mockk": {
             "locked": "1.10.3-jdk8"
+        },
+        "io.projectreactor:reactor-core": {
+            "locked": "3.4.4"
         },
         "io.reactivex.rxjava3:rxjava": {
             "locked": "3.0.11"
@@ -419,11 +451,21 @@
         "com.netflix.graphql.dgs:graphql-dgs-mocking": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-error-types": {
             "project": true
         },
         "io.mockk:mockk": {
             "locked": "1.10.3-jdk8"
+        },
+        "io.projectreactor:reactor-core": {
+            "locked": "3.4.4"
         },
         "io.reactivex.rxjava3:rxjava": {
             "locked": "3.0.11"

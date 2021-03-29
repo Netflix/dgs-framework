@@ -55,6 +55,14 @@
             ],
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-error-types": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
@@ -92,6 +100,14 @@
         }
     },
     "kapt": {
+        "org.springframework.boot:spring-boot-autoconfigure-processor": {
+            "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-configuration-processor": {
+            "locked": "2.3.6.RELEASE"
+        }
+    },
+    "kaptClasspath_kaptKotlin": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
             "locked": "2.3.6.RELEASE"
         },
@@ -280,6 +296,14 @@
             ],
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-error-types": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
@@ -387,6 +411,14 @@
             ],
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-error-types": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
@@ -397,7 +429,7 @@
             "locked": "1.10.3-jdk8"
         },
         "io.projectreactor:reactor-test": {
-            "locked": "3.4.0"
+            "locked": "3.4.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
@@ -483,6 +515,14 @@
             ],
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-error-types": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
@@ -493,7 +533,7 @@
             "locked": "1.10.3-jdk8"
         },
         "io.projectreactor:reactor-test": {
-            "locked": "3.4.0"
+            "locked": "3.4.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"

@@ -55,6 +55,15 @@
             ],
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc": {
             "project": true
         },
@@ -94,6 +103,14 @@
         }
     },
     "kapt": {
+        "org.springframework.boot:spring-boot-autoconfigure-processor": {
+            "locked": "2.3.6.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-configuration-processor": {
+            "locked": "2.3.6.RELEASE"
+        }
+    },
+    "kaptClasspath_kaptKotlin": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
             "locked": "2.3.6.RELEASE"
         },
@@ -286,6 +303,15 @@
             ],
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc": {
             "project": true
         },
@@ -405,6 +431,15 @@
             ],
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc": {
             "project": true
         },
@@ -501,6 +536,15 @@
         "com.netflix.graphql.dgs:graphql-dgs-mocking": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
+                "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
         },
