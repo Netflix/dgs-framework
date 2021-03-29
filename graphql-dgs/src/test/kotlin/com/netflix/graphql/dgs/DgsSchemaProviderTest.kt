@@ -86,8 +86,9 @@ internal class DgsSchemaProviderTest {
                 applicationContextMock,
                 Optional.empty(),
                 Optional.empty(),
-                Optional.empty()
-            ).findSchemaFiles("notexists")
+                Optional.empty(),
+                listOf("classpath*:notexists/**/*.graphql*")
+            ).findSchemaFiles()
         }
     }
 
@@ -97,8 +98,9 @@ internal class DgsSchemaProviderTest {
             applicationContextMock,
             Optional.empty(),
             Optional.of(TypeDefinitionRegistry()),
-            Optional.empty()
-        ).findSchemaFiles("noexists")
+            Optional.empty(),
+            listOf("classpath*:noexists/**/*.graphql*")
+        ).findSchemaFiles()
         assertEquals(0, findSchemaFiles.size)
     }
 
