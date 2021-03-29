@@ -23,8 +23,10 @@ description = "${rootProject.description} (Bill of Materials with Dependencies)"
 
 publishing {
     publications {
-        create<MavenPublication>(project.name) {
-            from(components["javaPlatform"])
+        configure(containerWithType(MavenPublication::class.java)) {
+            nebulaDependencyManagement {
+                from(components["javaPlatform"])
+            }
         }
     }
 }
