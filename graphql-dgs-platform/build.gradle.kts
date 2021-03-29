@@ -17,13 +17,14 @@
 plugins {
     `java-platform`
     `maven-publish`
-//    id("netflix.bom-publish")
 }
 
 publishing {
     publications {
-        create<MavenPublication>(project.name) {
-            from(components["javaPlatform"])
+        configure(containerWithType(MavenPublication::class.java)) {
+            nebulaDependencyManagement {
+                from(components["javaPlatform"])
+            }
         }
     }
 }
