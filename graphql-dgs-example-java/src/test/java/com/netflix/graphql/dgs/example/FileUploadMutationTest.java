@@ -30,7 +30,6 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-
 @ExampleSpringBootTest
 public class FileUploadMutationTest {
 
@@ -45,7 +44,7 @@ public class FileUploadMutationTest {
         inputMap.put("files", Lists.newArrayList(file));
 
         boolean result = queryExecutor.executeAndExtractJsonPath("mutation($input: FileUploadInput!) {uploadFile(input: $input)}",
-                "data.uploadFile",  Maps.newHashMap("input", inputMap));
+                "data.uploadFile", Maps.newHashMap("input", inputMap));
         assertThat(result).isTrue();
     }
 }

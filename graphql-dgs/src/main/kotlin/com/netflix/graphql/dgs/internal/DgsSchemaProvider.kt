@@ -46,6 +46,7 @@ import org.springframework.core.io.Resource
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.util.ReflectionUtils
 import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.multipart.MultipartFile
 import java.io.InputStreamReader
 import java.lang.reflect.Method
@@ -306,11 +307,28 @@ class DgsSchemaProvider(
                     )
                 }
 
+
+                parameter.isAnnotationPresent(RequestParam::class.java) -> {
+                    val annotation = parameter.getAnnotation(RequestParam::class.java)
+                    val parameterName = annotation.value.ifBlank { parameterNames[idx] }
+
+                    args.add(
+                        DgsContext.getRequestData(environment)?.webRequest?.parameterMap?.get(parameterName)?.let {
+                            if (parameter.type.isAssignableFrom(List::class.java)) {
+                                it
+                            } else {
+                                it.joinToString()
+                            }
+                        }
+                    )
+                }
+
                 environment.containsArgument(parameterNames[idx]) -> {
                     val parameterValue: Any = environment.getArgument(parameterNames[idx])
                     val convertValue = objectMapper.convertValue(parameterValue, parameter.type)
                     args.add(convertValue)
                 }
+
 
                 parameter.type == DataFetchingEnvironment::class.java || parameter.type == DgsDataFetchingEnvironment::class.java -> {
                     args.add(environment)
