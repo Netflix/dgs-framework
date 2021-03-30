@@ -129,9 +129,8 @@ internal class DgsSchemaProviderTest {
             Optional.empty(),
             Optional.of(TypeDefinitionRegistry()),
             Optional.empty(),
-            listOf("classpath*:noexists/**/*.graphql*")
+            listOf("classpath*:notexists/**/*.graphql*")
         ).findSchemaFiles()
-        assertEquals(0, findSchemaFiles.size)
     }
 
     @Test
