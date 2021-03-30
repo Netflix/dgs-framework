@@ -52,10 +52,6 @@
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
-                "com.netflix.graphql.dgs:graphql-error-types"
-            ],
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-error-types": {
@@ -366,10 +362,6 @@
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
-                "com.netflix.graphql.dgs:graphql-error-types"
-            ],
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-error-types": {
