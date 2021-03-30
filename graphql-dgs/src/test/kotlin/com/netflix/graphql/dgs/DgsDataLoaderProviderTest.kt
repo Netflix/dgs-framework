@@ -42,7 +42,7 @@ class DgsDataLoaderProviderTest {
     fun setDataLoaderInstrumentationExtensionProvider() {
         val listableBeanFactory = StaticListableBeanFactory()
         listableBeanFactory.addBean(
-            "testDgsDataLoaderOptionsCustomizer",
+            "exampleDgsDataLoaderOptionsCustomizer",
             object : DgsDataLoaderOptionsCustomizer {
                 override fun customize(dgsDataLoader: DgsDataLoader, dataLoaderOptions: DataLoaderOptions) {
                     dataLoaderOptions.setMaxBatchSize(notMinusOne)
@@ -51,8 +51,8 @@ class DgsDataLoaderProviderTest {
         )
         every { applicationContextMock.getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java) } returns
             listableBeanFactory.getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java)
-        every { applicationContextMock.getBeanProvider(DgsDataLoaderOptionsCustomizer::class.java) } returns
-            listableBeanFactory.getBeanProvider(DgsDataLoaderOptionsCustomizer::class.java)
+        every { applicationContextMock.getBean("exampleDgsDataLoaderOptionsCustomizer", DgsDataLoaderOptionsCustomizer::class.java) } returns
+            listableBeanFactory.getBean("exampleDgsDataLoaderOptionsCustomizer", DgsDataLoaderOptionsCustomizer::class.java)
     }
 
     @Test

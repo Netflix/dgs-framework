@@ -45,6 +45,8 @@ internal class DgsDataFetchingEnvironmentTest {
     @RelaxedMockK
     lateinit var dfeMock: DataFetchingEnvironment
 
+    val notMinusOne = 10
+
     val helloFetcher = object : Any() {
         @DgsData(parentType = "Query", field = "hello")
         fun someFetcher(dfe: DgsDataFetchingEnvironment): CompletableFuture<String> {
@@ -110,10 +112,10 @@ internal class DgsDataFetchingEnvironmentTest {
     fun setDataLoaderInstrumentationExtensionProvider() {
         val listableBeanFactory = StaticListableBeanFactory()
         listableBeanFactory.addBean(
-            "testDgsDataLoaderOptionsCustomizer",
+            "exampleDgsDataLoaderOptionsCustomizer",
             object : DgsDataLoaderOptionsCustomizer {
                 override fun customize(dgsDataLoader: DgsDataLoader, dataLoaderOptions: DataLoaderOptions) {
-                    dataLoaderOptions.setCacheKeyFunction { input -> dgsDataLoader.name + "-" + input }
+                    dataLoaderOptions.setMaxBatchSize(notMinusOne)
                 }
             }
         )
@@ -121,8 +123,8 @@ internal class DgsDataFetchingEnvironmentTest {
             listableBeanFactory.getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java)
 
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeanProvider(DgsDataLoaderOptionsCustomizer::class.java) } returns
-            listableBeanFactory.getBeanProvider(DgsDataLoaderOptionsCustomizer::class.java)
+        every { applicationContextMock.getBean("exampleDgsDataLoaderOptionsCustomizer", DgsDataLoaderOptionsCustomizer::class.java) } returns
+            listableBeanFactory.getBean("exampleDgsDataLoaderOptionsCustomizer", DgsDataLoaderOptionsCustomizer::class.java)
     }
 
     @Test
