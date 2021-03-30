@@ -137,7 +137,10 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         if (dgsDataLoader.maxBatchSize > 0) {
             options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
         }
-        customizeDataLoaderOptions(dgsDataLoader, options)
+        if (dgsDataLoader.optionsCustomizerName.isNotBlank()) {
+            applicationContext.getBean(dgsDataLoader.optionsCustomizerName, DgsDataLoaderOptionsCustomizer::class.java)
+                .customize(dgsDataLoader, options)
+        }
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
         return DataLoader.newDataLoader(extendedBatchLoader, options)
     }
@@ -152,7 +155,10 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         if (dgsDataLoader.maxBatchSize > 0) {
             options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
         }
-        customizeDataLoaderOptions(dgsDataLoader, options)
+        if (dgsDataLoader.optionsCustomizerName.isNotBlank()) {
+            applicationContext.getBean(dgsDataLoader.optionsCustomizerName, DgsDataLoaderOptionsCustomizer::class.java)
+                .customize(dgsDataLoader, options)
+        }
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
         return DataLoader.newMappedDataLoader(extendedBatchLoader, options)
     }
@@ -170,7 +176,11 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         if (dgsDataLoader.maxBatchSize > 0) {
             options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
         }
-        customizeDataLoaderOptions(dgsDataLoader, options)
+
+        if (dgsDataLoader.optionsCustomizerName.isNotBlank()) {
+            applicationContext.getBean(dgsDataLoader.optionsCustomizerName, DgsDataLoaderOptionsCustomizer::class.java)
+                .customize(dgsDataLoader, options)
+        }
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
         return DataLoader.newDataLoader(extendedBatchLoader, options)
     }
@@ -189,17 +199,12 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
             options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
         }
 
-        customizeDataLoaderOptions(dgsDataLoader, options)
+        if (dgsDataLoader.optionsCustomizerName.isNotBlank()) {
+            applicationContext.getBean(dgsDataLoader.optionsCustomizerName, DgsDataLoaderOptionsCustomizer::class.java)
+                .customize(dgsDataLoader, options)
+        }
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
         return DataLoader.newMappedDataLoader(extendedBatchLoader, options)
-    }
-
-    private fun customizeDataLoaderOptions(dgsDataLoader: DgsDataLoader, dataLoaderOptions: DataLoaderOptions) {
-        applicationContext
-            .getBeanProvider(DgsDataLoaderOptionsCustomizer::class.java)
-            .forEach {
-                it.customize(dgsDataLoader, dataLoaderOptions)
-            }
     }
 
     private inline fun <reified T> wrappedDataLoader(loader: T, name: String): T {

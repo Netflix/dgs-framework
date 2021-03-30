@@ -21,7 +21,7 @@ import org.dataloader.BatchLoaderWithContext
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
-@DgsDataLoader(name = "exampleLoaderWithContext")
+@DgsDataLoader(name = "exampleLoaderWithContext", optionsCustomizerName = "exampleDgsDataLoaderOptionsCustomizer")
 class ExampleBatchLoaderWithContext : BatchLoaderWithContext<String, String> {
     override fun load(keys: List<String>?, env: BatchLoaderEnvironment): CompletionStage<List<String>> {
         return CompletableFuture.supplyAsync { keys?.map { it.toUpperCase() } }
