@@ -435,7 +435,7 @@ class DgsSchemaProvider(
                 logger.info("No schema files found, but a schema was provided as an TypeDefinitionRegistry")
                 arrayOf()
             } else {
-                logger.error("No schema files found. Define schema locations with property dgs.graphql.schema-locations")
+                logger.error("No schema files found in ${schemaLocations}. Define schema locations with property dgs.graphql.schema-locations")
                 throw NoSchemaFoundException()
             }
         }
