@@ -80,6 +80,36 @@ internal class DgsSchemaProviderTest {
     }
 
     @Test
+    fun findMultipleSchemaFilesSingleLocation() {
+        val findSchemaFiles = DgsSchemaProvider(
+            applicationContextMock,
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            listOf("classpath*:location1/**/*.graphql*")
+        ).findSchemaFiles()
+        assertThat(findSchemaFiles.size).isGreaterThan(2)
+        assertEquals("location1-schema1.graphqls", findSchemaFiles[0].filename)
+        assertEquals("location1-schema2.graphqls", findSchemaFiles[1].filename)
+    }
+
+    @Test
+    fun findMultipleSchemaFilesMultipleLocations() {
+        val findSchemaFiles = DgsSchemaProvider(
+            applicationContextMock,
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            listOf("classpath*:location1/**/*.graphql*", "classpath*:location2/**/*.graphql*")
+        ).findSchemaFiles()
+        assertThat(findSchemaFiles.size).isGreaterThan(4)
+        assertEquals("location1-schema1.graphqls", findSchemaFiles[0].filename)
+        assertEquals("location1-schema2.graphqls", findSchemaFiles[1].filename)
+        assertEquals("location2-schema1.graphqls", findSchemaFiles[2].filename)
+        assertEquals("location2-schema2.graphqls", findSchemaFiles[3].filename)
+    }
+
+    @Test
     fun findSchemaFilesEmptyDir() {
         assertThrows<NoSchemaFoundException> {
             DgsSchemaProvider(
