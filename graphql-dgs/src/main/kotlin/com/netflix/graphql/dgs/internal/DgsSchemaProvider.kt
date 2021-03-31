@@ -62,8 +62,13 @@ class DgsSchemaProvider(
     private val applicationContext: ApplicationContext,
     private val federationResolver: Optional<DgsFederationResolver>,
     private val existingTypeDefinitionRegistry: Optional<TypeDefinitionRegistry>,
-    private val mockProviders: Optional<Set<MockProvider>>
+    private val mockProviders: Optional<Set<MockProvider>>,
+    private val schemaLocations: List<String> = listOf(DEFAULT_SCHEMA_LOCATION)
 ) {
+
+    companion object {
+        const val DEFAULT_SCHEMA_LOCATION = "classpath*:schema/**/*.graphql*"
+    }
 
     val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
     val entityFetchers = mutableMapOf<String, Pair<Any, Method>>()
@@ -417,12 +422,12 @@ class DgsSchemaProvider(
         }
     }
 
-    internal fun findSchemaFiles(basedir: String = "schema", hasDynamicTypeRegistry: Boolean = false): Array<Resource> {
+    internal fun findSchemaFiles(hasDynamicTypeRegistry: Boolean = false): Array<Resource> {
         val cl = Thread.currentThread().contextClassLoader
 
         val resolver = PathMatchingResourcePatternResolver(cl)
         val schemas = try {
-            val resources = resolver.getResources("classpath*:$basedir/**/*.graphql*")
+            val resources = schemaLocations.flatMap { resolver.getResources(it).toList() }.distinct().toTypedArray()
             if (resources.isEmpty()) {
                 throw NoSchemaFoundException()
             }
@@ -432,23 +437,17 @@ class DgsSchemaProvider(
                 logger.info("No schema files found, but a schema was provided as an TypeDefinitionRegistry")
                 arrayOf()
             } else {
-                logger.error("No schema files found. Define schemas in src/main/resources/$basedir/**/*.graphqls")
+                logger.error("No schema files found in $schemaLocations. Define schema locations with property dgs.graphql.schema-locations")
                 throw NoSchemaFoundException()
             }
         }
 
-        val testSchemas = try {
-            resolver.getResources("classpath:$basedir-test/**/*.graphql*")
-        } catch (ex: Exception) {
-            arrayOf<Resource>()
-        }
-
         val metaInfSchemas = try {
-            resolver.getResources("classpath*:META-INF/$basedir/**/*.graphql*")
+            resolver.getResources("classpath*:META-INF/schema/**/*.graphql*")
         } catch (ex: Exception) {
             arrayOf<Resource>()
         }
 
-        return schemas + testSchemas + metaInfSchemas
+        return schemas + metaInfSchemas
     }
 }
