@@ -41,13 +41,28 @@ rootProject.subprojects
     }
 
 dependencies {
+    // The following constraints leverage the _rich versioning_ exposed by Gradle,
+    // this will be published as Maven Metadata.
+    // For more information at https://docs.gradle.org/current/userguide/rich_versions.html
     constraints {
-        api("com.graphql-java:graphql-java:${Versions.GRAPHQL_JAVA}")
-        api("com.apollographql.federation:federation-graphql-java-support:${Versions.GRAPHQL_JAVA_FEDERATION}")
-        api("com.jayway.jsonpath:json-path:2.5.+")
-        api("io.reactivex.rxjava3:rxjava:3.+")
-        api("io.projectreactor:reactor-core:3.4.+")
-        api("io.projectreactor:reactor-test:3.4.+")
+        api("com.graphql-java:graphql-java") {
+            version { require(Versions.GRAPHQL_JAVA) }
+        }
+        api("com.apollographql.federation:federation-graphql-java-support") {
+            version { require(Versions.GRAPHQL_JAVA_FEDERATION) }
+        }
+        api("com.jayway.jsonpath:json-path") {
+            version { require("2.5.+") }
+        }
+        api("io.reactivex.rxjava3:rxjava") {
+            version { require("3.0.+") }
+        }
+        api("io.projectreactor:reactor-core") {
+            version { require("3.4.+") }
+        }
+        api("io.projectreactor:reactor-test"){
+            version { require("3.4.+") }
+        }
     }
 }
 
@@ -71,9 +86,10 @@ afterEvaluate {
 
     project.dependencies {
         constraints {
-            (subprojectRecommendations).forEach {
+            subprojectRecommendations.forEach {
                 logger.info("Adding ${it} as constraint.")
                 api(it)
+
             }
         }
     }
