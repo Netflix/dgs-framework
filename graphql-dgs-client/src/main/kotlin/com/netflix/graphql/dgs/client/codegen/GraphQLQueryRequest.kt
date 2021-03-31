@@ -22,8 +22,11 @@ class GraphQLQueryRequest(private val query: GraphQLQuery, private val projectio
 
     fun serialize(): String {
         val builder = StringBuilder()
-        builder.append(query.getOperationType()).append(" {")
-        builder.append(query.getOperationName())
+        builder.append(query.getOperationType())
+        if (query.name != null) {
+            builder.append(" ").append(query.name)
+        }
+        builder.append(" {").append(query.getOperationName())
         val input: Map<String, Any?> = query.input
         if (input.isNotEmpty()) {
             builder.append("(")
