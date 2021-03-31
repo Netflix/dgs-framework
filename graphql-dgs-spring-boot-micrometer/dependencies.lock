@@ -71,6 +71,16 @@
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ],
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure": {
@@ -84,7 +94,6 @@
         },
         "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
             "project": true
@@ -481,6 +490,16 @@
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ],
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure": {
@@ -494,7 +513,6 @@
         },
         "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
             "project": true
