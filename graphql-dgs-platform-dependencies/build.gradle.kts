@@ -59,13 +59,17 @@ afterEvaluate {
     val passThroughRecommendations =
         rootProject.dependencyRecommendations.mavenBomProvider.recommendations
             .filterNot { it.key in ignoreExternalModules }
-            .map { "${it.key}:${it.value}" }
+            .map { it.key to it.value }
 
     project.dependencies {
         constraints {
-            (passThroughRecommendations).forEach {
-                logger.info("Adding ${it} as constraint.")
-                api(it)
+            passThroughRecommendations.forEach {
+                logger.info("Adding ${it.first} as prefer constraint for ${it.second}.")
+                api(it.first) {
+                    version {
+                        prefer(it.second)
+                    }
+                }
             }
         }
     }
