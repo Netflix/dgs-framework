@@ -425,7 +425,7 @@ class DgsSchemaProvider(
 
         val resolver = PathMatchingResourcePatternResolver(cl)
         val schemas = try {
-            var resources = schemaLocations.flatMap { resolver.getResources(it).toList() }.distinct().toTypedArray()
+            val resources = schemaLocations.flatMap { resolver.getResources(it).toList() }.distinct().toTypedArray()
             if (resources.isEmpty()) {
                 throw NoSchemaFoundException()
             }
