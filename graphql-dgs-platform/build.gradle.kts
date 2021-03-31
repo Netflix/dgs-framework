@@ -52,16 +52,16 @@ dependencies {
             version { require(Versions.GRAPHQL_JAVA_FEDERATION) }
         }
         api("com.jayway.jsonpath:json-path") {
-            version { require("2.5.+") }
+            version { require("[2.5,)") }
         }
         api("io.reactivex.rxjava3:rxjava") {
-            version { require("3.0.+") }
+            version { require("[3.0,)") }
         }
         api("io.projectreactor:reactor-core") {
-            version { require("3.4.+") }
+            version { require("[3.4,)") }
         }
         api("io.projectreactor:reactor-test"){
-            version { require("3.4.+") }
+            version { require("[3.4,)") }
         }
     }
 }
