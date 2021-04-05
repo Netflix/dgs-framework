@@ -27,6 +27,7 @@ import graphql.schema.DataFetchingEnvironment
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -36,6 +37,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.context.request.WebRequest
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -149,6 +152,44 @@ internal class InputArgumentTest {
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument("person") person: Person): String {
+                return "Hello, ${person.name}"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello(person: {name: "tester"})}""")
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("Hello, tester", data["hello"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `@InputArgument with name specified as 'name'`() {
+        val schema = """
+            type Query {
+                hello(person:Person): String
+            }
+            
+            input Person {
+                name:String
+            }
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument(name = "person") person: Person): String {
                 return "Hello, ${person.name}"
             }
         }
@@ -779,10 +820,155 @@ internal class InputArgumentTest {
         val build = GraphQL.newGraphQL(schema).build()
         val httpHeaders = HttpHeaders()
         httpHeaders.add("Referer", "localhost")
-        val executionResult = build.execute(ExecutionInput.newExecutionInput("""{hello}""").context(DgsContext(null, DgsRequestData(emptyMap(), httpHeaders))))
+        val executionResult = build.execute(
+            ExecutionInput.newExecutionInput("""{hello}""")
+                .context(DgsContext(null, DgsRequestData(emptyMap(), httpHeaders)))
+        )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("From, localhost", data["hello"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `A @RequestHeader argument with name specified in 'name' argument should be supported`() {
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@RequestHeader(name = "referer") input: String): String {
+                return "From, $input"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val schema = provider.schema()
+
+        val build = GraphQL.newGraphQL(schema).build()
+        val httpHeaders = HttpHeaders()
+        httpHeaders.add("Referer", "localhost")
+        val executionResult = build.execute(
+            ExecutionInput.newExecutionInput("""{hello}""")
+                .context(DgsContext(null, DgsRequestData(emptyMap(), httpHeaders)))
+        )
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("From, localhost", data["hello"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `A @RequestParam argument with name specified in 'name' argument should be supported`() {
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@RequestParam(name = "message") input: String): String {
+                return input
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val schema = provider.schema()
+
+        val build = GraphQL.newGraphQL(schema).build()
+
+        val webRequest = mockk<WebRequest>()
+        every { webRequest.parameterMap } returns mapOf("message" to listOf("My param").toTypedArray())
+
+        val executionResult = build.execute(
+            ExecutionInput.newExecutionInput("""{hello}""")
+                .context(DgsContext(null, DgsRequestData(emptyMap(), null, webRequest)))
+        )
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("My param", data["hello"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `A @RequestParam argument with no name specified should be supported`() {
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@RequestParam message: String): String {
+                return message
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val schema = provider.schema()
+
+        val build = GraphQL.newGraphQL(schema).build()
+
+        val webRequest = mockk<WebRequest>()
+        every { webRequest.parameterMap } returns mapOf("message" to listOf("My param").toTypedArray())
+
+        val executionResult = build.execute(
+            ExecutionInput.newExecutionInput("""{hello}""")
+                .context(DgsContext(null, DgsRequestData(emptyMap(), null, webRequest)))
+        )
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("My param", data["hello"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `A @RequestParam argument with no name specified as value should be supported`() {
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@RequestParam("message") input: String): String {
+                return input
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val schema = provider.schema()
+
+        val build = GraphQL.newGraphQL(schema).build()
+
+        val webRequest = mockk<WebRequest>()
+        every { webRequest.parameterMap } returns mapOf("message" to listOf("My param").toTypedArray())
+
+        val executionResult = build.execute(
+            ExecutionInput.newExecutionInput("""{hello}""")
+                .context(DgsContext(null, DgsRequestData(emptyMap(), null, webRequest)))
+        )
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("My param", data["hello"])
 
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }

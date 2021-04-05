@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.aop.support.AopUtils
 import org.springframework.context.ApplicationContext
 import org.springframework.core.DefaultParameterNameDiscoverer
+import org.springframework.core.annotation.AnnotationUtils
 import org.springframework.core.annotation.MergedAnnotations
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
@@ -259,8 +260,10 @@ class DgsSchemaProvider(
 
             when {
                 parameter.isAnnotationPresent(InputArgument::class.java) -> {
-                    val annotation = parameter.getAnnotation(InputArgument::class.java)
-                    val parameterName = annotation.value.ifBlank { parameterNames[idx] }
+                    val annotation = AnnotationUtils.getAnnotation(parameter, InputArgument::class.java)!!
+                    val name: String = AnnotationUtils.getAnnotationAttributes(annotation)["name"] as String
+
+                    val parameterName = name.ifBlank { parameterNames[idx] }
                     val collectionType = annotation.collectionType.java
                     val parameterValue: Any? = environment.getArgument(parameterName)
 
@@ -269,7 +272,10 @@ class DgsSchemaProvider(
                             // Return a list of elements that are converted to their collection type, e.e.g. List<Person>, List<String> etc.
                             parameterValue.map { item -> objectMapper.convertValue(item, collectionType) }.toList()
                         } catch (ex: Exception) {
-                            throw DgsInvalidInputArgumentException("Specified type '$collectionType' is invalid for $parameterName.", ex)
+                            throw DgsInvalidInputArgumentException(
+                                "Specified type '$collectionType' is invalid for $parameterName.",
+                                ex
+                            )
                         }
                     } else if (parameterValue is List<*>) {
                         // Return as is for all other types of Lists, i.e. custom scalars e.g. List<UUID>, and other scalar types like List<Integer> etc.
@@ -298,8 +304,9 @@ class DgsSchemaProvider(
                 }
 
                 parameter.isAnnotationPresent(RequestHeader::class.java) -> {
-                    val annotation = parameter.getAnnotation(RequestHeader::class.java)
-                    val parameterName = annotation.value.ifBlank { parameterNames[idx] }
+                    val annotation = AnnotationUtils.getAnnotation(parameter, RequestHeader::class.java)!!
+                    val name: String = AnnotationUtils.getAnnotationAttributes(annotation)["name"] as String
+                    val parameterName = name.ifBlank { parameterNames[idx] }
 
                     args.add(
                         DgsContext.getRequestData(environment)?.headers?.get(parameterName)?.let {
@@ -313,8 +320,9 @@ class DgsSchemaProvider(
                 }
 
                 parameter.isAnnotationPresent(RequestParam::class.java) -> {
-                    val annotation = parameter.getAnnotation(RequestParam::class.java)
-                    val parameterName = annotation.value.ifBlank { parameterNames[idx] }
+                    val annotation = AnnotationUtils.getAnnotation(parameter, RequestParam::class.java)!!
+                    val name: String = AnnotationUtils.getAnnotationAttributes(annotation)["name"] as String
+                    val parameterName = name.ifBlank { parameterNames[idx] }
 
                     args.add(
                         DgsContext.getRequestData(environment)?.webRequest?.parameterMap?.get(parameterName)?.let {
