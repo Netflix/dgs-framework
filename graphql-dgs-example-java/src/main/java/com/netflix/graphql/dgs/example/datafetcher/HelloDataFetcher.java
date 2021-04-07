@@ -23,16 +23,20 @@ import graphql.GraphQLException;
 import graphql.schema.DataFetchingEnvironment;
 import org.dataloader.DataLoader;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @DgsComponent
 public class HelloDataFetcher {
     @DgsQuery
     @DgsEnableDataFetcherInstrumentation(false)
-    public String hello(@InputArgument String name) {
+    public String hello(@InputArgument String name, DgsDataFetchingEnvironment dfe) {
         if (name == null) {
             name = "Stranger";
         }
+
+        Map<String, Object> extensions = DgsContext.getRequestData(dfe).getExtensions();
+        System.out.println(extensions);
 
         return "hello, " + name + "!";
     }
