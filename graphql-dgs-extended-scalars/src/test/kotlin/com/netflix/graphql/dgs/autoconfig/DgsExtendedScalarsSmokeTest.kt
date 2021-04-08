@@ -18,18 +18,16 @@ package com.netflix.graphql.dgs.autoconfig
 
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
+import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.net.URL
@@ -39,108 +37,90 @@ import java.time.OffsetTime
 import java.time.ZoneOffset
 import java.util.*
 
-@SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.MOCK,
-    classes = [DgsExtendedScalarsSmokeTest.LocalApp::class]
-)
-@AutoConfigureMockMvc
+@SpringBootTest(classes = [DgsExtendedScalarsSmokeTest.LocalApp::class])
 @EnableAutoConfiguration
 internal class DgsExtendedScalarsSmokeTest {
 
     @Autowired
-    lateinit var mvc: MockMvc
+    lateinit var queryExecutor: DgsQueryExecutor
 
     @Test
     fun `Date & Time scalars are available`() {
-        assertResponse(
-            """{ "query": "{aDate aTime aDateTime}" }""",
-            """
-                |{
-                |   "data": {
-                |       "aDate":"1963-01-01",
-                |       "aTime":"18:00:30Z",
-                |       "aDateTime":"1963-01-01T18:00:30Z"
-                |   }
-                |}""".trimMargin()
+        val data = executeQueryExtractingData<Map<String, String>>("{aDate aTime aDateTime }")
+        assertThat(data).containsAllEntriesOf(
+            mapOf(
+                "aDate" to "1963-01-01",
+                "aTime" to "18:00:30Z",
+                "aDateTime" to "1963-01-01T18:00:30Z"
+            )
         )
     }
 
     @Test
     fun `Object, JSON, Url, and Locale scalars are available`() {
-        assertResponse(
-            """{ "query": "{aJSONObject anObject aURL aLocale}" }""",
-            """
-                |{
-                |   "data": {
-                |       "aJSONObject":{"name":"json"},
-                |       "anObject":{"name":"object"},
-                |       "aURL":"http://localhost:8080",
-                |       "aLocale":"en-US"
-                |   }
-                |}
-                |""".trimMargin()
+        val data =
+            executeQueryExtractingData<Map<String, Any>>("{aJSONObject anObject aURL aLocale}")
+
+        assertThat(data).containsAllEntriesOf(
+            mapOf(
+                "aJSONObject" to mapOf("name" to "json"),
+                "anObject" to mapOf("name" to "object"),
+                "aURL" to "http://localhost:8080",
+                "aLocale" to "en-US"
+            )
         )
     }
 
     @Test
     fun `Numeric scalars are available`() {
-        assertResponse(
-            """
+        val data =
+            executeQueryExtractingData<Map<String, Number>>(
+                """
                 |{ 
-                |   "query": "{
-                |       aPositiveInt
-                |       aNegativeInt
-                |       aNonPositiveInt
-                |       aNonNegativeInt
-                |       aPositiveFloat
-                |       aNegativeFloat
-                |       aNonPositiveFloat
-                |       aNonNegativeFloat
-                |       aLong
-                |       aShort
-                |       aByte
-                |       aBigDecimal
-                |       aBigInteger
-                |   }"
+                |   aPositiveInt
+                |   aNegativeInt
+                |   aNonPositiveInt
+                |   aNonNegativeInt
+                |   aPositiveFloat
+                |   aNegativeFloat
+                |   aNonPositiveFloat
+                |   aNonNegativeFloat
+                |   aLong
+                |   aShort
+                |   aByte
+                |   aBigDecimal
+                |   aBigInteger
                 |}
-                """.trimMargin().replace("\n ", ""),
-            """
-                |{
-                |   "data": {
-                |       "aPositiveInt":1,
-                |       "aNegativeInt":-1,
-                |       "aNonPositiveInt":0,
-                |       "aNonNegativeInt":0,
-                |       "aPositiveFloat":1.0,
-                |       "aNegativeFloat":-1.0,
-                |       "aNonPositiveFloat":0.0,
-                |       "aNonNegativeFloat":0.0,
-                |       "aLong":9223372036854775807,
-                |       "aShort":32767,
-                |       "aByte":127,
-                |       "aBigDecimal":10,
-                |       "aBigInteger":10
-                |   }
-                |}
-                |""".trimMargin()
+                """.trimMargin()
+            )
+        assertThat(data).containsAllEntriesOf(
+            mapOf(
+                "aPositiveInt" to 1,
+                "aNegativeInt" to -1,
+                "aNonPositiveInt" to 0,
+                "aNonNegativeInt" to 0,
+                "aPositiveFloat" to 1.0,
+                "aNegativeFloat" to -1.0,
+                "aNonPositiveFloat" to 0.0,
+                "aNonNegativeFloat" to 0.0,
+                "aLong" to 9223372036854775807L,
+                "aShort" to 32767,
+                "aByte" to 127,
+                "aBigDecimal" to 10,
+                "aBigInteger" to 10
+            )
         )
     }
 
     @Test
     fun `Char scalars are available`() {
-        assertResponse(
-            """{ "query": "{ aChar }" }""",
-            """{ "data": { "aChar": "A" } }"""
-        )
+        val data =
+            executeQueryExtractingData<Map<String, Any>>("{ aChar }")
+        assertThat(data).containsAllEntriesOf(mapOf("aChar" to "A"))
     }
 
-    private fun assertResponse(query: String, expectedResponse: String) {
-        mvc.perform(
-            MockMvcRequestBuilders
-                .post("/graphql")
-                .content(query)
-        ).andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json(expectedResponse, false))
+    private fun <T> executeQueryExtractingData(query: String): T {
+        return queryExecutor.executeAndExtractJsonPath(query, "data")
     }
 
     @SpringBootConfiguration(proxyBeanMethods = false)
