@@ -26,47 +26,27 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.SpyBean
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import java.time.LocalDate
 
 @SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.MOCK,
     classes = [MultipleRegistrationOfExtendedScalarsTest.LocalApp::class]
 )
-@AutoConfigureMockMvc
 @EnableAutoConfiguration
 internal class MultipleRegistrationOfExtendedScalarsTest {
 
     @Autowired
-    lateinit var mvc: MockMvc
+    lateinit var queryExecutor: DgsQueryExecutor
 
     @Autowired
     lateinit var timesExtendedScalarsRegistrar: DgsExtendedScalarsAutoConfiguration.ExtendedScalarRegistrar
 
-    @SpyBean
-    lateinit var example: LocalApp.ExampleImplementation
-
     @Test
     fun `Multiple registrations of the same scalar will not affect the outcome of the query`() {
         assertThat(timesExtendedScalarsRegistrar).isNotNull
-        assertResponse(
-            """{ "query": "{aDate}" }""",
-            """{ "data": { "aDate":"1963-01-01"   }}"""
-        )
-    }
 
-    private fun assertResponse(query: String, expectedResponse: String) {
-        mvc.perform(
-            MockMvcRequestBuilders
-                .post("/graphql")
-                .content(query)
-        ).andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json(expectedResponse, false))
+        val dateStr: String = queryExecutor.executeAndExtractJsonPath("""{ aDate }""", "data.aDate")
+        assertThat(dateStr).isEqualTo("1963-01-01")
     }
 
     @SpringBootConfiguration(proxyBeanMethods = false)
