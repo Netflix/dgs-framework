@@ -17,6 +17,8 @@
 package com.netflix.graphql.dgs
 
 import com.apollographql.federation.graphqljava._Entity
+import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
+import com.netflix.graphql.dgs.exceptions.InvalidDgsEntityFetcher
 import com.netflix.graphql.dgs.exceptions.MissingDgsEntityFetcherException
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
@@ -174,13 +176,47 @@ class DgsFederationResolverTest {
     }
 
     @Test
-    fun dgsEntityFetcherMissingArgument() {
+    fun dgsEntityFetcherWithException() {
+
         val movieEntityFetcher = object {
             @DgsEntityFetcher(name = "Movie")
-            fun movieEntityFetcher(): Movie {
-                throw RuntimeException("Should not be called")
+            fun movieEntityFetcher(values: Map<String, Any>): Movie {
+                if (values["movieId"] == "invalid") {
+                    throw DgsInvalidInputArgumentException("Invalid input argument exception")
+                }
+
+                return Movie(values["movieId"].toString())
             }
         }
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("MovieEntityFetcher", movieEntityFetcher))
+        dgsSchemaProvider.schema("""type Query {}""")
+
+        val arguments = mapOf<String, Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("__typename", "Movie"), Pair("movieId", "invalid")))))
+        val dataFetchingEnvironment = DgsDataFetchingEnvironment(DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build())
+        assertThrows<DgsInvalidInputArgumentException> { DefaultDgsFederationResolver(dgsSchemaProvider).entitiesFetcher().get(dataFetchingEnvironment) }
+    }
+
+    @Test
+    fun dgsEntityFetcherWithIllegalArgumentException() {
+
+        val movieEntityFetcher = object {
+            @DgsEntityFetcher(name = "Movie")
+            fun movieEntityFetcher(values: Map<String, Any>, illegalArgument: Int): Movie {
+                throw java.lang.RuntimeException("Should not execute for illegalArgument" + illegalArgument)
+            }
+        }
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("MovieEntityFetcher", movieEntityFetcher))
+        dgsSchemaProvider.schema("""type Query {}""")
+
+        val arguments = mapOf<String, Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("__typename", "Movie"), Pair("movieId", "invalid"), Pair("illegalArgument", 0)))))
+        val dataFetchingEnvironment = DgsDataFetchingEnvironment(DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build())
+        assertThrows<InvalidDgsEntityFetcher> { DefaultDgsFederationResolver(dgsSchemaProvider).entitiesFetcher().get(dataFetchingEnvironment) }
+    }
+
+    @Test
+    fun dgsEntityFetcherMissingArgument() {
         val arguments = mapOf<String, Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("__typename", "Movie")))))
         val dataFetchingEnvironment = DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build()
         assertThrows<RuntimeException> { DefaultDgsFederationResolver(dgsSchemaProvider).entitiesFetcher().get(dataFetchingEnvironment) }
