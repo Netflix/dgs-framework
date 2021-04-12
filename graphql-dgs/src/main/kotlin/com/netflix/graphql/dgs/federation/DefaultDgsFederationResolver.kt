@@ -29,6 +29,8 @@ import graphql.schema.TypeResolver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import java.lang.IllegalArgumentException
+import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
@@ -70,22 +72,31 @@ open class DefaultDgsFederationResolver() :
                 if (!fetcher.second.parameterTypes.any { it.isAssignableFrom(Map::class.java) }) {
                     throw InvalidDgsEntityFetcher("@DgsEntityFetcher ${fetcher.first::class.java.name}.${fetcher.second.name} is invalid. A DgsEntityFetcher must accept an argument of type Map<String, Object>")
                 }
+                try {
+                    val result =
+                        if (fetcher.second.parameterTypes.any { it.isAssignableFrom(DgsDataFetchingEnvironment::class.java) }) {
+                            fetcher.second.invoke(fetcher.first, values, DgsDataFetchingEnvironment(env))
+                        } else {
+                            fetcher.second.invoke(fetcher.first, values)
+                        }
 
-                val result =
-                    if (fetcher.second.parameterTypes.any { it.isAssignableFrom(DgsDataFetchingEnvironment::class.java) }) {
-                        fetcher.second.invoke(fetcher.first, values, DgsDataFetchingEnvironment(env))
-                    } else {
-                        fetcher.second.invoke(fetcher.first, values)
+                    if (result == null) {
+                        throw MissingDgsEntityFetcherException(typename.toString())
                     }
 
-                if (result == null) {
-                    throw MissingDgsEntityFetcherException(typename.toString())
-                }
-
-                if (result is CompletionStage<*>) {
-                    result.toCompletableFuture()
-                } else {
-                    CompletableFuture.completedFuture(result)
+                    if (result is CompletionStage<*>) {
+                        result.toCompletableFuture()
+                    } else {
+                        CompletableFuture.completedFuture(result)
+                    }
+                } catch (e: Exception) {
+                    if (e is InvocationTargetException && e.targetException != null) {
+                        throw e.targetException
+                    } else if (e is IllegalArgumentException) {
+                        throw InvalidDgsEntityFetcher("@DgsEntityFetcher ${fetcher.first::class.java.name}.${fetcher.second.name} has an invalid argument. A DgsEntityFetcher must accept an argument of type Map<String, Object> and optionally, a DgsDataFetchingEnvironment")
+                    } else {
+                        throw e
+                    }
                 }
             }
 
