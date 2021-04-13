@@ -7,13 +7,13 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -72,7 +72,7 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -81,40 +81,32 @@
             "locked": "5.3.6.RELEASE"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "5.3.6.RELEASE"
+            "locked": "5.3.8.RELEASE"
         },
         "org.springframework:spring-context": {
-            "locked": "5.2.12.RELEASE"
+            "locked": "5.2.13.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.2.12.RELEASE"
         },
         "org.springframework:spring-web": {
-            "locked": "5.2.12.RELEASE"
+            "locked": "5.2.13.RELEASE"
         }
     },
     "kapt": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.3.6.RELEASE"
-        }
-    },
-    "kaptClasspath_kaptKotlin": {
-        "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.3.6.RELEASE"
-        },
-        "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         }
     },
     "kaptTest": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         }
     },
     "kotlinCompilerClasspath": {
@@ -128,7 +120,7 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -154,7 +146,7 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -182,7 +174,7 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -202,7 +194,7 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -227,7 +219,7 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -298,7 +290,7 @@
             "locked": "1.7.30"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -307,16 +299,16 @@
             "locked": "5.3.6.RELEASE"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "5.3.6.RELEASE"
+            "locked": "5.3.8.RELEASE"
         },
         "org.springframework:spring-context": {
-            "locked": "5.2.12.RELEASE"
+            "locked": "5.2.13.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.2.12.RELEASE"
         },
         "org.springframework:spring-web": {
-            "locked": "5.2.12.RELEASE"
+            "locked": "5.2.13.RELEASE"
         }
     },
     "testAnnotationProcessor": {
@@ -327,7 +319,7 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -379,10 +371,10 @@
             "locked": "1.10.3-jdk8"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.4"
+            "locked": "3.4.5"
         },
         "io.reactivex.rxjava3:rxjava": {
-            "locked": "3.0.11"
+            "locked": "3.0.12"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
@@ -395,10 +387,10 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -407,16 +399,16 @@
             "locked": "5.3.6.RELEASE"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "5.3.6.RELEASE"
+            "locked": "5.3.8.RELEASE"
         },
         "org.springframework:spring-context": {
-            "locked": "5.2.12.RELEASE"
+            "locked": "5.2.13.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.2.12.RELEASE"
         },
         "org.springframework:spring-web": {
-            "locked": "5.2.12.RELEASE"
+            "locked": "5.2.13.RELEASE"
         }
     },
     "testRuntimeClasspath": {
@@ -465,10 +457,10 @@
             "locked": "1.10.3-jdk8"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.4"
+            "locked": "3.4.5"
         },
         "io.reactivex.rxjava3:rxjava": {
-            "locked": "3.0.11"
+            "locked": "3.0.12"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.31"
@@ -487,10 +479,10 @@
             "locked": "1.7.30"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -499,16 +491,16 @@
             "locked": "5.3.6.RELEASE"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "5.3.6.RELEASE"
+            "locked": "5.3.8.RELEASE"
         },
         "org.springframework:spring-context": {
-            "locked": "5.2.12.RELEASE"
+            "locked": "5.2.13.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.2.12.RELEASE"
         },
         "org.springframework:spring-web": {
-            "locked": "5.2.12.RELEASE"
+            "locked": "5.2.13.RELEASE"
         }
     }
 }
