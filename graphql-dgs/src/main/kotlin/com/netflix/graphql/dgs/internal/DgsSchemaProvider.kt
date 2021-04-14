@@ -315,12 +315,21 @@ class DgsSchemaProvider(
                         parameterValue
                     } else {
                         // Return the converted value mapped to the defined type
-                        objectMapper.convertValue(parameterValue, parameter.type)
+                        if (parameter.type.isAssignableFrom(Optional::class.java)) {
+                            if (collectionType != Object::class.java) {
+                                objectMapper.convertValue(parameterValue, collectionType)
+                            } else {
+                                throw DgsInvalidInputArgumentException("When Optional<T> is used, the type must be specified using the collectionType argument of the @InputArgument annotation.")
+                            }
+                        } else {
+                            objectMapper.convertValue(parameterValue, parameter.type)
+                        }
                     }
 
                     val paramType = parameter.type
+                    val optionalValue = getValueAsOptional(convertValue, parameter)
 
-                    if (convertValue != null && !paramType.isPrimitive && !paramType.isAssignableFrom(convertValue.javaClass)) {
+                    if (optionalValue != null && !paramType.isPrimitive && !paramType.isAssignableFrom(optionalValue.javaClass)) {
                         throw DgsInvalidInputArgumentException("Specified type '${parameter.type}' is invalid. Found ${parameterValue?.javaClass?.name} instead.")
                     }
 
@@ -328,7 +337,7 @@ class DgsSchemaProvider(
                         logger.warn("Unknown argument '$parameterName' on data fetcher ${dgsComponent.javaClass.name}.${method.name}")
                     }
 
-                    args.add(convertValue)
+                    args.add(optionalValue)
                 }
 
                 parameter.isAnnotationPresent(RequestHeader::class.java) -> {
