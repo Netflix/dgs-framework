@@ -82,6 +82,34 @@ internal class DgsSSESubscriptionHandlerTest {
     }
 
     @Test
+    fun queryWithoutSubscriptionOperationError() {
+
+        val query = " { stocks { name, price }}"
+        val queryPayload = DgsSSESubscriptionHandler.QueryPayload(operationName = "MySubscription", query = query)
+        val base64 = Base64.getEncoder().encodeToString(jacksonObjectMapper().writeValueAsBytes(queryPayload))
+
+        every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
+        // every { executionResultMock.errors } returns listOf(ValidationError.newValidationError().build())
+
+        val responseEntity = DgsSSESubscriptionHandler(dgsQueryExecutor).subscriptionWithId(base64)
+        assertThat(responseEntity.statusCode.is4xxClientError).isTrue
+    }
+
+    @Test
+    fun queryWithQueryOperationError() {
+
+        val query = " query { stocks { name, price }}"
+        val queryPayload = DgsSSESubscriptionHandler.QueryPayload(operationName = "MySubscription", query = query)
+        val base64 = Base64.getEncoder().encodeToString(jacksonObjectMapper().writeValueAsBytes(queryPayload))
+
+        every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
+        // every { executionResultMock.errors } returns listOf(ValidationError.newValidationError().build())
+
+        val responseEntity = DgsSSESubscriptionHandler(dgsQueryExecutor).subscriptionWithId(base64)
+        assertThat(responseEntity.statusCode.is4xxClientError).isTrue
+    }
+
+    @Test
     fun invalidJson() {
 
         val query = "subscription { stocks { name, price }}"
@@ -124,7 +152,7 @@ internal class DgsSSESubscriptionHandlerTest {
     @Test
     @Suppress("ReactiveStreamsUnusedPublisher")
     fun success() {
-        val query = "query { stocks { name, price }}"
+        val query = "subscription { stocks { name, price }}"
         val queryPayload = DgsSSESubscriptionHandler.QueryPayload(operationName = "MySubscription", query = query)
         val base64 = Base64.getEncoder().encodeToString(jacksonObjectMapper().writeValueAsBytes(queryPayload))
 

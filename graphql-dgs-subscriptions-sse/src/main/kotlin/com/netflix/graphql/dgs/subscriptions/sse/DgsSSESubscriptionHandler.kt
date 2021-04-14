@@ -20,6 +20,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import graphql.ExecutionResult
+import graphql.language.OperationDefinition
+import graphql.parser.Parser
 import graphql.validation.ValidationError
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
@@ -55,6 +57,14 @@ class DgsSSESubscriptionHandler(private val dgsQueryExecutor: DgsQueryExecutor) 
             mapper.readValue(query, QueryPayload::class.java)
         } catch (ex: Exception) {
             emitter.send("Error parsing query: ${ex.message}")
+            emitter.complete()
+            return ResponseEntity.badRequest().body(emitter)
+        }
+
+        val parsedQuery = Parser().parseDocument(queryPayload.query)
+        if (! parsedQuery.definitions.isEmpty() && (parsedQuery.definitions[0] as OperationDefinition).operation.name != "SUBSCRIPTION") {
+            val errorMessage = "${queryPayload.query} is not a subscription operation"
+            emitter.send("Error parsing query: not a subscription operation")
             emitter.complete()
             return ResponseEntity.badRequest().body(emitter)
         }
