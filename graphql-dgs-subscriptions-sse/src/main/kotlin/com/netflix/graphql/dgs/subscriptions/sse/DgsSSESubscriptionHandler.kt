@@ -59,6 +59,12 @@ class DgsSSESubscriptionHandler(private val dgsQueryExecutor: DgsQueryExecutor) 
             return ResponseEntity.badRequest().body(emitter)
         }
 
+        if (! query.contains("subscription")) {
+            emitter.send("Error parsing query: not a subscription operation")
+            emitter.complete()
+            return ResponseEntity.badRequest().body(emitter)
+        }
+
         val executionResult: ExecutionResult = dgsQueryExecutor.execute(queryPayload.query, queryPayload.variables)
         if (executionResult.errors.isNotEmpty()) {
             return if (executionResult.errors.filterIsInstance<ValidationError>().isNotEmpty()) {
