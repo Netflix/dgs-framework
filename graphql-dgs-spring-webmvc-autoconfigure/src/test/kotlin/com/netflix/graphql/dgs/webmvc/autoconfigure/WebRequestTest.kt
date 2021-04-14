@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
+import java.util.*
 
 @SpringBootTest(
     classes = [DgsWebMvcAutoConfiguration::class, DgsAutoConfiguration::class, WebRequestTest.ExampleImplementation::class, WebRequestTest.TestCustomContextBuilder::class],
@@ -73,6 +74,57 @@ class WebRequestTest {
     }
 
     @Test
+    fun `@RequestHeader should support defaultValue`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ usingHeader }" }""")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingHeader": "default header"}}"""))
+    }
+
+    @Test
+    fun `@RequestHeader should throw an exception when not provided but required and no default is set`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ usingRequiredHeader }" }""")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"errors":[{"message":"com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException: Required header 'myheader' was not provided","locations":[],"path":["usingRequiredHeader"],"extensions":{"errorType":"INTERNAL"}}],"data":{"usingRequiredHeader":null}}"""))
+    }
+
+    @Test
+    fun `@RequestHeader should use null if not required and not provided`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ usingOptionalHeader }" }""")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingOptionalHeader": "default header from datafetcher"}}"""))
+    }
+
+    @Test
+    fun `@RequestHeader should support Optional for not provided values`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ usingOptionalHeaderAsOptionalType }" }""")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingOptionalHeaderAsOptionalType": "default header from Optional"}}"""))
+    }
+
+    @Test
+    fun `@RequestHeader should support Optional for provided values`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ usingOptionalHeaderAsOptionalType }" }""")
+                .header("myheader", "hello")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingOptionalHeaderAsOptionalType": "hello"}}"""))
+    }
+
+    @Test
     fun `@RequestParam should be available`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
@@ -96,13 +148,54 @@ class WebRequestTest {
     }
 
     @Test
-    fun `@RequestParam should properly handle unavailable param`() {
+    fun `@RequestParam should use default when no parameter was provided`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
                 .content("""{"query": "{ usingParam }" }""")
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{}"""))
+            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingParam": "default parameter"}}"""))
+    }
+
+    @Test
+    fun `@RequestParam should throw exception when no parameter was provided and no default is set`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ usingParamRequired }" }""")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"errors":[{"message":"com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException: Required request parameter 'myParam' was not provided","locations":[],"path":["usingParamRequired"],"extensions":{"errorType":"INTERNAL"}}],"data":{"usingParamRequired":null}}"""))
+    }
+
+    @Test
+    fun `@RequestParam should use null when not required and not provided`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ usingOptionalParam }" }""")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingOptionalParam": "default from datafetcher"}}"""))
+    }
+
+    @Test
+    fun `@RequestParam should support Optional parameters with non required null values`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ usingOptionalParamAsOptionalType }" }""")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingOptionalParamAsOptionalType": "default param from Optional"}}"""))
+    }
+
+    @Test
+    fun `@RequestParam should support Optional parameters`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ usingOptionalParamAsOptionalType }" }""")
+                .param("myParam", "hello")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingOptionalParamAsOptionalType": "hello"}}"""))
     }
 
     @Test
@@ -140,6 +233,24 @@ class WebRequestTest {
                             .name("usingHeader")
                             .type(TypeName("String"))
                             .build()
+                    ).fieldDefinition(
+                        FieldDefinition
+                            .newFieldDefinition()
+                            .name("usingRequiredHeader")
+                            .type(TypeName("String"))
+                            .build()
+                    ).fieldDefinition(
+                        FieldDefinition
+                            .newFieldDefinition()
+                            .name("usingOptionalHeader")
+                            .type(TypeName("String"))
+                            .build()
+                    ).fieldDefinition(
+                        FieldDefinition
+                            .newFieldDefinition()
+                            .name("usingOptionalHeaderAsOptionalType")
+                            .type(TypeName("String"))
+                            .build()
                     )
                     .fieldDefinition(
                         FieldDefinition
@@ -152,6 +263,24 @@ class WebRequestTest {
                         FieldDefinition
                             .newFieldDefinition()
                             .name("usingParam")
+                            .type(TypeName("String"))
+                            .build()
+                    ).fieldDefinition(
+                        FieldDefinition
+                            .newFieldDefinition()
+                            .name("usingParamRequired")
+                            .type(TypeName("String"))
+                            .build()
+                    ).fieldDefinition(
+                        FieldDefinition
+                            .newFieldDefinition()
+                            .name("usingOptionalParam")
+                            .type(TypeName("String"))
+                            .build()
+                    ).fieldDefinition(
+                        FieldDefinition
+                            .newFieldDefinition()
+                            .name("usingOptionalParamAsOptionalType")
                             .type(TypeName("String"))
                             .build()
                     )
@@ -168,10 +297,34 @@ class WebRequestTest {
 
         @DgsData(parentType = "Query", field = "usingHeader")
         fun usingRequestHeader(
-            @RequestHeader myheader: String?,
+            @RequestHeader(defaultValue = "default header") myheader: String?,
             dataFetchingEnvironment: DgsDataFetchingEnvironment
         ): String {
             return myheader ?: "empty"
+        }
+
+        @DgsData(parentType = "Query", field = "usingRequiredHeader")
+        fun usingRequiredRequestHeader(
+            @RequestHeader(required = true) myheader: String,
+            dataFetchingEnvironment: DgsDataFetchingEnvironment
+        ): String {
+            return myheader ?: "empty"
+        }
+
+        @DgsData(parentType = "Query", field = "usingOptionalHeader")
+        fun usingOptionalRequestHeader(
+            @RequestHeader(required = false) myheader: String?,
+            dataFetchingEnvironment: DgsDataFetchingEnvironment
+        ): String {
+            return myheader ?: "default header from datafetcher"
+        }
+
+        @DgsData(parentType = "Query", field = "usingOptionalHeaderAsOptionalType")
+        fun usingOptionalRequestHeader(
+            @RequestHeader(required = false) myheader: Optional<String>,
+            dataFetchingEnvironment: DgsDataFetchingEnvironment
+        ): String {
+            return myheader.orElse("default header from Optional")
         }
 
         @DgsData(parentType = "Query", field = "usingContextWithRequest")
@@ -182,10 +335,34 @@ class WebRequestTest {
 
         @DgsData(parentType = "Query", field = "usingParam")
         fun usingRequestParam(
-            @RequestParam myParam: String?,
+            @RequestParam(defaultValue = "default parameter") myParam: String,
             dataFetchingEnvironment: DgsDataFetchingEnvironment
         ): String {
-            return myParam ?: "empty"
+            return myParam
+        }
+
+        @DgsData(parentType = "Query", field = "usingParamRequired")
+        fun usingRequestParamRequired(
+            @RequestParam(required = true) myParam: String,
+            dataFetchingEnvironment: DgsDataFetchingEnvironment
+        ): String {
+            return myParam
+        }
+
+        @DgsData(parentType = "Query", field = "usingOptionalParam")
+        fun usingOptionalRequestParam(
+            @RequestParam(required = false) myParam: String?,
+            dataFetchingEnvironment: DgsDataFetchingEnvironment
+        ): String {
+            return myParam ?: "default from datafetcher"
+        }
+
+        @DgsData(parentType = "Query", field = "usingOptionalParamAsOptionalType")
+        fun usingOptionalParamAsOptionalType(
+            @RequestParam(required = false) myParam: Optional<String>,
+            dataFetchingEnvironment: DgsDataFetchingEnvironment
+        ): String {
+            return myParam.orElse("default param from Optional")
         }
     }
 
