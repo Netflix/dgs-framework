@@ -48,9 +48,11 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.util.ReflectionUtils
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ValueConstants
 import org.springframework.web.multipart.MultipartFile
 import java.io.InputStreamReader
 import java.lang.reflect.Method
+import java.lang.reflect.Parameter
 import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -82,7 +84,8 @@ class DgsSchemaProvider(
     fun schema(schema: String? = null): GraphQLSchema {
         val startTime = System.currentTimeMillis()
         val dgsComponents = applicationContext.getBeansWithAnnotation(DgsComponent::class.java)
-        val hasDynamicTypeRegistry = dgsComponents.values.any { it.javaClass.methods.any { m -> m.isAnnotationPresent(DgsTypeDefinitionRegistry::class.java) } }
+        val hasDynamicTypeRegistry =
+            dgsComponents.values.any { it.javaClass.methods.any { m -> m.isAnnotationPresent(DgsTypeDefinitionRegistry::class.java) } }
 
         var mergedRegistry = if (schema == null) {
             findSchemaFiles(hasDynamicTypeRegistry = hasDynamicTypeRegistry).map {
@@ -105,19 +108,28 @@ class DgsSchemaProvider(
         val codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry()
         val runtimeWiringBuilder = RuntimeWiring.newRuntimeWiring()
 
-        dgsComponents.values.mapNotNull { dgsComponent -> invokeDgsTypeDefinitionRegistry(dgsComponent) }.fold(mergedRegistry) { a, b -> a.merge(b) }
+        dgsComponents.values.mapNotNull { dgsComponent -> invokeDgsTypeDefinitionRegistry(dgsComponent) }
+            .fold(mergedRegistry) { a, b -> a.merge(b) }
         findScalars(applicationContext, runtimeWiringBuilder)
         findDataFetchers(dgsComponents, codeRegistryBuilder, mergedRegistry)
         findTypeResolvers(dgsComponents, runtimeWiringBuilder, mergedRegistry)
         findEntityFetchers(dgsComponents)
 
-        dgsComponents.values.forEach { dgsComponent -> invokeDgsCodeRegistry(dgsComponent, codeRegistryBuilder, mergedRegistry) }
+        dgsComponents.values.forEach { dgsComponent ->
+            invokeDgsCodeRegistry(
+                dgsComponent,
+                codeRegistryBuilder,
+                mergedRegistry
+            )
+        }
 
         runtimeWiringBuilder.codeRegistry(codeRegistryBuilder.build())
 
         dgsComponents.values.forEach { dgsComponent -> invokeDgsRuntimeWiring(dgsComponent, runtimeWiringBuilder) }
 
-        val graphQLSchema = Federation.transform(mergedRegistry, runtimeWiringBuilder.build()).fetchEntities(entityFetcher).resolveEntityType(typeResolver).build()
+        val graphQLSchema =
+            Federation.transform(mergedRegistry, runtimeWiringBuilder.build()).fetchEntities(entityFetcher)
+                .resolveEntityType(typeResolver).build()
 
         val endTime = System.currentTimeMillis()
         val totalTime = endTime - startTime
@@ -131,44 +143,55 @@ class DgsSchemaProvider(
     }
 
     private fun invokeDgsTypeDefinitionRegistry(dgsComponent: Any): TypeDefinitionRegistry? {
-        return dgsComponent.javaClass.methods.filter { it.isAnnotationPresent(DgsTypeDefinitionRegistry::class.java) }.map { method ->
-            if (method.returnType != TypeDefinitionRegistry::class.java) {
-                throw InvalidDgsConfigurationException("Method annotated with @DgsTypeDefinitionRegistry must have return type TypeDefinitionRegistry")
-            }
+        return dgsComponent.javaClass.methods.filter { it.isAnnotationPresent(DgsTypeDefinitionRegistry::class.java) }
+            .map { method ->
+                if (method.returnType != TypeDefinitionRegistry::class.java) {
+                    throw InvalidDgsConfigurationException("Method annotated with @DgsTypeDefinitionRegistry must have return type TypeDefinitionRegistry")
+                }
 
-            method.invoke(dgsComponent) as TypeDefinitionRegistry
-        }.reduceOrNull { a, b -> a.merge(b) }
+                method.invoke(dgsComponent) as TypeDefinitionRegistry
+            }.reduceOrNull { a, b -> a.merge(b) }
     }
 
-    private fun invokeDgsCodeRegistry(dgsComponent: Any, codeRegistryBuilder: GraphQLCodeRegistry.Builder, registry: TypeDefinitionRegistry) {
-        dgsComponent.javaClass.methods.filter { it.isAnnotationPresent(DgsCodeRegistry::class.java) }.forEach { method ->
-            if (method.returnType != GraphQLCodeRegistry.Builder::class.java) {
-                throw InvalidDgsConfigurationException("Method annotated with @DgsCodeRegistry must have return type GraphQLCodeRegistry.Builder")
-            }
+    private fun invokeDgsCodeRegistry(
+        dgsComponent: Any,
+        codeRegistryBuilder: GraphQLCodeRegistry.Builder,
+        registry: TypeDefinitionRegistry
+    ) {
+        dgsComponent.javaClass.methods.filter { it.isAnnotationPresent(DgsCodeRegistry::class.java) }
+            .forEach { method ->
+                if (method.returnType != GraphQLCodeRegistry.Builder::class.java) {
+                    throw InvalidDgsConfigurationException("Method annotated with @DgsCodeRegistry must have return type GraphQLCodeRegistry.Builder")
+                }
 
-            if (method.parameterCount != 2 || method.parameterTypes[0] != GraphQLCodeRegistry.Builder::class.java || method.parameterTypes[1] != TypeDefinitionRegistry::class.java) {
-                throw InvalidDgsConfigurationException("Method annotated with @DgsCodeRegistry must accept the following arguments: GraphQLCodeRegistry.Builder, TypeDefinitionRegistry. ${dgsComponent.javaClass.name}.${method.name} has the following arguments: ${method.parameterTypes.joinToString()}")
-            }
+                if (method.parameterCount != 2 || method.parameterTypes[0] != GraphQLCodeRegistry.Builder::class.java || method.parameterTypes[1] != TypeDefinitionRegistry::class.java) {
+                    throw InvalidDgsConfigurationException("Method annotated with @DgsCodeRegistry must accept the following arguments: GraphQLCodeRegistry.Builder, TypeDefinitionRegistry. ${dgsComponent.javaClass.name}.${method.name} has the following arguments: ${method.parameterTypes.joinToString()}")
+                }
 
-            method.invoke(dgsComponent, codeRegistryBuilder, registry)
-        }
+                method.invoke(dgsComponent, codeRegistryBuilder, registry)
+            }
     }
 
     private fun invokeDgsRuntimeWiring(dgsComponent: Any, runtimeWiringBuilder: RuntimeWiring.Builder) {
-        dgsComponent.javaClass.methods.filter { it.isAnnotationPresent(DgsRuntimeWiring::class.java) }.forEach { method ->
-            if (method.returnType != RuntimeWiring.Builder::class.java) {
-                throw InvalidDgsConfigurationException("Method annotated with @DgsRuntimeWiring must have return type RuntimeWiring.Builder")
-            }
+        dgsComponent.javaClass.methods.filter { it.isAnnotationPresent(DgsRuntimeWiring::class.java) }
+            .forEach { method ->
+                if (method.returnType != RuntimeWiring.Builder::class.java) {
+                    throw InvalidDgsConfigurationException("Method annotated with @DgsRuntimeWiring must have return type RuntimeWiring.Builder")
+                }
 
-            if (method.parameterCount != 1 || method.parameterTypes[0] != RuntimeWiring.Builder::class.java) {
-                throw InvalidDgsConfigurationException("Method annotated with @DgsRuntimeWiring must accept an argument of type RuntimeWiring.Builder. ${dgsComponent.javaClass.name}.${method.name} has the following arguments: ${method.parameterTypes.joinToString()}")
-            }
+                if (method.parameterCount != 1 || method.parameterTypes[0] != RuntimeWiring.Builder::class.java) {
+                    throw InvalidDgsConfigurationException("Method annotated with @DgsRuntimeWiring must accept an argument of type RuntimeWiring.Builder. ${dgsComponent.javaClass.name}.${method.name} has the following arguments: ${method.parameterTypes.joinToString()}")
+                }
 
-            method.invoke(dgsComponent, runtimeWiringBuilder)
-        }
+                method.invoke(dgsComponent, runtimeWiringBuilder)
+            }
     }
 
-    private fun findDataFetchers(dgsComponents: Map<String, Any>, codeRegistryBuilder: GraphQLCodeRegistry.Builder, typeDefinitionRegistry: TypeDefinitionRegistry) {
+    private fun findDataFetchers(
+        dgsComponents: Map<String, Any>,
+        codeRegistryBuilder: GraphQLCodeRegistry.Builder,
+        typeDefinitionRegistry: TypeDefinitionRegistry
+    ) {
         dgsComponents.values.forEach { dgsComponent ->
             val javaClass = AopUtils.getTargetClass(dgsComponent)
 
@@ -218,7 +241,10 @@ class DgsSchemaProvider(
                             }
                         } else {
                             val dataFetcher = createBasicDataFetcher(method, dgsComponent)
-                            codeRegistryBuilder.dataFetcher(FieldCoordinates.coordinates(parentType, field), dataFetcher)
+                            codeRegistryBuilder.dataFetcher(
+                                FieldCoordinates.coordinates(parentType, field),
+                                dataFetcher
+                            )
                         }
                     } catch (ex: Exception) {
                         logger.error("Invalid parent type $parentType")
@@ -237,9 +263,11 @@ class DgsSchemaProvider(
                 .forEach { method ->
                     val dgsEntityFetcherAnnotation = method.getAnnotation(DgsEntityFetcher::class.java)
 
-                    val enableInstrumentation = method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)?.value
-                        ?: false
-                    dataFetcherInstrumentationEnabled["${"__entities"}.${dgsEntityFetcherAnnotation.name}"] = enableInstrumentation
+                    val enableInstrumentation =
+                        method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)?.value
+                            ?: false
+                    dataFetcherInstrumentationEnabled["${"__entities"}.${dgsEntityFetcherAnnotation.name}"] =
+                        enableInstrumentation
 
                     entityFetchers[dgsEntityFetcherAnnotation.name] = dgsComponent to method
                 }
@@ -307,24 +335,27 @@ class DgsSchemaProvider(
                     val annotation = AnnotationUtils.getAnnotation(parameter, RequestHeader::class.java)!!
                     val name: String = AnnotationUtils.getAnnotationAttributes(annotation)["name"] as String
                     val parameterName = name.ifBlank { parameterNames[idx] }
-
-                    args.add(
-                        DgsContext.getRequestData(environment)?.headers?.get(parameterName)?.let {
-                            if (parameter.type.isAssignableFrom(List::class.java)) {
-                                it
-                            } else {
-                                it.joinToString()
-                            }
+                    val value = DgsContext.getRequestData(environment)?.headers?.get(parameterName)?.let {
+                        if (parameter.type.isAssignableFrom(List::class.java)) {
+                            it
+                        } else {
+                            it.joinToString()
                         }
-                    )
+                    } ?: if (annotation.defaultValue != ValueConstants.DEFAULT_NONE) annotation.defaultValue else null
+
+                    if (value == null && annotation.required) {
+                        throw DgsInvalidInputArgumentException("Required header '$parameterName' was not provided")
+                    }
+
+                    val optionalValue = getValueAsOptional(value, parameter)
+                    args.add(optionalValue)
                 }
 
                 parameter.isAnnotationPresent(RequestParam::class.java) -> {
                     val annotation = AnnotationUtils.getAnnotation(parameter, RequestParam::class.java)!!
                     val name: String = AnnotationUtils.getAnnotationAttributes(annotation)["name"] as String
                     val parameterName = name.ifBlank { parameterNames[idx] }
-
-                    args.add(
+                    val value: Any? =
                         DgsContext.getRequestData(environment)?.webRequest?.parameterMap?.get(parameterName)?.let {
                             if (parameter.type.isAssignableFrom(List::class.java)) {
                                 it
@@ -332,7 +363,14 @@ class DgsSchemaProvider(
                                 it.joinToString()
                             }
                         }
-                    )
+                            ?: if (annotation.defaultValue != ValueConstants.DEFAULT_NONE) annotation.defaultValue else null
+
+                    if (value == null && annotation.required) {
+                        throw DgsInvalidInputArgumentException("Required request parameter '$parameterName' was not provided")
+                    }
+
+                    val optionalValue = getValueAsOptional(value, parameter)
+                    args.add(optionalValue)
                 }
 
                 environment.containsArgument(parameterNames[idx]) -> {
@@ -355,49 +393,64 @@ class DgsSchemaProvider(
         return ReflectionUtils.invokeMethod(method, dgsComponent, *args.toTypedArray())
     }
 
-    private fun findTypeResolvers(dgsComponents: Map<String, Any>, runtimeWiringBuilder: RuntimeWiring.Builder, mergedRegistry: TypeDefinitionRegistry) {
+    private fun getValueAsOptional(value: Any?, parameter: Parameter) =
+        if (value == null && parameter.type.isAssignableFrom(Optional::class.java)) {
+            Optional.empty<Any>()
+        } else if (parameter.type.isAssignableFrom(Optional::class.java)) {
+            Optional.of(value!!)
+        } else {
+            value
+        }
+
+    private fun findTypeResolvers(
+        dgsComponents: Map<String, Any>,
+        runtimeWiringBuilder: RuntimeWiring.Builder,
+        mergedRegistry: TypeDefinitionRegistry
+    ) {
         val registeredTypeResolvers = mutableSetOf<String>()
 
         dgsComponents.values.forEach { dgsComponent ->
-            dgsComponent.javaClass.methods.filter { it.isAnnotationPresent(DgsTypeResolver::class.java) }.forEach { method ->
-                val annotation = method.getAnnotation(DgsTypeResolver::class.java)
+            dgsComponent.javaClass.methods.filter { it.isAnnotationPresent(DgsTypeResolver::class.java) }
+                .forEach { method ->
+                    val annotation = method.getAnnotation(DgsTypeResolver::class.java)
 
-                if (method.returnType != String::class.java) {
-                    throw InvalidTypeResolverException("@DgsTypeResolvers must return String")
-                }
+                    if (method.returnType != String::class.java) {
+                        throw InvalidTypeResolverException("@DgsTypeResolvers must return String")
+                    }
 
-                if (method.parameterCount != 1) {
-                    throw InvalidTypeResolverException("@DgsTypeResolvers must take exactly one parameter")
-                }
+                    if (method.parameterCount != 1) {
+                        throw InvalidTypeResolverException("@DgsTypeResolvers must take exactly one parameter")
+                    }
 
-                if (!mergedRegistry.hasType(TypeName(annotation.name))) {
-                    throw InvalidTypeResolverException("could not find type name '${annotation.name}' in schema")
-                }
+                    if (!mergedRegistry.hasType(TypeName(annotation.name))) {
+                        throw InvalidTypeResolverException("could not find type name '${annotation.name}' in schema")
+                    }
 
-                var overrideTypeResolver = false
-                val defaultTypeResolver = method.getAnnotation(DgsDefaultTypeResolver::class.java)
-                if (defaultTypeResolver != null) {
-                    overrideTypeResolver = dgsComponents.values.any { component ->
-                        component.javaClass.methods.any { method ->
-                            method.isAnnotationPresent(DgsTypeResolver::class.java) &&
-                                method.getAnnotation(DgsTypeResolver::class.java).name == annotation.name &&
-                                component != dgsComponent
+                    var overrideTypeResolver = false
+                    val defaultTypeResolver = method.getAnnotation(DgsDefaultTypeResolver::class.java)
+                    if (defaultTypeResolver != null) {
+                        overrideTypeResolver = dgsComponents.values.any { component ->
+                            component.javaClass.methods.any { method ->
+                                method.isAnnotationPresent(DgsTypeResolver::class.java) &&
+                                    method.getAnnotation(DgsTypeResolver::class.java).name == annotation.name &&
+                                    component != dgsComponent
+                            }
                         }
                     }
-                }
-                // do not add the default resolver if another resolver with the same name is present
-                if (defaultTypeResolver == null || !overrideTypeResolver) {
-                    registeredTypeResolvers.add(annotation.name)
+                    // do not add the default resolver if another resolver with the same name is present
+                    if (defaultTypeResolver == null || !overrideTypeResolver) {
+                        registeredTypeResolvers.add(annotation.name)
 
-                    runtimeWiringBuilder.type(
-                        TypeRuntimeWiring.newTypeWiring(annotation.name)
-                            .typeResolver { env: TypeResolutionEnvironment ->
-                                val typeName = ReflectionUtils.invokeMethod(method, dgsComponent, env.getObject()) as String
-                                env.schema.getObjectType(typeName)
-                            }
-                    )
+                        runtimeWiringBuilder.type(
+                            TypeRuntimeWiring.newTypeWiring(annotation.name)
+                                .typeResolver { env: TypeResolutionEnvironment ->
+                                    val typeName =
+                                        ReflectionUtils.invokeMethod(method, dgsComponent, env.getObject()) as String
+                                    env.schema.getObjectType(typeName)
+                                }
+                        )
+                    }
                 }
-            }
         }
 
         // Add a fallback type resolver for types that don't have a type resolver registered.
@@ -424,7 +477,9 @@ class DgsSchemaProvider(
             val scalarComponent = it.value
             val annotation = scalarComponent::class.java.getAnnotation(DgsScalar::class.java)
             when (scalarComponent) {
-                is Coercing<*, *> -> runtimeWiringBuilder.scalar(GraphQLScalarType.newScalar().name(annotation.name).coercing(scalarComponent).build())
+                is Coercing<*, *> -> runtimeWiringBuilder.scalar(
+                    GraphQLScalarType.newScalar().name(annotation.name).coercing(scalarComponent).build()
+                )
                 else -> throw RuntimeException("Invalid @DgsScalar type: the class must implement graphql.schema.Coercing")
             }
         }
