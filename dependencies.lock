@@ -7,7 +7,7 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -35,7 +35,7 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -63,7 +63,7 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -89,7 +89,7 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -117,7 +117,7 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -137,7 +137,7 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -162,7 +162,7 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -185,7 +185,7 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -205,7 +205,7 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -228,7 +228,7 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
@@ -256,7 +256,7 @@
             "locked": "1.4.31"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.6.RELEASE"
+            "locked": "2.3.9.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR9"
