@@ -972,4 +972,135 @@ internal class InputArgumentTest {
 
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
+
+    @Test
+    fun `An @InputArgument could be of type Optional`() {
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument name: Optional<String>): String {
+                return "Hello, ${name.orElse("default value")}"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val schema = provider.schema()
+
+        val build = GraphQL.newGraphQL(schema).build()
+        val executionResult = build.execute("""{hello(name: "tester")}""")
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("Hello, tester", data["hello"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `An @InputArgument with a complex type could be wrapped in Optional`() {
+        val schema = """
+            type Query {
+                hello(person:Person): String
+            }
+            
+            input Person {
+                name:String
+            }
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument("person", collectionType = Person::class) person: Optional<Person>): String {
+                return "Hello, ${person.get().name}"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello(person: {name: "tester"})}""")
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("Hello, tester", data["hello"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+    @Test
+    fun `An @InputArgument of type Optional should fail when no type is specified`() {
+        val schema = """
+            type Query {
+                hello(person:Person): String
+            }
+            
+            input Person {
+                name:String
+            }
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument("person") person: Optional<Person>): String {
+                return "Hello, ${person.get().name}"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello(person: {name: "tester"})}""")
+        Assertions.assertEquals(1, executionResult.errors.size)
+        Assertions.assertEquals("Exception while fetching data (/hello) : When Optional<T> is used, the type must be specified using the collectionType argument of the @InputArgument annotation.", executionResult.errors[0].message)
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `An @InputArgument of type Optional receives empty by default`() {
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument name: Optional<String>): String {
+                return "Hello, ${name.orElse("default value")}"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val schema = provider.schema()
+
+        val build = GraphQL.newGraphQL(schema).build()
+        val executionResult = build.execute("""{hello}""")
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("Hello, default value", data["hello"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
 }
