@@ -28,14 +28,13 @@ internal class MappedBatchLoaderInterceptor(
             pipe.to(batchLoader).whenComplete { result, _ ->
                 logger.debug("Stopping timer[{}] for {}", ID, javaClass.simpleName)
                 timerSampler.stop(
-                    registry,
                     Timer.builder(ID)
                         .tags(
                             Tags.of(
                                 Tag.of(GqlTag.LOADER_NAME.key, name),
                                 Tag.of(GqlTag.LOADER_BATCH_SIZE.key, result.size.toString())
                             )
-                        )
+                        ).register(registry)
                 )
             }
         } catch (exception: Exception) {
