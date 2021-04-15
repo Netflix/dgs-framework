@@ -110,11 +110,7 @@ class DgsGraphQLMetricsInstrumentation(
         baseTags: Iterable<Tag>
     ) {
         val recordedTags = Tags.of(baseTags).and(tagsProvider.getFieldFetchTags(parameters, error))
-
-        timerSampler.stop(
-            registry,
-            Timer.builder(GqlMetric.RESOLVER.key).tags(recordedTags)
-        )
+        timerSampler.stop(Timer.builder(GqlMetric.RESOLVER.key).tags(recordedTags).register(registry))
     }
 
     class MetricsInstrumentationState(private val registry: MeterRegistry) : InstrumentationState {
