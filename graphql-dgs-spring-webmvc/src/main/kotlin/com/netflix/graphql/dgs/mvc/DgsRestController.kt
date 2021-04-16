@@ -62,7 +62,7 @@ import org.springframework.web.multipart.MultipartFile
  */
 
 @RestController
-class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
+open class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
 
     val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
 
