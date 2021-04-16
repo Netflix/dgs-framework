@@ -49,11 +49,7 @@ dependencies {
             version { require(Versions.GRAPHQL_JAVA) }
         }
         api("com.graphql-java:graphql-java-extended-scalars") {
-            // Note that the version of graphql-java should dictate the version of the scalars,
-            // but until https://github.com/graphql-java/graphql-java-extended-scalars/issues/38 is addressed we
-            // are preferring 15.0.0.
-            // Ref. https://github.com/graphql-java/graphql-java-extended-scalars
-            version { prefer("15.0.0") }
+            version { require(Versions.GRAPHQL_JAVA_EXTENDED_SCALARS) }
         }
         api("com.apollographql.federation:federation-graphql-java-support") {
             version { require(Versions.GRAPHQL_JAVA_FEDERATION) }
