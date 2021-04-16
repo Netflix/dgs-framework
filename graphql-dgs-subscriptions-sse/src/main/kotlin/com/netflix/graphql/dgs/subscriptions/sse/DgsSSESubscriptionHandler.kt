@@ -34,6 +34,10 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.nio.charset.StandardCharsets
 import java.util.*
 
+/**
+ * This class is defined as "open" only for proxy/aop use cases. It is not considered part of the API, and backwards compatibility is not guaranteed.
+ * Do not manually extend this class.
+ */
 @RestController
 open class DgsSSESubscriptionHandler(private val dgsQueryExecutor: DgsQueryExecutor) {
     private val logger = LoggerFactory.getLogger(DgsSSESubscriptionHandler::class.java)

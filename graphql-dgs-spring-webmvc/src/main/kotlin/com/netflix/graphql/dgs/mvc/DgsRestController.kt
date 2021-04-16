@@ -59,6 +59,9 @@ import org.springframework.web.multipart.MultipartFile
  * The remaining parts in the request contain the mapping of file name to file path, i.e. a map of MultipartFile(s)
  * The format of a multipart request is also described here:
  * https://github.com/jaydenseric/graphql-multipart-request-spec
+ *
+ * This class is defined as "open" only for proxy/aop use cases. It is not considered part of the API, and backwards compatibility is not guaranteed.
+ * Do not manually extend this class.
  */
 
 @RestController

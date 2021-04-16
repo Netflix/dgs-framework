@@ -28,6 +28,9 @@ import org.springframework.web.bind.annotation.RestController
 
 /**
  * Provides an HTTP endpoint to retrieve the available schema.
+ *
+ * This class is defined as "open" only for proxy/aop use cases. It is not considered part of the API, and backwards compatibility is not guaranteed.
+ * Do not manually extend this class.
  */
 @RestController
 open class DgsRestSchemaJsonController(private val schemaProvider: DgsSchemaProvider) {
