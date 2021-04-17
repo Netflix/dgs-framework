@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.autoconfig
+package com.netflix.graphql.dgs.autoconfigure
 
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test

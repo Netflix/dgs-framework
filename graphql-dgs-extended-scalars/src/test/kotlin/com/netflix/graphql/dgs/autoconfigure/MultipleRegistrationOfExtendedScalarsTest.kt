@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.autoconfig
+package com.netflix.graphql.dgs.autoconfigure
 
 import com.netflix.graphql.dgs.*
 import graphql.scalars.ExtendedScalars
