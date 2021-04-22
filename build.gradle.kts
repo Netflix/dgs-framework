@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 buildscript {
     repositories {
         mavenCentral()
@@ -113,21 +115,14 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         }
     }
 
+    tasks.withType<KotlinCompile>().configureEach {
+        kotlinOptions {
+            freeCompilerArgs += "-Xjvm-default=enable"
+            jvmTarget = "1.8"
+        }
+    }
+
     tasks {
-        compileKotlin {
-            kotlinOptions {
-                freeCompilerArgs = listOf("-Xjvm-default=all")
-                jvmTarget = "1.8"
-            }
-        }
-
-        compileTestKotlin {
-            kotlinOptions {
-                freeCompilerArgs = listOf("-Xjvm-default=all")
-                jvmTarget = "1.8"
-            }
-        }
-
         test {
             useJUnitPlatform()
         }
