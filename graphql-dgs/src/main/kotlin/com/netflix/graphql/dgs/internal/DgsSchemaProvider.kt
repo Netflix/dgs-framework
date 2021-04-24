@@ -341,10 +341,11 @@ class DgsSchemaProvider(
                 }
 
                 parameter.isAnnotationPresent(RequestHeader::class.java) -> {
+                    val requestData = DgsContext.getRequestData(environment)
                     val annotation = AnnotationUtils.getAnnotation(parameter, RequestHeader::class.java)!!
                     val name: String = AnnotationUtils.getAnnotationAttributes(annotation)["name"] as String
                     val parameterName = name.ifBlank { parameterNames[idx] }
-                    val value = DgsContext.getRequestData(environment)?.headers?.get(parameterName)?.let {
+                    val value = requestData?.headers?.get(parameterName)?.let {
                         if (parameter.type.isAssignableFrom(List::class.java)) {
                             it
                         } else {
@@ -361,25 +362,32 @@ class DgsSchemaProvider(
                 }
 
                 parameter.isAnnotationPresent(RequestParam::class.java) -> {
+                    val requestData = DgsContext.getRequestData(environment)
                     val annotation = AnnotationUtils.getAnnotation(parameter, RequestParam::class.java)!!
                     val name: String = AnnotationUtils.getAnnotationAttributes(annotation)["name"] as String
                     val parameterName = name.ifBlank { parameterNames[idx] }
-                    val value: Any? =
-                        DgsContext.getRequestData(environment)?.webRequest?.parameterMap?.get(parameterName)?.let {
-                            if (parameter.type.isAssignableFrom(List::class.java)) {
-                                it
-                            } else {
-                                it.joinToString()
+                    if (requestData is DgsWebMvcRequestData) {
+                        val webRequest = requestData.webRequest
+                        val value: Any? =
+                            webRequest?.parameterMap?.get(parameterName)?.let {
+                                if (parameter.type.isAssignableFrom(List::class.java)) {
+                                    it
+                                } else {
+                                    it.joinToString()
+                                }
                             }
+                                ?: if (annotation.defaultValue != ValueConstants.DEFAULT_NONE) annotation.defaultValue else null
+
+                        if (value == null && annotation.required) {
+                            throw DgsInvalidInputArgumentException("Required request parameter '$parameterName' was not provided")
                         }
-                            ?: if (annotation.defaultValue != ValueConstants.DEFAULT_NONE) annotation.defaultValue else null
 
-                    if (value == null && annotation.required) {
-                        throw DgsInvalidInputArgumentException("Required request parameter '$parameterName' was not provided")
+                        val optionalValue = getValueAsOptional(value, parameter)
+                        args.add(optionalValue)
+                    } else {
+                        logger.warn("@RequestParam is not supported when using WebFlux")
+                        args.add(null)
                     }
-
-                    val optionalValue = getValueAsOptional(value, parameter)
-                    args.add(optionalValue)
                 }
 
                 environment.containsArgument(parameterNames[idx]) -> {

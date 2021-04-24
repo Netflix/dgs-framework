@@ -103,7 +103,7 @@ class DgsMultipartPostControllerTest {
         val queryInputMap = Maps.newHashMap<String, Any>("description", "test")
         queryInputMap["files"] = Lists.newArrayList(file1, file2)
 
-        every { dgsQueryExecutor.execute(queryString, Maps.newHashMap("input", queryInputMap), any(), any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("Response", "success"))).build()
+        every { dgsQueryExecutor.execute(queryString, mapOf("input" to queryInputMap), any(), any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("Response", "success"))).build()
 
         val result = DgsRestController(dgsQueryExecutor).graphql(null, mapOf("0" to file1, "1" to file2), operation, map, HttpHeaders(), webRequest)
 

@@ -170,7 +170,7 @@ open class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
                     queryVariables,
                     extensions,
                     headers,
-                    operationName = gqlOperationName,
+                    gqlOperationName,
                     webRequest
                 )
             },

@@ -16,7 +16,6 @@
 
 package com.netflix.graphql.dgs.internal
 
-import com.netflix.graphql.dgs.DgsContextBuilder
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
@@ -24,24 +23,21 @@ import com.netflix.graphql.dgs.internal.utils.TimeTracer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
+import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.web.context.request.WebRequest
 import java.util.*
 
 open class DefaultDgsGraphQLContextBuilder(
     private val dgsCustomContextBuilder: Optional<DgsCustomContextBuilder<*>>,
     private val dgsCustomContextBuilderWithRequest: Optional<DgsCustomContextBuilderWithRequest<*>> = Optional.empty()
-) : DgsContextBuilder {
+) {
     val logger: Logger = LoggerFactory.getLogger(DefaultDgsGraphQLContextBuilder::class.java)
 
-    override fun build(): DgsContext {
-        return TimeTracer.logTime({ buildDgsContext(null) }, logger, "Created DGS context in {}ms")
-    }
-
-    override fun build(dgsRequestData: DgsRequestData): DgsContext {
+    fun build(dgsRequestData: DgsWebMvcRequestData): DgsContext {
         return TimeTracer.logTime({ buildDgsContext(dgsRequestData) }, logger, "Created DGS context in {}ms")
     }
 
-    private fun buildDgsContext(dgsRequestData: DgsRequestData?): DgsContext {
+    private fun buildDgsContext(dgsRequestData: DgsWebMvcRequestData?): DgsContext {
         @Suppress("DEPRECATION") val customContext = when {
             dgsCustomContextBuilderWithRequest.isPresent -> dgsCustomContextBuilderWithRequest.get().build(
                 dgsRequestData?.extensions ?: mapOf(),
@@ -70,8 +66,19 @@ data class DefaultRequestData(
     @Deprecated("Use DgsContext.requestData instead") val headers: HttpHeaders
 )
 
-data class DgsRequestData(
-    val extensions: Map<String, Any>? = emptyMap(),
-    val headers: HttpHeaders? = HttpHeaders.readOnlyHttpHeaders(HttpHeaders()),
-    val webRequest: WebRequest? = null
-)
+interface DgsRequestData {
+    val extensions: Map<String, Any>?
+    val headers: HttpHeaders?
+}
+
+/**
+ * @param extensions Optional map of extensions - useful for customized GraphQL interactions between for example a gateway and dgs.
+ * @param headers Http Headers
+ * @param webRequest Spring [WebRequest]. This will only be available when deployed in a WebMVC (Servlet based) environment. See [serverRequest] for the WebFlux version.
+ * @param serverRequest Spring reactive [ServerHttpRequest]. This will only be available when deployed in a WebFlux (non-Servlet) environment. See [webRequest] for the WebMVC version.
+ */
+data class DgsWebMvcRequestData(
+    override val extensions: Map<String, Any>? = null,
+    override val headers: HttpHeaders? = null,
+    val webRequest: WebRequest? = null,
+) : DgsRequestData
