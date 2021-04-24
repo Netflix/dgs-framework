@@ -1,0 +1,44 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@apollo/client": "^3.2.7",
+    "@reach/router": "^1.2.1",
+    "@types/node": "^12.12.14",
+    "@types/reach__router": "^1.2.6",
+    "@types/react": "^16.9.15",
+    "@types/react-dom": "^16.9.4",
+    "emotion": "^9.2.12",
+    "graphql": "^14.4.2",
+    "polished": "^3.4.1",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-emotion": "^9.2.12",
+    "react-scripts": "^3.4.1",
+    "subscriptions-transport-ws": "^0.9.18",
+    "typescript": "^3.7.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "rm -Rf ../src/main/resources/static/* && react-scripts build && mv build/* ../src/main/resources/static",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "@testing-library/jest-dom": "^4.0.0",
+    "@testing-library/react": "^8.0.7",
+    "@types/jest": "^24.0.23",
+    "apollo": "^2.16.3",
+    "artillery": "^1.6.0-26",
+    "npm-watch": "^0.6.0"
+  }
+}

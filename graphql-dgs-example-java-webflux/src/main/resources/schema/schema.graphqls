@@ -1,0 +1,82 @@
+type Query {
+    hello(name: String): String
+    withContext: String
+    withDataLoaderContext: String
+    movies: [Movie]
+    messageFromBatchLoader: String
+
+#    #Custom scalar example
+#    now: LocalTime
+#    schedule(time: LocalTime): Boolean
+
+    #To show how exceptions are handled
+    withGraphqlException: String
+    withRuntimeException: String
+
+    concurrent1: Int
+    concurrent2: Int
+
+    nested: [NestedA!]!
+
+    headers: String
+    referer: String
+}
+
+type NestedA {
+    nested2: Nested2!
+}
+
+type Nested2 {
+    message: String
+}
+
+interface Movie {
+    title: String
+    director: String
+}
+
+type ScaryMovie implements Movie {
+    title: String
+    director: String
+    gory: Boolean
+    scareFactor: Int
+}
+
+type ActionMovie implements Movie {
+    title: String
+    director: String
+    nrOfExplosions: Int
+}
+
+type Mutation {
+    addRating(input: RatingInput):Rating
+    uploadFile(input: FileUploadInput!): Boolean
+}
+
+input RatingInput {
+    title: String,
+    stars: Int
+}
+
+type Rating {
+    avgStars: Float
+}
+
+input FileUploadInput {
+    description: String
+    files: [Upload]
+}
+
+#metatron curl -a exampledgs https://localhost:8443/subscriptions\?query\=ewoicXVlcnkiOiAic3Vic2NyaXB0aW9uIHsgIHN0b2NrcyB7bmFtZX0gfSIKfQ==
+type Subscription {
+    stocks: Stock
+}
+
+type Stock {
+    name: String
+    price: Float
+}
+
+scalar Upload
+
+
