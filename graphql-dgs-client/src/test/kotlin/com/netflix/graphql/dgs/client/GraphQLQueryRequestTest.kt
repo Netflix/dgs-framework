@@ -21,6 +21,9 @@ import com.netflix.graphql.dgs.client.codegen.GraphQLQuery
 import com.netflix.graphql.dgs.client.codegen.GraphQLQueryRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.time.*
+import java.time.ZoneOffset.UTC
+import java.util.*
 
 class GraphQLQueryRequestTest {
     @Test
@@ -93,6 +96,46 @@ class GraphQLQueryRequestTest {
         val request = GraphQLQueryRequest(query, MovieProjection().name().movieId())
         val result = request.serialize()
         assertThat(result).isEqualTo("query TestNamedQuery {test(movie: {movieId:123, name:\"greatMovie\" }){ name movieId } }")
+    }
+
+    @Test
+    fun testSerializeInputClassOffsetDateTime() {
+        val query = TestGraphQLQuery().apply {
+            input["dateTime"] = OffsetDateTime.ofInstant(Instant.EPOCH, ZoneId.from(UTC))
+        }
+        val request = GraphQLQueryRequest(query)
+        val result = request.serialize()
+        assertThat(result).isEqualTo("query {test(dateTime: \"1970-01-01T00:00Z\") }")
+    }
+
+    @Test
+    fun testSerializeInputClassOffsetTime() {
+        val query = TestGraphQLQuery().apply {
+            input["time"] = OffsetTime.MIN
+        }
+        val request = GraphQLQueryRequest(query)
+        val result = request.serialize()
+        assertThat(result).isEqualTo("query {test(time: \"00:00+18:00\") }")
+    }
+
+    @Test
+    fun testSerializeInputClassLocalDate() {
+        val query = TestGraphQLQuery().apply {
+            input["date"] = LocalDate.of(2021, Month.APRIL, 1)
+        }
+        val request = GraphQLQueryRequest(query)
+        val result = request.serialize()
+        assertThat(result).isEqualTo("query {test(date: \"2021-04-01\") }")
+    }
+
+    @Test
+    fun testSerializeInputClassLocale() {
+        val query = TestGraphQLQuery().apply {
+            input["locale"] = Locale.UK
+        }
+        val request = GraphQLQueryRequest(query)
+        val result = request.serialize()
+        assertThat(result).isEqualTo("query {test(locale: \"en_GB\") }")
     }
 }
 

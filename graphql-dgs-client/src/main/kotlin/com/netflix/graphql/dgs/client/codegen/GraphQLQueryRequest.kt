@@ -16,6 +16,11 @@
 
 package com.netflix.graphql.dgs.client.codegen
 
+import java.time.LocalDate
+import java.time.OffsetDateTime
+import java.time.OffsetTime
+import java.util.*
+
 class GraphQLQueryRequest(private val query: GraphQLQuery, private val projection: BaseProjectionNode?) {
 
     constructor(query: GraphQLQuery) : this(query, null)
@@ -36,21 +41,27 @@ class GraphQLQueryRequest(private val query: GraphQLQuery, private val projectio
                 if (value != null) {
                     builder.append(key)
                     builder.append(": ")
-                    if (value is String) {
-                        builder.append("\"")
-                        builder.append(value.toString())
-                        builder.append("\"")
-                    } else if (value is List<*>) {
-                        if (value.isNotEmpty() && value[0] is String) {
-                            builder.append("[")
-                            val result = value.joinToString(separator = "\", \"", prefix = "\"", postfix = "\"")
-                            builder.append(result)
-                            builder.append("]")
-                        } else {
+                    when (value) {
+                        is String,
+                        is OffsetDateTime,
+                        is OffsetTime,
+                        is LocalDate,
+                        is Locale -> {
+                            builder.append("\"")
                             builder.append(value.toString())
+                            builder.append("\"")
                         }
-                    } else {
-                        builder.append(value.toString())
+                        is List<*> -> {
+                            if (value.isNotEmpty() && value[0] is String) {
+                                builder.append("[")
+                                val result = value.joinToString(separator = "\", \"", prefix = "\"", postfix = "\"")
+                                builder.append(result)
+                                builder.append("]")
+                            } else {
+                                builder.append(value.toString())
+                            }
+                        }
+                        else -> builder.append(value.toString())
                     }
                 }
                 if (inputEntryIterator.hasNext()) {
