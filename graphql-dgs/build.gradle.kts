@@ -31,6 +31,6 @@ dependencies {
     implementation("org.springframework.security:spring-security-core")
 
     testImplementation("org.springframework.security:spring-security-core")
-    testImplementation("io.reactivex.rxjava3:rxjava")
     testImplementation("io.projectreactor:reactor-core")
+    testImplementation("io.projectreactor:reactor-test")
 }
