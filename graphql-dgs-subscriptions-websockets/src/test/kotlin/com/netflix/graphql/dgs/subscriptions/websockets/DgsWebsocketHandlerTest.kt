@@ -23,7 +23,6 @@ import graphql.ExecutionResult
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import io.reactivex.rxjava3.core.Flowable
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -31,6 +30,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.reactivestreams.Publisher
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 @ExtendWith(MockKExtension::class)
 class DgsWebsocketHandlerTest {
@@ -151,7 +152,9 @@ class DgsWebsocketHandlerTest {
             result1
         }
 
-        every { executionResult.getData<Publisher<ExecutionResult>>() } returns Flowable.fromIterable(results)
+        every { executionResult.getData<Publisher<ExecutionResult>>() } returns
+            Mono.just(results).flatMapMany { Flux.fromIterable(results) }
+
         every { dgsQueryExecutor.execute("{ hello }") } returns executionResult
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessage)
@@ -159,7 +162,7 @@ class DgsWebsocketHandlerTest {
 
     private fun startWithError(webSocketSession: WebSocketSession) {
         every { webSocketSession.isOpen } returns true
-        every { executionResult.getData<Publisher<ExecutionResult>>() } returns Flowable.error(RuntimeException("That's wrong!"))
+        every { executionResult.getData<Publisher<ExecutionResult>>() } returns Mono.error(RuntimeException("That's wrong!"))
         every { dgsQueryExecutor.execute("{ hello }") } returns executionResult
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessage)

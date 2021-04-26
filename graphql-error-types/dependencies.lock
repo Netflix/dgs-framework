@@ -62,14 +62,6 @@
             "locked": "2.3.9.RELEASE"
         }
     },
-    "kaptClasspath_kaptKotlin": {
-        "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.3.9.RELEASE"
-        },
-        "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.3.9.RELEASE"
-        }
-    },
     "kaptTest": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
             "locked": "2.3.9.RELEASE"

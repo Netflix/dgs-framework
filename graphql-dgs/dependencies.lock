@@ -101,14 +101,6 @@
             "locked": "2.3.9.RELEASE"
         }
     },
-    "kaptClasspath_kaptKotlin": {
-        "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.3.9.RELEASE"
-        },
-        "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.3.9.RELEASE"
-        }
-    },
     "kaptTest": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
             "locked": "2.3.9.RELEASE"
@@ -381,8 +373,8 @@
         "io.projectreactor:reactor-core": {
             "locked": "3.4.5"
         },
-        "io.reactivex.rxjava3:rxjava": {
-            "locked": "3.0.12"
+        "io.projectreactor:reactor-test": {
+            "locked": "3.4.5"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -467,8 +459,8 @@
         "io.projectreactor:reactor-core": {
             "locked": "3.4.5"
         },
-        "io.reactivex.rxjava3:rxjava": {
-            "locked": "3.0.12"
+        "io.projectreactor:reactor-test": {
+            "locked": "3.4.5"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
