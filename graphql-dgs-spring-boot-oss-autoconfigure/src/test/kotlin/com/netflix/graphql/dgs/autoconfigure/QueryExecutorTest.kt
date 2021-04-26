@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.autoconfig
+package com.netflix.graphql.dgs.autoconfigure
 
 import com.jayway.jsonpath.PathNotFoundException
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.dgs.autoconfig.testcomponents.HelloDatFetcherConfig
+import com.netflix.graphql.dgs.autoconfigure.testcomponents.HelloDatFetcherConfig
 import com.netflix.graphql.dgs.exceptions.QueryException
 import graphql.ExecutionResult
 import org.assertj.core.api.Assertions.assertThat

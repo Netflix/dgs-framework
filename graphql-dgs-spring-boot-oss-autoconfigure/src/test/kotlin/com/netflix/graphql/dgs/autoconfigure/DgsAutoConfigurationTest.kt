@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.autoconfig
+package com.netflix.graphql.dgs.autoconfigure
 
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.dgs.autoconfig.testcomponents.CustomContextBuilderConfig
-import com.netflix.graphql.dgs.autoconfig.testcomponents.DataLoaderConfig
-import com.netflix.graphql.dgs.autoconfig.testcomponents.HelloDatFetcherConfig
+import com.netflix.graphql.dgs.autoconfigure.testcomponents.CustomContextBuilderConfig
+import com.netflix.graphql.dgs.autoconfigure.testcomponents.DataLoaderConfig
+import com.netflix.graphql.dgs.autoconfigure.testcomponents.HelloDatFetcherConfig
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

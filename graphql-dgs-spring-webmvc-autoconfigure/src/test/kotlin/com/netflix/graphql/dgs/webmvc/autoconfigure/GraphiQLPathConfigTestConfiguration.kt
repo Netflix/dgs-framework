@@ -17,7 +17,7 @@
 package com.netflix.graphql.dgs.webmvc.autoconfigure
 
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
+import com.netflix.graphql.dgs.autoconfigure.DgsAutoConfiguration
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import io.mockk.mockk
 import org.springframework.boot.SpringBootConfiguration
