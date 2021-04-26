@@ -38,7 +38,7 @@
             "locked": "16.2"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
-            "locked": "15.0.0"
+            "locked": "16.0.1"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -97,14 +97,6 @@
         }
     },
     "kapt": {
-        "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.3.9.RELEASE"
-        },
-        "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.3.9.RELEASE"
-        }
-    },
-    "kaptClasspath_kaptKotlin": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
             "locked": "2.3.9.RELEASE"
         },
@@ -279,7 +271,7 @@
             "locked": "16.2"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
-            "locked": "15.0.0"
+            "locked": "16.0.1"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -400,7 +392,7 @@
             "locked": "16.2"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
-            "locked": "15.0.0"
+            "locked": "16.0.1"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -561,7 +553,7 @@
             "locked": "16.2"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
-            "locked": "15.0.0"
+            "locked": "16.0.1"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
