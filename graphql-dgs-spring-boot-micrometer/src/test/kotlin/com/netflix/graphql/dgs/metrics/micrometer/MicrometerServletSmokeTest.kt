@@ -110,6 +110,7 @@ class MicrometerServletSmokeTest {
                 Tags.of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("outcome", "success")
+                    .and("gql.queryComplexity", "5")
             )
 
         assertThat(meters["gql.resolver"]).isNotNull.hasSize(1)
@@ -177,6 +178,7 @@ class MicrometerServletSmokeTest {
                 Tags.of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("outcome", "success")
+                    .and("gql.queryComplexity", "10")
             )
 
         assertThat(meters["gql.resolver"]).isNotNull.hasSize(3)
@@ -239,6 +241,7 @@ class MicrometerServletSmokeTest {
                 Tags.of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("outcome", "failure")
+                    .and("gql.queryComplexity", "0")
             )
     }
 
@@ -284,6 +287,7 @@ class MicrometerServletSmokeTest {
                 Tags.of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("outcome", "failure")
+                    .and("gql.queryComplexity", "5")
             )
 
         assertThat(meters["gql.resolver"]).isNotNull.hasSize(1)
@@ -339,6 +343,7 @@ class MicrometerServletSmokeTest {
                 Tags.of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("outcome", "failure")
+                    .and("gql.queryComplexity", "5")
             )
 
         assertThat(meters["gql.resolver"]).isNotNull.hasSize(1)
@@ -396,6 +401,7 @@ class MicrometerServletSmokeTest {
                 Tags.of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("outcome", "failure")
+                    .and("gql.queryComplexity", "5")
             )
 
         assertThat(meters["gql.resolver"]).isNotNull.hasSize(1)
