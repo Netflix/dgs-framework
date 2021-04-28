@@ -62,8 +62,11 @@ object DgsMetrics {
         /** The name of the data loader, may or may not be the same as the type of entity. */
         LOADER_NAME("gql.loaderName"),
 
-        /** Used to capture the result of an action, e.g. `ERROR` or `SUCCESS`.*/
-        OUTCOME("outcome")
+        /** Used to capture the result of an action, e.g. `sERROR` or `SUCCESS`.*/
+        OUTCOME("outcome"),
+
+        /** Used to capture the query complexity.*/
+        QUERY_COMPLEXITY("gql.queryComplexity")
     }
 
     enum class GqlTagValue(val owner: GqlTag, val value: String) {
