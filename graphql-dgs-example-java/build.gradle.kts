@@ -19,4 +19,13 @@ dependencies {
     implementation(project(":graphql-dgs-subscriptions-websockets-autoconfigure"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("io.projectreactor:reactor-core")
+
+    // Enabling Spring Boot Actuators. We are not expressing any opinion on which Metric System should be used
+    // please review the Spring Boot Docs in the link below for additional information.
+    // https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-metrics-export-simple
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    // Adding the DGS Micrometer integration that provides timers for gql.*
+    // For additional information go to the link below:
+    // https://netflix.github.io/dgs/advanced/instrumentation/
+    implementation(project(":graphql-dgs-spring-boot-micrometer"))
 }
