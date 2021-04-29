@@ -20,6 +20,9 @@ type Query {
 
     headers: String
     referer: String
+
+    ### To show how to handle HttpHeaders
+    helloWithHeaders(name: String): String
 }
 
 type NestedA {

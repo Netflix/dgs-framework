@@ -21,8 +21,12 @@ import com.netflix.graphql.dgs.exceptions.QueryException;
 import org.assertj.core.util.Maps;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
@@ -36,6 +40,22 @@ class HelloDataFetcherTest {
     void helloShouldIncludeName() {
         String message = queryExecutor.executeAndExtractJsonPath("{ hello(name: \"DGS\")}", "data.hello");
         assertThat(message).isEqualTo("hello, DGS!");
+    }
+
+    @Test
+    void helloWithHeadersShouldThrowQueryExceptionForMissingRequestHeaderAuthorization() {
+        assertThrows(QueryException.class, () -> {
+            queryExecutor.executeAndExtractJsonPath("{ helloWithHeaders(name: \"DGSHeader\")}", "data.helloWithHeaders");
+        });
+    }
+
+    @Test
+    void helloWithHeadersShouldReturnTheHeaderValue() {
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add(HttpHeaders.AUTHORIZATION, "dgsToken");
+        HttpHeaders httpHeaders = new HttpHeaders(map);
+        String value = queryExecutor.executeAndExtractJsonPath("{ helloWithHeaders(name: \"DGSHeader\")}", "data.helloWithHeaders", httpHeaders);
+        assertThat(value).isEqualTo("hello, dgsToken!");
     }
 
     @Test
