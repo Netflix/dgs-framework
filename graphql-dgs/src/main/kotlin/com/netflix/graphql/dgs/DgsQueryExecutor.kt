@@ -84,7 +84,7 @@ interface DgsQueryExecutor {
 
     /**
      * Executes a GraphQL query, parses the returned data, and uses a Json Path to extract specific elements out of the data.
-     * The method is generic, and tries to cast the result into the type you specify. This does NOT work work Lists. Use [executeAndExtractJsonPathAsObject] with a [TypeRef] instead.
+     * The method is generic, and tries to cast the result into the type you specify. This does NOT work on Lists. Use [executeAndExtractJsonPathAsObject] with a [TypeRef] instead.
      * @param query Query string
      * @param jsonPath JsonPath expression. See https://github.com/json-path/JsonPath for syntax.
      * @return T is the type you specify. This only works for primitive types and map representations. Use [executeAndExtractJsonPathAsObject] for complex types and lists.
@@ -93,13 +93,23 @@ interface DgsQueryExecutor {
 
     /**
      * Executes a GraphQL query, parses the returned data, and uses a Json Path to extract specific elements out of the data.
-     * The method is generic, and tries to cast the result into the type you specify. This does NOT work work Lists. Use [executeAndExtractJsonPathAsObject] with a [TypeRef] instead.
+     * The method is generic, and tries to cast the result into the type you specify. This does NOT work on Lists. Use [executeAndExtractJsonPathAsObject] with a [TypeRef] instead.
      * @param query Query string
      * @param jsonPath JsonPath expression. See https://github.com/json-path/JsonPath for syntax.
      * @param variables A Map of variables https://graphql.org/learn/queries/#variables
      * @return T is the type you specify. This only works for primitive types and map representations. Use [executeAndExtractJsonPathAsObject] for complex types and lists.
      */
     fun <T> executeAndExtractJsonPath(query: String, jsonPath: String, variables: Map<String, Any>): T
+
+    /**
+     * Executes a GraphQL query, parses the returned data, and uses a Json Path to extract specific elements out of the data.
+     * The method is generic, and tries to cast the result into the type you specify. This does NOT work on Lists. Use [executeAndExtractJsonPathAsObject] with a [TypeRef] instead.
+     * @param query Query string
+     * @param jsonPath JsonPath expression. See https://github.com/json-path/JsonPath for syntax.
+     * @param headers  Request headers represented as a Spring Framework [HttpHeaders]
+     * @return T is the type you specify. This only works for primitive types and map representations. Use [executeAndExtractJsonPathAsObject] for complex types and lists.
+     */
+    fun <T> executeAndExtractJsonPath(query: String, jsonPath: String, headers: HttpHeaders): T
 
     /**
      * Executes a GraphQL query, parses the returned data, and return a [DocumentContext].

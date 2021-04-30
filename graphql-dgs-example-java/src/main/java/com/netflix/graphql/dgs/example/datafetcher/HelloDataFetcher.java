@@ -22,6 +22,8 @@ import com.netflix.graphql.dgs.example.context.MyContext;
 import graphql.GraphQLException;
 import graphql.schema.DataFetchingEnvironment;
 import org.dataloader.DataLoader;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -39,6 +41,11 @@ public class HelloDataFetcher {
         System.out.println(extensions);
 
         return "hello, " + name + "!";
+    }
+
+    @DgsQuery
+    public String helloWithHeaders(@InputArgument String name, @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
+        return "hello, " + authorization + "!";
     }
 
     @DgsData(parentType = "Query", field = "messageFromBatchLoader")
