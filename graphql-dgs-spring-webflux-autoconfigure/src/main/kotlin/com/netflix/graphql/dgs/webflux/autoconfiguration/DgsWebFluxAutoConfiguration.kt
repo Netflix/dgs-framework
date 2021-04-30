@@ -48,6 +48,8 @@ import org.springframework.web.reactive.function.server.*
 import org.springframework.web.reactive.function.server.RequestPredicates.accept
 import org.springframework.web.reactive.function.server.ServerResponse.ok
 import org.springframework.web.reactive.function.server.ServerResponse.permanentRedirect
+import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping
+import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import java.net.URI
@@ -145,6 +147,24 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
                     .flatMap { ok().json().bodyValue(it) }
             }.build()
     }
+
+    @Bean
+    open fun websocketSubscriptionHandler(dgsReactiveQueryExecutor: DgsReactiveQueryExecutor): SimpleUrlHandlerMapping {
+
+        val simpleUrlHandlerMapping = SimpleUrlHandlerMapping(mapOf("/subscriptions" to DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor)))
+        simpleUrlHandlerMapping.order = 1
+        return simpleUrlHandlerMapping
+    }
+
+    @Bean
+    open fun handlerAdapter(): WebSocketHandlerAdapter? {
+        return WebSocketHandlerAdapter()
+    }
+
+//    @Bean
+//    open fun websocketHandler(dgsQueryExecutor: DgsQueryExecutor): DgsWebSocketHandler {
+//        return DgsWebSocketHandler(dgsQueryExecutor)
+//    }
 
     class GraphQlHandler(private val dgsQueryExecutor: DgsReactiveQueryExecutor) {
         val logger: Logger = LoggerFactory.getLogger(GraphQlHandler::class.java)
