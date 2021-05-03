@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.autoconfigure
+package com.netflix.graphql.dgs.autoconfig
 
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.dgs.autoconfigure.testcomponents.TestExceptionDatFetcherConfig
+import com.netflix.graphql.dgs.autoconfig.testcomponents.TestExceptionDatFetcherConfig
 import com.netflix.graphql.dgs.exceptions.QueryException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

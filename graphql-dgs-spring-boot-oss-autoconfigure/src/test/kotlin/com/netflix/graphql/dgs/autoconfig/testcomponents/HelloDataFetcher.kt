@@ -14,42 +14,44 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.autoconfigure.testcomponents
+package com.netflix.graphql.dgs.autoconfig.testcomponents
 
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsData
-import com.netflix.graphql.dgs.context.DgsContext
-import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import graphql.schema.DataFetchingEnvironment
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
+/*
+    Config class for the Hello data fetcher test
+     */
 @Configuration
-open class CustomContextBuilderConfig {
+open class HelloDatFetcherConfig {
     @Bean
-    open fun createCustomContextBuilder(): DgsCustomContextBuilder<*> {
-        return MyCustomDgsContextBuilder()
-    }
-
-    @Bean
-    open fun createDataFetcher(): CustomContextDataFetcher {
-        return CustomContextDataFetcher()
+    open fun createDgsComponent(): HelloDataFetcher {
+        return HelloDataFetcher()
     }
 }
 
-class MyCustomDgsContextBuilder : DgsCustomContextBuilder<MyCustomContext> {
-    override fun build(): MyCustomContext {
-        return MyCustomContext("Hello custom context")
-    }
-}
-
-class MyCustomContext(val message: String)
-
+@Suppress("UNUSED_PARAMETER")
 @DgsComponent
-class CustomContextDataFetcher {
+class HelloDataFetcher {
     @DgsData(parentType = "Query", field = "hello")
     fun hello(dfe: DataFetchingEnvironment): String {
-        val customContext = DgsContext.getCustomContext<MyCustomContext>(dfe)
-        return customContext.message
+        if (dfe.arguments["name"] != null) {
+            return "Hello, ${dfe.arguments["name"]}!"
+        }
+
+        return "Hello!"
+    }
+
+    @DgsData(parentType = "Query", field = "withNullableNull")
+    fun withNullableNull(): String? {
+        return null
+    }
+
+    @DgsData(parentType = "Query", field = "withNonNullableNull")
+    fun withNonNullableNull(): String? {
+        return null
     }
 }

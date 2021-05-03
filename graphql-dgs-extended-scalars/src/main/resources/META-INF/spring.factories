@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.netflix.graphql.dgs.autoconfigure.DgsExtendedScalarsAutoConfiguration
+  com.netflix.graphql.dgs.autoconfig.DgsExtendedScalarsAutoConfiguration
