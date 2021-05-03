@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.autoconfigure
+package com.netflix.graphql.dgs.autoconfig
 
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider.Companion.DEFAULT_SCHEMA_LOCATION
 import org.springframework.boot.context.properties.ConfigurationProperties
