@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController
  * Provides an HTTP endpoint to retrieve the available schema.
  */
 @RestController
-open class DgsRestSchemaJsonController(private val schemaProvider: DgsSchemaProvider) {
+open class DgsRestSchemaJsonController(open val schemaProvider: DgsSchemaProvider) {
 
     // The @ConfigurationProperties bean name is <prefix>-<fqn>
     @RequestMapping("#{@'dgs.graphql-com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcConfigurationProperties'.schemaJson.path}", produces = ["application/json"])

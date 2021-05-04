@@ -35,8 +35,8 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 
 @RestController
-open class DgsSSESubscriptionHandler(private val dgsQueryExecutor: DgsQueryExecutor) {
-    private val logger = LoggerFactory.getLogger(DgsSSESubscriptionHandler::class.java)
+open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor) {
+    open val logger = LoggerFactory.getLogger(DgsSSESubscriptionHandler::class.java)
 
     @RequestMapping("/subscriptions", produces = ["text/event-stream"])
     fun subscriptionWithId(@RequestParam("query") queryBase64: String): ResponseEntity<SseEmitter> {
