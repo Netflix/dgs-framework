@@ -22,4 +22,5 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     testImplementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
+    testImplementation("io.projectreactor:reactor-test")
 }

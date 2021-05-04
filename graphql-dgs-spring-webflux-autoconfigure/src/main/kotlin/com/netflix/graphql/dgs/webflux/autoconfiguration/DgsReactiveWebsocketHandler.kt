@@ -38,15 +38,11 @@ import java.util.concurrent.ConcurrentHashMap
 class DgsReactiveWebsocketHandler(private val dgsReactiveQueryExecutor: DgsReactiveQueryExecutor) : WebSocketHandler {
 
     private val logger = LoggerFactory.getLogger(DgsReactiveQueryExecutor::class.java)
-    private val MAP_RESOLVABLE_TYPE = ResolvableType.forType(OperationMessage::class.java)
+    private val resolvableType = ResolvableType.forType(OperationMessage::class.java)
     val subscriptions = ConcurrentHashMap<String, MutableMap<String, Subscription>>()
 
     val decoder = Jackson2JsonDecoder()
     val encoder = Jackson2JsonEncoder()
-
-    override fun getSubProtocols(): List<String> {
-        return listOf("graphql-ws")
-    }
 
     override fun handle(webSocketSession: WebSocketSession): Mono<Void> {
         return webSocketSession.send(
@@ -56,7 +52,7 @@ class DgsReactiveWebsocketHandler(private val dgsReactiveQueryExecutor: DgsReact
 
                     val operationMessage: OperationMessage = decoder.decode(
                         buffer,
-                        MAP_RESOLVABLE_TYPE,
+                        resolvableType,
                         MimeTypeUtils.APPLICATION_JSON,
                         null
                     ) as OperationMessage
@@ -68,10 +64,10 @@ class DgsReactiveWebsocketHandler(private val dgsReactiveQueryExecutor: DgsReact
                             )
                         )
                         GQL_START -> {
-
                             val queryPayload =
                                 jacksonObjectMapper().convertValue(operationMessage.payload, QueryPayload::class.java)
-                            dgsReactiveQueryExecutor.execute(queryPayload.query, emptyMap())
+                            logger.debug("Starting subscription $queryPayload for session ${webSocketSession.id}")
+                            dgsReactiveQueryExecutor.execute(queryPayload.query, queryPayload.variables)
                                 .flatMapMany { executionResult ->
                                     val publisher: Publisher<Any> = executionResult.getData()
                                     Flux.from(publisher).map {
@@ -83,6 +79,30 @@ class DgsReactiveWebsocketHandler(private val dgsReactiveQueryExecutor: DgsReact
                                         if (operationMessage.id != null) {
                                             subscriptions[webSocketSession.id] = mutableMapOf(operationMessage.id to it)
                                         }
+                                    }.doOnComplete {
+                                        webSocketSession.send(
+                                            Flux.just(
+                                                toWebsocketMessage(
+                                                    OperationMessage(GQL_COMPLETE, null, operationMessage.id),
+                                                    webSocketSession
+                                                )
+                                            )
+                                        ).subscribe()
+
+                                        subscriptions[webSocketSession.id]?.remove(operationMessage.id)
+                                        logger.debug("Completing subscription ${operationMessage.id} for subscription ${operationMessage.id} for connection ${webSocketSession.id}")
+                                    }.doOnError {
+                                        webSocketSession.send(
+                                            Flux.just(
+                                                toWebsocketMessage(
+                                                    OperationMessage(GQL_ERROR, DataPayload(null, listOf(it.message!!)), operationMessage.id),
+                                                    webSocketSession
+                                                )
+                                            )
+                                        ).subscribe()
+
+                                        subscriptions[webSocketSession.id]?.remove(operationMessage.id)
+                                        logger.debug("Subscription publisher error for input $queryPayload for subscription ${operationMessage.id} for connection ${webSocketSession.id}", it)
                                     }
                                 }
                         }
@@ -90,12 +110,14 @@ class DgsReactiveWebsocketHandler(private val dgsReactiveQueryExecutor: DgsReact
                         GQL_STOP -> {
                             subscriptions[webSocketSession.id]?.get(operationMessage.id)?.cancel()
                             subscriptions[webSocketSession.id]?.remove(operationMessage.id)
+                            logger.debug("Client stopped subscription ${operationMessage.id} for connection ${webSocketSession.id}")
                             Flux.empty()
                         }
 
                         GQL_CONNECTION_TERMINATE -> {
                             subscriptions[webSocketSession.id]?.values?.forEach { it.cancel() }
                             webSocketSession.close()
+                            logger.debug("Connection ${webSocketSession.id} terminated")
                             Flux.empty()
                         }
 
@@ -105,13 +127,13 @@ class DgsReactiveWebsocketHandler(private val dgsReactiveQueryExecutor: DgsReact
         )
     }
 
-    private fun toWebsocketMessage(operationMessage: OperationMessage, session: WebSocketSession): WebSocketMessage {
+    internal fun toWebsocketMessage(operationMessage: OperationMessage, session: WebSocketSession): WebSocketMessage {
         return WebSocketMessage(
             WebSocketMessage.Type.TEXT,
             encoder.encodeValue(
                 operationMessage,
                 session.bufferFactory(),
-                MAP_RESOLVABLE_TYPE,
+                resolvableType,
                 MimeTypeUtils.APPLICATION_JSON,
                 null
             )
@@ -125,7 +147,7 @@ const val GQL_START = "start"
 const val GQL_STOP = "stop"
 const val GQL_DATA = "data"
 const val GQL_ERROR = "error"
-const val GQL_TYPE = "complete"
+const val GQL_COMPLETE = "complete"
 const val GQL_CONNECTION_TERMINATE = "connection_terminate"
 
 data class DataPayload(val data: Any?, val errors: List<Any>? = emptyList())
