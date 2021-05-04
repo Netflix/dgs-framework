@@ -1,0 +1,76 @@
+name: CI Compatibility Check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        jdk-version: [ 1.8 ]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Java ${{ matrix.jdk-version }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.jdk-version }}
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install Python modules
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f scripts/requirements.txt ]; then pip install -r scripts/requirements.txt; fi
+
+      - uses: actions/cache@v1
+        id: gradle-wrapper-cache
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradlewrapper-${{ hashFiles('gradle/wrapper/*') }}
+          restore-keys: ${{ runner.os }}-gradlewrapper-
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+
+      - name: Maven cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build and publish Locally
+        run: |
+          ./gradlew --info check publishToMavenLocal --warning-mode all
+
+      - name: Clone dgs-examples-java
+        uses: actions/checkout@master
+        with:
+          repository: Netflix/dgs-examples-java
+          path: build/examples/dgs-examples-java
+
+      - name: Clone dgs-examples-kotlin
+        uses: actions/checkout@master
+        with:
+          repository: Netflix/dgs-examples-kotlin
+          path: build/examples/dgs-examples-kotlin
+
+      - name: Build Examples
+        run: |
+          find /home/runner/.m2/repository/ -type f -name "*graphql-dgs-codegen-gradle*"
+          ./scripts/test-examples.py -v --path=./build/examples
