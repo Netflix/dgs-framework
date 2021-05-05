@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.example;
+package com.netflix.graphql.dgs.example.shared.types;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+public class Stock {
+    private final String name;
+    private final double price;
 
-@SpringBootApplication(scanBasePackages = "com.netflix.graphql.dgs.example.shared")
-public class ExampleApp {
-    public static void main(String[] args) {
-        SpringApplication.run(ExampleApp.class, args);
+    public Stock(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getPrice() {
+        return price;
     }
 }

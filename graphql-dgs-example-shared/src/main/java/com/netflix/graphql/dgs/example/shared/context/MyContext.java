@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.example;
+package com.netflix.graphql.dgs.example.shared.context;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+public class MyContext {
+    private final String customState = "Custom state!";
 
-@SpringBootApplication(scanBasePackages = "com.netflix.graphql.dgs.example.shared")
-public class ExampleApp {
-    public static void main(String[] args) {
-        SpringApplication.run(ExampleApp.class, args);
+    public String getCustomState() {
+        return customState;
     }
 }

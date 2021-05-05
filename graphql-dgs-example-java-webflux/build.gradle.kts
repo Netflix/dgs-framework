@@ -15,8 +15,8 @@
  */
 
 dependencies {
+    implementation(project(":graphql-dgs-example-shared"))
     implementation(project(":graphql-dgs-webflux-starter"))
-
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("io.projectreactor:reactor-core")
 }

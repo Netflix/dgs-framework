@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.example;
+package com.netflix.graphql.dgs.example.shared.datafetcher;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.netflix.graphql.dgs.DgsComponent;
+import com.netflix.graphql.dgs.DgsSubscription;
+import com.netflix.graphql.dgs.example.shared.types.Stock;
+import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
 
-@SpringBootApplication(scanBasePackages = "com.netflix.graphql.dgs.example.shared")
-public class ExampleApp {
-    public static void main(String[] args) {
-        SpringApplication.run(ExampleApp.class, args);
+import java.time.Duration;
+
+@DgsComponent
+public class SubscriptionDataFetcher {
+    @DgsSubscription
+    public Publisher<Stock> stocks() {
+        return Flux.interval(Duration.ofSeconds(0), Duration.ofSeconds(1)).map(t -> new Stock("NFLX", t));
     }
 }
+
