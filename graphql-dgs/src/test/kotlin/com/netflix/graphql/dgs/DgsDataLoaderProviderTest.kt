@@ -21,7 +21,6 @@ import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import org.dataloader.Try
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -105,34 +104,5 @@ class DgsDataLoaderProviderTest {
 
         val privateDataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("privateExampleMappedLoaderFromField")
         Assertions.assertNotNull(privateDataLoader)
-    }
-
-    @Test
-    fun findMappedDataLoadersWithTryFromFields() {
-        every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", ExampleMappedBatchLoaderWithTryFromField()))
-
-        val provider = DgsDataLoaderProvider(applicationContextMock)
-        provider.findDataLoaders()
-        val dataLoaderRegistry = provider.buildRegistry()
-        Assertions.assertEquals(2, dataLoaderRegistry.dataLoaders.size)
-        val dataLoader = dataLoaderRegistry.getDataLoader<Any, Try<Any>>("exampleMappedLoaderWithTryFromField")
-        Assertions.assertNotNull(dataLoader)
-
-        val privateDataLoader = dataLoaderRegistry.getDataLoader<Any, Try<Any>>("privateExampleMappedLoaderWithTryFromField")
-        Assertions.assertNotNull(privateDataLoader)
-    }
-
-    @Test
-    fun findDataLoadersWithTry() {
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns mapOf(Pair("helloFetcher", ExampleBatchLoaderWithTry()))
-
-        val provider = DgsDataLoaderProvider(applicationContextMock)
-        provider.findDataLoaders()
-        val dataLoaderRegistry = provider.buildRegistry()
-        Assertions.assertEquals(1, dataLoaderRegistry.dataLoaders.size)
-        val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleBatchLoaderWithTry")
-        Assertions.assertNotNull(dataLoader)
     }
 }

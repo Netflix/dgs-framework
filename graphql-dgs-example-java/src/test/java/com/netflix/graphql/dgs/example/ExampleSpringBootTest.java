@@ -17,7 +17,6 @@
 package com.netflix.graphql.dgs.example;
 
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration;
-import com.netflix.graphql.dgs.example.dataLoader.MessagesDataLoaderWithException;
 import com.netflix.graphql.dgs.example.datafetcher.*;
 import org.springframework.boot.test.context.SpringBootTest;
 

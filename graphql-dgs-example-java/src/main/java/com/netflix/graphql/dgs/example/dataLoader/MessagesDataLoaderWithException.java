@@ -29,7 +29,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
-@DgsDataLoader(name = "messagesDataLoaderWithException", withTry = true)
+@DgsDataLoader(name = "messagesDataLoaderWithException")
 public class MessagesDataLoaderWithException implements BatchLoaderWithContext<String, Try<String>> {
     @Override
     public CompletionStage<List<Try<String>>> load(List<String> keys, BatchLoaderEnvironment environment) {
