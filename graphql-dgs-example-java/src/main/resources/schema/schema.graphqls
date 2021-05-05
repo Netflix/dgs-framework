@@ -4,6 +4,7 @@ type Query {
     withDataLoaderContext: String
     movies: [Movie]
     messageFromBatchLoader: String
+    messagesWithExceptionFromBatchLoader: [Message]
 
 #    #Custom scalar example
 #    now: LocalTime
@@ -31,6 +32,10 @@ type NestedA {
 
 type Nested2 {
     message: String
+}
+
+type Message {
+    info: String
 }
 
 interface Movie {

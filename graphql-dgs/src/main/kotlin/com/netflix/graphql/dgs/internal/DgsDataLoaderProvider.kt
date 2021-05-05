@@ -141,6 +141,10 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         }
 
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
+
+        if (dgsDataLoader.withTry) {
+            return DataLoader.newDataLoaderWithTry(extendedBatchLoader as BatchLoader<*, Try<Any>>, options)
+        }
         return DataLoader.newDataLoader(extendedBatchLoader, options)
     }
 
@@ -156,6 +160,10 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         }
 
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
+
+        if (dgsDataLoader.withTry) {
+            return DataLoader.newMappedDataLoaderWithTry(extendedBatchLoader as MappedBatchLoader<*, Try<Any>>, options)
+        }
         return DataLoader.newMappedDataLoader(extendedBatchLoader, options)
     }
 
@@ -174,6 +182,10 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         }
 
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
+
+        if (dgsDataLoader.withTry) {
+            return DataLoader.newDataLoaderWithTry(extendedBatchLoader as BatchLoaderWithContext<*, Try<Any>>, options)
+        }
         return DataLoader.newDataLoader(extendedBatchLoader, options)
     }
 
@@ -192,6 +204,10 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         }
 
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
+
+        if (dgsDataLoader.withTry) {
+            return DataLoader.newMappedDataLoaderWithTry(extendedBatchLoader as MappedBatchLoaderWithContext<*, Try<Any>>, options)
+        }
         return DataLoader.newMappedDataLoader(extendedBatchLoader, options)
     }
 

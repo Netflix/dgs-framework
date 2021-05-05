@@ -16,7 +16,9 @@
 
 package com.netflix.graphql.dgs.example;
 
+import com.jayway.jsonpath.DocumentContext;
 import com.netflix.graphql.dgs.DgsQueryExecutor;
+import com.netflix.graphql.dgs.example.types.Message;
 import com.netflix.graphql.dgs.exceptions.QueryException;
 import org.assertj.core.util.Maps;
 import org.junit.jupiter.api.Test;
@@ -24,6 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
