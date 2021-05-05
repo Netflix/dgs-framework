@@ -171,7 +171,7 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
         val mapper = jacksonObjectMapper()
 
         fun graphql(request: ServerRequest): Mono<ServerResponse> {
-            val executionResult: Mono<ExecutionResult> =
+            @Suppress("UNCHECKED_CAST") val executionResult: Mono<ExecutionResult> =
 
                 request.bodyToMono(String::class.java)
                     .map {
@@ -181,8 +181,9 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
                             val readValue = mapper.readValue<Map<String, Any>>(it)
                             QueryInput(
                                 readValue["query"] as String,
-                                readValue.getOrDefault("variables", emptyMap<String, Any>()) as Map<String, Any>,
-                                readValue.getOrDefault("extensions", emptyMap<String, Any>()) as Map<String, Any>
+
+                                (readValue["variables"] ?: emptyMap<String, Any>()) as Map<String, Any>,
+                                (readValue["extensions"] ?: emptyMap<String, Any>()) as Map<String, Any>,
                             )
                         }
                     }
