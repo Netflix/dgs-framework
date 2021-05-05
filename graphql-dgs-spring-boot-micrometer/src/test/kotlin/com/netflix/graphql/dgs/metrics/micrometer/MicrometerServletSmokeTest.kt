@@ -43,6 +43,7 @@ import org.dataloader.BatchLoader
 import org.dataloader.MappedBatchLoader
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -270,8 +271,12 @@ class MicrometerServletSmokeTest {
 
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
 
-        assertThat(meters["gql.error"]).isNotNull.hasSize(1)
-        assertThat(meters["gql.error"]?.first()?.id?.tags)
+        assertThat(meters["gql.error"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+
+        val errorMeters = meters["gql.error"]?.map { it.id }
+        logger.info("GQL Error meters[gql.error] tags: ${errorMeters?.map { it.tags }}")
+
+        assertThat(errorMeters?.first()?.tags)
             .containsExactlyInAnyOrderElementsOf(
                 Tags.of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
@@ -645,4 +650,8 @@ class MicrometerServletSmokeTest {
     }
 
     class CustomException(message: String?) : java.lang.IllegalStateException(message)
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(MicrometerServletSmokeTest::class.java)
+    }
 }
