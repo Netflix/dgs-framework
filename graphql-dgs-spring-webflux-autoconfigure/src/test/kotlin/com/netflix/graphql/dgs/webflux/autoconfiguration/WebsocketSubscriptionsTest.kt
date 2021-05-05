@@ -19,7 +19,7 @@ package com.netflix.graphql.dgs.webflux.autoconfiguration
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsSubscription
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
-import com.netflix.graphql.dgs.autoconfigure.DgsAutoConfiguration
+import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.junit.jupiter.api.Test

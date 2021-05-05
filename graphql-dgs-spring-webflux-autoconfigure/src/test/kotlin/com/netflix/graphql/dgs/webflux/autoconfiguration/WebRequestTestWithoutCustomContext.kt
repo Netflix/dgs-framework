@@ -19,7 +19,7 @@ package com.netflix.graphql.dgs.webflux.autoconfiguration
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
-import com.netflix.graphql.dgs.autoconfigure.DgsAutoConfiguration
+import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
 import graphql.language.FieldDefinition
 import graphql.language.ObjectTypeDefinition
 import graphql.language.TypeName

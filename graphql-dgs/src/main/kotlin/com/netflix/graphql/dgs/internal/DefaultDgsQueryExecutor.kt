@@ -28,6 +28,7 @@ import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
+import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor.Companion.parseContext
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
 import graphql.*
 import graphql.execution.ExecutionIdProvider
@@ -104,6 +105,10 @@ class DefaultDgsQueryExecutor(
 
     override fun <T> executeAndExtractJsonPath(query: String, jsonPath: String, variables: Map<String, Any>): T {
         return JsonPath.read(getJsonResult(query, variables), jsonPath)
+    }
+
+    override fun <T : Any?> executeAndExtractJsonPath(query: String, jsonPath: String, headers: HttpHeaders): T {
+        return JsonPath.read(getJsonResult(query, emptyMap(), headers), jsonPath)
     }
 
     override fun <T> executeAndExtractJsonPathAsObject(

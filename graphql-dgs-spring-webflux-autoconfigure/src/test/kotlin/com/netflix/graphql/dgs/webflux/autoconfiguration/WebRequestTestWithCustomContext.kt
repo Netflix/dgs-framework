@@ -17,7 +17,7 @@
 package com.netflix.graphql.dgs.webflux.autoconfiguration
 
 import com.netflix.graphql.dgs.*
-import com.netflix.graphql.dgs.autoconfigure.DgsAutoConfiguration
+import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithRequest
 import graphql.language.FieldDefinition

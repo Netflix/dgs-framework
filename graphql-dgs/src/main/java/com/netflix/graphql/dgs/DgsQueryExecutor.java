@@ -114,7 +114,7 @@ public interface DgsQueryExecutor {
      * @param headers  Request headers represented as a Spring Framework [HttpHeaders]
      * @return T is the type you specify. This only works for primitive types and map representations. Use [executeAndExtractJsonPathAsObject] for complex types and lists.
      */
-    fun <T> executeAndExtractJsonPath(query: String, jsonPath: String, headers: HttpHeaders): T
+    <T> T executeAndExtractJsonPath(String query, String jsonPath, HttpHeaders headers);
 
     /**
      * Executes a GraphQL query, parses the returned data, and return a [DocumentContext].

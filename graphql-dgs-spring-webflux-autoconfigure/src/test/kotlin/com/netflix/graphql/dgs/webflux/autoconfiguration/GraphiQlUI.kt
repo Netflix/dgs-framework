@@ -16,7 +16,7 @@
 
 package com.netflix.graphql.dgs.webflux.autoconfiguration
 
-import com.netflix.graphql.dgs.autoconfigure.DgsAutoConfiguration
+import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
