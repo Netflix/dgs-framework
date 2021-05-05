@@ -14,14 +14,23 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.example;
+package com.netflix.graphql.dgs.example.shared;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.netflix.graphql.dgs.DgsQueryExecutor;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@SpringBootApplication(scanBasePackages = "com.netflix.graphql.dgs.example.shared")
-public class ExampleApp {
-    public static void main(String[] args) {
-        SpringApplication.run(ExampleApp.class, args);
+import static org.assertj.core.api.Assertions.assertThat;
+
+@ExampleSpringBootTest
+public class MovieDataFetcherTest {
+
+    @Autowired
+    DgsQueryExecutor queryExecutor;
+
+    @Test
+    void moviesShouldHaveDirector() {
+        String director = queryExecutor.executeAndExtractJsonPath("{ movies { director } }", "data.movies[0].director");
+        assertThat(director).isEqualTo("some director");
     }
 }

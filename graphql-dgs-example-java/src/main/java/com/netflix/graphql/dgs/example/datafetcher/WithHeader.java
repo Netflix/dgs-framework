@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.example;
+package com.netflix.graphql.dgs.example.datafetcher;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.netflix.graphql.dgs.DgsComponent;
+import com.netflix.graphql.dgs.DgsQuery;
+import com.netflix.graphql.dgs.InputArgument;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.RequestHeader;
 
-@SpringBootApplication(scanBasePackages = "com.netflix.graphql.dgs.example.shared")
-public class ExampleApp {
-    public static void main(String[] args) {
-        SpringApplication.run(ExampleApp.class, args);
+@DgsComponent
+public class WithHeader {
+    @DgsQuery
+    public String helloWithHeaders(@InputArgument String name, @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
+        return "hello, " + authorization + "!";
     }
 }
