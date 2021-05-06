@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.example.dataLoader;
+package com.netflix.graphql.dgs.example.shared.dataLoader;
 
 import com.netflix.graphql.dgs.DgsDataLoader;
 import com.netflix.graphql.dgs.context.DgsContext;
-import com.netflix.graphql.dgs.example.context.MyContext;
-import com.netflix.graphql.dgs.example.types.Message;
+import com.netflix.graphql.dgs.example.shared.context.MyContext;
 import org.dataloader.BatchLoaderEnvironment;
 import org.dataloader.BatchLoaderWithContext;
 import org.dataloader.Try;

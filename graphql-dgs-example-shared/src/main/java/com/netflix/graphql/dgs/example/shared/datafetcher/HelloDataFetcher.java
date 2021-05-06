@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.example.shared.datafetcher;
+package com.netflix.graphql.dgs.example.datafetcher;
 
 import com.netflix.graphql.dgs.*;
 import com.netflix.graphql.dgs.context.DgsContext;
 import com.netflix.graphql.dgs.example.shared.context.MyContext;
+import com.netflix.graphql.dgs.example.shared.types.Message;
 import graphql.GraphQLException;
 import graphql.schema.DataFetchingEnvironment;
 import org.dataloader.DataLoader;
+import org.dataloader.Try;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.RequestHeader;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -41,10 +48,31 @@ public class HelloDataFetcher {
         return "hello, " + name + "!";
     }
 
+    @DgsQuery
+    public String helloWithHeaders(@InputArgument String name, @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
+        return "hello, " + authorization + "!";
+    }
+
     @DgsData(parentType = "Query", field = "messageFromBatchLoader")
     public CompletableFuture<String> getMessage(DataFetchingEnvironment env) {
         DataLoader<String, String> dataLoader = env.getDataLoader("messages");
         return dataLoader.load("a");
+    }
+
+    @DgsData(parentType = "Query", field = "messagesWithExceptionFromBatchLoader")
+    public CompletableFuture<List<Message>> getMessagesWithException(DgsDataFetchingEnvironment env) {
+        List<Message> messages = new ArrayList<>();
+        messages.add(new Message("A"));
+        messages.add(new Message("B"));
+        messages.add(new Message("C"));
+        return CompletableFuture.completedFuture(messages);
+    }
+
+    @DgsData(parentType = "Message", field = "info")
+    public CompletableFuture<String> getMessageWithException(DgsDataFetchingEnvironment env) {
+        Message msg = env.getSource();
+        DataLoader<String, String> dataLoader = env.getDataLoader("messagesDataLoaderWithException");
+        return dataLoader.load(msg.getInfo());
     }
 
     @DgsData(parentType = "Query", field = "withContext")

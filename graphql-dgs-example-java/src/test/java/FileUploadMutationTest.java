@@ -17,8 +17,8 @@
 import com.netflix.graphql.dgs.DgsQueryExecutor;
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration;
 import com.netflix.graphql.dgs.example.datafetcher.FileUploadMutation;
+import com.netflix.graphql.dgs.example.datafetcher.HelloDataFetcher;
 import com.netflix.graphql.dgs.example.shared.datafetcher.ConcurrentDataFetcher;
-import com.netflix.graphql.dgs.example.shared.datafetcher.HelloDataFetcher;
 import com.netflix.graphql.dgs.example.shared.datafetcher.MovieDataFetcher;
 import com.netflix.graphql.dgs.example.shared.datafetcher.RatingMutation;
 import org.assertj.core.util.Lists;
