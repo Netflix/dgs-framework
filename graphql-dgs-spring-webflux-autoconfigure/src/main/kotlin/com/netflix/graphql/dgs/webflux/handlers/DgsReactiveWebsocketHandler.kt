@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflux.graphql.dgs.webflux.handlers
+package com.netflix.graphql.dgs.webflux.handlers
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -126,6 +126,7 @@ class DgsReactiveWebsocketHandler(private val dgsReactiveQueryExecutor: DgsReact
 
                         GQL_CONNECTION_TERMINATE -> {
                             subscriptions[webSocketSession.id]?.values?.forEach { it.cancel() }
+                            subscriptions.remove(webSocketSession.id)
                             webSocketSession.close()
                             logger.debug("Connection ${webSocketSession.id} terminated")
                             Flux.empty()

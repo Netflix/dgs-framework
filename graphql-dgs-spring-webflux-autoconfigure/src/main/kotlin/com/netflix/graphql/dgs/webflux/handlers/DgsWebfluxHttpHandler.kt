@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflux.graphql.dgs.webflux.handlers
+package com.netflix.graphql.dgs.webflux.handlers
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue

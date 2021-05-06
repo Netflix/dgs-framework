@@ -23,8 +23,8 @@ import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithReque
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveQueryExecutor
-import com.netflux.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler
-import com.netflux.graphql.dgs.webflux.handlers.DgsWebfluxHttpHandler
+import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler
+import com.netflix.graphql.dgs.webflux.handlers.DgsWebfluxHttpHandler
 import graphql.ExecutionInput
 import graphql.GraphQL
 import graphql.execution.*

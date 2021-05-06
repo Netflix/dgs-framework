@@ -467,6 +467,9 @@
         "io.mockk:mockk": {
             "locked": "1.10.3-jdk8"
         },
+        "io.projectreactor:reactor-test": {
+            "locked": "3.4.5"
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
         },
@@ -596,6 +599,9 @@
         },
         "io.mockk:mockk": {
             "locked": "1.10.3-jdk8"
+        },
+        "io.projectreactor:reactor-test": {
+            "locked": "3.4.5"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
