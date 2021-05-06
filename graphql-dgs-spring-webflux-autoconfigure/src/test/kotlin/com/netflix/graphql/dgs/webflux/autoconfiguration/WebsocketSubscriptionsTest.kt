@@ -26,7 +26,6 @@ import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Comp
 import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Companion.GQL_ERROR
 import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Companion.GQL_START
 import com.netflix.graphql.dgs.webflux.handlers.OperationMessage
-import com.netflux.graphql.dgs.webflux.handlers.*
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.junit.jupiter.api.Test
