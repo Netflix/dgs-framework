@@ -19,6 +19,5 @@ dependencies {
     api(project(":graphql-dgs-spring-webflux-autoconfigure"))
     api(project(":graphql-dgs-client"))
     api(project(":graphql-error-types"))
-
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    api("org.springframework.boot:spring-boot-starter-webflux")
 }

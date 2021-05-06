@@ -16,8 +16,6 @@
 
 package com.netflix.graphql.dgs.webflux.autoconfiguration
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
@@ -25,15 +23,14 @@ import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithReque
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveQueryExecutor
+import com.netflux.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler
+import com.netflux.graphql.dgs.webflux.handlers.DgsWebfluxHttpHandler
 import graphql.ExecutionInput
-import graphql.ExecutionResult
 import graphql.GraphQL
 import graphql.execution.*
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.introspection.IntrospectionQuery
 import graphql.schema.GraphQLSchema
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -43,7 +40,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.http.MediaType
-import org.springframework.web.reactive.config.EnableWebFlux
 import org.springframework.web.reactive.function.server.*
 import org.springframework.web.reactive.function.server.RequestPredicates.accept
 import org.springframework.web.reactive.function.server.ServerResponse.ok
@@ -51,13 +47,11 @@ import org.springframework.web.reactive.function.server.ServerResponse.permanent
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping
 import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter
 import reactor.core.publisher.Mono
-import reactor.core.scheduler.Schedulers
 import java.net.URI
 import java.util.*
 
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @Configuration
-@EnableWebFlux
 @EnableConfigurationProperties(DgsWebfluxConfigurationProperties::class)
 open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfigurationProperties) {
 
@@ -118,7 +112,7 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
 
     @Bean
     open fun dgsGraphQlRouter(dgsQueryExecutor: DgsReactiveQueryExecutor): RouterFunction<ServerResponse> {
-        val graphQlHandler = GraphQlHandler(dgsQueryExecutor)
+        val graphQlHandler = DgsWebfluxHttpHandler(dgsQueryExecutor)
 
         return RouterFunctions.route()
             .POST(
@@ -160,56 +154,4 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     open fun handlerAdapter(): WebSocketHandlerAdapter? {
         return WebSocketHandlerAdapter()
     }
-
-//    @Bean
-//    open fun websocketHandler(dgsQueryExecutor: DgsQueryExecutor): DgsWebSocketHandler {
-//        return DgsWebSocketHandler(dgsQueryExecutor)
-//    }
-
-    class GraphQlHandler(private val dgsQueryExecutor: DgsReactiveQueryExecutor) {
-        val logger: Logger = LoggerFactory.getLogger(GraphQlHandler::class.java)
-        val mapper = jacksonObjectMapper()
-
-        fun graphql(request: ServerRequest): Mono<ServerResponse> {
-            @Suppress("UNCHECKED_CAST") val executionResult: Mono<ExecutionResult> =
-
-                request.bodyToMono(String::class.java)
-                    .map {
-                        if ("application/graphql" == request.headers().firstHeader("Content-Type")) {
-                            QueryInput(it)
-                        } else {
-                            val readValue = mapper.readValue<Map<String, Any>>(it)
-                            QueryInput(
-                                readValue["query"] as String,
-
-                                (readValue["variables"] ?: emptyMap<String, Any>()) as Map<String, Any>,
-                                (readValue["extensions"] ?: emptyMap<String, Any>()) as Map<String, Any>,
-                            )
-                        }
-                    }
-                    .flatMap { queryInput ->
-                        logger.debug("Parsed variables: {}", queryInput.queryVariables)
-
-                        dgsQueryExecutor.execute(
-                            queryInput.query,
-                            queryInput.queryVariables,
-                            queryInput.extensions,
-                            request.headers().asHttpHeaders(),
-                            "",
-                            request
-                        )
-                    }.subscribeOn(Schedulers.parallel())
-
-            return executionResult.flatMap { result ->
-                val graphQlOutput = result.toSpecification()
-                ok().bodyValue(graphQlOutput)
-            }
-        }
-    }
-
-    data class QueryInput(
-        val query: String,
-        val queryVariables: Map<String, Any> = emptyMap(),
-        val extensions: Map<String, Any> = emptyMap()
-    )
 }

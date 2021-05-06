@@ -16,7 +16,6 @@
 
 package com.netflix.graphql.dgs.reactive.internal
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.TypeRef
@@ -49,9 +48,9 @@ class DefaultDgsReactiveQueryExecutor(
     private val idProvider: Optional<ExecutionIdProvider>,
     private val reloadIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator = DefaultDgsQueryExecutor.ReloadSchemaIndicator { false }
 ) : com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor {
-    val logger: Logger = LoggerFactory.getLogger(DefaultDgsQueryExecutor::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(DefaultDgsQueryExecutor::class.java)
 
-    val schema = AtomicReference(defaultSchema)
+    private val schema = AtomicReference(defaultSchema)
 
     override fun execute(
         query: String,
@@ -61,34 +60,35 @@ class DefaultDgsReactiveQueryExecutor(
         operationName: String?,
         serverHttpRequest: ServerRequest?
     ): Mono<ExecutionResult> {
-        val graphQLSchema: GraphQLSchema =
+        return Mono.fromCallable {
             if (reloadIndicator.reloadSchema())
                 schema.updateAndGet { schemaProvider.schema() }
             else
                 schema.get()
-        return contextBuilder.build(DgsReactiveRequestData(extensions, headers, serverHttpRequest)).flatMap { dgsContext ->
-            Mono.fromCompletionStage(
-                BaseDgsQueryExecutor.baseExecute(
-                    query,
-                    variables,
-                    operationName,
-                    dgsContext,
-                    graphQLSchema,
-                    dataLoaderProvider,
-                    chainedInstrumentation,
-                    queryExecutionStrategy,
-                    mutationExecutionStrategy,
-                    idProvider
-                )
-            ).doOnEach { result ->
-                if (result.hasValue()) {
-                    val nullValueError = result.get()?.errors?.find { it is NonNullableFieldWasNullError }
-                    if (nullValueError != null) {
-                        logger.error(nullValueError.message)
+        }.zipWith(contextBuilder.build(DgsReactiveRequestData(extensions, headers, serverHttpRequest)))
+            .flatMap {
+                Mono.fromCompletionStage(
+                    BaseDgsQueryExecutor.baseExecute(
+                        query,
+                        variables,
+                        operationName,
+                        it.t2,
+                        it.t1,
+                        dataLoaderProvider,
+                        chainedInstrumentation,
+                        queryExecutionStrategy,
+                        mutationExecutionStrategy,
+                        idProvider
+                    )
+                ).doOnEach { result ->
+                    if (result.hasValue()) {
+                        val nullValueError = result.get()?.errors?.find { it is NonNullableFieldWasNullError }
+                        if (nullValueError != null) {
+                            logger.error(nullValueError.message)
+                        }
                     }
                 }
             }
-        }
     }
 
     override fun <T : Any> executeAndExtractJsonPath(
@@ -146,8 +146,7 @@ class DefaultDgsReactiveQueryExecutor(
                 throw QueryException(executionResult.errors)
             }
 
-            val objectMapper = ObjectMapper()
-            objectMapper.writeValueAsString(executionResult.toSpecification())
+            BaseDgsQueryExecutor.objectMapper.writeValueAsString(executionResult.toSpecification())
         }
     }
 }

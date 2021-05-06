@@ -20,6 +20,12 @@ import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsSubscription
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
+import com.netflux.graphql.dgs.webflux.handlers.*
+import com.netflux.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Companion.GQL_COMPLETE
+import com.netflux.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Companion.GQL_CONNECTION_ACK
+import com.netflux.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Companion.GQL_CONNECTION_INIT
+import com.netflux.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Companion.GQL_ERROR
+import com.netflux.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Companion.GQL_START
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.junit.jupiter.api.Test
@@ -35,6 +41,7 @@ import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.http.codec.json.Jackson2JsonDecoder
 import org.springframework.http.codec.json.Jackson2JsonEncoder
 import org.springframework.util.MimeTypeUtils
+import org.springframework.web.reactive.config.EnableWebFlux
 import org.springframework.web.reactive.socket.WebSocketMessage
 import org.springframework.web.reactive.socket.WebSocketSession
 import org.springframework.web.reactive.socket.client.ReactorNettyWebSocketClient
@@ -46,6 +53,7 @@ import reactor.test.StepVerifier
 import java.net.URI
 import java.time.Duration
 
+@EnableWebFlux
 @SpringBootTest(
     classes = [HttpHandlerAutoConfiguration::class, ReactiveWebServerFactoryAutoConfiguration::class, WebFluxAutoConfiguration::class, DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, WebsocketSubscriptionsTest.ExampleSubscriptionImplementation::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
@@ -128,7 +136,7 @@ open class WebsocketSubscriptionsTest {
                         val buffer: DataBuffer = DataBufferUtils.retain(message.payload)
                         val operationMessage: OperationMessage = decoder.decode(
                             buffer,
-                            MAP_RESOLVABLE_TYPE,
+                            resolvableType,
                             MimeTypeUtils.APPLICATION_JSON,
                             null
                         ) as OperationMessage
@@ -174,7 +182,7 @@ open class WebsocketSubscriptionsTest {
                 ).log().then()
         }
 
-    private val MAP_RESOLVABLE_TYPE = ResolvableType.forType(OperationMessage::class.java)
+    private val resolvableType = ResolvableType.forType(OperationMessage::class.java)
     private val decoder = Jackson2JsonDecoder()
     private val encoder = Jackson2JsonEncoder()
 
@@ -184,7 +192,7 @@ open class WebsocketSubscriptionsTest {
             encoder.encodeValue(
                 operationMessage,
                 session.bufferFactory(),
-                MAP_RESOLVABLE_TYPE,
+                resolvableType,
                 MimeTypeUtils.APPLICATION_JSON,
                 null
             )

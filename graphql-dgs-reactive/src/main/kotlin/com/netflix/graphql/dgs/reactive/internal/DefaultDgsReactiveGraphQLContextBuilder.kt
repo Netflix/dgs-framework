@@ -52,11 +52,9 @@ open class DefaultDgsReactiveGraphQLContextBuilder(
                     dgsRequestData
                 )
             )
-        }.switchIfEmpty(
-            Mono.just(
-                DgsContext(
-                    requestData = dgsRequestData
-                )
+        }.defaultIfEmpty(
+            DgsContext(
+                requestData = dgsRequestData
             )
         )
     }
