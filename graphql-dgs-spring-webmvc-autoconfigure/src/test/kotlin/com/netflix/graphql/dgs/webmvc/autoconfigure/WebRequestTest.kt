@@ -23,6 +23,7 @@ import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
+import com.netflix.graphql.dgs.internal.DgsWebMvcRequestData
 import graphql.language.FieldDefinition
 import graphql.language.ObjectTypeDefinition
 import graphql.language.TypeName
@@ -292,7 +293,7 @@ class WebRequestTest {
 
         @DgsData(parentType = "Query", field = "usingWebRequest")
         fun usingWebRequest(dfe: DgsDataFetchingEnvironment): String {
-            return (DgsContext.getRequestData(dfe)?.webRequest as ServletWebRequest).request.serverName
+            return ((DgsContext.getRequestData(dfe) as DgsWebMvcRequestData)?.webRequest as ServletWebRequest).request.serverName
         }
 
         @DgsData(parentType = "Query", field = "usingHeader")
