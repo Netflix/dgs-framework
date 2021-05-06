@@ -41,11 +41,6 @@ import org.springframework.web.multipart.MultipartFile
  * In addition to regular graphql queries, this method also handles multipart POST requests containing files for upload.
  * This is usually a POST request that  has Content type set to multipart/form-data. Here is an example command.
  *
- * metatron curl -a somedgs https://localhost:8443/graphql -F operations='{ "query": "mutation ($input: FileUploadInput!) { uploadFile(input: $input) }", "variables": { "input": { "description": "test", "files": [null, null] } } }' \
- * -F map='{ "0": ["variables.input.files.0"], "1": ["variables.input.files.1"] }' \
- * -F '0=@file1.txt' \
- * -F '1=@file2.txt'
- *
  * Each part in a multipart request is identified by the -F and is identified by the part name - "operations, map etc."
  * The "operations" part is the graphql query containing the mutation for the file upload, with variables for files set to null.
  * The "map" part and the subsequent parts specify the path of the file in the variables of the query, and will get mapped to

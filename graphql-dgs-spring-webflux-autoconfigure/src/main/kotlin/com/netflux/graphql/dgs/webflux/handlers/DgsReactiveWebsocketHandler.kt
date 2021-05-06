@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.webflux.autoconfiguration
+package com.netflux.graphql.dgs.webflux.handlers
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -39,10 +39,20 @@ class DgsReactiveWebsocketHandler(private val dgsReactiveQueryExecutor: DgsReact
 
     private val logger = LoggerFactory.getLogger(DgsReactiveQueryExecutor::class.java)
     private val resolvableType = ResolvableType.forType(OperationMessage::class.java)
-    val subscriptions = ConcurrentHashMap<String, MutableMap<String, Subscription>>()
+    private val subscriptions = ConcurrentHashMap<String, MutableMap<String, Subscription>>()
+    private val decoder = Jackson2JsonDecoder()
+    private val encoder = Jackson2JsonEncoder()
 
-    val decoder = Jackson2JsonDecoder()
-    val encoder = Jackson2JsonEncoder()
+    companion object {
+        const val GQL_CONNECTION_INIT = "connection_init"
+        const val GQL_CONNECTION_ACK = "connection_ack"
+        const val GQL_START = "start"
+        const val GQL_STOP = "stop"
+        const val GQL_DATA = "data"
+        const val GQL_ERROR = "error"
+        const val GQL_COMPLETE = "complete"
+        const val GQL_CONNECTION_TERMINATE = "connection_terminate"
+    }
 
     override fun handle(webSocketSession: WebSocketSession): Mono<Void> {
         return webSocketSession.send(
@@ -127,7 +137,7 @@ class DgsReactiveWebsocketHandler(private val dgsReactiveQueryExecutor: DgsReact
         )
     }
 
-    internal fun toWebsocketMessage(operationMessage: OperationMessage, session: WebSocketSession): WebSocketMessage {
+    private fun toWebsocketMessage(operationMessage: OperationMessage, session: WebSocketSession): WebSocketMessage {
         return WebSocketMessage(
             WebSocketMessage.Type.TEXT,
             encoder.encodeValue(
@@ -140,15 +150,6 @@ class DgsReactiveWebsocketHandler(private val dgsReactiveQueryExecutor: DgsReact
         )
     }
 }
-
-const val GQL_CONNECTION_INIT = "connection_init"
-const val GQL_CONNECTION_ACK = "connection_ack"
-const val GQL_START = "start"
-const val GQL_STOP = "stop"
-const val GQL_DATA = "data"
-const val GQL_ERROR = "error"
-const val GQL_COMPLETE = "complete"
-const val GQL_CONNECTION_TERMINATE = "connection_terminate"
 
 data class DataPayload(val data: Any?, val errors: List<Any>? = emptyList())
 data class OperationMessage(

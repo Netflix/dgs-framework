@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.example.shared;
-
 import com.netflix.graphql.dgs.DgsQueryExecutor;
+import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration;
+import com.netflix.graphql.dgs.example.datafetcher.FileUploadMutation;
+import com.netflix.graphql.dgs.example.shared.datafetcher.ConcurrentDataFetcher;
+import com.netflix.graphql.dgs.example.shared.datafetcher.HelloDataFetcher;
+import com.netflix.graphql.dgs.example.shared.datafetcher.MovieDataFetcher;
+import com.netflix.graphql.dgs.example.shared.datafetcher.RatingMutation;
 import org.assertj.core.util.Lists;
 import org.assertj.core.util.Maps;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,7 +35,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@ExampleSpringBootTest
+@SpringBootTest(classes = {HelloDataFetcher.class, MovieDataFetcher.class, ConcurrentDataFetcher.class, RatingMutation.class, DgsAutoConfiguration.class, FileUploadMutation.class})
 public class FileUploadMutationTest {
 
     @Autowired

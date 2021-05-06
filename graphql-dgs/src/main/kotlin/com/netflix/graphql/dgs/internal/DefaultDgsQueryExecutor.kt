@@ -17,7 +17,6 @@
 package com.netflix.graphql.dgs.internal
 
 import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.jayway.jsonpath.*
@@ -28,7 +27,7 @@ import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
-import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor.Companion.parseContext
+import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor.parseContext
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
 import graphql.*
 import graphql.execution.ExecutionIdProvider
@@ -150,8 +149,7 @@ class DefaultDgsQueryExecutor(
             throw QueryException(executionResult.errors)
         }
 
-        val objectMapper = ObjectMapper()
-        return objectMapper.writeValueAsString(executionResult.toSpecification())
+        return BaseDgsQueryExecutor.objectMapper.writeValueAsString(executionResult.toSpecification())
     }
 
     /**
@@ -167,64 +165,59 @@ class DefaultDgsQueryExecutor(
     }
 }
 
-class BaseDgsQueryExecutor {
-    companion object {
-        private val logger = LoggerFactory.getLogger(BaseDgsQueryExecutor::class.java)
+object BaseDgsQueryExecutor {
+    private val logger = LoggerFactory.getLogger(BaseDgsQueryExecutor::class.java)
 
-        val parseContext: ParseContext =
-            JsonPath.using(
-                Configuration.builder()
-                    .jsonProvider(JacksonJsonProvider(jacksonObjectMapper()))
-                    .mappingProvider(
-                        JacksonMappingProvider(
-                            jacksonObjectMapper()
-                                .registerModule(JavaTimeModule())
-                                .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
-                                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                        )
-                    ).build()
-                    .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)
-            )
+    val objectMapper = jacksonObjectMapper()
+        .registerModule(JavaTimeModule())
+        .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)!!
+    val parseContext: ParseContext =
+        JsonPath.using(
+            Configuration.builder()
+                .jsonProvider(JacksonJsonProvider(jacksonObjectMapper()))
+                .mappingProvider(JacksonMappingProvider(objectMapper)).build()
+                .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)
+        )
 
-        fun baseExecute(
-            query: String,
-            variables: Map<String, Any>?,
-            operationName: String?,
-            dgsContext: DgsContext,
-            graphQLSchema: GraphQLSchema,
-            dataLoaderProvider: DgsDataLoaderProvider,
-            chainedInstrumentation: ChainedInstrumentation,
-            queryExecutionStrategy: ExecutionStrategy,
-            mutationExecutionStrategy: ExecutionStrategy,
-            idProvider: Optional<ExecutionIdProvider>,
-        ): CompletableFuture<out ExecutionResult> {
-            val graphQLBuilder =
-                GraphQL.newGraphQL(graphQLSchema)
-                    .instrumentation(chainedInstrumentation)
-                    .queryExecutionStrategy(queryExecutionStrategy)
-                    .mutationExecutionStrategy(mutationExecutionStrategy)
-                    .subscriptionExecutionStrategy(SubscriptionExecutionStrategy())
-            if (idProvider.isPresent) {
-                graphQLBuilder.executionIdProvider(idProvider.get())
-            }
-            val graphQL = graphQLBuilder.build()
+    fun baseExecute(
+        query: String,
+        variables: Map<String, Any>?,
+        operationName: String?,
+        dgsContext: DgsContext,
+        graphQLSchema: GraphQLSchema,
+        dataLoaderProvider: DgsDataLoaderProvider,
+        chainedInstrumentation: ChainedInstrumentation,
+        queryExecutionStrategy: ExecutionStrategy,
+        mutationExecutionStrategy: ExecutionStrategy,
+        idProvider: Optional<ExecutionIdProvider>,
+    ): CompletableFuture<out ExecutionResult> {
+        val graphQLBuilder =
+            GraphQL.newGraphQL(graphQLSchema)
+                .instrumentation(chainedInstrumentation)
+                .queryExecutionStrategy(queryExecutionStrategy)
+                .mutationExecutionStrategy(mutationExecutionStrategy)
+                .subscriptionExecutionStrategy(SubscriptionExecutionStrategy())
+        if (idProvider.isPresent) {
+            graphQLBuilder.executionIdProvider(idProvider.get())
+        }
+        val graphQL = graphQLBuilder.build()
 
-            val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier({ dgsContext })
-            val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
-                .query(query)
-                .dataLoaderRegistry(dataLoaderRegistry)
-                .variables(variables)
-                .operationName(operationName)
-                .context(dgsContext)
-                .build()
+        val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier({ dgsContext })
+        val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
+            .query(query)
+            .dataLoaderRegistry(dataLoaderRegistry)
+            .variables(variables)
+            .operationName(operationName)
+            .context(dgsContext)
+            .build()
 
-            return try {
-                graphQL.executeAsync(executionInput)
-            } catch (e: Exception) {
-                logger.error("Encountered an exception while handling query $query", e)
-                val errors: List<GraphQLError> = if (e is GraphQLError) listOf<GraphQLError>(e) else emptyList()
-                CompletableFuture.completedFuture(ExecutionResultImpl(null, errors))
-            }
+        return try {
+            graphQL.executeAsync(executionInput)
+        } catch (e: Exception) {
+            logger.error("Encountered an exception while handling query $query", e)
+            val errors: List<GraphQLError> = if (e is GraphQLError) listOf<GraphQLError>(e) else emptyList()
+            CompletableFuture.completedFuture(ExecutionResultImpl(null, errors))
         }
     }
 }
