@@ -14,9 +14,23 @@
  * limitations under the License.
  */
 
+plugins {
+    id("org.springframework.boot") version "2.4.5"
+}
+
 dependencies {
     implementation(project(":graphql-dgs-example-shared"))
     implementation(project(":graphql-dgs-webflux-starter"))
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("io.projectreactor:reactor-core")
+}
+
+springBoot {
+    mainClass.set("com.netflix.graphql.dgs.example.ReactiveExampleApp")
+}
+
+tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+    layered {
+        isEnabled = false
+    }
 }
