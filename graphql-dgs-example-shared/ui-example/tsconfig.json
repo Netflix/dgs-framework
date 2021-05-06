@@ -18,9 +18,9 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
-    "outDir": "../src/main/resources/static"
+    "outDir": "../build/main/resources/static"
   },
   "include": [
     "src"
-  ],
+  ]
 }

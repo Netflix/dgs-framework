@@ -21,7 +21,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "rm -Rf ../src/main/resources/static/* && react-scripts build && mv build/* ../src/main/resources/static",
+    "build": "rm -Rf ../build/resources/main/static/* && react-scripts build && mkdir -p ../build/resources/main/static && cp -r build/* ../build/resources/main/static",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

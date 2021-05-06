@@ -71,3 +71,4 @@ buildSrc/.gradle/
 /graphql-dgs-example-java/ui-example/node_modules/
 /.idea/kotlinScripting.xml
 scripts/__pycache__/
+**/node_modules

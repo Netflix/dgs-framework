@@ -1,3 +1,5 @@
+
+
 /*
  * Copyright 2020 Netflix, Inc.
  *
@@ -14,9 +16,26 @@
  * limitations under the License.
  */
 
+plugins {
+    id("com.github.node-gradle.node") version "3.0.1"
+}
+
 dependencies {
     implementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
     implementation("io.projectreactor:reactor-core")
     implementation("org.springframework:spring-context")
     implementation("org.springframework:spring-web")
+}
+
+node {
+    version.set("16.1.0")
+    nodeProjectDir.set(File("$projectDir/ui-example"))
+}
+
+tasks.register<com.github.gradle.node.npm.task.NpmTask>("bundle") {
+    args.addAll("run", "build")
+    dependsOn.add(tasks.getByName("npmInstall"))
+}
+tasks.getByName("build") {
+    dependsOn.add(tasks.getByName("bundle"))
 }
