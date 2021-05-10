@@ -1,8 +1,4 @@
 spring:
   application:
     name: dgs-example
-dgs:
-  graphql:
-    graphiql:
-      path: /queries
 
