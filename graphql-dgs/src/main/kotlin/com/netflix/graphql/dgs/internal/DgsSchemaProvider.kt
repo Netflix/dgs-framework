@@ -427,7 +427,8 @@ class DgsSchemaProvider(
         val registeredTypeResolvers = mutableSetOf<String>()
 
         dgsComponents.values.forEach { dgsComponent ->
-            dgsComponent.javaClass.methods.filter { it.isAnnotationPresent(DgsTypeResolver::class.java) }
+            val javaClass = AopUtils.getTargetClass(dgsComponent)
+            javaClass.methods.filter { it.isAnnotationPresent(DgsTypeResolver::class.java) }
                 .forEach { method ->
                     val annotation = method.getAnnotation(DgsTypeResolver::class.java)
 
