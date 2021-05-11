@@ -16,9 +16,12 @@
 
 package com.netflix.graphql.dgs.client.codegen
 
-class GraphQLQueryRequest(private val query: GraphQLQuery, private val projection: BaseProjectionNode?) {
+import graphql.schema.Coercing
 
-    constructor(query: GraphQLQuery) : this(query, null)
+class GraphQLQueryRequest(private val query: GraphQLQuery, private val projection: BaseProjectionNode?, private val scalars: Map<Class<*>, Coercing<*, *>>?) {
+
+    constructor(query: GraphQLQuery) : this(query, null, null)
+    constructor(query: GraphQLQuery, projection: BaseProjectionNode?) : this(query, projection, null)
 
     fun serialize(): String {
         val builder = StringBuilder()
@@ -50,7 +53,14 @@ class GraphQLQueryRequest(private val query: GraphQLQuery, private val projectio
                             builder.append(value.toString())
                         }
                     } else {
-                        builder.append(value.toString())
+                        if (scalars?.contains(value::class.java) == true) {
+                            val serializedValue = scalars[value::class.java]!!.serialize(value)
+                            builder.append("\"")
+                            builder.append(serializedValue)
+                            builder.append("\"")
+                        } else {
+                            builder.append(value.toString())
+                        }
                     }
                 }
                 if (inputEntryIterator.hasNext()) {
@@ -63,6 +73,7 @@ class GraphQLQueryRequest(private val query: GraphQLQuery, private val projectio
         if (projection is BaseSubProjectionNode<*, *>) {
             builder.append(projection.root().toString())
         } else if (projection != null) {
+
             builder.append(projection.toString())
         }
 
