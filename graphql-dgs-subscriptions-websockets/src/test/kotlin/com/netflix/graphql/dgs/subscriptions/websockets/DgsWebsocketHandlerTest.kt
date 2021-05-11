@@ -70,6 +70,18 @@ class DgsWebsocketHandlerTest {
         """.trimIndent()
     )
 
+    private val queryMessageWithVariable = TextMessage(
+        """{
+                "type": "$GQL_START",
+                "payload": {
+                   "query": "query HELLO(${'$'}name: String){ hello(name:${'$'}name) }",
+                   "variables": {"name": "Stranger"},
+                   "extensions": {}
+                }
+            }
+        """.trimIndent()
+    )
+
     @Test
     fun testMultipleClients() {
         connect(session1)
@@ -88,6 +100,19 @@ class DgsWebsocketHandlerTest {
         // ACK, DATA, DATA DATA, COMPLETE
         verify(exactly = 5) {
             session2.sendMessage(any())
+        }
+    }
+
+    @Test
+    fun testWithQueryVariables() {
+        connect(session1)
+        startWithVariable(session1, 1)
+
+        disconnect(session1)
+
+        // ACK, DATA, COMPLETE
+        verify(exactly = 3) {
+            session1.sendMessage(any())
         }
     }
 
@@ -155,15 +180,32 @@ class DgsWebsocketHandlerTest {
         every { executionResult.getData<Publisher<ExecutionResult>>() } returns
             Mono.just(results).flatMapMany { Flux.fromIterable(results) }
 
-        every { dgsQueryExecutor.execute("{ hello }") } returns executionResult
+        every { dgsQueryExecutor.execute("{ hello }", emptyMap()) } returns executionResult
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessage)
+    }
+
+    private fun startWithVariable(webSocketSession: WebSocketSession, nrOfResults: Int) {
+
+        every { webSocketSession.isOpen } returns true
+
+        val results = (1..nrOfResults).map {
+            val result1 = mockkClass(ExecutionResult::class)
+            every { result1.getData<Any>() } returns it
+            result1
+        }
+
+        every { executionResult.getData<Publisher<ExecutionResult>>() } returns Mono.just(results).flatMapMany { Flux.fromIterable(results) }
+
+        every { dgsQueryExecutor.execute("query HELLO(\$name: String){ hello(name:\$name) }", mapOf("name" to "Stranger")) } returns executionResult
+
+        dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessageWithVariable)
     }
 
     private fun startWithError(webSocketSession: WebSocketSession) {
         every { webSocketSession.isOpen } returns true
         every { executionResult.getData<Publisher<ExecutionResult>>() } returns Mono.error(RuntimeException("That's wrong!"))
-        every { dgsQueryExecutor.execute("{ hello }") } returns executionResult
+        every { dgsQueryExecutor.execute("{ hello }", emptyMap()) } returns executionResult
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessage)
     }

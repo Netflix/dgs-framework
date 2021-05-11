@@ -90,7 +90,7 @@ class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : Text
     }
 
     private fun handleSubscription(id: String, payload: QueryPayload, session: WebSocketSession) {
-        val executionResult: ExecutionResult = dgsQueryExecutor.execute(payload.query)
+        val executionResult: ExecutionResult = dgsQueryExecutor.execute(payload.query, payload.variables)
         val subscriptionStream: Publisher<ExecutionResult> = executionResult.getData()
 
         subscriptionStream.subscribe(object : Subscriber<ExecutionResult> {
