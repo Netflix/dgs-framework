@@ -23,12 +23,18 @@ publish-local: ## Clans, bulds, and publishes the Codegen artifacts to mavenLoca
 test-examples_py: ## Modify the examples to use the latest Codegen SNAPSHOT, publishes the snapshot locally, and builds the examples.
 	scripts/test-examples.py -v -g --path=build/examples
 
-test-examples: ## Modify the examples to use the latest Codegen SNAPSHOT, publishes the snapshot locally, and builds the examples.
+test-examples: /usr/local/bin/python3 ## Modify the examples to use the latest Codegen SNAPSHOT, publishes the snapshot locally, and builds the examples.
 	$(MAKE) publish-local
+	$(MAKE) install-py-libs
 	$(MAKE) test-examples_py
+
 
 install-py-libs: ## Installs the Python Modules required by the scripts.
 	 pip3 install -r scripts/requirements.txt
+
+
+/usr/local/bin/python3: ## Installs Python3 via brew.
+	brew install python3
 
 
 all: test-examples ## Cleans, checks/tests, publishes the plugin locally and runs the examples.
