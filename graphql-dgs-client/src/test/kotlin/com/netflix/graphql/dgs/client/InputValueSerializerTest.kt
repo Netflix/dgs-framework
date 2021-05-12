@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.client
 import com.netflix.graphql.dgs.client.codegen.InputValueSerializer
 import com.netflix.graphql.dgs.client.scalar.DateRange
 import com.netflix.graphql.dgs.client.scalar.DateRangeScalar
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
@@ -40,7 +41,7 @@ class InputValueSerializerTest {
         )
 
         val serialize = InputValueSerializer(mapOf(DateRange::class.java to DateRangeScalar())).serialize(movieInput)
-        println(serialize)
+        assertThat(serialize).isEqualTo("{movieId:1, title:\"Some movie\", genre:ACTION, director:{name:\"The Director\" }, actor:[{name:\"Actor 1\", roleName:\"Role 1\" }, {name:\"Actor 2\", roleName:\"Role 2\" }], releaseWindow:\"01/01/2020-01/01/2021\" }")
     }
 
     @Test
@@ -49,12 +50,22 @@ class InputValueSerializerTest {
         val movieInput = MovieInput(1)
 
         val serialize = InputValueSerializer(mapOf(DateRange::class.java to DateRangeScalar())).serialize(movieInput)
-        println(serialize)
+        assertThat(serialize).isEqualTo("{movieId:1 }")
     }
 
     @Test
     fun `String value`() {
         val serialize = InputValueSerializer().serialize("some string")
-        println(serialize)
+        assertThat(serialize).isEqualTo("\"some string\"")
+    }
+
+    @Test
+    fun `Companion objects should be ignored`() {
+        val serialize = InputValueSerializer().serialize(MyDataWithCompanion("some title"))
+        assertThat(serialize).isEqualTo("{title:\"some title\" }")
+    }
+
+    data class MyDataWithCompanion(val title: String) {
+        public companion object {}
     }
 }

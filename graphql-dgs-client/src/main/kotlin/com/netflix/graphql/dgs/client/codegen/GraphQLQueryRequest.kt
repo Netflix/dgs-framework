@@ -73,6 +73,7 @@ class InputValueSerializer(private val scalars: Map<Class<*>, Coercing<*, *>> = 
         }
 
         val type = input::class.java
+
         return if (scalars.contains(type)) {
             """"${scalars[type]!!.serialize(input)}""""
         } else if (type.isPrimitive || type == Integer::class.java || type == Long::class.java || type == Double::class.java || type == Float::class.java || type == Boolean::class.java || type == Short::class.java || type == Byte::class.java || type.isEnum) {
@@ -82,10 +83,10 @@ class InputValueSerializer(private val scalars: Map<Class<*>, Coercing<*, *>> = 
         } else if (input is List<*>) {
             """[${input.filterNotNull().joinToString(", ") { listItem -> serialize(listItem) ?: "" }}]"""
         } else {
-            input.javaClass.declaredFields.map {
+            input.javaClass.declaredFields.filter { !it.type::class.isCompanion }.map {
                 it.isAccessible = true
                 val nestedValue = it.get(input)
-                if (nestedValue != null) {
+                if (nestedValue != null && !nestedValue::class.isCompanion) {
                     """${it.name}:${serialize(nestedValue)}"""
                 } else {
                     null
