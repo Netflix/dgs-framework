@@ -19,15 +19,11 @@ package com.netflix.graphql.dgs.client
 import com.netflix.graphql.dgs.client.codegen.BaseProjectionNode
 import com.netflix.graphql.dgs.client.codegen.GraphQLQuery
 import com.netflix.graphql.dgs.client.codegen.GraphQLQueryRequest
-import graphql.language.StringValue
-import graphql.schema.Coercing
-import graphql.schema.CoercingParseLiteralException
-import graphql.schema.CoercingParseValueException
-import graphql.schema.CoercingSerializeException
+import com.netflix.graphql.dgs.client.scalar.DateRange
+import com.netflix.graphql.dgs.client.scalar.DateRangeScalar
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class GraphQLQueryRequestTest {
     @Test
@@ -114,6 +110,18 @@ class GraphQLQueryRequestTest {
         val result = request.serialize()
         assertThat(result).isEqualTo("query TestNamedQuery {test(movie: {movieId:123, name:\"greatMovie\" }, dateRange: \"01/01/2020-05/11/2021\") }")
     }
+
+    @Test
+    fun serializeWithNestedScalar() {
+        val query = TestNamedGraphQLQuery().apply {
+            input["movie"] = Movie(123, "greatMovie", DateRange(LocalDate.of(2020, 1, 1), LocalDate.of(2021, 5, 11)))
+        }
+        val request =
+            GraphQLQueryRequest(query, MovieProjection(), mapOf(DateRange::class.java to DateRangeScalar()))
+
+        val result = request.serialize()
+        assertThat(result).isEqualTo("query TestNamedQuery {test(movie: {movieId:123, name:\"greatMovie\", window:\"01/01/2020-05/11/2021\" }) }")
+    }
 }
 
 class TestGraphQLQuery : GraphQLQuery() {
@@ -134,11 +142,7 @@ class TestGraphQLMutation : GraphQLQuery("mutation") {
     }
 }
 
-data class Movie(private val movieId: Int, private val name: String) {
-    override fun toString(): String {
-        return "{movieId:$movieId, name:\"$name\" }"
-    }
-}
+data class Movie(val movieId: Int, val name: String, val window: DateRange? = null)
 
 class MovieProjection : BaseProjectionNode() {
     fun movieId(): MovieProjection {
@@ -151,31 +155,3 @@ class MovieProjection : BaseProjectionNode() {
         return this
     }
 }
-
-class DateRangeScalar : Coercing<DateRange, String> {
-    private var formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy")
-
-    @Throws(CoercingSerializeException::class)
-    override fun serialize(dataFetcherResult: Any): String {
-        val range: DateRange = dataFetcherResult as DateRange
-        return range.from.format(formatter) + "-" + range.to.format(formatter)
-    }
-
-    @Throws(CoercingParseValueException::class)
-    override fun parseValue(input: Any): DateRange {
-        val split = (input as String).split("-").toTypedArray()
-        val from = LocalDate.parse(split[0], formatter)
-        val to = LocalDate.parse(split[0], formatter)
-        return DateRange(from, to)
-    }
-
-    @Throws(CoercingParseLiteralException::class)
-    override fun parseLiteral(input: Any): DateRange {
-        val split = (input as StringValue).value.split("-").toTypedArray()
-        val from = LocalDate.parse(split[0], formatter)
-        val to = LocalDate.parse(split[0], formatter)
-        return DateRange(from, to)
-    }
-}
-
-class DateRange(val from: LocalDate, val to: LocalDate)

@@ -18,10 +18,16 @@ package com.netflix.graphql.dgs.client.codegen
 
 import graphql.schema.Coercing
 
-class GraphQLQueryRequest(private val query: GraphQLQuery, private val projection: BaseProjectionNode?, private val scalars: Map<Class<*>, Coercing<*, *>>?) {
+class GraphQLQueryRequest(
+    private val query: GraphQLQuery,
+    private val projection: BaseProjectionNode?,
+    private val scalars: Map<Class<*>, Coercing<*, *>>?
+) {
 
     constructor(query: GraphQLQuery) : this(query, null, null)
     constructor(query: GraphQLQuery, projection: BaseProjectionNode?) : this(query, projection, null)
+
+    private val inputValueSerializer = InputValueSerializer(scalars ?: emptyMap())
 
     fun serialize(): String {
         val builder = StringBuilder()
@@ -39,29 +45,7 @@ class GraphQLQueryRequest(private val query: GraphQLQuery, private val projectio
                 if (value != null) {
                     builder.append(key)
                     builder.append(": ")
-                    if (value is String) {
-                        builder.append("\"")
-                        builder.append(value.toString())
-                        builder.append("\"")
-                    } else if (value is List<*>) {
-                        if (value.isNotEmpty() && value[0] is String) {
-                            builder.append("[")
-                            val result = value.joinToString(separator = "\", \"", prefix = "\"", postfix = "\"")
-                            builder.append(result)
-                            builder.append("]")
-                        } else {
-                            builder.append(value.toString())
-                        }
-                    } else {
-                        if (scalars?.contains(value::class.java) == true) {
-                            val serializedValue = scalars[value::class.java]!!.serialize(value)
-                            builder.append("\"")
-                            builder.append(serializedValue)
-                            builder.append("\"")
-                        } else {
-                            builder.append(value.toString())
-                        }
-                    }
+                    builder.append(inputValueSerializer.serialize(value))
                 }
                 if (inputEntryIterator.hasNext()) {
                     builder.append(", ")
@@ -79,5 +63,34 @@ class GraphQLQueryRequest(private val query: GraphQLQuery, private val projectio
 
         builder.append(" }")
         return builder.toString()
+    }
+}
+
+class InputValueSerializer(private val scalars: Map<Class<*>, Coercing<*, *>> = emptyMap()) {
+    fun serialize(input: Any?): String? {
+        if (input == null) {
+            return null
+        }
+
+        val type = input::class.java
+        return if (scalars.contains(type)) {
+            """"${scalars[type]!!.serialize(input)}""""
+        } else if (type.isPrimitive || type == Integer::class.java || type == Long::class.java || type == Double::class.java || type == Float::class.java || type == Boolean::class.java || type == Short::class.java || type == Byte::class.java || type.isEnum) {
+            input.toString()
+        } else if (type == String::class.java) {
+            """"$input""""
+        } else if (input is List<*>) {
+            """[${input.filterNotNull().joinToString(", ") { listItem -> serialize(listItem) ?: "" }}]"""
+        } else {
+            input.javaClass.declaredFields.map {
+                it.isAccessible = true
+                val nestedValue = it.get(input)
+                if (nestedValue != null) {
+                    """${it.name}:${serialize(nestedValue)}"""
+                } else {
+                    null
+                }
+            }.filterNotNull().joinToString(", ", "{", " }")
+        }
     }
 }
