@@ -68,6 +68,16 @@ internal class DgsSchemaProviderTest {
         }
     }
 
+    private interface DefaultHelloFetcherInterface {
+        @DgsData(parentType = "Query", field = "hello")
+        fun someFetcher(): String
+    }
+
+    private val interfaceHelloFetcher = object : DefaultHelloFetcherInterface {
+        override fun someFetcher(): String =
+            "Hello"
+    }
+
     @Test
     fun findSchemaFiles() {
         val findSchemaFiles = DgsSchemaProvider(
@@ -340,6 +350,22 @@ internal class DgsSchemaProviderTest {
             Pair(
                 "helloFetcher",
                 defaultHelloFetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        provider.schema()
+        assertThat(provider.dataFetcherInstrumentationEnabled).containsKey("Query.hello")
+        assertThat(provider.dataFetcherInstrumentationEnabled["Query.hello"]).isTrue
+    }
+
+    @Test
+    fun enableInstrumentationForDataFetchersFromInterfaces() {
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                interfaceHelloFetcher
             )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()

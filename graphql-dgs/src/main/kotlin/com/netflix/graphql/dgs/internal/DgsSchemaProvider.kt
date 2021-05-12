@@ -196,10 +196,10 @@ class DgsSchemaProvider(
             val javaClass = AopUtils.getTargetClass(dgsComponent)
 
             javaClass.methods.asSequence()
-                .filter { method -> MergedAnnotations.from(method).isPresent(DgsData::class.java) }
+                .filter { method -> MergedAnnotations.from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY).isPresent(DgsData::class.java) }
                 .forEach { method ->
 
-                    val dgsDataAnnotation = MergedAnnotations.from(method).get(DgsData::class.java)
+                    val dgsDataAnnotation = MergedAnnotations.from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY).get(DgsData::class.java)
                     val field = dgsDataAnnotation.getString("field").ifEmpty { method.name }
                     val parentType = dgsDataAnnotation.getString("parentType")
 
