@@ -21,7 +21,7 @@ publish-local: ## Clans, bulds, and publishes the Codegen artifacts to mavenLoca
 
 
 test-examples_py: ## Modify the examples to use the latest Codegen SNAPSHOT, publishes the snapshot locally, and builds the examples.
-	scripts/test-examples.py -v -g --path=build/examples
+	scripts/test-examples.py -v -g -k --path=build/examples
 
 test-examples: /usr/local/bin/python3 ## Modify the examples to use the latest Codegen SNAPSHOT, publishes the snapshot locally, and builds the examples.
 	$(MAKE) publish-local
