@@ -79,6 +79,12 @@ class InputValueSerializerTest {
     }
 
     @Test
+    fun `String with slashes`() {
+        val serialize = InputValueSerializer().serialize("some \\ \"string\"")
+        assertThat(serialize).isEqualTo("\"some \\ \"string\"\"")
+    }
+
+    @Test
     fun `int value`() {
         val serialize = InputValueSerializer().serialize(1)
         assertThat(serialize).isEqualTo("1")
