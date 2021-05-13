@@ -76,7 +76,7 @@ class InputValueSerializer(private val scalars: Map<Class<*>, Coercing<*, *>> = 
 
         return if (scalars.contains(type)) {
             """"${scalars[type]!!.serialize(input)}""""
-        } else if (type.isPrimitive || type == Integer::class.java || type == Long::class.java || type == Double::class.java || type == Float::class.java || type == Boolean::class.java || type == Short::class.java || type == Byte::class.java || type.isEnum) {
+        } else if (type.isPrimitive || type.isAssignableFrom(java.lang.Integer::class.java) || type.isAssignableFrom(java.lang.Long::class.java) || type.isAssignableFrom(java.lang.Double::class.java) || type.isAssignableFrom(java.lang.Float::class.java) || type.isAssignableFrom(java.lang.Boolean::class.java) || type.isAssignableFrom(java.lang.Short::class.java) || type.isAssignableFrom(java.lang.Byte::class.java) || type.isEnum) {
             input.toString()
         } else if (type == String::class.java) {
             """"$input""""

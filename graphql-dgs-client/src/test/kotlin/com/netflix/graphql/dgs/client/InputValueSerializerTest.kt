@@ -60,6 +60,30 @@ class InputValueSerializerTest {
     }
 
     @Test
+    fun `int value`() {
+        val serialize = InputValueSerializer().serialize(1)
+        assertThat(serialize).isEqualTo("1")
+    }
+
+    @Test
+    fun `long value`() {
+        val serialize = InputValueSerializer().serialize(1L)
+        assertThat(serialize).isEqualTo("1")
+    }
+
+    @Test
+    fun `boolean value`() {
+        val serialize = InputValueSerializer().serialize(true)
+        assertThat(serialize).isEqualTo("true")
+    }
+
+    @Test
+    fun `double value`() {
+        val serialize = InputValueSerializer().serialize(1.1)
+        assertThat(serialize).isEqualTo("1.1")
+    }
+
+    @Test
     fun `Companion objects should be ignored`() {
         val serialize = InputValueSerializer().serialize(MyDataWithCompanion("some title"))
         assertThat(serialize).isEqualTo("{title:\"some title\" }")
