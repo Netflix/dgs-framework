@@ -17,6 +17,9 @@
 package com.netflix.graphql.dgs.client.codegen
 
 import graphql.schema.Coercing
+import org.springframework.util.ReflectionUtils
+import java.lang.reflect.Field
+import java.util.*
 
 class GraphQLQueryRequest(
     private val query: GraphQLQuery,
@@ -83,15 +86,20 @@ class InputValueSerializer(private val scalars: Map<Class<*>, Coercing<*, *>> = 
         } else if (input is List<*>) {
             """[${input.filterNotNull().joinToString(", ") { listItem -> serialize(listItem) ?: "" }}]"""
         } else {
-            input.javaClass.declaredFields.filter { !it.type::class.isCompanion }.map {
-                it.isAccessible = true
+            val fields = LinkedList<Field>()
+            ReflectionUtils.doWithFields(input.javaClass) {
+                ReflectionUtils.makeAccessible(it)
+                fields.add(it)
+            }
+
+            fields.filter { !it.type::class.isCompanion }.mapNotNull {
                 val nestedValue = it.get(input)
                 if (nestedValue != null && !nestedValue::class.isCompanion) {
                     """${it.name}:${serialize(nestedValue)}"""
                 } else {
                     null
                 }
-            }.filterNotNull().joinToString(", ", "{", " }")
+            }.joinToString(", ", "{", " }")
         }
     }
 }

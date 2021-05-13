@@ -114,7 +114,17 @@ class InputValueSerializerTest {
         assertThat(serialize).isEqualTo("[1, 2, 3]")
     }
 
+    @Test
+    fun `Base class properties should be found`() {
+        val serialize = InputValueSerializer().serialize(MySubClass("DGS", 1500))
+        assertThat(serialize).isEqualTo("{stars:1500, name:\"DGS\" }")
+    }
+
     data class MyDataWithCompanion(val title: String) {
         public companion object {}
     }
+
+    open class MyBaseClass(private val name: String)
+
+    class MySubClass(name: String, val stars: Int) : MyBaseClass(name)
 }
