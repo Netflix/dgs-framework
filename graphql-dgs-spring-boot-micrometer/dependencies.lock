@@ -119,7 +119,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
-            "locked": "3.4.5"
+            "locked": "3.4.6"
         },
         "net.bytebuddy:byte-buddy": {
             "locked": "1.10.20"
@@ -533,7 +533,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
-            "locked": "3.4.5"
+            "locked": "3.4.6"
         },
         "net.bytebuddy:byte-buddy": {
             "locked": "1.10.20"
@@ -616,6 +616,7 @@
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
@@ -700,7 +701,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
-            "locked": "3.4.5"
+            "locked": "3.4.6"
         },
         "jakarta.servlet:jakarta.servlet-api": {
             "firstLevelTransitive": [

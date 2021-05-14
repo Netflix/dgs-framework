@@ -470,7 +470,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
-            "locked": "3.4.5"
+            "locked": "3.4.6"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -547,6 +547,7 @@
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
@@ -631,7 +632,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
-            "locked": "3.4.5"
+            "locked": "3.4.6"
         },
         "jakarta.servlet:jakarta.servlet-api": {
             "firstLevelTransitive": [
