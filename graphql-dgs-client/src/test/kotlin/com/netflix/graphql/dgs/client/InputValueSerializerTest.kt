@@ -22,6 +22,7 @@ import com.netflix.graphql.dgs.client.scalar.DateRangeScalar
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class InputValueSerializerTest {
 
@@ -126,6 +127,13 @@ class InputValueSerializerTest {
         assertThat(serialize).isEqualTo("{stars:1500, name:\"DGS\" }")
     }
 
+    @Test
+    fun `Date without scalar`() {
+        val input = WithLocalDateTime(LocalDateTime.of(2021, 5, 13, 4, 34))
+        val serialize = InputValueSerializer().serialize(input)
+        assertThat(serialize).isEqualTo("""{date:"2021-05-13T04:34" }""")
+    }
+
     data class MyDataWithCompanion(val title: String) {
         public companion object {}
     }
@@ -133,4 +141,6 @@ class InputValueSerializerTest {
     open class MyBaseClass(private val name: String)
 
     class MySubClass(name: String, val stars: Int) : MyBaseClass(name)
+
+    class WithLocalDateTime(val date: LocalDateTime)
 }
