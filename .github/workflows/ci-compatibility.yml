@@ -55,11 +55,11 @@ jobs:
         run: |
           ./gradlew --info check publishToMavenLocal --warning-mode all
 
-      - name: Publish Test Report
-        if: ${{ always() }}
-        uses: scacap/action-surefire-report@v1
-        with:
-          report_paths: '**/build/test-results/test/TEST-*.xml'
+      # - name: Publish Test Report
+      #   if: ${{ always() }}
+      #   uses: scacap/action-surefire-report@v1
+      #   with:
+      #     report_paths: '**/build/test-results/test/TEST-*.xml'
 
       - name: Clone dgs-examples-java
         uses: actions/checkout@master
@@ -78,10 +78,10 @@ jobs:
           find /home/runner/.m2/repository/ -type f -name "*graphql-dgs-codegen-gradle*"
           ./scripts/test-examples.py -v -k --path=./build/examples
 
-      - name: Publish Examples Test Report
-        if: ${{ always() }}
-        uses: scacap/action-surefire-report@v1
-        with:
-          check_name: Examples Test Reports
-          report_paths: 'build/examples/**/build/test-results/test/TEST-*.xml'
+      # - name: Publish Examples Test Report
+      #   if: ${{ always() }}
+      #   uses: scacap/action-surefire-report@v1
+      #   with:
+      #     check_name: Examples Test Reports
+      #     report_paths: 'build/examples/**/build/test-results/test/TEST-*.xml'
 
