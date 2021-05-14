@@ -122,6 +122,17 @@ class GraphQLQueryRequestTest {
         val result = request.serialize()
         assertThat(result).isEqualTo("query TestNamedQuery {test(movie: {movieId:123, name:\"greatMovie\", window:\"01/01/2020-05/11/2021\" }) }")
     }
+
+    @Test
+    fun testSerializeMapAsInput() {
+        val query = TestGraphQLQuery().apply {
+            input["actors"] = mapOf("name" to "actorA", "movies" to listOf("movie1", "movie2"))
+            input["movie"] = Movie(123, "greatMovie", DateRange(LocalDate.of(2020, 1, 1), LocalDate.of(2021, 5, 11)))
+        }
+        val request = GraphQLQueryRequest(query, MovieProjection(), mapOf(DateRange::class.java to DateRangeScalar()))
+        val result = request.serialize()
+        assertThat(result).isEqualTo("query {test(actors: { name: \"actorA\", movies: [\"movie1\", \"movie2\"] }, movie: {movieId:123, name:\"greatMovie\", window:\"01/01/2020-05/11/2021\" }) }")
+    }
 }
 
 class TestGraphQLQuery : GraphQLQuery() {

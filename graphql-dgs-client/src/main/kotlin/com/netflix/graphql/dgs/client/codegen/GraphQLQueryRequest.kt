@@ -100,6 +100,15 @@ class InputValueSerializer(private val scalars: Map<Class<*>, Coercing<*, *>> = 
             """"$input""""
         } else if (input is List<*>) {
             """[${input.filterNotNull().joinToString(", ") { listItem -> serialize(listItem) ?: "" }}]"""
+        } else if (input is Map<*, *>) {
+            input.map {
+                entry ->
+                if (entry.value != null) {
+                    """${entry.key}: ${serialize(entry.value)}"""
+                } else {
+                    """${entry.key}: null"""
+                }
+            }.joinToString(", ", "{ ", " }")
         } else {
             val fields = LinkedList<Field>()
             ReflectionUtils.doWithFields(input.javaClass) {
