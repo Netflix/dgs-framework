@@ -313,6 +313,10 @@ class DgsSchemaProvider(
                     } else if (environment.fieldDefinition.arguments.find { it.name == parameterName }?.type is GraphQLScalarType) {
                         // Return the value with it's type for scalars
                         parameterValue
+                    } else if (environment.fieldDefinition.arguments.find { it.name == parameterName }?.type is GraphQLNonNull
+                              && environment.fieldDefinition.arguments.find { it.name == parameterName }?.type?.originalWrappedType is GraphQLScalarType) {
+                        // Return the value with it's type for scalars
+                        parameterValue
                     } else {
                         // Return the converted value mapped to the defined type
                         if (parameter.type.isAssignableFrom(Optional::class.java)) {
