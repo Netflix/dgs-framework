@@ -82,7 +82,7 @@ class InputValueSerializerTest {
     @Test
     fun `String with slashes`() {
         val serialize = InputValueSerializer().serialize("some \\ \"string\"")
-        assertThat(serialize).isEqualTo("\"some \\ \"string\"\"")
+        assertThat(serialize).isEqualTo("\"some \\\\ \\\"string\\\"\"")
     }
 
     @Test

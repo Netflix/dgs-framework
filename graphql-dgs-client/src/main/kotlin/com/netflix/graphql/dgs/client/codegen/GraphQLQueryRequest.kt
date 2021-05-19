@@ -97,7 +97,7 @@ class InputValueSerializer(private val scalars: Map<Class<*>, Coercing<*, *>> = 
             input.toString()
         } else if (toStringClasses.contains(type)) {
             // Call toString for known types, in case no scalar is found. This is for backward compatibility.
-            """"$input""""
+            """"${input.toString().replace("\\", "\\\\").replace("\"", "\\\"")}""""
         } else if (input is List<*>) {
             """[${input.filterNotNull().joinToString(", ") { listItem -> serialize(listItem) ?: "" }}]"""
         } else if (input is Map<*, *>) {
