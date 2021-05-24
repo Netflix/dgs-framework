@@ -147,6 +147,17 @@ public interface DgsQueryExecutor {
     DocumentContext executeAndGetDocumentContext(String query, Map<String, Object> variables);
 
     /**
+     * Executes a GraphQL query, parses the returned data, and return a {@link DocumentContext}.
+     * A {@link DocumentContext} can be used to extract multiple values using JsonPath, without re-executing the query.
+     * @param query Query string
+     * @param variables A Map of variables
+     * @param headers Spring {@link HttpHeaders}
+     * @return {@link DocumentContext} is a JsonPath type used to extract values from.
+     * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
+     */
+    DocumentContext executeAndGetDocumentContext(String query, Map<String, Object> variables, HttpHeaders headers);
+
+    /**
      * Executes a GraphQL query, parses the returned data, extracts a value using JsonPath, and converts that value into the given type.
      * Be aware that this method can't guarantee type safety.
      * @param query Query string

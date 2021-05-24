@@ -142,6 +142,14 @@ class DefaultDgsQueryExecutor(
         return parseContext.parse(getJsonResult(query, variables))
     }
 
+    override fun executeAndGetDocumentContext(
+        query: String,
+        variables: MutableMap<String, Any>,
+        headers: HttpHeaders?
+    ): DocumentContext {
+        return parseContext.parse(getJsonResult(query, variables, headers))
+    }
+
     private fun getJsonResult(query: String, variables: Map<String, Any>, headers: HttpHeaders? = null): String {
         val executionResult = execute(query, variables, null, headers, null, null)
 
