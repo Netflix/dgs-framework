@@ -112,8 +112,10 @@ class InputValueSerializer(private val scalars: Map<Class<*>, Coercing<*, *>> = 
         } else {
             val fields = LinkedList<Field>()
             ReflectionUtils.doWithFields(input.javaClass) {
-                ReflectionUtils.makeAccessible(it)
-                fields.add(it)
+                if (! it.isSynthetic) {
+                    ReflectionUtils.makeAccessible(it)
+                    fields.add(it)
+                }
             }
 
             fields.filter { !it.type::class.isCompanion }.mapNotNull {
