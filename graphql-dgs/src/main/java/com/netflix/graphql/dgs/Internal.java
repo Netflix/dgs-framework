@@ -14,8 +14,21 @@
  * limitations under the License.
  */
 
+package com.netflix.graphql.dgs;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.ElementType.FIELD;
+
+
 /**
- * This package is intended to not offer any beans, its mainly a place holder
- * to redirect class scanning. Ref [MicrometerServeltSmokeTest]
+ * This represents code considered internal to the DGS framework and therefore its API is not stable between within releases.
+ * In general unnecessary changes will be avoided but you should not depend on internal classes.
  */
-package com.netflix.graphql.dgs.metrics.micrometer.none
+@Retention(RetentionPolicy.RUNTIME)
+@Target(value = {CONSTRUCTOR, METHOD, TYPE, FIELD})
+public @interface Internal {
+}
