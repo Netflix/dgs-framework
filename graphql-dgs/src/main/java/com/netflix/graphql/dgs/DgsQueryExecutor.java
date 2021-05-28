@@ -181,7 +181,23 @@ public interface DgsQueryExecutor {
      * @see <a href="https://github.com/json-path/JsonPath">JsonPath syntax docs</a>
      * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
      */
-    <T> T executeAndExtractJsonPathAsObject(String query, String jsonPath, Map<String, Object> variables, Class<T> clazz);
+    default <T> T executeAndExtractJsonPathAsObject(String query, String jsonPath, Map<String, Object> variables, Class<T> clazz) {
+        return executeAndExtractJsonPathAsObject(query, jsonPath, null, Collections.emptyMap(), clazz);
+    }
+
+    /**
+     * Executes a GraphQL query, parses the returned data, extracts a value using JsonPath, and converts that value into the given type.
+     * Be aware that this method can't guarantee type safety.
+     * @param query Query string
+     * @param jsonPath JsonPath expression.
+     * @param headers Request headers represented as a Spring Framework {@link HttpHeaders}
+     * @param variables A Map of variables
+     * @param clazz The type to convert the extracted value to.
+     * @return The extracted value from the result, converted to type T
+     * @see <a href="https://github.com/json-path/JsonPath">JsonPath syntax docs</a>
+     * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
+     */
+    <T> T executeAndExtractJsonPathAsObject(String query, String jsonPath, HttpHeaders headers, Map<String, Object> variables, Class<T> clazz);
 
     /**
      * Executes a GraphQL query, parses the returned data, extracts a value using JsonPath, and converts that value into the given type.
@@ -211,5 +227,23 @@ public interface DgsQueryExecutor {
      * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
      * @see <a href="https://github.com/json-path/JsonPath#what-is-returned-when">Using TypeRef</a>
      */
-    <T> T executeAndExtractJsonPathAsObject(String query, String jsonPath, Map<String, Object> variables, TypeRef<T> typeRef);
+    default <T> T executeAndExtractJsonPathAsObject(String query, String jsonPath, Map<String, Object> variables, TypeRef<T> typeRef) {
+        return executeAndExtractJsonPathAsObject(query, jsonPath, null,  Collections.emptyMap(), typeRef);
+    }
+
+    /**
+     * Executes a GraphQL query, parses the returned data, extracts a value using JsonPath, and converts that value into the given type.
+     * Uses a {@link TypeRef} to specify the expected type, which is useful for Lists and Maps.
+     * Be aware that this method can't guarantee type safety.
+     * @param query Query string
+     * @param jsonPath JsonPath expression.
+     * @param headers Request headers represented as a Spring Framework {@link HttpHeaders}
+     * @param variables A Map of variables
+     * @param typeRef A JsonPath {@link TypeRef} representing the expected result type.
+     * @return The extracted value from the result, converted to type T
+     * @see <a href="https://github.com/json-path/JsonPath">JsonPath syntax docs</a>
+     * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
+     * @see <a href="https://github.com/json-path/JsonPath#what-is-returned-when">Using TypeRef</a>
+     */
+    <T> T executeAndExtractJsonPathAsObject(String query, String jsonPath, HttpHeaders headers, Map<String, Object> variables, TypeRef<T> typeRef);
 }

@@ -113,10 +113,11 @@ class DefaultDgsQueryExecutor(
     override fun <T> executeAndExtractJsonPathAsObject(
         query: String,
         jsonPath: String,
+        headers: HttpHeaders?,
         variables: Map<String, Any>,
         clazz: Class<T>
     ): T {
-        val jsonResult = getJsonResult(query, variables)
+        val jsonResult = getJsonResult(query, variables, headers)
         return try {
             parseContext.parse(jsonResult).read(jsonPath, clazz)
         } catch (ex: MappingException) {
@@ -127,10 +128,11 @@ class DefaultDgsQueryExecutor(
     override fun <T> executeAndExtractJsonPathAsObject(
         query: String,
         jsonPath: String,
+        headers: HttpHeaders?,
         variables: Map<String, Any>,
         typeRef: TypeRef<T>
     ): T {
-        val jsonResult = getJsonResult(query, variables)
+        val jsonResult = getJsonResult(query, variables, headers)
         return try {
             parseContext.parse(jsonResult).read(jsonPath, typeRef)
         } catch (ex: MappingException) {
