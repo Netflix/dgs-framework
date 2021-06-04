@@ -30,8 +30,19 @@
       "type": "java.lang.Boolean",
       "description": "Enables DGS' instrumentation for DataLoader; emits gql.dataLoader meters.",
       "defaultValue": true
+    },
+    {
+      "name": "management.metrics.dgs-graphql.query-signature.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enables DGS' QuerySignatureRepository, if available metrics will be tagged with the `gql.query.sig.hash`",
+      "defaultValue": true
+    },
+    {
+      "name": "management.metrics.dgs-graphql.query-signature.caching.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enables DGS' QuerySignature caching. If set to false the signature will always be calcualted on each request.",
+      "defaultValue": true
     }
-
   ],
   "hints": []
 }
