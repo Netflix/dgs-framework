@@ -114,9 +114,10 @@ class DefaultDgsQueryExecutor(
         query: String,
         jsonPath: String,
         variables: Map<String, Any>,
-        clazz: Class<T>
+        clazz: Class<T>,
+        headers: HttpHeaders?
     ): T {
-        val jsonResult = getJsonResult(query, variables)
+        val jsonResult = getJsonResult(query, variables, headers)
         return try {
             parseContext.parse(jsonResult).read(jsonPath, clazz)
         } catch (ex: MappingException) {
@@ -128,9 +129,10 @@ class DefaultDgsQueryExecutor(
         query: String,
         jsonPath: String,
         variables: Map<String, Any>,
-        typeRef: TypeRef<T>
+        typeRef: TypeRef<T>,
+        headers: HttpHeaders?
     ): T {
-        val jsonResult = getJsonResult(query, variables)
+        val jsonResult = getJsonResult(query, variables, headers)
         return try {
             parseContext.parse(jsonResult).read(jsonPath, typeRef)
         } catch (ex: MappingException) {
