@@ -34,13 +34,13 @@
     {
       "name": "management.metrics.dgs-graphql.query-signature.enabled",
       "type": "java.lang.Boolean",
-      "description": "Enables DGS' QuerySignatureRepository, if available metrics will be tagged with the `gql.query.sig.hash`",
+      "description": "Enables DGS' QuerySignatureRepository; if available metrics will be tagged with the `gql.query.sig.hash`.",
       "defaultValue": true
     },
     {
       "name": "management.metrics.dgs-graphql.query-signature.caching.enabled",
       "type": "java.lang.Boolean",
-      "description": "Enables DGS' QuerySignature caching. If set to false the signature will always be calcualted on each request.",
+      "description": "Enables DGS' QuerySignature caching; if set to false the signature will always be calculated on each request.",
       "defaultValue": true
     }
   ],
