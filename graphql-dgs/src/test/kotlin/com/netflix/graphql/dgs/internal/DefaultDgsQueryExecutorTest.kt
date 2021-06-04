@@ -21,6 +21,7 @@ import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsData
 import com.netflix.graphql.dgs.DgsScalar
+import com.netflix.graphql.dgs.InputArgument
 import com.netflix.graphql.dgs.LocalDateTimeScalar
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
@@ -37,6 +38,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
+import org.springframework.http.HttpHeaders
 import java.time.LocalDateTime
 import java.util.*
 import java.util.function.Supplier
@@ -83,7 +85,14 @@ internal class DefaultDgsQueryExecutorTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", fetcher), Pair("numbersFetcher", numbersFetcher), Pair("moviesFetcher", moviesFetcher), Pair("withErrorFetcher", fetcherWithError))
+        val echoFetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "echo")
+            fun echo(@InputArgument("message") message: String): String {
+                return message
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", fetcher), Pair("numbersFetcher", numbersFetcher), Pair("moviesFetcher", moviesFetcher), Pair("withErrorFetcher", fetcherWithError), Pair("echoFetcher", echoFetcher))
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(Pair("DateTimeScalar", LocalDateTimeScalar()))
         every { dgsDataLoaderProvider.buildRegistryWithContextSupplier(any<Supplier<Any>>()) } returns DataLoaderRegistry()
 
@@ -101,6 +110,7 @@ internal class DefaultDgsQueryExecutorTest {
                 numbers: [Int]
                 movies: [Movie]
                 withError: String
+                echo(message: String): String
             }
             
             type Movie { 
@@ -205,6 +215,66 @@ internal class DefaultDgsQueryExecutorTest {
 
         assertThat(person).isInstanceOf(List::class.java)
         assertThat(person[0]).isExactlyInstanceOf(Movie::class.java)
+    }
+
+    @Test
+    fun extractJsonAsObjectTypeRefWithVariables() {
+        val expectedMessage = "hello dgs"
+        val message = dgsQueryExecutor!!.executeAndExtractJsonPathAsObject(
+            "query echo(\$message: String) { echo(message: \$message)}",
+            "data.echo",
+            mapOf("message" to expectedMessage),
+            object : TypeRef<String>() {}
+        )
+
+        assertThat(expectedMessage).isEqualTo(message)
+    }
+
+    @Test
+    fun extractJsonAsObjectTypeRefWithHeadersNotThrow() {
+        val httpHeaders = HttpHeaders()
+        httpHeaders.add("test", "headerValue")
+
+        val expectedMessage = "hello dgs"
+        val message = dgsQueryExecutor!!.executeAndExtractJsonPathAsObject(
+            "query echo(\$message: String) { echo(message: \$message)}",
+            "data.echo",
+            mapOf("message" to expectedMessage),
+            object : TypeRef<String>() {},
+            httpHeaders
+        )
+
+        assertThat(expectedMessage).isEqualTo(message)
+    }
+
+    @Test
+    fun extractJsonAsObjectClazzWithVariables() {
+        val expectedMessage = "hello dgs"
+        val message = dgsQueryExecutor!!.executeAndExtractJsonPathAsObject(
+            "query echo(\$message: String) { echo(message: \$message)}",
+            "data.echo",
+            mapOf("message" to expectedMessage),
+            String::class.java
+        )
+
+        assertThat(expectedMessage).isEqualTo(message)
+    }
+
+    @Test
+    fun extractJsonAsObjectClazzWithHeadersNotThrow() {
+        val httpHeaders = HttpHeaders()
+        httpHeaders.add("test", "headerValue")
+
+        val expectedMessage = "hello dgs"
+        val message = dgsQueryExecutor!!.executeAndExtractJsonPathAsObject(
+            "query echo(\$message: String) { echo(message: \$message)}",
+            "data.echo",
+            mapOf("message" to expectedMessage),
+            String::class.java,
+            httpHeaders
+        )
+
+        assertThat(expectedMessage).isEqualTo(message)
     }
 
     @Test
