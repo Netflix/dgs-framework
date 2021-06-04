@@ -227,7 +227,7 @@ internal class DefaultDgsQueryExecutorTest {
             object : TypeRef<String>() {}
         )
 
-        assertThat(expectedMessage).isEqualTo(message)
+        assertThat(message).isEqualTo(expectedMessage)
     }
 
     @Test
@@ -244,7 +244,7 @@ internal class DefaultDgsQueryExecutorTest {
             httpHeaders
         )
 
-        assertThat(expectedMessage).isEqualTo(message)
+        assertThat(message).isEqualTo(expectedMessage)
     }
 
     @Test
@@ -257,7 +257,7 @@ internal class DefaultDgsQueryExecutorTest {
             String::class.java
         )
 
-        assertThat(expectedMessage).isEqualTo(message)
+        assertThat(message).isEqualTo(expectedMessage)
     }
 
     @Test
@@ -274,7 +274,7 @@ internal class DefaultDgsQueryExecutorTest {
             httpHeaders
         )
 
-        assertThat(expectedMessage).isEqualTo(message)
+        assertThat(message).isEqualTo(expectedMessage)
     }
 
     @Test
