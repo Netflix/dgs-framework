@@ -40,7 +40,7 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       - name: Build
         run: |
-          ./gradlew build
+          ./gradlew build --info
       # - name: Publish Test Report
       #   if: ${{ always() }}
       #   uses: scacap/action-surefire-report@v1
