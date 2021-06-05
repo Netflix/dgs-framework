@@ -100,7 +100,6 @@ class WebRequestTestWithCustomContext {
                             .type(TypeName("String"))
                             .build()
                     )
-
                     .build()
             newRegistry.add(query)
 

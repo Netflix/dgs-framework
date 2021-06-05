@@ -13,7 +13,7 @@ GW_OPT_DISABLE_LOCAL=
 
 
 format: ## Formats source code
-	$(GW_CMD) ktlintFormat
+	$(GW_CMD) formatKotlin
 
 
 publish-local: ## Clans, bulds, and publishes the Codegen artifacts to mavenLocal, as a SNAPSHOT.
