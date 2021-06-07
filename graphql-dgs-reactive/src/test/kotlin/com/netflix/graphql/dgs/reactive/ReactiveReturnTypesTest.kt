@@ -16,12 +16,9 @@
 
 package com.netflix.graphql.dgs.reactive
 
-import com.jayway.jsonpath.TypeRef
-import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsData
 import com.netflix.graphql.dgs.DgsScalar
-import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
@@ -39,13 +36,16 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
+import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
 import java.util.function.Supplier
 
 @ExtendWith(MockKExtension::class)
-internal class DefaultDgsReactiveQueryExecutorTest {
+internal class ReactiveReturnTypesTest {
     @MockK
     lateinit var applicationContextMock: ApplicationContext
 
@@ -59,29 +59,29 @@ internal class DefaultDgsReactiveQueryExecutorTest {
 
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
-            fun hello(): String {
-                return "hi!"
+            fun hello(): Mono<String> {
+                return Mono.just("hi!")
             }
         }
 
         val numbersFetcher = object : Any() {
             @DgsData(parentType = "Query", field = "numbers")
-            fun hello(): List<Int> {
-                return listOf(1, 2, 3)
+            fun hello(): Flux<Int> {
+                return Flux.interval(Duration.ofMillis(1)).map { it.toInt() }.take(5)
             }
         }
 
         val moviesFetcher = object : Any() {
             @DgsData(parentType = "Query", field = "movies")
-            fun movies(): List<Movie> {
-                return listOf(Movie("Extraction", LocalDateTime.MIN), Movie("Da 5 Bloods", LocalDateTime.MAX))
+            fun movies(): Flux<Movie> {
+                return Flux.just(Movie("Extraction", LocalDateTime.MIN), Movie("Da 5 Bloods", LocalDateTime.MAX))
             }
         }
 
         val fetcherWithError = object : Any() {
             @DgsData(parentType = "Query", field = "withError")
-            fun withError(): String {
-                throw RuntimeException("Broken!")
+            fun withError(): Mono<String> {
+                return Mono.error { throw RuntimeException("Broken!") }
             }
         }
 
@@ -141,7 +141,7 @@ internal class DefaultDgsReactiveQueryExecutorTest {
     }
 
     @Test
-    fun extractJsonWithString() {
+    fun extractJsonWithMonoString() {
         val helloResult = dgsQueryExecutor.executeAndExtractJsonPath<String>(
             """
             {
@@ -157,7 +157,7 @@ internal class DefaultDgsReactiveQueryExecutorTest {
     }
 
     @Test
-    fun extractJsonWithListOfString() {
+    fun extractJsonWithFlux() {
         val numbers = dgsQueryExecutor.executeAndExtractJsonPath<List<Int>>(
             """
             {
@@ -167,13 +167,14 @@ internal class DefaultDgsReactiveQueryExecutorTest {
             "data.numbers"
         )
 
-        StepVerifier.create(numbers).assertNext {
-            assertThat(it).isEqualTo(listOf(1, 2, 3))
+        val step = StepVerifier.create(numbers)
+        step.assertNext {
+            assertThat(it).isEqualTo(listOf(0, 1, 2, 3, 4))
         }.verifyComplete()
     }
 
     @Test
-    fun extractJsonWithObjectListAsMap() {
+    fun extractJsonWithMonoOfObjects() {
         val movies = dgsQueryExecutor!!.executeAndExtractJsonPath<List<Map<String, Any>>>(
             """
             {
@@ -191,57 +192,6 @@ internal class DefaultDgsReactiveQueryExecutorTest {
     }
 
     @Test
-    fun extractJsonAsObjectAsMap() {
-        val movie = dgsQueryExecutor!!.executeAndExtractJsonPath<Map<String, Any>>(
-            """
-            {
-                movies { title releaseDate }
-            }
-            """.trimIndent(),
-            "data.movies[0]"
-        )
-
-        StepVerifier.create(movie).assertNext {
-            assertThat(it["title"]).isEqualTo("Extraction")
-            assertThat(LocalDateTime.parse(it["releaseDate"] as CharSequence)).isEqualTo(LocalDateTime.MIN)
-        }.verifyComplete()
-    }
-
-    @Test
-    fun extractJsonAsObject() {
-        val movie = dgsQueryExecutor!!.executeAndExtractJsonPathAsObject(
-            """
-            {
-                movies { title releaseDate }
-            }
-            """.trimIndent(),
-            "data.movies[0]", Movie::class.java
-        )
-
-        StepVerifier.create(movie).assertNext {
-            assertThat(it.title).isEqualTo("Extraction")
-            assertThat(it.releaseDate).isEqualTo(LocalDateTime.MIN)
-        }.verifyComplete()
-    }
-
-    @Test
-    fun extractJsonAsObjectWithTypeRef() {
-        val person = dgsQueryExecutor!!.executeAndExtractJsonPathAsObject(
-            """
-            {
-                movies { title releaseDate }
-            }
-            """.trimIndent(),
-            "data.movies", object : TypeRef<List<Movie>>() {}
-        )
-
-        StepVerifier.create(person).assertNext {
-            assertThat(it).isInstanceOf(List::class.java)
-            assertThat(it[0]).isExactlyInstanceOf(Movie::class.java)
-        }.verifyComplete()
-    }
-
-    @Test
     fun extractError() {
         val withError = dgsQueryExecutor.executeAndExtractJsonPath<String>(
             """
@@ -253,88 +203,6 @@ internal class DefaultDgsReactiveQueryExecutorTest {
         )
 
         StepVerifier.create(withError).verifyError(QueryException::class.java)
-    }
-
-    @Test
-    fun extractJsonAsObjectError() {
-
-        val withError = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
-            """
-            {
-                movies { title }
-            }
-            """.trimIndent(),
-            "data.movies[0]", String::class.java
-        )
-
-        StepVerifier.create(withError).consumeErrorWith {
-            assertThat(it).isInstanceOf(DgsQueryExecutionDataExtractionException::class.java)
-            if (it is DgsQueryExecutionDataExtractionException) {
-                assertThat(it.message).isEqualTo("Error deserializing data from '{\"data\":{\"movies\":[{\"title\":\"Extraction\"},{\"title\":\"Da 5 Bloods\"}]}}' with JsonPath 'data.movies[0]' and target class java.lang.String")
-                assertThat(it.cause).isInstanceOf(MappingException::class.java)
-
-                assertThat(it.jsonResult).isEqualTo("{\"data\":{\"movies\":[{\"title\":\"Extraction\"},{\"title\":\"Da 5 Bloods\"}]}}")
-                assertThat(it.jsonPath).isEqualTo("data.movies[0]")
-                assertThat(it.targetClass).isEqualTo(String::class.java.name)
-            }
-        }.verify()
-    }
-
-    @Test
-    fun extractJsonAsTypeRefError() {
-        val withError = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
-            """
-            {
-                movies { title }
-            }
-            """.trimIndent(),
-            "data.movies[0]", object : TypeRef<List<String>>() {}
-        )
-
-        StepVerifier.create(withError).consumeErrorWith {
-            assertThat(it).isInstanceOf(DgsQueryExecutionDataExtractionException::class.java)
-            if (it is DgsQueryExecutionDataExtractionException) {
-                assertThat(it.message).isEqualTo("Error deserializing data from '{\"data\":{\"movies\":[{\"title\":\"Extraction\"},{\"title\":\"Da 5 Bloods\"}]}}' with JsonPath 'data.movies[0]' and target class java.util.List<? extends java.lang.String>")
-                assertThat(it.cause).isInstanceOf(MappingException::class.java)
-                assertThat(it.jsonResult).isEqualTo("{\"data\":{\"movies\":[{\"title\":\"Extraction\"},{\"title\":\"Da 5 Bloods\"}]}}")
-                assertThat(it.jsonPath).isEqualTo("data.movies[0]")
-                assertThat(it.targetClass).isEqualTo("java.util.List<? extends java.lang.String>")
-            }
-        }.verify()
-    }
-
-    @Test
-    fun documentContext() {
-        val context = dgsQueryExecutor.executeAndGetDocumentContext(
-            """
-            {
-                movies { title releaseDate }
-            }
-            """.trimIndent()
-        )
-
-        StepVerifier.create(context).assertNext {
-            val movieList = it.read("data.movies", object : TypeRef<List<Movie>>() {})
-            assertThat(movieList.size).isEqualTo(2)
-            val movie = it.read("data.movies[0]", Movie::class.java)
-            assertThat(movie).isNotNull
-        }.verifyComplete()
-    }
-
-    @Test
-    fun documentContextWithTypename() {
-        val context = dgsQueryExecutor.executeAndGetDocumentContext(
-            """
-            {
-                movies { title __typename }
-            }
-            """.trimIndent()
-        )
-
-        StepVerifier.create(context).assertNext {
-            val movie = it.read("data.movies[0]", Movie::class.java)
-            assertThat(movie).isNotNull
-        }.verifyComplete()
     }
 
     private data class Movie(val title: String, val releaseDate: LocalDateTime?)

@@ -50,6 +50,8 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ValueConstants
 import org.springframework.web.multipart.MultipartFile
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import java.io.InputStreamReader
 import java.lang.reflect.Method
 import java.lang.reflect.Parameter
@@ -276,8 +278,11 @@ class DgsSchemaProvider(
 
     private fun createBasicDataFetcher(method: Method, dgsComponent: Any): DataFetcher<Any?> {
         return DataFetcher<Any?> { environment ->
-            val result = invokeDataFetcher(method, dgsComponent, DgsDataFetchingEnvironment(environment))
-            result
+            when (val result = invokeDataFetcher(method, dgsComponent, DgsDataFetchingEnvironment(environment))) {
+                is Mono<*> -> result.toFuture()
+                is Flux<*> -> result.collectList().toFuture()
+                else -> result
+            }
         }
     }
 
