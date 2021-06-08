@@ -25,8 +25,7 @@ import static java.lang.annotation.ElementType.FIELD;
 
 
 /**
- * This represents code considered internal to the DGS framework and therefore its API is not stable between within releases.
- * In general unnecessary changes will be avoided but you should not depend on internal classes.
+ * This represents code considered internal to the DGS framework and therefore its API is not stable between releases.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = {CONSTRUCTOR, METHOD, TYPE, FIELD})
