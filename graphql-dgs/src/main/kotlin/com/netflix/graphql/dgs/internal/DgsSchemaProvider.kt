@@ -225,7 +225,7 @@ class DgsSchemaProvider(
                         if (type is InterfaceTypeDefinition) {
                             val implementationsOf = typeDefinitionRegistry.getImplementationsOf(type)
                             implementationsOf.forEach { implType ->
-                                val dataFetcher = createBasicDataFetcher(method, dgsComponent)
+                                val dataFetcher = createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
                                 codeRegistryBuilder.dataFetcher(
                                     FieldCoordinates.coordinates(implType.name, field),
                                     dataFetcher
@@ -234,7 +234,7 @@ class DgsSchemaProvider(
                             }
                         } else if (type is UnionTypeDefinition) {
                             type.memberTypes.filterIsInstance<TypeName>().forEach { memberType ->
-                                val dataFetcher = createBasicDataFetcher(method, dgsComponent)
+                                val dataFetcher = createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
                                 codeRegistryBuilder.dataFetcher(
                                     FieldCoordinates.coordinates(memberType.name, field),
                                     dataFetcher
@@ -242,7 +242,7 @@ class DgsSchemaProvider(
                                 dataFetcherInstrumentationEnabled["${memberType.name}.$field"] = enableInstrumentation
                             }
                         } else {
-                            val dataFetcher = createBasicDataFetcher(method, dgsComponent)
+                            val dataFetcher = createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
                             codeRegistryBuilder.dataFetcher(
                                 FieldCoordinates.coordinates(parentType, field),
                                 dataFetcher
@@ -276,12 +276,17 @@ class DgsSchemaProvider(
         }
     }
 
-    private fun createBasicDataFetcher(method: Method, dgsComponent: Any): DataFetcher<Any?> {
+    private fun createBasicDataFetcher(method: Method, dgsComponent: Any, isSubscription: Boolean): DataFetcher<Any?> {
         return DataFetcher<Any?> { environment ->
-            when (val result = invokeDataFetcher(method, dgsComponent, DgsDataFetchingEnvironment(environment))) {
-                is Mono<*> -> result.toFuture()
-                is Flux<*> -> result.collectList().toFuture()
-                else -> result
+            val result = invokeDataFetcher(method, dgsComponent, DgsDataFetchingEnvironment(environment))
+            if (isSubscription) {
+                result
+            } else {
+                when (result) {
+                    is Mono<*> -> result.toFuture()
+                    is Flux<*> -> result.collectList().toFuture()
+                    else -> result
+                }
             }
         }
     }
