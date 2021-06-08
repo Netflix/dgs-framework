@@ -44,4 +44,8 @@ internal class SpectatorLimitedTagMetricResolver(
             DgsGraphQLMetricsProperties.CardinalityLimiterKind.ROLLUP -> CardinalityLimiters.rollup(properties.limit)
         }
     }
+
+    override fun toString(): String {
+        return "SpectatorLimitedTagMetricResolver(tagsProperties=$tagsProperties, dynamicTags=$dynamicTags)"
+    }
 }

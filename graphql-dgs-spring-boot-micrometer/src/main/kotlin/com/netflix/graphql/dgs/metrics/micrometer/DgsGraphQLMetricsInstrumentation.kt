@@ -1,5 +1,6 @@
 package com.netflix.graphql.dgs.metrics.micrometer
 
+import com.netflix.graphql.dgs.Internal
 import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlMetric
 import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlTag
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsGraphQLMetricsTagsProvider
@@ -209,7 +210,8 @@ class DgsGraphQLMetricsInstrumentation(
             this.timerSample.ifPresent { it.stop(timer.register(this.registry)) }
         }
 
-        internal fun tags(): Tags {
+        @Internal
+        fun tags(): Tags {
             return Tags
                 .of(
                     GqlTag.QUERY_COMPLEXITY.key,
