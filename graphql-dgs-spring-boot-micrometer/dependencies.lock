@@ -386,12 +386,6 @@
         "io.micrometer:micrometer-core": {
             "locked": "1.5.11"
         },
-        "io.projectreactor:reactor-core": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
-            "locked": "3.4.6"
-        },
         "net.bytebuddy:byte-buddy": {
             "locked": "1.10.20"
         },
@@ -750,7 +744,6 @@
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
             "locked": "3.4.6"

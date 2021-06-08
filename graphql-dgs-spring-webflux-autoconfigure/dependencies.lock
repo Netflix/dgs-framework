@@ -318,12 +318,6 @@
             ],
             "project": true
         },
-        "io.projectreactor:reactor-core": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
-            "locked": "3.4.6"
-        },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
         },
@@ -605,12 +599,6 @@
         },
         "io.mockk:mockk": {
             "locked": "1.11.0"
-        },
-        "io.projectreactor:reactor-core": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
-            "locked": "3.4.6"
         },
         "io.projectreactor:reactor-test": {
             "locked": "3.4.6"

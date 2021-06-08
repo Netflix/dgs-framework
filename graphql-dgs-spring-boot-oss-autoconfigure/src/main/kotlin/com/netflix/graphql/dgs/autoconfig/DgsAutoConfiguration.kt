@@ -124,14 +124,16 @@ open class DgsAutoConfiguration(
         dataFetcherExceptionHandler: DataFetcherExceptionHandler,
         existingTypeDefinitionFactory: Optional<TypeDefinitionRegistry>,
         existingCodeRegistry: Optional<GraphQLCodeRegistry>,
-        mockProviders: Optional<Set<MockProvider>>
+        mockProviders: Optional<Set<MockProvider>>,
+        dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
     ): DgsSchemaProvider {
         return DgsSchemaProvider(
             applicationContext,
             federationResolver,
             existingTypeDefinitionFactory,
             mockProviders,
-            configProps.schemaLocations
+            configProps.schemaLocations,
+            dataFetcherResultProcessors,
         )
     }
 

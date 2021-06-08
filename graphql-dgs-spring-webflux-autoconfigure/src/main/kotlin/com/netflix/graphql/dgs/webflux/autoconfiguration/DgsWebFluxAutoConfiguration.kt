@@ -23,6 +23,8 @@ import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithReque
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveQueryExecutor
+import com.netflix.graphql.dgs.reactive.internal.FluxDataFetcherResultProcessor
+import com.netflix.graphql.dgs.reactive.internal.MonoDataFetcherResultProcessor
 import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler
 import com.netflix.graphql.dgs.webflux.handlers.DgsWebfluxHttpHandler
 import graphql.ExecutionInput
@@ -153,5 +155,15 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     @Bean
     open fun handlerAdapter(): WebSocketHandlerAdapter? {
         return WebSocketHandlerAdapter()
+    }
+
+    @Bean
+    open fun monoReactiveDataFetcherResultProcessor(): MonoDataFetcherResultProcessor {
+        return MonoDataFetcherResultProcessor()
+    }
+
+    @Bean
+    open fun fluxReactiveDataFetcherResultProcessor(): FluxDataFetcherResultProcessor {
+        return FluxDataFetcherResultProcessor()
     }
 }

@@ -437,7 +437,6 @@
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared"
             ],
@@ -833,7 +832,6 @@
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared"
             ],

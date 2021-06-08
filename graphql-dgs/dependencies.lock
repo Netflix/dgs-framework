@@ -61,9 +61,6 @@
         "com.netflix.graphql.dgs:graphql-error-types": {
             "project": true
         },
-        "io.projectreactor:reactor-core": {
-            "locked": "3.4.6"
-        },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
         },
@@ -275,9 +272,6 @@
         },
         "com.netflix.graphql.dgs:graphql-error-types": {
             "project": true
-        },
-        "io.projectreactor:reactor-core": {
-            "locked": "3.4.6"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"

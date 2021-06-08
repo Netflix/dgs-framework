@@ -320,12 +320,6 @@
             ],
             "project": true
         },
-        "io.projectreactor:reactor-core": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
-            "locked": "3.4.6"
-        },
         "jakarta.servlet:jakarta.servlet-api": {
             "locked": "4.0.4"
         },
@@ -596,12 +590,6 @@
         },
         "io.mockk:mockk": {
             "locked": "1.11.0"
-        },
-        "io.projectreactor:reactor-core": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
-            "locked": "3.4.6"
         },
         "jakarta.servlet:jakarta.servlet-api": {
             "locked": "4.0.4"

@@ -24,6 +24,8 @@ import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveQueryExecutor
+import com.netflix.graphql.dgs.reactive.internal.FluxDataFetcherResultProcessor
+import com.netflix.graphql.dgs.reactive.internal.MonoDataFetcherResultProcessor
 import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
@@ -106,7 +108,9 @@ internal class ReactiveReturnTypesTest {
             applicationContextMock,
             federationResolver = Optional.empty(),
             existingTypeDefinitionRegistry = Optional.empty(),
-            mockProviders = Optional.empty()
+            mockProviders = Optional.empty(),
+            listOf(DgsSchemaProvider.DEFAULT_SCHEMA_LOCATION),
+            listOf(MonoDataFetcherResultProcessor(), FluxDataFetcherResultProcessor()),
         )
 
         val schema = provider.schema(

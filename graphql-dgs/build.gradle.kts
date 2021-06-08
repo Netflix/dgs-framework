@@ -29,8 +29,8 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.apollographql.federation:federation-graphql-java-support")
     implementation("org.springframework.security:spring-security-core")
-    implementation("io.projectreactor:reactor-core")
 
     testImplementation("org.springframework.security:spring-security-core")
+    testImplementation("io.projectreactor:reactor-core")
     testImplementation("io.projectreactor:reactor-test")
 }
