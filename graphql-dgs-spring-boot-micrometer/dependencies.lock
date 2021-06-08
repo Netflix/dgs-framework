@@ -35,6 +35,9 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.3"
         },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.8.8"
+        },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -48,7 +51,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
-            "locked": "2.5.0"
+            "locked": "2.6.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "firstLevelTransitive": [
@@ -112,6 +115,12 @@
             ],
             "project": true
         },
+        "com.netflix.spectator:spectator-api": {
+            "locked": "0.131.0"
+        },
+        "commons-codec:commons-codec": {
+            "locked": "1.14"
+        },
         "io.micrometer:micrometer-core": {
             "locked": "1.5.11"
         },
@@ -154,6 +163,9 @@
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.3.9.RELEASE"
+        },
+        "org.springframework:spring-context-support": {
+            "locked": "5.2.13.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.2.13.RELEASE"
@@ -319,6 +331,9 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.3"
         },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.8.8"
+        },
         "com.github.javafaker:javafaker": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -337,7 +352,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "2.5.0"
+            "locked": "2.6.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "project": true
@@ -361,6 +376,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
             "project": true
+        },
+        "com.netflix.spectator:spectator-api": {
+            "locked": "0.131.0"
+        },
+        "commons-codec:commons-codec": {
+            "locked": "1.14"
         },
         "io.micrometer:micrometer-core": {
             "locked": "1.5.11"
@@ -406,6 +427,9 @@
             ],
             "locked": "5.2.13.RELEASE"
         },
+        "org.springframework:spring-context-support": {
+            "locked": "5.2.13.RELEASE"
+        },
         "org.springframework:spring-framework-bom": {
             "locked": "5.2.13.RELEASE"
         },
@@ -446,6 +470,9 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.3"
         },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.8.8"
+        },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -459,7 +486,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
-            "locked": "2.5.0"
+            "locked": "2.6.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "firstLevelTransitive": [
@@ -523,11 +550,17 @@
             ],
             "project": true
         },
+        "com.netflix.spectator:spectator-api": {
+            "locked": "0.131.0"
+        },
+        "commons-codec:commons-codec": {
+            "locked": "1.14"
+        },
         "io.micrometer:micrometer-core": {
             "locked": "1.5.11"
         },
         "io.mockk:mockk": {
-            "locked": "1.10.3-jdk8"
+            "locked": "1.11.0"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -572,6 +605,9 @@
         "org.springframework.security:spring-security-bom": {
             "locked": "5.3.9.RELEASE"
         },
+        "org.springframework:spring-context-support": {
+            "locked": "5.2.13.RELEASE"
+        },
         "org.springframework:spring-framework-bom": {
             "locked": "5.2.13.RELEASE"
         }
@@ -607,6 +643,9 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.3"
         },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.8.8"
+        },
         "com.github.javafaker:javafaker": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -627,7 +666,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
-            "locked": "2.5.0"
+            "locked": "2.6.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "firstLevelTransitive": [
@@ -691,11 +730,17 @@
             ],
             "project": true
         },
+        "com.netflix.spectator:spectator-api": {
+            "locked": "0.131.0"
+        },
+        "commons-codec:commons-codec": {
+            "locked": "1.14"
+        },
         "io.micrometer:micrometer-core": {
             "locked": "1.5.11"
         },
         "io.mockk:mockk": {
-            "locked": "1.10.3-jdk8"
+            "locked": "1.11.0"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -784,6 +829,9 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
+            "locked": "5.2.13.RELEASE"
+        },
+        "org.springframework:spring-context-support": {
             "locked": "5.2.13.RELEASE"
         },
         "org.springframework:spring-framework-bom": {

@@ -267,7 +267,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.10.3-jdk8"
+            "locked": "1.11.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -308,7 +308,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.10.3-jdk8"
+            "locked": "1.11.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"

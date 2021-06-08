@@ -41,7 +41,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "2.5.0"
+            "locked": "2.6.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "firstLevelTransitive": [
@@ -296,7 +296,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "2.5.0"
+            "locked": "2.6.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "firstLevelTransitive": [
@@ -440,7 +440,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "2.5.0"
+            "locked": "2.6.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "firstLevelTransitive": [
@@ -482,7 +482,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.10.3-jdk8"
+            "locked": "1.11.0"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.4.6"
@@ -563,7 +563,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "2.5.0"
+            "locked": "2.6.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "firstLevelTransitive": [
@@ -605,7 +605,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.10.3-jdk8"
+            "locked": "1.11.0"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.4.6"

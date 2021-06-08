@@ -66,7 +66,8 @@ class DgsSchemaProvider(
     private val federationResolver: Optional<DgsFederationResolver>,
     private val existingTypeDefinitionRegistry: Optional<TypeDefinitionRegistry>,
     private val mockProviders: Optional<Set<MockProvider>>,
-    private val schemaLocations: List<String> = listOf(DEFAULT_SCHEMA_LOCATION)
+    private val schemaLocations: List<String> = listOf(DEFAULT_SCHEMA_LOCATION),
+    private val dataFetcherResultProcessors: List<DataFetcherResultProcessor> = emptyList(),
 ) {
 
     companion object {
@@ -196,10 +197,15 @@ class DgsSchemaProvider(
             val javaClass = AopUtils.getTargetClass(dgsComponent)
 
             javaClass.methods.asSequence()
-                .filter { method -> MergedAnnotations.from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY).isPresent(DgsData::class.java) }
+                .filter { method ->
+                    MergedAnnotations.from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY)
+                        .isPresent(DgsData::class.java)
+                }
                 .forEach { method ->
 
-                    val dgsDataAnnotation = MergedAnnotations.from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY).get(DgsData::class.java)
+                    val dgsDataAnnotation =
+                        MergedAnnotations.from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY)
+                            .get(DgsData::class.java)
                     val field = dgsDataAnnotation.getString("field").ifEmpty { method.name }
                     val parentType = dgsDataAnnotation.getString("parentType")
 
@@ -223,7 +229,8 @@ class DgsSchemaProvider(
                         if (type is InterfaceTypeDefinition) {
                             val implementationsOf = typeDefinitionRegistry.getImplementationsOf(type)
                             implementationsOf.forEach { implType ->
-                                val dataFetcher = createBasicDataFetcher(method, dgsComponent)
+                                val dataFetcher =
+                                    createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
                                 codeRegistryBuilder.dataFetcher(
                                     FieldCoordinates.coordinates(implType.name, field),
                                     dataFetcher
@@ -232,7 +239,8 @@ class DgsSchemaProvider(
                             }
                         } else if (type is UnionTypeDefinition) {
                             type.memberTypes.filterIsInstance<TypeName>().forEach { memberType ->
-                                val dataFetcher = createBasicDataFetcher(method, dgsComponent)
+                                val dataFetcher =
+                                    createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
                                 codeRegistryBuilder.dataFetcher(
                                     FieldCoordinates.coordinates(memberType.name, field),
                                     dataFetcher
@@ -240,7 +248,7 @@ class DgsSchemaProvider(
                                 dataFetcherInstrumentationEnabled["${memberType.name}.$field"] = enableInstrumentation
                             }
                         } else {
-                            val dataFetcher = createBasicDataFetcher(method, dgsComponent)
+                            val dataFetcher = createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
                             codeRegistryBuilder.dataFetcher(
                                 FieldCoordinates.coordinates(parentType, field),
                                 dataFetcher
@@ -274,10 +282,20 @@ class DgsSchemaProvider(
         }
     }
 
-    private fun createBasicDataFetcher(method: Method, dgsComponent: Any): DataFetcher<Any?> {
+    private fun createBasicDataFetcher(method: Method, dgsComponent: Any, isSubscription: Boolean): DataFetcher<Any?> {
         return DataFetcher<Any?> { environment ->
             val result = invokeDataFetcher(method, dgsComponent, DgsDataFetchingEnvironment(environment))
-            result
+            when {
+                isSubscription -> {
+                    result
+                }
+                result != null -> {
+                    dataFetcherResultProcessors.find { it.supportsType(result) }?.process(result) ?: result
+                }
+                else -> {
+                    result
+                }
+            }
         }
     }
 
@@ -531,4 +549,9 @@ class DgsSchemaProvider(
 
         return schemas + metaInfSchemas
     }
+}
+
+interface DataFetcherResultProcessor {
+    fun supportsType(originalResult: Any): Boolean
+    fun process(originalResult: Any): Any
 }

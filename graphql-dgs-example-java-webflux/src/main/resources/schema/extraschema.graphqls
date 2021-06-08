@@ -1,0 +1,4 @@
+extend type Query {
+    mono: String
+    flux: [Int]
+}
