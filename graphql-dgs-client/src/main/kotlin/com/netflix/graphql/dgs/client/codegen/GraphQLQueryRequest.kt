@@ -45,11 +45,9 @@ class GraphQLQueryRequest(
             val inputEntryIterator = input.entries.iterator()
             while (inputEntryIterator.hasNext()) {
                 val (key, value) = inputEntryIterator.next()
-                if (value != null) {
-                    builder.append(key)
-                    builder.append(": ")
-                    builder.append(inputValueSerializer.serialize(value))
-                }
+                builder.append(key)
+                builder.append(": ")
+                builder.append(inputValueSerializer.serialize(value))
                 if (inputEntryIterator.hasNext()) {
                     builder.append(", ")
                 }
@@ -86,7 +84,7 @@ class InputValueSerializer(private val scalars: Map<Class<*>, Coercing<*, *>> = 
 
     fun serialize(input: Any?): String? {
         if (input == null) {
-            return null
+            return "null"
         }
 
         val type = input::class.java
