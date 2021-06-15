@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.webflux.autoconfiguration
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
+import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
 import javax.annotation.PostConstruct
 
@@ -25,17 +26,16 @@ import javax.annotation.PostConstruct
 @ConfigurationProperties(prefix = "dgs.graphql")
 @Suppress("ConfigurationProperties")
 class DgsWebfluxConfigurationProperties(
-    @DefaultValue("/graphql") val path: String,
-
-    @DefaultValue
-    val schemaJson: DgsSchemaJsonConfigurationProperties
+    /** Path to the endpoint that will serve GraphQL requests. */
+    @DefaultValue("/graphql") var path: String = "/graphql",
+    @NestedConfigurationProperty var schemaJson: DgsSchemaJsonConfigurationProperties = DgsSchemaJsonConfigurationProperties()
 ) {
     /**
      * Configuration properties for the schema-json endpoint.
      */
     data class DgsSchemaJsonConfigurationProperties(
         /** Path to the schema-json endpoint without trailing slash. */
-        @DefaultValue("/schema.json") val path: String
+        @DefaultValue("/schema.json") var path: String = "/schema.json"
     )
 
     @PostConstruct
