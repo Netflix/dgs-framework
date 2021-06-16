@@ -30,6 +30,10 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 data class DgsConfigurationProperties(
     /** Location of the GraphQL schema files. */
     @DefaultValue(DEFAULT_SCHEMA_LOCATION) val schemaLocations: List<String>,
-    /** Enable Introspection */
-    @DefaultValue("true") val introspection: Boolean
+    /**
+     * Setting this value to `false` will prevent Introspection queries from being performed.
+     * Note that this is against GraphQL Specification, that said, some production systems want this lock down in place
+     * for security concerns.
+     */
+    @DefaultValue("true") val introspectionEnabled: Boolean
 )

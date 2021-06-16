@@ -1,10 +1,5 @@
 {
-  "properties": [
-    {
-      "name": "dgs.graphql.introspection",
-      "type": "java.lang.Boolean",
-      "description": "Enables Introspection.",
-      "defaultValue": "true"
-    }
-  ]
+  "groups": [],
+  "properties": [],
+  "hints": []
 }

@@ -31,9 +31,13 @@ import graphql.execution.instrumentation.Instrumentation
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.GraphQLSchema
 import graphql.schema.idl.TypeDefinitionRegistry
+import graphql.schema.visibility.DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
+import graphql.schema.visibility.GraphqlFieldVisibility
+import graphql.schema.visibility.NoIntrospectionGraphqlFieldVisibility.NO_INTROSPECTION_FIELD_VISIBILITY
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext
@@ -53,6 +57,10 @@ import java.util.*
 open class DgsAutoConfiguration(
     private val configProps: DgsConfigurationProperties
 ) {
+
+    companion object {
+        const val AUTO_CONF_PREFIX = "dgs.graphql"
+    }
 
     @Bean
     open fun dgsQueryExecutor(
@@ -145,8 +153,23 @@ open class DgsAutoConfiguration(
 
     @Bean
     @ConditionalOnMissingBean
-    open fun schema(dgsSchemaProvider: DgsSchemaProvider): GraphQLSchema {
-        return dgsSchemaProvider.schema(null, configProps.introspection)
+    open fun schema(dgsSchemaProvider: DgsSchemaProvider, fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
+        return dgsSchemaProvider.schema(null, fieldVisibility)
+    }
+
+    @Bean
+    @ConditionalOnProperty(
+        prefix = AUTO_CONF_PREFIX,
+        name = ["introspection-enabled"], havingValue = "false", matchIfMissing = false
+    )
+    open fun noIntrospectionFieldVisibility(): GraphqlFieldVisibility {
+        return NO_INTROSPECTION_FIELD_VISIBILITY
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun defaultFieldVisibility(): GraphqlFieldVisibility {
+        return DEFAULT_FIELD_VISIBILITY
     }
 
     @Bean

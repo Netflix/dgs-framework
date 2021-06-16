@@ -38,7 +38,7 @@ import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.idl.TypeRuntimeWiring
 import graphql.schema.visibility.DefaultGraphqlFieldVisibility
-import graphql.schema.visibility.NoIntrospectionGraphqlFieldVisibility
+import graphql.schema.visibility.GraphqlFieldVisibility
 import org.slf4j.LoggerFactory
 import org.springframework.aop.support.AopUtils
 import org.springframework.context.ApplicationContext
@@ -84,7 +84,7 @@ class DgsSchemaProvider(
 
     private val objectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
 
-    fun schema(schema: String? = null, introspection: Boolean? = true): GraphQLSchema {
+    fun schema(schema: String? = null, fieldVisibility: GraphqlFieldVisibility = DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY): GraphQLSchema {
         val startTime = System.currentTimeMillis()
         val dgsComponents = applicationContext.getBeansWithAnnotation(DgsComponent::class.java)
         val hasDynamicTypeRegistry =
@@ -106,11 +106,6 @@ class DgsSchemaProvider(
 
         val entityFetcher = federationResolverInstance.entitiesFetcher()
         val typeResolver = federationResolverInstance.typeResolver()
-        val fieldVisibility = if (introspection!!) {
-            DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
-        } else {
-            NoIntrospectionGraphqlFieldVisibility.NO_INTROSPECTION_FIELD_VISIBILITY
-        }
 
         val codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry().fieldVisibility(fieldVisibility)
         val runtimeWiringBuilder = RuntimeWiring.newRuntimeWiring().codeRegistry(codeRegistryBuilder).fieldVisibility(fieldVisibility)

@@ -45,8 +45,8 @@ class DgsConfigurationPropertiesTest {
 
     @Test
     fun introspectionFlag() {
-        val properties = bind("dgs.graphql.introspection", "false")
-        Assertions.assertThat(properties.introspection).isEqualTo(false)
+        val properties = bind("dgs.graphql.introspection-enabled", "false")
+        Assertions.assertThat(properties.introspectionEnabled).isEqualTo(false)
     }
 
     private fun bind(name: String, value: String): DgsConfigurationProperties {

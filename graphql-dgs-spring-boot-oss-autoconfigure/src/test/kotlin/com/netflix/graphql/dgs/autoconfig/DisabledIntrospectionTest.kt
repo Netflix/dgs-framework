@@ -26,7 +26,7 @@ import org.springframework.boot.test.context.runner.WebApplicationContextRunner
 class DisabledIntrospectionTest {
     private val context =
         WebApplicationContextRunner().withConfiguration(AutoConfigurations.of(DgsAutoConfiguration::class.java))
-            .withPropertyValues("dgs.graphql.introspection=false")!!
+            .withPropertyValues("dgs.graphql.introspection-enabled=false")!!
 
     @Test
     fun disabledIntrospectionTest() {

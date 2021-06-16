@@ -79,7 +79,7 @@ class DgsAutoConfigurationTest {
     }
 
     @Test
-    fun introspectionTest() {
+    fun enabledIntrospectionTest() {
         context.withUserConfiguration(CustomContextBuilderConfig::class.java).run { ctx ->
             assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
                 val json = it.executeAndExtractJsonPath<Any>(
