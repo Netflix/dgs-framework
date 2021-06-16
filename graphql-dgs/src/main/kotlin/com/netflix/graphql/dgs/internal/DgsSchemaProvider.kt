@@ -101,7 +101,7 @@ class DgsSchemaProvider(
         if (existingTypeDefinitionRegistry.isPresent) {
             mergedRegistry = mergedRegistry.merge(existingTypeDefinitionRegistry.get())
         }
-        
+
         val federationResolverInstance = federationResolver.orElseGet { DefaultDgsFederationResolver(this) }
 
         val entityFetcher = federationResolverInstance.entitiesFetcher()
