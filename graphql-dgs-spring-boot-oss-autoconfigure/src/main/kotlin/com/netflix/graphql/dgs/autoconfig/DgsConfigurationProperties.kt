@@ -29,5 +29,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 @Suppress("ConfigurationProperties")
 data class DgsConfigurationProperties(
     /** Location of the GraphQL schema files. */
-    @DefaultValue(DEFAULT_SCHEMA_LOCATION) val schemaLocations: List<String>
+    @DefaultValue(DEFAULT_SCHEMA_LOCATION) val schemaLocations: List<String>,
+    /** Enable Introspection */
+    @DefaultValue("true") val introspection: Boolean
 )

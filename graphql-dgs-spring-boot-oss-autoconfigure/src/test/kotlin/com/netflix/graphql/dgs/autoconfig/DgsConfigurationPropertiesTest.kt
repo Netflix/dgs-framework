@@ -43,6 +43,12 @@ class DgsConfigurationPropertiesTest {
         Assertions.assertThat(properties.schemaLocations).containsExactly("foo.graphqls", "bar.graphqls")
     }
 
+    @Test
+    fun introspectionFlag() {
+        val properties = bind("dgs.graphql.introspection", "false")
+        Assertions.assertThat(properties.introspection).isEqualTo(false)
+    }
+
     private fun bind(name: String, value: String): DgsConfigurationProperties {
         return bind(Collections.singletonMap(name, value))
     }
