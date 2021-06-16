@@ -62,4 +62,3 @@ class GraphQLQueryRequest(
         return builder.toString()
     }
 }
-

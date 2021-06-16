@@ -26,7 +26,7 @@ class ProjectionSerializer(private val inputValueSerializer: InputValueSerialize
 
         val joiner = StringJoiner(" ", "{ ", " }")
         projection.fields.forEach { (key, value) ->
-            val field = if(projection.inputArguments[key] != null) {
+            val field = if (projection.inputArguments[key] != null) {
                 val inputArgsJoiner = StringJoiner(", ", "(", ")")
                 projection.inputArguments[key]?.forEach {
                     inputArgsJoiner.add("${it.name}: ${inputValueSerializer.serialize(it.value)}")
@@ -39,7 +39,11 @@ class ProjectionSerializer(private val inputValueSerializer: InputValueSerialize
 
             joiner.add(field)
             if (value != null) {
-                joiner.add(" ").add(value.toString())
+                if (value is BaseProjectionNode) {
+                    joiner.add(" ").add(serialize(value))
+                } else {
+                    joiner.add(" ").add(value.toString())
+                }
             }
         }
 
