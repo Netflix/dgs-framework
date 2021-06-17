@@ -37,6 +37,8 @@ import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.idl.TypeRuntimeWiring
+import graphql.schema.visibility.DefaultGraphqlFieldVisibility
+import graphql.schema.visibility.GraphqlFieldVisibility
 import org.slf4j.LoggerFactory
 import org.springframework.aop.support.AopUtils
 import org.springframework.context.ApplicationContext
@@ -82,7 +84,7 @@ class DgsSchemaProvider(
 
     private val objectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
 
-    fun schema(schema: String? = null): GraphQLSchema {
+    fun schema(schema: String? = null, fieldVisibility: GraphqlFieldVisibility = DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY): GraphQLSchema {
         val startTime = System.currentTimeMillis()
         val dgsComponents = applicationContext.getBeansWithAnnotation(DgsComponent::class.java)
         val hasDynamicTypeRegistry =
@@ -100,14 +102,12 @@ class DgsSchemaProvider(
             mergedRegistry = mergedRegistry.merge(existingTypeDefinitionRegistry.get())
         }
 
-        DefaultDgsFederationResolver(this)
-
         val federationResolverInstance = federationResolver.orElseGet { DefaultDgsFederationResolver(this) }
 
         val entityFetcher = federationResolverInstance.entitiesFetcher()
         val typeResolver = federationResolverInstance.typeResolver()
-        val codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry()
-        val runtimeWiringBuilder = RuntimeWiring.newRuntimeWiring()
+        val codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry().fieldVisibility(fieldVisibility)
+        val runtimeWiringBuilder = RuntimeWiring.newRuntimeWiring().codeRegistry(codeRegistryBuilder).fieldVisibility(fieldVisibility)
 
         dgsComponents.values.mapNotNull { dgsComponent -> invokeDgsTypeDefinitionRegistry(dgsComponent) }
             .fold(mergedRegistry) { a, b -> a.merge(b) }
