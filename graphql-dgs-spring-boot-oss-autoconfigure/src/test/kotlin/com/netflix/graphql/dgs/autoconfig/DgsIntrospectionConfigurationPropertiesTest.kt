@@ -23,32 +23,26 @@ import org.springframework.boot.context.properties.source.ConfigurationPropertyS
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource
 import java.util.*
 
-class DgsConfigurationPropertiesTest {
+class DgsIntrospectionConfigurationPropertiesTest {
 
     @Test
-    fun schemaLocationsDefault() {
-        val properties = bind(Collections.emptyMap())
-        Assertions.assertThat(properties.schemaLocations).containsExactly("classpath*:schema/**/*.graphql*")
+    fun enableIntrospectionFlag() {
+        val properties = bind("dgs.graphql.introspection.enabled", "true")
+        Assertions.assertThat(properties.enabled).isEqualTo(true)
     }
 
     @Test
-    fun schemaLocationsCustom() {
-        val properties = bind("dgs.graphql.schema-locations", "file:/some/resource/path/schema.graphqls")
-        Assertions.assertThat(properties.schemaLocations).containsExactly("file:/some/resource/path/schema.graphqls")
+    fun disableIntrospectionFlag() {
+        val properties = bind("dgs.graphql.introspection.enabled", "false")
+        Assertions.assertThat(properties.enabled).isEqualTo(false)
     }
 
-    @Test
-    fun schemaLocationsCustomMultiple() {
-        val properties = bind("dgs.graphql.schema-locations", "foo.graphqls, bar.graphqls")
-        Assertions.assertThat(properties.schemaLocations).containsExactly("foo.graphqls", "bar.graphqls")
-    }
-
-    private fun bind(name: String, value: String): DgsConfigurationProperties {
+    private fun bind(name: String, value: String): DgsIntrospectionConfigurationProperties {
         return bind(Collections.singletonMap(name, value))
     }
 
-    private fun bind(map: Map<String?, String?>): DgsConfigurationProperties {
+    private fun bind(map: Map<String?, String?>): DgsIntrospectionConfigurationProperties {
         val source: ConfigurationPropertySource = MapConfigurationPropertySource(map)
-        return Binder(source).bindOrCreate("dgs.graphql", DgsConfigurationProperties::class.java)
+        return Binder(source).bindOrCreate("dgs.graphql.introspection", DgsIntrospectionConfigurationProperties::class.java)
     }
 }

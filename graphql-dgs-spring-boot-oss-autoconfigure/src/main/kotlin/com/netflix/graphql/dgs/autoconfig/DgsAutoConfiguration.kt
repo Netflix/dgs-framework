@@ -52,7 +52,7 @@ import java.util.*
  */
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @Configuration
-@EnableConfigurationProperties(DgsConfigurationProperties::class)
+@EnableConfigurationProperties(value = [DgsConfigurationProperties::class, DgsIntrospectionConfigurationProperties::class])
 @ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class])
 open class DgsAutoConfiguration(
     private val configProps: DgsConfigurationProperties
@@ -159,8 +159,8 @@ open class DgsAutoConfiguration(
 
     @Bean
     @ConditionalOnProperty(
-        prefix = AUTO_CONF_PREFIX,
-        name = ["introspection-enabled"], havingValue = "false", matchIfMissing = false
+        prefix = "$AUTO_CONF_PREFIX.introspection",
+        name = ["enabled"], havingValue = "false", matchIfMissing = false
     )
     open fun noIntrospectionFieldVisibility(): GraphqlFieldVisibility {
         return NO_INTROSPECTION_FIELD_VISIBILITY
