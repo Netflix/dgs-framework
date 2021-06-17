@@ -17,26 +17,12 @@
 package com.netflix.graphql.dgs.client.codegen
 
 import java.util.*
+import kotlin.collections.LinkedHashMap
 
 abstract class BaseProjectionNode {
     val fields: MutableMap<String, Any?> = LinkedHashMap()
     val fragments: MutableList<BaseSubProjectionNode<*, *>> = LinkedList()
+    val inputArguments: MutableMap<String, List<InputArgument>> = LinkedHashMap()
 
-    override fun toString(): String {
-        if (fields.isEmpty() && fragments.isEmpty()) {
-            return ""
-        }
-
-        val joiner = StringJoiner(" ", "{ ", " }")
-        fields.forEach { (key, value) ->
-            joiner.add(key)
-            if (value != null) {
-                joiner.add(" ").add(value.toString())
-            }
-        }
-
-        fragments.forEach { joiner.add(it.toString()) }
-
-        return joiner.toString()
-    }
+    data class InputArgument(val name: String, val value: Any)
 }
