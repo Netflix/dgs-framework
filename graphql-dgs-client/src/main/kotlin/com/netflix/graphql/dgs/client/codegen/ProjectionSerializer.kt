@@ -47,7 +47,7 @@ class ProjectionSerializer(private val inputValueSerializer: InputValueSerialize
             }
         }
 
-        projection.fragments.forEach { joiner.add(it.toString()) }
+        projection.fragments.forEach { joiner.add(serialize(it)) }
 
         return joiner.toString()
     }
