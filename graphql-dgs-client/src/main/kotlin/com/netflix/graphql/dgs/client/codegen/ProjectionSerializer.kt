@@ -25,9 +25,9 @@ class ProjectionSerializer(private val inputValueSerializer: InputValueSerialize
         }
 
         val prefix = if (isFragment) {
-            "... on ${projection::class.java.name.substringAfterLast("_").substringBefore("Projection")} {"
+            "... on ${projection::class.java.name.substringAfterLast("_").substringBefore("Projection")} { "
         } else {
-            "{"
+            "{ "
         }
         val joiner = StringJoiner(" ", prefix, " }")
         projection.fields.forEach { (key, value) ->
