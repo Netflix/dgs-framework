@@ -71,23 +71,18 @@ class DefaultDgsQueryExecutor(
         operationName: String?,
         webRequest: WebRequest?
     ): ExecutionResult {
-        val graphQLSchema: GraphQLSchema =
-            if (reloadIndicator.reloadSchema())
-                schema.updateAndGet { schemaProvider.schema() }
-            else
-                schema.get()
+        if (reloadIndicator.reloadSchema())
+            schema.updateAndGet { schemaProvider.schema() }
+        else
+            schema.get()
         val dgsContext = contextBuilder.build(DgsWebMvcRequestData(extensions, headers, webRequest))
         val executionResult = BaseDgsQueryExecutor.baseExecute(
             query,
             variables,
             operationName,
             dgsContext,
-            graphQLSchema,
+            graphQL(),
             dataLoaderProvider,
-            chainedInstrumentation,
-            queryExecutionStrategy,
-            mutationExecutionStrategy,
-            idProvider
         )
 
         // Check for NonNullableFieldWasNull errors, and log them explicitly because they don't run through the exception handlers.
@@ -139,6 +134,26 @@ class DefaultDgsQueryExecutor(
             throw DgsQueryExecutionDataExtractionException(ex, jsonResult, jsonPath, typeRef)
         }
     }
+
+    override fun graphQL(): GraphQL {
+        val graphQLSchema: GraphQLSchema =
+            if (reloadIndicator.reloadSchema())
+                schema.updateAndGet { schemaProvider.schema() }
+            else
+                schema.get()
+
+        val graphQLBuilder =
+            GraphQL.newGraphQL(graphQLSchema)
+                .instrumentation(chainedInstrumentation)
+                .queryExecutionStrategy(queryExecutionStrategy)
+                .mutationExecutionStrategy(mutationExecutionStrategy)
+                .subscriptionExecutionStrategy(SubscriptionExecutionStrategy())
+        if (idProvider.isPresent) {
+            graphQLBuilder.executionIdProvider(idProvider.get())
+        }
+        return graphQLBuilder.build()
+    }
+
 
     override fun executeAndGetDocumentContext(query: String, variables: Map<String, Any>): DocumentContext {
         return parseContext.parse(getJsonResult(query, variables))
@@ -195,23 +210,10 @@ object BaseDgsQueryExecutor {
         variables: Map<String, Any>?,
         operationName: String?,
         dgsContext: DgsContext,
-        graphQLSchema: GraphQLSchema,
+        graphQL: GraphQL,
         dataLoaderProvider: DgsDataLoaderProvider,
-        chainedInstrumentation: ChainedInstrumentation,
-        queryExecutionStrategy: ExecutionStrategy,
-        mutationExecutionStrategy: ExecutionStrategy,
-        idProvider: Optional<ExecutionIdProvider>,
     ): CompletableFuture<out ExecutionResult> {
-        val graphQLBuilder =
-            GraphQL.newGraphQL(graphQLSchema)
-                .instrumentation(chainedInstrumentation)
-                .queryExecutionStrategy(queryExecutionStrategy)
-                .mutationExecutionStrategy(mutationExecutionStrategy)
-                .subscriptionExecutionStrategy(SubscriptionExecutionStrategy())
-        if (idProvider.isPresent) {
-            graphQLBuilder.executionIdProvider(idProvider.get())
-        }
-        val graphQL = graphQLBuilder.build()
+
 
         val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier({ dgsContext })
         val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()

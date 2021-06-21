@@ -7,7 +7,7 @@
             "locked": "1.4.32"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"

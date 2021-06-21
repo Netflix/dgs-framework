@@ -7,13 +7,13 @@
             "locked": "1.4.32"
         },
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -42,7 +42,7 @@
             "locked": "16.2"
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.6.0"
+            "locked": "2.5.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -54,10 +54,10 @@
             "locked": "1.4.32"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.4.32"
+            "locked": "1.5.10"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -69,23 +69,23 @@
             "locked": "5.2.13.RELEASE"
         },
         "org.springframework:spring-web": {
-            "locked": "5.2.13.RELEASE"
+            "locked": "5.3.8"
         }
     },
     "kapt": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         }
     },
     "kaptTest": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         }
     },
     "kotlinCompilerClasspath": {
@@ -96,10 +96,10 @@
             "locked": "1.4.32"
         },
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.4.32"
+            "locked": "1.5.10"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -125,7 +125,7 @@
             "locked": "1.4.32"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -153,7 +153,7 @@
             "locked": "1.4.32"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -173,7 +173,7 @@
             "locked": "1.4.32"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -198,7 +198,7 @@
             "locked": "1.4.32"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -227,7 +227,7 @@
             "locked": "16.2"
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.6.0"
+            "locked": "2.5.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -239,10 +239,10 @@
             "locked": "1.4.32"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.4.32"
+            "locked": "1.5.10"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -254,7 +254,7 @@
             "locked": "5.2.13.RELEASE"
         },
         "org.springframework:spring-web": {
-            "locked": "5.2.13.RELEASE"
+            "locked": "5.3.8"
         }
     },
     "testAnnotationProcessor": {
@@ -265,7 +265,7 @@
             "locked": "1.4.32"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -297,7 +297,7 @@
             "locked": "16.0.1"
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.6.0"
+            "locked": "2.5.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -312,19 +312,19 @@
             "locked": "1.4.32"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.4.32"
+            "locked": "1.5.10"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.boot:spring-boot-starter-webflux": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -336,10 +336,10 @@
             "locked": "5.2.13.RELEASE"
         },
         "org.springframework:spring-test": {
-            "locked": "5.2.13.RELEASE"
+            "locked": "5.3.8"
         },
         "org.springframework:spring-web": {
-            "locked": "5.2.13.RELEASE"
+            "locked": "5.3.8"
         }
     },
     "testRuntimeClasspath": {
@@ -362,7 +362,7 @@
             "locked": "16.0.1"
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.6.0"
+            "locked": "2.5.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -377,19 +377,19 @@
             "locked": "1.4.32"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.4.32"
+            "locked": "1.5.10"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.boot:spring-boot-starter-webflux": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -401,10 +401,10 @@
             "locked": "5.2.13.RELEASE"
         },
         "org.springframework:spring-test": {
-            "locked": "5.2.13.RELEASE"
+            "locked": "5.3.8"
         },
         "org.springframework:spring-web": {
-            "locked": "5.2.13.RELEASE"
+            "locked": "5.3.8"
         }
     }
 }

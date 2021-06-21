@@ -7,7 +7,7 @@
             "locked": "1.4.32"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -32,10 +32,10 @@
             "locked": "1.4.32"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.4.32"
+            "locked": "1.5.10"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -60,10 +60,10 @@
             "locked": "1.4.32"
         },
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.4.32"
+            "locked": "1.5.10"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -89,7 +89,7 @@
             "locked": "1.4.32"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -117,7 +117,7 @@
             "locked": "1.4.32"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -137,7 +137,7 @@
             "locked": "1.4.32"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -162,7 +162,7 @@
             "locked": "1.4.32"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -182,10 +182,10 @@
             "locked": "1.4.32"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.4.32"
+            "locked": "1.5.10"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -205,7 +205,7 @@
             "locked": "1.4.32"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -225,10 +225,10 @@
             "locked": "1.4.32"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.4.32"
+            "locked": "1.5.10"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
@@ -253,10 +253,10 @@
             "locked": "1.4.32"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.4.32"
+            "locked": "1.5.10"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.5.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "Hoxton.SR10"
