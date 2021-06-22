@@ -23,13 +23,16 @@ import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.exceptions.InvalidDgsEntityFetcher
 import com.netflix.graphql.dgs.exceptions.MissingDgsEntityFetcherException
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.types.errors.TypedGraphQLError
+import graphql.GraphQLError
+import graphql.execution.DataFetcherResult
+import graphql.execution.ResultPath
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.TypeResolver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import java.lang.IllegalArgumentException
 import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
@@ -62,17 +65,20 @@ open class DefaultDgsFederationResolver() :
         }
     }
 
-    private fun dgsEntityFetchers(env: DataFetchingEnvironment): CompletableFuture<List<Any?>> {
+    private fun dgsEntityFetchers(env: DataFetchingEnvironment): CompletableFuture<DataFetcherResult<List<Any?>>> {
+
+        var errorsList = mutableListOf<GraphQLError>()
         val resultList = env.getArgument<List<Map<String, Any>>>(_Entity.argumentName)
             .map { values ->
-                val typename = values["__typename"] ?: throw RuntimeException("__typename missing from arguments in federated query")
-                val fetcher = dgsSchemaProvider.entityFetchers[typename]
-                    ?: throw MissingDgsEntityFetcherException(typename.toString())
-
-                if (!fetcher.second.parameterTypes.any { it.isAssignableFrom(Map::class.java) }) {
-                    throw InvalidDgsEntityFetcher("@DgsEntityFetcher ${fetcher.first::class.java.name}.${fetcher.second.name} is invalid. A DgsEntityFetcher must accept an argument of type Map<String, Object>")
-                }
                 try {
+                    val typename = values["__typename"]
+                        ?: throw RuntimeException("__typename missing from arguments in federated query")
+                    val fetcher = dgsSchemaProvider.entityFetchers[typename]
+                        ?: throw MissingDgsEntityFetcherException(typename.toString())
+
+                    if (!fetcher.second.parameterTypes.any { it.isAssignableFrom(Map::class.java) }) {
+                        throw InvalidDgsEntityFetcher("@DgsEntityFetcher ${fetcher.first::class.java.name}.${fetcher.second.name} is invalid. A DgsEntityFetcher must accept an argument of type Map<String, Object>")
+                    }
                     val result =
                         if (fetcher.second.parameterTypes.any { it.isAssignableFrom(DgsDataFetchingEnvironment::class.java) }) {
                             fetcher.second.invoke(fetcher.first, values, DgsDataFetchingEnvironment(env))
@@ -81,7 +87,7 @@ open class DefaultDgsFederationResolver() :
                         }
 
                     if (result == null) {
-                        throw MissingDgsEntityFetcherException(typename.toString())
+                        CompletableFuture.completedFuture(null)
                     }
 
                     if (result is CompletionStage<*>) {
@@ -91,20 +97,29 @@ open class DefaultDgsFederationResolver() :
                     }
                 } catch (e: Exception) {
                     if (e is InvocationTargetException && e.targetException != null) {
-                        throw e.targetException
-                    } else if (e is IllegalArgumentException) {
-                        throw InvalidDgsEntityFetcher("@DgsEntityFetcher ${fetcher.first::class.java.name}.${fetcher.second.name} has an invalid argument. A DgsEntityFetcher must accept an argument of type Map<String, Object> and optionally, a DgsDataFetchingEnvironment")
+                        errorsList.add(
+                            TypedGraphQLError.newInternalErrorBuilder().message("%s: %s", e.targetException::class.java.name, e.targetException.message)
+                                .path(ResultPath.parse("/_entities")).build()
+                        )
                     } else {
-                        throw e
+                        errorsList.add(
+                            TypedGraphQLError.newInternalErrorBuilder().message("%s: %s", e::class.java.name, e.message)
+                                .path(ResultPath.parse("/_entities")).build()
+                        )
                     }
+                    CompletableFuture.completedFuture(null)
                 }
             }
 
         return CompletableFuture.allOf(*resultList.toTypedArray()).thenApply {
-            resultList.asSequence()
-                .map { cf -> cf.join() }
-                .flatMap { r -> if (r is Collection<*>) r.asSequence() else sequenceOf(r) }
-                .toList()
+            DataFetcherResult.newResult<List<Any?>>().data(
+                resultList.asSequence()
+                    .map { cf -> cf.join() }
+                    .flatMap { r -> if (r is Collection<*>) r.asSequence() else sequenceOf(r) }
+                    .toList()
+            )
+                .errors(errorsList)
+                .build()
         }
     }
 

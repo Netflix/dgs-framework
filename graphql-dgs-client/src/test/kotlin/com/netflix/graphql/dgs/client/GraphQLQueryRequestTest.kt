@@ -19,8 +19,11 @@ package com.netflix.graphql.dgs.client
 import com.netflix.graphql.dgs.client.codegen.BaseProjectionNode
 import com.netflix.graphql.dgs.client.codegen.GraphQLQuery
 import com.netflix.graphql.dgs.client.codegen.GraphQLQueryRequest
+import com.netflix.graphql.dgs.client.scalar.DateRange
+import com.netflix.graphql.dgs.client.scalar.DateRangeScalar
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 class GraphQLQueryRequestTest {
     @Test
@@ -94,6 +97,42 @@ class GraphQLQueryRequestTest {
         val result = request.serialize()
         assertThat(result).isEqualTo("query TestNamedQuery {test(movie: {movieId:123, name:\"greatMovie\" }){ name movieId } }")
     }
+
+    @Test
+    fun serializeWithScalar() {
+        val query = TestNamedGraphQLQuery().apply {
+            input["movie"] = Movie(123, "greatMovie")
+            input["dateRange"] = DateRange(LocalDate.of(2020, 1, 1), LocalDate.of(2021, 5, 11))
+        }
+        val request =
+            GraphQLQueryRequest(query, MovieProjection(), mapOf(DateRange::class.java to DateRangeScalar()))
+
+        val result = request.serialize()
+        assertThat(result).isEqualTo("query TestNamedQuery {test(movie: {movieId:123, name:\"greatMovie\" }, dateRange: \"01/01/2020-05/11/2021\") }")
+    }
+
+    @Test
+    fun serializeWithNestedScalar() {
+        val query = TestNamedGraphQLQuery().apply {
+            input["movie"] = Movie(123, "greatMovie", DateRange(LocalDate.of(2020, 1, 1), LocalDate.of(2021, 5, 11)))
+        }
+        val request =
+            GraphQLQueryRequest(query, MovieProjection(), mapOf(DateRange::class.java to DateRangeScalar()))
+
+        val result = request.serialize()
+        assertThat(result).isEqualTo("query TestNamedQuery {test(movie: {movieId:123, name:\"greatMovie\", window:\"01/01/2020-05/11/2021\" }) }")
+    }
+
+    @Test
+    fun testSerializeMapAsInput() {
+        val query = TestGraphQLQuery().apply {
+            input["actors"] = mapOf("name" to "actorA", "movies" to listOf("movie1", "movie2"))
+            input["movie"] = Movie(123, "greatMovie", DateRange(LocalDate.of(2020, 1, 1), LocalDate.of(2021, 5, 11)))
+        }
+        val request = GraphQLQueryRequest(query, MovieProjection(), mapOf(DateRange::class.java to DateRangeScalar()))
+        val result = request.serialize()
+        assertThat(result).isEqualTo("query {test(actors: { name: \"actorA\", movies: [\"movie1\", \"movie2\"] }, movie: {movieId:123, name:\"greatMovie\", window:\"01/01/2020-05/11/2021\" }) }")
+    }
 }
 
 class TestGraphQLQuery : GraphQLQuery() {
@@ -114,11 +153,7 @@ class TestGraphQLMutation : GraphQLQuery("mutation") {
     }
 }
 
-data class Movie(private val movieId: Int, private val name: String) {
-    override fun toString(): String {
-        return "{movieId:$movieId, name:\"$name\" }"
-    }
-}
+data class Movie(val movieId: Int, val name: String, val window: DateRange? = null)
 
 class MovieProjection : BaseProjectionNode() {
     fun movieId(): MovieProjection {

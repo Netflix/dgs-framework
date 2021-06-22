@@ -41,11 +41,6 @@ import org.springframework.web.multipart.MultipartFile
  * In addition to regular graphql queries, this method also handles multipart POST requests containing files for upload.
  * This is usually a POST request that  has Content type set to multipart/form-data. Here is an example command.
  *
- * metatron curl -a somedgs https://localhost:8443/graphql -F operations='{ "query": "mutation ($input: FileUploadInput!) { uploadFile(input: $input) }", "variables": { "input": { "description": "test", "files": [null, null] } } }' \
- * -F map='{ "0": ["variables.input.files.0"], "1": ["variables.input.files.1"] }' \
- * -F '0=@file1.txt' \
- * -F '1=@file2.txt'
- *
  * Each part in a multipart request is identified by the -F and is identified by the part name - "operations, map etc."
  * The "operations" part is the graphql query containing the mutation for the file upload, with variables for files set to null.
  * The "map" part and the subsequent parts specify the path of the file in the variables of the query, and will get mapped to
@@ -59,6 +54,9 @@ import org.springframework.web.multipart.MultipartFile
  * The remaining parts in the request contain the mapping of file name to file path, i.e. a map of MultipartFile(s)
  * The format of a multipart request is also described here:
  * https://github.com/jaydenseric/graphql-multipart-request-spec
+ *
+ * This class is defined as "open" only for proxy/aop use cases. It is not considered part of the API, and backwards compatibility is not guaranteed.
+ * Do not manually extend this class.
  */
 
 @RestController
@@ -167,7 +165,7 @@ open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
                     queryVariables,
                     extensions,
                     headers,
-                    operationName = gqlOperationName,
+                    gqlOperationName,
                     webRequest
                 )
             },

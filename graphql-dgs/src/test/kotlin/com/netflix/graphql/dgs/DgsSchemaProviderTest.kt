@@ -32,7 +32,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
-import io.reactivex.rxjava3.subscribers.TestSubscriber
+// import io.reactivex.rxjava3.subscribers.TestSubscriber
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -42,6 +42,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.reactivestreams.Publisher
 import org.springframework.context.ApplicationContext
 import reactor.core.publisher.Flux
+import reactor.test.StepVerifier
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -65,6 +66,16 @@ internal class DgsSchemaProviderTest {
         fun someFetcher(): Video {
             return Show("ShowA")
         }
+    }
+
+    private interface DefaultHelloFetcherInterface {
+        @DgsData(parentType = "Query", field = "hello")
+        fun someFetcher(): String
+    }
+
+    private val interfaceHelloFetcher = object : DefaultHelloFetcherInterface {
+        override fun someFetcher(): String =
+            "Hello"
     }
 
     @Test
@@ -339,6 +350,22 @@ internal class DgsSchemaProviderTest {
             Pair(
                 "helloFetcher",
                 defaultHelloFetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        provider.schema()
+        assertThat(provider.dataFetcherInstrumentationEnabled).containsKey("Query.hello")
+        assertThat(provider.dataFetcherInstrumentationEnabled["Query.hello"]).isTrue
+    }
+
+    @Test
+    fun enableInstrumentationForDataFetchersFromInterfaces() {
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                interfaceHelloFetcher
             )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
@@ -775,9 +802,13 @@ internal class DgsSchemaProviderTest {
         val executionResult = build.execute("subscription {messages}")
         assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Publisher<ExecutionResult>>()
-        val testSubscriber = TestSubscriber<ExecutionResult>()
-        data.subscribe(testSubscriber)
-        testSubscriber.assertValue { it.getData<Map<String, String>>()["messages"] == "hello" }
+
+        StepVerifier
+            .create(data)
+            .expectSubscription().assertNext { result ->
+                assertThat(result.getData<Map<String, String>>())
+                    .hasEntrySatisfying("message") { value -> assertThat(value).isEqualTo("hello") }
+            }
     }
 
     private fun assertInputMessage(build: GraphQL) {

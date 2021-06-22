@@ -1,3 +1,4 @@
 spring:
   application:
     name: dgs-example
+

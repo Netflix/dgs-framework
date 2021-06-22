@@ -19,16 +19,13 @@ package com.netflix.graphql.dgs.metrics.micrometer
 import com.netflix.graphql.dgs.metrics.micrometer.dataloader.DgsDataLoaderInstrumentationProvider
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsGraphQLMetricsTagsProvider
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.SimpleGqlOutcomeTagCustomizer
-import io.mockk.mockkClass
+import com.netflix.graphql.dgs.metrics.micrometer.utils.QuerySignatureRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration
 import org.springframework.boot.autoconfigure.AutoConfigurations
-import org.springframework.boot.context.annotation.UserConfigurations
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 
 internal class DgsGraphQLMicrometerAutoConfigurationTest {
 
@@ -48,6 +45,7 @@ internal class DgsGraphQLMicrometerAutoConfigurationTest {
             assertThat(ctx)
                 .hasSingleBean(DgsGraphQLMetricsInstrumentation::class.java)
                 .hasSingleBean(DgsDataLoaderInstrumentationProvider::class.java)
+                .hasSingleBean(LimitedTagMetricResolver::class.java)
                 .hasSingleBean(SimpleGqlOutcomeTagCustomizer::class.java)
 
             assertThat(ctx)
@@ -61,6 +59,15 @@ internal class DgsGraphQLMicrometerAutoConfigurationTest {
                 .extracting {
                     assertThat(it).isExactlyInstanceOf(DgsGraphQLCollatedMetricsTagsProvider::class.java)
                 }
+
+            assertThat(ctx)
+                .hasSingleBean(DgsGraphQLMicrometerAutoConfiguration.QuerySignatureRepositoryConfiguration::class.java)
+                .hasSingleBean(QuerySignatureRepository::class.java)
+
+            assertThat(ctx)
+                .hasSingleBean(DgsGraphQLMicrometerAutoConfiguration.QuerySignatureRepositoryConfiguration::class.java)
+            assertThat(ctx)
+                .hasSingleBean(QuerySignatureRepository::class.java)
         }
     }
 
@@ -90,26 +97,13 @@ internal class DgsGraphQLMicrometerAutoConfigurationTest {
                     .hasSingleBean(DgsGraphQLMetricsInstrumentation::class.java)
                     .hasSingleBean(SimpleGqlOutcomeTagCustomizer::class.java)
             }
-    }
 
-    @Test
-    fun `Beans can be replaced`() {
         contextRunner
-            .withConfiguration(UserConfigurations.of(LocalConfiguration::class.java)).run { ctx ->
-                assertThat(ctx).hasSingleBean(DgsMeterRegistrySupplier::class.java)
-                    .getBean(DgsMeterRegistrySupplier::class.java).extracting {
-                        assertThat(it).isNotExactlyInstanceOf(
-                            DgsGraphQLMicrometerAutoConfiguration.DefaultMeterRegistrySupplier::class.java
-                        )
-                    }
+            .withPropertyValues("management.metrics.dgs-graphql.query-signature.enabled=false").run { ctx ->
+                assertThat(ctx)
+                    .doesNotHaveBean(DgsGraphQLMicrometerAutoConfiguration.QuerySignatureRepositoryConfiguration::class.java)
+                assertThat(ctx)
+                    .doesNotHaveBean(QuerySignatureRepository::class.java)
             }
-    }
-
-    @Configuration
-    open class LocalConfiguration {
-        @Bean
-        open fun mockMeterRegistrySupplier(): DgsMeterRegistrySupplier {
-            return mockkClass(DgsMeterRegistrySupplier::class)
-        }
     }
 }

@@ -46,7 +46,7 @@
             "locked": "16.2"
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.5.0"
+            "locked": "2.6.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-mocking": {
             "project": true
@@ -94,14 +94,6 @@
         }
     },
     "kapt": {
-        "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.3.9.RELEASE"
-        },
-        "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.3.9.RELEASE"
-        }
-    },
-    "kaptClasspath_kaptKotlin": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
             "locked": "2.3.9.RELEASE"
         },
@@ -266,7 +258,7 @@
             "locked": "16.2"
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.5.0"
+            "locked": "2.6.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-mocking": {
             "project": true
@@ -360,7 +352,7 @@
             "locked": "16.2"
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.5.0"
+            "locked": "2.6.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-mocking": {
             "project": true
@@ -376,13 +368,13 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.10.3-jdk8"
+            "locked": "1.11.0"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.5"
+            "locked": "3.4.6"
         },
-        "io.reactivex.rxjava3:rxjava": {
-            "locked": "3.0.12"
+        "io.projectreactor:reactor-test": {
+            "locked": "3.4.6"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -446,7 +438,7 @@
             "locked": "16.2"
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.5.0"
+            "locked": "2.6.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-mocking": {
             "project": true
@@ -462,13 +454,13 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.10.3-jdk8"
+            "locked": "1.11.0"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.5"
+            "locked": "3.4.6"
         },
-        "io.reactivex.rxjava3:rxjava": {
-            "locked": "3.0.12"
+        "io.projectreactor:reactor-test": {
+            "locked": "3.4.6"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"

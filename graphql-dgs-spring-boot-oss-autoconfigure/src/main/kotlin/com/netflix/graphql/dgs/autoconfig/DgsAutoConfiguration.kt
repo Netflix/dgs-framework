@@ -16,17 +16,13 @@
 
 package com.netflix.graphql.dgs.autoconfig
 
-import com.netflix.graphql.dgs.DgsContextBuilder
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
-import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
-import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
+import com.netflix.graphql.dgs.internal.*
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
-import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
-import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import com.netflix.graphql.mocking.MockProvider
 import graphql.execution.*
@@ -50,6 +46,7 @@ import java.util.*
  * Framework auto configuration based on open source Spring only, without Netflix integrations.
  * This does NOT have logging, tracing, metrics and security integration.
  */
+@Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @Configuration
 @EnableConfigurationProperties(DgsConfigurationProperties::class)
 @ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class])
@@ -63,7 +60,7 @@ open class DgsAutoConfiguration(
         schema: GraphQLSchema,
         schemaProvider: DgsSchemaProvider,
         dgsDataLoaderProvider: DgsDataLoaderProvider,
-        dgsContextBuilder: DgsContextBuilder,
+        dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
         dataFetcherExceptionHandler: DataFetcherExceptionHandler,
         chainedInstrumentation: ChainedInstrumentation,
         environment: Environment,
@@ -72,7 +69,6 @@ open class DgsAutoConfiguration(
         idProvider: Optional<ExecutionIdProvider>,
         reloadSchemaIndicator: ReloadSchemaIndicator
     ): DgsQueryExecutor {
-
         val queryExecutionStrategy = providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
         val mutationExecutionStrategy = providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
         return DefaultDgsQueryExecutor(
@@ -128,14 +124,16 @@ open class DgsAutoConfiguration(
         dataFetcherExceptionHandler: DataFetcherExceptionHandler,
         existingTypeDefinitionFactory: Optional<TypeDefinitionRegistry>,
         existingCodeRegistry: Optional<GraphQLCodeRegistry>,
-        mockProviders: Optional<Set<MockProvider>>
+        mockProviders: Optional<Set<MockProvider>>,
+        dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
     ): DgsSchemaProvider {
         return DgsSchemaProvider(
             applicationContext,
             federationResolver,
             existingTypeDefinitionFactory,
             mockProviders,
-            configProps.schemaLocations
+            configProps.schemaLocations,
+            dataFetcherResultProcessors,
         )
     }
 
@@ -156,7 +154,7 @@ open class DgsAutoConfiguration(
     open fun graphQLContextBuilder(
         dgsCustomContextBuilder: Optional<DgsCustomContextBuilder<*>>,
         dgsCustomContextBuilderWithRequest: Optional<DgsCustomContextBuilderWithRequest<*>>
-    ): DgsContextBuilder {
+    ): DefaultDgsGraphQLContextBuilder {
         return DefaultDgsGraphQLContextBuilder(dgsCustomContextBuilder, dgsCustomContextBuilderWithRequest)
     }
 
