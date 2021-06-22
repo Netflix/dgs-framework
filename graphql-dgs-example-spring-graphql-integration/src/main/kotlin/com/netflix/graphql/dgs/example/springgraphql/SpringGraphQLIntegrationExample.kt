@@ -19,7 +19,7 @@ package com.netflix.graphql.dgs.example.springgraphql
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
-@SpringBootApplication(scanBasePackages = ["com.netflix.graphql.dgs.example.shared", "com.netflix.graphql.dgs.example"])
+@SpringBootApplication(scanBasePackages = ["com.netflix.graphql.dgs.example.shared", "com.netflix.graphql.dgs.example.springgraphql"])
 open class SpringGraphQLIntegrationExample
 
 fun main(args: Array<String>) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.example.datafetcher;
+package com.netflix.graphql.dgs.example.shared.datafetcher;
 
 import com.netflix.graphql.dgs.*;
 import com.netflix.graphql.dgs.context.DgsContext;
@@ -42,8 +42,8 @@ public class HelloDataFetcher {
             name = "Stranger";
         }
 
-        Map<String, Object> extensions = DgsContext.getRequestData(dfe).getExtensions();
-        System.out.println(extensions);
+//        Map<String, Object> extensions = DgsContext.getRequestData(dfe).getExtensions();
+//        System.out.println(extensions);
 
         return "hello, " + name + "!";
     }

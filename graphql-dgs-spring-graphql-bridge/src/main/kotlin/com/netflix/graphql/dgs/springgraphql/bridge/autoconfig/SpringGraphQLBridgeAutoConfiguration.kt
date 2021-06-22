@@ -19,10 +19,13 @@ package com.netflix.graphql.dgs.springgraphql.bridge.autoconfig
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.bridge.SpringGraphQLBridge
 import graphql.schema.GraphQLSchema
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.graphql.boot.GraphQlProperties
 
 @Configuration
+@EnableConfigurationProperties(GraphQlProperties::class)
 open class SpringGraphQLBridgeAutoConfiguration {
 
 

@@ -1,1 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.netflix.graphql.dgs.springgraphql.bridge.autoconfig.SpringGraphQLBridgeAutoConfiguration
+debug=true
