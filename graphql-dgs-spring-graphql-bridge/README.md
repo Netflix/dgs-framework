@@ -40,7 +40,7 @@ Technical design
 A `GraphQLSource` provides a `GraphQLSchema` and `GraphQL` instances, which are both types from `graphql-java`.
 The `spring-graphql` project comes with a default implementation of this interface that does some basic schema file loading.
 The DGS framework provides another implementation of this interface, where the DGS framework is responsible for creating `GraphQLSchema` and `GraphQL` instances.
-In regular a regular DGS, the `DgsSchemaProvider` creates a `GraphQLSchema` based on the registered components and schema files; this is where the declarative programming model comes from.
+In a regular DGS, the `DgsSchemaProvider` creates a `GraphQLSchema` based on the registered components and schema files; this is where the declarative programming model comes from.
 The `DgsQueryExecutor` creates a `GraphQL` instance based on the (cached) `GraphQLSchema`.
 
 By making the DGS framework implement the `GraphQLSource` interface, the DGS framework becomes responsible for finding components such as data fetchers, loading schema files, and wire it all together.
