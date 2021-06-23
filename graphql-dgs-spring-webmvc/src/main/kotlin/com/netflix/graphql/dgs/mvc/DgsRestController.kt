@@ -60,9 +60,9 @@ import org.springframework.web.multipart.MultipartFile
  */
 
 @RestController
-open class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
+open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
 
-    val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
+    open val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
 
     // The @ConfigurationProperties bean name is <prefix>-<fqn>
     @RequestMapping(
