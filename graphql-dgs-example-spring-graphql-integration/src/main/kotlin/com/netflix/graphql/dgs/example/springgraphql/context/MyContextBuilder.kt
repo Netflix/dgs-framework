@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-dependencies {
-    api("org.springframework.experimental:graphql-spring-boot-starter:1.0.0-SNAPSHOT")
-    implementation(project(":graphql-dgs"))
-    implementation("org.springframework.boot:spring-boot-starter")
+package com.netflix.graphql.dgs.example.springgraphql.context
 
-    implementation(project(":graphql-dgs-reactive"))
+import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
+import com.netflix.graphql.dgs.example.shared.context.MyContext
+import org.springframework.stereotype.Component
 
-    compileOnly("org.springframework:spring-webflux")
-
+@Component
+class MyContextBuilder: DgsCustomContextBuilder<MyContext> {
+    override fun build(): MyContext {
+        return MyContext()
+    }
 }

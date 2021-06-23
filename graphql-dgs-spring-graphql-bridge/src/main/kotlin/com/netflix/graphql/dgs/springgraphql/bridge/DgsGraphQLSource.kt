@@ -21,7 +21,7 @@ import graphql.GraphQL
 import graphql.schema.GraphQLSchema
 import org.springframework.graphql.execution.GraphQlSource
 
-class SpringGraphQLBridge(private val graphqlSchema: GraphQLSchema, private val dgsQueryExecutor: DgsQueryExecutor) : GraphQlSource {
+class DgsGraphQLSource(private val graphqlSchema: GraphQLSchema, private val dgsQueryExecutor: DgsQueryExecutor) : GraphQlSource {
     override fun graphQl(): GraphQL {
         return dgsQueryExecutor.graphQL()
     }
