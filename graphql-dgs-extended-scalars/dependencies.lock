@@ -35,7 +35,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "16.2"
+            "locked": "0.0.0-2021-06-22T12-54-16-ead75387"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "16.0.1"
@@ -239,7 +239,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "0.6.3"
+            "locked": "0.6.5-SNAPSHOT"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
@@ -268,7 +268,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "16.2"
+            "locked": "0.0.0-2021-06-22T12-54-16-ead75387"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "16.0.1"
@@ -401,7 +401,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "16.2"
+            "locked": "0.0.0-2021-06-22T12-54-16-ead75387"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "16.0.1"
@@ -524,7 +524,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "0.6.3"
+            "locked": "0.6.5-SNAPSHOT"
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "firstLevelTransitive": [
@@ -563,7 +563,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "16.2"
+            "locked": "0.0.0-2021-06-22T12-54-16-ead75387"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "16.0.1"

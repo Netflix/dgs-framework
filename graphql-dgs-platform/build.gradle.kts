@@ -46,7 +46,7 @@ dependencies {
     // For more information at https://docs.gradle.org/current/userguide/rich_versions.html
     constraints {
         api("com.graphql-java:graphql-java") {
-            version { require(Versions.GRAPHQL_JAVA) }
+            version { strictly(Versions.GRAPHQL_JAVA) }
         }
         api("com.graphql-java:graphql-java-extended-scalars") {
             version { require(Versions.GRAPHQL_JAVA_EXTENDED_SCALARS) }

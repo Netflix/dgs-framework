@@ -29,17 +29,49 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.3"
         },
+        "com.graphql-java:graphql-java": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "locked": "0.0.0-2021-06-22T12-54-16-ead75387"
+        },
+        "com.jayway.jsonpath:json-path": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "2.5.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs": {
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-example-shared": {
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-bridge"
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-bridge",
+                "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-bridge": {
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-error-types": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
             "project": true
         },
         "org.jetbrains.kotlin:kotlin-bom": {
@@ -47,8 +79,11 @@
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-bridge"
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-bridge",
+                "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "1.5.10"
         },
@@ -626,17 +661,49 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.3"
         },
+        "com.graphql-java:graphql-java": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "locked": "0.0.0-2021-06-22T12-54-16-ead75387"
+        },
+        "com.jayway.jsonpath:json-path": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "2.5.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs": {
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-example-shared": {
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-bridge"
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-bridge",
+                "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-bridge": {
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-error-types": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
             "project": true
         },
         "io.mockk:mockk": {
@@ -647,8 +714,11 @@
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-bridge"
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-bridge",
+                "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "1.5.10"
         },
@@ -668,6 +738,9 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-bridge"
             ],
+            "locked": "1.0.0-SNAPSHOT"
+        },
+        "org.springframework.experimental:spring-graphql-test": {
             "locked": "1.0.0-SNAPSHOT"
         },
         "org.springframework.security:spring-security-bom": {
@@ -841,6 +914,9 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-bridge"
             ],
+            "locked": "1.0.0-SNAPSHOT"
+        },
+        "org.springframework.experimental:spring-graphql-test": {
             "locked": "1.0.0-SNAPSHOT"
         },
         "org.springframework.security:spring-security-bom": {

@@ -17,14 +17,17 @@
 package com.netflix.graphql.dgs.context
 
 import com.netflix.graphql.dgs.internal.DgsRequestData
+import graphql.GraphQLContext
 import graphql.schema.DataFetchingEnvironment
 import org.dataloader.BatchLoaderEnvironment
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
 
 /**
  * Context class that is created per request, and is added to both DataFetchingEnvironment and BatchLoaderEnvironment.
  * Custom data can be added by providing a [DgsCustomContextBuilder].
  */
-open class DgsContext(val customContext: Any? = null, val requestData: DgsRequestData?) {
+open class DgsContext(val customContext: Any? = null, val requestData: DgsRequestData?): GraphQLContext(ConcurrentHashMap()) {
 
     companion object {
         @JvmStatic

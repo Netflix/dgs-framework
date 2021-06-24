@@ -39,7 +39,7 @@
             "locked": "2.12.3"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "16.2"
+            "locked": "0.0.0-2021-06-22T12-54-16-ead75387"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.5.0"
@@ -224,7 +224,7 @@
             "locked": "2.12.3"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "16.2"
+            "locked": "0.0.0-2021-06-22T12-54-16-ead75387"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.5.0"
@@ -291,7 +291,7 @@
             "locked": "2.12.3"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "16.2"
+            "locked": "0.0.0-2021-06-22T12-54-16-ead75387"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "16.0.1"
@@ -356,7 +356,7 @@
             "locked": "2.12.3"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "16.2"
+            "locked": "0.0.0-2021-06-22T12-54-16-ead75387"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "16.0.1"
