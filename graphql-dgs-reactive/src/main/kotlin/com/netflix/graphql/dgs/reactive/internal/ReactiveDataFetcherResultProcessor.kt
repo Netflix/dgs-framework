@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.reactive.internal
 
+import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
 import com.netflix.graphql.dgs.internal.DataFetcherResultProcessor
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -26,7 +27,7 @@ class MonoDataFetcherResultProcessor : DataFetcherResultProcessor {
         return originalResult is Mono<*>
     }
 
-    override fun process(originalResult: Any): Any {
+    override fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any {
         if (originalResult is Mono<*>) {
             return originalResult.toFuture()
         } else {
@@ -40,7 +41,7 @@ class FluxDataFetcherResultProcessor : DataFetcherResultProcessor {
         return originalResult is Flux<*>
     }
 
-    override fun process(originalResult: Any): Any {
+    override fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any {
         if (originalResult is Flux<*>) {
             return originalResult.collectList().toFuture()
         } else {

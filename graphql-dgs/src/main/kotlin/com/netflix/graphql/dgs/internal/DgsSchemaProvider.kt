@@ -284,13 +284,14 @@ class DgsSchemaProvider(
 
     private fun createBasicDataFetcher(method: Method, dgsComponent: Any, isSubscription: Boolean): DataFetcher<Any?> {
         return DataFetcher<Any?> { environment ->
-            val result = invokeDataFetcher(method, dgsComponent, DgsDataFetchingEnvironment(environment))
+            val dfe = DgsDataFetchingEnvironment(environment)
+            val result = invokeDataFetcher(method, dgsComponent, dfe)
             when {
                 isSubscription -> {
                     result
                 }
                 result != null -> {
-                    dataFetcherResultProcessors.find { it.supportsType(result) }?.process(result) ?: result
+                    dataFetcherResultProcessors.find { it.supportsType(result) }?.process(result, dfe) ?: result
                 }
                 else -> {
                     result
@@ -553,5 +554,7 @@ class DgsSchemaProvider(
 
 interface DataFetcherResultProcessor {
     fun supportsType(originalResult: Any): Boolean
-    fun process(originalResult: Any): Any
+    fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any = process(originalResult)
+    @Deprecated("Replaced with process(originalResult, dfe)")
+    fun process(originalResult: Any): Any = originalResult
 }
