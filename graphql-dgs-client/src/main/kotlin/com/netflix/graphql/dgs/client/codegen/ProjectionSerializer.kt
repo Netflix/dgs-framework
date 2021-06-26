@@ -25,7 +25,7 @@ class ProjectionSerializer(private val inputValueSerializer: InputValueSerialize
         }
 
         val prefix = if (isFragment) {
-            "... on ${projection::class.java.name.substringAfterLast("_").substringBefore("Projection")} { "
+            "... on ${projection::class.java.name.substringAfterLast(".").substringAfterLast("_").substringBefore("Projection")} { "
         } else {
             "{ "
         }
