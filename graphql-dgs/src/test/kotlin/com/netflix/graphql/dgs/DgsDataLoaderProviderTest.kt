@@ -120,7 +120,7 @@ class DgsDataLoaderProviderTest {
         provider.findDataLoaders()
         val registry = provider.buildRegistry()
 
-        //Use the dataloader's "load" method to check if the registry was set correctly, because the dataloader instance isn't itself a DgsDataLoaderRegistryConsumer
+        // Use the dataloader's "load" method to check if the registry was set correctly, because the dataloader instance isn't itself a DgsDataLoaderRegistryConsumer
         val dataLoader = registry.getDataLoader<String, String>("withRegistry")
         val load = dataLoader.load("")
         dataLoader.dispatch()
@@ -129,7 +129,7 @@ class DgsDataLoaderProviderTest {
     }
 
     @DgsDataLoader(name = "withRegistry")
-    class ExampleDataLoaderWithRegistry: BatchLoader<String, String>, DgsDataLoaderRegistryConsumer {
+    class ExampleDataLoaderWithRegistry : BatchLoader<String, String>, DgsDataLoaderRegistryConsumer {
 
         lateinit var registry: DataLoaderRegistry
 
