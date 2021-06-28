@@ -29,10 +29,19 @@ class MonoDataFetcherResultProcessor : DataFetcherResultProcessor {
 
     override fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any {
         if (originalResult is Mono<*>) {
-            return originalResult.toFuture()
+            return withContext(dfe, originalResult).toFuture()
         } else {
             throw IllegalArgumentException("Instance passed to ${this::class.qualifiedName} was not a Mono<*>. It was a ${originalResult::class.qualifiedName} instead")
         }
+    }
+}
+
+private fun <T> withContext(dfe: DgsDataFetchingEnvironment, mono: Mono<T>): Mono<T> {
+    val dgsCtx = dfe.getDgsContext()
+    return if (dgsCtx is DgsContextWithReactiveContext) {
+        mono.contextWrite(dgsCtx.contextView)
+    } else {
+        mono
     }
 }
 
@@ -43,9 +52,11 @@ class FluxDataFetcherResultProcessor : DataFetcherResultProcessor {
 
     override fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any {
         if (originalResult is Flux<*>) {
-            return originalResult.collectList().toFuture()
+            return withContext(dfe, originalResult.collectList())
+                .toFuture()
         } else {
             throw IllegalArgumentException("Instance passed to ${this::class.qualifiedName} was not a Flux<*>. It was a ${originalResult::class.qualifiedName} instead")
         }
     }
+
 }

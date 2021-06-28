@@ -20,6 +20,7 @@ import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
+import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.*
@@ -67,20 +68,23 @@ class DefaultDgsReactiveQueryExecutor(
                 schema.get()
         }.zipWith(contextBuilder.build(DgsReactiveRequestData(extensions, headers, serverHttpRequest)))
             .flatMap {
-                Mono.fromCompletionStage(
-                    BaseDgsQueryExecutor.baseExecute(
-                        query,
-                        variables,
-                        operationName,
-                        it.t2,
-                        it.t1,
-                        dataLoaderProvider,
-                        chainedInstrumentation,
-                        queryExecutionStrategy,
-                        mutationExecutionStrategy,
-                        idProvider
+                Mono.deferContextual { ctx ->
+                    val dgsContext: DgsContext = it.t2
+                    Mono.fromCompletionStage(
+                        BaseDgsQueryExecutor.baseExecute(
+                            query,
+                            variables,
+                            operationName,
+                            DgsContextWithReactiveContext.wrap(it.t2, ctx),
+                            it.t1,
+                            dataLoaderProvider,
+                            chainedInstrumentation,
+                            queryExecutionStrategy,
+                            mutationExecutionStrategy,
+                            idProvider
+                        )
                     )
-                ).doOnEach { result ->
+                }.doOnEach { result ->
                     if (result.hasValue()) {
                         val nullValueError = result.get()?.errors?.find { it is NonNullableFieldWasNullError }
                         if (nullValueError != null) {
