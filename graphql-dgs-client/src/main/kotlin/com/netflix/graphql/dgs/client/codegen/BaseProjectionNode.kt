@@ -19,7 +19,19 @@ package com.netflix.graphql.dgs.client.codegen
 import java.util.*
 import kotlin.collections.LinkedHashMap
 
-abstract class BaseProjectionNode {
+abstract class BaseProjectionNode(
+    /**
+     * Explicit GraphQL Schema type. This, for example, is used to define the GraphQL Type when resolving a _fragment_.
+     * For example, let's say the `schemaType` is `"Movie"`, then  the _Entity fragment_ associated to
+     * this node will be:
+     *
+     * ```
+     *  ... on Movie {
+     * ```
+     */
+    val schemaType: Optional<String> = Optional.empty()
+) {
+
     val fields: MutableMap<String, Any?> = LinkedHashMap()
     val fragments: MutableList<BaseSubProjectionNode<*, *>> = LinkedList()
     val inputArguments: MutableMap<String, List<InputArgument>> = LinkedHashMap()
