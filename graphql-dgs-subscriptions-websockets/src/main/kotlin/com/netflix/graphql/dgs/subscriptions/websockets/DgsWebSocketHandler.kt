@@ -149,4 +149,4 @@ const val GQL_CONNECTION_TERMINATE = "connection_terminate"
 
 data class DataPayload(val data: Any?, val errors: List<Any>? = emptyList())
 data class OperationMessage(@JsonProperty("type") val type: String, @JsonProperty("payload") val payload: Any? = null, @JsonProperty("id", required = false) val id: String? = "")
-data class QueryPayload(@JsonProperty("variables") val variables: Map<String, Any> = emptyMap(), @JsonProperty("extensions") val extensions: Map<String, Any> = emptyMap(), @JsonProperty("operationName") val operationName: String?, @JsonProperty("query") val query: String)
+data class QueryPayload(@JsonProperty("variables") val variables: Map<String, Any>?, @JsonProperty("extensions") val extensions: Map<String, Any> = emptyMap(), @JsonProperty("operationName") val operationName: String?, @JsonProperty("query") val query: String)

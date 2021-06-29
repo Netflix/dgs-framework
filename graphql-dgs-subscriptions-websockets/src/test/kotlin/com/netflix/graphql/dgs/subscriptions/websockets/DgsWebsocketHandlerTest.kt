@@ -82,6 +82,18 @@ class DgsWebsocketHandlerTest {
         """.trimIndent()
     )
 
+    private val queryMessageWithNullVariable = TextMessage(
+        """{
+                "type": "$GQL_START",
+                "payload": {
+                   "query": "query HELLO(${'$'}name: String){ hello(name:${'$'}name) }",
+                   "variables": null,
+                   "extensions": {}
+                }
+            }
+        """.trimIndent()
+    )
+
     @Test
     fun testMultipleClients() {
         connect(session1)
@@ -107,6 +119,19 @@ class DgsWebsocketHandlerTest {
     fun testWithQueryVariables() {
         connect(session1)
         startWithVariable(session1, 1)
+
+        disconnect(session1)
+
+        // ACK, DATA, COMPLETE
+        verify(exactly = 3) {
+            session1.sendMessage(any())
+        }
+    }
+
+    @Test
+    fun testWithNullQueryVariables() {
+        connect(session1)
+        startWithNullVariable(session1, 1)
 
         disconnect(session1)
 
@@ -200,6 +225,23 @@ class DgsWebsocketHandlerTest {
         every { dgsQueryExecutor.execute("query HELLO(\$name: String){ hello(name:\$name) }", mapOf("name" to "Stranger")) } returns executionResult
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessageWithVariable)
+    }
+
+    private fun startWithNullVariable(webSocketSession: WebSocketSession, nrOfResults: Int) {
+
+        every { webSocketSession.isOpen } returns true
+
+        val results = (1..nrOfResults).map {
+            val result1 = mockkClass(ExecutionResult::class)
+            every { result1.getData<Any>() } returns it
+            result1
+        }
+
+        every { executionResult.getData<Publisher<ExecutionResult>>() } returns Mono.just(results).flatMapMany { Flux.fromIterable(results) }
+
+        every { dgsQueryExecutor.execute("query HELLO(\$name: String){ hello(name:\$name) }", null) } returns executionResult
+
+        dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessageWithNullVariable)
     }
 
     private fun startWithError(webSocketSession: WebSocketSession) {
