@@ -16,7 +16,15 @@
 
 package com.netflix.graphql.dgs.client.codegen
 
-abstract class BaseSubProjectionNode<T, R>(val parent: T, val root: R) : BaseProjectionNode() {
+import java.util.*
+
+abstract class BaseSubProjectionNode<T, R>(
+    val parent: T,
+    val root: R,
+    schemaType: Optional<String> = Optional.empty()
+) : BaseProjectionNode(schemaType) {
+
+    constructor(parent: T, root: R) : this(parent, root, schemaType = Optional.empty())
 
     fun parent(): T {
         return parent

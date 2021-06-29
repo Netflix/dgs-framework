@@ -19,16 +19,24 @@ package com.netflix.graphql.dgs.client.codegen
 import java.util.*
 
 class ProjectionSerializer(private val inputValueSerializer: InputValueSerializer) {
+
     fun serialize(projection: BaseProjectionNode, isFragment: Boolean = false): String {
         if (projection.fields.isEmpty() && projection.fragments.isEmpty()) {
             return ""
         }
 
         val prefix = if (isFragment) {
-            "... on ${projection::class.java.name.substringAfterLast(".").substringAfterLast("_").substringBefore("Projection")} { "
+            val schemaType = projection.schemaType.orElse(
+                projection::class.java.name
+                    .substringAfterLast(".")
+                    .substringAfterLast("_")
+                    .substringBefore("Projection")
+            )
+            "... on $schemaType { "
         } else {
             "{ "
         }
+
         val joiner = StringJoiner(" ", prefix, " }")
         projection.fields.forEach { (key, value) ->
             val field = if (projection.inputArguments[key] != null) {

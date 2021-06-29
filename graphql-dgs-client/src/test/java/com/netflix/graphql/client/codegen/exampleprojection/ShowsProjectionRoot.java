@@ -22,6 +22,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 
 public class ShowsProjectionRoot extends BaseProjectionNode {
+
     public Shows_ReviewsProjection reviews() {
         Shows_ReviewsProjection projection = new Shows_ReviewsProjection(this, this);
         getFields().put("reviews", projection);
