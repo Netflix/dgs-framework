@@ -71,7 +71,7 @@ class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : Text
             }
             GQL_STOP -> {
                 subscriptions[session.id]?.get(id)?.cancel()
-                subscriptions.remove(id)
+                subscriptions[session.id]?.remove(id)
             }
             GQL_CONNECTION_TERMINATE -> {
                 logger.info("Terminated session " + session.id)
@@ -86,6 +86,7 @@ class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : Text
     private fun cleanupSubscriptionsForSession(session: WebSocketSession) {
         logger.info("Cleaning up for session {}", session.id)
         subscriptions[session.id]?.values?.forEach { it.cancel() }
+        subscriptions.remove(session.id)
         sessions.remove(session)
     }
 
@@ -96,7 +97,8 @@ class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : Text
         subscriptionStream.subscribe(object : Subscriber<ExecutionResult> {
             override fun onSubscribe(s: Subscription) {
                 logger.info("Subscription started for {}", id)
-                subscriptions[session.id] = mutableMapOf(Pair(id, s))
+                subscriptions.putIfAbsent(session.id, mutableMapOf())
+                subscriptions[session.id]?.set(id, s)
 
                 s.request(1)
             }
@@ -132,7 +134,7 @@ class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : Text
                     session.sendMessage(jsonMessage)
                 }
 
-                subscriptions.remove(id)
+                subscriptions[session.id]?.remove(id)
             }
         })
     }
