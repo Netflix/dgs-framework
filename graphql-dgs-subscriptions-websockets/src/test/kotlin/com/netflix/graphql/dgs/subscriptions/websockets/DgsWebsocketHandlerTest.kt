@@ -65,7 +65,8 @@ class DgsWebsocketHandlerTest {
                    "query": "{ hello }",
                    "variables": {},
                    "extensions": {}
-                }
+                },
+                "id": "123"
             }
         """.trimIndent()
     )
@@ -77,7 +78,21 @@ class DgsWebsocketHandlerTest {
                    "query": "query HELLO(${'$'}name: String){ hello(name:${'$'}name) }",
                    "variables": {"name": "Stranger"},
                    "extensions": {}
-                }
+                },
+                "id": "222"
+            }
+        """.trimIndent()
+    )
+
+    private val queryMessageWithNullVariable = TextMessage(
+        """{
+                "type": "$GQL_START",
+                "payload": {
+                   "query": "query HELLO(${'$'}name: String){ hello(name:${'$'}name) }",
+                   "variables": null,
+                   "extensions": {}
+                },
+                "id": "123"
             }
         """.trimIndent()
     )
@@ -104,9 +119,34 @@ class DgsWebsocketHandlerTest {
     }
 
     @Test
+    fun testWithMultipleSubscriptionsPerSession() {
+        connect(session1)
+        start(session1, 1)
+        startWithVariable(session1, 1)
+
+        assertThat(dgsWebsocketHandler.sessions.size).isEqualTo(1)
+        assertThat(dgsWebsocketHandler.subscriptions.size).isEqualTo(1)
+        disconnect(session1)
+        assertThat(dgsWebsocketHandler.sessions.size).isEqualTo(0)
+    }
+
+    @Test
     fun testWithQueryVariables() {
         connect(session1)
         startWithVariable(session1, 1)
+
+        disconnect(session1)
+
+        // ACK, DATA, COMPLETE
+        verify(exactly = 3) {
+            session1.sendMessage(any())
+        }
+    }
+
+    @Test
+    fun testWithNullQueryVariables() {
+        connect(session1)
+        startWithNullVariable(session1, 1)
 
         disconnect(session1)
 
@@ -124,6 +164,19 @@ class DgsWebsocketHandlerTest {
 
         // ACK, ERROR
         verify(exactly = 2) {
+            session1.sendMessage(any())
+        }
+    }
+
+    @Test
+    fun testWithStop() {
+        connect(session1)
+        start(session1, 1)
+        stop(session1)
+        disconnect(session1)
+
+        // ACK, DATA, COMPLETE
+        verify(exactly = 3) {
             session1.sendMessage(any())
         }
     }
@@ -202,11 +255,46 @@ class DgsWebsocketHandlerTest {
         dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessageWithVariable)
     }
 
+    private fun startWithNullVariable(webSocketSession: WebSocketSession, nrOfResults: Int) {
+
+        every { webSocketSession.isOpen } returns true
+
+        val results = (1..nrOfResults).map {
+            val result1 = mockkClass(ExecutionResult::class)
+            every { result1.getData<Any>() } returns it
+            result1
+        }
+
+        every { executionResult.getData<Publisher<ExecutionResult>>() } returns Mono.just(results).flatMapMany { Flux.fromIterable(results) }
+
+        every { dgsQueryExecutor.execute("query HELLO(\$name: String){ hello(name:\$name) }", null) } returns executionResult
+
+        dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessageWithNullVariable)
+    }
+
     private fun startWithError(webSocketSession: WebSocketSession) {
         every { webSocketSession.isOpen } returns true
         every { executionResult.getData<Publisher<ExecutionResult>>() } returns Mono.error(RuntimeException("That's wrong!"))
         every { dgsQueryExecutor.execute("{ hello }", emptyMap()) } returns executionResult
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessage)
+    }
+
+    private fun stop(webSocketSession: WebSocketSession) {
+        val currentNrOfSessions = dgsWebsocketHandler.sessions.size
+        every { webSocketSession.close() } just Runs
+
+        val textMessage = TextMessage(
+            """{
+            "type": "$GQL_STOP",
+            "id": "123"
+        }
+            """.trimIndent()
+        )
+
+        dgsWebsocketHandler.handleTextMessage(webSocketSession, textMessage)
+
+        assertThat(dgsWebsocketHandler.sessions.size).isEqualTo(currentNrOfSessions)
+        assertThat(dgsWebsocketHandler.subscriptions[webSocketSession.id]?.get("123")).isNull()
     }
 }
