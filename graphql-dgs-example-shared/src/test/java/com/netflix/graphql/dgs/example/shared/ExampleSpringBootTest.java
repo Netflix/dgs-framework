@@ -17,8 +17,8 @@
 package com.netflix.graphql.dgs.example.shared;
 
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration;
-import com.netflix.graphql.dgs.example.datafetcher.HelloDataFetcher;
 import com.netflix.graphql.dgs.example.shared.datafetcher.ConcurrentDataFetcher;
+import com.netflix.graphql.dgs.example.shared.datafetcher.HelloDataFetcher;
 import com.netflix.graphql.dgs.example.shared.datafetcher.MovieDataFetcher;
 import com.netflix.graphql.dgs.example.shared.datafetcher.RatingMutation;
 import com.netflix.graphql.dgs.pagination.DgsPaginationAutoConfiguration;

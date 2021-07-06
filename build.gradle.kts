@@ -46,8 +46,6 @@ allprojects {
         maven {
             url = uri("https://repo.spring.io/snapshot")
         }
-
-        mavenLocal()
     }
 
     apply(plugin = "nebula.netflixoss")

@@ -15,7 +15,7 @@
  */
 
 dependencies {
-    api("org.springframework.experimental:graphql-spring-boot-starter:1.0.0-SNAPSHOT")
+    api("org.springframework.experimental:graphql-spring-boot-starter:1.0.0-M1")
     implementation(project(":graphql-dgs"))
     implementation("org.springframework.boot:spring-boot-starter")
 

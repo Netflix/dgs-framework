@@ -27,7 +27,7 @@
     },
     "compileClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "0.6.5-SNAPSHOT"
+            "locked": "0.6.4"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.12.3"
@@ -43,7 +43,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "0.0.0-2021-06-22T12-54-16-ead75387"
+            "locked": "16.2"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.5.0"
@@ -239,7 +239,7 @@
     },
     "runtimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "0.6.5-SNAPSHOT"
+            "locked": "0.6.4"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.12.3"
@@ -261,7 +261,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "0.0.0-2021-06-22T12-54-16-ead75387"
+            "locked": "16.2"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.5.0"
@@ -345,7 +345,7 @@
     },
     "testCompileClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "0.6.5-SNAPSHOT"
+            "locked": "0.6.4"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.12.3"
@@ -361,7 +361,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "0.0.0-2021-06-22T12-54-16-ead75387"
+            "locked": "16.2"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.5.0"
@@ -431,7 +431,7 @@
     },
     "testRuntimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "0.6.5-SNAPSHOT"
+            "locked": "0.6.4"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.12.3"
@@ -453,7 +453,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "0.0.0-2021-06-22T12-54-16-ead75387"
+            "locked": "16.2"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.5.0"
