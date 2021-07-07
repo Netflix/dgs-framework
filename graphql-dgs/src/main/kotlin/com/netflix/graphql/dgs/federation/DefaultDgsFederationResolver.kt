@@ -25,8 +25,7 @@ import com.netflix.graphql.dgs.exceptions.MissingDgsEntityFetcherException
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.types.errors.TypedGraphQLError
 import graphql.GraphQLError
-import graphql.execution.DataFetcherResult
-import graphql.execution.ResultPath
+import graphql.execution.*
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.TypeResolver
@@ -34,6 +33,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import java.lang.reflect.InvocationTargetException
+import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
@@ -46,8 +46,9 @@ open class DefaultDgsFederationResolver() :
      * This is the most common use case.
      * The default constructor is used to extend the DefaultDgsFederationResolver. In that case injection is used to provide the schemaProvider.
      */
-    constructor(providedDgsSchemaProvider: DgsSchemaProvider) : this() {
+    constructor(providedDgsSchemaProvider: DgsSchemaProvider, dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler>) : this() {
         dgsSchemaProvider = providedDgsSchemaProvider
+        dgsExceptionHandler = dataFetcherExceptionHandler
     }
 
     /**
@@ -56,6 +57,9 @@ open class DefaultDgsFederationResolver() :
     @Suppress("JoinDeclarationAndAssignment")
     @Autowired
     lateinit var dgsSchemaProvider: DgsSchemaProvider
+
+    @Autowired
+    lateinit var dgsExceptionHandler: Optional<DataFetcherExceptionHandler>
 
     val logger: Logger = LoggerFactory.getLogger(DefaultDgsFederationResolver::class.java)
 
@@ -97,10 +101,19 @@ open class DefaultDgsFederationResolver() :
                     }
                 } catch (e: Exception) {
                     if (e is InvocationTargetException && e.targetException != null) {
-                        errorsList.add(
-                            TypedGraphQLError.newInternalErrorBuilder().message("%s: %s", e.targetException::class.java.name, e.targetException.message)
-                                .path(ResultPath.parse("/_entities")).build()
-                        )
+                        if (dgsExceptionHandler.isPresent) {
+                            val res = dgsExceptionHandler.get().onException(
+                                DataFetcherExceptionHandlerParameters.newExceptionParameters()
+                                    .dataFetchingEnvironment(env).exception(e.targetException).build()
+                            )
+                            res.errors.forEach { errorsList.add(it) }
+                        } else {
+                            errorsList.add(
+                                TypedGraphQLError.newInternalErrorBuilder()
+                                    .message("%s: %s", e.targetException::class.java.name, e.targetException.message)
+                                    .path(ResultPath.parse("/_entities")).build()
+                            )
+                        }
                     } else {
                         errorsList.add(
                             TypedGraphQLError.newInternalErrorBuilder().message("%s: %s", e::class.java.name, e.message)

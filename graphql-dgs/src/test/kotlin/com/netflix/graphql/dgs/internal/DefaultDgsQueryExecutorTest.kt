@@ -99,6 +99,7 @@ internal class DefaultDgsQueryExecutorTest {
         val provider = DgsSchemaProvider(
             applicationContextMock,
             federationResolver = Optional.empty(),
+            dataFetcherExceptionHandler = Optional.empty(),
             existingTypeDefinitionRegistry = Optional.empty(),
             mockProviders = Optional.empty()
         )

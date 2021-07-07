@@ -17,14 +17,16 @@
 package com.netflix.graphql.dgs
 
 import com.apollographql.federation.graphqljava._Entity
+import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import graphql.TypeResolutionEnvironment
+import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherResult
-import graphql.schema.DataFetchingEnvironment
-import graphql.schema.DataFetchingEnvironmentImpl
-import graphql.schema.GraphQLSchema
+import graphql.execution.ExecutionStepInfo
+import graphql.execution.ResultPath
+import graphql.schema.*
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.SchemaGenerator
 import graphql.schema.idl.SchemaParser
@@ -47,13 +49,17 @@ class DgsFederationResolverTest {
 
     lateinit var dgsSchemaProvider: DgsSchemaProvider
 
+    lateinit var dgsExceptionHandler: DataFetcherExceptionHandler
+
     @BeforeEach
     fun setup() {
+        dgsExceptionHandler = DefaultDataFetcherExceptionHandler()
         dgsSchemaProvider = DgsSchemaProvider(
             applicationContextMock,
             Optional.empty(),
             Optional.empty(),
-            Optional.empty()
+            Optional.empty(),
+            dataFetcherExceptionHandler = Optional.of(dgsExceptionHandler)
         )
     }
 
@@ -73,7 +79,7 @@ class DgsFederationResolverTest {
 
         val graphQLSchema: GraphQLSchema = buildGraphQLSchema(schema)
 
-        val type = DefaultDgsFederationResolver(dgsSchemaProvider).typeResolver().getType(TypeResolutionEnvironment(Movie("123", "Stranger Things"), emptyMap(), null, null, graphQLSchema, null))
+        val type = DefaultDgsFederationResolver(dgsSchemaProvider, Optional.of(dgsExceptionHandler)).typeResolver().getType(TypeResolutionEnvironment(Movie("123", "Stranger Things"), emptyMap(), null, null, graphQLSchema, null))
         assertThat(type.name).isEqualTo("Movie")
     }
 
@@ -88,7 +94,7 @@ class DgsFederationResolverTest {
 
         val graphQLSchema: GraphQLSchema = buildGraphQLSchema(schema)
 
-        val type = DefaultDgsFederationResolver(dgsSchemaProvider).typeResolver().getType(TypeResolutionEnvironment(Movie("123", "Stranger Things"), emptyMap(), null, null, graphQLSchema, null))
+        val type = DefaultDgsFederationResolver(dgsSchemaProvider, Optional.of(dgsExceptionHandler)).typeResolver().getType(TypeResolutionEnvironment(Movie("123", "Stranger Things"), emptyMap(), null, null, graphQLSchema, null))
         assertThat(type).isNull()
     }
 
@@ -107,7 +113,7 @@ class DgsFederationResolverTest {
         """.trimIndent()
 
         val graphQLSchema: GraphQLSchema = buildGraphQLSchema(schema)
-        val customTypeResolver = object : DefaultDgsFederationResolver(dgsSchemaProvider) {
+        val customTypeResolver = object : DefaultDgsFederationResolver(dgsSchemaProvider, Optional.of(dgsExceptionHandler)) {
             override fun typeMapping(): Map<Class<*>, String> {
                 return mapOf(Pair(Movie::class.java, "DgsMovie"))
             }
@@ -121,7 +127,7 @@ class DgsFederationResolverTest {
     fun missingDgsEntityFetcher() {
         val arguments = mapOf<String, Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("__typename", "Movie")))))
         val dataFetchingEnvironment = DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build()
-        val result = (DefaultDgsFederationResolver(dgsSchemaProvider).entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>)
+        val result = (DefaultDgsFederationResolver(dgsSchemaProvider, Optional.of(dgsExceptionHandler)).entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>)
         assertThat(result).isNotNull
         assertThat(result.get().data.size).isEqualTo(1)
         assertThat(result.get().errors.size).isEqualTo(1)
@@ -132,7 +138,7 @@ class DgsFederationResolverTest {
     fun missingTypeNameForEntitiesQuery() {
         val arguments = mapOf<String, Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("something", "Else")))))
         val dataFetchingEnvironment = DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build()
-        val result = (DefaultDgsFederationResolver(dgsSchemaProvider).entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>)
+        val result = (DefaultDgsFederationResolver(dgsSchemaProvider, Optional.of(dgsExceptionHandler)).entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>)
         assertThat(result).isNotNull
         assertThat(result.get().data.size).isEqualTo(1)
         assertThat(result.get().errors.size).isEqualTo(1)
@@ -167,7 +173,7 @@ class DgsFederationResolverTest {
         val arguments = mapOf<String, Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("__typename", "Movie"), Pair("movieId", "1")))))
         val dataFetchingEnvironment = DgsDataFetchingEnvironment(DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build())
 
-        val result = (DefaultDgsFederationResolver(dgsSchemaProvider).entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>)
+        val result = (DefaultDgsFederationResolver(dgsSchemaProvider, Optional.of(dgsExceptionHandler)).entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>)
         assertThat(result).isNotNull
         assertThat(result.get().data.size).isEqualTo(1)
     }
@@ -220,8 +226,9 @@ class DgsFederationResolverTest {
         dgsSchemaProvider.schema("""type Query {}""")
 
         val arguments = mapOf<String, Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("__typename", "Movie"), Pair("movieId", "invalid")))))
-        val dataFetchingEnvironment = DgsDataFetchingEnvironment(DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build())
-        val result = (DefaultDgsFederationResolver(dgsSchemaProvider).entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>)
+        val executionStepInfo = ExecutionStepInfo.newExecutionStepInfo().path(ResultPath.parse("/_entities")).type(GraphQLList.list(GraphQLUnionType.newUnionType().name("Entity").possibleTypes(GraphQLObjectType.newObject().name("Movie").build()).build())).build()
+        val dataFetchingEnvironment = DgsDataFetchingEnvironment(DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).executionStepInfo(executionStepInfo).build())
+        val result = (DefaultDgsFederationResolver(dgsSchemaProvider, Optional.of(dgsExceptionHandler)).entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>)
         assertThat(result).isNotNull
         assertThat(result.get().data.size).isEqualTo(1)
         assertThat(result.get().errors.size).isEqualTo(1)
@@ -243,7 +250,7 @@ class DgsFederationResolverTest {
 
         val arguments = mapOf<String, Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("__typename", "Movie"), Pair("movieId", "invalid"), Pair("illegalArgument", 0)))))
         val dataFetchingEnvironment = DgsDataFetchingEnvironment(DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build())
-        val result = (DefaultDgsFederationResolver(dgsSchemaProvider).entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>)
+        val result = (DefaultDgsFederationResolver(dgsSchemaProvider, Optional.of(dgsExceptionHandler)).entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>)
         assertThat(result).isNotNull
         assertThat(result.get().data.size).isEqualTo(1)
         assertThat(result.get().errors.size).isEqualTo(1)
@@ -254,7 +261,7 @@ class DgsFederationResolverTest {
     fun dgsEntityFetcherMissingArgument() {
         val arguments = mapOf<String, Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("__typename", "Movie")))))
         val dataFetchingEnvironment = DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build()
-        val result = (DefaultDgsFederationResolver(dgsSchemaProvider).entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>)
+        val result = (DefaultDgsFederationResolver(dgsSchemaProvider, Optional.of(dgsExceptionHandler)).entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>)
         assertThat(result).isNotNull
         assertThat(result.get().data.size).isEqualTo(1)
         assertThat(result.get().errors.size).isEqualTo(1)
@@ -269,7 +276,7 @@ class DgsFederationResolverTest {
         val arguments = mapOf<String, Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("__typename", "Movie"), Pair("movieId", "1")))))
         val dataFetchingEnvironment = DgsDataFetchingEnvironment(DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build())
 
-        val result = (DefaultDgsFederationResolver(dgsSchemaProvider).entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>)
+        val result = (DefaultDgsFederationResolver(dgsSchemaProvider, Optional.of(dgsExceptionHandler)).entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>)
         assertThat(result).isNotNull
         assertThat(result.get().data.size).isEqualTo(1)
         assertThat(result.get().data.first() is Movie).isTrue
