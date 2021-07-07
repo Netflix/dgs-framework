@@ -431,7 +431,7 @@ class DgsSchemaProvider(
             }
         }
 
-        return if(method.kotlinFunction?.isSuspend == true) {
+        return if (method.kotlinFunction?.isSuspend == true) {
             val dgsContext = environment.getContext<DgsContext>()
             val launch = dgsContext.coroutineScope?.async {
                 return@async method.kotlinFunction!!.callSuspend(dgsComponent, *args.toTypedArray())

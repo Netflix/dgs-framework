@@ -70,8 +70,6 @@ class CoroutineDataFetcherTest {
 
         val build = GraphQL.newGraphQL(schema).build()
 
-
-
         val context = DgsContext(
             null,
             null,
@@ -79,28 +77,32 @@ class CoroutineDataFetcherTest {
         )
 
         val concurrentTime = measureTimeMillis {
-            val executionResult = build.execute(ExecutionInput.newExecutionInput().context(context).query(
-                """
+            val executionResult = build.execute(
+                ExecutionInput.newExecutionInput().context(context).query(
+                    """
             {
                 first: concurrent(from: 1, to: 10)
                 second: concurrent(from: 1, to: 10)               
                 third: concurrent(from: 1, to: 10)               
                 fourth: concurrent(from: 1, to: 10)               
             }
-            """.trimIndent()
-            ).build())
+                    """.trimIndent()
+                ).build()
+            )
 
             assertThat(executionResult.isDataPresent).isTrue()
         }
 
         val singleTime = measureTimeMillis {
-            val executionResult = build.execute(ExecutionInput.newExecutionInput().context(context).query(
-                """
+            val executionResult = build.execute(
+                ExecutionInput.newExecutionInput().context(context).query(
+                    """
             {
                 first: concurrent(from: 1, to: 10)
             }
-            """.trimIndent()
-            ).build())
+                    """.trimIndent()
+                ).build()
+            )
 
             assertThat(executionResult.isDataPresent).isTrue()
         }
