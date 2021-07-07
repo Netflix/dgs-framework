@@ -125,7 +125,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
-            "locked": "3.4.6"
+            "locked": "3.4.7"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -442,7 +442,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared"
             ],
-            "locked": "3.4.6"
+            "locked": "3.4.7"
         },
         "jakarta.servlet:jakarta.servlet-api": {
             "firstLevelTransitive": [
@@ -474,6 +474,18 @@
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "1.4.32"
+        },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "1.3.8"
+        },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "1.3.8"
         },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
@@ -683,7 +695,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
-            "locked": "3.4.6"
+            "locked": "3.4.7"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -868,7 +880,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared"
             ],
-            "locked": "3.4.6"
+            "locked": "3.4.7"
         },
         "jakarta.servlet:jakarta.servlet-api": {
             "firstLevelTransitive": [
@@ -900,6 +912,18 @@
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "1.4.32"
+        },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "1.3.8"
+        },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "1.3.8"
         },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [

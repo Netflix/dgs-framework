@@ -18,13 +18,14 @@ package com.netflix.graphql.dgs.context
 
 import com.netflix.graphql.dgs.internal.DgsRequestData
 import graphql.schema.DataFetchingEnvironment
+import kotlinx.coroutines.CoroutineScope
 import org.dataloader.BatchLoaderEnvironment
 
 /**
  * Context class that is created per request, and is added to both DataFetchingEnvironment and BatchLoaderEnvironment.
  * Custom data can be added by providing a [DgsCustomContextBuilder].
  */
-open class DgsContext(val customContext: Any? = null, val requestData: DgsRequestData?) {
+open class DgsContext(val customContext: Any? = null, val requestData: DgsRequestData?, val coroutineScope: CoroutineScope? = null) {
 
     companion object {
         @JvmStatic

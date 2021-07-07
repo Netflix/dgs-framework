@@ -39,6 +39,8 @@ import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.idl.TypeRuntimeWiring
 import graphql.schema.visibility.DefaultGraphqlFieldVisibility
 import graphql.schema.visibility.GraphqlFieldVisibility
+import kotlinx.coroutines.async
+import kotlinx.coroutines.future.asCompletableFuture
 import org.slf4j.LoggerFactory
 import org.springframework.aop.support.AopUtils
 import org.springframework.context.ApplicationContext
@@ -59,6 +61,9 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
+import kotlin.coroutines.Continuation
+import kotlin.reflect.full.callSuspend
+import kotlin.reflect.jvm.kotlinFunction
 
 /**
  * Main framework class that scans for components and configures a runtime executable schema.
@@ -303,7 +308,7 @@ class DgsSchemaProvider(
     private fun invokeDataFetcher(method: Method, dgsComponent: Any, environment: DataFetchingEnvironment): Any? {
         val args = mutableListOf<Any?>()
         val parameterNames = defaultParameterNameDiscoverer.getParameterNames(method) ?: emptyArray()
-        method.parameters.forEachIndexed { idx, parameter ->
+        method.parameters.filter { it.type != Continuation::class.java }.forEachIndexed { idx, parameter ->
 
             when {
                 parameter.isAnnotationPresent(InputArgument::class.java) -> {
@@ -426,7 +431,16 @@ class DgsSchemaProvider(
             }
         }
 
-        return ReflectionUtils.invokeMethod(method, dgsComponent, *args.toTypedArray())
+        return if(method.kotlinFunction?.isSuspend == true) {
+            val dgsContext = environment.getContext<DgsContext>()
+            val launch = dgsContext.coroutineScope?.async {
+                return@async method.kotlinFunction!!.callSuspend(dgsComponent, *args.toTypedArray())
+            }
+
+            launch?.asCompletableFuture()
+        } else {
+            ReflectionUtils.invokeMethod(method, dgsComponent, *args.toTypedArray())
+        }
     }
 
     private fun getValueAsOptional(value: Any?, parameter: Parameter) =

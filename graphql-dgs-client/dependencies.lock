@@ -48,7 +48,7 @@
             "project": true
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.6"
+            "locked": "3.4.7"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -233,7 +233,7 @@
             "project": true
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.6"
+            "locked": "3.4.7"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -293,6 +293,9 @@
         "com.graphql-java:graphql-java": {
             "locked": "16.2"
         },
+        "com.graphql-java:graphql-java-extended-scalars": {
+            "locked": "16.0.1"
+        },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.6.0"
         },
@@ -303,7 +306,7 @@
             "locked": "1.11.0"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.6"
+            "locked": "3.4.7"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -355,6 +358,9 @@
         "com.graphql-java:graphql-java": {
             "locked": "16.2"
         },
+        "com.graphql-java:graphql-java-extended-scalars": {
+            "locked": "16.0.1"
+        },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.6.0"
         },
@@ -365,7 +371,7 @@
             "locked": "1.11.0"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.6"
+            "locked": "3.4.7"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
