@@ -87,7 +87,7 @@ open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
         if (body != null) {
             logger.debug("Reading input value: '{}'", body)
 
-            if ("application/graphql" == headers.getFirst("Content-Type")) {
+            if (headers.getFirst("Content-Type")?.contains("application/graphql" ) == true) {
                 inputQuery = mapOf(Pair("query", body))
                 queryVariables = emptyMap()
                 extensions = emptyMap()
