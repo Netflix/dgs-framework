@@ -21,7 +21,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.*
 import com.netflix.graphql.dgs.context.DgsContext
-import com.netflix.graphql.dgs.exceptions.*
+import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
+import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
+import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
+import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
 import com.netflix.graphql.mocking.DgsSchemaTransformer
 import com.netflix.graphql.mocking.MockProvider
@@ -77,6 +80,7 @@ class DgsSchemaProvider(
 
     val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
     val entityFetchers = mutableMapOf<String, Pair<Any, Method>>()
+    val dataFetchers = mutableListOf<DatafetcherReference>()
 
     private val defaultParameterNameDiscoverer = DefaultParameterNameDiscoverer()
     private val logger = LoggerFactory.getLogger(DgsSchemaProvider::class.java)
@@ -202,11 +206,11 @@ class DgsSchemaProvider(
                 }
                 .forEach { method ->
 
-                    val dgsDataAnnotation =
-                        MergedAnnotations.from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY)
-                            .get(DgsData::class.java)
+                    val mergedAnnotations = MergedAnnotations.from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY)
+                    val dgsDataAnnotation = mergedAnnotations.get(DgsData::class.java)
                     val field = dgsDataAnnotation.getString("field").ifEmpty { method.name }
                     val parentType = dgsDataAnnotation.getString("parentType")
+                    dataFetchers.add(DatafetcherReference(dgsComponent, method, mergedAnnotations, parentType, field))
 
                     val enableInstrumentation =
                         if (method.isAnnotationPresent(DgsEnableDataFetcherInstrumentation::class.java)) {
@@ -557,3 +561,5 @@ interface DataFetcherResultProcessor {
     @Deprecated("Replaced with process(originalResult, dfe)")
     fun process(originalResult: Any): Any = originalResult
 }
+
+data class DatafetcherReference(val instance: Any, val method: Method, val annotations: MergedAnnotations, val parentType: String, val field: String)
