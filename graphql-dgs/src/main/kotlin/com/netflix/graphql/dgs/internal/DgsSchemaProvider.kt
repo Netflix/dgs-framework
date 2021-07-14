@@ -26,6 +26,7 @@ import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
 import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
+import com.netflix.graphql.dgs.pagination.DgsPaginationTypeDefinitionRegistry
 import com.netflix.graphql.mocking.DgsSchemaTransformer
 import com.netflix.graphql.mocking.MockProvider
 import graphql.TypeResolutionEnvironment
@@ -87,6 +88,8 @@ class DgsSchemaProvider(
 
     private val objectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
 
+    private val paginationTypeDefinitionRegistry = DgsPaginationTypeDefinitionRegistry()
+
     fun schema(schema: String? = null, fieldVisibility: GraphqlFieldVisibility = DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY): GraphQLSchema {
         val startTime = System.currentTimeMillis()
         val dgsComponents = applicationContext.getBeansWithAnnotation(DgsComponent::class.java)
@@ -104,6 +107,7 @@ class DgsSchemaProvider(
         if (existingTypeDefinitionRegistry.isPresent) {
             mergedRegistry = mergedRegistry.merge(existingTypeDefinitionRegistry.get())
         }
+        mergedRegistry = mergedRegistry.merge(paginationTypeDefinitionRegistry.registry(mergedRegistry))
 
         val federationResolverInstance = federationResolver.orElseGet { DefaultDgsFederationResolver(this, dataFetcherExceptionHandler) }
 

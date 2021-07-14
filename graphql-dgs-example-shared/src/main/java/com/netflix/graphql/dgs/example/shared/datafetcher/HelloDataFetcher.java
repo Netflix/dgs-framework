@@ -21,9 +21,9 @@ import com.netflix.graphql.dgs.context.DgsContext;
 import com.netflix.graphql.dgs.example.shared.context.MyContext;
 import com.netflix.graphql.dgs.example.shared.types.Message;
 import graphql.GraphQLException;
+import graphql.relay.*;
 import graphql.schema.DataFetchingEnvironment;
 import org.dataloader.DataLoader;
-import org.dataloader.Try;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.RequestHeader;
 
@@ -96,5 +96,10 @@ public class HelloDataFetcher {
     @DgsData(parentType = "Query", field = "withRuntimeException")
     public String withRuntimeException() {
         throw new RuntimeException("That's broken!");
+    }
+
+    @DgsData(parentType = "Query", field = "withPagination")
+    public Connection<Message> withPagination(DataFetchingEnvironment env) {
+       return new SimpleListConnection<>(Collections.singletonList(new Message("This is a generated connection"))).get(env);
     }
 }
