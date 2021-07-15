@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import graphql.ExecutionResult
+import graphql.GraphQLError
 import graphql.validation.ValidationError
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
@@ -91,7 +92,7 @@ open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor
             override fun onNext(t: ExecutionResult) {
 
                 val event = SseEmitter.event()
-                    .data(mapper.writeValueAsString(SubscriptionData(t.getData(), sessionId)), MediaType.APPLICATION_JSON)
+                    .data(mapper.writeValueAsString(SubscriptionData(t.getData(), t.errors, sessionId)), MediaType.APPLICATION_JSON)
                     .id(UUID.randomUUID().toString())
                 emitter.send(event)
 
@@ -140,5 +141,5 @@ open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor
     }
 
     data class QueryPayload(@JsonProperty("variables") val variables: Map<String, Any> = emptyMap(), @JsonProperty("extensions") val extensions: Map<String, Any> = emptyMap(), @JsonProperty("operationName") val operationName: String?, @JsonProperty("query") val query: String)
-    data class SubscriptionData(val data: Any, val subId: String, val type: String = "SUBSCRIPTION_DATA")
+    data class SubscriptionData(val data: Any, val errors: List<GraphQLError>? = null, val subId: String, val type: String = "SUBSCRIPTION_DATA")
 }
