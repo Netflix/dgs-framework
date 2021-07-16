@@ -20,8 +20,6 @@ import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.internal.utils.TimeTracer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
@@ -58,7 +56,6 @@ open class DefaultDgsGraphQLContextBuilder(
         return DgsContext(
             customContext,
             dgsRequestData,
-            CoroutineScope(Dispatchers.Default)
         )
     }
 }

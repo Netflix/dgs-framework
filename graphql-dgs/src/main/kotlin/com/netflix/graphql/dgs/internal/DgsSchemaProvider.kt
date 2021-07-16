@@ -39,6 +39,8 @@ import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.idl.TypeRuntimeWiring
 import graphql.schema.visibility.DefaultGraphqlFieldVisibility
 import graphql.schema.visibility.GraphqlFieldVisibility
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.future.asCompletableFuture
 import org.slf4j.LoggerFactory
@@ -432,8 +434,8 @@ class DgsSchemaProvider(
         }
 
         return if (method.kotlinFunction?.isSuspend == true) {
-            val dgsContext = environment.getContext<DgsContext>()
-            val launch = dgsContext.coroutineScope?.async {
+
+            val launch = CoroutineScope(Dispatchers.Unconfined).async {
                 return@async method.kotlinFunction!!.callSuspend(dgsComponent, *args.toTypedArray())
             }
 

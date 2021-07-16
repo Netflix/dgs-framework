@@ -23,16 +23,16 @@ import graphql.GraphQL
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Percentage
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
 import java.util.*
+import java.util.concurrent.Executors
 import kotlin.system.measureTimeMillis
 
 @ExtendWith(MockKExtension::class)
@@ -40,23 +40,35 @@ class CoroutineDataFetcherTest {
     @MockK
     lateinit var applicationContextMock: ApplicationContext
 
+    val executor = Executors.newFixedThreadPool(8)
+
     @Test
     fun `Suspend functions should be supported as datafetchers`() {
         val fetcher = object : Any() {
             @DgsQuery
             suspend fun concurrent(@InputArgument from: Int, to: Int): Int = coroutineScope {
                 var sum = 0
+                withContext(executor.asCoroutineDispatcher()) {
+                    println("before $from")
+                    repeat(from.rangeTo(to).count()) {
+                        sum++
 
-                repeat(from.rangeTo(to).count()) {
-                    sum++
-                    delay(50)
+                        //Forcing a blocking call to demonstrate running with a thread pool
+                        Thread.sleep(50)
+                    }
+                    println("after $from")
+
+                    sum
                 }
-
-                sum
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("concurrentFetcher", fetcher))
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "concurrentFetcher",
+                fetcher
+            )
+        )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
 
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
@@ -73,7 +85,6 @@ class CoroutineDataFetcherTest {
         val context = DgsContext(
             null,
             null,
-            CoroutineScope(Dispatchers.Default)
         )
 
         val concurrentTime = measureTimeMillis {
@@ -82,9 +93,9 @@ class CoroutineDataFetcherTest {
                     """
             {
                 first: concurrent(from: 1, to: 10)
-                second: concurrent(from: 1, to: 10)               
-                third: concurrent(from: 1, to: 10)               
-                fourth: concurrent(from: 1, to: 10)               
+                second: concurrent(from: 2, to: 10)               
+                third: concurrent(from: 3, to: 10)               
+                fourth: concurrent(from: 4, to: 10)               
             }
                     """.trimIndent()
                 ).build()
