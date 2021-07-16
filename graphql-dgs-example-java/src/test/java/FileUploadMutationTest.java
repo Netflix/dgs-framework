@@ -21,6 +21,7 @@ import com.netflix.graphql.dgs.example.datafetcher.HelloDataFetcher;
 import com.netflix.graphql.dgs.example.shared.datafetcher.ConcurrentDataFetcher;
 import com.netflix.graphql.dgs.example.shared.datafetcher.MovieDataFetcher;
 import com.netflix.graphql.dgs.example.shared.datafetcher.RatingMutation;
+import com.netflix.graphql.dgs.pagination.DgsPaginationAutoConfiguration;
 import org.assertj.core.util.Lists;
 import org.assertj.core.util.Maps;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@SpringBootTest(classes = {HelloDataFetcher.class, MovieDataFetcher.class, ConcurrentDataFetcher.class, RatingMutation.class, DgsAutoConfiguration.class, FileUploadMutation.class})
+@SpringBootTest(classes = {HelloDataFetcher.class, MovieDataFetcher.class, ConcurrentDataFetcher.class, RatingMutation.class, DgsAutoConfiguration.class, DgsPaginationAutoConfiguration.class, FileUploadMutation.class})
 public class FileUploadMutationTest {
 
     @Autowired

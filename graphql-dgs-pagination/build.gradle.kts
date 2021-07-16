@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,7 @@
  */
 
 dependencies {
-    implementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
-    implementation(project(":graphql-dgs-pagination"))
-    implementation("io.projectreactor:reactor-core")
-    implementation("org.springframework:spring-context")
-    implementation("org.springframework:spring-web")
+    api(project(":graphql-dgs"))
+    implementation("com.graphql-java:graphql-java")
+    implementation("org.springframework.boot:spring-boot-autoconfigure")
 }

@@ -16,12 +16,16 @@
 
 package com.netflix.graphql.dgs.pagination
 
+import com.netflix.graphql.dgs.DgsComponent
+import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import graphql.language.*
 import graphql.schema.idl.TypeDefinitionRegistry
 
+@DgsComponent
 class DgsPaginationTypeDefinitionRegistry {
-    fun registry(schemaRegistry: TypeDefinitionRegistry): TypeDefinitionRegistry {
 
+    @DgsTypeDefinitionRegistry
+    fun registry(schemaRegistry: TypeDefinitionRegistry): TypeDefinitionRegistry {
         val definitions = schemaRegistry.types()
         val connectionTypes = parseConnectionDirective(definitions.values.toMutableList())
         val typeDefinitionRegistry = TypeDefinitionRegistry()

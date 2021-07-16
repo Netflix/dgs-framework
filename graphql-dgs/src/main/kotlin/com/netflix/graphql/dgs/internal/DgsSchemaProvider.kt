@@ -26,7 +26,6 @@ import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
 import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
-import com.netflix.graphql.dgs.pagination.DgsPaginationTypeDefinitionRegistry
 import com.netflix.graphql.mocking.DgsSchemaTransformer
 import com.netflix.graphql.mocking.MockProvider
 import graphql.TypeResolutionEnvironment
@@ -88,8 +87,6 @@ class DgsSchemaProvider(
 
     private val objectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
 
-    private val paginationTypeDefinitionRegistry = DgsPaginationTypeDefinitionRegistry()
-
     fun schema(schema: String? = null, fieldVisibility: GraphqlFieldVisibility = DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY): GraphQLSchema {
         val startTime = System.currentTimeMillis()
         val dgsComponents = applicationContext.getBeansWithAnnotation(DgsComponent::class.java)
@@ -107,7 +104,6 @@ class DgsSchemaProvider(
         if (existingTypeDefinitionRegistry.isPresent) {
             mergedRegistry = mergedRegistry.merge(existingTypeDefinitionRegistry.get())
         }
-        mergedRegistry = mergedRegistry.merge(paginationTypeDefinitionRegistry.registry(mergedRegistry))
 
         val federationResolverInstance = federationResolver.orElseGet { DefaultDgsFederationResolver(this, dataFetcherExceptionHandler) }
 
@@ -116,7 +112,7 @@ class DgsSchemaProvider(
         val codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry().fieldVisibility(fieldVisibility)
         val runtimeWiringBuilder = RuntimeWiring.newRuntimeWiring().codeRegistry(codeRegistryBuilder).fieldVisibility(fieldVisibility)
 
-        dgsComponents.values.mapNotNull { dgsComponent -> invokeDgsTypeDefinitionRegistry(dgsComponent) }
+        dgsComponents.values.mapNotNull { dgsComponent -> invokeDgsTypeDefinitionRegistry(dgsComponent, mergedRegistry) }
             .fold(mergedRegistry) { a, b -> a.merge(b) }
         findScalars(applicationContext, runtimeWiringBuilder)
         findDataFetchers(dgsComponents, codeRegistryBuilder, mergedRegistry)
@@ -150,14 +146,17 @@ class DgsSchemaProvider(
         }
     }
 
-    private fun invokeDgsTypeDefinitionRegistry(dgsComponent: Any): TypeDefinitionRegistry? {
+    private fun invokeDgsTypeDefinitionRegistry(dgsComponent: Any, registry: TypeDefinitionRegistry): TypeDefinitionRegistry? {
         return dgsComponent.javaClass.methods.filter { it.isAnnotationPresent(DgsTypeDefinitionRegistry::class.java) }
             .map { method ->
                 if (method.returnType != TypeDefinitionRegistry::class.java) {
                     throw InvalidDgsConfigurationException("Method annotated with @DgsTypeDefinitionRegistry must have return type TypeDefinitionRegistry")
                 }
-
-                method.invoke(dgsComponent) as TypeDefinitionRegistry
+                if (method.parameterCount == 1 && method.parameterTypes[0] == TypeDefinitionRegistry::class.java) {
+                    method.invoke(dgsComponent, registry) as TypeDefinitionRegistry
+                } else {
+                    method.invoke(dgsComponent) as TypeDefinitionRegistry
+                }
             }.reduceOrNull { a, b -> a.merge(b) }
     }
 

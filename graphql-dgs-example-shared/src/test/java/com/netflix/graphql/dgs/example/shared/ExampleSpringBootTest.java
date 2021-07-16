@@ -21,6 +21,7 @@ import com.netflix.graphql.dgs.example.datafetcher.HelloDataFetcher;
 import com.netflix.graphql.dgs.example.shared.datafetcher.ConcurrentDataFetcher;
 import com.netflix.graphql.dgs.example.shared.datafetcher.MovieDataFetcher;
 import com.netflix.graphql.dgs.example.shared.datafetcher.RatingMutation;
+import com.netflix.graphql.dgs.pagination.DgsPaginationAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.lang.annotation.ElementType;
@@ -30,6 +31,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@SpringBootTest(classes = {HelloDataFetcher.class, MovieDataFetcher.class, ConcurrentDataFetcher.class, RatingMutation.class, DgsAutoConfiguration.class})
+@SpringBootTest(classes = {HelloDataFetcher.class, MovieDataFetcher.class, ConcurrentDataFetcher.class, RatingMutation.class, DgsAutoConfiguration.class, DgsPaginationAutoConfiguration.class})
 public @interface ExampleSpringBootTest {
 }
