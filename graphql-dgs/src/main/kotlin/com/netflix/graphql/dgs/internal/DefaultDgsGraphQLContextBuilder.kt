@@ -55,7 +55,7 @@ open class DefaultDgsGraphQLContextBuilder(
 
         return DgsContext(
             customContext,
-            dgsRequestData
+            dgsRequestData,
         )
     }
 }
