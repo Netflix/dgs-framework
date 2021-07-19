@@ -53,7 +53,7 @@ class CoroutineDataFetcherTest {
                     repeat(from.rangeTo(to).count()) {
                         sum++
 
-                        //Forcing a blocking call to demonstrate running with a thread pool
+                        // Forcing a blocking call to demonstrate running with a thread pool
                         Thread.sleep(50)
                     }
                     println("after $from")
