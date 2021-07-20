@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-dependencies {
-    implementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
-    implementation(project(":graphql-dgs-pagination"))
-    implementation("io.projectreactor:reactor-core")
-    implementation("org.springframework:spring-context")
-    implementation("org.springframework:spring-web")
+package com.netflix.graphql.dgs.pagination
+
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+
+@Configuration
+open class DgsPaginationAutoConfiguration {
+    @Bean
+    open fun dgsPaginationTypeDefinitionRegistry(): DgsPaginationTypeDefinitionRegistry {
+        return DgsPaginationTypeDefinitionRegistry()
+    }
 }

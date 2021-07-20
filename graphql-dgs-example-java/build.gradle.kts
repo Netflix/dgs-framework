@@ -17,6 +17,7 @@
 dependencies {
     implementation(project(":graphql-dgs-example-shared"))
     implementation(project(":graphql-dgs-spring-boot-starter"))
+    implementation(project(":graphql-dgs-pagination"))
     implementation(project(":graphql-dgs-subscriptions-websockets-autoconfigure"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("io.projectreactor:reactor-core")

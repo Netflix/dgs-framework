@@ -1,3 +1,5 @@
+directive @connection on OBJECT
+
 type Query {
     hello(name: String): String
     withContext: String
@@ -24,6 +26,8 @@ type Query {
 
     ### To show how to handle HttpHeaders
     helloWithHeaders(name: String): String
+
+    withPagination: MessageConnection
 }
 
 type NestedA {
@@ -34,7 +38,7 @@ type Nested2 {
     message: String
 }
 
-type Message {
+type Message @connection {
     info: String
 }
 
