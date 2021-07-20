@@ -16,11 +16,15 @@
 
 package com.netflix.graphql.dgs.example.shared.types;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Stock {
     private final String name;
     private final double price;
 
-    public Stock(String name, double price) {
+    @JsonCreator
+    public Stock(@JsonProperty("name") String name, @JsonProperty("price") double price) {
         this.name = name;
         this.price = price;
     }

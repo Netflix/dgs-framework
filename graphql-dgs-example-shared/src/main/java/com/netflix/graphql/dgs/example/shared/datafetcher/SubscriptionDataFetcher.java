@@ -28,7 +28,7 @@ import java.time.Duration;
 public class SubscriptionDataFetcher {
     @DgsSubscription
     public Publisher<Stock> stocks() {
-        return Flux.interval(Duration.ofSeconds(0), Duration.ofSeconds(1)).map(t -> new Stock("NFLX", t));
+        return Flux.interval(Duration.ofSeconds(0), Duration.ofSeconds(1)).map(t -> new Stock("NFLX", 500 + t));
     }
 }
 
