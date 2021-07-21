@@ -46,7 +46,6 @@ class DgsExecutionInputConfigurer(private val dgsDataLoaderProvider: DgsDataLoad
             builder.context(dgsContext)
 
             builder.dataLoaderRegistry(dgsDataLoaderProvider.buildRegistryWithContextSupplier( { dgsContext }))
-            logger.warn("DGS context can currently not be set, this is pending on: https://github.com/spring-projects/spring-graphql/issues/84")
 
             input
         }
