@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.springgraphql.bridge.autoconfig
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
+import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.springgraphql.bridge.DgsExecutionInputConfigurer
 import com.netflix.graphql.dgs.springgraphql.bridge.DgsGraphQLSource
 import graphql.schema.GraphQLSchema
@@ -39,7 +40,7 @@ open class SpringGraphQLBridgeAutoConfiguration {
     }
 
     @Bean
-    open fun dgsExecutionInputConfigurer(dgsCustomContextBuilder: Optional<DgsCustomContextBuilder<*>>, dgsCustomContextBuilderWithRequest: Optional<DgsCustomContextBuilderWithRequest<*>>): DgsExecutionInputConfigurer {
-        return DgsExecutionInputConfigurer(dgsCustomContextBuilder, dgsCustomContextBuilderWithRequest)
+    open fun dgsExecutionInputConfigurer(dgsDataLoaderProvider: DgsDataLoaderProvider, dgsCustomContextBuilder: Optional<DgsCustomContextBuilder<*>>, dgsCustomContextBuilderWithRequest: Optional<DgsCustomContextBuilderWithRequest<*>>): DgsExecutionInputConfigurer {
+        return DgsExecutionInputConfigurer(dgsDataLoaderProvider, dgsCustomContextBuilder, dgsCustomContextBuilderWithRequest)
     }
 }

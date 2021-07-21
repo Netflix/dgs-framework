@@ -16,8 +16,11 @@
 
 package com.netflix.graphql.dgs.springgraphql.bridge
 
+import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
+import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
+import com.netflix.graphql.dgs.reactive.internal.DgsReactiveRequestData
 import org.slf4j.LoggerFactory
 import org.springframework.graphql.web.WebGraphQlHandler
 import org.springframework.graphql.web.WebInput
@@ -26,20 +29,23 @@ import org.springframework.graphql.web.WebOutput
 import reactor.core.publisher.Mono
 import java.util.*
 
-class DgsExecutionInputConfigurer(private val dgsCustomContextBuilder: Optional<DgsCustomContextBuilder<*>>, private val dgsCustomContextBuilderWithRequest: Optional<DgsCustomContextBuilderWithRequest<*>>) : WebInterceptor {
+class DgsExecutionInputConfigurer(private val dgsDataLoaderProvider: DgsDataLoaderProvider, private val dgsCustomContextBuilder: Optional<DgsCustomContextBuilder<*>>, private val dgsCustomContextBuilderWithRequest: Optional<DgsCustomContextBuilderWithRequest<*>>) : WebInterceptor {
     private val logger = LoggerFactory.getLogger(DgsExecutionInputConfigurer::class.java)
 
     override fun intercept(webInput: WebInput, next: WebGraphQlHandler): Mono<WebOutput> {
         webInput.configureExecutionInput { input, builder ->
 
-//            val requestData = DgsReactiveRequestData(headers = webInput.headers)
-//            if(dgsCustomContextBuilder.isPresent) {
-//
-//                builder.context(DgsContext(dgsCustomContextBuilder.get().build(), requestData))
-//            } else {
-//                builder.context(DgsContext(null, requestData))
-//            }
+            val requestData = DgsReactiveRequestData(headers = webInput.headers)
+            val dgsContext = if(dgsCustomContextBuilder.isPresent) {
 
+                DgsContext(dgsCustomContextBuilder.get().build(), requestData)
+            } else {
+                DgsContext(null, requestData)
+            }
+
+            builder.context(dgsContext)
+
+            builder.dataLoaderRegistry(dgsDataLoaderProvider.buildRegistryWithContextSupplier( { dgsContext }))
             logger.warn("DGS context can currently not be set, this is pending on: https://github.com/spring-projects/spring-graphql/issues/84")
 
             input

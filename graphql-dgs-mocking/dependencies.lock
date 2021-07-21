@@ -33,7 +33,7 @@
             "locked": "1.0.2"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "16.2"
+            "locked": "17.0-beta1"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -206,7 +206,7 @@
             "locked": "1.0.2"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "16.2"
+            "locked": "17.0-beta1"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -261,13 +261,13 @@
             "locked": "1.0.2"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "16.2"
+            "locked": "17.0-beta1"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.11.0"
+            "locked": "1.12.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -302,13 +302,13 @@
             "locked": "1.0.2"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "16.2"
+            "locked": "17.0-beta1"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.11.0"
+            "locked": "1.12.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"

@@ -35,7 +35,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "16.2"
+            "locked": "17.0-beta1"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -95,7 +95,7 @@
             "locked": "Hoxton.SR10"
         },
         "org.springframework.experimental:graphql-spring-boot-starter": {
-            "locked": "1.0.0-M1"
+            "locked": "1.0.0-SNAPSHOT"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.3.9.RELEASE"
@@ -250,7 +250,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "0.6.4"
+            "locked": "0.6.5-SNAPSHOT"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
@@ -280,7 +280,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "16.2"
+            "locked": "17.0-beta1"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -330,6 +330,19 @@
             ],
             "locked": "1.5.10"
         },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-reactive"
+            ],
+            "locked": "1.5.0"
+        },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "1.5.0"
+        },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -349,7 +362,7 @@
             "locked": "Hoxton.SR10"
         },
         "org.springframework.experimental:graphql-spring-boot-starter": {
-            "locked": "1.0.0-M1"
+            "locked": "1.0.0-SNAPSHOT"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.3.9.RELEASE"
@@ -412,7 +425,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "16.2"
+            "locked": "17.0-beta1"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -451,7 +464,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.11.0"
+            "locked": "1.12.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -478,7 +491,7 @@
             "locked": "Hoxton.SR10"
         },
         "org.springframework.experimental:graphql-spring-boot-starter": {
-            "locked": "1.0.0-M1"
+            "locked": "1.0.0-SNAPSHOT"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.3.9.RELEASE"
@@ -492,7 +505,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "0.6.4"
+            "locked": "0.6.5-SNAPSHOT"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
@@ -522,7 +535,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "16.2"
+            "locked": "17.0-beta1"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -561,7 +574,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.11.0"
+            "locked": "1.12.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -574,6 +587,19 @@
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "1.5.10"
+        },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-reactive"
+            ],
+            "locked": "1.5.0"
+        },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "1.5.0"
         },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
@@ -597,7 +623,7 @@
             "locked": "Hoxton.SR10"
         },
         "org.springframework.experimental:graphql-spring-boot-starter": {
-            "locked": "1.0.0-M1"
+            "locked": "1.0.0-SNAPSHOT"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.3.9.RELEASE"

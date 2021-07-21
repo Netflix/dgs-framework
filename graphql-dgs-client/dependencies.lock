@@ -39,7 +39,7 @@
             "locked": "2.12.3"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "16.2"
+            "locked": "17.0-beta1"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.5.0"
@@ -48,7 +48,7 @@
             "project": true
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.7"
+            "locked": "3.4.6"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -224,7 +224,7 @@
             "locked": "2.12.3"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "16.2"
+            "locked": "17.0-beta1"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.5.0"
@@ -233,7 +233,7 @@
             "project": true
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.7"
+            "locked": "3.4.6"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -291,7 +291,7 @@
             "locked": "2.12.3"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "16.2"
+            "locked": "17.0-beta1"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "16.0.1"
@@ -303,10 +303,10 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.11.0"
+            "locked": "1.12.0"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.7"
+            "locked": "3.4.6"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -356,7 +356,7 @@
             "locked": "2.12.3"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "16.2"
+            "locked": "17.0-beta1"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "16.0.1"
@@ -368,10 +368,10 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.11.0"
+            "locked": "1.12.0"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.7"
+            "locked": "3.4.6"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"

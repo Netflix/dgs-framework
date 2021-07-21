@@ -38,7 +38,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "16.2"
+            "locked": "17.0-beta1"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -250,7 +250,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "0.6.4"
+            "locked": "0.6.5-SNAPSHOT"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
@@ -280,7 +280,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "16.2"
+            "locked": "17.0-beta1"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -335,13 +335,13 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive"
             ],
-            "locked": "1.3.8"
+            "locked": "1.5.0"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "1.3.8"
+            "locked": "1.5.0"
         },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
@@ -425,7 +425,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "16.2"
+            "locked": "17.0-beta1"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -478,10 +478,10 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.11.0"
+            "locked": "1.12.0"
         },
         "io.projectreactor:reactor-test": {
-            "locked": "3.4.7"
+            "locked": "3.4.6"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -527,7 +527,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "0.6.4"
+            "locked": "0.6.5-SNAPSHOT"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
@@ -558,7 +558,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "16.2"
+            "locked": "17.0-beta1"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -611,10 +611,10 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.11.0"
+            "locked": "1.12.0"
         },
         "io.projectreactor:reactor-test": {
-            "locked": "3.4.7"
+            "locked": "3.4.6"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -641,13 +641,13 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive"
             ],
-            "locked": "1.3.8"
+            "locked": "1.5.0"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "1.3.8"
+            "locked": "1.5.0"
         },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
