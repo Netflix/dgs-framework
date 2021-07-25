@@ -16,6 +16,8 @@ import graphql.execution.instrumentation.SimpleInstrumentationContext.whenComple
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import graphql.execution.instrumentation.parameters.InstrumentationValidationParameters
+import graphql.language.Document
+import graphql.language.OperationDefinition
 import graphql.schema.DataFetcher
 import graphql.schema.GraphQLNonNull
 import graphql.schema.GraphQLObjectType
@@ -162,8 +164,11 @@ class DgsGraphQLMetricsInstrumentation(
                 return@whenCompleted
             }
             val state: MetricsInstrumentationState = parameters.getInstrumentationState()
-            // compute the Query signatures.
+            // compute fields that require a document
             if (parameters.document != null) {
+                state.operationName =
+                    if (state.operationName.isPresent) state.operationName
+                    else TagUtils.resolveOperationNameFromUniqueOperationDefinition(parameters.document)
                 state.querySignature = optQuerySignatureRepository.flatMap { it.get(parameters.document, parameters) }
             }
             // compute the query complexity.
@@ -290,6 +295,19 @@ class DgsGraphQLMetricsInstrumentation(
         const val TAG_VALUE_ANONYMOUS = "anonymous"
         const val TAG_VALUE_NONE = "none"
         const val TAG_VALUE_UNKNOWN = "unknown"
+
+        fun resolveOperationNameFromUniqueOperationDefinition(document: Document): Optional<String> {
+            return if (document.definitions.isNotEmpty()) {
+                val operationDefinitions = document.definitions.filterIsInstance<OperationDefinition>()
+                if (operationDefinitions.size == 1) {
+                    ofNullable(operationDefinitions.first().name)
+                } else {
+                    empty()
+                }
+            } else {
+                empty()
+            }
+        }
 
         fun resolveDataFetcherTagValue(parameters: InstrumentationFieldFetchParameters): String {
             val type = parameters.executionStepInfo.parent.type
