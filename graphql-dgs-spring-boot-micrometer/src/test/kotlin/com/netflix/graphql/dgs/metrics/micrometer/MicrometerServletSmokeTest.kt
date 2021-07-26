@@ -93,7 +93,48 @@ class MicrometerServletSmokeTest {
     }
 
     @Test
-    fun `Metrics for a successful request`() {
+    fun `Metrics for a successful request, implicit operation name`() {
+        mvc.perform(
+            // Note that the query below uses an aliased field, aliasing `ping` to `op_name`.
+            // We will also assert that the tag reflected by the metric is not affected by the alias.
+            MockMvcRequestBuilders
+                .post("/graphql")
+                .content("""{ "query": "query my_op_1{ping}" }""")
+        ).andExpect(status().isOk)
+            .andExpect(content().json("""{"data":{"ping":"pong"}}""", false))
+
+        val meters = fetchMeters()
+
+        assertThat(meters).containsOnlyKeys("gql.query", "gql.resolver")
+
+        assertThat(meters["gql.query"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.query"]?.first()?.id?.tags)
+            .containsAll(
+                Tags.of("execution-tag", "foo")
+                    .and("contextual-tag", "foo")
+                    .and("outcome", "success")
+                    .and("gql.operation", "QUERY")
+                    .and("gql.operation.name", "my_op_1")
+                    .and("gql.query.complexity", "5")
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+            )
+
+        assertThat(meters["gql.resolver"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.resolver"]?.first()?.id?.tags)
+            .containsAll(
+                Tags.of("field-fetch-tag", "foo")
+                    .and("contextual-tag", "foo")
+                    .and("gql.field", "Query.ping")
+                    .and("outcome", "success")
+                    .and("gql.operation", "QUERY")
+                    .and("gql.operation.name", "my_op_1")
+                    .and("gql.query.complexity", "5")
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+            )
+    }
+
+    @Test
+    fun `Metrics for a successful request with explicit operation name`() {
         mvc.perform(
             // Note that the query below uses an aliased field, aliasing `ping` to `op_name`.
             // We will also assert that the tag reflected by the metric is not affected by the alias.
