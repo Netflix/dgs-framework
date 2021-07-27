@@ -1,0 +1,8 @@
+extend type Query {
+    showRepositories: [Show]
+}
+
+type Show {
+    id: String
+    title: String
+}

@@ -14,14 +14,30 @@
  * limitations under the License.
  */
 
-dependencies {
-    api("org.springframework.experimental:graphql-spring-boot-starter:1.0.0-SNAPSHOT")
-    implementation(project(":graphql-dgs"))
-    implementation("org.springframework.boot:spring-boot-starter")
+package com.netflix.graphql.dgs.example.springgraphql;
 
-    implementation(project(":graphql-dgs-reactive"))
-    implementation("org.springframework.data:spring-data-commons")
+import com.querydsl.core.annotations.QueryEntity;
 
-    compileOnly("org.springframework:spring-webflux")
+@QueryEntity
+public class Show {
 
+    private String id;
+
+    private String title;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 }

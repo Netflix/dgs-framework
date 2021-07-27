@@ -34,10 +34,7 @@ import graphql.language.InterfaceTypeDefinition
 import graphql.language.TypeName
 import graphql.language.UnionTypeDefinition
 import graphql.schema.*
-import graphql.schema.idl.RuntimeWiring
-import graphql.schema.idl.SchemaParser
-import graphql.schema.idl.TypeDefinitionRegistry
-import graphql.schema.idl.TypeRuntimeWiring
+import graphql.schema.idl.*
 import graphql.schema.visibility.DefaultGraphqlFieldVisibility
 import graphql.schema.visibility.GraphqlFieldVisibility
 import kotlinx.coroutines.CoroutineScope
@@ -78,7 +75,8 @@ class DgsSchemaProvider(
     private val mockProviders: Optional<Set<MockProvider>>,
     private val schemaLocations: List<String> = listOf(DEFAULT_SCHEMA_LOCATION),
     private val dataFetcherResultProcessors: List<DataFetcherResultProcessor> = emptyList(),
-    private val dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty()
+    private val dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
+    private val typeVisitors: List<GraphQLTypeVisitor> = emptyList()
 ) {
 
     companion object {
@@ -134,9 +132,16 @@ class DgsSchemaProvider(
             )
         }
 
-        runtimeWiringBuilder.codeRegistry(codeRegistryBuilder.build())
+        val vars = Collections.singletonMap<Class<*>, Any>(
+            GraphQLCodeRegistry.Builder::class.java, codeRegistryBuilder
+        )
 
+
+        runtimeWiringBuilder.codeRegistry(codeRegistryBuilder.build())
         dgsComponents.values.forEach { dgsComponent -> invokeDgsRuntimeWiring(dgsComponent, runtimeWiringBuilder) }
+
+        val schema = SchemaGenerator().makeExecutableSchema(mergedRegistry, runtimeWiringBuilder.build())
+        SchemaTraverser().depthFirstFullSchema(typeVisitors, schema, vars)
 
         val graphQLSchema =
             Federation.transform(mergedRegistry, runtimeWiringBuilder.build()).fetchEntities(entityFetcher)
@@ -149,6 +154,7 @@ class DgsSchemaProvider(
         return if (mockProviders.isPresent) {
             DgsSchemaTransformer().transformSchemaWithMockProviders(graphQLSchema, mockProviders.get())
         } else {
+
             graphQLSchema
         }
     }

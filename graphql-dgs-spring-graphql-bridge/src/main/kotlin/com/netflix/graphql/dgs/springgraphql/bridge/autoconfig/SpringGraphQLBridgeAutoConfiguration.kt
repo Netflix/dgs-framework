@@ -23,15 +23,25 @@ import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.springgraphql.bridge.DgsExecutionInputConfigurer
 import com.netflix.graphql.dgs.springgraphql.bridge.DgsGraphQLSource
 import graphql.schema.GraphQLSchema
+import graphql.schema.GraphQLTypeVisitor
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.querydsl.ReactiveQuerydslPredicateExecutor
 import org.springframework.graphql.boot.GraphQlProperties
+import org.springframework.graphql.data.QuerydslDataFetcher
 import java.util.*
 
 @Configuration
 @EnableConfigurationProperties(GraphQlProperties::class)
 open class SpringGraphQLBridgeAutoConfiguration {
+    @Bean
+    open fun queryDslVisitor(
+        executors:
+        List<ReactiveQuerydslPredicateExecutor<*>>
+    ): GraphQLTypeVisitor {
+        return QuerydslDataFetcher.registrationTypeVisitor(emptyList(), executors)
+    }
 
 
     @Bean
@@ -40,7 +50,15 @@ open class SpringGraphQLBridgeAutoConfiguration {
     }
 
     @Bean
-    open fun dgsExecutionInputConfigurer(dgsDataLoaderProvider: DgsDataLoaderProvider, dgsCustomContextBuilder: Optional<DgsCustomContextBuilder<*>>, dgsCustomContextBuilderWithRequest: Optional<DgsCustomContextBuilderWithRequest<*>>): DgsExecutionInputConfigurer {
-        return DgsExecutionInputConfigurer(dgsDataLoaderProvider, dgsCustomContextBuilder, dgsCustomContextBuilderWithRequest)
+    open fun dgsExecutionInputConfigurer(
+        dgsDataLoaderProvider: DgsDataLoaderProvider,
+        dgsCustomContextBuilder: Optional<DgsCustomContextBuilder<*>>,
+        dgsCustomContextBuilderWithRequest: Optional<DgsCustomContextBuilderWithRequest<*>>
+    ): DgsExecutionInputConfigurer {
+        return DgsExecutionInputConfigurer(
+            dgsDataLoaderProvider,
+            dgsCustomContextBuilder,
+            dgsCustomContextBuilderWithRequest
+        )
     }
 }

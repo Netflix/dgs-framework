@@ -30,6 +30,7 @@ import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.GraphQLSchema
+import graphql.schema.GraphQLTypeVisitor
 import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.visibility.DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
 import graphql.schema.visibility.GraphqlFieldVisibility
@@ -134,6 +135,7 @@ open class DgsAutoConfiguration(
         mockProviders: Optional<Set<MockProvider>>,
         dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
         dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
+        typeVisitors: List<GraphQLTypeVisitor>
     ): DgsSchemaProvider {
         return DgsSchemaProvider(
             applicationContext,
@@ -143,6 +145,7 @@ open class DgsAutoConfiguration(
             configProps.schemaLocations,
             dataFetcherResultProcessors,
             dataFetcherExceptionHandler,
+            typeVisitors
         )
     }
 

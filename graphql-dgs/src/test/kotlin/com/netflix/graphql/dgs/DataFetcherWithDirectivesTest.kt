@@ -39,7 +39,7 @@ class DataFetcherWithDirectivesTest {
             @DgsData(parentType = "Query", field = "hello")
             fun hellOFetcher(dataFetchingEnvironment: DgsDataFetchingEnvironment): String {
                 val directive = dataFetchingEnvironment.fieldDefinition.directives[0]
-                return "hello ${directive.arguments[0].value}"
+                return "hello ${directive.arguments[0].argumentValue}"
             }
         }
 

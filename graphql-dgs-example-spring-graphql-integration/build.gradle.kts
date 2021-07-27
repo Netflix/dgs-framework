@@ -16,13 +16,22 @@
 
 plugins {
     id("org.springframework.boot") version "2.5.0"
-
 }
 
 dependencies {
     implementation(project(":graphql-dgs"))
+    implementation(project(":graphql-dgs-reactive"))
     implementation(project(":graphql-dgs-example-shared"))
     implementation(project(":graphql-dgs-spring-graphql-bridge"))
+    implementation("org.springframework.boot:spring-boot-starter")
+
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.data:spring-data-commons")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.graphql:spring-graphql-test:1.0.0-SNAPSHOT")
+    implementation("com.querydsl:querydsl-core:5.0.0")
+
+    kapt("com.querydsl:querydsl-apt:5.0.0:general")
 }
 

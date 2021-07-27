@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-dependencies {
-    api("org.springframework.experimental:graphql-spring-boot-starter:1.0.0-SNAPSHOT")
-    implementation(project(":graphql-dgs"))
-    implementation("org.springframework.boot:spring-boot-starter")
+package com.netflix.graphql.dgs.example.springgraphql;
 
-    implementation(project(":graphql-dgs-reactive"))
-    implementation("org.springframework.data:spring-data-commons")
+import org.springframework.data.querydsl.ReactiveQuerydslPredicateExecutor;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.graphql.data.GraphQlRepository;
 
-    compileOnly("org.springframework:spring-webflux")
-
+@GraphQlRepository
+public interface ShowRepositories extends ReactiveCrudRepository<Show, String>, ReactiveQuerydslPredicateExecutor<Show> {
 }
