@@ -213,7 +213,7 @@ object BaseDgsQueryExecutor {
         }
         val graphQL = graphQLBuilder.build()
 
-        val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier({ dgsContext })
+        val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier { dgsContext }
         val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
             .query(query)
             .dataLoaderRegistry(dataLoaderRegistry)

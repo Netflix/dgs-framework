@@ -179,7 +179,7 @@ internal class ReactiveReturnTypesTest {
 
     @Test
     fun extractJsonWithMonoOfObjects() {
-        val movies = dgsQueryExecutor!!.executeAndExtractJsonPath<List<Map<String, Any>>>(
+        val movies = dgsQueryExecutor.executeAndExtractJsonPath<List<Map<String, Any>>>(
             """
             {
                 movies { title releaseDate }

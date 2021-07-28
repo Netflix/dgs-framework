@@ -45,8 +45,8 @@ class FetcherUsingDataLoader {
 
 @DgsDataLoader(name = "testMappedLoader")
 class TestMappedDataLoader : MappedBatchLoader<String, String> {
-    override fun load(keys: MutableSet<String>?): CompletionStage<MutableMap<String, String>> {
-        return CompletableFuture.supplyAsync { keys?.map { it to it.toUpperCase() }?.toMap()?.toMutableMap() }
+    override fun load(keys: MutableSet<String>): CompletionStage<MutableMap<String, String>> {
+        return CompletableFuture.supplyAsync { keys.associateWith { it.toUpperCase() }.toMutableMap() }
     }
 }
 

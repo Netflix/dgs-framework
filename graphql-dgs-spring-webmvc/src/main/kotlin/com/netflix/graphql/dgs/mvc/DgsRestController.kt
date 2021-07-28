@@ -99,14 +99,14 @@ open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
                         .body(ex.message ?: "Error parsing query - no details found in the error message")
                 }
 
-                queryVariables = if (inputQuery.get("variables") != null) {
+                queryVariables = if (inputQuery["variables"] != null) {
                     @Suppress("UNCHECKED_CAST")
                     inputQuery["variables"] as Map<String, String>
                 } else {
                     emptyMap()
                 }
 
-                extensions = if (inputQuery.get("extensions") != null) {
+                extensions = if (inputQuery["extensions"] != null) {
                     @Suppress("UNCHECKED_CAST")
                     inputQuery["extensions"] as Map<String, Any>
                 } else {
@@ -118,14 +118,14 @@ open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
         } else if (fileParams != null && mapParam != null && operation != null) {
             inputQuery = operation.let { mapper.readValue(it) }
 
-            queryVariables = if (inputQuery.get("variables") != null) {
+            queryVariables = if (inputQuery["variables"] != null) {
                 @Suppress("UNCHECKED_CAST")
                 inputQuery["variables"] as Map<String, Any>
             } else {
                 emptyMap()
             }
 
-            extensions = if (inputQuery.get("extensions") != null) {
+            extensions = if (inputQuery["extensions"] != null) {
                 @Suppress("UNCHECKED_CAST")
                 inputQuery["extensions"] as Map<String, Any>
             } else {

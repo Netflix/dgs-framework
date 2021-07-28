@@ -175,7 +175,7 @@ internal class DefaultDgsReactiveQueryExecutorTest {
 
     @Test
     fun extractJsonWithObjectListAsMap() {
-        val movies = dgsQueryExecutor!!.executeAndExtractJsonPath<List<Map<String, Any>>>(
+        val movies = dgsQueryExecutor.executeAndExtractJsonPath<List<Map<String, Any>>>(
             """
             {
                 movies { title releaseDate }
@@ -193,7 +193,7 @@ internal class DefaultDgsReactiveQueryExecutorTest {
 
     @Test
     fun extractJsonAsObjectAsMap() {
-        val movie = dgsQueryExecutor!!.executeAndExtractJsonPath<Map<String, Any>>(
+        val movie = dgsQueryExecutor.executeAndExtractJsonPath<Map<String, Any>>(
             """
             {
                 movies { title releaseDate }
@@ -210,7 +210,7 @@ internal class DefaultDgsReactiveQueryExecutorTest {
 
     @Test
     fun extractJsonAsObject() {
-        val movie = dgsQueryExecutor!!.executeAndExtractJsonPathAsObject(
+        val movie = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
             """
             {
                 movies { title releaseDate }
@@ -227,7 +227,7 @@ internal class DefaultDgsReactiveQueryExecutorTest {
 
     @Test
     fun extractJsonAsObjectWithTypeRef() {
-        val person = dgsQueryExecutor!!.executeAndExtractJsonPathAsObject(
+        val person = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
             """
             {
                 movies { title releaseDate }

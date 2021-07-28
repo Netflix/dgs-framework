@@ -61,7 +61,7 @@ class GraphiQLPathConfigWithCustomGraphQLPathAndServletContextTest(
         assertThat(graphqlResponse.statusCodeValue).isEqualTo(HttpStatus.NOT_FOUND.value())
 
         // graphql is available with context path in uri (400 expected as we don't sent proper request)
-        val absPathWithContextPath = rootUri + "/zuzu"
+        val absPathWithContextPath = "$rootUri/zuzu"
         graphqlResponse = restTemplate.getForEntity(
             absPathWithContextPath,
             String::class.java
