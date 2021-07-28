@@ -807,8 +807,9 @@ internal class DgsSchemaProviderTest {
             .create(data)
             .expectSubscription().assertNext { result ->
                 assertThat(result.getData<Map<String, String>>())
-                    .hasEntrySatisfying("message") { value -> assertThat(value).isEqualTo("hello") }
+                    .hasEntrySatisfying("messages") { value -> assertThat(value).isEqualTo("hello") }
             }
+            .verifyComplete()
     }
 
     private fun assertInputMessage(build: GraphQL) {
