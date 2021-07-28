@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory
  * Default DataFetcherExceptionHandler used by the framework, can be replaced with a custom implementation.
  * The default implementation uses the Common Errors library to return GraphQL errors.
  */
-class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
+open class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
     private val logger: Logger = LoggerFactory.getLogger(DefaultDataFetcherExceptionHandler::class.java)
 
     override fun onException(handlerParameters: DataFetcherExceptionHandlerParameters?): DataFetcherExceptionHandlerResult {
