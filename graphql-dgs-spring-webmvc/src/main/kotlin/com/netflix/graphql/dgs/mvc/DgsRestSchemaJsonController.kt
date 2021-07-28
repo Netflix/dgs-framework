@@ -35,11 +35,11 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 open class DgsRestSchemaJsonController(open val schemaProvider: DgsSchemaProvider) {
 
+    private val mapper = jacksonObjectMapper()
+
     // The @ConfigurationProperties bean name is <prefix>-<fqn>
     @RequestMapping("#{@'dgs.graphql-com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcConfigurationProperties'.schemaJson.path}", produces = ["application/json"])
     fun schema(): String {
-        val mapper = jacksonObjectMapper()
-
         val graphQLSchema: GraphQLSchema = schemaProvider.schema()
         val graphQL = GraphQL.newGraphQL(graphQLSchema).build()
 

@@ -63,6 +63,7 @@ import org.springframework.web.multipart.MultipartFile
 open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
 
     open val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
+    private val mapper = jacksonObjectMapper()
 
     // The @ConfigurationProperties bean name is <prefix>-<fqn>
     @RequestMapping(
@@ -80,7 +81,6 @@ open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
 
         logger.debug("Starting /graphql handling")
 
-        val mapper = jacksonObjectMapper()
         val inputQuery: Map<String, Any>
         val queryVariables: Map<String, Any>
         val extensions: Map<String, Any>
