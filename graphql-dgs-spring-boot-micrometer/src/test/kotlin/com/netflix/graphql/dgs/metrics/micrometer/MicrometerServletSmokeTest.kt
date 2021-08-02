@@ -42,6 +42,8 @@ import org.dataloader.BatchLoader
 import org.dataloader.MappedBatchLoader
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -67,6 +69,7 @@ import java.util.concurrent.Executor
 @SpringBootTest
 @EnableAutoConfiguration
 @AutoConfigureMockMvc
+@Execution(ExecutionMode.SAME_THREAD)
 class MicrometerServletSmokeTest {
     companion object {
         private val logger = LoggerFactory.getLogger(MicrometerServletSmokeTest::class.java)
