@@ -58,10 +58,7 @@ import java.time.Duration
     classes = [HttpHandlerAutoConfiguration::class, ReactiveWebServerFactoryAutoConfiguration::class, WebFluxAutoConfiguration::class, DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, WebsocketSubscriptionsTest.ExampleSubscriptionImplementation::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-open class WebsocketSubscriptionsTest {
-
-    @LocalServerPort
-    lateinit var port: Integer
+open class WebsocketSubscriptionsTest(@param:LocalServerPort val port: Int) {
 
     @Test
     fun `Basic subscription flow`() {

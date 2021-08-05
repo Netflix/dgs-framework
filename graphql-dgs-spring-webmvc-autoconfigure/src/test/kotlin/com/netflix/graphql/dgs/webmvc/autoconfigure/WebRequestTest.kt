@@ -293,7 +293,7 @@ class WebRequestTest {
 
         @DgsData(parentType = "Query", field = "usingWebRequest")
         fun usingWebRequest(dfe: DgsDataFetchingEnvironment): String {
-            return ((DgsContext.getRequestData(dfe) as DgsWebMvcRequestData)?.webRequest as ServletWebRequest).request.serverName
+            return ((DgsContext.getRequestData(dfe) as DgsWebMvcRequestData).webRequest as ServletWebRequest).request.serverName
         }
 
         @DgsData(parentType = "Query", field = "usingHeader")
@@ -309,7 +309,7 @@ class WebRequestTest {
             @RequestHeader(required = true) myheader: String,
             dataFetchingEnvironment: DgsDataFetchingEnvironment
         ): String {
-            return myheader ?: "empty"
+            return myheader
         }
 
         @DgsData(parentType = "Query", field = "usingOptionalHeader")

@@ -620,13 +620,13 @@ class MicrometerServletSmokeTest {
             logger.info("No meters found.")
             return
         }
-        val meterData = meters?.map { it.id }?.map { id: Meter.Id ->
+        val meterData = meters?.map { it.id }?.joinToString(",\n", "{\n", "\n}") { id: Meter.Id ->
             """
             |Name: ${id.name}
             |Tags:
             |   ${id.tags.joinToString(",\n\t", "\t") { tag: Tag? -> "[${tag?.key} : ${tag?.value}]" }}
             """.trimMargin()
-        }?.joinToString(",\n", "{\n", "\n}")
+        }
         logger.info("Meters:\n{}", meterData)
     }
 
@@ -742,7 +742,7 @@ class MicrometerServletSmokeTest {
             ) : MappedBatchLoader<String, String> {
                 override fun load(keys: Set<String>): CompletionStage<Map<String, String>> {
                     return CompletableFuture.supplyAsync(
-                        { keys.map { it to it.reversed() }.toMap() },
+                        { keys.associateWith { it.reversed() } },
                         dataLoaderTaskExecutor
                     )
                 }

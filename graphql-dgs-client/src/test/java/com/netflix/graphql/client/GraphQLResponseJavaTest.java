@@ -38,15 +38,15 @@ public class GraphQLResponseJavaTest {
 
     RequestExecutor requestExecutor = (url, headers, body) -> {
         HttpHeaders httpHeaders = new HttpHeaders();
-        headers.forEach( (k,v) -> { httpHeaders.addAll(k, v); });
-        ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity(body, httpHeaders),String.class);
+        headers.forEach(httpHeaders::addAll);
+        ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(body, httpHeaders),String.class);
         return new HttpResponse(exchange.getStatusCodeValue(), exchange.getBody());
     };
 
     RequestExecutor requestExecutorWithResponseHeaders = (url, headers, body) -> {
         HttpHeaders httpHeaders = new HttpHeaders();
-        headers.forEach( (k,v) -> { httpHeaders.addAll(k, v); });
-        ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity(body, httpHeaders),String.class);
+        headers.forEach(httpHeaders::addAll);
+        ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(body, httpHeaders),String.class);
         return new HttpResponse(exchange.getStatusCodeValue(), exchange.getBody(), exchange.getHeaders());
     };
 

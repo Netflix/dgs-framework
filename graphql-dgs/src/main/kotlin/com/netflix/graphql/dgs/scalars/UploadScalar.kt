@@ -35,7 +35,7 @@ class UploadScalar {
         }
 
         @Throws(CoercingParseValueException::class)
-        override fun parseValue(input: Any): MultipartFile? {
+        override fun parseValue(input: Any): MultipartFile {
             return if (input is MultipartFile) {
                 input
             } else run {

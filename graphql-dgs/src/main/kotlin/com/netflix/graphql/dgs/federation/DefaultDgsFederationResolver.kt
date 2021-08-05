@@ -70,8 +70,7 @@ open class DefaultDgsFederationResolver() :
     }
 
     private fun dgsEntityFetchers(env: DataFetchingEnvironment): CompletableFuture<DataFetcherResult<List<Any?>>> {
-
-        var errorsList = mutableListOf<GraphQLError>()
+        val errorsList = mutableListOf<GraphQLError>()
         val resultList = env.getArgument<List<Map<String, Any>>>(_Entity.argumentName)
             .map { values ->
                 try {
