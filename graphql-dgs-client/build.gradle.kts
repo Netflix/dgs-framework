@@ -19,6 +19,8 @@ dependencies {
     api("io.projectreactor:reactor-core")
     api("com.fasterxml.jackson.core:jackson-annotations")
 
+    compileOnly("org.springframework:spring-webflux")
+
     implementation("org.springframework:spring-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
