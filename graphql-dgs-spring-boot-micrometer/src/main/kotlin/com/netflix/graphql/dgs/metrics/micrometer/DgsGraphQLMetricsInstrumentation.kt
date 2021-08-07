@@ -14,10 +14,9 @@ import graphql.analysis.QueryVisitorStub
 import graphql.execution.instrumentation.*
 import graphql.execution.instrumentation.SimpleInstrumentationContext.whenCompleted
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
+import graphql.execution.instrumentation.parameters.InstrumentationExecutionStrategyParameters
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import graphql.execution.instrumentation.parameters.InstrumentationValidationParameters
-import graphql.language.Document
-import graphql.language.OperationDefinition
 import graphql.schema.DataFetcher
 import graphql.schema.GraphQLNonNull
 import graphql.schema.GraphQLObjectType
@@ -29,8 +28,7 @@ import io.micrometer.core.instrument.Timer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
-import java.util.Optional.empty
-import java.util.Optional.ofNullable
+import java.util.Optional.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
@@ -58,7 +56,6 @@ class DgsGraphQLMetricsInstrumentation(
         state.startTimer()
 
         state.operationName = ofNullable(parameters.operation)
-        state.operation = ofNullable(parameters.schema.queryType.name)
 
         return object : SimpleInstrumentationContext<ExecutionResult>() {
 
@@ -76,13 +73,6 @@ class DgsGraphQLMetricsInstrumentation(
                 )
             }
         }
-    }
-
-    override fun instrumentDocumentAndVariables(
-        documentAndVariables: DocumentAndVariables,
-        parameters: InstrumentationExecutionParameters
-    ): DocumentAndVariables {
-        return documentAndVariables
     }
 
     override fun instrumentExecutionResult(
@@ -164,15 +154,29 @@ class DgsGraphQLMetricsInstrumentation(
                 return@whenCompleted
             }
             val state: MetricsInstrumentationState = parameters.getInstrumentationState()
-            // compute fields that require a document
             if (parameters.document != null) {
-                state.operationName =
-                    if (state.operationName.isPresent) state.operationName
-                    else TagUtils.resolveOperationNameFromUniqueOperationDefinition(parameters.document)
                 state.querySignature = optQuerySignatureRepository.flatMap { it.get(parameters.document, parameters) }
             }
-            // compute the query complexity.
             state.queryComplexity = ComplexityUtils.resolveComplexity(parameters)
+        }
+    }
+
+    override fun beginExecutionStrategy(
+        parameters: InstrumentationExecutionStrategyParameters
+    ): ExecutionStrategyInstrumentationContext {
+        val state: MetricsInstrumentationState = parameters.getInstrumentationState()
+        if (parameters.executionContext.getRoot<Any>() == null) {
+            state.operation = of(parameters.executionContext.operationDefinition.operation.name.toUpperCase())
+            if (!state.operationName.isPresent) {
+                state.operationName = ofNullable(parameters.executionContext.operationDefinition?.name)
+            }
+        }
+        return object : ExecutionStrategyInstrumentationContext {
+            override fun onDispatched(result: CompletableFuture<ExecutionResult>) {
+            }
+
+            override fun onCompleted(result: ExecutionResult, t: Throwable) {
+            }
         }
     }
 
@@ -295,19 +299,6 @@ class DgsGraphQLMetricsInstrumentation(
         const val TAG_VALUE_ANONYMOUS = "anonymous"
         const val TAG_VALUE_NONE = "none"
         const val TAG_VALUE_UNKNOWN = "unknown"
-
-        fun resolveOperationNameFromUniqueOperationDefinition(document: Document): Optional<String> {
-            return if (document.definitions.isNotEmpty()) {
-                val operationDefinitions = document.definitions.filterIsInstance<OperationDefinition>()
-                if (operationDefinitions.size == 1) {
-                    ofNullable(operationDefinitions.first().name)
-                } else {
-                    empty()
-                }
-            } else {
-                empty()
-            }
-        }
 
         fun resolveDataFetcherTagValue(parameters: InstrumentationFieldFetchParameters): String {
             val type = parameters.executionStepInfo.parent.type

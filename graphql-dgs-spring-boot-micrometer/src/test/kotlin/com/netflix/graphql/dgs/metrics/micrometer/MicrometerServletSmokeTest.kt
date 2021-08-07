@@ -96,7 +96,7 @@ class MicrometerServletSmokeTest {
     }
 
     @Test
-    fun `Metrics for a successful request, implicit operation name`() {
+    fun `Metrics for a successful query`() {
         mvc.perform(
             // Note that the query below uses an aliased field, aliasing `ping` to `op_name`.
             // We will also assert that the tag reflected by the metric is not affected by the alias.
@@ -137,6 +137,47 @@ class MicrometerServletSmokeTest {
     }
 
     @Test
+    fun `Metrics for a successful mutation`() {
+        mvc.perform(
+            // Note that the query below uses an aliased field, aliasing `ping` to `op_name`.
+            // We will also assert that the tag reflected by the metric is not affected by the alias.
+            MockMvcRequestBuilders
+                .post("/graphql")
+                .content("""{ "query": " mutation my_op_1{buzz}" }""".trimMargin())
+        ).andExpect(status().isOk)
+            .andExpect(content().json("""{"data":{"buzz":"buzz"}}""", false))
+
+        val meters = fetchMeters()
+
+        assertThat(meters).containsOnlyKeys("gql.query", "gql.resolver")
+
+        assertThat(meters["gql.query"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.query"]?.first()?.id?.tags)
+            .containsAll(
+                Tags.of("execution-tag", "foo")
+                    .and("contextual-tag", "foo")
+                    .and("outcome", "success")
+                    .and("gql.operation", "MUTATION")
+                    .and("gql.operation.name", "my_op_1")
+                    .and("gql.query.complexity", "5")
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+            )
+
+        assertThat(meters["gql.resolver"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.resolver"]?.first()?.id?.tags)
+            .containsAll(
+                Tags.of("field-fetch-tag", "foo")
+                    .and("contextual-tag", "foo")
+                    .and("gql.field", "Mutation.buzz")
+                    .and("outcome", "success")
+                    .and("gql.operation", "MUTATION")
+                    .and("gql.operation.name", "my_op_1")
+                    .and("gql.query.complexity", "5")
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+            )
+    }
+
+    @Test
     fun `Metrics for a successful request with explicit operation name`() {
         mvc.perform(
             // Note that the query below uses an aliased field, aliasing `ping` to `op_name`.
@@ -146,8 +187,8 @@ class MicrometerServletSmokeTest {
                 .content(
                     """
                     | {
-                    |     "query": "query my_op_1{ping}",
-                    |     "operationName": "my_op_1"
+                    |     "query": "mutation my_m_1{buzz} query my_q_1{ping}",
+                    |     "operationName": "my_q_1"
                     | }
                     """.trimMargin()
                 )
@@ -165,7 +206,7 @@ class MicrometerServletSmokeTest {
                     .and("contextual-tag", "foo")
                     .and("outcome", "success")
                     .and("gql.operation", "QUERY")
-                    .and("gql.operation.name", "my_op_1")
+                    .and("gql.operation.name", "my_q_1")
                     .and("gql.query.complexity", "5")
                     .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
             )
@@ -178,7 +219,7 @@ class MicrometerServletSmokeTest {
                     .and("gql.field", "Query.ping")
                     .and("outcome", "success")
                     .and("gql.operation", "QUERY")
-                    .and("gql.operation.name", "my_op_1")
+                    .and("gql.operation.name", "my_q_1")
                     .and("gql.query.complexity", "5")
                     .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
             )
@@ -307,7 +348,7 @@ class MicrometerServletSmokeTest {
             .containsAll(
                 Tags.of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
-                    .and("gql.operation", "QUERY")
+                    .and("gql.operation", "none")
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "none")
                     .and("gql.query.sig.hash", "none")
@@ -323,7 +364,7 @@ class MicrometerServletSmokeTest {
                 Tags.of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("outcome", "failure")
-                    .and("gql.operation", "QUERY")
+                    .and("gql.operation", "none")
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "none")
                     .and("gql.query.sig.hash", "none")
@@ -682,6 +723,10 @@ class MicrometerServletSmokeTest {
                 |    triggerCustomFailure: String
                 |}
                 |
+                |type Mutation{
+                |    buzz:String
+                |}
+                |
                 |type StringTransformation {
                 |    index: Int
                 |    value: String
@@ -695,6 +740,11 @@ class MicrometerServletSmokeTest {
             @DgsData(parentType = "Query", field = "ping")
             fun ping(): String {
                 return "pong"
+            }
+
+            @DgsData(parentType = "Mutation", field = "buzz")
+            fun buzz(): String {
+                return "buzz"
             }
 
             @DgsData(parentType = "Query", field = "transform")
@@ -766,7 +816,7 @@ class MicrometerServletSmokeTest {
             val executor = ThreadPoolTaskExecutor()
             executor.corePoolSize = 1
             executor.maxPoolSize = 1
-            executor.threadNamePrefix = "${MicrometerServletSmokeTest::class.java.simpleName}-test-"
+            executor.setThreadNamePrefix("${MicrometerServletSmokeTest::class.java.simpleName}-test-")
             executor.setQueueCapacity(10)
             executor.initialize()
             return executor
