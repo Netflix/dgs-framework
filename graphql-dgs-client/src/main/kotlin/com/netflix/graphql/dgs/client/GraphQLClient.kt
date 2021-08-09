@@ -16,6 +16,8 @@
 
 package com.netflix.graphql.dgs.client
 
+import org.reactivestreams.Publisher
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 interface GraphQLClient {
@@ -41,6 +43,19 @@ interface MonoGraphQLClient {
         operationName: String?,
         requestExecutor: MonoRequestExecutor
     ): Mono<GraphQLResponse>
+}
+
+interface ReactiveGraphQLClient {
+    fun reactiveExecuteQuery(
+        query: String,
+        variables: Map<String, Any>,
+    ): Publisher<GraphQLResponse>
+
+    fun reactiveExecuteQuery(
+        query: String,
+        variables: Map<String, Any>,
+        operationName: String?,
+    ): Publisher<GraphQLResponse>
 }
 
 @FunctionalInterface
