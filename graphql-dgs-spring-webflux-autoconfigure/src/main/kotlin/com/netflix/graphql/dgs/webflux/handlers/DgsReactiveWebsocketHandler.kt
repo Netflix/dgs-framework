@@ -54,6 +54,8 @@ class DgsReactiveWebsocketHandler(private val dgsReactiveQueryExecutor: DgsReact
         const val GQL_CONNECTION_TERMINATE = "connection_terminate"
     }
 
+    override fun getSubProtocols(): List<String> = listOf("graphql-ws")
+
     override fun handle(webSocketSession: WebSocketSession): Mono<Void> {
         return webSocketSession.send(
             webSocketSession.receive()
