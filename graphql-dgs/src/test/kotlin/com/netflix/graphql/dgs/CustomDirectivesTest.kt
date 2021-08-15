@@ -18,53 +18,59 @@ package com.netflix.graphql.dgs
 
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import graphql.GraphQL
-import graphql.schema.DataFetchingEnvironment
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import org.junit.jupiter.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
-class CustomScalarsTest {
+class CustomDirectivesTest {
     @MockK
     lateinit var applicationContextMock: ApplicationContext
 
     @Test
-    fun testLocalDateTimeScalar() {
+    fun testUppercaseDirective() {
         val fetcher = object : Any() {
-            @DgsData(parentType = "Query", field = "now")
-            fun now(): LocalDateTime {
-                return LocalDateTime.now()
-            }
+            @DgsData(parentType = "Query", field = "hello")
+            fun hello(): String = "hello"
 
-            @DgsData(parentType = "Query", field = "schedule")
-            fun schedule(env: DataFetchingEnvironment): Boolean {
-                val time = env.getArgument<LocalDateTime>("time")
-                println(time)
-                return true
-            }
+            @DgsData(parentType = "Query", field = "word")
+            fun word(): String = "abcefg"
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("timeFetcher", fetcher))
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(Pair("localDateTimeScalar", LocalDateTimeScalar()))
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns mapOf()
-        
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns mapOf(
+            Pair(
+                "uppercase",
+                UppercaseDirective()
+            ),
+            Pair(
+                "wordfilter",
+                WordFilterDirective()
+            )
+        )
+
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
 
         val schema = provider.schema(
             """
             type Query {
-                now: DateTime
-                schedule(time: DateTime): Boolean
+                hello: String @uppercase
+                word: String
             }
             
-            scalar DateTime
+            directive @uppercase on FIELD_DEFINITION
             """.trimIndent()
         )
 
@@ -72,13 +78,26 @@ class CustomScalarsTest {
         val executionResult = build.execute(
             """
             {
-                now
+               hello
             }
             """.trimIndent()
         )
 
-        Assertions.assertEquals(0, executionResult.errors.size)
+        assertEquals(0, executionResult.errors.size)
         val data = executionResult.getData<Map<String, String>>()
-        Assertions.assertTrue(LocalDateTime.parse(data["now"], DateTimeFormatter.ISO_DATE_TIME).plusHours(1).isAfter(LocalDateTime.now()))
+        assertThat(data["hello"]).isEqualTo("HELLO")
+
+        // test global directive
+        val wordExecutionResult = build.execute(
+            """
+            {
+               word
+            }
+            """.trimIndent()
+        )
+
+        assertEquals(0, wordExecutionResult.errors.size)
+        val wordData = wordExecutionResult.getData<Map<String, String>>()
+        assertThat(wordData["word"]).contains("xxx")
     }
 }
