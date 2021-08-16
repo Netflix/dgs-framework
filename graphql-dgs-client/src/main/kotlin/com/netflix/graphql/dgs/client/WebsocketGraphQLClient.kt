@@ -44,6 +44,22 @@ class WebsocketGraphQLClient(
         private val MAPPER = jacksonObjectMapper()
     }
 
+    // Sinks are used as buffers, incoming messages from the server are
+    // buffered in incomingSink before being consumed. Outgoing messages
+    // for the server are buffered in outgoingSink before being sent.
+    private val incomingSink = Sinks
+        .many()
+        .unicast()
+        .onBackpressureBuffer<OperationMessage>()
+    private val outgoingSink = Sinks
+        .many()
+        .unicast()
+        .onBackpressureBuffer<OperationMessage>()
+    private val conn = Mono.defer {
+        val uri = URI(url)
+        client.execute(uri) { exchange(incomingSink, outgoingSink, it) }
+    }
+
     override fun reactiveExecuteQuery(
         query: String,
         variables: Map<String, Any>,
@@ -56,67 +72,54 @@ class WebsocketGraphQLClient(
         variables: Map<String, Any>,
         operationName: String?,
     ): Publisher<GraphQLResponse> {
-        val uri = URI(url)
-
-        // Sinks are used as buffers, incoming messages from the server are
-        // buffered in incomingSink before being consumed. Outgoing messages
-        // for the server are buffered in outgoingSink before being sent.
-        val incomingSink = Sinks
-            .many()
-            .unicast()
-            .onBackpressureBuffer<OperationMessage>()
-        val outgoingSink = Sinks
-            .many()
-            .unicast()
-            .onBackpressureBuffer<OperationMessage>()
-
-        fun exchange(session: WebSocketSession): Mono<Void> {
-            val incomingMessages = session
-                .receive()
-                .map(this::decodeMessage)
-                .doOnNext(incomingSink::tryEmitNext)
-                .doOnComplete(incomingSink::tryEmitComplete)
-
-            val outgoingMessages = session
-                .send(outgoingSink
-                    .asFlux()
-                    .map{ createMessage(session, it) })
-
-            return Flux
-                .merge(incomingMessages, outgoingMessages)
-                .then()
-        }
-
-        // Connect to the server and link the connection to the sinks, this is
-        // done immediately and not deferred until subscription
-        client
-            .execute(uri, ::exchange)
-            .subscribe()
-
         val queryMessage = OperationMessage(
             GQL_START,
             QueryPayload(variables, emptyMap(), operationName, query),
-            "1")
+            "1"
+        )
         val stopMessage = OperationMessage(GQL_STOP, null, "1")
 
-        // First send the handshake message, then the query
-        // TODO: Should await acknowledgement message before sending query
-        outgoingSink.tryEmitNext(CONNECTION_INIT_MESSAGE)
-        outgoingSink.tryEmitNext(queryMessage)
+        // Connect to the server and link the connection to the sinks, this is
+        // done immediately and not deferred until subscription
 
-        return incomingSink
-            .asFlux()
-            .takeUntil { it.type == GQL_COMPLETE }
-            .doOnCancel {
-                outgoingSink.tryEmitNext(stopMessage)
-                outgoingSink.tryEmitNext(CONNECTION_TERMINATE_MESSAGE)
-                outgoingSink.tryEmitComplete()
-            }
-            .doOnComplete {
-                outgoingSink.tryEmitNext(CONNECTION_TERMINATE_MESSAGE)
-                outgoingSink.tryEmitComplete()
-            }
-            .flatMap(this::handleMessage)
+        return Flux.defer {
+            val messageStream = incomingSink
+                .asFlux()
+                .takeUntil { it.type == GQL_COMPLETE }
+                .doOnCancel {
+                    outgoingSink.tryEmitNext(stopMessage)
+                }
+                .flatMap(this::handleMessage)
+
+            // First send the handshake message, then the query
+            // TODO: Should await acknowledgement message before sending query
+            outgoingSink.tryEmitNext(CONNECTION_INIT_MESSAGE)
+            outgoingSink.tryEmitNext(queryMessage)
+
+            conn.subscribe()
+
+            messageStream
+        }
+    }
+
+    fun exchange(
+        incomingSink: Sinks.Many<OperationMessage>,
+        outgoingSink: Sinks.Many<OperationMessage>,
+        session: WebSocketSession): Mono<Void> {
+        val incomingMessages = session
+            .receive()
+            .map(this::decodeMessage)
+            .doOnNext(incomingSink::tryEmitNext)
+            .doOnComplete(incomingSink::tryEmitComplete)
+
+        val outgoingMessages = session
+            .send(outgoingSink
+                .asFlux()
+                .map{ createMessage(session, it) })
+
+        return Flux
+            .merge(incomingMessages, outgoingMessages)
+            .then()
     }
 
     private fun createMessage(
