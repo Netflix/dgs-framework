@@ -53,6 +53,7 @@ import org.springframework.core.annotation.MergedAnnotations
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.util.ReflectionUtils
+import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ValueConstants
@@ -78,7 +79,8 @@ class DgsSchemaProvider(
     private val mockProviders: Optional<Set<MockProvider>>,
     private val schemaLocations: List<String> = listOf(DEFAULT_SCHEMA_LOCATION),
     private val dataFetcherResultProcessors: List<DataFetcherResultProcessor> = emptyList(),
-    private val dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty()
+    private val dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
+    private val cookieValueResolver: Optional<CookieValueResolver> = Optional.empty()
 ) {
 
     companion object {
@@ -424,6 +426,21 @@ class DgsSchemaProvider(
                         logger.warn("@RequestParam is not supported when using WebFlux")
                         args.add(null)
                     }
+                }
+
+                parameter.isAnnotationPresent(CookieValue::class.java) -> {
+                    val requestData = DgsContext.getRequestData(environment)
+                    val annotation = AnnotationUtils.getAnnotation(parameter, CookieValue::class.java)!!
+                    val name: String = AnnotationUtils.getAnnotationAttributes(annotation)["name"] as String
+                    val parameterName = name.ifBlank { parameterNames[idx] }
+                    val value = if(cookieValueResolver.isPresent) { cookieValueResolver.get().getCookieValue(parameterName, requestData) } else null
+                        ?: if (annotation.defaultValue != ValueConstants.DEFAULT_NONE) annotation.defaultValue else null
+
+                    if (value == null && annotation.required) {
+                        throw DgsInvalidInputArgumentException("Required cookie '$parameterName' was not provided")
+                    }
+
+                    args.add(value  )
                 }
 
                 environment.containsArgument(parameterNames[idx]) -> {
