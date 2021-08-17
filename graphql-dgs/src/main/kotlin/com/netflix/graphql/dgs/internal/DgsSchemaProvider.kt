@@ -433,14 +433,14 @@ class DgsSchemaProvider(
                     val annotation = AnnotationUtils.getAnnotation(parameter, CookieValue::class.java)!!
                     val name: String = AnnotationUtils.getAnnotationAttributes(annotation)["name"] as String
                     val parameterName = name.ifBlank { parameterNames[idx] }
-                    val value = if(cookieValueResolver.isPresent) { cookieValueResolver.get().getCookieValue(parameterName, requestData) } else null
+                    val value = if (cookieValueResolver.isPresent) { cookieValueResolver.get().getCookieValue(parameterName, requestData) } else null
                         ?: if (annotation.defaultValue != ValueConstants.DEFAULT_NONE) annotation.defaultValue else null
 
                     if (value == null && annotation.required) {
                         throw DgsInvalidInputArgumentException("Required cookie '$parameterName' was not provided")
                     }
 
-                    args.add(value  )
+                    args.add(value)
                 }
 
                 environment.containsArgument(parameterNames[idx]) -> {

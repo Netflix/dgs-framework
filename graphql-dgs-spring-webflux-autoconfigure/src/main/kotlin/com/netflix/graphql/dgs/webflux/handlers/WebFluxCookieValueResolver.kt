@@ -22,7 +22,7 @@ import com.netflix.graphql.dgs.reactive.internal.DgsReactiveRequestData
 import org.springframework.http.HttpCookie
 import org.springframework.util.MultiValueMap
 
-class WebFluxCookieValueResolver: CookieValueResolver {
+class WebFluxCookieValueResolver : CookieValueResolver {
     override fun getCookieValue(name: String, requestData: DgsRequestData?): String? {
 
         return if (requestData is DgsReactiveRequestData) {

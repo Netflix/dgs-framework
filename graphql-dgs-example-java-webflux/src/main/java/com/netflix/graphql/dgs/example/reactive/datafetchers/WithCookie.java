@@ -35,8 +35,8 @@ public class WithCookie {
         DgsReactiveRequestData requestData = (DgsReactiveRequestData) dfe.getDgsContext().getRequestData();
         ServerRequest serverRequest = requestData.getServerRequest();
 
-//        serverRequest.cookies().add("mydgscookie", new HttpCookie("mydgscookie", value));
-serverRequest.exchange().getResponse().addCookie(ResponseCookie.from("mydgscookie", "webfluxupdated").build());
+        serverRequest.exchange().getResponse()
+                .addCookie(ResponseCookie.from("mydgscookie", "webfluxupdated").build());
         return value;
     }
 }
