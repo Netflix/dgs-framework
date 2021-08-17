@@ -20,8 +20,9 @@ import com.apollographql.federation.graphqljava.Federation
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.*
-import com.netflix.graphql.dgs.context.DgsContext
-import com.netflix.graphql.dgs.exceptions.*
+import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
+import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
+import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
 import com.netflix.graphql.mocking.DgsSchemaTransformer
 import com.netflix.graphql.mocking.MockProvider
@@ -37,34 +38,20 @@ import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.idl.TypeRuntimeWiring
 import graphql.schema.visibility.DefaultGraphqlFieldVisibility
 import graphql.schema.visibility.GraphqlFieldVisibility
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.future.asCompletableFuture
 import org.slf4j.LoggerFactory
 import org.springframework.aop.support.AopUtils
 import org.springframework.context.ApplicationContext
 import org.springframework.core.DefaultParameterNameDiscoverer
-import org.springframework.core.annotation.AnnotationUtils
 import org.springframework.core.annotation.MergedAnnotations
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.util.ReflectionUtils
-import org.springframework.web.bind.annotation.CookieValue
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ValueConstants
-import org.springframework.web.multipart.MultipartFile
 import java.io.InputStreamReader
 import java.lang.reflect.Method
-import java.lang.reflect.Parameter
 import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
-import kotlin.coroutines.Continuation
-import kotlin.reflect.full.callSuspend
-import kotlin.reflect.jvm.kotlinFunction
 
 /**
  * Main framework class that scans for components and configures a runtime executable schema.
@@ -89,9 +76,8 @@ class DgsSchemaProvider(
     val dataFetchers = mutableListOf<DatafetcherReference>()
 
     private val defaultParameterNameDiscoverer = DefaultParameterNameDiscoverer()
-    private val logger = LoggerFactory.getLogger(DgsSchemaProvider::class.java)
-
     private val objectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
+    private val logger = LoggerFactory.getLogger(DgsSchemaProvider::class.java)
 
     fun schema(schema: String? = null, fieldVisibility: GraphqlFieldVisibility = DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY): GraphQLSchema {
         val startTime = System.currentTimeMillis()
@@ -301,7 +287,7 @@ class DgsSchemaProvider(
     private fun createBasicDataFetcher(method: Method, dgsComponent: Any, isSubscription: Boolean): DataFetcher<Any?> {
         return DataFetcher<Any?> { environment ->
             val dfe = DgsDataFetchingEnvironment(environment)
-            val result = invokeDataFetcher(method, dgsComponent, dfe)
+            val result = DataFetcherInvoker(cookieValueResolver, defaultParameterNameDiscoverer, objectMapper, dfe, dgsComponent, method).invokeDataFetcher()
             when {
                 isSubscription -> {
                     result
@@ -315,167 +301,6 @@ class DgsSchemaProvider(
             }
         }
     }
-
-    private fun invokeDataFetcher(method: Method, dgsComponent: Any, environment: DataFetchingEnvironment): Any? {
-        val args = mutableListOf<Any?>()
-        val parameterNames = defaultParameterNameDiscoverer.getParameterNames(method) ?: emptyArray()
-        method.parameters.asSequence().filter { it.type != Continuation::class.java }.forEachIndexed { idx, parameter ->
-
-            when {
-                parameter.isAnnotationPresent(InputArgument::class.java) -> {
-                    val annotation = AnnotationUtils.getAnnotation(parameter, InputArgument::class.java)!!
-                    val name: String = AnnotationUtils.getAnnotationAttributes(annotation)["name"] as String
-
-                    val parameterName = name.ifBlank { parameterNames[idx] }
-                    val collectionType = annotation.collectionType.java
-                    val parameterValue: Any? = environment.getArgument(parameterName)
-
-                    val convertValue: Any? = if (parameterValue is List<*> && collectionType != Object::class.java) {
-                        try {
-                            // Return a list of elements that are converted to their collection type, e.e.g. List<Person>, List<String> etc.
-                            parameterValue.map { item -> objectMapper.convertValue(item, collectionType) }.toList()
-                        } catch (ex: Exception) {
-                            throw DgsInvalidInputArgumentException(
-                                "Specified type '$collectionType' is invalid for $parameterName.",
-                                ex
-                            )
-                        }
-                    } else if (parameterValue is List<*>) {
-                        // Return as is for all other types of Lists, i.e. custom scalars e.g. List<UUID>, and other scalar types like List<Integer> etc.
-                        parameterValue
-                    } else if (parameterValue is MultipartFile) {
-                        parameterValue
-                    } else if (environment.fieldDefinition.arguments.find { it.name == parameterName }?.type is GraphQLScalarType) {
-                        // Return the value with it's type for scalars
-                        parameterValue
-                    } else {
-                        // Return the converted value mapped to the defined type
-                        if (parameter.type.isAssignableFrom(Optional::class.java)) {
-                            if (collectionType != Object::class.java) {
-                                objectMapper.convertValue(parameterValue, collectionType)
-                            } else {
-                                throw DgsInvalidInputArgumentException("When Optional<T> is used, the type must be specified using the collectionType argument of the @InputArgument annotation.")
-                            }
-                        } else {
-                            objectMapper.convertValue(parameterValue, parameter.type)
-                        }
-                    }
-
-                    val paramType = parameter.type
-                    val optionalValue = getValueAsOptional(convertValue, parameter)
-
-                    if (optionalValue != null && !paramType.isPrimitive && !paramType.isAssignableFrom(optionalValue.javaClass)) {
-                        throw DgsInvalidInputArgumentException("Specified type '${parameter.type}' is invalid. Found ${parameterValue?.javaClass?.name} instead.")
-                    }
-
-                    if (convertValue == null && environment.fieldDefinition.arguments.none { it.name == parameterName }) {
-                        logger.warn("Unknown argument '$parameterName' on data fetcher ${dgsComponent.javaClass.name}.${method.name}")
-                    }
-
-                    args.add(optionalValue)
-                }
-
-                parameter.isAnnotationPresent(RequestHeader::class.java) -> {
-                    val requestData = DgsContext.getRequestData(environment)
-                    val annotation = AnnotationUtils.getAnnotation(parameter, RequestHeader::class.java)!!
-                    val name: String = AnnotationUtils.getAnnotationAttributes(annotation)["name"] as String
-                    val parameterName = name.ifBlank { parameterNames[idx] }
-                    val value = requestData?.headers?.get(parameterName)?.let {
-                        if (parameter.type.isAssignableFrom(List::class.java)) {
-                            it
-                        } else {
-                            it.joinToString()
-                        }
-                    } ?: if (annotation.defaultValue != ValueConstants.DEFAULT_NONE) annotation.defaultValue else null
-
-                    if (value == null && annotation.required) {
-                        throw DgsInvalidInputArgumentException("Required header '$parameterName' was not provided")
-                    }
-
-                    val optionalValue = getValueAsOptional(value, parameter)
-                    args.add(optionalValue)
-                }
-
-                parameter.isAnnotationPresent(RequestParam::class.java) -> {
-                    val requestData = DgsContext.getRequestData(environment)
-                    val annotation = AnnotationUtils.getAnnotation(parameter, RequestParam::class.java)!!
-                    val name: String = AnnotationUtils.getAnnotationAttributes(annotation)["name"] as String
-                    val parameterName = name.ifBlank { parameterNames[idx] }
-                    if (requestData is DgsWebMvcRequestData) {
-                        val webRequest = requestData.webRequest
-                        val value: Any? =
-                            webRequest?.parameterMap?.get(parameterName)?.let {
-                                if (parameter.type.isAssignableFrom(List::class.java)) {
-                                    it
-                                } else {
-                                    it.joinToString()
-                                }
-                            }
-                                ?: if (annotation.defaultValue != ValueConstants.DEFAULT_NONE) annotation.defaultValue else null
-
-                        if (value == null && annotation.required) {
-                            throw DgsInvalidInputArgumentException("Required request parameter '$parameterName' was not provided")
-                        }
-
-                        val optionalValue = getValueAsOptional(value, parameter)
-                        args.add(optionalValue)
-                    } else {
-                        logger.warn("@RequestParam is not supported when using WebFlux")
-                        args.add(null)
-                    }
-                }
-
-                parameter.isAnnotationPresent(CookieValue::class.java) -> {
-                    val requestData = DgsContext.getRequestData(environment)
-                    val annotation = AnnotationUtils.getAnnotation(parameter, CookieValue::class.java)!!
-                    val name: String = AnnotationUtils.getAnnotationAttributes(annotation)["name"] as String
-                    val parameterName = name.ifBlank { parameterNames[idx] }
-                    val value = if (cookieValueResolver.isPresent) { cookieValueResolver.get().getCookieValue(parameterName, requestData) } else { null }
-                        ?: if (annotation.defaultValue != ValueConstants.DEFAULT_NONE) annotation.defaultValue else null
-
-                    if (value == null && annotation.required) {
-                        throw DgsMissingCookieException(parameterName)
-                    }
-
-                    val optionalValue = getValueAsOptional(value, parameter)
-                    args.add(optionalValue)
-                }
-
-                environment.containsArgument(parameterNames[idx]) -> {
-                    val parameterValue: Any = environment.getArgument(parameterNames[idx])
-                    val convertValue = objectMapper.convertValue(parameterValue, parameter.type)
-                    args.add(convertValue)
-                }
-
-                parameter.type == DataFetchingEnvironment::class.java || parameter.type == DgsDataFetchingEnvironment::class.java -> {
-                    args.add(environment)
-                }
-                else -> {
-                    logger.warn("Unknown argument '${parameterNames[idx]}' on data fetcher ${dgsComponent.javaClass.name}.${method.name}")
-                    // This might cause an exception, but parameter's the best effort we can do
-                    args.add(null)
-                }
-            }
-        }
-
-        return if (method.kotlinFunction?.isSuspend == true) {
-
-            val launch = CoroutineScope(Dispatchers.Unconfined).async {
-                return@async method.kotlinFunction!!.callSuspend(dgsComponent, *args.toTypedArray())
-            }
-
-            launch.asCompletableFuture()
-        } else {
-            ReflectionUtils.invokeMethod(method, dgsComponent, *args.toTypedArray())
-        }
-    }
-
-    private fun getValueAsOptional(value: Any?, parameter: Parameter) =
-        if (parameter.type.isAssignableFrom(Optional::class.java)) {
-            Optional.ofNullable(value)
-        } else {
-            value
-        }
 
     private fun findTypeResolvers(
         dgsComponents: Collection<Any>,
@@ -550,7 +375,7 @@ class DgsSchemaProvider(
         }
     }
 
-    internal fun findScalars(applicationContext: ApplicationContext, runtimeWiringBuilder: RuntimeWiring.Builder) {
+    private fun findScalars(applicationContext: ApplicationContext, runtimeWiringBuilder: RuntimeWiring.Builder) {
         applicationContext.getBeansWithAnnotation(DgsScalar::class.java).forEach { (_, scalarComponent) ->
             val annotation = scalarComponent::class.java.getAnnotation(DgsScalar::class.java)
             when (scalarComponent) {
