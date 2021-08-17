@@ -69,7 +69,7 @@ class WebsocketGraphQLClient(
     override fun reactiveExecuteQuery(
         query: String,
         variables: Map<String, Any>,
-    ): Publisher<GraphQLResponse> {
+    ): Flux<GraphQLResponse> {
         return reactiveExecuteQuery(query, variables, null)
     }
 
@@ -77,7 +77,7 @@ class WebsocketGraphQLClient(
         query: String,
         variables: Map<String, Any>,
         operationName: String?,
-    ): Publisher<GraphQLResponse> {
+    ): Flux<GraphQLResponse> {
         val subscriptionId = subscriptionCount
             .incrementAndGet()
             .toString()

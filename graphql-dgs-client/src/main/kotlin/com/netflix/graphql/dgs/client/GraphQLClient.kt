@@ -49,13 +49,13 @@ interface ReactiveGraphQLClient {
     fun reactiveExecuteQuery(
         query: String,
         variables: Map<String, Any>,
-    ): Publisher<GraphQLResponse>
+    ): Flux<GraphQLResponse>
 
     fun reactiveExecuteQuery(
         query: String,
         variables: Map<String, Any>,
         operationName: String?,
-    ): Publisher<GraphQLResponse>
+    ): Flux<GraphQLResponse>
 }
 
 @FunctionalInterface
