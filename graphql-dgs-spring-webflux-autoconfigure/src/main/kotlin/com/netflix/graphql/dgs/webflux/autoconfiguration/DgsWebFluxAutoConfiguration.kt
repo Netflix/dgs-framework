@@ -173,7 +173,7 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     }
 
     @Bean
-    open fun cookieResolver(): CookieValueResolver {
+    open fun webfluxCookieResolver(): CookieValueResolver {
         return WebFluxCookieValueResolver()
     }
 }
