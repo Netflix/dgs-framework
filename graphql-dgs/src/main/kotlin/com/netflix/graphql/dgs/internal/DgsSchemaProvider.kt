@@ -21,10 +21,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.*
 import com.netflix.graphql.dgs.context.DgsContext
-import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
-import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
-import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
-import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
+import com.netflix.graphql.dgs.exceptions.*
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
 import com.netflix.graphql.mocking.DgsSchemaTransformer
 import com.netflix.graphql.mocking.MockProvider
@@ -433,14 +430,15 @@ class DgsSchemaProvider(
                     val annotation = AnnotationUtils.getAnnotation(parameter, CookieValue::class.java)!!
                     val name: String = AnnotationUtils.getAnnotationAttributes(annotation)["name"] as String
                     val parameterName = name.ifBlank { parameterNames[idx] }
-                    val value = if (cookieValueResolver.isPresent) { cookieValueResolver.get().getCookieValue(parameterName, requestData) } else null
+                    val value = if (cookieValueResolver.isPresent) { cookieValueResolver.get().getCookieValue(parameterName, requestData) } else { null }
                         ?: if (annotation.defaultValue != ValueConstants.DEFAULT_NONE) annotation.defaultValue else null
 
                     if (value == null && annotation.required) {
-                        throw DgsInvalidInputArgumentException("Required cookie '$parameterName' was not provided")
+                        throw DgsMissingCookieException(parameterName)
                     }
 
-                    args.add(value)
+                    val optionalValue = getValueAsOptional(value, parameter)
+                    args.add(optionalValue)
                 }
 
                 environment.containsArgument(parameterNames[idx]) -> {
