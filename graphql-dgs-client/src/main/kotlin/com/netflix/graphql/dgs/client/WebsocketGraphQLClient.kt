@@ -29,7 +29,10 @@ import org.springframework.web.reactive.socket.client.WebSocketClient
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.publisher.Sinks
+import reactor.util.concurrent.Queues
 import java.net.URI
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Reactive client implementation using websockets and the subscription-transport-ws protocol:
@@ -49,8 +52,10 @@ class WebsocketGraphQLClient(
     // for the server are buffered in outgoingSink before being sent.
     private val incomingSink = Sinks
         .many()
-        .unicast()
-        .onBackpressureBuffer<OperationMessage>()
+        .multicast()
+        // Flag prevents the sink from auto-cancelling on the completion of a single subscriber, see:
+        // https://stackoverflow.com/questions/66671636/why-is-sinks-many-multicast-onbackpressurebuffer-completing-after-one-of-t
+        .onBackpressureBuffer<OperationMessage>(Queues.SMALL_BUFFER_SIZE, false)
     private val outgoingSink = Sinks
         .many()
         .unicast()
@@ -58,7 +63,8 @@ class WebsocketGraphQLClient(
     private val conn = Mono.defer {
         val uri = URI(url)
         client.execute(uri) { exchange(incomingSink, outgoingSink, it) }
-    }
+    }.cache()
+    private val subscriptionCount = AtomicLong(0L)
 
     override fun reactiveExecuteQuery(
         query: String,
@@ -72,20 +78,22 @@ class WebsocketGraphQLClient(
         variables: Map<String, Any>,
         operationName: String?,
     ): Publisher<GraphQLResponse> {
+        val subscriptionId = subscriptionCount
+            .incrementAndGet()
+            .toString()
+
         val queryMessage = OperationMessage(
             GQL_START,
             QueryPayload(variables, emptyMap(), operationName, query),
-            "1"
+            subscriptionId
         )
-        val stopMessage = OperationMessage(GQL_STOP, null, "1")
-
-        // Connect to the server and link the connection to the sinks, this is
-        // done immediately and not deferred until subscription
+        val stopMessage = OperationMessage(GQL_STOP, null, subscriptionId)
 
         return Flux.defer {
             val messageStream = incomingSink
                 .asFlux()
                 .takeUntil { it.type == GQL_COMPLETE }
+                .filter { it.id == subscriptionId }
                 .doOnCancel {
                     outgoingSink.tryEmitNext(stopMessage)
                 }
@@ -110,7 +118,6 @@ class WebsocketGraphQLClient(
             .receive()
             .map(this::decodeMessage)
             .doOnNext(incomingSink::tryEmitNext)
-            .doOnComplete(incomingSink::tryEmitComplete)
 
         val outgoingMessages = session
             .send(outgoingSink
