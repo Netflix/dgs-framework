@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-dependencies {
-    api(project(":graphql-error-types"))
-    api(project(":graphql-dgs"))
+package com.netflix.graphql.dgs.exceptions
 
-    implementation(kotlin("reflect"))
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.springframework:spring-web")
-    compileOnly("javax.servlet:javax.servlet-api:4.0.1")
-
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-}
+class DgsMissingCookieException(cookieName: String) : RuntimeException("Required cookie '$cookieName' was not provided")
