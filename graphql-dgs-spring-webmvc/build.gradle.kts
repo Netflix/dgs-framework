@@ -21,7 +21,7 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework:spring-web")
-    compileOnly("javax.servlet:javax.servlet-api:3.1.0")
+    compileOnly("javax.servlet:javax.servlet-api:4.0.1")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
