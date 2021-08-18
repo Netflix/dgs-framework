@@ -25,8 +25,6 @@ import java.lang.annotation.Target;
 
 /**
  * Mark a class as a custom Directive implementation that gets registered to the framework.
- *
- * @author Hantsy Bai <hantsy@gmail.com>
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

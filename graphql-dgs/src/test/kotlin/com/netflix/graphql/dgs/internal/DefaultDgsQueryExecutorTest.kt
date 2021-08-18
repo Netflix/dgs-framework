@@ -18,11 +18,7 @@ package com.netflix.graphql.dgs.internal
 
 import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
-import com.netflix.graphql.dgs.DgsComponent
-import com.netflix.graphql.dgs.DgsData
-import com.netflix.graphql.dgs.DgsScalar
-import com.netflix.graphql.dgs.InputArgument
-import com.netflix.graphql.dgs.LocalDateTimeScalar
+import com.netflix.graphql.dgs.*
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
 import graphql.execution.AsyncExecutionStrategy
@@ -94,6 +90,7 @@ internal class DefaultDgsQueryExecutorTest {
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", fetcher), Pair("numbersFetcher", numbersFetcher), Pair("moviesFetcher", moviesFetcher), Pair("withErrorFetcher", fetcherWithError), Pair("echoFetcher", echoFetcher))
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(Pair("DateTimeScalar", LocalDateTimeScalar()))
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
         every { dgsDataLoaderProvider.buildRegistryWithContextSupplier(any<Supplier<Any>>()) } returns DataLoaderRegistry()
 
         val provider = DgsSchemaProvider(

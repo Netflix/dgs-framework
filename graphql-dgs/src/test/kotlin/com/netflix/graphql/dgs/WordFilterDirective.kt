@@ -20,12 +20,9 @@ import graphql.schema.DataFetcherFactories
 import graphql.schema.GraphQLFieldDefinition
 import graphql.schema.idl.SchemaDirectiveWiring
 import graphql.schema.idl.SchemaDirectiveWiringEnvironment
-import java.util.function.BiFunction
 
 /**
  *  An `@DgsDirective` example for test purpose.
- *
- *  @author Hantsy Bai <hantsy@gmail.com>
  */
 @DgsDirective
 class WordFilterDirective : SchemaDirectiveWiring {

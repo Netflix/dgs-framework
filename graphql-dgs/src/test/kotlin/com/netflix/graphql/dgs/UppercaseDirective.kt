@@ -23,8 +23,6 @@ import graphql.schema.idl.SchemaDirectiveWiringEnvironment
 
 /**
  *  An `@DgsDirective` example for test purpose.
- *
- *  @author Hantsy Bai <hantsy@gmail.com>
  */
 @DgsDirective(name = "uppercase")
 class UppercaseDirective : SchemaDirectiveWiring {

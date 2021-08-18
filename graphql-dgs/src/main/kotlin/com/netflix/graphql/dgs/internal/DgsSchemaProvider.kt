@@ -43,10 +43,6 @@ import org.springframework.core.annotation.MergedAnnotations
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.util.ReflectionUtils
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ValueConstants
-import org.springframework.web.multipart.MultipartFile
 import java.io.InputStreamReader
 import java.lang.reflect.Method
 import java.nio.charset.StandardCharsets
@@ -403,7 +399,6 @@ class DgsSchemaProvider(
             }
         }
     }
-
 
     internal fun findSchemaFiles(hasDynamicTypeRegistry: Boolean = false): List<Resource> {
         val cl = Thread.currentThread().contextClassLoader

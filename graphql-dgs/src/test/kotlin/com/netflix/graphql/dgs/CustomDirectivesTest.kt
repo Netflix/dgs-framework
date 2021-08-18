@@ -34,7 +34,7 @@ class CustomDirectivesTest {
     lateinit var applicationContextMock: ApplicationContext
 
     @Test
-    fun testUppercaseDirective() {
+    fun testCustomDirectives() {
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
             fun hello(): String = "hello"
