@@ -21,7 +21,8 @@ import com.netflix.graphql.dgs.context.DgsContext;
 import com.netflix.graphql.dgs.example.shared.context.MyContext;
 import com.netflix.graphql.dgs.example.shared.types.Message;
 import graphql.GraphQLException;
-import graphql.relay.*;
+import graphql.relay.Connection;
+import graphql.relay.SimpleListConnection;
 import graphql.schema.DataFetchingEnvironment;
 import org.dataloader.DataLoader;
 import org.springframework.http.HttpHeaders;
@@ -30,20 +31,16 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @DgsComponent
 public class HelloDataFetcher {
     @DgsQuery
     @DgsEnableDataFetcherInstrumentation(false)
-    public String hello(@InputArgument String name, DgsDataFetchingEnvironment dfe) {
+    public String hello(@InputArgument String name) {
         if (name == null) {
             name = "Stranger";
         }
-
-        Map<String, Object> extensions = DgsContext.getRequestData(dfe).getExtensions();
-        System.out.println(extensions);
 
         return "hello, " + name + "!";
     }

@@ -134,6 +134,7 @@ open class DgsAutoConfiguration(
         mockProviders: Optional<Set<MockProvider>>,
         dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
         dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
+        cookieValueResolver: Optional<CookieValueResolver> = Optional.empty()
     ): DgsSchemaProvider {
         return DgsSchemaProvider(
             applicationContext,
@@ -143,6 +144,7 @@ open class DgsAutoConfiguration(
             configProps.schemaLocations,
             dataFetcherResultProcessors,
             dataFetcherExceptionHandler,
+            cookieValueResolver
         )
     }
 

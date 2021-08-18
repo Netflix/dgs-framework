@@ -1,7 +1,5 @@
 spring:
   application:
     name: dgs-example
-dgs:
-  graphql:
-    introspection:
-        enabled: false
+
+logging.level.graphql: DEBUG

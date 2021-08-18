@@ -48,7 +48,7 @@
             "project": true
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.7"
+            "locked": "3.4.9"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -233,7 +233,7 @@
             "project": true
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.7"
+            "locked": "3.4.9"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -303,10 +303,10 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.11.0"
+            "locked": "1.12.0"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.7"
+            "locked": "3.4.9"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"
@@ -368,10 +368,10 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.11.0"
+            "locked": "1.12.0"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.7"
+            "locked": "3.4.9"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.4.32"

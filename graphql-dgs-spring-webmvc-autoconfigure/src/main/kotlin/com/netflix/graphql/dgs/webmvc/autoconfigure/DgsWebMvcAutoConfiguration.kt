@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,11 @@
 package com.netflix.graphql.dgs.webmvc.autoconfigure
 
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.internal.CookieValueResolver
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.mvc.DgsRestController
 import com.netflix.graphql.dgs.mvc.DgsRestSchemaJsonController
+import com.netflix.graphql.dgs.mvc.ServletCookieValueResolver
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
@@ -36,6 +38,11 @@ open class DgsWebMvcAutoConfiguration {
     @Bean
     open fun dgsRestController(dgsQueryExecutor: DgsQueryExecutor): DgsRestController {
         return DgsRestController(dgsQueryExecutor)
+    }
+
+    @Bean
+    open fun servletCookieValueResolver(): CookieValueResolver {
+        return ServletCookieValueResolver()
     }
 
     @Configuration
