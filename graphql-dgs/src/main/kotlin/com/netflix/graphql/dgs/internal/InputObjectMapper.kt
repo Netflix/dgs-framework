@@ -45,7 +45,9 @@ class InputObjectMapper {
     }
 
     fun <T> mapToJavaObject(inputMap: Map<String, *>, targetClass: Class<T>): T {
-        val instance = targetClass.newInstance()
+        val ctor = targetClass.getDeclaredConstructor()
+        ctor.isAccessible = true
+        val instance = ctor.newInstance()
         inputMap.forEach {
             val declaredField = targetClass.getDeclaredField(it.key)
             declaredField.isAccessible = true
