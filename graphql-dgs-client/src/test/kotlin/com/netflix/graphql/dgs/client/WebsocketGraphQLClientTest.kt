@@ -16,13 +16,6 @@
 
 package com.netflix.graphql.dgs.client
 
-import graphql.GraphQLException
-import io.mockk.*
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
-import reactor.core.publisher.Flux
-import reactor.test.StepVerifier
-
 /*
  * Copyright 2021 Netflix, Inc.
  *
@@ -38,7 +31,16 @@ import reactor.test.StepVerifier
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import graphql.GraphQLException
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import io.mockk.verifyOrder
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import reactor.core.publisher.Flux
+import reactor.test.StepVerifier
 import java.time.Duration
 import java.util.concurrent.TimeoutException
 import java.util.stream.Collectors

@@ -103,7 +103,7 @@ class WebsocketGraphQLClient(
             handshake
                 .doOnSuccess { client.send(queryMessage) }
                 .thenMany(
-            client.receive().doOnNext { println("RCV [$subscriptionId]: $it") }
+            client.receive()
                 .filter { it.id == subscriptionId }
                 .takeUntil { it.type == GQL_COMPLETE }
                 .doOnCancel {
