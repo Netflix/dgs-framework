@@ -62,6 +62,10 @@ class WebsocketGraphQLClient(
             this(client, DEFAULT_ACKNOWLEDGEMENT_TIMEOUT)
 
     private val subscriptionCount = AtomicLong(0L)
+
+    // The handshake represents a connection to the server, it is cached so that there is one per client instance.
+    // The handshake only completes once the connection has been establishes and a GQL_CONNECTION_ACK message has been
+    // recieved from the server
     private val handshake = Mono.defer {
         client.send(CONNECTION_INIT_MESSAGE)
         client.receive()
@@ -99,18 +103,16 @@ class WebsocketGraphQLClient(
         )
         val stopMessage = OperationMessage(GQL_STOP, null, subscriptionId)
 
-        return Flux.defer {
-            handshake
-                .doOnSuccess { client.send(queryMessage) }
-                .thenMany(
-            client.receive()
-                .filter { it.id == subscriptionId }
-                .takeUntil { it.type == GQL_COMPLETE }
-                .doOnCancel {
-                    client.send(stopMessage)
-                }
-                .flatMap(this::handleMessage))
-        }
+        return handshake
+            .doOnSuccess { client.send(queryMessage) }
+            .thenMany(
+                client.receive()
+                    .filter { it.id == subscriptionId }
+                    .takeUntil { it.type == GQL_COMPLETE }
+                    .doOnCancel {
+                        client.send(stopMessage)
+                    }
+                    .flatMap(this::handleMessage))
     }
 
     private fun handleMessage(

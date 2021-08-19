@@ -41,6 +41,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
+import reactor.test.publisher.TestPublisher
 import java.time.Duration
 import java.util.concurrent.TimeoutException
 import java.util.stream.Collectors
@@ -195,12 +196,15 @@ class WebsocketGraphQLClientTest {
 
     @Test
     fun handlesMultipleSubscriptions() {
-        every { subscriptionsClient.receive() } returns Flux
-            .just(CONNECTION_ACK_MESSAGE)
-            .mergeWith(dataMessages(listOf(TEST_DATA_A), "1"))
-            .mergeWith(Flux.just(OperationMessage(GQL_COMPLETE, null, "1")))
-            .mergeWith(Flux.never())
+        val publisher = TestPublisher.createCold<OperationMessage>()
 
+        every { subscriptionsClient.receive() } returns publisher.flux()
+
+        publisher.next(CONNECTION_ACK_MESSAGE)
+        dataMessages(listOf(TEST_DATA_A), "1")
+            .doOnNext(publisher::next)
+            .blockLast()
+        publisher.next(OperationMessage(GQL_COMPLETE, null, "1"))
 
         val responses1 = client.reactiveExecuteQuery("", emptyMap())
         val responses2 = client.reactiveExecuteQuery("", emptyMap())
@@ -211,9 +215,10 @@ class WebsocketGraphQLClientTest {
             .expectComplete()
             .verify(VERIFY_TIMEOUT)
 
-        every { subscriptionsClient.receive() } returns dataMessages(listOf(TEST_DATA_B), "2")
-            .mergeWith(Flux.just(OperationMessage(GQL_COMPLETE, null, "2")))
-            .mergeWith(Flux.never())
+        dataMessages(listOf(TEST_DATA_B), "2")
+            .doOnNext(publisher::next)
+            .blockLast()
+        publisher.next(OperationMessage(GQL_COMPLETE, null, "2"))
 
         StepVerifier.create(responses2.map { it.extractValue<Int>("a") })
             .expectSubscription()
