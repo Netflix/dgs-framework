@@ -44,6 +44,7 @@ import reactor.core.publisher.Mono
 import reactor.core.publisher.Sinks
 import java.time.Duration
 import java.util.concurrent.TimeoutException
+import java.util.stream.Collectors
 import kotlin.math.sin
 
 class WebsocketGraphQLClientTest {
@@ -52,6 +53,7 @@ class WebsocketGraphQLClientTest {
         private val CONNECTION_ACK_MESSAGE = OperationMessage(GQL_CONNECTION_ACK, null, null)
         private val TEST_DATA_A = mapOf(Pair("a", 1), Pair("b", "hello"), Pair("c", false))
         private val TEST_DATA_B = mapOf(Pair("a", 2), Pair("b", null), Pair("c", true))
+        private val TEST_DATA_C = mapOf(Pair("a", 3), Pair("b", "world"), Pair("c", false))
     }
 
     lateinit var subscriptionsClient: SubscriptionsTransportWsClient
@@ -175,7 +177,6 @@ class WebsocketGraphQLClientTest {
 
     @Test
     fun sendsStopMessageIfCancelled() {
-        // TODO: Should fail because never subscribed!
         every { subscriptionsClient.receive() } returns Flux
             .just(CONNECTION_ACK_MESSAGE)
             .mergeWith(Flux.never())
@@ -200,8 +201,6 @@ class WebsocketGraphQLClientTest {
             .just(CONNECTION_ACK_MESSAGE)
             .mergeWith(dataMessages(listOf(TEST_DATA_A), "1"))
             .mergeWith(Flux.just(OperationMessage(GQL_COMPLETE, null, "1")))
-            .mergeWith(dataMessages(listOf(TEST_DATA_B), "2"))
-            .mergeWith(Flux.just(OperationMessage(GQL_COMPLETE, null, "2")))
             .mergeWith(Flux.never())
 
 
@@ -214,11 +213,45 @@ class WebsocketGraphQLClientTest {
             .expectComplete()
             .verify(VERIFY_TIMEOUT)
 
+        every { subscriptionsClient.receive() } returns dataMessages(listOf(TEST_DATA_B), "2")
+            .mergeWith(Flux.just(OperationMessage(GQL_COMPLETE, null, "2")))
+            .mergeWith(Flux.never())
+
         StepVerifier.create(responses2.map { it.extractValue<Int>("a") })
             .expectSubscription()
             .expectNext(2)
             .expectComplete()
             .verify(VERIFY_TIMEOUT)
+    }
+
+    @Test
+    fun handlesConcurrentSubscriptions() {
+        every { subscriptionsClient.receive() } returns Flux
+            .just(CONNECTION_ACK_MESSAGE)
+            .mergeWith(dataMessages(listOf(TEST_DATA_A), "1"))
+            .mergeWith(dataMessages(listOf(TEST_DATA_B), "2"))
+            .mergeWith(Flux.just(OperationMessage(GQL_COMPLETE, null, "2")))
+            .mergeWith(dataMessages(listOf(TEST_DATA_C), "1"))
+            .mergeWith(Flux.just(OperationMessage(GQL_COMPLETE, null, "1")))
+            .mergeWith(Flux.never())
+
+        val responses1 = client.reactiveExecuteQuery("", emptyMap())
+        val responses2 = client.reactiveExecuteQuery("", emptyMap())
+
+        val responses = Flux.merge(
+            responses1
+                .map { it.extractValue<Int>("a") }
+                .collect(Collectors.toList()),
+            responses2
+                .map { it.extractValue<Int>("a") }
+                .collect(Collectors.toList()))
+            .collect(Collectors.toList())
+            .block()
+
+        assertThat(responses).hasSameElementsAs(listOf(
+            listOf(1, 3),
+            listOf(2)
+        ))
     }
 
     fun dataMessages(data: List<Map<String, Any?>>, id: String): Flux<OperationMessage> {
