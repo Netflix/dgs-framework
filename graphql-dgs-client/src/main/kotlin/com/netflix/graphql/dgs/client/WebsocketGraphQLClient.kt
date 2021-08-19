@@ -123,7 +123,6 @@ class WebsocketGraphQLClient(
             GQL_DATA -> {
                 val payload = message.payload
                 // Payload can be either QueryPayload or DataPayload
-                // TODO: Typecheck this?
                 if (payload is DataPayload)
                     return Flux.just(GraphQLResponse(MAPPER.writeValueAsString(payload)))
                 else
