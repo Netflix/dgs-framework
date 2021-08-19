@@ -32,10 +32,7 @@ import graphql.language.InterfaceTypeDefinition
 import graphql.language.TypeName
 import graphql.language.UnionTypeDefinition
 import graphql.schema.*
-import graphql.schema.idl.RuntimeWiring
-import graphql.schema.idl.SchemaParser
-import graphql.schema.idl.TypeDefinitionRegistry
-import graphql.schema.idl.TypeRuntimeWiring
+import graphql.schema.idl.*
 import graphql.schema.visibility.DefaultGraphqlFieldVisibility
 import graphql.schema.visibility.GraphqlFieldVisibility
 import org.slf4j.LoggerFactory
@@ -108,6 +105,7 @@ class DgsSchemaProvider(
             .mapNotNull { dgsComponent -> invokeDgsTypeDefinitionRegistry(dgsComponent, mergedRegistry) }
             .fold(mergedRegistry) { a, b -> a.merge(b) }
         findScalars(applicationContext, runtimeWiringBuilder)
+        findDirectives(applicationContext, runtimeWiringBuilder)
         findDataFetchers(dgsComponents, codeRegistryBuilder, mergedRegistry)
         findTypeResolvers(dgsComponents, runtimeWiringBuilder, mergedRegistry)
         findEntityFetchers(dgsComponents)
@@ -383,6 +381,21 @@ class DgsSchemaProvider(
                     GraphQLScalarType.newScalar().name(annotation.name).coercing(scalarComponent).build()
                 )
                 else -> throw RuntimeException("Invalid @DgsScalar type: the class must implement graphql.schema.Coercing")
+            }
+        }
+    }
+
+    private fun findDirectives(applicationContext: ApplicationContext, runtimeWiringBuilder: RuntimeWiring.Builder) {
+        applicationContext.getBeansWithAnnotation(DgsDirective::class.java).forEach { (_, directiveComponent) ->
+            val annotation = directiveComponent::class.java.getAnnotation(DgsDirective::class.java)
+            when (directiveComponent) {
+                is SchemaDirectiveWiring ->
+                    if (annotation.name.isNotBlank()) {
+                        runtimeWiringBuilder.directive(annotation.name, directiveComponent)
+                    } else {
+                        runtimeWiringBuilder.directiveWiring(directiveComponent)
+                    }
+                else -> throw RuntimeException("Invalid @DgsDirective type: the class must implement graphql.schema.idl.SchemaDirectiveWiring")
             }
         }
     }
