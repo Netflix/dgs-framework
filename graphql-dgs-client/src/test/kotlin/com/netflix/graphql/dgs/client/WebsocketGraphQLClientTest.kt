@@ -57,17 +57,19 @@ class WebsocketGraphQLClientTest {
 
     lateinit var subscriptionsClient: SubscriptionsTransportWsClient
     lateinit var client: WebsocketGraphQLClient
+    lateinit var server: TestPublisher<OperationMessage>
 
     @BeforeEach
     fun setup() {
         subscriptionsClient = mockk(relaxed = true)
         client = WebsocketGraphQLClient(subscriptionsClient)
+        server = TestPublisher.createCold()
+
+        every { subscriptionsClient.receive() } returns server.flux()
     }
 
     @Test
     fun timesOutIfNoAckFromServer() {
-        every { subscriptionsClient.receive() } returns Flux.never()
-
         val client = WebsocketGraphQLClient(subscriptionsClient, Duration.ofSeconds(1))
         val responses = client.reactiveExecuteQuery("", emptyMap())
         StepVerifier.create(responses)
@@ -77,8 +79,7 @@ class WebsocketGraphQLClientTest {
 
     @Test
     fun errorsIfMessageOtherThanAckFromServer() {
-        every { subscriptionsClient.receive() } returns dataMessages(listOf(TEST_DATA_A), "1")
-            .mergeWith(Flux.never())
+        server.next(dataMessage(TEST_DATA_A, "1"))
 
         val responses = client.reactiveExecuteQuery("", emptyMap())
         StepVerifier.create(responses)
@@ -88,7 +89,8 @@ class WebsocketGraphQLClientTest {
 
     @Test
     fun sendsInitMessage() {
-        every { subscriptionsClient.receive() } returns Flux.empty()
+        server.next(CONNECTION_ACK_MESSAGE)
+        server.next(OperationMessage(GQL_COMPLETE, null, "1"))
 
         client.reactiveExecuteQuery("", emptyMap()).blockLast()
         verify { subscriptionsClient.send(OperationMessage(GQL_CONNECTION_INIT, null, null)) }
@@ -96,7 +98,8 @@ class WebsocketGraphQLClientTest {
 
     @Test
     fun sendsQuery() {
-        every { subscriptionsClient.receive() } returns Flux.empty()
+        server.next(CONNECTION_ACK_MESSAGE)
+        server.next(OperationMessage(GQL_COMPLETE, null, "1"))
 
         client.reactiveExecuteQuery("{ helloWorld }", emptyMap()).blockLast()
         verify { subscriptionsClient.send(OperationMessage(GQL_START, QueryPayload(emptyMap(), emptyMap(), null, "{ helloWorld }"), "1")) }
@@ -104,10 +107,8 @@ class WebsocketGraphQLClientTest {
 
     @Test
     fun parsesData() {
-        every { subscriptionsClient.receive() } returns Flux
-            .just(CONNECTION_ACK_MESSAGE)
-            .mergeWith(dataMessages(listOf(TEST_DATA_A), "1"))
-            .mergeWith(Flux.never())
+        server.next(CONNECTION_ACK_MESSAGE)
+        server.next(dataMessage(TEST_DATA_A, "1"))
 
         val responses = client.reactiveExecuteQuery("", emptyMap())
         StepVerifier.create(responses.take(1))
@@ -123,10 +124,9 @@ class WebsocketGraphQLClientTest {
 
     @Test
     fun parsesMultipleData() {
-        every { subscriptionsClient.receive() } returns Flux
-            .just(CONNECTION_ACK_MESSAGE)
-            .mergeWith(dataMessages(listOf(TEST_DATA_A, TEST_DATA_B), "1"))
-            .mergeWith(Flux.never())
+        server.next(CONNECTION_ACK_MESSAGE)
+        server.next(dataMessage(TEST_DATA_A, "1"))
+        server.next(dataMessage(TEST_DATA_B, "1"))
 
         val responses = client.reactiveExecuteQuery("", emptyMap())
         StepVerifier.create(responses.take(2))
@@ -147,11 +147,9 @@ class WebsocketGraphQLClientTest {
 
     @Test
     fun completesOnCompleteMessage() {
-        every { subscriptionsClient.receive() } returns Flux
-            .just(CONNECTION_ACK_MESSAGE)
-            .mergeWith(dataMessages(listOf(TEST_DATA_A), "1"))
-            .mergeWith(Flux.just(OperationMessage(GQL_COMPLETE, null, "1")))
-            .mergeWith(Flux.never())
+        server.next(CONNECTION_ACK_MESSAGE)
+        server.next(dataMessage(TEST_DATA_A, "1"))
+        server.next(OperationMessage(GQL_COMPLETE, null, "1"))
 
         val responses = client.reactiveExecuteQuery("", emptyMap())
         StepVerifier.create(responses)
@@ -163,9 +161,8 @@ class WebsocketGraphQLClientTest {
 
     @Test
     fun finishesOnGraphQLError() {
-        every { subscriptionsClient.receive() } returns Flux
-            .just(CONNECTION_ACK_MESSAGE, OperationMessage(GQL_ERROR, "An error occurred", "1"))
-            .mergeWith(Flux.never())
+        server.next(CONNECTION_ACK_MESSAGE)
+        server.next(OperationMessage(GQL_ERROR, "An error occurred", "1"))
 
         val responses = client.reactiveExecuteQuery("", emptyMap())
         StepVerifier.create(responses)
@@ -176,9 +173,7 @@ class WebsocketGraphQLClientTest {
 
     @Test
     fun sendsStopMessageIfCancelled() {
-        every { subscriptionsClient.receive() } returns Flux
-            .just(CONNECTION_ACK_MESSAGE)
-            .mergeWith(Flux.never())
+        server.next(CONNECTION_ACK_MESSAGE)
 
         val responses = client.reactiveExecuteQuery("", emptyMap())
         StepVerifier.create(responses)
@@ -196,15 +191,9 @@ class WebsocketGraphQLClientTest {
 
     @Test
     fun handlesMultipleSubscriptions() {
-        val publisher = TestPublisher.createCold<OperationMessage>()
-
-        every { subscriptionsClient.receive() } returns publisher.flux()
-
-        publisher.next(CONNECTION_ACK_MESSAGE)
-        dataMessages(listOf(TEST_DATA_A), "1")
-            .doOnNext(publisher::next)
-            .blockLast()
-        publisher.next(OperationMessage(GQL_COMPLETE, null, "1"))
+        server.next(CONNECTION_ACK_MESSAGE)
+        server.next(dataMessage(TEST_DATA_A, "1"))
+        server.next(OperationMessage(GQL_COMPLETE, null, "1"))
 
         val responses1 = client.reactiveExecuteQuery("", emptyMap())
         val responses2 = client.reactiveExecuteQuery("", emptyMap())
@@ -215,10 +204,8 @@ class WebsocketGraphQLClientTest {
             .expectComplete()
             .verify(VERIFY_TIMEOUT)
 
-        dataMessages(listOf(TEST_DATA_B), "2")
-            .doOnNext(publisher::next)
-            .blockLast()
-        publisher.next(OperationMessage(GQL_COMPLETE, null, "2"))
+        server.next(dataMessage(TEST_DATA_B, "2"))
+        server.next(OperationMessage(GQL_COMPLETE, null, "2"))
 
         StepVerifier.create(responses2.map { it.extractValue<Int>("a") })
             .expectSubscription()
@@ -229,14 +216,12 @@ class WebsocketGraphQLClientTest {
 
     @Test
     fun handlesConcurrentSubscriptions() {
-        every { subscriptionsClient.receive() } returns Flux
-            .just(CONNECTION_ACK_MESSAGE)
-            .mergeWith(dataMessages(listOf(TEST_DATA_A), "1"))
-            .mergeWith(dataMessages(listOf(TEST_DATA_B), "2"))
-            .mergeWith(Flux.just(OperationMessage(GQL_COMPLETE, null, "2")))
-            .mergeWith(dataMessages(listOf(TEST_DATA_C), "1"))
-            .mergeWith(Flux.just(OperationMessage(GQL_COMPLETE, null, "1")))
-            .mergeWith(Flux.never())
+        server.next(CONNECTION_ACK_MESSAGE)
+        server.next(dataMessage(TEST_DATA_A, "1"))
+        server.next(dataMessage(TEST_DATA_B, "2"))
+        server.next(OperationMessage(GQL_COMPLETE, null, "2"))
+        server.next(dataMessage(TEST_DATA_C, "1"))
+        server.next(OperationMessage(GQL_COMPLETE, null, "1"))
 
         val responses1 = client.reactiveExecuteQuery("", emptyMap())
         val responses2 = client.reactiveExecuteQuery("", emptyMap())
@@ -261,5 +246,9 @@ class WebsocketGraphQLClientTest {
         return Flux
             .fromIterable(data)
             .map { OperationMessage(GQL_DATA, DataPayload(it, null), id) }
+    }
+
+    fun dataMessage(data: Map<String, Any?>, id: String): OperationMessage {
+        return OperationMessage(GQL_DATA, DataPayload(data, null), id)
     }
 }
