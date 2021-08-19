@@ -55,7 +55,7 @@ class WebsocketGraphQLClientTest {
         private val TEST_DATA_C = mapOf(Pair("a", 3), Pair("b", "world"), Pair("c", false))
     }
 
-    lateinit var subscriptionsClient: SubscriptionsTransportWsClient
+    lateinit var subscriptionsClient: OperationMessageWebSocketClient
     lateinit var client: WebsocketGraphQLClient
     lateinit var server: TestPublisher<OperationMessage>
 
@@ -242,13 +242,7 @@ class WebsocketGraphQLClientTest {
         ))
     }
 
-    fun dataMessages(data: List<Map<String, Any?>>, id: String): Flux<OperationMessage> {
-        return Flux
-            .fromIterable(data)
-            .map { OperationMessage(GQL_DATA, DataPayload(it, null), id) }
-    }
-
-    fun dataMessage(data: Map<String, Any?>, id: String): OperationMessage {
+    private fun dataMessage(data: Map<String, Any?>, id: String): OperationMessage {
         return OperationMessage(GQL_DATA, DataPayload(data, null), id)
     }
 }

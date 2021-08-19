@@ -28,7 +28,6 @@ import org.springframework.web.reactive.socket.client.WebSocketClient
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.publisher.Sinks
-import reactor.core.scheduler.Schedulers
 import reactor.util.concurrent.Queues
 import java.net.URI
 import java.time.Duration
@@ -39,7 +38,7 @@ import java.util.concurrent.atomic.AtomicLong
  * https://github.com/apollographql/subscriptions-transport-ws/blob/master/PROTOCOL.md
  */
 class WebsocketGraphQLClient(
-    private val client: SubscriptionsTransportWsClient,
+    private val client: OperationMessageWebSocketClient,
     private val acknowledgementTimeout: Duration): ReactiveGraphQLClient {
     companion object {
         private val DEFAULT_ACKNOWLEDGEMENT_TIMEOUT = Duration.ofSeconds(30)
@@ -51,14 +50,14 @@ class WebsocketGraphQLClient(
         url: String,
         client: WebSocketClient,
         acknowledgementTimeout: Duration):
-            this(SubscriptionsTransportWsClient(url, client), acknowledgementTimeout)
+            this(OperationMessageWebSocketClient(url, client), acknowledgementTimeout)
 
     constructor(
         url: String,
         client: WebSocketClient):
-            this(SubscriptionsTransportWsClient(url, client), DEFAULT_ACKNOWLEDGEMENT_TIMEOUT)
+            this(OperationMessageWebSocketClient(url, client), DEFAULT_ACKNOWLEDGEMENT_TIMEOUT)
 
-    constructor(client: SubscriptionsTransportWsClient):
+    constructor(client: OperationMessageWebSocketClient):
             this(client, DEFAULT_ACKNOWLEDGEMENT_TIMEOUT)
 
     private val subscriptionCount = AtomicLong(0L)
@@ -93,6 +92,7 @@ class WebsocketGraphQLClient(
         variables: Map<String, Any>,
         operationName: String?,
     ): Flux<GraphQLResponse> {
+        // Generate a unique number for each subscription in the same session.
         val subscriptionId = subscriptionCount
             .incrementAndGet()
             .toString()
@@ -103,6 +103,8 @@ class WebsocketGraphQLClient(
         )
         val stopMessage = OperationMessage(GQL_STOP, null, subscriptionId)
 
+        // Because handshake is cached it should have only been done once, all subsequent calls to
+        // reactiveExecuteQuery() will proceed straight to client.receive()
         return handshake
             .doOnSuccess { client.send(queryMessage) }
             .thenMany(
@@ -150,7 +152,10 @@ class WebsocketGraphQLClient(
 }
 
 
-class SubscriptionsTransportWsClient(
+/**
+ * Wrapper around a WebSocketClient for sending/receiving OperationMessages
+ */
+class OperationMessageWebSocketClient(
     private val url: String,
     private val client: WebSocketClient) {
 
@@ -178,12 +183,20 @@ class SubscriptionsTransportWsClient(
         }
         .cache()
 
+    /**
+     * Send a message to the server, the message is buffered for sending later if connection has not been established
+     * @param message The OperationMessage to send
+     */
     fun send(message: OperationMessage) {
         outgoingSink
             .tryEmitNext(message)
             .orThrow()
     }
 
+    /**
+     * Stream messages from the server, lazily establish connection
+     * @return Flux of OperationMessages
+     */
     fun receive(): Flux<OperationMessage> {
         return Flux.defer {
             conn.subscribe()
@@ -192,21 +205,22 @@ class SubscriptionsTransportWsClient(
     }
 
     private fun exchange(
-        incomingSink: Sinks.Many<OperationMessage>,
-        outgoingSink: Sinks.Many<OperationMessage>,
+        incomingMessages: Sinks.Many<OperationMessage>,
+        outgoingMessages: Sinks.Many<OperationMessage>,
         session: WebSocketSession): Mono<Void> {
-        val incomingMessages = session
+        // Create chains to handle de/serialization
+        val incomingDeserialized = session
             .receive()
             .map(this::decodeMessage)
-            .doOnNext(incomingSink::tryEmitNext)
-
-        val outgoingMessages = session
-            .send(outgoingSink
+            .doOnNext(incomingMessages::tryEmitNext)
+        val outgoingSerialized = session
+            .send(outgoingMessages
                 .asFlux()
                 .map{ createMessage(session, it) })
 
+        // Transfer the contents of the sinks to/from the server
         return Flux
-            .merge(incomingMessages, outgoingMessages)
+            .merge(incomingDeserialized, outgoingSerialized)
             .then()
     }
 
@@ -264,5 +278,3 @@ data class QueryPayload(
     val operationName: String?,
     @JsonProperty("query")
     val query: String)
-
-
