@@ -123,7 +123,6 @@ class DgsSchemaProvider(
         runtimeWiringBuilder.codeRegistry(codeRegistryBuilder.build())
 
         dgsComponents.forEach { dgsComponent -> invokeDgsRuntimeWiring(dgsComponent, runtimeWiringBuilder) }
-
         val graphQLSchema =
             Federation.transform(mergedRegistry, runtimeWiringBuilder.build()).fetchEntities(entityFetcher)
                 .resolveEntityType(typeResolver).build()
@@ -287,7 +286,7 @@ class DgsSchemaProvider(
     private fun createBasicDataFetcher(method: Method, dgsComponent: Any, isSubscription: Boolean): DataFetcher<Any?> {
         return DataFetcher<Any?> { environment ->
             val dfe = DgsDataFetchingEnvironment(environment)
-            val result = DataFetcherInvoker(cookieValueResolver, defaultParameterNameDiscoverer, objectMapper, dfe, dgsComponent, method).invokeDataFetcher()
+            val result = DataFetcherInvoker(cookieValueResolver, defaultParameterNameDiscoverer, dfe, dgsComponent, method).invokeDataFetcher()
             when {
                 isSubscription -> {
                     result
