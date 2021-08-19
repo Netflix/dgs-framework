@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.client
 
 import graphql.GraphQLException
 import io.mockk.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
@@ -37,15 +38,10 @@ import reactor.test.StepVerifier
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
-import org.springframework.web.reactive.socket.client.ReactorNettyWebSocketClient
-import reactor.core.publisher.Mono
-import reactor.core.publisher.Sinks
 import java.time.Duration
 import java.util.concurrent.TimeoutException
 import java.util.stream.Collectors
-import kotlin.math.sin
 
 class WebsocketGraphQLClientTest {
     companion object {

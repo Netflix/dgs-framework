@@ -28,6 +28,7 @@ import org.springframework.web.reactive.socket.client.WebSocketClient
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.publisher.Sinks
+import reactor.core.scheduler.Schedulers
 import reactor.util.concurrent.Queues
 import java.net.URI
 import java.time.Duration
@@ -102,7 +103,7 @@ class WebsocketGraphQLClient(
             handshake
                 .doOnSuccess { client.send(queryMessage) }
                 .thenMany(
-            client.receive()
+            client.receive().doOnNext { println("RCV [$subscriptionId]: $it") }
                 .filter { it.id == subscriptionId }
                 .takeUntil { it.type == GQL_COMPLETE }
                 .doOnCancel {
@@ -168,10 +169,12 @@ class SubscriptionsTransportWsClient(
         .many()
         .unicast()
         .onBackpressureBuffer<OperationMessage>()
-    private val conn = Mono.defer {
-        val uri = URI(url)
-        client.execute(uri) { exchange(incomingSink, outgoingSink, it) }
-    }.cache()
+    private val conn = Mono
+        .defer {
+            val uri = URI(url)
+            client.execute(uri) { exchange(incomingSink, outgoingSink, it) }
+        }
+        .cache()
 
     fun send(message: OperationMessage) {
         outgoingSink
