@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import graphql.GraphQLException
-import org.reactivestreams.Publisher
 import org.springframework.web.reactive.socket.WebSocketMessage
 import org.springframework.web.reactive.socket.WebSocketSession
 import org.springframework.web.reactive.socket.client.WebSocketClient
@@ -31,7 +30,7 @@ import reactor.core.publisher.Mono
 import reactor.core.publisher.Sinks
 import reactor.util.concurrent.Queues
 import java.net.URI
-import java.util.concurrent.atomic.AtomicInteger
+import java.time.Duration
 import java.util.concurrent.atomic.AtomicLong
 
 /**
@@ -39,32 +38,43 @@ import java.util.concurrent.atomic.AtomicLong
  * https://github.com/apollographql/subscriptions-transport-ws/blob/master/PROTOCOL.md
  */
 class WebsocketGraphQLClient(
-    private val url: String,
-    private val client: WebSocketClient): ReactiveGraphQLClient {
+    private val client: SubscriptionsTransportWsClient,
+    private val acknowledgementTimeout: Duration): ReactiveGraphQLClient {
     companion object {
+        private val DEFAULT_ACKNOWLEDGEMENT_TIMEOUT = Duration.ofSeconds(30)
         private val CONNECTION_INIT_MESSAGE = OperationMessage(GQL_CONNECTION_INIT, null, null)
-        private val CONNECTION_TERMINATE_MESSAGE = OperationMessage(GQL_CONNECTION_TERMINATE, null, null)
         private val MAPPER = jacksonObjectMapper()
     }
 
-    // Sinks are used as buffers, incoming messages from the server are
-    // buffered in incomingSink before being consumed. Outgoing messages
-    // for the server are buffered in outgoingSink before being sent.
-    private val incomingSink = Sinks
-        .many()
-        .multicast()
-        // Flag prevents the sink from auto-cancelling on the completion of a single subscriber, see:
-        // https://stackoverflow.com/questions/66671636/why-is-sinks-many-multicast-onbackpressurebuffer-completing-after-one-of-t
-        .onBackpressureBuffer<OperationMessage>(Queues.SMALL_BUFFER_SIZE, false)
-    private val outgoingSink = Sinks
-        .many()
-        .unicast()
-        .onBackpressureBuffer<OperationMessage>()
-    private val conn = Mono.defer {
-        val uri = URI(url)
-        client.execute(uri) { exchange(incomingSink, outgoingSink, it) }
-    }.cache()
+    constructor(
+        url: String,
+        client: WebSocketClient,
+        acknowledgementTimeout: Duration):
+            this(SubscriptionsTransportWsClient(url, client), acknowledgementTimeout)
+
+    constructor(
+        url: String,
+        client: WebSocketClient):
+            this(SubscriptionsTransportWsClient(url, client), DEFAULT_ACKNOWLEDGEMENT_TIMEOUT)
+
+    constructor(client: SubscriptionsTransportWsClient):
+            this(client, DEFAULT_ACKNOWLEDGEMENT_TIMEOUT)
+
     private val subscriptionCount = AtomicLong(0L)
+    private val handshake = Mono.defer {
+        client.send(CONNECTION_INIT_MESSAGE)
+        client.receive()
+            .take(1)
+            .map {
+                if (it.type == GQL_CONNECTION_ACK)
+                    it
+                else
+                    throw GraphQLException("Acknowledgement expected from server, received $it")
+            }
+            .timeout(acknowledgementTimeout)
+            .then()
+    }.cache()
+
 
     override fun reactiveExecuteQuery(
         query: String,
@@ -81,7 +91,6 @@ class WebsocketGraphQLClient(
         val subscriptionId = subscriptionCount
             .incrementAndGet()
             .toString()
-
         val queryMessage = OperationMessage(
             GQL_START,
             QueryPayload(variables, emptyMap(), operationName, query),
@@ -90,57 +99,17 @@ class WebsocketGraphQLClient(
         val stopMessage = OperationMessage(GQL_STOP, null, subscriptionId)
 
         return Flux.defer {
-            val messageStream = incomingSink
-                .asFlux()
-                .takeUntil { it.type == GQL_COMPLETE }
+            handshake
+                .doOnSuccess { client.send(queryMessage) }
+                .thenMany(
+            client.receive()
                 .filter { it.id == subscriptionId }
+                .takeUntil { it.type == GQL_COMPLETE }
                 .doOnCancel {
-                    outgoingSink.tryEmitNext(stopMessage)
+                    client.send(stopMessage)
                 }
-                .flatMap(this::handleMessage)
-
-            // First send the handshake message, then the query
-            // TODO: Should await acknowledgement message before sending query
-            outgoingSink.tryEmitNext(CONNECTION_INIT_MESSAGE)
-            outgoingSink.tryEmitNext(queryMessage)
-
-            conn.subscribe()
-
-            messageStream
+                .flatMap(this::handleMessage))
         }
-    }
-
-    fun exchange(
-        incomingSink: Sinks.Many<OperationMessage>,
-        outgoingSink: Sinks.Many<OperationMessage>,
-        session: WebSocketSession): Mono<Void> {
-        val incomingMessages = session
-            .receive()
-            .map(this::decodeMessage)
-            .doOnNext(incomingSink::tryEmitNext)
-
-        val outgoingMessages = session
-            .send(outgoingSink
-                .asFlux()
-                .map{ createMessage(session, it) })
-
-        return Flux
-            .merge(incomingMessages, outgoingMessages)
-            .then()
-    }
-
-    private fun createMessage(
-        session: WebSocketSession,
-        message: OperationMessage): WebSocketMessage {
-
-        return session.textMessage(MAPPER.writeValueAsString(message))
-    }
-
-    private fun decodeMessage(message: WebSocketMessage): OperationMessage {
-        val messageText = message.payloadAsText;
-        val type = object : TypeReference<OperationMessage>() {}
-
-        return MAPPER.readValue(messageText, type)
     }
 
     private fun handleMessage(
@@ -175,6 +144,80 @@ class WebsocketGraphQLClient(
                         "${message.type}. Full message: $message")
             }
         }
+    }
+}
+
+
+class SubscriptionsTransportWsClient(
+    private val url: String,
+    private val client: WebSocketClient) {
+
+    companion object {
+        private val MAPPER = jacksonObjectMapper()
+    }
+
+    // Sinks are used as buffers, incoming messages from the server are
+    // buffered in incomingSink before being consumed. Outgoing messages
+    // for the server are buffered in outgoingSink before being sent.
+    private val incomingSink = Sinks
+        .many()
+        .multicast()
+        // Flag prevents the sink from auto-cancelling on the completion of a single subscriber, see:
+        // https://stackoverflow.com/questions/66671636/why-is-sinks-many-multicast-onbackpressurebuffer-completing-after-one-of-t
+        .onBackpressureBuffer<OperationMessage>(Queues.SMALL_BUFFER_SIZE, false)
+    private val outgoingSink = Sinks
+        .many()
+        .unicast()
+        .onBackpressureBuffer<OperationMessage>()
+    private val conn = Mono.defer {
+        val uri = URI(url)
+        client.execute(uri) { exchange(incomingSink, outgoingSink, it) }
+    }.cache()
+
+    fun send(message: OperationMessage) {
+        outgoingSink
+            .tryEmitNext(message)
+            .orThrow()
+    }
+
+    fun receive(): Flux<OperationMessage> {
+        return Flux.defer {
+            conn.subscribe()
+            incomingSink.asFlux()
+        }
+    }
+
+    private fun exchange(
+        incomingSink: Sinks.Many<OperationMessage>,
+        outgoingSink: Sinks.Many<OperationMessage>,
+        session: WebSocketSession): Mono<Void> {
+        val incomingMessages = session
+            .receive()
+            .map(this::decodeMessage)
+            .doOnNext(incomingSink::tryEmitNext)
+
+        val outgoingMessages = session
+            .send(outgoingSink
+                .asFlux()
+                .map{ createMessage(session, it) })
+
+        return Flux
+            .merge(incomingMessages, outgoingMessages)
+            .then()
+    }
+
+    private fun createMessage(
+        session: WebSocketSession,
+        message: OperationMessage): WebSocketMessage {
+
+        return session.textMessage(MAPPER.writeValueAsString(message))
+    }
+
+    private fun decodeMessage(message: WebSocketMessage): OperationMessage {
+        val messageText = message.payloadAsText;
+        val type = object : TypeReference<OperationMessage>() {}
+
+        return MAPPER.readValue(messageText, type)
     }
 }
 
