@@ -16,14 +16,13 @@
 
 package com.netflix.graphql.dgs.internal
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.isKotlinClass
 import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
 import com.netflix.graphql.dgs.InputArgument
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
 import com.netflix.graphql.dgs.exceptions.DgsMissingCookieException
 import graphql.schema.DataFetchingEnvironment
-import graphql.schema.GraphQLScalarType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -36,7 +35,6 @@ import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ValueConstants
-import org.springframework.web.multipart.MultipartFile
 import java.lang.reflect.Method
 import java.lang.reflect.Parameter
 import java.util.*
@@ -47,7 +45,6 @@ import kotlin.reflect.jvm.kotlinFunction
 class DataFetcherInvoker(
     private val cookieValueResolver: Optional<CookieValueResolver>,
     defaultParameterNameDiscoverer: DefaultParameterNameDiscoverer,
-    private val objectMapper: ObjectMapper,
     private val environment: DataFetchingEnvironment,
     private val dgsComponent: Any,
     private val method: Method
@@ -61,14 +58,37 @@ class DataFetcherInvoker(
         method.parameters.asSequence().filter { it.type != Continuation::class.java }.forEachIndexed { idx, parameter ->
 
             when {
-                parameter.isAnnotationPresent(InputArgument::class.java) -> args.add(processInputArgument(parameter, idx))
-                parameter.isAnnotationPresent(RequestHeader::class.java) -> args.add(processRequestHeader(environment, parameter, idx))
-                parameter.isAnnotationPresent(RequestParam::class.java) -> args.add(processRequestArgument(environment, parameter, idx))
-                parameter.isAnnotationPresent(CookieValue::class.java) -> args.add(processCookieValueArgument(environment, parameter, idx))
+                parameter.isAnnotationPresent(InputArgument::class.java) -> args.add(
+                    processInputArgument(
+                        parameter,
+                        idx
+                    )
+                )
+                parameter.isAnnotationPresent(RequestHeader::class.java) -> args.add(
+                    processRequestHeader(
+                        environment,
+                        parameter,
+                        idx
+                    )
+                )
+                parameter.isAnnotationPresent(RequestParam::class.java) -> args.add(
+                    processRequestArgument(
+                        environment,
+                        parameter,
+                        idx
+                    )
+                )
+                parameter.isAnnotationPresent(CookieValue::class.java) -> args.add(
+                    processCookieValueArgument(
+                        environment,
+                        parameter,
+                        idx
+                    )
+                )
 
                 environment.containsArgument(parameterNames[idx]) -> {
                     val parameterValue: Any = environment.getArgument(parameterNames[idx])
-                    val convertValue = objectMapper.convertValue(parameterValue, parameter.type)
+                    val convertValue = convertValue(parameterValue, parameter, null)
                     args.add(convertValue)
                 }
 
@@ -173,32 +193,16 @@ class DataFetcherInvoker(
         val convertValue: Any? = if (parameterValue is List<*> && collectionType != Object::class.java) {
             try {
                 // Return a list of elements that are converted to their collection type, e.e.g. List<Person>, List<String> etc.
-                parameterValue.map { item -> objectMapper.convertValue(item, collectionType) }.toList()
+                parameterValue.map { item -> convertValue(item, parameter, collectionType) }.toList()
             } catch (ex: Exception) {
                 throw DgsInvalidInputArgumentException(
                     "Specified type '$collectionType' is invalid for $parameterName.",
                     ex
                 )
             }
-        } else if (parameterValue is List<*>) {
-            // Return as is for all other types of Lists, i.e. custom scalars e.g. List<UUID>, and other scalar types like List<Integer> etc.
-            parameterValue
-        } else if (parameterValue is MultipartFile) {
-            parameterValue
-        } else if (environment.fieldDefinition.arguments.find { it.name == parameterName }?.type is GraphQLScalarType) {
-            // Return the value with it's type for scalars
-            parameterValue
         } else {
             // Return the converted value mapped to the defined type
-            if (parameter.type.isAssignableFrom(Optional::class.java)) {
-                if (collectionType != Object::class.java) {
-                    objectMapper.convertValue(parameterValue, collectionType)
-                } else {
-                    throw DgsInvalidInputArgumentException("When Optional<T> is used, the type must be specified using the collectionType argument of the @InputArgument annotation.")
-                }
-            } else {
-                objectMapper.convertValue(parameterValue, parameter.type)
-            }
+            convertValue(parameterValue, parameter, collectionType)
         }
 
         val paramType = parameter.type
@@ -214,6 +218,28 @@ class DataFetcherInvoker(
 
         return optionalValue
     }
+
+    private fun convertValue(parameterValue: Any?, parameter: Parameter, collectionType: Class<out Any>?) =
+        if (parameterValue is Map<*, *>) {
+            // Account for Optional
+            val targetType = if (parameter.type.isAssignableFrom(Optional::class.java) || parameter.type.isAssignableFrom(List::class.java) || parameter.type.isAssignableFrom(Set::class.java)) {
+                if (collectionType != null && collectionType != Object::class.java) {
+                    collectionType
+                } else {
+                    throw DgsInvalidInputArgumentException("When ${parameter.type.simpleName}<T> is used, the type must be specified using the collectionType argument of the @InputArgument annotation.")
+                }
+            } else {
+                parameter.type
+            }
+
+            if (targetType.isKotlinClass()) {
+                InputObjectMapper.mapToKotlinObject(parameterValue as Map<String, *>, targetType.kotlin)
+            } else {
+                InputObjectMapper.mapToJavaObject(parameterValue as Map<String, *>, targetType)
+            }
+        } else {
+            parameterValue
+        }
 
     private fun getValueAsOptional(value: Any?, parameter: Parameter) =
         if (parameter.type.isAssignableFrom(Optional::class.java)) {
