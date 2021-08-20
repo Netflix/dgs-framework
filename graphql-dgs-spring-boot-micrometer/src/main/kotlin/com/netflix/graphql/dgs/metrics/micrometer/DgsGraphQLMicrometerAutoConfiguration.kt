@@ -167,8 +167,12 @@ open class DgsGraphQLMicrometerAutoConfiguration {
             private val DEFAULT_METER_REGISTRY = SimpleMeterRegistry()
         }
 
+        private val registry: MeterRegistry by lazy {
+            meterRegistryProvider.ifAvailable ?: DEFAULT_METER_REGISTRY
+        }
+
         override fun get(): MeterRegistry {
-            return meterRegistryProvider.ifAvailable ?: DEFAULT_METER_REGISTRY
+            return registry
         }
     }
 }
