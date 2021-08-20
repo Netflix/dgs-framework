@@ -21,7 +21,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 
-class InputObjectMapper {
+object InputObjectMapper {
     fun <T : Any> mapToKotlinObject(inputMap: Map<String, *>, targetClass: KClass<T>): T {
         val params = targetClass.primaryConstructor!!.parameters
         val inputValues = mutableListOf<Any?>()

@@ -43,7 +43,7 @@ internal class InputObjectMapperTest {
 
     @Test
     fun mapToJavaClass() {
-        val mapToObject = InputObjectMapper().mapToJavaObject(input, InputObject::class.java)
+        val mapToObject = InputObjectMapper.mapToJavaObject(input, InputObject::class.java)
         assertThat(mapToObject.simpleString).isEqualTo("hello")
         assertThat(mapToObject.someDate).isEqualTo(currentDate)
         assertThat(mapToObject.someObject.key1).isEqualTo("value1")
@@ -53,7 +53,7 @@ internal class InputObjectMapperTest {
 
     @Test
     fun mapToJavaClassWithKotlinProperty() {
-        val mapToObject = InputObjectMapper().mapToJavaObject(inputKotlinJavaMix, InputObjectWithKotlinProperty::class.java)
+        val mapToObject = InputObjectMapper.mapToJavaObject(inputKotlinJavaMix, InputObjectWithKotlinProperty::class.java)
         assertThat(mapToObject.name).isEqualTo("dgs")
         assertThat(mapToObject.objectProperty.simpleString).isEqualTo("hello")
         assertThat(mapToObject.objectProperty.someObject.key1).isEqualTo("value1")
@@ -61,7 +61,7 @@ internal class InputObjectMapperTest {
 
     @Test
     fun mapToKotlinDataClass() {
-        val mapToObject = InputObjectMapper().mapToKotlinObject(input, KotlinInputObject::class)
+        val mapToObject = InputObjectMapper.mapToKotlinObject(input, KotlinInputObject::class)
         assertThat(mapToObject.simpleString).isEqualTo("hello")
         assertThat(mapToObject.someDate).isEqualTo(currentDate)
         assertThat(mapToObject.someObject.key1).isEqualTo("value1")
@@ -71,7 +71,7 @@ internal class InputObjectMapperTest {
 
     @Test
     fun mapToKotlinDataClassWithJavaProperty() {
-        val mapToObject = InputObjectMapper().mapToKotlinObject(inputKotlinJavaMix, KotlinWithJavaProperty::class)
+        val mapToObject = InputObjectMapper.mapToKotlinObject(inputKotlinJavaMix, KotlinWithJavaProperty::class)
         assertThat(mapToObject.name).isEqualTo("dgs")
         assertThat(mapToObject.objectProperty.simpleString).isEqualTo("hello")
         assertThat(mapToObject.objectProperty.someObject.key1).isEqualTo("value1")
@@ -79,7 +79,7 @@ internal class InputObjectMapperTest {
 
     @Test
     fun mapToJavaClassWithNull() {
-        val mapToObject = InputObjectMapper().mapToJavaObject(inputWithNulls, InputObject::class.java)
+        val mapToObject = InputObjectMapper.mapToJavaObject(inputWithNulls, InputObject::class.java)
         assertThat(mapToObject.simpleString).isNull()
         assertThat(mapToObject.someDate).isEqualTo(currentDate)
         assertThat(mapToObject.someObject.key1).isEqualTo("value1")
@@ -89,7 +89,7 @@ internal class InputObjectMapperTest {
 
     @Test
     fun mapToKotlinDataClassWithNull() {
-        val mapToObject = InputObjectMapper().mapToKotlinObject(inputWithNulls, KotlinInputObject::class)
+        val mapToObject = InputObjectMapper.mapToKotlinObject(inputWithNulls, KotlinInputObject::class)
         assertThat(mapToObject.simpleString).isNull()
         assertThat(mapToObject.someDate).isEqualTo(currentDate)
         assertThat(mapToObject.someObject.key1).isEqualTo("value1")

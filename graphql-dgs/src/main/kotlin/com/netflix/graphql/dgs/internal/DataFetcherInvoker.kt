@@ -233,9 +233,9 @@ class DataFetcherInvoker(
             }
 
             if (targetType.isKotlinClass()) {
-                InputObjectMapper().mapToKotlinObject(parameterValue as Map<String, *>, targetType.kotlin)
+                InputObjectMapper.mapToKotlinObject(parameterValue as Map<String, *>, targetType.kotlin)
             } else {
-                InputObjectMapper().mapToJavaObject(parameterValue as Map<String, *>, targetType)
+                InputObjectMapper.mapToJavaObject(parameterValue as Map<String, *>, targetType)
             }
         } else {
             parameterValue
