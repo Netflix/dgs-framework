@@ -21,5 +21,5 @@ dependencies {
     implementation("org.springframework:spring-context")
     implementation("org.springframework:spring-web")
     implementation("com.fasterxml.jackson.core:jackson-databind")
-    testCompile ('io.projectreactor:reactor-test')
+    testImplementation ('io.projectreactor:reactor-test')
 }
