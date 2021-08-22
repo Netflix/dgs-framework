@@ -22,6 +22,8 @@ dependencies {
     api("com.graphql-java:graphql-java")
     api("com.jayway.jsonpath:json-path")
 
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+
     implementation("org.springframework:spring-web")
     implementation("org.springframework:spring-context")
 

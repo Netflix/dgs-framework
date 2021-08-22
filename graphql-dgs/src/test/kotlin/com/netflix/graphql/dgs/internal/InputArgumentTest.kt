@@ -1019,6 +1019,7 @@ internal class InputArgumentTest {
 
         val build = GraphQL.newGraphQL(schema).build()
         val executionResult = build.execute("""{hello(name: "tester")}""")
+        Assertions.assertTrue(executionResult.errors.isEmpty())
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("Hello, tester", data["hello"])
@@ -1124,6 +1125,7 @@ internal class InputArgumentTest {
 
         val build = GraphQL.newGraphQL(schema).build()
         val executionResult = build.execute("""{hello}""")
+        Assertions.assertTrue(executionResult.errors.isEmpty())
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("Hello, default value", data["hello"])

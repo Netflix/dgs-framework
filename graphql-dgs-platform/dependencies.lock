@@ -4,7 +4,7 @@
             "locked": "2.12.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.9.RELEASE"
