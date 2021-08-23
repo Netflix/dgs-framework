@@ -16,6 +16,8 @@
 
 package com.netflix.graphql.types.errors;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import graphql.ErrorClassification;
 import graphql.GraphQLError;
 import graphql.execution.ResultPath;
@@ -36,7 +38,12 @@ public class TypedGraphQLError implements GraphQLError {
     private final List<Object> path;
     private final Map<String, Object> extensions;
 
-    public TypedGraphQLError(String message, List<SourceLocation> locations, ErrorClassification classification, List<Object> path, Map<String, Object> extensions) {
+    @JsonCreator
+    public TypedGraphQLError(@JsonProperty("message") String message,
+                             @JsonProperty("locations") List<SourceLocation> locations,
+                             @JsonProperty("classification") ErrorClassification classification,
+                             @JsonProperty("path") List<Object> path,
+                             @JsonProperty("extensions") Map<String, Object> extensions) {
         this.message = message;
         this.locations = locations;
         this.classification = classification;
