@@ -29,13 +29,16 @@ object InputObjectMapper {
         params.forEach {
             val input = inputMap[it.name]
             if (input is Map<*, *>) {
-                val nestedTarged = it.type.jvmErasure
-                val subValue = if (nestedTarged.java.isKotlinClass()) {
-                    mapToKotlinObject(input as Map<String, *>, nestedTarged)
+                val nestedTarget = it.type.jvmErasure
+                val subValue = if (nestedTarget.java.isKotlinClass()) {
+                    mapToKotlinObject(input as Map<String, *>, nestedTarget)
                 } else {
-                    mapToJavaObject(input as Map<String, *>, nestedTarged.java)
+                    mapToJavaObject(input as Map<String, *>, nestedTarget.java)
                 }
                 inputValues.add(subValue)
+            } else if (it.type.jvmErasure.java.isEnum) {
+                val enumValue = (it.type.jvmErasure.java.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == input }
+                inputValues.add(enumValue)
             } else {
                 inputValues.add(input)
             }
@@ -60,6 +63,9 @@ object InputObjectMapper {
                 }
 
                 declaredField.set(instance, mappedValue)
+            } else if (declaredField.type.isEnum) {
+                val enumValue = (declaredField.type.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == it.value }
+                declaredField.set(instance, enumValue)
             } else {
                 declaredField.set(instance, it.value)
             }

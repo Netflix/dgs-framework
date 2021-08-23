@@ -237,6 +237,9 @@ class DataFetcherInvoker(
             } else {
                 InputObjectMapper.mapToJavaObject(parameterValue as Map<String, *>, targetType)
             }
+        } else if (parameter.type.isEnum) {
+            (parameter.type.enumConstants as Array<Enum<*>>).find { it.name == parameterValue }
+                ?: throw DgsInvalidInputArgumentException("Invalid enum value '$parameterValue for enum type ${parameter.type.name}")
         } else {
             parameterValue
         }
