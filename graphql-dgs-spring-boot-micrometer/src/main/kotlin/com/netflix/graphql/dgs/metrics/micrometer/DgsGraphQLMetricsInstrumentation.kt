@@ -42,6 +42,14 @@ class DgsGraphQLMetricsInstrumentation(
 
     companion object {
         private val log: Logger = LoggerFactory.getLogger(DgsGraphQLMetricsInstrumentation::class.java)
+
+        private object DefaultExecutionStrategyInstrumentationContext : ExecutionStrategyInstrumentationContext {
+            override fun onDispatched(result: CompletableFuture<ExecutionResult>) {
+            }
+
+            override fun onCompleted(result: ExecutionResult, t: Throwable?) {
+            }
+        }
     }
 
     override fun createState(): InstrumentationState {
@@ -166,18 +174,12 @@ class DgsGraphQLMetricsInstrumentation(
     ): ExecutionStrategyInstrumentationContext {
         val state: MetricsInstrumentationState = parameters.getInstrumentationState()
         if (parameters.executionContext.getRoot<Any>() == null) {
-            state.operation = of(parameters.executionContext.operationDefinition.operation.name.toUpperCase())
+            state.operation = of(parameters.executionContext.operationDefinition.operation.name.uppercase())
             if (!state.operationName.isPresent) {
                 state.operationName = ofNullable(parameters.executionContext.operationDefinition?.name)
             }
         }
-        return object : ExecutionStrategyInstrumentationContext {
-            override fun onDispatched(result: CompletableFuture<ExecutionResult>) {
-            }
-
-            override fun onCompleted(result: ExecutionResult, t: Throwable) {
-            }
-        }
+        return DefaultExecutionStrategyInstrumentationContext
     }
 
     private fun recordDataFetcherMetrics(
