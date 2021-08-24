@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.pagination
 
+import graphql.introspection.Introspection
 import graphql.language.*
 import graphql.schema.idl.SchemaParser
 import io.mockk.junit5.MockKExtension
@@ -49,6 +50,10 @@ class DgsPaginationTypeDefinitionRegistryTest {
 
         val typeRegistry = SchemaParser().parse(schema)
         val paginatedTypeRegistry = paginationTypeRegistry.registry(typeRegistry)
+
+        val addedDirective = paginatedTypeRegistry.directiveDefinitions["connection"]
+        assertThat(addedDirective).isNotNull
+        assertThat(addedDirective!!.directiveLocations[0].name).isEqualTo(Introspection.DirectiveLocation.OBJECT.name)
 
         assertThat(paginatedTypeRegistry.types()["MovieConnection"]).isNotNull
         assertThat(paginatedTypeRegistry.types()["MovieEdge"]).isNotNull
