@@ -47,7 +47,7 @@ class DgsGraphQLMetricsInstrumentation(
             override fun onDispatched(result: CompletableFuture<ExecutionResult>) {
             }
 
-            override fun onCompleted(result: ExecutionResult, t: Throwable?) {
+            override fun onCompleted(result: ExecutionResult?, t: Throwable?) {
             }
         }
     }
