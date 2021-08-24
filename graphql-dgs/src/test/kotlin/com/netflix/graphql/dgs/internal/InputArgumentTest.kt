@@ -1306,4 +1306,34 @@ internal class InputArgumentTest {
         Assertions.assertEquals("Hello, this is a FRIENDLY greeting", data["hello"])
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
+
+    @Test
+    fun `An argument not annotated with @InputArgument should fall back to argument name resolution`() {
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(name: String): String {
+                return "Hello, $name"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val schema = provider.schema()
+
+        val build = GraphQL.newGraphQL(schema).build()
+        val executionResult = build.execute("""{hello(name: "tester")}""")
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("Hello, tester", data["hello"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
 }
