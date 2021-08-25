@@ -32,9 +32,11 @@ class DgsPaginationTypeDefinitionRegistry {
 
         val typeDefinitionRegistry = TypeDefinitionRegistry()
         typeDefinitionRegistry.addAll(connectionTypes)
-        val directive = DirectiveDefinition.newDirectiveDefinition().name("connection")
-            .directiveLocation(DirectiveLocation.newDirectiveLocation().name(Introspection.DirectiveLocation.OBJECT.name).build()).build()
-        typeDefinitionRegistry.add(directive)
+        if (! schemaRegistry.directiveDefinitions.contains("connection")) {
+            val directive = DirectiveDefinition.newDirectiveDefinition().name("connection")
+                .directiveLocation(DirectiveLocation.newDirectiveLocation().name(Introspection.DirectiveLocation.OBJECT.name).build()).build()
+            typeDefinitionRegistry.add(directive)
+        }
 
         return typeDefinitionRegistry
     }
@@ -48,7 +50,7 @@ class DgsPaginationTypeDefinitionRegistry {
                 definitions.add(createEdge(it.name))
             }
 
-        if (types.find { it.hasDirective("connection") } != null && types.find { it.name == "PageInfo" } == null) {
+        if (types.any { it.hasDirective("connection") } && ! types.any { it.name == "PageInfo" }) {
             definitions.add(createPageInfo())
         }
 
