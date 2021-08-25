@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.pagination
 
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
+import graphql.introspection.Introspection
 import graphql.language.*
 import graphql.schema.idl.TypeDefinitionRegistry
 
@@ -28,8 +29,15 @@ class DgsPaginationTypeDefinitionRegistry {
     fun registry(schemaRegistry: TypeDefinitionRegistry): TypeDefinitionRegistry {
         val definitions = schemaRegistry.types()
         val connectionTypes = parseConnectionDirective(definitions.values.toMutableList())
+
         val typeDefinitionRegistry = TypeDefinitionRegistry()
         typeDefinitionRegistry.addAll(connectionTypes)
+        if (! schemaRegistry.directiveDefinitions.contains("connection")) {
+            val directive = DirectiveDefinition.newDirectiveDefinition().name("connection")
+                .directiveLocation(DirectiveLocation.newDirectiveLocation().name(Introspection.DirectiveLocation.OBJECT.name).build()).build()
+            typeDefinitionRegistry.add(directive)
+        }
+
         return typeDefinitionRegistry
     }
 
@@ -42,7 +50,7 @@ class DgsPaginationTypeDefinitionRegistry {
                 definitions.add(createEdge(it.name))
             }
 
-        if (types.find { it.name == "PageInfo" } == null) {
+        if (types.any { it.hasDirective("connection") } && ! types.any { it.name == "PageInfo" }) {
             definitions.add(createPageInfo())
         }
 
