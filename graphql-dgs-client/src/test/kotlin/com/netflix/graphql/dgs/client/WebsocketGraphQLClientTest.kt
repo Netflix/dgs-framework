@@ -70,9 +70,11 @@ class WebsocketGraphQLClientTest {
 
     @Test
     fun timesOutIfNoAckFromServer() {
-        val client = WebsocketGraphQLClient(subscriptionsClient, Duration.ofSeconds(1))
+        val timeout = Duration.ofSeconds(10)
+        val client = WebsocketGraphQLClient(subscriptionsClient, timeout)
         val responses = client.reactiveExecuteQuery("", emptyMap())
-        StepVerifier.create(responses)
+        StepVerifier.withVirtualTime { responses }
+            .thenAwait(timeout.plusSeconds(1))
             .expectError(TimeoutException::class.java)
             .verify(VERIFY_TIMEOUT)
     }
