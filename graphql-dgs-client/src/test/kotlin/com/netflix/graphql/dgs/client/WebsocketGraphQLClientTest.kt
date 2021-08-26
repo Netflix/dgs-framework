@@ -31,6 +31,7 @@ package com.netflix.graphql.dgs.client
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import com.netflix.graphql.types.subscription.*
 import graphql.GraphQLException
 import io.mockk.every
 import io.mockk.mockk
