@@ -20,9 +20,7 @@ import java.lang.annotation.*;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(DgsMutations.class)
 @DgsData(parentType = "Mutation")
 public @interface DgsMutation {
     String field() default "";
-
 }

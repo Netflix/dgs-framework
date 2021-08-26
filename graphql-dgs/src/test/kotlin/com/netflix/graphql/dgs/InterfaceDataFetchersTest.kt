@@ -22,6 +22,7 @@ import graphql.schema.DataFetchingEnvironment
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -79,7 +80,8 @@ class InterfaceDataFetchersTest {
         }
 
         val queryFetcher = object : Any() {
-            @DgsQueries(DgsQuery(), DgsQuery(field = "shows"))
+            // Since the field is not explicit the name of the method will be used.
+            @DgsQuery()
             fun movies(dfe: DataFetchingEnvironment): List<Movie> {
                 return listOf(ScaryMovie(), ActionMovie())
             }
@@ -126,16 +128,20 @@ class InterfaceDataFetchersTest {
 
         val build = GraphQL.newGraphQL(schema).build()
 
-        val executionResult = build.execute("{movies {director} shows {director title description}}")
+        val executionResult = build.execute("{movies {director title description}}")
         assertEquals(0, executionResult.errors.size)
         assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, List<Map<String, *>>>>()
-        assertEquals("The Director", data["movies"]!![0]["director"])
-        assertEquals("The Director", data["movies"]!![1]["director"])
-        assertEquals("The Director", data["shows"]!![0]["director"])
-        assertEquals("Some dummy data for title", data["shows"]!![0]["title"])
-        assertEquals("The Director", data["shows"]!![1]["director"])
-        assertEquals("Some dummy data for title", data["shows"]!![1]["title"])
-        assertEquals("Some dummy data for description", data["shows"]!![1]["description"])
+        assertThat(data).hasEntrySatisfying("movies") {
+            assertThat(it).containsAll(
+                listOf(
+                    mapOf(
+                        "director" to "The Director",
+                        "title" to "Some dummy data for title",
+                        "description" to "Some dummy data for description"
+                    )
+                )
+            )
+        }
     }
 }

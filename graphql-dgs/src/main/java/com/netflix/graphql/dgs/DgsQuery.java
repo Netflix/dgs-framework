@@ -20,7 +20,6 @@ import java.lang.annotation.*;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(DgsQueries.class)
 @DgsData(parentType = "Query")
 public @interface DgsQuery {
     String field() default "";
