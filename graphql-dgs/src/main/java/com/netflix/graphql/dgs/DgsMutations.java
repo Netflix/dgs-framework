@@ -18,10 +18,15 @@ package com.netflix.graphql.dgs;
 
 import java.lang.annotation.*;
 
+/**
+ * Container annotation that aggregates several {@link DgsMutation @DgsMutation} annotations.
+ */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(DgsQueries.class)
-@DgsData(parentType = "Query")
-public @interface DgsQuery {
-    String field() default "";
+@Documented
+public @interface DgsMutations {
+    /**
+     * Return the contained {@link DgsMutation} associated with this method.
+     */
+    DgsMutation[] value();
 }

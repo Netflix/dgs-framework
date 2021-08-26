@@ -16,14 +16,13 @@
 
 package com.netflix.graphql.dgs;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
+@Repeatable(DgsMutations.class)
 @DgsData(parentType = "Mutation")
 public @interface DgsMutation {
     String field() default "";
+
 }
