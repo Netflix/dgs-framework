@@ -137,6 +137,32 @@ class MicrometerServletSmokeTest {
     }
 
     @Test
+    fun `Metrics for a query with a data fetcher with disabled instrumentation`() {
+        mvc.perform(
+            MockMvcRequestBuilders
+                .post("/graphql")
+                .content("""{ "query": "{someTrivialThings}" }""")
+        ).andExpect(status().isOk)
+            .andExpect(content().json("""{"data":{"someTrivialThings":"some insignificance"}}""", false))
+
+        val meters = fetchMeters()
+
+        assertThat(meters).containsOnlyKeys("gql.query")
+
+        assertThat(meters["gql.query"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.query"]?.first()?.id?.tags)
+            .containsAll(
+                Tags.of("execution-tag", "foo")
+                    .and("contextual-tag", "foo")
+                    .and("outcome", "success")
+                    .and("gql.operation", "QUERY")
+                    .and("gql.operation.name", "anonymous")
+                    .and("gql.query.complexity", "5")
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+            )
+    }
+
+    @Test
     fun `Metrics for a successful mutation`() {
         mvc.perform(
             // Note that the query below uses an aliased field, aliasing `ping` to `op_name`.
@@ -286,36 +312,28 @@ class MicrometerServletSmokeTest {
                     .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
             )
 
-        assertThat(meters["gql.resolver"]).isNotNull.hasSize(3)
-        assertThat(meters["gql.resolver"]?.map { it.id.tags })
+        assertThat(meters["gql.resolver"]?.first()?.id?.tags)
+            .containsAll(
+                Tags.of("gql.field", "Query.transform")
+                    .and("field-fetch-tag", "foo")
+                    .and("contextual-tag", "foo")
+                    .and("outcome", "success")
+                    .and("gql.operation", "QUERY")
+                    .and("gql.operation.name", "anonymous")
+                    .and("gql.query.complexity", "10")
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+            )
+
+        assertThat(meters["gql.dataLoader"]).isNotNull.hasSize(2)
+        assertThat(meters["gql.dataLoader"]?.map { it.id.tags })
             .containsAll(
                 listOf(
-                    Tags.of("contextual-tag", "foo")
-                        .and("field-fetch-tag", "foo")
-                        .and("gql.field", "StringTransformation.reversed")
-                        .and("outcome", "success")
-                        .and("gql.operation", "QUERY")
-                        .and("gql.operation.name", "anonymous")
-                        .and("gql.query.complexity", "10")
-                        .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    Tags.of("gql.loaderBatchSize", "2")
+                        .and("gql.loaderName", "reverser")
                         .toList(),
-                    Tags.of("contextual-tag", "foo")
-                        .and("field-fetch-tag", "foo")
-                        .and("gql.field", "StringTransformation.upperCased")
-                        .and("outcome", "success")
-                        .and("gql.operation", "QUERY")
-                        .and("gql.operation.name", "anonymous")
-                        .and("gql.query.complexity", "10")
-                        .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
-                        .toList(),
-                    Tags.of("contextual-tag", "foo")
-                        .and("field-fetch-tag", "foo")
-                        .and("gql.field", "Query.transform")
-                        .and("gql.operation", "QUERY")
-                        .and("gql.operation.name", "anonymous")
-                        .and("gql.query.complexity", "10")
-                        .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
-                        .and("outcome", "success").toList(),
+                    Tags.of("gql.loaderBatchSize", "2")
+                        .and("gql.loaderName", "upperCaseLoader")
+                        .toList()
                 )
             )
     }
@@ -717,6 +735,7 @@ class MicrometerServletSmokeTest {
                 val gqlSchema = """
                 |type Query{
                 |    ping:String
+                |    someTrivialThings: String 
                 |    transform(input:[String]): [StringTransformation]
                 |    triggerInternalFailure: String
                 |    triggerBadRequestFailure:String
@@ -737,9 +756,15 @@ class MicrometerServletSmokeTest {
                 return schemaParser.parse(gqlSchema)
             }
 
-            @DgsData(parentType = "Query", field = "ping")
+            @DgsQuery()
             fun ping(): String {
                 return "pong"
+            }
+
+            @DgsQuery()
+            @DgsEnableDataFetcherInstrumentation(false)
+            fun someTrivialThings(): String {
+                return "some insignificance"
             }
 
             @DgsData(parentType = "Mutation", field = "buzz")

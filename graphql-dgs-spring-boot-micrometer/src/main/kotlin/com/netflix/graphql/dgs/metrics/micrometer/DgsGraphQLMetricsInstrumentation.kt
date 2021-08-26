@@ -1,10 +1,12 @@
 package com.netflix.graphql.dgs.metrics.micrometer
 
 import com.netflix.graphql.dgs.Internal
+import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlMetric
 import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlTag
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsGraphQLMetricsTagsProvider
 import com.netflix.graphql.dgs.metrics.micrometer.utils.QuerySignatureRepository
+import graphql.ExecutionInput
 import graphql.ExecutionResult
 import graphql.GraphQLError
 import graphql.InvalidSyntaxError
@@ -33,6 +35,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
 class DgsGraphQLMetricsInstrumentation(
+    private val schemaProvider: DgsSchemaProvider,
     private val registrySupplier: DgsMeterRegistrySupplier,
     private val tagsProvider: DgsGraphQLMetricsTagsProvider,
     private val properties: DgsGraphQLMetricsProperties,
@@ -64,6 +67,7 @@ class DgsGraphQLMetricsInstrumentation(
         state.startTimer()
 
         state.operationName = ofNullable(parameters.operation)
+        state.isIntrospectionQuery = QueryUtils.isIntrospectionQuery(parameters.executionInput)
 
         return object : SimpleInstrumentationContext<ExecutionResult>() {
 
@@ -117,7 +121,12 @@ class DgsGraphQLMetricsInstrumentation(
     ): DataFetcher<*> {
         val state: MetricsInstrumentationState = parameters.getInstrumentationState()
         val gqlField = TagUtils.resolveDataFetcherTagValue(parameters)
-        if (parameters.isTrivialDataFetcher || TagUtils.shouldIgnoreTag(gqlField)) {
+
+        if (parameters.isTrivialDataFetcher ||
+            state.isIntrospectionQuery ||
+            TagUtils.shouldIgnoreTag(gqlField) ||
+            !schemaProvider.dataFetcherInstrumentationEnabled.getOrDefault(gqlField, true)
+        ) {
             return dataFetcher
         }
 
@@ -208,6 +217,7 @@ class DgsGraphQLMetricsInstrumentation(
     ) : InstrumentationState {
         private var timerSample: Optional<Timer.Sample> = empty()
 
+        var isIntrospectionQuery = false
         var queryComplexity: Optional<Int> = empty()
         var operation: Optional<String> = empty()
         var operationName: Optional<String> = empty()
@@ -243,6 +253,12 @@ class DgsGraphQLMetricsInstrumentation(
                         querySignature.map { it.hash }.orElse(TagUtils.TAG_VALUE_NONE)
                     )
                 )
+        }
+    }
+
+    internal object QueryUtils {
+        fun isIntrospectionQuery(input: ExecutionInput): Boolean {
+            return input.query.contains("query IntrospectionQuery") || input.operationName == "IntrospectionQuery"
         }
     }
 
