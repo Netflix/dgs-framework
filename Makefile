@@ -37,7 +37,7 @@ install-py-libs: ## Installs the Python Modules required by the scripts.
 	brew install python3
 
 
-all: test-examples ## Cleans, checks/tests, publishes the plugin locally and runs the examples.
+all: format test-examples ## Cleans, checks/tests, publishes the plugin locally and runs the examples.
 
 
 help:

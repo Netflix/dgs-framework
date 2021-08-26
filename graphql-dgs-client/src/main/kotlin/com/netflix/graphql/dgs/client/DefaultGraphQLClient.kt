@@ -61,7 +61,7 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
      * Executes a query and returns a GraphQLResponse.
      * The actual HTTP request is done by an implementation of RequestExecutor, which is user provided.
      * The RequestExecutor is typically provided as a lambda expression.
-     * The Accept and Content-Type headers are set. Additional headers can be set in the RequestExecutor.
+     * The `Accept` and `Content-Type` headers are set. Additional headers can be set in the RequestExecutor.
      * @param query The Query as a String
      * @param variables Query variables. May be empty
      * @param operationName optional operation name
@@ -85,7 +85,7 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
      * Executes a query and returns a GraphQLResponse.
      * The actual HTTP request is done by an implementation of RequestExecutor, which is user provided.
      * The RequestExecutor is typically provided as a lambda expression.
-     * The Accept and Content-Type headers are set. Additional headers can be set in the RequestExecutor.
+     * The `Accept` and `Content-Type` headers are set. Additional headers can be set in the RequestExecutor.
      * @param query The Query as a String
      * @param variables Query variables. May be empty
      * @param requestExecutor The code that does the actual HTTP request. Typically provided as a lambda expression.
@@ -104,7 +104,7 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
      * Executes a query and returns a reactive Mono<GraphQLResponse>.
      * The actual HTTP request is done by an implementation of RequestExecutor, which is user provided.
      * The RequestExecutor is typically provided as a lambda expression.
-     * The Accept and Content-Type headers are set. Additional headers can be set in the RequestExecutor.
+     * The `Accept` and `Content-Type` headers are set. Additional headers can be set in the RequestExecutor.
      * @param query The Query as a String
      * @param variables Query variables. May be empty
      * @param requestExecutor The code that does the actual HTTP request. Typically provided as a lambda expression.
@@ -123,7 +123,7 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
      * Executes a query and returns a reactive Mono<GraphQLResponse>.
      * The actual HTTP request is done by an implementation of RequestExecutor, which is user provided.
      * The RequestExecutor is typically provided as a lambda expression.
-     * The Accept and Content-Type headers are set. Additional headers can be set in the RequestExecutor.
+     * The `Accept` and `Content-Type` headers are set. Additional headers can be set in the RequestExecutor.
      * @param query The Query as a String
      * @param variables Query variables. May be empty
      * @param operationName optional operation name

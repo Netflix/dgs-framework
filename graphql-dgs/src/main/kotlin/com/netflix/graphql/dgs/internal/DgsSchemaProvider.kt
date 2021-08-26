@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.aop.support.AopUtils
 import org.springframework.context.ApplicationContext
 import org.springframework.core.DefaultParameterNameDiscoverer
+import org.springframework.core.annotation.MergedAnnotation
 import org.springframework.core.annotation.MergedAnnotations
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
@@ -201,63 +202,85 @@ class DgsSchemaProvider(
                         .isPresent(DgsData::class.java)
                 }
                 .forEach { method ->
-
-                    val mergedAnnotations = MergedAnnotations.from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY)
-                    val dgsDataAnnotation = mergedAnnotations.get(DgsData::class.java)
-                    val field = dgsDataAnnotation.getString("field").ifEmpty { method.name }
-                    val parentType = dgsDataAnnotation.getString("parentType")
-                    dataFetchers.add(DatafetcherReference(dgsComponent, method, mergedAnnotations, parentType, field))
-
-                    val enableInstrumentation =
-                        if (method.isAnnotationPresent(DgsEnableDataFetcherInstrumentation::class.java)) {
-                            val dgsEnableDataFetcherInstrumentation =
-                                method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)
-                            dgsEnableDataFetcherInstrumentation.value
-                        } else {
-                            method.returnType != CompletionStage::class.java && method.returnType != CompletableFuture::class.java
-                        }
-
-                    dataFetcherInstrumentationEnabled["$parentType.$field"] = enableInstrumentation
-
-                    try {
-                        if (!typeDefinitionRegistry.getType(parentType).isPresent) {
-                            logger.error("Parent type $parentType not found, but it was referenced in ${javaClass.name} in @DgsData annotation for field $field")
-                            throw InvalidDgsConfigurationException("Parent type $parentType not found, but it was referenced on ${javaClass.name} in @DgsData annotation for field $field")
-                        }
-                        val type = typeDefinitionRegistry.getType(parentType).get()
-                        if (type is InterfaceTypeDefinition) {
-                            val implementationsOf = typeDefinitionRegistry.getImplementationsOf(type)
-                            implementationsOf.forEach { implType ->
-                                val dataFetcher =
-                                    createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
-                                codeRegistryBuilder.dataFetcher(
-                                    FieldCoordinates.coordinates(implType.name, field),
-                                    dataFetcher
-                                )
-                                dataFetcherInstrumentationEnabled["${implType.name}.$field"] = enableInstrumentation
-                            }
-                        } else if (type is UnionTypeDefinition) {
-                            type.memberTypes.asSequence().filterIsInstance<TypeName>().forEach { memberType ->
-                                val dataFetcher =
-                                    createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
-                                codeRegistryBuilder.dataFetcher(
-                                    FieldCoordinates.coordinates(memberType.name, field),
-                                    dataFetcher
-                                )
-                                dataFetcherInstrumentationEnabled["${memberType.name}.$field"] = enableInstrumentation
-                            }
-                        } else {
-                            val dataFetcher = createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
-                            codeRegistryBuilder.dataFetcher(
-                                FieldCoordinates.coordinates(parentType, field),
-                                dataFetcher
-                            )
-                        }
-                    } catch (ex: Exception) {
-                        logger.error("Invalid parent type $parentType")
-                        throw ex
+                    val mergedAnnotations =
+                        MergedAnnotations.from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY)
+                    mergedAnnotations.stream(DgsData::class.java).forEach { dgsDataAnnotation ->
+                        registerDataFetcher(
+                            typeDefinitionRegistry,
+                            codeRegistryBuilder,
+                            dgsComponent,
+                            method,
+                            dgsDataAnnotation,
+                            mergedAnnotations
+                        )
                     }
                 }
+        }
+    }
+
+    private fun registerDataFetcher(
+        typeDefinitionRegistry: TypeDefinitionRegistry,
+        codeRegistryBuilder: GraphQLCodeRegistry.Builder,
+        dgsComponent: Any,
+        method: Method,
+        dgsDataAnnotation: MergedAnnotation<DgsData>,
+        mergedAnnotations: MergedAnnotations
+    ) {
+        val field = dgsDataAnnotation.getString("field").ifEmpty { method.name }
+        val parentType = dgsDataAnnotation.getString("parentType")
+        dataFetchers.add(DatafetcherReference(dgsComponent, method, mergedAnnotations, parentType, field))
+
+        val enableInstrumentation =
+            if (method.isAnnotationPresent(DgsEnableDataFetcherInstrumentation::class.java)) {
+                val dgsEnableDataFetcherInstrumentation =
+                    method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)
+                dgsEnableDataFetcherInstrumentation.value
+            } else {
+                method.returnType != CompletionStage::class.java && method.returnType != CompletableFuture::class.java
+            }
+
+        dataFetcherInstrumentationEnabled["$parentType.$field"] = enableInstrumentation
+
+        try {
+            if (!typeDefinitionRegistry.getType(parentType).isPresent) {
+                logger.error("Parent type $parentType not found, but it was referenced in ${javaClass.name} in @DgsData annotation for field $field")
+                throw InvalidDgsConfigurationException("Parent type $parentType not found, but it was referenced on ${javaClass.name} in @DgsData annotation for field $field")
+            }
+            when (val type = typeDefinitionRegistry.getType(parentType).get()) {
+                is InterfaceTypeDefinition -> {
+                    val implementationsOf = typeDefinitionRegistry.getImplementationsOf(type)
+                    implementationsOf.forEach { implType ->
+                        val dataFetcher =
+                            createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
+                        codeRegistryBuilder.dataFetcher(
+                            FieldCoordinates.coordinates(implType.name, field),
+                            dataFetcher
+                        )
+                        dataFetcherInstrumentationEnabled["${implType.name}.$field"] = enableInstrumentation
+                    }
+                }
+                is UnionTypeDefinition -> {
+                    type.memberTypes.asSequence().filterIsInstance<TypeName>().forEach { memberType ->
+                        val dataFetcher =
+                            createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
+                        codeRegistryBuilder.dataFetcher(
+                            FieldCoordinates.coordinates(memberType.name, field),
+                            dataFetcher
+                        )
+                        dataFetcherInstrumentationEnabled["${memberType.name}.$field"] = enableInstrumentation
+                    }
+                }
+                else -> {
+                    val dataFetcher = createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
+                    codeRegistryBuilder.dataFetcher(
+                        FieldCoordinates.coordinates(parentType, field),
+                        dataFetcher
+                    )
+                }
+            }
+        } catch (ex: Exception) {
+            logger.error("Invalid parent type $parentType")
+            throw ex
         }
     }
 
