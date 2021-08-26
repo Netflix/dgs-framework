@@ -16,7 +16,6 @@
 
 package com.netflix.graphql.dgs.client
 
-import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 

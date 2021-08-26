@@ -114,9 +114,9 @@ class WebsocketGraphQLClientTest {
         StepVerifier.create(responses.take(1))
             .expectSubscription()
             .expectNextMatches {
-                it.extractValue<Int>("a") == 1
-                        && it.extractValue<String>("b") == "hello"
-                        && !it.extractValue<Boolean>("c")
+                it.extractValue<Int>("a") == 1 &&
+                    it.extractValue<String>("b") == "hello" &&
+                    !it.extractValue<Boolean>("c")
             }
             .expectComplete()
             .verify(VERIFY_TIMEOUT)
@@ -132,14 +132,14 @@ class WebsocketGraphQLClientTest {
         StepVerifier.create(responses.take(2))
             .expectSubscription()
             .expectNextMatches {
-                it.extractValue<Int>("a") == 1
-                        && it.extractValue<String?>("b") == "hello"
-                        && !it.extractValue<Boolean>("c")
+                it.extractValue<Int>("a") == 1 &&
+                    it.extractValue<String?>("b") == "hello" &&
+                    !it.extractValue<Boolean>("c")
             }
             .expectNextMatches {
-                it.extractValue<Int>("a") == 2
-                        && it.extractValue<String?>("b") == null
-                        && it.extractValue("c")
+                it.extractValue<Int>("a") == 2 &&
+                    it.extractValue<String?>("b") == null &&
+                    it.extractValue("c")
             }
             .expectComplete()
             .verify(VERIFY_TIMEOUT)
@@ -232,14 +232,17 @@ class WebsocketGraphQLClientTest {
                 .collect(Collectors.toList()),
             responses2
                 .map { it.extractValue<Int>("a") }
-                .collect(Collectors.toList()))
+                .collect(Collectors.toList())
+        )
             .collect(Collectors.toList())
             .block()
 
-        assertThat(responses).hasSameElementsAs(listOf(
-            listOf(1, 3),
-            listOf(2)
-        ))
+        assertThat(responses).hasSameElementsAs(
+            listOf(
+                listOf(1, 3),
+                listOf(2)
+            )
+        )
     }
 
     private fun dataMessage(data: Map<String, Any?>, id: String): OperationMessage {

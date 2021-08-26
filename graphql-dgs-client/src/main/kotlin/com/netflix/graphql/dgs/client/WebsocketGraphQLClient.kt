@@ -39,7 +39,8 @@ import java.util.concurrent.atomic.AtomicLong
  */
 class WebsocketGraphQLClient(
     private val client: OperationMessageWebSocketClient,
-    private val acknowledgementTimeout: Duration): ReactiveGraphQLClient {
+    private val acknowledgementTimeout: Duration
+) : ReactiveGraphQLClient {
     companion object {
         private val DEFAULT_ACKNOWLEDGEMENT_TIMEOUT = Duration.ofSeconds(30)
         private val CONNECTION_INIT_MESSAGE = OperationMessage(GQL_CONNECTION_INIT, null, null)
@@ -49,16 +50,18 @@ class WebsocketGraphQLClient(
     constructor(
         url: String,
         client: WebSocketClient,
-        acknowledgementTimeout: Duration):
-            this(OperationMessageWebSocketClient(url, client), acknowledgementTimeout)
+        acknowledgementTimeout: Duration
+    ) :
+        this(OperationMessageWebSocketClient(url, client), acknowledgementTimeout)
 
     constructor(
         url: String,
-        client: WebSocketClient):
-            this(OperationMessageWebSocketClient(url, client), DEFAULT_ACKNOWLEDGEMENT_TIMEOUT)
+        client: WebSocketClient
+    ) :
+        this(OperationMessageWebSocketClient(url, client), DEFAULT_ACKNOWLEDGEMENT_TIMEOUT)
 
-    constructor(client: OperationMessageWebSocketClient):
-            this(client, DEFAULT_ACKNOWLEDGEMENT_TIMEOUT)
+    constructor(client: OperationMessageWebSocketClient) :
+        this(client, DEFAULT_ACKNOWLEDGEMENT_TIMEOUT)
 
     private val subscriptionCount = AtomicLong(0L)
 
@@ -78,7 +81,6 @@ class WebsocketGraphQLClient(
             .timeout(acknowledgementTimeout)
             .then()
     }.cache()
-
 
     override fun reactiveExecuteQuery(
         query: String,
@@ -114,12 +116,14 @@ class WebsocketGraphQLClient(
                     .doOnCancel {
                         client.send(stopMessage)
                     }
-                    .flatMap(this::handleMessage))
+                    .flatMap(this::handleMessage)
+            )
     }
 
     private fun handleMessage(
-        message: OperationMessage): Flux<GraphQLResponse> {
-        when(message.type) {
+        message: OperationMessage
+    ): Flux<GraphQLResponse> {
+        when (message.type) {
             // Do nothing if no data provided
             GQL_CONNECTION_ACK, GQL_CONNECTION_KEEP_ALIVE, GQL_COMPLETE -> {
                 return Flux.empty()
@@ -131,8 +135,10 @@ class WebsocketGraphQLClient(
                 if (payload is DataPayload)
                     return Flux.just(GraphQLResponse(MAPPER.writeValueAsString(payload)))
                 else
-                    throw GraphQLException("Message $message has type " +
-                            "GQL_DATA but not a valid data payload")
+                    throw GraphQLException(
+                        "Message $message has type " +
+                            "GQL_DATA but not a valid data payload"
+                    )
             }
             // Convert errors received from the server into exceptions, does
             // not include GraphQL execution errors which are bundled in the
@@ -144,20 +150,22 @@ class WebsocketGraphQLClient(
             // The message is invalid according to the subscriptions transport
             // protocol so it should result in an exception
             else -> {
-                throw GraphQLException("Unable to handle message of type " +
-                        "${message.type}. Full message: $message")
+                throw GraphQLException(
+                    "Unable to handle message of type " +
+                        "${message.type}. Full message: $message"
+                )
             }
         }
     }
 }
-
 
 /**
  * Wrapper around a WebSocketClient for sending/receiving OperationMessages
  */
 class OperationMessageWebSocketClient(
     private val url: String,
-    private val client: WebSocketClient) {
+    private val client: WebSocketClient
+) {
 
     companion object {
         private val MAPPER = jacksonObjectMapper()
@@ -207,16 +215,19 @@ class OperationMessageWebSocketClient(
     private fun exchange(
         incomingMessages: Sinks.Many<OperationMessage>,
         outgoingMessages: Sinks.Many<OperationMessage>,
-        session: WebSocketSession): Mono<Void> {
+        session: WebSocketSession
+    ): Mono<Void> {
         // Create chains to handle de/serialization
         val incomingDeserialized = session
             .receive()
             .map(this::decodeMessage)
             .doOnNext(incomingMessages::tryEmitNext)
         val outgoingSerialized = session
-            .send(outgoingMessages
-                .asFlux()
-                .map{ createMessage(session, it) })
+            .send(
+                outgoingMessages
+                    .asFlux()
+                    .map { createMessage(session, it) }
+            )
 
         // Transfer the contents of the sinks to/from the server
         return Flux
@@ -226,19 +237,19 @@ class OperationMessageWebSocketClient(
 
     private fun createMessage(
         session: WebSocketSession,
-        message: OperationMessage): WebSocketMessage {
+        message: OperationMessage
+    ): WebSocketMessage {
 
         return session.textMessage(MAPPER.writeValueAsString(message))
     }
 
     private fun decodeMessage(message: WebSocketMessage): OperationMessage {
-        val messageText = message.payloadAsText;
+        val messageText = message.payloadAsText
         val type = object : TypeReference<OperationMessage>() {}
 
         return MAPPER.readValue(messageText, type)
     }
 }
-
 
 const val GQL_CONNECTION_INIT = "connection_init"
 const val GQL_CONNECTION_ACK = "connection_ack"
@@ -258,16 +269,19 @@ data class OperationMessage(
     @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
     @JsonSubTypes(
         JsonSubTypes.Type(value = DataPayload::class),
-        JsonSubTypes.Type(value = QueryPayload::class))
+        JsonSubTypes.Type(value = QueryPayload::class)
+    )
     val payload: Any? = null,
     @JsonProperty("id", required = false)
-    val id: String? = "")
+    val id: String? = ""
+)
 
 data class DataPayload(
     @JsonProperty("data")
     val data: Any?,
     @JsonProperty("errors")
-    val errors: List<Any>? = emptyList())
+    val errors: List<Any>? = emptyList()
+)
 
 data class QueryPayload(
     @JsonProperty("variables")
@@ -277,4 +291,5 @@ data class QueryPayload(
     @JsonProperty("operationName")
     val operationName: String?,
     @JsonProperty("query")
-    val query: String)
+    val query: String
+)
