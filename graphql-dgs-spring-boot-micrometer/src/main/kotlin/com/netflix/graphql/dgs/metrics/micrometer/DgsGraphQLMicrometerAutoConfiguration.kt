@@ -1,5 +1,6 @@
 package com.netflix.graphql.dgs.metrics.micrometer
 
+import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.metrics.micrometer.DgsGraphQLMicrometerAutoConfiguration.Companion.AUTO_CONF_PREFIX
 import com.netflix.graphql.dgs.metrics.micrometer.dataloader.DgsDataLoaderInstrumentationProvider
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.*
@@ -43,6 +44,7 @@ open class DgsGraphQLMicrometerAutoConfiguration {
         name = ["enabled"], havingValue = "true", matchIfMissing = true
     )
     open fun metricsInstrumentation(
+        dgsSchemaProvider: DgsSchemaProvider,
         meterRegistrySupplier: DgsMeterRegistrySupplier,
         tagsProvider: DgsGraphQLMetricsTagsProvider,
         properties: DgsGraphQLMetricsProperties,
@@ -50,6 +52,7 @@ open class DgsGraphQLMicrometerAutoConfiguration {
         optQuerySignatureRepository: Optional<QuerySignatureRepository>
     ): DgsGraphQLMetricsInstrumentation {
         return DgsGraphQLMetricsInstrumentation(
+            dgsSchemaProvider,
             meterRegistrySupplier,
             tagsProvider,
             properties,
