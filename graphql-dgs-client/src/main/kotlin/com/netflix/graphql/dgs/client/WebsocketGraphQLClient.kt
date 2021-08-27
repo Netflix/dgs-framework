@@ -22,6 +22,7 @@ import com.netflix.graphql.types.subscription.*
 import graphql.GraphQLException
 import org.springframework.web.reactive.socket.WebSocketMessage
 import org.springframework.web.reactive.socket.WebSocketSession
+import org.springframework.web.reactive.socket.client.ReactorNettyWebSocketClient
 import org.springframework.web.reactive.socket.client.WebSocketClient
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -47,10 +48,10 @@ class WebsocketGraphQLClient(
 
     constructor(
         url: String,
-        client: WebSocketClient,
+        client: WebSocketClient? = null,
         acknowledgementTimeout: Duration = DEFAULT_ACKNOWLEDGEMENT_TIMEOUT
     ) :
-        this(OperationMessageWebSocketClient(url, client), acknowledgementTimeout)
+        this(OperationMessageWebSocketClient(url, client ?: ReactorNettyWebSocketClient()), acknowledgementTimeout)
 
     private val subscriptionCount = AtomicLong(0L)
 
