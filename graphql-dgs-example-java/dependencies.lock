@@ -35,6 +35,9 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.3"
         },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.9.2"
+        },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -400,6 +403,9 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.3"
         },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.9.2"
+        },
         "com.github.javafaker:javafaker": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -680,6 +686,9 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.3"
         },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.9.2"
+        },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -858,6 +867,9 @@
         },
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.3"
+        },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.9.2"
         },
         "com.github.javafaker:javafaker": {
             "firstLevelTransitive": [

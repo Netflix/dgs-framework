@@ -28,6 +28,8 @@ import com.netflix.graphql.mocking.MockProvider
 import graphql.execution.*
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
+import graphql.execution.preparsed.NoOpPreparsedDocumentProvider
+import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.GraphQLSchema
 import graphql.schema.idl.TypeDefinitionRegistry
@@ -75,7 +77,8 @@ open class DgsAutoConfiguration(
         @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
         @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
         idProvider: Optional<ExecutionIdProvider>,
-        reloadSchemaIndicator: ReloadSchemaIndicator
+        reloadSchemaIndicator: ReloadSchemaIndicator,
+        preparsedDocumentProvider: PreparsedDocumentProvider
     ): DgsQueryExecutor {
         val queryExecutionStrategy = providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
         val mutationExecutionStrategy = providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
@@ -88,8 +91,15 @@ open class DgsAutoConfiguration(
             queryExecutionStrategy,
             mutationExecutionStrategy,
             idProvider,
-            reloadSchemaIndicator
+            reloadSchemaIndicator,
+            preparsedDocumentProvider
         )
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun preparsedDocumentProvider(): PreparsedDocumentProvider {
+        return NoOpPreparsedDocumentProvider()
     }
 
     @Bean
