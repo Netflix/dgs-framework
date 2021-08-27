@@ -36,7 +36,7 @@
             "locked": "2.12.3"
         },
         "com.github.ben-manes.caffeine:caffeine": {
-            "locked": "2.9.2"
+            "locked": "2.8.8"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -404,7 +404,7 @@
             "locked": "2.12.3"
         },
         "com.github.ben-manes.caffeine:caffeine": {
-            "locked": "2.9.2"
+            "locked": "2.8.8"
         },
         "com.github.javafaker:javafaker": {
             "firstLevelTransitive": [
@@ -687,7 +687,7 @@
             "locked": "2.12.3"
         },
         "com.github.ben-manes.caffeine:caffeine": {
-            "locked": "2.9.2"
+            "locked": "2.8.8"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -869,7 +869,7 @@
             "locked": "2.12.3"
         },
         "com.github.ben-manes.caffeine:caffeine": {
-            "locked": "2.9.2"
+            "locked": "2.8.8"
         },
         "com.github.javafaker:javafaker": {
             "firstLevelTransitive": [

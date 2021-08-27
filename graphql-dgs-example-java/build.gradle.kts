@@ -29,5 +29,5 @@ dependencies {
     // For additional information go to the link below:
     // https://netflix.github.io/dgs/advanced/instrumentation/
 
-    implementation("com.github.ben-manes.caffeine:caffeine:2.9.2")
+    implementation("com.github.ben-manes.caffeine:caffeine")
 }
