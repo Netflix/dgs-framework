@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicLong
  * Reactive client implementation using websockets and the subscription-transport-ws protocol:
  * https://github.com/apollographql/subscriptions-transport-ws/blob/master/PROTOCOL.md
  */
-class WebsocketGraphQLClient(
+class WebSocketGraphQLClient(
     private val client: OperationMessageWebSocketClient,
     private val acknowledgementTimeout: Duration = DEFAULT_ACKNOWLEDGEMENT_TIMEOUT
 ) : ReactiveGraphQLClient {

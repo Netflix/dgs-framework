@@ -47,7 +47,7 @@ import java.time.Duration
 import java.util.concurrent.TimeoutException
 import java.util.stream.Collectors
 
-class WebsocketGraphQLClientTest {
+class WebSocketGraphQLClientTest {
     companion object {
         private val VERIFY_TIMEOUT = Duration.ofSeconds(10)
         private val CONNECTION_ACK_MESSAGE = OperationMessage(GQL_CONNECTION_ACK, null, null)
@@ -57,13 +57,13 @@ class WebsocketGraphQLClientTest {
     }
 
     lateinit var subscriptionsClient: OperationMessageWebSocketClient
-    lateinit var client: WebsocketGraphQLClient
+    lateinit var client: WebSocketGraphQLClient
     lateinit var server: TestPublisher<OperationMessage>
 
     @BeforeEach
     fun setup() {
         subscriptionsClient = mockk(relaxed = true)
-        client = WebsocketGraphQLClient(subscriptionsClient)
+        client = WebSocketGraphQLClient(subscriptionsClient)
         server = TestPublisher.createCold()
 
         every { subscriptionsClient.receive() } returns server.flux()
@@ -72,7 +72,7 @@ class WebsocketGraphQLClientTest {
     @Test
     fun timesOutIfNoAckFromServer() {
         val timeout = Duration.ofSeconds(10)
-        val client = WebsocketGraphQLClient(subscriptionsClient, timeout)
+        val client = WebSocketGraphQLClient(subscriptionsClient, timeout)
         val responses = client.reactiveExecuteQuery("", emptyMap())
         StepVerifier.withVirtualTime { responses }
             .thenAwait(timeout.plusSeconds(1))
