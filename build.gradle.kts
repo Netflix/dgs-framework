@@ -28,6 +28,7 @@ plugins {
     `java-library`
     id("nebula.netflixoss") version "10.1.0"
     id("nebula.dependency-recommender") version "10.0.1"
+    id("nebula.dependency-lock") version "11.3.2"
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
     kotlin("jvm") version Versions.KOTLIN_VERSION
     kotlin("kapt") version Versions.KOTLIN_VERSION
@@ -43,6 +44,7 @@ allprojects {
 
     apply(plugin = "nebula.netflixoss")
     apply(plugin = "nebula.dependency-recommender")
+    apply(plugin = "nebula.dependency-lock")
 
     dependencyRecommendations {
         mavenBom(mapOf("module" to "org.springframework:spring-framework-bom:${Versions.SPRING_VERSION}"))
