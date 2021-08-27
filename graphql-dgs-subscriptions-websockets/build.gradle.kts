@@ -15,6 +15,8 @@
  */
 
 dependencies {
+    api(project(":graphql-dgs-subscription-types"))
+
     implementation(project(":graphql-dgs"))
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("org.springframework:spring-web")

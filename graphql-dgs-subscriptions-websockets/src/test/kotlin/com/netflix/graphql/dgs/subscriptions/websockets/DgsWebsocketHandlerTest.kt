@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.subscriptions.websockets
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.types.subscription.*
 import graphql.ExecutionResult
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
