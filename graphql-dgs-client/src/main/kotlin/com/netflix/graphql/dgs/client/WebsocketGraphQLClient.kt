@@ -37,7 +37,7 @@ import java.util.concurrent.atomic.AtomicLong
  */
 class WebsocketGraphQLClient(
     private val client: OperationMessageWebSocketClient,
-    private val acknowledgementTimeout: Duration
+    private val acknowledgementTimeout: Duration = DEFAULT_ACKNOWLEDGEMENT_TIMEOUT
 ) : ReactiveGraphQLClient {
     companion object {
         private val DEFAULT_ACKNOWLEDGEMENT_TIMEOUT = Duration.ofSeconds(30)
@@ -48,18 +48,9 @@ class WebsocketGraphQLClient(
     constructor(
         url: String,
         client: WebSocketClient,
-        acknowledgementTimeout: Duration
+        acknowledgementTimeout: Duration = DEFAULT_ACKNOWLEDGEMENT_TIMEOUT
     ) :
         this(OperationMessageWebSocketClient(url, client), acknowledgementTimeout)
-
-    constructor(
-        url: String,
-        client: WebSocketClient
-    ) :
-        this(OperationMessageWebSocketClient(url, client), DEFAULT_ACKNOWLEDGEMENT_TIMEOUT)
-
-    constructor(client: OperationMessageWebSocketClient) :
-        this(client, DEFAULT_ACKNOWLEDGEMENT_TIMEOUT)
 
     private val subscriptionCount = AtomicLong(0L)
 
