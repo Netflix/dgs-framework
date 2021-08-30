@@ -26,25 +26,43 @@ object InputObjectMapper {
         val params = targetClass.primaryConstructor!!.parameters
         val inputValues = mutableListOf<Any?>()
 
-        params.forEach {
-            val input = inputMap[it.name]
+        params.forEach { parameter ->
+            val input = inputMap[parameter.name]
             if (input is Map<*, *>) {
-                val nestedTarget = it.type.jvmErasure
+                val nestedTarget = parameter.type.jvmErasure
                 val subValue = if (nestedTarget.java.isKotlinClass()) {
                     mapToKotlinObject(input as Map<String, *>, nestedTarget)
                 } else {
                     mapToJavaObject(input as Map<String, *>, nestedTarget.java)
                 }
                 inputValues.add(subValue)
-            } else if (it.type.jvmErasure.java.isEnum) {
-                val enumValue = (it.type.jvmErasure.java.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == input }
+            } else if (parameter.type.jvmErasure.java.isEnum) {
+                val enumValue = (parameter.type.jvmErasure.java.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == input }
                 inputValues.add(enumValue)
-            } else {
+            } else if (input is List<*>) {
+                val newList = convertList(input, parameter.type.arguments[0].type!!.jvmErasure)
+                inputValues.add(newList)
+            }
+            else {
                 inputValues.add(input)
             }
         }
 
         return targetClass.primaryConstructor!!.call(*inputValues.toTypedArray())
+    }
+
+    private fun convertList(input: List<*>, nestedTarget: KClass<*>): List<*> {
+        return input.map { listItem ->
+            if (listItem is Map<*, *>) {
+                if (nestedTarget.java.isKotlinClass()) {
+                    mapToKotlinObject(listItem as Map<String, *>, nestedTarget)
+                } else {
+                    mapToJavaObject(listItem as Map<String, *>, nestedTarget.java)
+                }
+            } else {
+                listItem
+            }
+        }
     }
 
     fun <T> mapToJavaObject(inputMap: Map<String, *>, targetClass: Class<T>): T {
@@ -66,7 +84,11 @@ object InputObjectMapper {
             } else if (declaredField.type.isEnum) {
                 val enumValue = (declaredField.type.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == it.value }
                 declaredField.set(instance, enumValue)
-            } else {
+            } else if (it.value is List<*>) {
+                val newList = convertList(it.value as List<*>, declaredField.type.kotlin)
+                declaredField.set(instance, newList)
+            }
+            else {
                 declaredField.set(instance, it.value)
             }
         }
