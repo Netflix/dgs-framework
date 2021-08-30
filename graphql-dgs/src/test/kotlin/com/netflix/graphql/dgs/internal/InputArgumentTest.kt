@@ -681,6 +681,45 @@ internal class InputArgumentTest {
     }
 
     @Test
+    fun `null value Scalars should be supported as input arguments - testing with DateTime`() {
+        val schema = """
+            type Mutation {
+                setDate(date:DateTime): String
+            }                     
+            
+            scalar DateTime
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Mutation", field = "setDate")
+            fun someFetcher(@InputArgument("date") date: LocalDateTime?): String {
+                if (date == null) {
+                    return "The future is now"
+                }
+
+                return "The date is: ${date.format(DateTimeFormatter.ISO_DATE)}"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(Pair("DateTime", LocalDateTimeScalar()))
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""mutation {setDate(date: null)}""")
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("The future is now", data["setDate"])
+    }
+
+    @Test
     fun `Lists of scalars should be supported - testing with list of DateTime`() {
         val schema = """
             type Mutation {
