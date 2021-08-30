@@ -37,4 +37,5 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-core")
     testImplementation("io.projectreactor:reactor-core")
     testImplementation("io.projectreactor:reactor-test")
+    testImplementation("com.graphql-java:graphql-java-extended-scalars")
 }
