@@ -423,6 +423,9 @@
             ],
             "locked": "16.2"
         },
+        "com.graphql-java:graphql-java-extended-scalars": {
+            "locked": "16.0.1"
+        },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.6.0"
         },
@@ -517,6 +520,9 @@
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "16.2"
+        },
+        "com.graphql-java:graphql-java-extended-scalars": {
+            "locked": "16.0.1"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.6.0"
