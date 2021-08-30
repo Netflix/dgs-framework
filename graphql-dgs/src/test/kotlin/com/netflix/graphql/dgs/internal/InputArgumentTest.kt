@@ -297,6 +297,94 @@ internal class InputArgumentTest {
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 
+    data class MovieFilter(val movieIds: List<Any>)
+
+    @Test
+    fun `List of scalar in a nested input type`() {
+        val schema = """
+            type Query {
+                titles(filter: MovieFilter): String
+            }
+            
+            input MovieFilter {
+                movieIds: [Object]
+            }
+            
+            scalar Object
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "titles")
+            fun someFetcher(@InputArgument("filter") filter: MovieFilter): String {
+                return filter.movieIds.joinToString { "Title for $it" }
+            }
+
+            @DgsRuntimeWiring
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
+                return builder.scalar(ExtendedScalars.Object)
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{titles(filter: {movieIds: [1, "two"]})}""")
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("Title for 1, Title for two", data["titles"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `@InputArgument on a list of input types without collectionType should fail with a DgsInvalidInputArgumentException`() {
+        val schema = """
+            type Query {
+                hello(person:[Person]): String
+            }
+            
+            input Person {
+                name:String
+            }
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument("person") person: List<Person>): String {
+                return "Hello, ${person.joinToString(", ") { it.name }}"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello(person: [{name: "tester"}, {name: "tester 2"}])}""")
+        assertThat(executionResult.errors.size).isEqualTo(1)
+        val exceptionWhileDataFetching = executionResult.errors[0] as ExceptionWhileDataFetching
+        assertThat(exceptionWhileDataFetching.exception).isInstanceOf(DgsInvalidInputArgumentException::class.java)
+        assertThat(exceptionWhileDataFetching.exception.message).contains("A collectionType must be specified for input arguments of type List due to type erasure. Use @InputArgument(collectionType=...)")
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
     @Test
     fun `Input argument of type Set should result in a DgsInvalidInputArgumentException`() {
         val schema = """
@@ -330,10 +418,10 @@ internal class InputArgumentTest {
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
 
         val executionResult = build.execute("""{hello(person: [{name: "tester"}, {name: "tester 2"}])}""")
-        org.assertj.core.api.Assertions.assertThat(executionResult.errors.size).isEqualTo(1)
+        assertThat(executionResult.errors.size).isEqualTo(1)
         val exceptionWhileDataFetching = executionResult.errors[0] as ExceptionWhileDataFetching
-        org.assertj.core.api.Assertions.assertThat(exceptionWhileDataFetching.exception).isInstanceOf(DgsInvalidInputArgumentException::class.java)
-        org.assertj.core.api.Assertions.assertThat(exceptionWhileDataFetching.exception.message).contains("Specified type 'interface java.util.Set' is invalid. Found java.util.ArrayList instead")
+        assertThat(exceptionWhileDataFetching.exception).isInstanceOf(DgsInvalidInputArgumentException::class.java)
+        assertThat(exceptionWhileDataFetching.exception.message).contains("Specified type 'interface java.util.Set' is invalid. Found java.util.ArrayList instead")
 
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
@@ -371,10 +459,10 @@ internal class InputArgumentTest {
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
 
         val executionResult = build.execute("""{hello(person: [{name: "tester"}, {name: "tester 2"}])}""")
-        org.assertj.core.api.Assertions.assertThat(executionResult.errors.size).isEqualTo(1)
+        assertThat(executionResult.errors.size).isEqualTo(1)
         val exceptionWhileDataFetching = executionResult.errors[0] as ExceptionWhileDataFetching
-        org.assertj.core.api.Assertions.assertThat(exceptionWhileDataFetching.exception).isInstanceOf(DgsInvalidInputArgumentException::class.java)
-        org.assertj.core.api.Assertions.assertThat(exceptionWhileDataFetching.exception.message).contains("Specified type 'class java.lang.String' is invalid for person")
+        assertThat(exceptionWhileDataFetching.exception).isInstanceOf(DgsInvalidInputArgumentException::class.java)
+        assertThat(exceptionWhileDataFetching.exception.message).contains("Specified type 'class java.lang.String' is invalid for person")
 
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
