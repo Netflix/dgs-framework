@@ -44,8 +44,7 @@ object InputObjectMapper {
             } else if (input is List<*>) {
                 val newList = convertList(input, parameter.type.arguments[0].type!!.jvmErasure)
                 inputValues.add(newList)
-            }
-            else {
+            } else {
                 inputValues.add(input)
             }
         }
@@ -90,8 +89,7 @@ object InputObjectMapper {
                 val actualType: Type = (declaredField.genericType as ParameterizedType).actualTypeArguments[0]
                 val newList = convertList(it.value as List<*>, Class.forName(actualType.typeName).kotlin)
                 declaredField.set(instance, newList)
-            }
-            else {
+            } else {
                 declaredField.set(instance, it.value)
             }
         }

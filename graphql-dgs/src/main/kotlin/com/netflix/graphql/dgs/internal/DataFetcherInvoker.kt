@@ -200,7 +200,7 @@ class DataFetcherInvoker(
                     ex
                 )
             }
-        }  else {
+        } else {
             // Return the converted value mapped to the defined type
             convertValue(parameterValue, parameter, collectionType)
         }
