@@ -17,6 +17,8 @@
 package com.netflix.graphql.dgs.internal
 
 import com.fasterxml.jackson.module.kotlin.isKotlinClass
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
@@ -85,7 +87,8 @@ object InputObjectMapper {
                 val enumValue = (declaredField.type.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == it.value }
                 declaredField.set(instance, enumValue)
             } else if (it.value is List<*>) {
-                val newList = convertList(it.value as List<*>, declaredField.type.kotlin)
+                val actualType: Type = (declaredField.genericType as ParameterizedType).actualTypeArguments[0]
+                val newList = convertList(it.value as List<*>, Class.forName(actualType.typeName).kotlin)
                 declaredField.set(instance, newList)
             }
             else {
