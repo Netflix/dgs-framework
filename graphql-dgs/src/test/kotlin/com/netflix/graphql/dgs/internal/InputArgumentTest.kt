@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.internal
 import com.netflix.graphql.dgs.*
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
+import com.netflix.graphql.dgs.inputobjects.JFooInput
 import com.netflix.graphql.dgs.internal.testenums.GreetingType
 import com.netflix.graphql.dgs.internal.testenums.InputMessage
 import com.netflix.graphql.dgs.scalars.UploadScalar
@@ -297,6 +298,159 @@ internal class InputArgumentTest {
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 
+    data class MovieFilter(val movieIds: List<Any>)
+
+    @Test
+    fun `List of scalar in a nested input type`() {
+        val schema = """
+            type Query {
+                titles(filter: MovieFilter): String
+            }
+            
+            input MovieFilter {
+                movieIds: [Object]
+            }
+            
+            scalar Object
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "titles")
+            fun someFetcher(@InputArgument("filter") filter: MovieFilter): String {
+                return filter.movieIds.joinToString { "Title for $it" }
+            }
+
+            @DgsRuntimeWiring
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
+                return builder.scalar(ExtendedScalars.Object)
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{titles(filter: {movieIds: [1, "two"]})}""")
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("Title for 1, Title for two", data["titles"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    data class FooInput(val bars: List<BarInput>)
+    data class BarInput(val name: String, val value: Any)
+
+    @Test
+    fun `Use scalar property inside a List of complex input type`() {
+        val schema = """
+            type Query {
+                titles(input: FooInput): String
+            }
+            
+           input FooInput {
+                bars: [BarInput!]
+            }
+            
+            input BarInput {
+                name: String!
+                value: Object!
+            }
+            
+            scalar Object
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "titles")
+            fun someFetcher(@InputArgument input: FooInput): String {
+                return input.bars.joinToString { "${it.name}: ${it.value}" }
+            }
+
+            @DgsRuntimeWiring
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
+                return builder.scalar(ExtendedScalars.Object)
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{titles(input: {bars: [{name: "bar 1", value: 1}, {name: "bar 2", value: "two"}]})}""")
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("bar 1: 1, bar 2: two", data["titles"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `Use scalar property inside a List of complex Java input type`() {
+        val schema = """
+            type Query {
+                titles(input: JFooInput): String
+            }
+            
+           input JFooInput {
+                bars: [JBarInput!]
+            }
+            
+            input JBarInput {
+                name: String!
+                value: Object!
+            }
+            
+            scalar Object
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "titles")
+            fun someFetcher(@InputArgument input: JFooInput): String {
+                return input.bars.joinToString { "${it.name}: ${it.value}" }
+            }
+
+            @DgsRuntimeWiring
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
+                return builder.scalar(ExtendedScalars.Object)
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{titles(input: {bars: [{name: "bar 1", value: 1}, {name: "bar 2", value: "two"}]})}""")
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("bar 1: 1, bar 2: two", data["titles"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
     @Test
     fun `Input argument of type Set should result in a DgsInvalidInputArgumentException`() {
         val schema = """
@@ -330,10 +484,10 @@ internal class InputArgumentTest {
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
 
         val executionResult = build.execute("""{hello(person: [{name: "tester"}, {name: "tester 2"}])}""")
-        org.assertj.core.api.Assertions.assertThat(executionResult.errors.size).isEqualTo(1)
+        assertThat(executionResult.errors.size).isEqualTo(1)
         val exceptionWhileDataFetching = executionResult.errors[0] as ExceptionWhileDataFetching
-        org.assertj.core.api.Assertions.assertThat(exceptionWhileDataFetching.exception).isInstanceOf(DgsInvalidInputArgumentException::class.java)
-        org.assertj.core.api.Assertions.assertThat(exceptionWhileDataFetching.exception.message).contains("Specified type 'interface java.util.Set' is invalid. Found java.util.ArrayList instead")
+        assertThat(exceptionWhileDataFetching.exception).isInstanceOf(DgsInvalidInputArgumentException::class.java)
+        assertThat(exceptionWhileDataFetching.exception.message).contains("Specified type 'interface java.util.Set' is invalid. Found java.util.ArrayList instead")
 
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
@@ -371,10 +525,10 @@ internal class InputArgumentTest {
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
 
         val executionResult = build.execute("""{hello(person: [{name: "tester"}, {name: "tester 2"}])}""")
-        org.assertj.core.api.Assertions.assertThat(executionResult.errors.size).isEqualTo(1)
+        assertThat(executionResult.errors.size).isEqualTo(1)
         val exceptionWhileDataFetching = executionResult.errors[0] as ExceptionWhileDataFetching
-        org.assertj.core.api.Assertions.assertThat(exceptionWhileDataFetching.exception).isInstanceOf(DgsInvalidInputArgumentException::class.java)
-        org.assertj.core.api.Assertions.assertThat(exceptionWhileDataFetching.exception.message).contains("Specified type 'class java.lang.String' is invalid for person")
+        assertThat(exceptionWhileDataFetching.exception).isInstanceOf(DgsInvalidInputArgumentException::class.java)
+        assertThat(exceptionWhileDataFetching.exception.message).contains("Specified type 'class java.lang.String' is invalid for person")
 
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
@@ -1378,7 +1532,6 @@ internal class InputArgumentTest {
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 
-    data class BarInput(val name: String, val value: Any)
     @Test
     fun `The Object scalar should be converted using the extended scalar`() {
 
