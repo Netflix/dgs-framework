@@ -452,46 +452,6 @@ internal class InputArgumentTest {
     }
 
     @Test
-    fun `@InputArgument on a list of input types without collectionType should fail with a DgsInvalidInputArgumentException`() {
-        val schema = """
-            type Query {
-                hello(person:[Person]): String
-            }
-            
-            input Person {
-                name:String
-            }
-        """.trimIndent()
-
-        val fetcher = object : Any() {
-            @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument("person") person: List<Person>): String {
-                return "Hello, ${person.joinToString(", ") { it.name }}"
-            }
-        }
-
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-
-        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
-
-        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
-        val executionResult = build.execute("""{hello(person: [{name: "tester"}, {name: "tester 2"}])}""")
-        assertThat(executionResult.errors.size).isEqualTo(1)
-        val exceptionWhileDataFetching = executionResult.errors[0] as ExceptionWhileDataFetching
-        assertThat(exceptionWhileDataFetching.exception).isInstanceOf(DgsInvalidInputArgumentException::class.java)
-        assertThat(exceptionWhileDataFetching.exception.message).contains("A collectionType must be specified for input arguments of type List due to type erasure. Use @InputArgument(collectionType=...)")
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
-    }
-
-    @Test
     fun `Input argument of type Set should result in a DgsInvalidInputArgumentException`() {
         val schema = """
             type Query {

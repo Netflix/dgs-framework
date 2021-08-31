@@ -200,11 +200,7 @@ class DataFetcherInvoker(
                     ex
                 )
             }
-        } else if (parameterValue is List<*> && collectionType == Object::class.java) {
-            throw DgsInvalidInputArgumentException(
-                "A collectionType must be specified for input arguments of type List due to type erasure. Use @InputArgument(collectionType=...)"
-            )
-        } else {
+        }  else {
             // Return the converted value mapped to the defined type
             convertValue(parameterValue, parameter, collectionType)
         }
