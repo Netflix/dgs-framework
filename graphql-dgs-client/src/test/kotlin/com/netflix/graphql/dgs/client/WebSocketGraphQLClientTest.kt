@@ -33,13 +33,14 @@ package com.netflix.graphql.dgs.client
  */
 import com.netflix.graphql.types.subscription.*
 import graphql.GraphQLException
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import io.mockk.verifyOrder
+import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.web.reactive.socket.WebSocketHandler
+import org.springframework.web.reactive.socket.WebSocketMessage
+import org.springframework.web.reactive.socket.WebSocketSession
+import org.springframework.web.reactive.socket.client.WebSocketClient
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
 import reactor.test.publisher.TestPublisher
@@ -277,6 +278,39 @@ class WebSocketGraphQLClientTest {
             .expectNext(1)
             .expectError()
             .verify(VERIFY_TIMEOUT)
+    }
+
+    @Test
+    fun operationMessageClientForwardsComplete() {
+        val websocketClient = mockOperationMessageClient(Flux.empty())
+
+        val messageClient = OperationMessageWebSocketClient("", websocketClient)
+        StepVerifier.create(messageClient.receive())
+            .expectSubscription()
+            .expectComplete()
+            .verify(VERIFY_TIMEOUT)
+    }
+
+    @Test
+    fun operationMessageClientForwardsError() {
+        val websocketClient = mockOperationMessageClient(Flux.error(Exception()))
+
+        val messageClient = OperationMessageWebSocketClient("", websocketClient)
+        StepVerifier.create(messageClient.receive())
+            .expectSubscription()
+            .expectError()
+            .verify(VERIFY_TIMEOUT)
+    }
+
+    private fun mockOperationMessageClient(messages: Flux<WebSocketMessage>): WebSocketClient {
+        val websocketClient = mockk<WebSocketClient>(relaxed = true)
+        val session = mockk<WebSocketSession>(relaxed = true)
+        val handler = slot<WebSocketHandler>()
+        every { session.receive() } returns messages
+        every { websocketClient.execute(any(), capture(handler)) } answers {
+            handler.captured.handle(session)
+        }
+        return websocketClient
     }
 
     private fun dataMessage(data: Map<String, Any?>, id: String) =

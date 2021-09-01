@@ -223,6 +223,9 @@ class OperationMessageWebSocketClient(
         // Create chains to handle de/serialization
         val incomingDeserialized = session
             .receive()
+            // Ensure the output flux collapses neatly if the socket closes or an error occurs
+            .doOnComplete { incomingMessages.tryEmitComplete().orThrow() }
+            .doOnError { incomingMessages.tryEmitError(it) }
             .map(this::decodeMessage)
             .doOnNext(incomingMessages::tryEmitNext)
         val outgoingSerialized = session
