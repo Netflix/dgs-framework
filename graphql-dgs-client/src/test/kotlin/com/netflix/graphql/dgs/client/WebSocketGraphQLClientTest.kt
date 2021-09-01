@@ -43,6 +43,7 @@ import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
 import reactor.test.publisher.TestPublisher
+import java.lang.Exception
 import java.time.Duration
 import java.util.concurrent.TimeoutException
 import java.util.stream.Collectors
@@ -246,6 +247,36 @@ class WebSocketGraphQLClientTest {
                 listOf(2)
             )
         )
+    }
+
+    @Test
+    fun retriesAfterCompleteIfInstructed() {
+        server.next(CONNECTION_ACK_MESSAGE)
+        server.next(dataMessage(TEST_DATA_A, "1"))
+        server.next(OperationMessage(GQL_COMPLETE, null, "1"))
+
+        val responses = client.reactiveExecuteQuery("", emptyMap()).repeat(1)
+        StepVerifier.create(responses.map { it.extractValue<Int>("a") })
+            .expectSubscription()
+            .expectNext(1)
+            .expectNext(1)
+            .expectComplete()
+            .verify(VERIFY_TIMEOUT)
+    }
+
+    @Test
+    fun retriesAfterErrorIfInstructed() {
+        server.next(CONNECTION_ACK_MESSAGE)
+        server.next(dataMessage(TEST_DATA_A, "1"))
+        server.error(Exception())
+
+        val responses = client.reactiveExecuteQuery("", emptyMap()).retry(1)
+        StepVerifier.create(responses.map { it.extractValue<Int>("a") })
+            .expectSubscription()
+            .expectNext(1)
+            .expectNext(1)
+            .expectError()
+            .verify(VERIFY_TIMEOUT)
     }
 
     private fun dataMessage(data: Map<String, Any?>, id: String): OperationMessage {
