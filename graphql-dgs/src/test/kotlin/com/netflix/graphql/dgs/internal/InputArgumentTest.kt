@@ -1578,4 +1578,110 @@ internal class InputArgumentTest {
 
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
+
+    @Test
+    fun `The Object scalar as top level input argument should be passed into a Map of String to Any`() {
+
+        val schema = """
+            type Query {
+                hello(json: Object): String
+            }                          
+                  
+            scalar Object
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument json: Map<String, Any>): String {
+                return json.map { "${it.key}: ${it.value}" }.joinToString()
+            }
+
+            @DgsRuntimeWiring
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
+                return builder.scalar(ExtendedScalars.Object)
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello(json: {keyA: "value A", keyB: "value B"})}""")
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("keyA: value A, keyB: value B", data["hello"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    enum class MovieSortByField { TITLE, RELEASEDATE }
+    enum class SortDirection { ASC, DESC }
+    data class MovieSortBy(val field: MovieSortByField, val direction: SortDirection)
+
+    @Test
+    fun `github issue 584`() {
+        val schema = """
+            type Query {
+                movies(sortBy: [MovieSortBy]): String
+            }
+                                  
+            input MovieSortBy {
+                field: MovieSortByField
+                direction: SortDirection = ASC
+            }    
+            
+            enum MovieSortByField {
+                TITLE,
+                RELEASEDATE
+            }
+                  
+            enum SortDirection {
+                ASC,
+                DESC
+            }
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsQuery
+            fun movies(@InputArgument(collectionType = MovieSortBy::class) sortBy: List<MovieSortBy>): String {
+                return "Sorted by: ${sortBy.joinToString { "${it.field}: ${it.direction}" }}"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute(
+            """
+            {
+                movies(sortBy: 
+                    [
+                        {field: RELEASEDATE, direction: DESC}, 
+                        {field: TITLE, direction: ASC}
+                    ]
+                )
+             }
+            """.trimIndent()
+        )
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("Sorted by: RELEASEDATE: DESC, TITLE: ASC", data["movies"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
 }

@@ -200,6 +200,8 @@ class DataFetcherInvoker(
                     ex
                 )
             }
+        } else if (parameterValue is Map<*, *> && parameter.type.isAssignableFrom(Map::class.java)) {
+            parameterValue
         } else {
             // Return the converted value mapped to the defined type
             convertValue(parameterValue, parameter, collectionType)
