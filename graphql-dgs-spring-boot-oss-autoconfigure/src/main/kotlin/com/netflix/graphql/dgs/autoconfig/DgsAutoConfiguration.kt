@@ -28,7 +28,6 @@ import com.netflix.graphql.mocking.MockProvider
 import graphql.execution.*
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
-import graphql.execution.preparsed.NoOpPreparsedDocumentProvider
 import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.GraphQLSchema
@@ -99,7 +98,7 @@ open class DgsAutoConfiguration(
     @Bean
     @ConditionalOnMissingBean
     open fun preparsedDocumentProvider(): PreparsedDocumentProvider {
-        return NoOpPreparsedDocumentProvider()
+        return DgsNoOpPreparsedDocumentProvider
     }
 
     @Bean

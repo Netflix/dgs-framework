@@ -22,16 +22,12 @@ import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
-import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor
-import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
-import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
-import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.*
 import graphql.ExecutionResult
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
 import graphql.execution.NonNullableFieldWasNullError
 import graphql.execution.instrumentation.ChainedInstrumentation
-import graphql.execution.preparsed.NoOpPreparsedDocumentProvider
 import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLSchema
 import org.slf4j.Logger
@@ -52,7 +48,7 @@ class DefaultDgsReactiveQueryExecutor(
     private val mutationExecutionStrategy: ExecutionStrategy,
     private val idProvider: Optional<ExecutionIdProvider>,
     private val reloadIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator = DefaultDgsQueryExecutor.ReloadSchemaIndicator { false },
-    private val preparsedDocumentProvider: PreparsedDocumentProvider = NoOpPreparsedDocumentProvider()
+    private val preparsedDocumentProvider: PreparsedDocumentProvider = DgsNoOpPreparsedDocumentProvider
 ) : com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor {
     private val logger: Logger = LoggerFactory.getLogger(DefaultDgsQueryExecutor::class.java)
 
