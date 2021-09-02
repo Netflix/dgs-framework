@@ -32,7 +32,9 @@ object InputObjectMapper {
             val input = inputMap[parameter.name]
             if (input is Map<*, *>) {
                 val nestedTarget = parameter.type.jvmErasure
-                val subValue = if (nestedTarget.java.isKotlinClass()) {
+                val subValue = if (nestedTarget.java == Object::class.java || nestedTarget == Any::class) {
+                    input
+                } else if (nestedTarget.java.isKotlinClass()) {
                     mapToKotlinObject(input as Map<String, *>, nestedTarget)
                 } else {
                     mapToJavaObject(input as Map<String, *>, nestedTarget.java)
@@ -55,7 +57,9 @@ object InputObjectMapper {
     private fun convertList(input: List<*>, nestedTarget: KClass<*>): List<*> {
         return input.map { listItem ->
             if (listItem is Map<*, *>) {
-                if (nestedTarget.java.isKotlinClass()) {
+                if (nestedTarget.java == Object::class.java || nestedTarget == Any::class) {
+                    listItem
+                } else if (nestedTarget.java.isKotlinClass()) {
                     mapToKotlinObject(listItem as Map<String, *>, nestedTarget)
                 } else {
                     mapToJavaObject(listItem as Map<String, *>, nestedTarget.java)
@@ -67,6 +71,10 @@ object InputObjectMapper {
     }
 
     fun <T> mapToJavaObject(inputMap: Map<String, *>, targetClass: Class<T>): T {
+        if (targetClass == Object::class.java) {
+            return inputMap as T
+        }
+
         val ctor = targetClass.getDeclaredConstructor()
         ctor.isAccessible = true
         val instance = ctor.newInstance()

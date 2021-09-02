@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.internal
 import com.netflix.graphql.dgs.*
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
+import com.netflix.graphql.dgs.inputobjects.JFilter
 import com.netflix.graphql.dgs.inputobjects.JFooInput
 import com.netflix.graphql.dgs.internal.testenums.GreetingType
 import com.netflix.graphql.dgs.internal.testenums.InputMessage
@@ -1617,6 +1618,101 @@ internal class InputArgumentTest {
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("keyA: value A, keyB: value B", data["hello"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    data class Filter(val query: Any)
+
+    @Test
+    fun `A field of an input type of type Any should be assigned the actual value and skip converting`() {
+
+        val schema = """
+            type Query {
+                hello(filter: Filter): String
+            }               
+                       
+            input Filter {
+                query: Object
+            }
+                  
+            scalar Object
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument filter: Filter): String {
+                return filter.toString()
+            }
+
+            @DgsRuntimeWiring
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
+                return builder.scalar(ExtendedScalars.Object)
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello(filter: {query: {and: ["title", "genre"]}})}""")
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("Filter(query={and=[title, genre]})", data["hello"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `A field of an input type of type Object should be assigned the actual value and skip converting`() {
+
+        val schema = """
+            type Query {
+                hello(filter: Filter): String
+            }               
+                       
+            input Filter {
+                query: Object
+            }
+                  
+            scalar Object
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument filter: JFilter): String {
+                val map = filter.query as Map<String, Object>
+                return map.entries.map { "${it.key}: ${it.value}" }.joinToString()
+            }
+
+            @DgsRuntimeWiring
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
+                return builder.scalar(ExtendedScalars.Object)
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello(filter: {query: {and: ["title", "genre"]}})}""")
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("and: [title, genre]", data["hello"])
 
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
