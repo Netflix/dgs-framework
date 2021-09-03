@@ -40,7 +40,7 @@ object InputObjectMapper {
                     mapToJavaObject(input as Map<String, *>, nestedTarget.java)
                 }
                 inputValues.add(subValue)
-            } else if (parameter.type.jvmErasure.java.isEnum) {
+            } else if (parameter.type.jvmErasure.java.isEnum && input !== null) {
                 val enumValue = (parameter.type.jvmErasure.java.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == input }
                 inputValues.add(enumValue)
             } else if (input is List<*>) {
