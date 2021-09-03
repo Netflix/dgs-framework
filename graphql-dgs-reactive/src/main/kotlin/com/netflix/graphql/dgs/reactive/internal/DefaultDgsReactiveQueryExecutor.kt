@@ -22,7 +22,11 @@ import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
-import com.netflix.graphql.dgs.internal.*
+import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor
+import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
+import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
+import com.netflix.graphql.dgs.internal.DgsNoOpPreparsedDocumentProvider
+import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import graphql.ExecutionResult
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
