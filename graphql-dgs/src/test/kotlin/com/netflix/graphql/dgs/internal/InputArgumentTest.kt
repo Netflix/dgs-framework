@@ -1377,6 +1377,45 @@ internal class InputArgumentTest {
     }
 
     @Test
+    fun `Nullable enum @InputArgument`() {
+        val schema = """
+            type Query {
+                hello(type:GreetingType): String
+            }
+
+            enum GreetingType {
+                FRIENDLY
+                POLITE
+            }
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument type: GreetingType?): String {
+                return "Hello, this is a ${type ?: "SAD"} greeting"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello}""")
+        assertThat(executionResult.errors.isEmpty()).isTrue
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("Hello, this is a SAD greeting", data["hello"])
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
     fun `Java enum @InputArgument`() {
         val schema = """
             type Query {
@@ -1415,7 +1454,7 @@ internal class InputArgumentTest {
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 
-    data class InputMessage(val type: GreetingType)
+    data class InputMessage(val type: GreetingType?)
 
     @Test
     fun `Nested enum @InputArgument`() {
@@ -1423,12 +1462,12 @@ internal class InputArgumentTest {
             type Query {
                 hello(someInput:InputMessage): String
             }
-            
+
             input InputMessage {
                 type: GreetingType
             }
             
-            enum GreetingType {          
+            enum GreetingType {
                 FRIENDLY
                 POLITE
             }
@@ -1457,6 +1496,49 @@ internal class InputArgumentTest {
         assertThat(executionResult.errors.isEmpty()).isTrue
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("Hello, this is a FRIENDLY greeting", data["hello"])
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `Nested null enum @InputArgument`() {
+        val schema = """
+            type Query {
+                hello(someInput:InputMessage!): String
+            }
+
+            input InputMessage {
+                type: GreetingType
+            }
+
+            enum GreetingType {
+                FRIENDLY
+                POLITE
+            }
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument someInput: InputMessage): String {
+                return "Hello, this is a ${someInput.type ?: "SAD"} greeting"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello(someInput: {type: null})}""")
+        assertThat(executionResult.errors.isEmpty()).isTrue
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("Hello, this is a SAD greeting", data["hello"])
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 
