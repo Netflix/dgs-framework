@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.inputobjects;
+package com.netflix.graphql.dgs.internal.java.test.inputobjects;
 
 import java.time.LocalDateTime;
 
-public class InputObject {
+public class JInputObject {
+
     private String simpleString;
     private LocalDateTime someDate;
     private SomeObject someObject;

@@ -14,16 +14,27 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.internal.testenums;
+package com.netflix.graphql.dgs.internal.java.test.enums;
 
-public class InputMessage {
-    private GreetingType type;
+import java.util.List;
 
-    public GreetingType getType() {
+public class JInputMessage {
+    private JGreetingType type;
+    private List<JGreetingType> typeList;
+
+    public JGreetingType getType() {
         return type;
     }
 
-    public void setType(GreetingType type) {
+    public void setType(JGreetingType type) {
         this.type = type;
+    }
+
+    public List<JGreetingType> getTypeList() {
+        return typeList;
+    }
+
+    public void setTypeList(List<JGreetingType> typeList) {
+        this.typeList = typeList;
     }
 }

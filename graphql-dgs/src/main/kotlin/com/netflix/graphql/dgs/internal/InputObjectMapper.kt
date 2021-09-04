@@ -54,22 +54,6 @@ object InputObjectMapper {
         return targetClass.primaryConstructor!!.call(*inputValues.toTypedArray())
     }
 
-    private fun convertList(input: List<*>, nestedTarget: KClass<*>): List<*> {
-        return input.map { listItem ->
-            if (listItem is Map<*, *>) {
-                if (nestedTarget.java == Object::class.java || nestedTarget == Any::class) {
-                    listItem
-                } else if (nestedTarget.java.isKotlinClass()) {
-                    mapToKotlinObject(listItem as Map<String, *>, nestedTarget)
-                } else {
-                    mapToJavaObject(listItem as Map<String, *>, nestedTarget.java)
-                }
-            } else {
-                listItem
-            }
-        }
-    }
-
     fun <T> mapToJavaObject(inputMap: Map<String, *>, targetClass: Class<T>): T {
         if (targetClass == Object::class.java) {
             return inputMap as T
@@ -103,5 +87,25 @@ object InputObjectMapper {
         }
 
         return instance
+    }
+
+    private fun convertList(input: List<*>, nestedTarget: KClass<*>): List<*> {
+        return input.filterNotNull().map { listItem ->
+            if (nestedTarget.java.isAssignableFrom(listItem::class.java)) {
+                listItem
+            } else if (nestedTarget.java.isEnum) {
+                (nestedTarget.java.enumConstants as Array<Enum<*>>).first { it.name == listItem }
+            } else if (listItem is Map<*, *>) {
+                if (nestedTarget.java == Object::class.java || nestedTarget == Any::class) {
+                    listItem
+                } else if (nestedTarget.java.isKotlinClass()) {
+                    mapToKotlinObject(listItem as Map<String, *>, nestedTarget)
+                } else {
+                    mapToJavaObject(listItem as Map<String, *>, nestedTarget.java)
+                }
+            } else {
+                listItem
+            }
+        }
     }
 }

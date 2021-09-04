@@ -16,8 +16,8 @@
 
 package com.netflix.graphql.dgs.internal
 
-import com.netflix.graphql.dgs.inputobjects.InputObject
-import com.netflix.graphql.dgs.inputobjects.InputObjectWithKotlinProperty
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObject
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithKotlinProperty
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -43,7 +43,7 @@ internal class InputObjectMapperTest {
 
     @Test
     fun mapToJavaClass() {
-        val mapToObject = InputObjectMapper.mapToJavaObject(input, InputObject::class.java)
+        val mapToObject = InputObjectMapper.mapToJavaObject(input, JInputObject::class.java)
         assertThat(mapToObject.simpleString).isEqualTo("hello")
         assertThat(mapToObject.someDate).isEqualTo(currentDate)
         assertThat(mapToObject.someObject.key1).isEqualTo("value1")
@@ -53,7 +53,7 @@ internal class InputObjectMapperTest {
 
     @Test
     fun mapToJavaClassWithKotlinProperty() {
-        val mapToObject = InputObjectMapper.mapToJavaObject(inputKotlinJavaMix, InputObjectWithKotlinProperty::class.java)
+        val mapToObject = InputObjectMapper.mapToJavaObject(inputKotlinJavaMix, JInputObjectWithKotlinProperty::class.java)
         assertThat(mapToObject.name).isEqualTo("dgs")
         assertThat(mapToObject.objectProperty.simpleString).isEqualTo("hello")
         assertThat(mapToObject.objectProperty.someObject.key1).isEqualTo("value1")
@@ -79,7 +79,7 @@ internal class InputObjectMapperTest {
 
     @Test
     fun mapToJavaClassWithNull() {
-        val mapToObject = InputObjectMapper.mapToJavaObject(inputWithNulls, InputObject::class.java)
+        val mapToObject = InputObjectMapper.mapToJavaObject(inputWithNulls, JInputObject::class.java)
         assertThat(mapToObject.simpleString).isNull()
         assertThat(mapToObject.someDate).isEqualTo(currentDate)
         assertThat(mapToObject.someObject.key1).isEqualTo("value1")
@@ -101,5 +101,5 @@ internal class InputObjectMapperTest {
     data class KotlinSomeObject(val key1: String, val key2: LocalDateTime, val key3: KotlinSubObject?)
     data class KotlinSubObject(val subkey1: String)
 
-    data class KotlinWithJavaProperty(val name: String, val objectProperty: InputObject)
+    data class KotlinWithJavaProperty(val name: String, val objectProperty: JInputObject)
 }
