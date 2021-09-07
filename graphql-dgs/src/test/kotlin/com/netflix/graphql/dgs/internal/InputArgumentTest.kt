@@ -1777,7 +1777,7 @@ internal class InputArgumentTest {
     }
 
     @Test
-    fun `github issue 584`() {
+    fun `Input object of a subclass with a generic typed field`() {
         val schema = """
             type Query {
                 movies(sortBy: [MovieSortBy]): String
