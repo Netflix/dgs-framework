@@ -29,7 +29,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 
 object InputObjectMapper {
-    val logger : Logger = LoggerFactory.getLogger(InputObjectMapper::class.java)
+    val logger: Logger = LoggerFactory.getLogger(InputObjectMapper::class.java)
 
     fun <T : Any> mapToKotlinObject(inputMap: Map<String, *>, targetClass: KClass<T>): T {
         val params = targetClass.primaryConstructor!!.parameters
@@ -84,33 +84,33 @@ object InputObjectMapper {
                     }
 
                     declaredField.set(instance, mappedValue)
-                } else if (actualType.isEnum) {
-                    val enumValue = (actualType.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == it.value }
-                    declaredField.set(instance, enumValue)
                 } else if (it.value is List<*>) {
                     val newList = convertList(it.value as List<*>, Class.forName(actualType.typeName).kotlin)
                     declaredField.set(instance, newList)
+                } else if (actualType.isEnum) {
+                    val enumValue = (actualType.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == it.value }
+                    declaredField.set(instance, enumValue)
                 } else {
                     declaredField.set(instance, it.value)
                 }
             } else {
-                logger.warn("Field '${it.key}' was not found on Input object of type '${targetClass}'")
+                logger.warn("Field '${it.key}' was not found on Input object of type '$targetClass'")
                 nrOfFieldErrors++
             }
         }
 
-        if(nrOfFieldErrors == inputMap.size) {
-            throw DgsInvalidInputArgumentException("Input argument type '${targetClass}' doesn't match input $inputMap")
+        if (nrOfFieldErrors == inputMap.size) {
+            throw DgsInvalidInputArgumentException("Input argument type '$targetClass' doesn't match input $inputMap")
         }
 
         return instance
     }
 
-    fun getFieldType(field: Field, genericSuperclass: Type, ): Class<*> {
+    fun getFieldType(field: Field, genericSuperclass: Type,): Class<*> {
         val type: Type = field.genericType
         return if (type is ParameterizedType) {
             Class.forName(type.actualTypeArguments[0].typeName)
-        } else if(genericSuperclass is ParameterizedType) {
+        } else if (genericSuperclass is ParameterizedType) {
             Class.forName(genericSuperclass.actualTypeArguments[0].typeName)
         } else {
             field.type
