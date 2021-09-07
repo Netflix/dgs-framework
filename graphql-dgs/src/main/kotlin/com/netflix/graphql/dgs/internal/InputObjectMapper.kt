@@ -17,6 +17,9 @@
 package com.netflix.graphql.dgs.internal
 
 import com.fasterxml.jackson.module.kotlin.isKotlinClass
+import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.util.ReflectionUtils
 import java.lang.reflect.Field
 import java.lang.reflect.ParameterizedType
@@ -26,6 +29,8 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 
 object InputObjectMapper {
+    val logger : Logger = LoggerFactory.getLogger(InputObjectMapper::class.java)
+
     fun <T : Any> mapToKotlinObject(inputMap: Map<String, *>, targetClass: KClass<T>): T {
         val params = targetClass.primaryConstructor!!.parameters
         val inputValues = mutableListOf<Any?>()
@@ -64,6 +69,7 @@ object InputObjectMapper {
         val ctor = targetClass.getDeclaredConstructor()
         ctor.isAccessible = true
         val instance = ctor.newInstance()
+        var nrOfFieldErrors = 0
         inputMap.forEach {
             val declaredField = ReflectionUtils.findField(targetClass, it.key)
             if (declaredField != null) {
@@ -82,13 +88,19 @@ object InputObjectMapper {
                     val enumValue = (actualType.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == it.value }
                     declaredField.set(instance, enumValue)
                 } else if (it.value is List<*>) {
-                    val actualType: Type = (declaredField.genericType as ParameterizedType).actualTypeArguments[0]
                     val newList = convertList(it.value as List<*>, Class.forName(actualType.typeName).kotlin)
                     declaredField.set(instance, newList)
                 } else {
                     declaredField.set(instance, it.value)
                 }
+            } else {
+                logger.warn("Field '${it.key}' was not found on Input object of type '${targetClass}'")
+                nrOfFieldErrors++
             }
+        }
+
+        if(nrOfFieldErrors == inputMap.size) {
+            throw DgsInvalidInputArgumentException("Input argument type '${targetClass}' doesn't match input $inputMap")
         }
 
         return instance

@@ -20,13 +20,9 @@ import com.netflix.graphql.dgs.*
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
 import com.netflix.graphql.dgs.inputobjects.JFilter
-import com.netflix.graphql.dgs.inputobjects.JFooInput
 import com.netflix.graphql.dgs.inputobjects.sortby.MovieSortBy
-import com.netflix.graphql.dgs.internal.testenums.GreetingType
-import com.netflix.graphql.dgs.internal.testenums.InputMessage
 import com.netflix.graphql.dgs.internal.java.test.enums.JGreetingType
 import com.netflix.graphql.dgs.internal.java.test.enums.JInputMessage
-import com.netflix.graphql.dgs.internal.java.test.inputobjects.JFilter
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JFooInput
 import com.netflix.graphql.dgs.internal.kotlin.test.*
 import com.netflix.graphql.dgs.scalars.UploadScalar
