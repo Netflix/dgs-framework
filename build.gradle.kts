@@ -115,6 +115,10 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         }
     }
 
+    tasks.withType<JavaCompile>().configureEach {
+        options.compilerArgs + "-parameters"
+    }
+
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
             freeCompilerArgs += "-Xjvm-default=enable"
