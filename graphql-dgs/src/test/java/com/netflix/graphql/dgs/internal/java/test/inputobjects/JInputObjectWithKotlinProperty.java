@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.inputobjects;
+package com.netflix.graphql.dgs.internal.java.test.inputobjects;
 
-public class JBarInput {
+import com.netflix.graphql.dgs.internal.InputObjectMapperTest;
+
+public class JInputObjectWithKotlinProperty {
     private String name;
-    private Object value;
+    private InputObjectMapperTest.KotlinInputObject objectProperty;
 
     public String getName() {
         return name;
@@ -28,11 +30,11 @@ public class JBarInput {
         this.name = name;
     }
 
-    public Object getValue() {
-        return value;
+    public InputObjectMapperTest.KotlinInputObject getObjectProperty() {
+        return objectProperty;
     }
 
-    public void setValue(Object value) {
-        this.value = value;
+    public void setObjectProperty(InputObjectMapperTest.KotlinInputObject objectProperty) {
+        this.objectProperty = objectProperty;
     }
 }

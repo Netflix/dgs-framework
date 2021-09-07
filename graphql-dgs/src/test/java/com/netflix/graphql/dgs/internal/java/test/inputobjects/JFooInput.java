@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.inputobjects;
+package com.netflix.graphql.dgs.internal.java.test.inputobjects;
 
 import java.util.List;
 
