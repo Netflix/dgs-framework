@@ -17,6 +17,8 @@
 package com.netflix.graphql.dgs.internal
 
 import com.fasterxml.jackson.module.kotlin.isKotlinClass
+import org.springframework.util.ReflectionUtils
+import java.lang.IllegalArgumentException
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
@@ -63,7 +65,9 @@ object InputObjectMapper {
         ctor.isAccessible = true
         val instance = ctor.newInstance()
         inputMap.forEach {
-            val declaredField = targetClass.getDeclaredField(it.key)
+            val declaredField = ReflectionUtils.findField(targetClass, it.key)
+                ?: throw IllegalArgumentException("The target type $targetClass has no ${it.key} field!")
+
             declaredField.isAccessible = true
 
             if (it.value is Map<*, *>) {

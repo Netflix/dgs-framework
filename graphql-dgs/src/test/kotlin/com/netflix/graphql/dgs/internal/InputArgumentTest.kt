@@ -21,6 +21,7 @@ import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
 import com.netflix.graphql.dgs.internal.java.test.enums.JGreetingType
 import com.netflix.graphql.dgs.internal.java.test.enums.JInputMessage
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JConcreteFilterEntry
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JFilter
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JFooInput
 import com.netflix.graphql.dgs.internal.kotlin.test.*
@@ -1780,41 +1781,38 @@ internal class InputArgumentTest {
     data class MovieSortBy(val field: MovieSortByField, val direction: SortDirection)
 
     @Test
-    fun `github issue 584`() {
+    fun `github issue 584 Java`() {
         val schema = """
-            type Query {
-                movies(sortBy: [MovieSortBy]): String
+           enum FilterOperator {
+                IN
+                EQUALS
             }
-                                  
-            input MovieSortBy {
-                field: MovieSortByField
-                direction: SortDirection = ASC
-            }    
             
-            enum MovieSortByField {
-                TITLE,
-                RELEASEDATE
+            enum FilterField {
+                MY_FIELD
             }
-                  
-            enum SortDirection {
-                ASC,
-                DESC
+            
+            input ConcreteFilterEntry {
+                field: FilterField!
+                operator: FilterOperator!
+                values: [String]!
             }
+            
+            type Query {
+                testQuery(filters: [ConcreteFilterEntry]): Boolean
+            } 
         """.trimIndent()
 
         val fetcher = object : Any() {
             @DgsQuery
-            fun movies(@InputArgument(collectionType = MovieSortBy::class) sortBy: List<MovieSortBy>): String {
-                return "Sorted by: ${sortBy.joinToString { "${it.field}: ${it.direction}" }}"
+            fun testQuery(
+                @InputArgument(collectionType = JConcreteFilterEntry::class) filters: List<JConcreteFilterEntry>
+            ): Boolean {
+                return true
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("fetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -1823,18 +1821,79 @@ internal class InputArgumentTest {
         val executionResult = build.execute(
             """
             {
-                movies(sortBy: 
+                testQuery(filters: 
                     [
-                        {field: RELEASEDATE, direction: DESC}, 
-                        {field: TITLE, direction: ASC}
+                        {field: MY_FIELD, operator: IN, values: ["VALUE"] }
                     ]
                 )
              }
             """.trimIndent()
         )
-        Assertions.assertTrue(executionResult.isDataPresent)
-        val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Sorted by: RELEASEDATE: DESC, TITLE: ASC", data["movies"])
+
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult)
+            .extracting { it.getData<Map<String, *>>() }
+            .extracting { it["testQuery"] }
+            .isEqualTo(true)
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `github issue 584 Kotlin`() {
+        val schema = """
+           enum FilterOperator {
+                IN
+                EQUALS
+            }
+            
+            enum FilterField {
+                MY_FIELD
+            }
+            
+            input ConcreteFilterEntry {
+                field: FilterField!
+                operator: FilterOperator!
+                values: [String]!
+            }
+            
+            type Query {
+                testQuery(filters: [ConcreteFilterEntry]): Boolean
+            } 
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsQuery
+            fun testQuery(
+                @InputArgument(collectionType = KConcreteFilterEntry::class) filters: List<KConcreteFilterEntry>
+            ): Boolean {
+                return true
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("fetcher" to fetcher)
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute(
+            """
+            {
+                testQuery(filters: 
+                    [
+                        {field: MY_FIELD, operator: IN, values: ["VALUE"] }
+                    ]
+                )
+             }
+            """.trimIndent()
+        )
+
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult)
+            .extracting { it.getData<Map<String, *>>() }
+            .extracting { it["testQuery"] }
+            .isEqualTo(true)
 
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }

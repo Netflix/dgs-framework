@@ -16,6 +16,10 @@
 
 package com.netflix.graphql.dgs.internal.kotlin.test
 
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JFilterEntry
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JFilterField
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JFilterOperator
+
 enum class KGreetingType {
     FRIENDLY,
     POLITE
@@ -30,3 +34,9 @@ data class KFooInput(val bars: List<KBarInput>)
 data class KBarInput(val name: String, val value: Any)
 
 data class KFilter(val query: Any)
+
+class KConcreteFilterEntry(
+    operator: JFilterOperator?,
+    values: List<String?>?,
+    val field: JFilterField?
+) : JFilterEntry(operator, values)

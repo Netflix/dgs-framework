@@ -122,6 +122,10 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         }
     }
 
+    tasks.withType<JavaCompile>().configureEach {
+        options.compilerArgs + "-parameters"
+    }
+
     tasks {
         test {
             useJUnitPlatform()
