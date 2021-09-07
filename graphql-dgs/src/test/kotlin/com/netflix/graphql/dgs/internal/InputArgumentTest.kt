@@ -19,6 +19,11 @@ package com.netflix.graphql.dgs.internal
 import com.netflix.graphql.dgs.*
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
+import com.netflix.graphql.dgs.inputobjects.JFilter
+import com.netflix.graphql.dgs.inputobjects.JFooInput
+import com.netflix.graphql.dgs.inputobjects.sortby.MovieSortBy
+import com.netflix.graphql.dgs.internal.testenums.GreetingType
+import com.netflix.graphql.dgs.internal.testenums.InputMessage
 import com.netflix.graphql.dgs.internal.java.test.enums.JGreetingType
 import com.netflix.graphql.dgs.internal.java.test.enums.JInputMessage
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JFilter
@@ -1775,10 +1780,6 @@ internal class InputArgumentTest {
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 
-    enum class MovieSortByField { TITLE, RELEASEDATE }
-    enum class SortDirection { ASC, DESC }
-    data class MovieSortBy(val field: MovieSortByField, val direction: SortDirection)
-
     @Test
     fun `github issue 584`() {
         val schema = """
@@ -1805,7 +1806,7 @@ internal class InputArgumentTest {
         val fetcher = object : Any() {
             @DgsQuery
             fun movies(@InputArgument(collectionType = MovieSortBy::class) sortBy: List<MovieSortBy>): String {
-                return "Sorted by: ${sortBy.joinToString { "${it.field}: ${it.direction}" }}"
+                return "Sorted by: ${sortBy.joinToString { "${it.field}" }}"
             }
         }
 
@@ -1834,7 +1835,7 @@ internal class InputArgumentTest {
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Sorted by: RELEASEDATE: DESC, TITLE: ASC", data["movies"])
+        Assertions.assertEquals("Sorted by: RELEASEDATE, TITLE", data["movies"])
 
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }

@@ -17,6 +17,8 @@
 package com.netflix.graphql.dgs.internal
 
 import com.fasterxml.jackson.module.kotlin.isKotlinClass
+import org.springframework.util.ReflectionUtils
+import java.lang.reflect.Field
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
@@ -63,30 +65,44 @@ object InputObjectMapper {
         ctor.isAccessible = true
         val instance = ctor.newInstance()
         inputMap.forEach {
-            val declaredField = targetClass.getDeclaredField(it.key)
-            declaredField.isAccessible = true
+            val declaredField = ReflectionUtils.findField(targetClass, it.key)
+            if (declaredField != null) {
+                declaredField.isAccessible = true
+                val actualType = getFieldType(declaredField, targetClass.genericSuperclass)
 
-            if (it.value is Map<*, *>) {
-                val mappedValue = if (declaredField.type.isKotlinClass()) {
-                    mapToKotlinObject(it.value as Map<String, *>, declaredField.type.kotlin)
+                if (it.value is Map<*, *>) {
+                    val mappedValue = if (actualType.isKotlinClass()) {
+                        mapToKotlinObject(it.value as Map<String, *>, actualType.kotlin)
+                    } else {
+                        mapToJavaObject(it.value as Map<String, *>, actualType)
+                    }
+
+                    declaredField.set(instance, mappedValue)
+                } else if (actualType.isEnum) {
+                    val enumValue = (actualType.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == it.value }
+                    declaredField.set(instance, enumValue)
+                } else if (it.value is List<*>) {
+                    val actualType: Type = (declaredField.genericType as ParameterizedType).actualTypeArguments[0]
+                    val newList = convertList(it.value as List<*>, Class.forName(actualType.typeName).kotlin)
+                    declaredField.set(instance, newList)
                 } else {
-                    mapToJavaObject(it.value as Map<String, *>, declaredField.type)
+                    declaredField.set(instance, it.value)
                 }
-
-                declaredField.set(instance, mappedValue)
-            } else if (declaredField.type.isEnum) {
-                val enumValue = (declaredField.type.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == it.value }
-                declaredField.set(instance, enumValue)
-            } else if (it.value is List<*>) {
-                val actualType: Type = (declaredField.genericType as ParameterizedType).actualTypeArguments[0]
-                val newList = convertList(it.value as List<*>, Class.forName(actualType.typeName).kotlin)
-                declaredField.set(instance, newList)
-            } else {
-                declaredField.set(instance, it.value)
             }
         }
 
         return instance
+    }
+
+    fun getFieldType(field: Field, genericSuperclass: Type, ): Class<*> {
+        val type: Type = field.genericType
+        return if (type is ParameterizedType) {
+            Class.forName(type.actualTypeArguments[0].typeName)
+        } else if(genericSuperclass is ParameterizedType) {
+            Class.forName(genericSuperclass.actualTypeArguments[0].typeName)
+        } else {
+            field.type
+        }
     }
 
     private fun convertList(input: List<*>, nestedTarget: KClass<*>): List<*> {
