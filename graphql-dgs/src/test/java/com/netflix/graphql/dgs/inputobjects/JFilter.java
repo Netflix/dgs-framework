@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.internal.testenums;
+package com.netflix.graphql.dgs.inputobjects;
 
-public enum GreetingType {
-    FRIENDLY,
-    POLITE
+public class JFilter {
+    private Object query;
+
+    public Object getQuery() {
+        return query;
+    }
+
+    public void setQuery(Object query) {
+        this.query = query;
+    }
 }

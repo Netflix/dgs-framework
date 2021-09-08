@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.inputobjects;
+package com.netflix.graphql.dgs.internal.java.test.inputobjects;
 
-public class JBarInput {
-    private String name;
-    private Object value;
+public class JGenericInputObjectTwoTypeParams<A, B> {
 
-    public String getName() {
-        return name;
+    private A fieldA;
+    private B fieldB;
+
+    public A getFieldA() {
+        return fieldA;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFieldA(A fieldA) {
+        this.fieldA = fieldA;
     }
 
-    public Object getValue() {
-        return value;
+    public B getFieldB() {
+        return fieldB;
     }
 
-    public void setValue(Object value) {
-        this.value = value;
+    public void setFieldB(B fieldB) {
+        this.fieldB = fieldB;
     }
 }

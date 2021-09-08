@@ -14,16 +14,26 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.internal.testenums;
+package com.netflix.graphql.dgs.internal.java.test.inputobjects;
 
-public class InputMessage {
-    private GreetingType type;
+public class JGenericBaseInputObject<T> {
 
-    public GreetingType getType() {
-        return type;
+    private String someField;
+    private T fieldA;
+
+    public String getSomeField() {
+        return someField;
     }
 
-    public void setType(GreetingType type) {
-        this.type = type;
+    public void setSomeField(String someField) {
+        this.someField = someField;
+    }
+
+    public T getFieldA() {
+        return fieldA;
+    }
+
+    public void setFieldA(T fieldA) {
+        this.fieldA = fieldA;
     }
 }

@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.inputobjects;
+package com.netflix.graphql.dgs.inputobjects.sortby;
 
-import java.util.List;
-
-public class JFooInput {
-    private List<JBarInput> bars;
-
-    public List<JBarInput> getBars() {
-        return bars;
-    }
-
-    public void setBars(List<JBarInput> bars) {
-        this.bars = bars;
-    }
+enum MovieSortByField {
+    TITLE,
+    RELEASEDATE
 }

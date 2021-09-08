@@ -19,9 +19,12 @@ package com.netflix.graphql.dgs.internal
 import com.netflix.graphql.dgs.*
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
-import com.netflix.graphql.dgs.inputobjects.JFooInput
-import com.netflix.graphql.dgs.internal.testenums.GreetingType
-import com.netflix.graphql.dgs.internal.testenums.InputMessage
+import com.netflix.graphql.dgs.inputobjects.JFilter
+import com.netflix.graphql.dgs.inputobjects.sortby.MovieSortBy
+import com.netflix.graphql.dgs.internal.java.test.enums.JGreetingType
+import com.netflix.graphql.dgs.internal.java.test.enums.JInputMessage
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JFooInput
+import com.netflix.graphql.dgs.internal.kotlin.test.*
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import graphql.ExceptionWhileDataFetching
 import graphql.ExecutionInput
@@ -298,8 +301,6 @@ internal class InputArgumentTest {
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 
-    data class MovieFilter(val movieIds: List<Any>)
-
     @Test
     fun `List of scalar in a nested input type`() {
         val schema = """
@@ -316,7 +317,7 @@ internal class InputArgumentTest {
 
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "titles")
-            fun someFetcher(@InputArgument("filter") filter: MovieFilter): String {
+            fun someFetcher(@InputArgument("filter") filter: KMovieFilter): String {
                 return filter.movieIds.joinToString { "Title for $it" }
             }
 
@@ -346,9 +347,6 @@ internal class InputArgumentTest {
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 
-    data class FooInput(val bars: List<BarInput>)
-    data class BarInput(val name: String, val value: Any)
-
     @Test
     fun `Use scalar property inside a List of complex input type`() {
         val schema = """
@@ -370,7 +368,7 @@ internal class InputArgumentTest {
 
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "titles")
-            fun someFetcher(@InputArgument input: FooInput): String {
+            fun someFetcher(@InputArgument input: KFooInput): String {
                 return input.bars.joinToString { "${it.name}: ${it.value}" }
             }
 
@@ -816,13 +814,8 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(Pair("DateTime", LocalDateTimeScalar()))
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf("DateTime" to LocalDateTimeScalar())
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
@@ -855,13 +848,8 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(Pair("DateTime", LocalDateTimeScalar()))
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf("DateTime" to LocalDateTimeScalar())
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
@@ -890,13 +878,8 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(Pair("DateTime", LocalDateTimeScalar()))
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf("DateTime" to LocalDateTimeScalar())
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
 
@@ -928,13 +911,8 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(Pair("DateTime", LocalDateTimeScalar()))
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf("DateTime" to LocalDateTimeScalar())
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
@@ -963,12 +941,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -1037,10 +1010,7 @@ internal class InputArgumentTest {
         val build = GraphQL.newGraphQL(schema).build()
         val httpHeaders = HttpHeaders()
         httpHeaders.add("Referer", "localhost")
-        val executionResult = build.execute(
-            ExecutionInput.newExecutionInput("""{hello}""")
-                .context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders)))
-        )
+        val executionResult = build.execute(ExecutionInput.newExecutionInput("""{hello}""").context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders))))
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("From, localhost", data["hello"])
@@ -1263,6 +1233,7 @@ internal class InputArgumentTest {
 
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
+
     @Test
     fun `An @InputArgument of type Optional should fail when no type is specified`() {
         val schema = """
@@ -1295,8 +1266,9 @@ internal class InputArgumentTest {
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello(person: {name: "tester"})}""")
-        Assertions.assertEquals(1, executionResult.errors.size)
-        Assertions.assertEquals("Exception while fetching data (/hello) : When Optional<T> is used, the type must be specified using the collectionType argument of the @InputArgument annotation.", executionResult.errors[0].message)
+        assertThat(executionResult.errors).hasSize(1)
+        assertThat(executionResult.errors[0].message)
+            .isEqualTo("Exception while fetching data (/hello) : When Optional<T> is used, the type must be specified using the collectionType argument of the @InputArgument annotation.")
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 
@@ -1331,11 +1303,6 @@ internal class InputArgumentTest {
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 
-    enum class GreetingType {
-        FRIENDLY,
-        POLITE
-    }
-
     @Test
     fun `Kotlin enum @InputArgument`() {
         val schema = """
@@ -1351,7 +1318,7 @@ internal class InputArgumentTest {
 
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument type: GreetingType): String {
+            fun someFetcher(@InputArgument type: KGreetingType): String {
                 return "Hello, this is a $type greeting"
             }
         }
@@ -1372,6 +1339,45 @@ internal class InputArgumentTest {
         assertThat(executionResult.errors.isEmpty()).isTrue
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("Hello, this is a FRIENDLY greeting", data["hello"])
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `Nullable enum @InputArgument`() {
+        val schema = """
+            type Query {
+                hello(type:GreetingType): String
+            }
+
+            enum GreetingType {
+                FRIENDLY
+                POLITE
+            }
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument type: KGreetingType?): String {
+                return "Hello, this is a ${type ?: "SAD"} greeting"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello}""")
+        assertThat(executionResult.errors.isEmpty()).isTrue
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("Hello, this is a SAD greeting", data["hello"])
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 
@@ -1390,7 +1396,7 @@ internal class InputArgumentTest {
 
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument type: com.netflix.graphql.dgs.internal.testenums.GreetingType): String {
+            fun someFetcher(@InputArgument type: JGreetingType): String {
                 return "Hello, this is a $type greeting"
             }
         }
@@ -1414,20 +1420,19 @@ internal class InputArgumentTest {
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 
-    data class InputMessage(val type: GreetingType)
-
     @Test
-    fun `Nested enum @InputArgument`() {
+    fun `Nested Kotlin enum @InputArgument`() {
         val schema = """
             type Query {
-                hello(someInput:InputMessage): String
+                hello(input:InputMessage): String
             }
-            
+
             input InputMessage {
                 type: GreetingType
+                typeList:  [GreetingType!]
             }
             
-            enum GreetingType {          
+            enum GreetingType {
                 FRIENDLY
                 POLITE
             }
@@ -1435,8 +1440,58 @@ internal class InputArgumentTest {
 
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument someInput: InputMessage): String {
-                return "Hello, this is a ${someInput.type} greeting"
+            fun hello(@InputArgument input: KInputMessage): String {
+                assertThat(input.type).isInstanceOf(KGreetingType::class.java)
+                assertThat(input.type).isEqualTo(KGreetingType.FRIENDLY)
+                assertThat(input.typeList).hasOnlyElementsOfType(KGreetingType::class.java)
+                assertThat(input.typeList).contains(KGreetingType.FRIENDLY, KGreetingType.POLITE)
+                return "Hello, this is a ${input.type} greeting with ${input.typeList}"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute(
+            """
+                { hello(input: { type: FRIENDLY, typeList: [POLITE, FRIENDLY] }) }
+            """.trimIndent()
+        )
+
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult)
+            .extracting { it.getData<Map<String, *>>() }
+            .extracting { it["hello"] }
+            .isEqualTo("Hello, this is a FRIENDLY greeting with [POLITE, FRIENDLY]")
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `Nested null enum @InputArgument`() {
+        val schema = """
+            type Query {
+                hello(someInput:InputMessage!): String
+            }
+
+            input InputMessage {
+                type: GreetingType
+            }
+
+            enum GreetingType {
+                FRIENDLY
+                POLITE
+            }
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument someInput: JInputMessage): String {
+                return "Hello, this is a ${someInput.type ?: "SAD"} greeting"
             }
         }
 
@@ -1452,10 +1507,10 @@ internal class InputArgumentTest {
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
-        val executionResult = build.execute("""{hello(someInput: {type: FRIENDLY})}""")
+        val executionResult = build.execute("""{hello(someInput: {type: null})}""")
         assertThat(executionResult.errors.isEmpty()).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, this is a FRIENDLY greeting", data["hello"])
+        Assertions.assertEquals("Hello, this is a SAD greeting", data["hello"])
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 
@@ -1463,11 +1518,12 @@ internal class InputArgumentTest {
     fun `Nested Java enum @InputArgument`() {
         val schema = """
             type Query {
-                hello(someInput:InputMessage): String
+                hello(input:InputMessage): String
             }
             
             input InputMessage {
                 type: GreetingType
+                typeList:  [GreetingType!]
             }
             
             enum GreetingType {          
@@ -1478,27 +1534,33 @@ internal class InputArgumentTest {
 
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument someInput: com.netflix.graphql.dgs.internal.testenums.InputMessage): String {
-                return "Hello, this is a ${someInput.type} greeting"
+            fun hello(@InputArgument input: JInputMessage): String {
+                assertThat(input.type).isInstanceOf(JGreetingType::class.java)
+                assertThat(input.type).isEqualTo(JGreetingType.FRIENDLY)
+                assertThat(input.typeList).hasOnlyElementsOfType(JGreetingType::class.java)
+                assertThat(input.typeList).contains(JGreetingType.FRIENDLY, JGreetingType.POLITE)
+                return "Hello, this is a ${input.type} greeting with ${input.typeList}"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
-
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
-        val executionResult = build.execute("""{hello(someInput: {type: FRIENDLY})}""")
-        assertThat(executionResult.errors.isEmpty()).isTrue
-        val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, this is a FRIENDLY greeting", data["hello"])
+        val executionResult = build.execute(
+            """
+                { hello(input: { type: FRIENDLY, typeList: [POLITE, FRIENDLY] }) }
+            """.trimIndent()
+        )
+
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult)
+            .extracting { it.getData<Map<String, *>>() }
+            .extracting { it["hello"] }
+            .isEqualTo("Hello, this is a FRIENDLY greeting with [POLITE, FRIENDLY]")
+
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 
@@ -1550,7 +1612,7 @@ internal class InputArgumentTest {
 
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument(collectionType = BarInput::class) objects: List<BarInput>): String {
+            fun someFetcher(@InputArgument(collectionType = KBarInput::class) objects: List<KBarInput>): String {
                 return objects.joinToString { "${it.name}: ${it.value}" }
             }
 
@@ -1621,12 +1683,101 @@ internal class InputArgumentTest {
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 
-    enum class MovieSortByField { TITLE, RELEASEDATE }
-    enum class SortDirection { ASC, DESC }
-    data class MovieSortBy(val field: MovieSortByField, val direction: SortDirection)
+    @Test
+    fun `A field of an input type of type Any should be assigned the actual value and skip converting`() {
+
+        val schema = """
+            type Query {
+                hello(filter: Filter): String
+            }               
+                       
+            input Filter {
+                query: Object
+            }
+                  
+            scalar Object
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument filter: KFilter): String {
+                return filter.toString()
+            }
+
+            @DgsRuntimeWiring
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
+                return builder.scalar(ExtendedScalars.Object)
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello(filter: {query: {and: ["title", "genre"]}})}""")
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("KFilter(query={and=[title, genre]})", data["hello"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
 
     @Test
-    fun `github issue 584`() {
+    fun `A field of an input type of type Object should be assigned the actual value and skip converting`() {
+
+        val schema = """
+            type Query {
+                hello(filter: Filter): String
+            }               
+                       
+            input Filter {
+                query: Object
+            }
+                  
+            scalar Object
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument filter: JFilter): String {
+                val map = filter.query as Map<String, Object>
+                return map.entries.map { "${it.key}: ${it.value}" }.joinToString()
+            }
+
+            @DgsRuntimeWiring
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
+                return builder.scalar(ExtendedScalars.Object)
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello(filter: {query: {and: ["title", "genre"]}})}""")
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("and: [title, genre]", data["hello"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `Input object of a subclass with a generic typed field`() {
         val schema = """
             type Query {
                 movies(sortBy: [MovieSortBy]): String
@@ -1651,7 +1802,7 @@ internal class InputArgumentTest {
         val fetcher = object : Any() {
             @DgsQuery
             fun movies(@InputArgument(collectionType = MovieSortBy::class) sortBy: List<MovieSortBy>): String {
-                return "Sorted by: ${sortBy.joinToString { "${it.field}: ${it.direction}" }}"
+                return "Sorted by: ${sortBy.joinToString { "${it.field}" }}"
             }
         }
 
@@ -1680,7 +1831,7 @@ internal class InputArgumentTest {
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Sorted by: RELEASEDATE: DESC, TITLE: ASC", data["movies"])
+        Assertions.assertEquals("Sorted by: RELEASEDATE, TITLE", data["movies"])
 
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }

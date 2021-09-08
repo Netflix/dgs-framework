@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.inputobjects;
+package com.netflix.graphql.dgs.internal.java.test.enums;
 
-import com.netflix.graphql.dgs.internal.InputObjectMapperTest;
+import java.util.List;
 
-public class InputObjectWithKotlinProperty {
-    private String name;
-    private InputObjectMapperTest.KotlinInputObject objectProperty;
+public class JInputMessage {
+    private JGreetingType type;
+    private List<JGreetingType> typeList;
 
-    public String getName() {
-        return name;
+    public JGreetingType getType() {
+        return type;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setType(JGreetingType type) {
+        this.type = type;
     }
 
-    public InputObjectMapperTest.KotlinInputObject getObjectProperty() {
-        return objectProperty;
+    public List<JGreetingType> getTypeList() {
+        return typeList;
     }
 
-    public void setObjectProperty(InputObjectMapperTest.KotlinInputObject objectProperty) {
-        this.objectProperty = objectProperty;
+    public void setTypeList(List<JGreetingType> typeList) {
+        this.typeList = typeList;
     }
 }
