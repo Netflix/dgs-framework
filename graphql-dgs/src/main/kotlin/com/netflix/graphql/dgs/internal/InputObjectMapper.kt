@@ -59,7 +59,11 @@ object InputObjectMapper {
             }
         }
 
-        return targetClass.primaryConstructor!!.call(*inputValues.toTypedArray())
+        return try {
+            targetClass.primaryConstructor!!.call(*inputValues.toTypedArray())
+        } catch (ex: Exception) {
+            throw DgsInvalidInputArgumentException("Provided input arguments `$inputValues` do not match arguments of data class `$targetClass`")
+        }
     }
 
     fun <T> mapToJavaObject(inputMap: Map<String, *>, targetClass: Class<T>): T {
@@ -74,7 +78,6 @@ object InputObjectMapper {
         inputMap.forEach {
             val declaredField = ReflectionUtils.findField(targetClass, it.key)
             if (declaredField != null) {
-                declaredField.isAccessible = true
                 val actualType = getFieldType(declaredField, targetClass.genericSuperclass)
 
                 if (it.value is Map<*, *>) {
@@ -84,15 +87,15 @@ object InputObjectMapper {
                         mapToJavaObject(it.value as Map<String, *>, actualType)
                     }
 
-                    declaredField.set(instance, mappedValue)
+                    trySetField(declaredField, instance, mappedValue)
                 } else if (it.value is List<*>) {
                     val newList = convertList(it.value as List<*>, Class.forName(actualType.typeName).kotlin)
-                    declaredField.set(instance, newList)
+                    trySetField(declaredField, instance, newList)
                 } else if (actualType.isEnum) {
                     val enumValue = (actualType.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == it.value }
-                    declaredField.set(instance, enumValue)
+                    trySetField(declaredField, instance, enumValue)
                 } else {
-                    declaredField.set(instance, it.value)
+                    trySetField(declaredField, instance, it.value)
                 }
             } else {
                 logger.warn("Field '${it.key}' was not found on Input object of type '$targetClass'")
@@ -110,6 +113,15 @@ object InputObjectMapper {
         }
 
         return instance
+    }
+
+    private fun trySetField(declaredField: Field, instance: Any?, value: Any?) {
+        try {
+            declaredField.isAccessible = true
+            declaredField.set(instance, value)
+        } catch (ex: Exception) {
+            throw DgsInvalidInputArgumentException("Invalid input argument `$value` for field `${declaredField.name}` on type `${instance?.javaClass?.name}`")
+        }
     }
 
     fun getFieldType(field: Field, genericSuperclass: Type,): Class<*> {
