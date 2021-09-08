@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.internal
 
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JGenericInputObject
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObject
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithKotlinProperty
 import org.assertj.core.api.Assertions.assertThat
@@ -95,6 +96,15 @@ internal class InputObjectMapperTest {
         assertThat(mapToObject.someObject.key1).isEqualTo("value1")
         assertThat(mapToObject.someObject.key2).isEqualTo(currentDate)
         assertThat(mapToObject.someObject.key3).isNull()
+    }
+
+    @Test
+    fun mapGenericJavaClass() {
+        val input = mapOf("fieldA" to "value A", "fieldB" to listOf(1, 2, 3))
+        val mappedGeneric = InputObjectMapper.mapToJavaObject(input, JGenericInputObject::class.java)
+
+        assertThat(mappedGeneric.fieldA).isEqualTo("value A")
+        assertThat(mappedGeneric.fieldB).isEqualTo(listOf(1, 2, 3))
     }
 
     data class KotlinInputObject(val simpleString: String?, val someDate: LocalDateTime, val someObject: KotlinSomeObject)

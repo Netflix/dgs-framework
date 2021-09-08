@@ -28,6 +28,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 
+@Suppress("UNCHECKED_CAST")
 object InputObjectMapper {
     val logger: Logger = LoggerFactory.getLogger(InputObjectMapper::class.java)
 
@@ -39,7 +40,7 @@ object InputObjectMapper {
             val input = inputMap[parameter.name]
             if (input is Map<*, *>) {
                 val nestedTarget = parameter.type.jvmErasure
-                val subValue = if (nestedTarget.java == Object::class.java || nestedTarget == Any::class) {
+                val subValue = if (isObjectOrAny(nestedTarget)) {
                     input
                 } else if (nestedTarget.java.isKotlinClass()) {
                     mapToKotlinObject(input as Map<String, *>, nestedTarget)
@@ -99,6 +100,11 @@ object InputObjectMapper {
             }
         }
 
+        /**
+         We can't error out if only some fields don't match.
+         This would happen if new schema fields are added, but the Java type wasn't updated yet.
+         If none of the fields match however, it's a pretty good indication that the wrong type was used, hence this check.
+         */
         if (nrOfFieldErrors == inputMap.size) {
             throw DgsInvalidInputArgumentException("Input argument type '$targetClass' doesn't match input $inputMap")
         }
@@ -111,7 +117,9 @@ object InputObjectMapper {
         return if (type is ParameterizedType) {
             Class.forName(type.actualTypeArguments[0].typeName)
         } else if (genericSuperclass is ParameterizedType) {
-            Class.forName(genericSuperclass.actualTypeArguments[0].typeName)
+            val typeParameters = (genericSuperclass.rawType as Class<*>).typeParameters
+            val indexOfTypeParameter = typeParameters.indexOfFirst { it.name == type.typeName }
+            Class.forName(genericSuperclass.actualTypeArguments[indexOfTypeParameter].typeName)
         } else {
             field.type
         }
@@ -124,7 +132,7 @@ object InputObjectMapper {
             } else if (nestedTarget.java.isEnum) {
                 (nestedTarget.java.enumConstants as Array<Enum<*>>).first { it.name == listItem }
             } else if (listItem is Map<*, *>) {
-                if (nestedTarget.java == Object::class.java || nestedTarget == Any::class) {
+                if (isObjectOrAny(nestedTarget)) {
                     listItem
                 } else if (nestedTarget.java.isKotlinClass()) {
                     mapToKotlinObject(listItem as Map<String, *>, nestedTarget)
@@ -136,4 +144,7 @@ object InputObjectMapper {
             }
         }
     }
+
+    private fun isObjectOrAny(nestedTarget: KClass<*>) =
+        nestedTarget.java == Object::class.java || nestedTarget == Any::class
 }
