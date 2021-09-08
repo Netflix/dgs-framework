@@ -116,7 +116,7 @@ object InputObjectMapper {
         val type: Type = field.genericType
         return if (type is ParameterizedType) {
             Class.forName(type.actualTypeArguments[0].typeName)
-        } else if (genericSuperclass is ParameterizedType) {
+        } else if (genericSuperclass is ParameterizedType && field.type != field.genericType) {
             val typeParameters = (genericSuperclass.rawType as Class<*>).typeParameters
             val indexOfTypeParameter = typeParameters.indexOfFirst { it.name == type.typeName }
             Class.forName(genericSuperclass.actualTypeArguments[indexOfTypeParameter].typeName)

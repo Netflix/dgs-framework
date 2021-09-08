@@ -16,7 +16,8 @@
 
 package com.netflix.graphql.dgs.internal
 
-import com.netflix.graphql.dgs.internal.java.test.inputobjects.JGenericInputObject
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JGenericInputObjectTwoTypeParams
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JGenericSubInputObject
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObject
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithKotlinProperty
 import org.assertj.core.api.Assertions.assertThat
@@ -99,12 +100,20 @@ internal class InputObjectMapperTest {
     }
 
     @Test
-    fun mapGenericJavaClass() {
+    fun mapGenericJavaClassTwoTypeParams() {
         val input = mapOf("fieldA" to "value A", "fieldB" to listOf(1, 2, 3))
-        val mappedGeneric = InputObjectMapper.mapToJavaObject(input, JGenericInputObject::class.java)
+        val mappedGeneric = InputObjectMapper.mapToJavaObject(input, JGenericInputObjectTwoTypeParams::class.java)
 
         assertThat(mappedGeneric.fieldA).isEqualTo("value A")
         assertThat(mappedGeneric.fieldB).isEqualTo(listOf(1, 2, 3))
+    }
+
+    @Test
+    fun mapGenericJavaClass() {
+        val input = mapOf("someField" to "The String", "fieldA" to 1)
+        val mappedGeneric = InputObjectMapper.mapToJavaObject(input, JGenericSubInputObject::class.java)
+
+        assertThat(mappedGeneric.fieldA).isEqualTo(1)
     }
 
     data class KotlinInputObject(val simpleString: String?, val someDate: LocalDateTime, val someObject: KotlinSomeObject)
