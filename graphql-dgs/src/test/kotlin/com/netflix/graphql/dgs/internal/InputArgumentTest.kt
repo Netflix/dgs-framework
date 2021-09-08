@@ -19,11 +19,12 @@ package com.netflix.graphql.dgs.internal
 import com.netflix.graphql.dgs.*
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
-import com.netflix.graphql.dgs.inputobjects.JFilter
-import com.netflix.graphql.dgs.inputobjects.sortby.MovieSortBy
 import com.netflix.graphql.dgs.internal.java.test.enums.JGreetingType
 import com.netflix.graphql.dgs.internal.java.test.enums.JInputMessage
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JFilter
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JFooInput
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JListOfListOfFilters
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.sortby.JMovieSortBy
 import com.netflix.graphql.dgs.internal.kotlin.test.*
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import graphql.ExceptionWhileDataFetching
@@ -1801,7 +1802,7 @@ internal class InputArgumentTest {
 
         val fetcher = object : Any() {
             @DgsQuery
-            fun movies(@InputArgument(collectionType = MovieSortBy::class) sortBy: List<MovieSortBy>): String {
+            fun movies(@InputArgument(collectionType = JMovieSortBy::class) sortBy: List<JMovieSortBy>): String {
                 return "Sorted by: ${sortBy.joinToString { "${it.field}" }}"
             }
         }
@@ -1832,6 +1833,72 @@ internal class InputArgumentTest {
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("Sorted by: RELEASEDATE, TITLE", data["movies"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `List of lists as @InputArgument`() {
+        val schema = """
+            type Query {
+                lists(input: ListOfLists!): String
+            }
+            
+            input ListOfLists {
+                lists:  [[[Filter]]]!
+            }
+            
+            input Filter {
+                query: Object
+            }
+                  
+            scalar Object
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsQuery
+            fun lists(@InputArgument input: JListOfListOfFilters): String {
+                assertThat(input).isNotNull
+                assertThat(input.lists)
+                    .contains(
+                        listOf(
+                            listOf(JFilter(mapOf("foo" to "bar")), JFilter(mapOf("baz" to "buz"))),
+                            listOf(JFilter(mapOf("bat" to "brat")))
+                        )
+                    )
+                return "Hello"
+            }
+
+            @DgsRuntimeWiring
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
+                return builder.scalar(ExtendedScalars.Object)
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("fetcher" to fetcher)
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute(
+            """
+                {
+                    lists(input:{
+                        lists: [[
+                            [ {query: {foo: "bar"}} {query: {baz: "buz"}}]
+                            [ {query: {bat: "brat"}}]
+                        ]]
+                     })
+               }
+            """.trimIndent()
+        )
+
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult)
+            .extracting { it.getData<Map<String, *>>() }
+            .extracting { it["lists"] }
+            .isEqualTo("Hello")
 
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }

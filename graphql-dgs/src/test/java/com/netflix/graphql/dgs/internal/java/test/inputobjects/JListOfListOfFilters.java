@@ -16,42 +16,39 @@
 
 package com.netflix.graphql.dgs.internal.java.test.inputobjects;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
-public class JFilter {
-    private Object query;
+public class JListOfListOfFilters {
 
-    public JFilter() {}
+    private List<List<List<JFilter>>> lists = Collections.emptyList();
 
-    public JFilter(Object query) {
-        this.query = query;
+    public List<List<List<JFilter>>> getLists() {
+        return lists;
     }
 
-    public Object getQuery() {
-        return query;
-    }
-
-    public void setQuery(Object query) {
-        this.query = query;
+    public void setLists(List<List<List<JFilter>>> lists) {
+        this.lists = lists;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof JFilter)) return false;
-        JFilter jFilter = (JFilter) o;
-        return Objects.equals(getQuery(), jFilter.getQuery());
+        if (!(o instanceof JListOfListOfFilters)) return false;
+        JListOfListOfFilters that = (JListOfListOfFilters) o;
+        return Objects.equals(getLists(), that.getLists());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getQuery());
+        return Objects.hash(getLists());
     }
 
     @Override
     public String toString() {
-        return "JFilter{" +
-                "query=" + query +
+        return "JListOfListOfFilters {" +
+                "lists=" + lists +
                 '}';
     }
 }

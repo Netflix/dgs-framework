@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.inputobjects;
+package com.netflix.graphql.dgs.internal.java.test.inputobjects.sortby;
 
-public class JFilter {
-    private Object query;
+public class JSortBy<T extends Enum<T>> {
+    private T field;
 
-    public Object getQuery() {
-        return query;
+    public T getField() {
+        return field;
     }
 
-    public void setQuery(Object query) {
-        this.query = query;
+    public void setField(T field) {
+        this.field = field;
     }
 }

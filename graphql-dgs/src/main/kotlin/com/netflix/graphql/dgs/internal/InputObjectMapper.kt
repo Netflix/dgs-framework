@@ -78,21 +78,28 @@ object InputObjectMapper {
         inputMap.forEach {
             val declaredField = ReflectionUtils.findField(targetClass, it.key)
             if (declaredField != null) {
-                val actualType = getFieldType(declaredField, targetClass.genericSuperclass)
+                val fieldType = getFieldType(declaredField, targetClass)
+                // resolve the field class we will map into, as well as an optional type argument in case such
+                // class is a parameterized type, such as a List.
+                val (fieldClass: Class<*>, fieldArgumentType: Type?) = when (fieldType) {
+                    is ParameterizedType -> fieldType.rawType as Class<*> to fieldType.actualTypeArguments[0]
+                    is Class<*> -> fieldType to null
+                    else -> Class.forName(fieldType.typeName) to null
+                }
 
                 if (it.value is Map<*, *>) {
-                    val mappedValue = if (actualType.isKotlinClass()) {
-                        mapToKotlinObject(it.value as Map<String, *>, actualType.kotlin)
+                    val mappedValue = if (fieldClass.isKotlinClass()) {
+                        mapToKotlinObject(it.value as Map<String, *>, fieldClass.kotlin)
                     } else {
-                        mapToJavaObject(it.value as Map<String, *>, actualType)
+                        mapToJavaObject(it.value as Map<String, *>, fieldClass)
                     }
 
                     trySetField(declaredField, instance, mappedValue)
                 } else if (it.value is List<*>) {
-                    val newList = convertList(it.value as List<*>, Class.forName(actualType.typeName).kotlin)
+                    val newList = convertList(it.value as List<*>, fieldClass.kotlin, fieldArgumentType)
                     trySetField(declaredField, instance, newList)
-                } else if (actualType.isEnum) {
-                    val enumValue = (actualType.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == it.value }
+                } else if (fieldClass.isEnum) {
+                    val enumValue = (fieldClass.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == it.value }
                     trySetField(declaredField, instance, enumValue)
                 } else {
                     trySetField(declaredField, instance, it.value)
@@ -124,23 +131,32 @@ object InputObjectMapper {
         }
     }
 
-    fun getFieldType(field: Field, genericSuperclass: Type,): Class<*> {
-        val type: Type = field.genericType
-        return if (type is ParameterizedType) {
-            Class.forName(type.actualTypeArguments[0].typeName)
+    private fun getFieldType(field: Field, targetClass: Class<*>): Type {
+        val genericSuperclass = targetClass.genericSuperclass
+        val fieldType: Type = field.genericType
+        return if (fieldType is ParameterizedType) {
+            fieldType.actualTypeArguments[0]
         } else if (genericSuperclass is ParameterizedType && field.type != field.genericType) {
             val typeParameters = (genericSuperclass.rawType as Class<*>).typeParameters
-            val indexOfTypeParameter = typeParameters.indexOfFirst { it.name == type.typeName }
-            Class.forName(genericSuperclass.actualTypeArguments[indexOfTypeParameter].typeName)
+            val indexOfTypeParameter = typeParameters.indexOfFirst { it.name == fieldType.typeName }
+            genericSuperclass.actualTypeArguments[indexOfTypeParameter]
         } else {
             field.type
         }
     }
 
-    private fun convertList(input: List<*>, nestedTarget: KClass<*>): List<*> {
+
+    private fun convertList(input: List<*>, nestedTarget: KClass<*>, nestedType: Type? = null): List<*> {
         return input.filterNotNull().map { listItem ->
-            if (nestedTarget.java.isAssignableFrom(listItem::class.java)) {
-                listItem
+            if (listItem is List<*>) {
+                when (nestedType) {
+                    is ParameterizedType ->
+                        convertList(listItem, (nestedType.rawType as Class<*>).kotlin, nestedType.actualTypeArguments[0])
+                    is Class<*> ->
+                        convertList(listItem, nestedType.kotlin)
+                    else ->
+                        listItem
+                }
             } else if (nestedTarget.java.isEnum) {
                 (nestedTarget.java.enumConstants as Array<Enum<*>>).first { it.name == listItem }
             } else if (listItem is Map<*, *>) {

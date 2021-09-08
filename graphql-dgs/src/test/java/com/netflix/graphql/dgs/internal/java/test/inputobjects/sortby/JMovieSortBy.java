@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.inputobjects.sortby;
+package com.netflix.graphql.dgs.internal.java.test.inputobjects.sortby;
 
-enum MovieSortByField {
-    TITLE,
-    RELEASEDATE
+public class JMovieSortBy extends JSortBy<JMovieSortByField> {
+
 }
