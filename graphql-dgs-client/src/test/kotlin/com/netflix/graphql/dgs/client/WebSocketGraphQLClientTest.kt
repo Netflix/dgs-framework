@@ -42,6 +42,7 @@ import org.springframework.web.reactive.socket.WebSocketMessage
 import org.springframework.web.reactive.socket.WebSocketSession
 import org.springframework.web.reactive.socket.client.WebSocketClient
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import reactor.test.publisher.TestPublisher
 import java.lang.Exception
@@ -61,14 +62,17 @@ class WebSocketGraphQLClientTest {
     lateinit var subscriptionsClient: OperationMessageWebSocketClient
     lateinit var client: WebSocketGraphQLClient
     lateinit var server: TestPublisher<OperationMessage>
+    lateinit var connection: TestPublisher<Void>
 
     @BeforeEach
     fun setup() {
         subscriptionsClient = mockk(relaxed = true)
         client = WebSocketGraphQLClient(subscriptionsClient)
         server = TestPublisher.createCold()
+        connection = TestPublisher.createCold()
 
         every { subscriptionsClient.receive() } returns server.flux()
+        every { subscriptionsClient.connect() } returns connection.mono()
     }
 
     @Test
@@ -165,6 +169,29 @@ class WebSocketGraphQLClientTest {
     }
 
     @Test
+    fun completesOnConnectionStale() {
+        server.next(CONNECTION_ACK_MESSAGE)
+        server.next(dataMessage(TEST_DATA_A, "1"))
+        server.next(dataMessage(TEST_DATA_B, "1"))
+
+        val responses = client.reactiveExecuteQuery("", emptyMap())
+        StepVerifier.create(responses)
+            .expectSubscription()
+            .expectNextMatches {
+                // Have to do this instead of .then() because of this issue:
+                // https://github.com/reactor/reactor-core/issues/2139
+                if (it.extractValue<Int>("a") == 1) {
+                    connection.complete()
+                    true
+                } else {
+                    false
+                }
+            }
+            .expectComplete()
+            .verify(VERIFY_TIMEOUT)
+    }
+
+    @Test
     fun finishesOnGraphQLError() {
         server.next(CONNECTION_ACK_MESSAGE)
         server.next(OperationMessage(GQL_ERROR, "An error occurred", "1"))
@@ -248,6 +275,12 @@ class WebSocketGraphQLClientTest {
                 listOf(2)
             )
         )
+
+        // connect -> send handshake -> receive ack -> send query 1 -> receive query 1 data ->
+        // send query 2 -> receive query 2 data
+        verify(exactly = 1) { subscriptionsClient.connect() }
+        verify(exactly = 3) { subscriptionsClient.send(any()) }
+        verify(exactly = 3) { subscriptionsClient.receive() }
     }
 
     @Test
@@ -281,28 +314,49 @@ class WebSocketGraphQLClientTest {
     }
 
     @Test
-    fun operationMessageClientForwardsComplete() {
-        val websocketClient = mockOperationMessageClient(Flux.empty())
+    fun resubscribesToConnectionIfStale() {
+        server.next(CONNECTION_ACK_MESSAGE)
+        server.next(dataMessage(TEST_DATA_A, "1"))
+        server.next(completeMessage("1"))
 
-        val messageClient = OperationMessageWebSocketClient("", websocketClient)
-        StepVerifier.create(messageClient.receive())
+        val responses = client.reactiveExecuteQuery("", emptyMap()).repeat(1)
+        StepVerifier.create(responses.map { it.extractValue<Int>("a") })
             .expectSubscription()
+            .expectNextMatches {
+                // Have to do this instead of .then() because of this issue:
+                // https://github.com/reactor/reactor-core/issues/2139
+                if (it == 1) {
+                    connection.complete()
+                    every { subscriptionsClient.connect() } returns Mono.never()
+                    true
+                } else {
+                    false
+                }
+            }
+            .expectNext(1)
             .expectComplete()
             .verify(VERIFY_TIMEOUT)
+
+        // connect -> send handshake -> receive ack -> send query -> receive query data[1] -> connect ->
+        // send handshake -> receive ack -> send query -> receive query data[1]
+        verify(exactly = 2) { subscriptionsClient.connect() }
+        verify(exactly = 4) { subscriptionsClient.send(any()) }
+        verify(exactly = 3) { subscriptionsClient.receive() }
     }
 
     @Test
     fun operationMessageClientForwardsError() {
-        val websocketClient = mockOperationMessageClient(Flux.error(Exception()))
+        val websocketClient = mockWebSocketClient(Flux.error(Exception()))
 
         val messageClient = OperationMessageWebSocketClient("", websocketClient)
+        messageClient.connect().subscribe()
         StepVerifier.create(messageClient.receive())
             .expectSubscription()
             .expectError()
             .verify(VERIFY_TIMEOUT)
     }
 
-    private fun mockOperationMessageClient(messages: Flux<WebSocketMessage>): WebSocketClient {
+    private fun mockWebSocketClient(messages: Flux<WebSocketMessage>): WebSocketClient {
         val websocketClient = mockk<WebSocketClient>(relaxed = true)
         val session = mockk<WebSocketSession>(relaxed = true)
         val handler = slot<WebSocketHandler>()
