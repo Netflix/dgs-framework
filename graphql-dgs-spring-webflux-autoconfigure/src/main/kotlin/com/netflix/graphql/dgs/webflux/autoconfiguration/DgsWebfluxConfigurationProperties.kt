@@ -45,7 +45,7 @@ class DgsWebfluxConfigurationProperties(
     }
 
     private fun validatePath(path: String, pathProperty: String) {
-        if (!path.startsWith("/") || path.endsWith("/")) {
+        if (path != "/" && (!path.startsWith("/") || path.endsWith("/"))) {
             throw IllegalArgumentException("$pathProperty must start with '/' and not end with '/' but was '$path'")
         }
     }
