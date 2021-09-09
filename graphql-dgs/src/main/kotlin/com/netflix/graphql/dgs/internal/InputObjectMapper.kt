@@ -25,8 +25,11 @@ import java.lang.reflect.Field
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
+import java.lang.reflect.WildcardType
 import kotlin.reflect.KClass
+import kotlin.reflect.KType
 import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmErasure
 
 @Suppress("UNCHECKED_CAST")
@@ -53,7 +56,16 @@ object InputObjectMapper {
                 val enumValue = (parameter.type.jvmErasure.java.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == input }
                 inputValues.add(enumValue)
             } else if (input is List<*>) {
-                val newList = convertList(input, targetClass.java, parameter.type.arguments[0].type!!.jvmErasure)
+                val newList = convertList(
+                    input = input,
+                    targetClass = targetClass.java,
+                    nestedClass = parameter.type.arguments[0].type!!.jvmErasure,
+                    nestedType =
+                    if (parameter.type.arguments[0].type!!.arguments.isNotEmpty())
+                        ((parameter.type.arguments[0].type!!.arguments[0].type) as KType).javaType
+                    else
+                        null
+                )
                 inputValues.add(newList)
             } else {
                 inputValues.add(input)
@@ -158,6 +170,10 @@ object InputObjectMapper {
                                 .typeParameters.indexOfFirst { it.name == nestedType.typeName }
                         val parameterType = (targetClass.genericSuperclass as ParameterizedType).actualTypeArguments[indexOfGeneric]
                         convertList(listItem, targetClass, (parameterType as Class<*>).kotlin)
+                    }
+                    is WildcardType -> {
+                        // We are assuming that the upper-bound type is a Class and not a Parametrized Type.
+                        convertList(listItem, targetClass, (nestedType.upperBounds[0] as Class<*>).kotlin)
                     }
                     is Class<*> ->
                         convertList(listItem, targetClass, nestedType.kotlin)

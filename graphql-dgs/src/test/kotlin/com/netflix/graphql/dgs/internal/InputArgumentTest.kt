@@ -1839,7 +1839,7 @@ internal class InputArgumentTest {
     }
 
     @Test
-    fun `List of lists as @InputArgument`() {
+    fun `List of lists as @InputArgument on Java Types`() {
         val schema = """
             type Query {
                 lists(input: ListOfListsOfFilters!): String
@@ -1910,21 +1910,104 @@ internal class InputArgumentTest {
 
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+
         val executionResult = build.execute(
             """
                 {
-                    lists(input:{
-                        lists: [[
-                            [ {query: {foo: "bar"}} {query: {baz: "buz"}}]
-                            [ {query: {bat: "brat"}}]
-                        ]]
-                     })
-                     enums(input:{
-                        lists: [[ [A B] [C] ]]
-                     })
-                     strings (input:{
-                        lists: [[ ["Foo" "Bar"] ["Baz"] ]]
-                     })
+                    lists(input:{ lists: [[ [ {query: {foo: "bar"}} {query: {baz: "buz"}}] [ {query: {bat: "brat"}}] ]] })
+                    enums(input:{ lists: [[ [A B] [C] ]] })
+                    strings(input:{ lists: [[ ["Foo" "Bar"] ["Baz"] ]] })
+               }
+            """.trimIndent()
+        )
+
+        assertThat(executionResult.errors).isEmpty()
+        val data = executionResult.getData<Map<String, *>>()
+        assertThat(data).hasEntrySatisfying("lists") { assertThat(it).isEqualTo("Ok") }
+        assertThat(data).hasEntrySatisfying("enums") { assertThat(it).isEqualTo("Ok") }
+        assertThat(data).hasEntrySatisfying("strings") { assertThat(it).isEqualTo("Ok") }
+    }
+
+    @Test
+    fun `List of lists as @InputArgument on Kotlin Types`() {
+        val schema = """
+            type Query {
+                lists(input: ListOfListsOfFilters!): String
+                enums(input: ListOfListsOfEnums!): String
+                strings(input: ListOfListsOfStrings!): String
+            }
+            
+            input ListOfListsOfFilters{
+                lists:  [[[Filter]]]!
+            }
+            
+            input ListOfListsOfEnums {
+                lists:  [[[AnEnum]]]!
+            }
+            
+            input ListOfListsOfStrings {
+                lists:  [[[String]]]!
+            }
+            
+            input Filter {
+                query: Object
+            }
+            
+            enum AnEnum {
+                A, B, C 
+            }
+            
+            scalar Object
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+
+            @DgsQuery
+            fun lists(@InputArgument input: KListOfListsOfLists.KListOfListOfFilters): String {
+                assertThat(input).isNotNull
+                assertThat(input.lists)
+                    .contains(
+                        listOf(
+                            listOf(KFilter(mapOf("foo" to "bar")), KFilter(mapOf("baz" to "buz"))),
+                            listOf(KFilter(mapOf("bat" to "brat")))
+                        )
+                    )
+                return "Ok"
+            }
+
+            @DgsQuery
+            fun enums(@InputArgument input: KListOfListsOfLists.KListOfListOfEnums): String {
+                assertThat(input).isNotNull
+                assertThat(input.lists).contains(listOf(listOf(KEnum.A, KEnum.B), listOf(KEnum.C)))
+                return "Ok"
+            }
+
+            @DgsQuery
+            fun strings(@InputArgument input: KListOfListsOfLists.KListOfListOfStrings): String {
+                assertThat(input).isNotNull
+                assertThat(input.lists).contains(listOf(listOf("Foo", "Bar"), listOf("Baz")))
+                return "Ok"
+            }
+
+            @DgsRuntimeWiring
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
+                return builder.scalar(ExtendedScalars.Object)
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("fetcher" to fetcher)
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+
+        val executionResult = build.execute(
+            """
+                {
+                    lists(input:{ lists: [[ [ {query: {foo: "bar"}} {query: {baz: "buz"}}] [ {query: {bat: "brat"}}] ]] })
+                    enums(input:{ lists: [[ [A B] [C] ]] })
+                    strings(input:{ lists: [[ ["Foo" "Bar"] ["Baz"] ]] })
                }
             """.trimIndent()
         )
