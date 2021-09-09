@@ -16,6 +16,8 @@
 
 package com.netflix.graphql.dgs.internal.kotlin.test
 
+import java.util.*
+
 enum class KGreetingType {
     FRIENDLY,
     POLITE
@@ -30,3 +32,18 @@ data class KFooInput(val bars: List<KBarInput>)
 data class KBarInput(val name: String, val value: Any)
 
 data class KFilter(val query: Any)
+
+enum class KEnum {
+    A, B, C
+}
+
+object KListOfListsOfLists {
+
+    class KListOfListOfFilters(lists: List<List<List<KFilter>>>) : KListOfListOfThings<KFilter>(lists)
+
+    class KListOfListOfEnums(lists: List<List<List<KEnum>>>) : KListOfListOfThings<KEnum>(lists)
+
+    class KListOfListOfStrings(lists: List<List<List<String>>>) : KListOfListOfThings<String>(lists)
+
+    abstract class KListOfListOfThings<T>(val lists: List<List<List<T>>> = emptyList())
+}
