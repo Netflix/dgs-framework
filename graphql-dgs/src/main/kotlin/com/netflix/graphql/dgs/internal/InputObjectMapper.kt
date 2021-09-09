@@ -153,9 +153,10 @@ object InputObjectMapper {
                     is ParameterizedType ->
                         convertList(listItem, targetClass, (nestedType.rawType as Class<*>).kotlin, nestedType.actualTypeArguments[0])
                     is TypeVariable<*> -> {
-                        // TODO This is a naive way to fetch the generic parameter type since it assumes that the first
-                        // type define in the generic superclass is the correct one. This is not necessarily true.
-                        val parameterType = (targetClass.genericSuperclass as ParameterizedType).actualTypeArguments[0]
+                        val indexOfGeneric =
+                            ((targetClass.genericSuperclass as ParameterizedType).rawType as Class<*>)
+                                .typeParameters.indexOfFirst { it.name == nestedType.typeName }
+                        val parameterType = (targetClass.genericSuperclass as ParameterizedType).actualTypeArguments[indexOfGeneric]
                         convertList(listItem, targetClass, (parameterType as Class<*>).kotlin)
                     }
                     is Class<*> ->

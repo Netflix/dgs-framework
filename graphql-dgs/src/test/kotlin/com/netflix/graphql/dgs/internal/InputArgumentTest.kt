@@ -21,6 +21,7 @@ import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
 import com.netflix.graphql.dgs.internal.java.test.enums.JGreetingType
 import com.netflix.graphql.dgs.internal.java.test.enums.JInputMessage
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JEnum
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JFilter
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JFooInput
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JListOfListsOfLists
@@ -1841,17 +1842,31 @@ internal class InputArgumentTest {
     fun `List of lists as @InputArgument`() {
         val schema = """
             type Query {
-                lists(input: ListOfLists!): String
+                lists(input: ListOfListsOfFilters!): String
+                enums(input: ListOfListsOfEnums!): String
+                strings(input: ListOfListsOfStrings!): String
             }
             
-            input ListOfLists {
+            input ListOfListsOfFilters{
                 lists:  [[[Filter]]]!
+            }
+            
+            input ListOfListsOfEnums {
+                lists:  [[[AnEnum]]]!
+            }
+            
+            input ListOfListsOfStrings {
+                lists:  [[[String]]]!
             }
             
             input Filter {
                 query: Object
             }
-                  
+            
+            enum AnEnum {
+                A, B, C 
+            }
+            
             scalar Object
         """.trimIndent()
 
@@ -1866,7 +1881,21 @@ internal class InputArgumentTest {
                             listOf(JFilter(mapOf("bat" to "brat")))
                         )
                     )
-                return "Hello"
+                return "Ok"
+            }
+
+            @DgsQuery
+            fun enums(@InputArgument input: JListOfListsOfLists.JListOfListOfEnums): String {
+                assertThat(input).isNotNull
+                assertThat(input.lists).contains(listOf(listOf(JEnum.A, JEnum.B), listOf(JEnum.C)))
+                return "Ok"
+            }
+
+            @DgsQuery
+            fun strings(@InputArgument input: JListOfListsOfLists.JListOfListOfStrings): String {
+                assertThat(input).isNotNull
+                assertThat(input.lists).contains(listOf(listOf("Foo", "Bar"), listOf("Baz")))
+                return "Ok"
             }
 
             @DgsRuntimeWiring
@@ -1890,15 +1919,21 @@ internal class InputArgumentTest {
                             [ {query: {bat: "brat"}}]
                         ]]
                      })
+                     enums(input:{
+                        lists: [[ [A B] [C] ]]
+                     })
+                     strings (input:{
+                        lists: [[ ["Foo" "Bar"] ["Baz"] ]]
+                     })
                }
             """.trimIndent()
         )
 
         assertThat(executionResult.errors).isEmpty()
-        assertThat(executionResult)
-            .extracting { it.getData<Map<String, *>>() }
-            .extracting { it["lists"] }
-            .isEqualTo("Hello")
+        val data = executionResult.getData<Map<String, *>>()
+        assertThat(data).hasEntrySatisfying("lists") { assertThat(it).isEqualTo("Ok") }
+        assertThat(data).hasEntrySatisfying("enums") { assertThat(it).isEqualTo("Ok") }
+        assertThat(data).hasEntrySatisfying("strings") { assertThat(it).isEqualTo("Ok") }
 
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
