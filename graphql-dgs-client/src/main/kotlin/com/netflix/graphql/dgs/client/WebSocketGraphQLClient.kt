@@ -78,14 +78,10 @@ class WebSocketGraphQLClient(
     //       next release of reactors (v3.4.8: https://github.com/reactor/reactor-core/releases/tag/v3.4.8)
     private val connection = AtomicReference<Disposable?>(null)
     private val handshake = Mono.defer {
-        println("CHECKING CONNECTION")
-        if (connectionIsStale()) {
-            println("NEW CONNECTION")
+        if (connectionIsStale())
             doHandshake()
-        } else {
-            println("KEEP OLD CONNECTION")
+        else
             Mono.empty()
-        }
     }
 
     override fun reactiveExecuteQuery(
@@ -117,7 +113,6 @@ class WebSocketGraphQLClient(
             .doOnSuccess { client.send(queryMessage) }
             .thenMany(
                 client.receive()
-                    .takeUntil { connectionIsStale() }
                     .filter { it.id == subscriptionId }
                     .takeUntil { it.type == GQL_COMPLETE }
                     .doOnCancel { client.send(stopMessage) }
@@ -209,12 +204,13 @@ class OperationMessageWebSocketClient(
         .many()
         .multicast()
         .onBackpressureBuffer<OperationMessage>(Queues.SMALL_BUFFER_SIZE, false)
+    private val errorSink = Sinks
+        .many()
+        .multicast()
+        .onBackpressureBuffer<GraphQLException>(Queues.SMALL_BUFFER_SIZE, false)
 
     fun connect(): Mono<Void> {
-        return Mono
-            .defer {
-                client.execute(URI(url), this::exchange)
-            }
+        return Mono.defer { client.execute(URI(url), this::exchange) }
     }
 
     /**
@@ -232,7 +228,9 @@ class OperationMessageWebSocketClient(
      * @return Flux of OperationMessages
      */
     fun receive(): Flux<OperationMessage> {
-        return incomingSink.asFlux()
+        return incomingSink
+            .asFlux()
+            .mergeWith(errorSink.asFlux().map { throw it })
     }
 
     private fun exchange(
@@ -241,8 +239,6 @@ class OperationMessageWebSocketClient(
         // Create chains to handle de/serialization
         val incomingDeserialized = session
             .receive()
-            // Ensure the output flux collapses neatly if an error occurs
-            .doOnError { incomingSink.tryEmitError(it).orThrow() }
             .map(this::decodeMessage)
             .doOnNext(incomingSink::tryEmitNext)
         val outgoingSerialized = session
@@ -256,6 +252,9 @@ class OperationMessageWebSocketClient(
         return Flux
             .merge(incomingDeserialized, outgoingSerialized)
             .then()
+            // Ensure the output flux collapses neatly if an error occurs
+            .doOnError { errorSink.tryEmitNext(GraphQLException(it)).orThrow() }
+            .doAfterTerminate { errorSink.tryEmitNext(GraphQLException("Server closed the connection unexpectedly")).orThrow() }
     }
 
     private fun createMessage(

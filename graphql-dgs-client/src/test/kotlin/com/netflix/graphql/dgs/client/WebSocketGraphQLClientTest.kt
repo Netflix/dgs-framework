@@ -42,10 +42,10 @@ import org.springframework.web.reactive.socket.WebSocketMessage
 import org.springframework.web.reactive.socket.WebSocketSession
 import org.springframework.web.reactive.socket.client.WebSocketClient
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Hooks
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import reactor.test.publisher.TestPublisher
-import java.lang.Exception
 import java.time.Duration
 import java.util.concurrent.TimeoutException
 import java.util.stream.Collectors
@@ -169,25 +169,22 @@ class WebSocketGraphQLClientTest {
     }
 
     @Test
-    fun completesOnConnectionStale() {
+    fun errorsOnConnectionStale() {
         server.next(CONNECTION_ACK_MESSAGE)
         server.next(dataMessage(TEST_DATA_A, "1"))
-        server.next(dataMessage(TEST_DATA_B, "1"))
 
         val responses = client.reactiveExecuteQuery("", emptyMap())
         StepVerifier.create(responses)
             .expectSubscription()
             .expectNextMatches {
-                // Have to do this instead of .then() because of this issue:
-                // https://github.com/reactor/reactor-core/issues/2139
                 if (it.extractValue<Int>("a") == 1) {
-                    connection.complete()
+                    server.error(GraphQLException(""))
                     true
                 } else {
                     false
                 }
             }
-            .expectComplete()
+            .expectError()
             .verify(VERIFY_TIMEOUT)
     }
 
@@ -356,10 +353,48 @@ class WebSocketGraphQLClientTest {
             .verify(VERIFY_TIMEOUT)
     }
 
+    @Test
+    fun operationMessageClientErrorsOnDisconnect() {
+        val websocketClient = mockWebSocketClient(Flux.empty())
+
+        val messageClient = OperationMessageWebSocketClient("", websocketClient)
+        val conn = messageClient.connect().subscribe()
+        StepVerifier.create(messageClient.receive())
+            .expectSubscription()
+            .expectError()
+            .verify(VERIFY_TIMEOUT)
+        assert(conn.isDisposed)
+    }
+
+    @Test
+    fun operationMessageClientCanReconnect() {
+        Hooks.onErrorDropped { throw RuntimeException(it) }
+
+        val websocketClient = mockWebSocketClient(Flux.empty())
+        val messageClient = OperationMessageWebSocketClient("", websocketClient)
+
+        val conn1 = messageClient.connect().subscribe()
+        StepVerifier.create(messageClient.receive())
+            .expectSubscription()
+            .expectError()
+            .verify(VERIFY_TIMEOUT)
+        assert(conn1.isDisposed)
+
+        val conn2 = messageClient.connect().subscribe()
+        StepVerifier.create(messageClient.receive())
+            .expectSubscription()
+            .expectError()
+            .verify(VERIFY_TIMEOUT)
+        assert(conn2.isDisposed)
+
+        verify(exactly = 2) { websocketClient.execute(any(), any()) }
+    }
+
     private fun mockWebSocketClient(messages: Flux<WebSocketMessage>): WebSocketClient {
         val websocketClient = mockk<WebSocketClient>(relaxed = true)
         val session = mockk<WebSocketSession>(relaxed = true)
         val handler = slot<WebSocketHandler>()
+        every { session.send(any()) } returns Mono.empty()
         every { session.receive() } returns messages
         every { websocketClient.execute(any(), capture(handler)) } answers {
             handler.captured.handle(session)
