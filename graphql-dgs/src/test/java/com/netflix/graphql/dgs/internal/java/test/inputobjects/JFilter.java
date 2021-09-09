@@ -16,8 +16,16 @@
 
 package com.netflix.graphql.dgs.internal.java.test.inputobjects;
 
+import java.util.Objects;
+
 public class JFilter {
     private Object query;
+
+    public JFilter() {}
+
+    public JFilter(Object query) {
+        this.query = query;
+    }
 
     public Object getQuery() {
         return query;
@@ -25,5 +33,25 @@ public class JFilter {
 
     public void setQuery(Object query) {
         this.query = query;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof JFilter)) return false;
+        JFilter jFilter = (JFilter) o;
+        return Objects.equals(getQuery(), jFilter.getQuery());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getQuery());
+    }
+
+    @Override
+    public String toString() {
+        return "JFilter{" +
+                "query=" + query +
+                '}';
     }
 }
