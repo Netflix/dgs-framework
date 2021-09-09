@@ -23,7 +23,7 @@ import com.netflix.graphql.dgs.internal.java.test.enums.JGreetingType
 import com.netflix.graphql.dgs.internal.java.test.enums.JInputMessage
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JFilter
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JFooInput
-import com.netflix.graphql.dgs.internal.java.test.inputobjects.JListOfListOfFilters
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JListOfListsOfLists
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.sortby.JMovieSortBy
 import com.netflix.graphql.dgs.internal.kotlin.test.*
 import com.netflix.graphql.dgs.scalars.UploadScalar
@@ -1857,7 +1857,7 @@ internal class InputArgumentTest {
 
         val fetcher = object : Any() {
             @DgsQuery
-            fun lists(@InputArgument input: JListOfListOfFilters): String {
+            fun lists(@InputArgument input: JListOfListsOfLists.JListOfListOfFilters): String {
                 assertThat(input).isNotNull
                 assertThat(input.lists)
                     .contains(

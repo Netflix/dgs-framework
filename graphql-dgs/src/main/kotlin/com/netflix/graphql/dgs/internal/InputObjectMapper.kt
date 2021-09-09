@@ -24,6 +24,7 @@ import org.springframework.util.ReflectionUtils
 import java.lang.reflect.Field
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
+import java.lang.reflect.TypeVariable
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
@@ -52,7 +53,7 @@ object InputObjectMapper {
                 val enumValue = (parameter.type.jvmErasure.java.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == input }
                 inputValues.add(enumValue)
             } else if (input is List<*>) {
-                val newList = convertList(input, parameter.type.arguments[0].type!!.jvmErasure)
+                val newList = convertList(input, targetClass.java, parameter.type.arguments[0].type!!.jvmErasure)
                 inputValues.add(newList)
             } else {
                 inputValues.add(input)
@@ -71,8 +72,8 @@ object InputObjectMapper {
             return inputMap as T
         }
 
-        val ctor = targetClass.getDeclaredConstructor()
-        ctor.isAccessible = true
+        val ctor = ReflectionUtils.accessibleConstructor(targetClass)
+        ReflectionUtils.makeAccessible(ctor)
         val instance = ctor.newInstance()
         var nrOfFieldErrors = 0
         inputMap.forEach {
@@ -96,7 +97,7 @@ object InputObjectMapper {
 
                     trySetField(declaredField, instance, mappedValue)
                 } else if (it.value is List<*>) {
-                    val newList = convertList(it.value as List<*>, fieldClass.kotlin, fieldArgumentType)
+                    val newList = convertList(it.value as List<*>, targetClass, fieldClass.kotlin, fieldArgumentType)
                     trySetField(declaredField, instance, newList)
                 } else if (fieldClass.isEnum) {
                     val enumValue = (fieldClass.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == it.value }
@@ -145,27 +146,32 @@ object InputObjectMapper {
         }
     }
 
-
-    private fun convertList(input: List<*>, nestedTarget: KClass<*>, nestedType: Type? = null): List<*> {
+    private fun convertList(input: List<*>, targetClass: Class<*>, nestedClass: KClass<*>, nestedType: Type? = null): List<*> {
         return input.filterNotNull().map { listItem ->
             if (listItem is List<*>) {
                 when (nestedType) {
                     is ParameterizedType ->
-                        convertList(listItem, (nestedType.rawType as Class<*>).kotlin, nestedType.actualTypeArguments[0])
+                        convertList(listItem, targetClass, (nestedType.rawType as Class<*>).kotlin, nestedType.actualTypeArguments[0])
+                    is TypeVariable<*> -> {
+                        // TODO This is a naive way to fetch the generic parameter type since it assumes that the first
+                        // type define in the generic superclass is the correct one. This is not necessarily true.
+                        val parameterType = (targetClass.genericSuperclass as ParameterizedType).actualTypeArguments[0]
+                        convertList(listItem, targetClass, (parameterType as Class<*>).kotlin)
+                    }
                     is Class<*> ->
-                        convertList(listItem, nestedType.kotlin)
+                        convertList(listItem, targetClass, nestedType.kotlin)
                     else ->
                         listItem
                 }
-            } else if (nestedTarget.java.isEnum) {
-                (nestedTarget.java.enumConstants as Array<Enum<*>>).first { it.name == listItem }
+            } else if (nestedClass.java.isEnum) {
+                (nestedClass.java.enumConstants as Array<Enum<*>>).first { it.name == listItem }
             } else if (listItem is Map<*, *>) {
-                if (isObjectOrAny(nestedTarget)) {
+                if (isObjectOrAny(nestedClass)) {
                     listItem
-                } else if (nestedTarget.java.isKotlinClass()) {
-                    mapToKotlinObject(listItem as Map<String, *>, nestedTarget)
+                } else if (nestedClass.java.isKotlinClass()) {
+                    mapToKotlinObject(listItem as Map<String, *>, nestedClass)
                 } else {
-                    mapToJavaObject(listItem as Map<String, *>, nestedTarget.java)
+                    mapToJavaObject(listItem as Map<String, *>, nestedClass.java)
                 }
             } else {
                 listItem
