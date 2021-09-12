@@ -71,7 +71,14 @@ class DefaultDgsReactiveQueryExecutor(
                 schema.updateAndGet { schemaProvider.schema() }
             else
                 schema.get()
-        }.zipWith(contextBuilder.build(DgsReactiveRequestData(extensions, headers, serverHttpRequest)))
+        }.zipWith(
+            contextBuilder.build(
+                DgsReactiveRequestData(
+                    extensions, headers,
+                    serverHttpRequest?.queryParams(), serverHttpRequest
+                )
+            )
+        )
             .flatMap {
                 Mono.fromCompletionStage(
                     BaseDgsQueryExecutor.baseExecute(

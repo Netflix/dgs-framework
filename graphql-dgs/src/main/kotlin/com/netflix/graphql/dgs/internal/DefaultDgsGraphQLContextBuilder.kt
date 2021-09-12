@@ -69,6 +69,7 @@ data class DefaultRequestData(
 interface DgsRequestData {
     val extensions: Map<String, Any>?
     val headers: HttpHeaders?
+    val queryParams: Map<String, List<String>>?
 }
 
 /**
@@ -80,5 +81,6 @@ interface DgsRequestData {
 data class DgsWebMvcRequestData(
     override val extensions: Map<String, Any>? = null,
     override val headers: HttpHeaders? = null,
+    override val queryParams: Map<String, List<String>>?,
     val webRequest: WebRequest? = null,
 ) : DgsRequestData

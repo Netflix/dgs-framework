@@ -980,7 +980,8 @@ internal class InputArgumentTest {
         val build = GraphQL.newGraphQL(schema).build()
         val httpHeaders = HttpHeaders()
         httpHeaders.add("Referer", "localhost")
-        val executionResult = build.execute(ExecutionInput.newExecutionInput("""{hello}""").context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders))))
+        val queryParams = mutableMapOf(Pair("query", listOf("params")))
+        val executionResult = build.execute(ExecutionInput.newExecutionInput("""{hello}""").context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, queryParams))))
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("From, localhost", data["hello"])
@@ -1012,7 +1013,8 @@ internal class InputArgumentTest {
         val build = GraphQL.newGraphQL(schema).build()
         val httpHeaders = HttpHeaders()
         httpHeaders.add("Referer", "localhost")
-        val executionResult = build.execute(ExecutionInput.newExecutionInput("""{hello}""").context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders))))
+        val queryParams = mutableMapOf(Pair("query", listOf("params")))
+        val executionResult = build.execute(ExecutionInput.newExecutionInput("""{hello}""").context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, queryParams))))
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("From, localhost", data["hello"])
@@ -1044,9 +1046,10 @@ internal class InputArgumentTest {
         val build = GraphQL.newGraphQL(schema).build()
         val httpHeaders = HttpHeaders()
         httpHeaders.add("Referer", "localhost")
+        val queryParams = mutableMapOf(Pair("query", listOf("params")))
         val executionResult = build.execute(
             ExecutionInput.newExecutionInput("""{hello}""")
-                .context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders)))
+                .context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, queryParams)))
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
@@ -1080,10 +1083,11 @@ internal class InputArgumentTest {
 
         val webRequest = mockk<WebRequest>()
         every { webRequest.parameterMap } returns mapOf("message" to listOf("My param").toTypedArray())
+        val queryParams = mutableMapOf(Pair("query", listOf("params")))
 
         val executionResult = build.execute(
             ExecutionInput.newExecutionInput("""{hello}""")
-                .context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, webRequest)))
+                .context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, queryParams, webRequest)))
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
@@ -1117,10 +1121,11 @@ internal class InputArgumentTest {
 
         val webRequest = mockk<WebRequest>()
         every { webRequest.parameterMap } returns mapOf("message" to listOf("My param").toTypedArray())
+        val queryParams = mutableMapOf(Pair("query", listOf("params")))
 
         val executionResult = build.execute(
             ExecutionInput.newExecutionInput("""{hello}""")
-                .context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, webRequest)))
+                .context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, queryParams, webRequest)))
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
@@ -1154,10 +1159,11 @@ internal class InputArgumentTest {
 
         val webRequest = mockk<WebRequest>()
         every { webRequest.parameterMap } returns mapOf("message" to listOf("My param").toTypedArray())
+        val queryParams = mutableMapOf(Pair("query", listOf("params")))
 
         val executionResult = build.execute(
             ExecutionInput.newExecutionInput("""{hello}""")
-                .context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, webRequest)))
+                .context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, queryParams, webRequest)))
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()

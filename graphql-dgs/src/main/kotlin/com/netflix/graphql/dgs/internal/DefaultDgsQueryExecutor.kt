@@ -73,12 +73,15 @@ class DefaultDgsQueryExecutor(
         operationName: String?,
         webRequest: WebRequest?
     ): ExecutionResult {
+        val queryParams = mutableMapOf<String, List<String>>()
+        webRequest?.parameterMap?.entries?.forEach { queryParams[it.key] = it.value.toList() }
+
         val graphQLSchema: GraphQLSchema =
             if (reloadIndicator.reloadSchema())
                 schema.updateAndGet { schemaProvider.schema() }
             else
                 schema.get()
-        val dgsContext = contextBuilder.build(DgsWebMvcRequestData(extensions, headers, webRequest))
+        val dgsContext = contextBuilder.build(DgsWebMvcRequestData(extensions, headers, queryParams, webRequest))
         val executionResult = BaseDgsQueryExecutor.baseExecute(
             query,
             variables,
