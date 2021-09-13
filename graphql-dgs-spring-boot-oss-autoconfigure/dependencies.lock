@@ -420,12 +420,6 @@
         "org.springframework.security:spring-security-bom": {
             "locked": "5.3.9.RELEASE"
         },
-        "org.springframework.security:spring-security-core": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
-            "locked": "5.3.9.RELEASE"
-        },
         "org.springframework:spring-context": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
@@ -682,12 +676,6 @@
             "locked": "Hoxton.SR10"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.3.9.RELEASE"
-        },
-        "org.springframework.security:spring-security-core": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
             "locked": "5.3.9.RELEASE"
         },
         "org.springframework:spring-context": {
