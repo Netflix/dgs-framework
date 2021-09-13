@@ -243,7 +243,11 @@ class DataFetcherInvoker(
             (parameter.type.enumConstants as Array<Enum<*>>).find { it.name == parameterValue }
                 ?: throw DgsInvalidInputArgumentException("Invalid enum value '$parameterValue for enum type ${parameter.type.name}")
         } else {
-            parameterValue
+            if (parameterValue is List<*> && parameter.type == Set::class.java) {
+                parameterValue.toSet()
+            } else {
+                parameterValue
+            }
         }
 
     private fun getValueAsOptional(value: Any?, parameter: Parameter) =

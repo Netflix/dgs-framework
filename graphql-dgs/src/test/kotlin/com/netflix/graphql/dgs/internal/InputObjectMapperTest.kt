@@ -22,6 +22,7 @@ import com.netflix.graphql.dgs.internal.java.test.inputobjects.JGenericInputObje
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JGenericSubInputObject
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObject
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithKotlinProperty
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithSet
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -48,7 +49,7 @@ internal class InputObjectMapperTest {
 
     @Test
     fun mapToJavaClass() {
-        val mapToObject = InputObjectMapper.mapToJavaObject(input, JInputObject::class.java)
+        val mapToObject = mapToJavaObject(input, JInputObject::class.java)
         assertThat(mapToObject.simpleString).isEqualTo("hello")
         assertThat(mapToObject.someDate).isEqualTo(currentDate)
         assertThat(mapToObject.someObject.key1).isEqualTo("value1")
@@ -58,7 +59,7 @@ internal class InputObjectMapperTest {
 
     @Test
     fun mapToJavaClassWithKotlinProperty() {
-        val mapToObject = InputObjectMapper.mapToJavaObject(inputKotlinJavaMix, JInputObjectWithKotlinProperty::class.java)
+        val mapToObject = mapToJavaObject(inputKotlinJavaMix, JInputObjectWithKotlinProperty::class.java)
         assertThat(mapToObject.name).isEqualTo("dgs")
         assertThat(mapToObject.objectProperty.simpleString).isEqualTo("hello")
         assertThat(mapToObject.objectProperty.someObject.key1).isEqualTo("value1")
@@ -84,7 +85,7 @@ internal class InputObjectMapperTest {
 
     @Test
     fun mapToJavaClassWithNull() {
-        val mapToObject = InputObjectMapper.mapToJavaObject(inputWithNulls, JInputObject::class.java)
+        val mapToObject = mapToJavaObject(inputWithNulls, JInputObject::class.java)
         assertThat(mapToObject.simpleString).isNull()
         assertThat(mapToObject.someDate).isEqualTo(currentDate)
         assertThat(mapToObject.someObject.key1).isEqualTo("value1")
@@ -105,7 +106,7 @@ internal class InputObjectMapperTest {
     @Test
     fun mapGenericJavaClassTwoTypeParams() {
         val input = mapOf("fieldA" to "value A", "fieldB" to listOf(1, 2, 3))
-        val mappedGeneric = InputObjectMapper.mapToJavaObject(input, JGenericInputObjectTwoTypeParams::class.java)
+        val mappedGeneric = mapToJavaObject(input, JGenericInputObjectTwoTypeParams::class.java)
 
         assertThat(mappedGeneric.fieldA).isEqualTo("value A")
         assertThat(mappedGeneric.fieldB).isEqualTo(listOf(1, 2, 3))
@@ -114,7 +115,7 @@ internal class InputObjectMapperTest {
     @Test
     fun mapGenericJavaClass() {
         val input = mapOf("someField" to "The String", "fieldA" to 1)
-        val mappedGeneric = InputObjectMapper.mapToJavaObject(input, JGenericSubInputObject::class.java)
+        val mappedGeneric = mapToJavaObject(input, JGenericSubInputObject::class.java)
 
         assertThat(mappedGeneric.fieldA).isEqualTo(1)
     }
@@ -126,7 +127,7 @@ internal class InputObjectMapperTest {
             "unknown" to "The String",
         )
 
-        val mapToObject = InputObjectMapper.mapToJavaObject(input, JInputObject::class.java)
+        val mapToObject = mapToJavaObject(input, JInputObject::class.java)
         assertThat(mapToObject).isNotNull
         assertThat(mapToObject.simpleString).isEqualTo("hello")
     }
@@ -174,9 +175,24 @@ internal class InputObjectMapperTest {
         ).hasMessageStartingWith("Provided input arguments")
     }
 
+    @Test
+    fun `A list argument should be able to convert to Set in Kotlin`() {
+        val input = mapOf("items" to listOf(1, 2, 3))
+        val withSet = InputObjectMapper.mapToKotlinObject(input, KotlinObjectWithSet::class)
+        assertThat(withSet.items).isInstanceOf(Set::class.java)
+    }
+
+    @Test
+    fun `A list argument should be able to convert to Set in Java`() {
+        val input = mapOf("items" to listOf(1, 2, 3))
+        val withSet = mapToJavaObject(input, JInputObjectWithSet::class.java)
+        assertThat(withSet.items).isInstanceOf(Set::class.java)
+    }
+
     data class KotlinInputObject(val simpleString: String?, val someDate: LocalDateTime, val someObject: KotlinSomeObject)
     data class KotlinSomeObject(val key1: String, val key2: LocalDateTime, val key3: KotlinSubObject?)
     data class KotlinSubObject(val subkey1: String)
+    data class KotlinObjectWithSet(val items: Set<Int>)
 
     data class KotlinWithJavaProperty(val name: String, val objectProperty: JInputObject)
 }
