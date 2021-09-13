@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.webflux.autoconfiguration
 
+import com.netflix.graphql.dgs.internal.CookieValueResolver
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
@@ -27,6 +28,7 @@ import com.netflix.graphql.dgs.reactive.internal.FluxDataFetcherResultProcessor
 import com.netflix.graphql.dgs.reactive.internal.MonoDataFetcherResultProcessor
 import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler
 import com.netflix.graphql.dgs.webflux.handlers.DgsWebfluxHttpHandler
+import com.netflix.graphql.dgs.webflux.handlers.WebFluxCookieValueResolver
 import graphql.ExecutionInput
 import graphql.GraphQL
 import graphql.execution.*
@@ -42,10 +44,13 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.http.MediaType
-import org.springframework.web.reactive.function.server.*
 import org.springframework.web.reactive.function.server.RequestPredicates.accept
+import org.springframework.web.reactive.function.server.RouterFunction
+import org.springframework.web.reactive.function.server.RouterFunctions
+import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.ServerResponse.ok
 import org.springframework.web.reactive.function.server.ServerResponse.permanentRedirect
+import org.springframework.web.reactive.function.server.json
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping
 import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter
 import reactor.core.publisher.Mono
@@ -165,5 +170,10 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     @Bean
     open fun fluxReactiveDataFetcherResultProcessor(): FluxDataFetcherResultProcessor {
         return FluxDataFetcherResultProcessor()
+    }
+
+    @Bean
+    open fun webfluxCookieResolver(): CookieValueResolver {
+        return WebFluxCookieValueResolver()
     }
 }

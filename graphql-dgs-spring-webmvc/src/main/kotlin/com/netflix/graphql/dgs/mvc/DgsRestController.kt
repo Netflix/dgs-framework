@@ -63,6 +63,7 @@ import org.springframework.web.multipart.MultipartFile
 open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
 
     open val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
+    private val mapper = jacksonObjectMapper()
 
     // The @ConfigurationProperties bean name is <prefix>-<fqn>
     @RequestMapping(
@@ -80,7 +81,6 @@ open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
 
         logger.debug("Starting /graphql handling")
 
-        val mapper = jacksonObjectMapper()
         val inputQuery: Map<String, Any>
         val queryVariables: Map<String, Any>
         val extensions: Map<String, Any>
@@ -99,14 +99,14 @@ open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
                         .body(ex.message ?: "Error parsing query - no details found in the error message")
                 }
 
-                queryVariables = if (inputQuery.get("variables") != null) {
+                queryVariables = if (inputQuery["variables"] != null) {
                     @Suppress("UNCHECKED_CAST")
                     inputQuery["variables"] as Map<String, String>
                 } else {
                     emptyMap()
                 }
 
-                extensions = if (inputQuery.get("extensions") != null) {
+                extensions = if (inputQuery["extensions"] != null) {
                     @Suppress("UNCHECKED_CAST")
                     inputQuery["extensions"] as Map<String, Any>
                 } else {
@@ -118,14 +118,14 @@ open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
         } else if (fileParams != null && mapParam != null && operation != null) {
             inputQuery = operation.let { mapper.readValue(it) }
 
-            queryVariables = if (inputQuery.get("variables") != null) {
+            queryVariables = if (inputQuery["variables"] != null) {
                 @Suppress("UNCHECKED_CAST")
                 inputQuery["variables"] as Map<String, Any>
             } else {
                 emptyMap()
             }
 
-            extensions = if (inputQuery.get("extensions") != null) {
+            extensions = if (inputQuery["extensions"] != null) {
                 @Suppress("UNCHECKED_CAST")
                 inputQuery["extensions"] as Map<String, Any>
             } else {

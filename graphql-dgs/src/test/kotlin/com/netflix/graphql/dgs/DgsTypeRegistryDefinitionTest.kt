@@ -67,6 +67,7 @@ class DgsTypeRegistryDefinitionTest {
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("queryResolver", queryFetcher), Pair("typeRegistry", typeRegistry))
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
         val schema = provider.schema()
         val graphql = GraphQL.newGraphQL(schema).build()
@@ -133,6 +134,7 @@ class DgsTypeRegistryDefinitionTest {
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("queryResolver", queryFetcher), Pair("numberResolver", numberFetcher), Pair("typeRegistry", firstTypeDefinitionFactory), Pair("secondRegistry", secondTypeDefinitionFactory))
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
         val schema = provider.schema()
         val graphql = GraphQL.newGraphQL(schema).build()

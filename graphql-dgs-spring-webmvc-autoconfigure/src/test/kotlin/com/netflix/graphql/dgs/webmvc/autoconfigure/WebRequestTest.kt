@@ -37,11 +37,13 @@ import org.springframework.stereotype.Component
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
 import java.util.*
+import javax.servlet.http.Cookie
 
 @SpringBootTest(
     classes = [DgsWebMvcAutoConfiguration::class, DgsAutoConfiguration::class, WebRequestTest.ExampleImplementation::class, WebRequestTest.TestCustomContextBuilder::class],
@@ -210,6 +212,68 @@ class WebRequestTest {
             .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingContextWithRequest": "hello"}}"""))
     }
 
+    @Test
+    fun `@CookieValue should give access to cookie`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ withCookie }" }""")
+                .cookie(Cookie("myCookie", "cookiehello"))
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"withCookie": "cookiehello"}}"""))
+    }
+
+    @Test
+    fun `@CookieValue should allow Optional type`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ withOptionalCookie }" }""")
+                .cookie(Cookie("myCookie", "cookiehello"))
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"withOptionalCookie": "cookiehello"}}"""))
+    }
+
+    @Test
+    fun `@CookieValue should allow empty Optional type`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ withEmptyOptionalCookie }" }""")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"withEmptyOptionalCookie": "emptycookie"}}"""))
+    }
+
+    @Test
+    fun `@CookieValue should allow null when not required`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ withEmptyCookie }" }""")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"withEmptyCookie": "emptycookie"}}"""))
+    }
+
+    @Test
+    fun `@CookieValue should throw exception when required but not set`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ withRequiredCookie }" }""")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"errors":[{"message":"com.netflix.graphql.dgs.exceptions.DgsMissingCookieException: Required cookie 'myCookie' was not provided","locations":[],"path":["withRequiredCookie"],"extensions":{"errorType":"INTERNAL"}}],"data":{"withRequiredCookie":null}}"""))
+    }
+
+    @Test
+    fun `@CookieValue should support default value`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/graphql")
+                .content("""{"query": "{ withDefaultCookie }" }""")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"withDefaultCookie": "defaultvalue"}}"""))
+    }
+
     @DgsComponent
     class ExampleImplementation {
 
@@ -284,6 +348,42 @@ class WebRequestTest {
                             .name("usingOptionalParamAsOptionalType")
                             .type(TypeName("String"))
                             .build()
+                    ).fieldDefinition(
+                        FieldDefinition
+                            .newFieldDefinition()
+                            .name("withCookie")
+                            .type(TypeName("String"))
+                            .build()
+                    ).fieldDefinition(
+                        FieldDefinition
+                            .newFieldDefinition()
+                            .name("withOptionalCookie")
+                            .type(TypeName("String"))
+                            .build()
+                    ).fieldDefinition(
+                        FieldDefinition
+                            .newFieldDefinition()
+                            .name("withEmptyOptionalCookie")
+                            .type(TypeName("String"))
+                            .build()
+                    ).fieldDefinition(
+                        FieldDefinition
+                            .newFieldDefinition()
+                            .name("withEmptyCookie")
+                            .type(TypeName("String"))
+                            .build()
+                    ).fieldDefinition(
+                        FieldDefinition
+                            .newFieldDefinition()
+                            .name("withRequiredCookie")
+                            .type(TypeName("String"))
+                            .build()
+                    ).fieldDefinition(
+                        FieldDefinition
+                            .newFieldDefinition()
+                            .name("withDefaultCookie")
+                            .type(TypeName("String"))
+                            .build()
                     )
                     .build()
             newRegistry.add(query)
@@ -293,7 +393,7 @@ class WebRequestTest {
 
         @DgsData(parentType = "Query", field = "usingWebRequest")
         fun usingWebRequest(dfe: DgsDataFetchingEnvironment): String {
-            return ((DgsContext.getRequestData(dfe) as DgsWebMvcRequestData)?.webRequest as ServletWebRequest).request.serverName
+            return ((DgsContext.getRequestData(dfe) as DgsWebMvcRequestData).webRequest as ServletWebRequest).request.serverName
         }
 
         @DgsData(parentType = "Query", field = "usingHeader")
@@ -309,7 +409,7 @@ class WebRequestTest {
             @RequestHeader(required = true) myheader: String,
             dataFetchingEnvironment: DgsDataFetchingEnvironment
         ): String {
-            return myheader ?: "empty"
+            return myheader
         }
 
         @DgsData(parentType = "Query", field = "usingOptionalHeader")
@@ -364,6 +464,48 @@ class WebRequestTest {
             dataFetchingEnvironment: DgsDataFetchingEnvironment
         ): String {
             return myParam.orElse("default param from Optional")
+        }
+
+        @DgsData(parentType = "Query", field = "withCookie")
+        fun usingCookie(
+            @CookieValue myCookie: String,
+        ): String {
+            return myCookie
+        }
+
+        @DgsData(parentType = "Query", field = "withOptionalCookie")
+        fun usingOptionalCookie(
+            @CookieValue myCookie: Optional<String>,
+        ): String {
+            return myCookie.get()
+        }
+
+        @DgsData(parentType = "Query", field = "withEmptyOptionalCookie")
+        fun usingEmptyOptionalCookie(
+            @CookieValue(required = false) myCookie: Optional<String>,
+        ): String {
+            return myCookie.orElse("emptycookie")
+        }
+
+        @DgsData(parentType = "Query", field = "withEmptyCookie")
+        fun usingEmptyOptionalCookie(
+            @CookieValue(required = false) myCookie: String?,
+        ): String {
+            return myCookie ?: "emptycookie"
+        }
+
+        @DgsData(parentType = "Query", field = "withRequiredCookie")
+        fun usingRequiredCookie(
+            @CookieValue(required = true) myCookie: String,
+        ): String {
+            return myCookie
+        }
+
+        @DgsData(parentType = "Query", field = "withDefaultCookie")
+        fun usingCookieWithDefault(
+            @CookieValue(defaultValue = "defaultvalue") myCookie: String,
+        ): String {
+            return myCookie
         }
     }
 

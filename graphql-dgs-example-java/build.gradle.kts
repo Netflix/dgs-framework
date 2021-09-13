@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,4 +28,6 @@ dependencies {
     // Adding the DGS Micrometer integration that provides timers for gql.*
     // For additional information go to the link below:
     // https://netflix.github.io/dgs/advanced/instrumentation/
+
+    implementation("com.github.ben-manes.caffeine:caffeine")
 }

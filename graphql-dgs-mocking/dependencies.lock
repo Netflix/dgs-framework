@@ -4,7 +4,7 @@
             "locked": "2.12.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         },
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
             "locked": "2.3.9.RELEASE"
@@ -39,10 +39,10 @@
             "project": true
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         },
         "org.slf4j:slf4j-api": {
             "locked": "1.7.30"
@@ -68,6 +68,14 @@
             "locked": "2.3.9.RELEASE"
         }
     },
+    "kaptClasspath_kaptKotlin": {
+        "org.springframework.boot:spring-boot-autoconfigure-processor": {
+            "locked": "2.3.9.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-configuration-processor": {
+            "locked": "2.3.9.RELEASE"
+        }
+    },
     "kaptTest": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
             "locked": "2.3.9.RELEASE"
@@ -81,10 +89,10 @@
             "locked": "2.12.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         },
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.9.RELEASE"
@@ -103,14 +111,60 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.3"
         },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.5.21"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.9.RELEASE"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "Hoxton.SR10"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.3.9.RELEASE"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.2.13.RELEASE"
+        }
+    },
+    "kotlinCompilerPluginClasspathMain": {
+        "com.fasterxml.jackson:jackson-bom": {
+            "locked": "2.12.3"
+        },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.9.RELEASE"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "Hoxton.SR10"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.3.9.RELEASE"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.2.13.RELEASE"
+        }
+    },
+    "kotlinCompilerPluginClasspathTest": {
+        "com.fasterxml.jackson:jackson-bom": {
+            "locked": "2.12.3"
+        },
+        "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
+            "locked": "1.5.21"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.5.21"
+        },
+        "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
+            "locked": "1.5.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.9.RELEASE"
@@ -127,7 +181,7 @@
     },
     "kotlinKaptWorkerDependencies": {
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         }
     },
     "kotlinKlibCommonizerClasspath": {
@@ -135,10 +189,10 @@
             "locked": "2.12.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         },
         "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.9.RELEASE"
@@ -158,7 +212,7 @@
             "locked": "2.12.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.9.RELEASE"
@@ -183,7 +237,7 @@
             "locked": "2.12.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.9.RELEASE"
@@ -212,10 +266,10 @@
             "project": true
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         },
         "org.slf4j:slf4j-api": {
             "locked": "1.7.30"
@@ -238,7 +292,7 @@
             "locked": "2.12.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.3.9.RELEASE"
@@ -267,13 +321,13 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.11.0"
+            "locked": "1.12.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         },
         "org.slf4j:slf4j-api": {
             "locked": "1.7.30"
@@ -308,13 +362,13 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.11.0"
+            "locked": "1.12.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.4.32"
+            "locked": "1.5.21"
         },
         "org.slf4j:slf4j-api": {
             "locked": "1.7.30"

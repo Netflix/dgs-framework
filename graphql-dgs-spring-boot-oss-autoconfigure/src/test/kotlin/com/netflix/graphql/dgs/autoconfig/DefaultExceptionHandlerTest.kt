@@ -39,6 +39,6 @@ class DefaultExceptionHandlerTest {
         }
         assertThat(error.errors.size).isEqualTo(1)
 
-        assertThat(error.errors[0].extensions.get("errorType")).isEqualTo("INTERNAL")
+        assertThat(error.errors[0].extensions["errorType"]).isEqualTo("INTERNAL")
     }
 }

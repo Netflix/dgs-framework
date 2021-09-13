@@ -22,6 +22,8 @@ dependencies {
     api("com.graphql-java:graphql-java")
     api("com.jayway.jsonpath:json-path")
 
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+
     implementation("org.springframework:spring-web")
     implementation("org.springframework:spring-context")
 
@@ -35,4 +37,5 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-core")
     testImplementation("io.projectreactor:reactor-core")
     testImplementation("io.projectreactor:reactor-test")
+    testImplementation("com.graphql-java:graphql-java-extended-scalars")
 }

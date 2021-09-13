@@ -35,7 +35,7 @@ public class MessagesDataLoaderWithException implements BatchLoaderWithContext<S
         MyContext context = DgsContext.getCustomContext(environment);
         return CompletableFuture.supplyAsync(() -> keys.stream()
                 .map(key -> Try.tryCall(() -> {
-                    if (key == "A") {
+                    if (key.equals("A")) {
                         throw new RuntimeException("Invalid key");
                     }
                     return  context.getCustomState() + " " + key;

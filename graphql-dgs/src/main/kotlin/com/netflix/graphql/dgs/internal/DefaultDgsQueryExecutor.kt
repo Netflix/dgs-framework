@@ -35,6 +35,7 @@ import graphql.execution.ExecutionStrategy
 import graphql.execution.NonNullableFieldWasNullError
 import graphql.execution.SubscriptionExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
+import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLSchema
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -56,7 +57,8 @@ class DefaultDgsQueryExecutor(
     private val queryExecutionStrategy: ExecutionStrategy,
     private val mutationExecutionStrategy: ExecutionStrategy,
     private val idProvider: Optional<ExecutionIdProvider>,
-    private val reloadIndicator: ReloadSchemaIndicator = ReloadSchemaIndicator { false }
+    private val reloadIndicator: ReloadSchemaIndicator = ReloadSchemaIndicator { false },
+    private val preparsedDocumentProvider: PreparsedDocumentProvider = DgsNoOpPreparsedDocumentProvider,
 ) : DgsQueryExecutor {
 
     val logger: Logger = LoggerFactory.getLogger(DefaultDgsQueryExecutor::class.java)
@@ -87,7 +89,8 @@ class DefaultDgsQueryExecutor(
             chainedInstrumentation,
             queryExecutionStrategy,
             mutationExecutionStrategy,
-            idProvider
+            idProvider,
+            preparsedDocumentProvider,
         )
 
         // Check for NonNullableFieldWasNull errors, and log them explicitly because they don't run through the exception handlers.
@@ -201,9 +204,11 @@ object BaseDgsQueryExecutor {
         queryExecutionStrategy: ExecutionStrategy,
         mutationExecutionStrategy: ExecutionStrategy,
         idProvider: Optional<ExecutionIdProvider>,
+        preparsedDocumentProvider: PreparsedDocumentProvider,
     ): CompletableFuture<out ExecutionResult> {
         val graphQLBuilder =
             GraphQL.newGraphQL(graphQLSchema)
+                .preparsedDocumentProvider(preparsedDocumentProvider)
                 .instrumentation(chainedInstrumentation)
                 .queryExecutionStrategy(queryExecutionStrategy)
                 .mutationExecutionStrategy(mutationExecutionStrategy)
@@ -213,7 +218,7 @@ object BaseDgsQueryExecutor {
         }
         val graphQL = graphQLBuilder.build()
 
-        val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier({ dgsContext })
+        val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier { dgsContext }
         val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
             .query(query)
             .dataLoaderRegistry(dataLoaderRegistry)

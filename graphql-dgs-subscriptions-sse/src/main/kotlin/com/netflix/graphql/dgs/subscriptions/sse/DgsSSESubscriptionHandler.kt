@@ -42,11 +42,11 @@ import java.util.*
 @RestController
 open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor) {
     open val logger = LoggerFactory.getLogger(DgsSSESubscriptionHandler::class.java)
+    private val mapper = jacksonObjectMapper()
 
     @RequestMapping("/subscriptions", produces = ["text/event-stream"])
     fun subscriptionWithId(@RequestParam("query") queryBase64: String): ResponseEntity<SseEmitter> {
         val emitter = SseEmitter(-1)
-        val mapper = jacksonObjectMapper()
         val sessionId = UUID.randomUUID().toString()
         val query = try {
             String(Base64.getDecoder().decode(queryBase64), StandardCharsets.UTF_8)
@@ -66,7 +66,7 @@ open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor
 
         val executionResult: ExecutionResult = dgsQueryExecutor.execute(queryPayload.query, queryPayload.variables)
         if (executionResult.errors.isNotEmpty()) {
-            return if (executionResult.errors.filterIsInstance<ValidationError>().isNotEmpty()) {
+            return if (executionResult.errors.asSequence().filterIsInstance<ValidationError>().any()) {
                 val errorMessage = "Subscription query failed to validate: ${executionResult.errors.joinToString(", ")}"
                 emitter.send(errorMessage)
                 emitter.complete()

@@ -22,6 +22,7 @@ import graphql.schema.DataFetchingEnvironment
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -68,38 +69,57 @@ class InterfaceDataFetchersTest {
             fun directorFetcher(dfe: DataFetchingEnvironment): String {
                 return "The Director"
             }
+
+            @DgsData.List(
+                DgsData(parentType = "Movie", field = "title"),
+                DgsData(parentType = "Movie", field = "description")
+            )
+            fun dummyData(dfe: DataFetchingEnvironment): String {
+                return "Some dummy data for ${dfe.field.name}"
+            }
         }
 
         val queryFetcher = object : Any() {
-            @DgsData(parentType = "Query", field = "movies")
-            fun moviesFetcher(dfe: DataFetchingEnvironment): List<Movie> {
+            // Since the field is not explicit the name of the method will be used.
+            @DgsQuery()
+            fun movies(dfe: DataFetchingEnvironment): List<Movie> {
                 return listOf(ScaryMovie(), ActionMovie())
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", fetcher), Pair("movieTypeResolver", movieTypeResolver), Pair("queryResolver", queryFetcher))
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair("movieDirectorFetcher", fetcher),
+            Pair("movieTypeResolver", movieTypeResolver),
+            Pair("queryResolver", queryFetcher)
+        )
+
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
         val schema = provider.schema(
             """
             type Query {
-                movies: [Movie]            
+                movies: [Movie]
+                shows: [Movie]
             }
             
             interface Movie {
                 title: String
+                description: String
                 director: String
             }
             
             type ScaryMovie implements Movie {
                 title: String
+                description: String
                 director: String
                 gory: Boolean
             }
             
             type ActionMovie implements Movie {
                 title: String
+                description: String
                 director: String
                 nrOfExplosions: Int
             }
@@ -107,11 +127,21 @@ class InterfaceDataFetchersTest {
         )
 
         val build = GraphQL.newGraphQL(schema).build()
-        val executionResult = build.execute("{movies {director}}")
+
+        val executionResult = build.execute("{movies {director title description}}")
         assertEquals(0, executionResult.errors.size)
         assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, List<Map<String, *>>>>()
-        assertEquals("The Director", data["movies"]!![0]["director"])
-        assertEquals("The Director", data["movies"]!![1]["director"])
+        assertThat(data).hasEntrySatisfying("movies") {
+            assertThat(it).containsAll(
+                listOf(
+                    mapOf(
+                        "director" to "The Director",
+                        "title" to "Some dummy data for title",
+                        "description" to "Some dummy data for description"
+                    )
+                )
+            )
+        }
     }
 }

@@ -1,4 +1,3 @@
-directive @connection on OBJECT
 
 type Query {
     hello(name: String): String
@@ -28,6 +27,7 @@ type Query {
     helloWithHeaders(name: String): String
 
     withPagination: MessageConnection
+    withCookie: String
 }
 
 type NestedA {
@@ -63,6 +63,7 @@ type ActionMovie implements Movie {
 type Mutation {
     addRating(input: RatingInput):Rating
     uploadFile(input: FileUploadInput!): Boolean
+    updateCookie(value: String): String
 }
 
 input RatingInput {

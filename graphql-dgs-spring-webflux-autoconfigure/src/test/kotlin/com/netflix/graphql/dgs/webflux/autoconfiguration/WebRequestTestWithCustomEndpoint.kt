@@ -40,7 +40,7 @@ class WebRequestTestWithCustomEndpoint {
 
     @Test
     fun `A simple request should execute correctly when no custom context builder is available`() {
-        val exchange = webTestClient.post().uri("/api").bodyValue(
+        webTestClient.post().uri("/api").bodyValue(
             """
             {"query": "{hello}"}
             """.trimIndent()

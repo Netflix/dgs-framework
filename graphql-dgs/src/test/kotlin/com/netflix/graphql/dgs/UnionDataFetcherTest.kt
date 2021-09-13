@@ -68,6 +68,7 @@ class UnionDataFetcherTest {
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("queryResolver", queryFetcher), Pair("searchResultTypeResolver", searchResultTypeResolver), Pair("imdbFetcher", imdbFetcher))
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
         val schema = provider.schema(
             """

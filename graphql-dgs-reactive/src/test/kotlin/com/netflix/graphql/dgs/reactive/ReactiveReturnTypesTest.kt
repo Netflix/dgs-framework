@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.reactive
 
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsData
+import com.netflix.graphql.dgs.DgsDirective
 import com.netflix.graphql.dgs.DgsScalar
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
@@ -102,6 +103,7 @@ internal class ReactiveReturnTypesTest {
                 LocalDateTimeScalar()
             )
         )
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
         every { dgsDataLoaderProvider.buildRegistryWithContextSupplier(any<Supplier<Any>>()) } returns DataLoaderRegistry()
 
         val provider = DgsSchemaProvider(
@@ -179,7 +181,7 @@ internal class ReactiveReturnTypesTest {
 
     @Test
     fun extractJsonWithMonoOfObjects() {
-        val movies = dgsQueryExecutor!!.executeAndExtractJsonPath<List<Map<String, Any>>>(
+        val movies = dgsQueryExecutor.executeAndExtractJsonPath<List<Map<String, Any>>>(
             """
             {
                 movies { title releaseDate }

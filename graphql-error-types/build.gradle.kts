@@ -16,4 +16,5 @@
 
 dependencies {
     api("com.graphql-java:graphql-java")
+    compileOnly("com.fasterxml.jackson.core:jackson-annotations")
 }
