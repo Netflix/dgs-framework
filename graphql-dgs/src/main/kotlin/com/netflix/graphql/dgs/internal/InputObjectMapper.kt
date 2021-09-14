@@ -66,7 +66,12 @@ object InputObjectMapper {
                     else
                         null
                 )
-                inputValues.add(newList)
+
+                if (parameter.type.jvmErasure == Set::class) {
+                    inputValues.add(newList.toSet())
+                } else {
+                    inputValues.add(newList)
+                }
             } else {
                 inputValues.add(input)
             }
@@ -110,7 +115,11 @@ object InputObjectMapper {
                     trySetField(declaredField, instance, mappedValue)
                 } else if (it.value is List<*>) {
                     val newList = convertList(it.value as List<*>, targetClass, fieldClass.kotlin, fieldArgumentType)
-                    trySetField(declaredField, instance, newList)
+                    if (declaredField.type == Set::class.java) {
+                        trySetField(declaredField, instance, newList.toSet())
+                    } else {
+                        trySetField(declaredField, instance, newList)
+                    }
                 } else if (fieldClass.isEnum) {
                     val enumValue = (fieldClass.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == it.value }
                     trySetField(declaredField, instance, enumValue)
@@ -159,16 +168,22 @@ object InputObjectMapper {
     }
 
     private fun convertList(input: List<*>, targetClass: Class<*>, nestedClass: KClass<*>, nestedType: Type? = null): List<*> {
-        return input.filterNotNull().map { listItem ->
+        val mappedList = input.filterNotNull().map { listItem ->
             if (listItem is List<*>) {
                 when (nestedType) {
                     is ParameterizedType ->
-                        convertList(listItem, targetClass, (nestedType.rawType as Class<*>).kotlin, nestedType.actualTypeArguments[0])
+                        convertList(
+                            listItem,
+                            targetClass,
+                            (nestedType.rawType as Class<*>).kotlin,
+                            nestedType.actualTypeArguments[0]
+                        )
                     is TypeVariable<*> -> {
                         val indexOfGeneric =
                             ((targetClass.genericSuperclass as ParameterizedType).rawType as Class<*>)
                                 .typeParameters.indexOfFirst { it.name == nestedType.typeName }
-                        val parameterType = (targetClass.genericSuperclass as ParameterizedType).actualTypeArguments[indexOfGeneric]
+                        val parameterType =
+                            (targetClass.genericSuperclass as ParameterizedType).actualTypeArguments[indexOfGeneric]
                         convertList(listItem, targetClass, (parameterType as Class<*>).kotlin)
                     }
                     is WildcardType -> {
@@ -194,6 +209,8 @@ object InputObjectMapper {
                 listItem
             }
         }
+
+        return mappedList
     }
 
     private fun isObjectOrAny(nestedTarget: KClass<*>) =

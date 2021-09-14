@@ -16,7 +16,16 @@
 
 package com.netflix.graphql.dgs.internal
 
-import com.netflix.graphql.dgs.*
+import com.netflix.graphql.dgs.DateTimeInput
+import com.netflix.graphql.dgs.DgsComponent
+import com.netflix.graphql.dgs.DgsData
+import com.netflix.graphql.dgs.DgsDirective
+import com.netflix.graphql.dgs.DgsQuery
+import com.netflix.graphql.dgs.DgsRuntimeWiring
+import com.netflix.graphql.dgs.DgsScalar
+import com.netflix.graphql.dgs.InputArgument
+import com.netflix.graphql.dgs.LocalDateTimeScalar
+import com.netflix.graphql.dgs.Person
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
 import com.netflix.graphql.dgs.internal.java.test.enums.JGreetingType
@@ -26,7 +35,14 @@ import com.netflix.graphql.dgs.internal.java.test.inputobjects.JFilter
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JFooInput
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JListOfListsOfLists
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.sortby.JMovieSortBy
-import com.netflix.graphql.dgs.internal.kotlin.test.*
+import com.netflix.graphql.dgs.internal.kotlin.test.KBarInput
+import com.netflix.graphql.dgs.internal.kotlin.test.KEnum
+import com.netflix.graphql.dgs.internal.kotlin.test.KFilter
+import com.netflix.graphql.dgs.internal.kotlin.test.KFooInput
+import com.netflix.graphql.dgs.internal.kotlin.test.KGreetingType
+import com.netflix.graphql.dgs.internal.kotlin.test.KInputMessage
+import com.netflix.graphql.dgs.internal.kotlin.test.KListOfListsOfLists
+import com.netflix.graphql.dgs.internal.kotlin.test.KMovieFilter
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import graphql.ExceptionWhileDataFetching
 import graphql.ExecutionInput
@@ -240,6 +256,41 @@ internal class InputArgumentTest {
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument("names") names: List<String>): String {
+                return "Hello, ${names.joinToString(", ")}"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello(names: ["tester 1", "tester 2"])}""")
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("Hello, tester 1, tester 2", data["hello"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `@InputArgument on a Set of strings`() {
+        val schema = """
+            type Query {
+                hello(names: [String]): String
+            }
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument("names") names: Set<String>): String {
                 return "Hello, ${names.joinToString(", ")}"
             }
         }
