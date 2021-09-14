@@ -18,6 +18,9 @@ dependencies {
     api("com.jayway.jsonpath:json-path")
     api("io.projectreactor:reactor-core")
     api("com.fasterxml.jackson.core:jackson-annotations")
+    api(project(":graphql-dgs-subscription-types"))
+
+    compileOnly("org.springframework:spring-webflux")
 
     implementation("org.springframework:spring-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -28,4 +31,5 @@ dependencies {
     testImplementation("org.springframework:spring-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
     testImplementation("com.graphql-java:graphql-java-extended-scalars")
+    testImplementation("io.projectreactor:reactor-test")
 }

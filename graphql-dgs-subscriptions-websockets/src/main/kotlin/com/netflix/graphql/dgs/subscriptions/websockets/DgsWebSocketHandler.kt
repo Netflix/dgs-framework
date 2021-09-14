@@ -16,9 +16,9 @@
 
 package com.netflix.graphql.dgs.subscriptions.websockets
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.types.subscription.*
 import graphql.ExecutionResult
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
@@ -128,7 +128,7 @@ class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : Text
 
             override fun onComplete() {
                 logger.info("Subscription completed for {}", id)
-                val message = OperationMessage(GQL_TYPE, null, id)
+                val message = OperationMessage(GQL_COMPLETE, null, id)
                 val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
 
                 if (session.isOpen) {
@@ -140,16 +140,3 @@ class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : Text
         })
     }
 }
-
-const val GQL_CONNECTION_INIT = "connection_init"
-const val GQL_CONNECTION_ACK = "connection_ack"
-const val GQL_START = "start"
-const val GQL_STOP = "stop"
-const val GQL_DATA = "data"
-const val GQL_ERROR = "error"
-const val GQL_TYPE = "complete"
-const val GQL_CONNECTION_TERMINATE = "connection_terminate"
-
-data class DataPayload(val data: Any?, val errors: List<Any>? = emptyList())
-data class OperationMessage(@JsonProperty("type") val type: String, @JsonProperty("payload") val payload: Any? = null, @JsonProperty("id", required = false) val id: String? = "")
-data class QueryPayload(@JsonProperty("variables") val variables: Map<String, Any>?, @JsonProperty("extensions") val extensions: Map<String, Any> = emptyMap(), @JsonProperty("operationName") val operationName: String?, @JsonProperty("query") val query: String)
