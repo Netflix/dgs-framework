@@ -1372,6 +1372,8 @@ internal class InputArgumentTest {
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument type: KGreetingType): String {
+                assertThat(type).isInstanceOf(KGreetingType::class.java)
+
                 return "Hello, this is a $type greeting"
             }
         }
@@ -1411,6 +1413,8 @@ internal class InputArgumentTest {
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument type: Optional<KGreetingType>): String {
+                assertThat(type).isNotEmpty.get().isInstanceOf(KGreetingType::class.java)
+
                 return "Hello, this is a ${type.get()} greeting"
             }
         }
@@ -1532,6 +1536,8 @@ internal class InputArgumentTest {
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument type: JGreetingType): String {
+                assertThat(type).isInstanceOf(JGreetingType::class.java)
+
                 return "Hello, this is a $type greeting"
             }
         }
@@ -1571,6 +1577,8 @@ internal class InputArgumentTest {
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument type: Optional<JGreetingType>): String {
+                assertThat(type).isNotEmpty.get().isInstanceOf(JGreetingType::class.java)
+
                 return "Hello, this is a ${type.get()} greeting"
             }
         }
