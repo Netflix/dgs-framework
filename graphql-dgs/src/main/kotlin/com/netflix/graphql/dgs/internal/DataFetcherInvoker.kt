@@ -51,7 +51,6 @@ class DataFetcherInvoker(
     private val method: Method
 ) {
 
-    private val logger = LoggerFactory.getLogger(DataFetcherInvoker::class.java)
     private val parameterNames = defaultParameterNameDiscoverer.getParameterNames(method) ?: emptyArray()
 
     fun invokeDataFetcher(): Any? {
@@ -269,4 +268,8 @@ class DataFetcherInvoker(
         } else {
             value
         }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(DataFetcherInvoker::class.java)
+    }
 }

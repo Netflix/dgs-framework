@@ -24,6 +24,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.jayway.jsonpath.*
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 /**
@@ -31,16 +32,6 @@ import org.slf4j.LoggerFactory
  * This class gives convenient JSON parsing methods to get data out of the response.
  */
 data class GraphQLResponse(val json: String, val headers: Map<String, List<String>>) {
-
-    companion object {
-        private val mapper: ObjectMapper = jacksonObjectMapper()
-            .registerModule(JavaTimeModule())
-            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
-        private val jsonPathConfig: Configuration = Configuration.builder()
-            .jsonProvider(JacksonJsonProvider(mapper))
-            .mappingProvider(JacksonMappingProvider(mapper)).build()
-            .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)
-    }
 
     /**
      * A JsonPath DocumentContext. Typically only used internally.
@@ -53,7 +44,6 @@ data class GraphQLResponse(val json: String, val headers: Map<String, List<Strin
 
     val data: Map<String, Any> = parsed.read("data") ?: emptyMap()
     val errors: List<GraphQLError> = parsed.read("errors", object : TypeRef<List<GraphQLError>>() {}) ?: emptyList()
-    private val logger = LoggerFactory.getLogger(GraphQLResponse::class.java)
 
     constructor(json: String) : this(json, emptyMap())
 
@@ -121,6 +111,19 @@ data class GraphQLResponse(val json: String, val headers: Map<String, List<Strin
     private fun getDataPath(path: String) = if (!path.startsWith("data")) "data.$path" else path
 
     fun hasErrors(): Boolean = errors.isNotEmpty()
+
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(GraphQLResponse::class.java)
+
+        private val mapper: ObjectMapper = jacksonObjectMapper()
+            .registerModule(JavaTimeModule())
+            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+
+        private val jsonPathConfig: Configuration = Configuration.builder()
+            .jsonProvider(JacksonJsonProvider(mapper))
+            .mappingProvider(JacksonMappingProvider(mapper)).build()
+            .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)
+    }
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)

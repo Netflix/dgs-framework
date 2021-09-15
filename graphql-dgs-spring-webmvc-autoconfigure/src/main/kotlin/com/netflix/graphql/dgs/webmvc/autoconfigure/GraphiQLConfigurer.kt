@@ -43,12 +43,6 @@ open class GraphiQLConfigurer(
     private val servletContext: ServletContext
 ) : WebMvcConfigurer {
 
-    val logger: Logger = LoggerFactory.getLogger(GraphiQLConfigurer::class.java)
-
-    object Constants {
-        const val PATH_TO_GRAPHIQL_INDEX_HTML = "/graphiql/index.html"
-    }
-
     override fun addViewControllers(registry: ViewControllerRegistry) {
         registry.addViewController(configProps.graphiql.path).setViewName("forward:$PATH_TO_GRAPHIQL_INDEX_HTML")
         registry.addViewController("${configProps.graphiql.path}/").setViewName("forward:$PATH_TO_GRAPHIQL_INDEX_HTML")
@@ -81,5 +75,13 @@ open class GraphiQLConfigurer(
             }
             return resource
         }
+    }
+
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(GraphiQLConfigurer::class.java)
+    }
+
+    object Constants {
+        const val PATH_TO_GRAPHIQL_INDEX_HTML = "/graphiql/index.html"
     }
 }

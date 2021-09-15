@@ -17,11 +17,6 @@ internal class MappedBatchLoaderWithContextInterceptor(
     private val registry: MeterRegistry
 ) {
 
-    companion object {
-        private val ID = GqlMetric.DATA_LOADER.key
-        private val logger = LoggerFactory.getLogger(MappedBatchLoaderWithContextInterceptor::class.java)
-    }
-
     fun load(@Pipe pipe: Forwarder<CompletionStage<Map<*, *>>, MappedBatchLoaderWithContext<*, *>>): CompletionStage<Map<*, *>> {
         logger.debug("Starting metered timer[{}] for {}.", ID, javaClass.simpleName)
         val timerSampler = Timer.start(registry)
@@ -42,5 +37,10 @@ internal class MappedBatchLoaderWithContextInterceptor(
             logger.warn("Error creating timer interceptor '{}' for {}", ID, javaClass.simpleName)
             pipe.to(batchLoader)
         }
+    }
+
+    companion object {
+        private val ID = GqlMetric.DATA_LOADER.key
+        private val logger = LoggerFactory.getLogger(MappedBatchLoaderWithContextInterceptor::class.java)
     }
 }

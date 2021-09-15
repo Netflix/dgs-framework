@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory
  * The default implementation uses the Common Errors library to return GraphQL errors.
  */
 class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
-    private val logger: Logger = LoggerFactory.getLogger(DefaultDataFetcherExceptionHandler::class.java)
 
     override fun onException(handlerParameters: DataFetcherExceptionHandlerParameters?): DataFetcherExceptionHandlerResult {
 
@@ -60,5 +59,9 @@ class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
         return DataFetcherExceptionHandlerResult.newResult()
             .error(graphqlError)
             .build()
+    }
+
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(DefaultDataFetcherExceptionHandler::class.java)
     }
 }

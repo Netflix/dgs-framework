@@ -34,7 +34,7 @@ import kotlin.reflect.jvm.jvmErasure
 
 @Suppress("UNCHECKED_CAST")
 object InputObjectMapper {
-    val logger: Logger = LoggerFactory.getLogger(InputObjectMapper::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(InputObjectMapper::class.java)
 
     fun <T : Any> mapToKotlinObject(inputMap: Map<String, *>, targetClass: KClass<T>): T {
         val params = targetClass.primaryConstructor!!.parameters

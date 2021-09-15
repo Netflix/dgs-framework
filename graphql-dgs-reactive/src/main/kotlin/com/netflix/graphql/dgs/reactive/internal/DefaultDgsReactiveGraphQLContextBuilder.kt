@@ -19,8 +19,6 @@ package com.netflix.graphql.dgs.reactive.internal
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.internal.DgsRequestData
 import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithRequest
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.web.context.request.WebRequest
@@ -31,7 +29,6 @@ import java.util.*
 open class DefaultDgsReactiveGraphQLContextBuilder(
     private val dgsReactiveCustomContextBuilderWithRequest: Optional<DgsReactiveCustomContextBuilderWithRequest<*>> = Optional.empty()
 ) {
-    val logger: Logger = LoggerFactory.getLogger(DefaultDgsReactiveGraphQLContextBuilder::class.java)
 
     fun build(dgsRequestData: DgsReactiveRequestData?): Mono<DgsContext> {
         val customContext = if (dgsReactiveCustomContextBuilderWithRequest.isPresent) {

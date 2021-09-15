@@ -54,7 +54,6 @@ class DefaultDgsReactiveQueryExecutor(
     private val reloadIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator = DefaultDgsQueryExecutor.ReloadSchemaIndicator { false },
     private val preparsedDocumentProvider: PreparsedDocumentProvider = DgsNoOpPreparsedDocumentProvider
 ) : com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor {
-    private val logger: Logger = LoggerFactory.getLogger(DefaultDgsQueryExecutor::class.java)
 
     private val schema = AtomicReference(defaultSchema)
 
@@ -155,5 +154,9 @@ class DefaultDgsReactiveQueryExecutor(
 
             BaseDgsQueryExecutor.objectMapper.writeValueAsString(executionResult.toSpecification())
         }
+    }
+
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(DefaultDgsQueryExecutor::class.java)
     }
 }
