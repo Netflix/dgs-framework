@@ -31,7 +31,6 @@ open class DefaultDgsGraphQLContextBuilder(
     private val dgsCustomContextBuilder: Optional<DgsCustomContextBuilder<*>>,
     private val dgsCustomContextBuilderWithRequest: Optional<DgsCustomContextBuilderWithRequest<*>> = Optional.empty()
 ) {
-    val logger: Logger = LoggerFactory.getLogger(DefaultDgsGraphQLContextBuilder::class.java)
 
     fun build(dgsRequestData: DgsWebMvcRequestData): DgsContext {
         return TimeTracer.logTime({ buildDgsContext(dgsRequestData) }, logger, "Created DGS context in {}ms")
@@ -57,6 +56,10 @@ open class DefaultDgsGraphQLContextBuilder(
             customContext,
             dgsRequestData,
         )
+    }
+
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(DefaultDgsGraphQLContextBuilder::class.java)
     }
 }
 

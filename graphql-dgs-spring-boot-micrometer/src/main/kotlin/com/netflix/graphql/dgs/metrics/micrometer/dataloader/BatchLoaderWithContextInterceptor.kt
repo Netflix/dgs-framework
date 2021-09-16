@@ -16,10 +16,6 @@ internal class BatchLoaderWithContextInterceptor(
     private val name: String,
     private val registry: MeterRegistry
 ) {
-    companion object {
-        private val ID = GqlMetric.DATA_LOADER.key
-        private val logger = LoggerFactory.getLogger(BatchLoaderWithContextInterceptor::class.java)
-    }
 
     fun load(@Pipe pipe: Forwarder<CompletionStage<List<*>>, BatchLoaderWithContext<*, *>>): CompletionStage<List<*>> {
         logger.debug("Starting metered timer[{}] for {}.", ID, javaClass.simpleName)
@@ -41,5 +37,10 @@ internal class BatchLoaderWithContextInterceptor(
             logger.warn("Error creating timer interceptor '{}' for {}", ID, javaClass.simpleName)
             pipe.to(batchLoader)
         }
+    }
+
+    companion object {
+        private val ID = GqlMetric.DATA_LOADER.key
+        private val logger = LoggerFactory.getLogger(BatchLoaderWithContextInterceptor::class.java)
     }
 }

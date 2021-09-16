@@ -33,8 +33,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 import javax.annotation.PostConstruct
 
 class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : TextWebSocketHandler() {
-    private val logger = LoggerFactory.getLogger(DgsWebSocketHandler::class.java)
-    private val objectMapper = jacksonObjectMapper()
+
     internal val subscriptions = ConcurrentHashMap<String, MutableMap<String, Subscription>>()
     internal val sessions = CopyOnWriteArrayList<WebSocketSession>()
 
@@ -138,5 +137,10 @@ class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : Text
                 subscriptions[session.id]?.remove(id)
             }
         })
+    }
+
+    private companion object {
+        val logger = LoggerFactory.getLogger(DgsWebSocketHandler::class.java)
+        val objectMapper = jacksonObjectMapper()
     }
 }

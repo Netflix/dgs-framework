@@ -25,6 +25,7 @@ import graphql.validation.ValidationError
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -41,7 +42,6 @@ import java.util.*
  */
 @RestController
 open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor) {
-    open val logger = LoggerFactory.getLogger(DgsSSESubscriptionHandler::class.java)
     private val mapper = jacksonObjectMapper()
 
     @RequestMapping("/subscriptions", produces = ["text/event-stream"])
@@ -140,6 +140,21 @@ open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor
         return ResponseEntity.ok(emitter)
     }
 
-    data class QueryPayload(@JsonProperty("variables") val variables: Map<String, Any> = emptyMap(), @JsonProperty("extensions") val extensions: Map<String, Any> = emptyMap(), @JsonProperty("operationName") val operationName: String?, @JsonProperty("query") val query: String)
-    data class SubscriptionData(val data: Any, val errors: List<GraphQLError>? = null, val subId: String, val type: String = "SUBSCRIPTION_DATA")
+    data class QueryPayload(
+        @JsonProperty("variables") val variables: Map<String, Any> = emptyMap(),
+        @JsonProperty("extensions") val extensions: Map<String, Any> = emptyMap(),
+        @JsonProperty("operationName") val operationName: String?,
+        @JsonProperty("query") val query: String
+    )
+
+    data class SubscriptionData(
+        val data: Any,
+        val errors: List<GraphQLError>? = null,
+        val subId: String,
+        val type: String = "SUBSCRIPTION_DATA"
+    )
+
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(DgsSSESubscriptionHandler::class.java)
+    }
 }

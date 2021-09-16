@@ -36,7 +36,6 @@ import javax.annotation.PostConstruct
  * Framework implementation class responsible for finding and configuring data loaders.
  */
 class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) {
-    val logger: Logger = LoggerFactory.getLogger(DgsDataLoaderProvider::class.java)
 
     private val batchLoaders = mutableListOf<Pair<BatchLoader<*, *>, DgsDataLoader>>()
     private val batchLoadersWithContext = mutableListOf<Pair<BatchLoaderWithContext<*, *>, DgsDataLoader>>()
@@ -249,5 +248,9 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
             logger.debug("Unable to wrap the [{} : {}]", name, loader, ex)
         }
         return loader
+    }
+
+    private companion object {
+        private val logger: Logger = LoggerFactory.getLogger(DgsDataLoaderProvider::class.java)
     }
 }

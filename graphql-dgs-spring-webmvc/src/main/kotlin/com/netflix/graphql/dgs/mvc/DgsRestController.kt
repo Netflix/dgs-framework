@@ -62,9 +62,6 @@ import org.springframework.web.multipart.MultipartFile
 @RestController
 open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
 
-    open val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
-    private val mapper = jacksonObjectMapper()
-
     // The @ConfigurationProperties bean name is <prefix>-<fqn>
     @RequestMapping(
         "#{@'dgs.graphql-com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcConfigurationProperties'.path}",
@@ -196,5 +193,10 @@ open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
         }
 
         return ResponseEntity.ok(result)
+    }
+
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
+        private val mapper = jacksonObjectMapper()
     }
 }
