@@ -16,7 +16,17 @@
 
 package com.netflix.graphql.dgs.internal.kotlin.test
 
-import java.util.*
+import java.time.LocalDateTime
+
+interface Video {
+    val title: String
+}
+
+data class Show(override val title: String) : Video
+
+data class Person(val name: String)
+
+data class DateTimeInput(val date: LocalDateTime)
 
 enum class KGreetingType {
     FRIENDLY,
