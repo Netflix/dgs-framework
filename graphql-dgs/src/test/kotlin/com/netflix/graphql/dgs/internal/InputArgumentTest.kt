@@ -16,7 +16,6 @@
 
 package com.netflix.graphql.dgs.internal
 
-import com.netflix.graphql.dgs.DateTimeInput
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsData
 import com.netflix.graphql.dgs.DgsDirective
@@ -25,7 +24,6 @@ import com.netflix.graphql.dgs.DgsRuntimeWiring
 import com.netflix.graphql.dgs.DgsScalar
 import com.netflix.graphql.dgs.InputArgument
 import com.netflix.graphql.dgs.LocalDateTimeScalar
-import com.netflix.graphql.dgs.Person
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
 import com.netflix.graphql.dgs.internal.java.test.enums.JGreetingType
@@ -34,7 +32,9 @@ import com.netflix.graphql.dgs.internal.java.test.inputobjects.JEnum
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JFilter
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JFooInput
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JListOfListsOfLists
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JPerson
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.sortby.JMovieSortBy
+import com.netflix.graphql.dgs.internal.kotlin.test.DateTimeInput
 import com.netflix.graphql.dgs.internal.kotlin.test.KBarInput
 import com.netflix.graphql.dgs.internal.kotlin.test.KEnum
 import com.netflix.graphql.dgs.internal.kotlin.test.KFilter
@@ -43,6 +43,7 @@ import com.netflix.graphql.dgs.internal.kotlin.test.KGreetingType
 import com.netflix.graphql.dgs.internal.kotlin.test.KInputMessage
 import com.netflix.graphql.dgs.internal.kotlin.test.KListOfListsOfLists
 import com.netflix.graphql.dgs.internal.kotlin.test.KMovieFilter
+import com.netflix.graphql.dgs.internal.kotlin.test.Person
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import graphql.ExceptionWhileDataFetching
 import graphql.ExecutionInput
@@ -562,12 +563,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -580,6 +576,40 @@ internal class InputArgumentTest {
         val exceptionWhileDataFetching = executionResult.errors[0] as ExceptionWhileDataFetching
         assertThat(exceptionWhileDataFetching.exception).isInstanceOf(DgsInvalidInputArgumentException::class.java)
         assertThat(exceptionWhileDataFetching.exception.message).contains("Specified type 'class java.lang.String' is invalid for person")
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `An @InputArgument representing a complex type can be empty`() {
+        val schema = """
+            type Query {
+                hello(person: Person): String
+            }
+            
+            input Person {
+                name:String
+            }
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+            @DgsQuery
+            fun hello(@InputArgument person: JPerson): String {
+                assertThat(person).isNotNull.extracting { it.name }.isNull()
+                return "Hello, $person"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+
+        val executionResult = build.execute("""{hello(person: {})}""")
+        assertThat(executionResult.errors).hasSize(0)
 
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
@@ -602,7 +632,6 @@ internal class InputArgumentTest {
                 if (person == null) {
                     return "Hello, Stranger"
                 }
-
                 return "Hello, ${person.name}"
             }
         }
