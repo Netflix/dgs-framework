@@ -27,10 +27,11 @@ dependencies {
     implementation("org.springframework:spring-web")
     implementation("org.springframework:spring-context")
 
+    compileOnly("org.springframework.security:spring-security-core")
+
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.apollographql.federation:federation-graphql-java-support")
-    implementation("org.springframework.security:spring-security-core")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8")
 
