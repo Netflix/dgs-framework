@@ -18,8 +18,7 @@ dependencies {
     implementation(project(":graphql-dgs-example-shared"))
     implementation(project(":graphql-dgs-spring-boot-starter"))
     implementation(project(":graphql-dgs-pagination"))
-//    implementation(project(":graphql-dgs-subscriptions-websockets-autoconfigure"))
-    implementation(project(":graphql-dgs-subscriptions-sse-autoconfigure"))
+    implementation(project(":graphql-dgs-subscriptions-websockets-autoconfigure"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("io.projectreactor:reactor-core")
     // Enabling Spring Boot Actuators. We are not expressing any opinion on which Metric System should be used
@@ -33,5 +32,5 @@ dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine")
     testImplementation(project(":graphql-dgs-client"))
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
-    testImplementation("io.projectreactor:reactor-test")
+    testImplementation ("io.projectreactor:reactor-test")
 }
