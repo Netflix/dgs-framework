@@ -32,5 +32,5 @@ dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine")
     testImplementation(project(":graphql-dgs-client"))
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
-    testImplementation ("io.projectreactor:reactor-test")
+    testImplementation("io.projectreactor:reactor-test")
 }
