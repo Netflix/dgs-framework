@@ -63,3 +63,5 @@ data class QueryPayload(
     @JsonProperty("query")
     val query: String
 )
+
+data class Error(@JsonProperty val message: String = "")

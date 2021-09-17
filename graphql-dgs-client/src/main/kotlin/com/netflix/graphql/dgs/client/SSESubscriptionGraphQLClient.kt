@@ -20,9 +20,11 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.types.subscription.QueryPayload
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.bodyToFlux
 import reactor.core.publisher.Flux
 import reactor.core.scheduler.Schedulers
+import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.util.*
 
@@ -44,10 +46,20 @@ class SSESubscriptionGraphQLClient(private val url: String, private val webClien
         val jsonPayload = mapper.writeValueAsString(queryPayload)
 
         return webClient.get()
-            .uri("${url}?query={query}", mapOf("query" to encodeQuery(jsonPayload)))
+            .uri("$url?query={query}", mapOf("query" to encodeQuery(jsonPayload)))
             .accept(MediaType.TEXT_EVENT_STREAM)
             .exchange()
-            .flatMapMany { r -> r.bodyToFlux<String>().map { GraphQLResponse(it, r.headers().asHttpHeaders()) }.onBackpressureBuffer() }
+            .flatMapMany { r ->
+                if (r.statusCode().is2xxSuccessful) {
+                    r.bodyToFlux<String>().map { GraphQLResponse(it, r.headers().asHttpHeaders()) }.onBackpressureBuffer()
+                } else {
+                    if (r.statusCode().is4xxClientError || r.statusCode().is3xxRedirection) {
+                        throw WebClientResponseException.create(r.rawStatusCode(), r.toString(), r.headers().asHttpHeaders(), byteArrayOf(), Charset.defaultCharset())
+                    } else {
+                        r.bodyToFlux<String>().map { throw WebClientResponseException.create(r.rawStatusCode(), r.toString(), r.headers().asHttpHeaders(), it.toByteArray(), Charset.defaultCharset()) }
+                    }
+                }
+            }
             .publishOn(Schedulers.single())
     }
 
