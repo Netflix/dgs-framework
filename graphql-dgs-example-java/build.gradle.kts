@@ -30,4 +30,7 @@ dependencies {
     // https://netflix.github.io/dgs/advanced/instrumentation/
 
     implementation("com.github.ben-manes.caffeine:caffeine")
+    testImplementation(project(":graphql-dgs-client"))
+    testImplementation("org.springframework.boot:spring-boot-starter-webflux")
+    testImplementation("io.projectreactor:reactor-test")
 }

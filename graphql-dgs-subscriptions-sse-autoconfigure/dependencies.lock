@@ -303,6 +303,12 @@
             ],
             "locked": "0.6.3"
         },
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
+            ],
+            "locked": "2.12.3"
+        },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
@@ -329,6 +335,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "16.2"
@@ -355,8 +362,15 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse",
                 "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-subscription-types": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
             ],
             "project": true
         },
@@ -382,6 +396,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
@@ -552,6 +567,12 @@
             ],
             "locked": "0.6.3"
         },
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
+            ],
+            "locked": "2.12.3"
+        },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
@@ -578,6 +599,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "16.2"
@@ -604,8 +626,15 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse",
                 "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-subscription-types": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
             ],
             "project": true
         },
@@ -634,6 +663,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
