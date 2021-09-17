@@ -94,7 +94,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
@@ -127,7 +127,7 @@
             ],
             "project": true
         },
-        "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure": {
+        "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure": {
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-error-types": {
@@ -159,7 +159,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "1.5.21"
@@ -407,7 +407,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets"
             ],
             "locked": "2.12.3"
         },
@@ -447,8 +447,8 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure"
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
             ],
             "project": true
         },
@@ -485,8 +485,8 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
@@ -516,17 +516,17 @@
         },
         "com.netflix.graphql.dgs:graphql-dgs-subscription-types": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets"
             ],
             "project": true
         },
-        "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse": {
+        "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure"
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
             ],
             "project": true
         },
-        "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure": {
+        "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure": {
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-error-types": {
@@ -572,8 +572,8 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "1.5.21"
@@ -599,7 +599,8 @@
         "org.springframework.boot:spring-boot-autoconfigure": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure"
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
             ],
             "locked": "2.3.9.RELEASE"
         },
@@ -651,16 +652,20 @@
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure"
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets"
             ],
             "locked": "5.2.13.RELEASE"
         },
         "org.springframework:spring-webmvc": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure"
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
+            ],
+            "locked": "5.2.13.RELEASE"
+        },
+        "org.springframework:spring-websocket": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
             ],
             "locked": "5.2.13.RELEASE"
         }
@@ -754,7 +759,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
@@ -787,7 +792,7 @@
             ],
             "project": true
         },
-        "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure": {
+        "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure": {
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-error-types": {
@@ -825,7 +830,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "1.5.21"
@@ -887,7 +892,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets"
             ],
             "locked": "2.12.3"
         },
@@ -927,8 +932,8 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure"
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
             ],
             "project": true
         },
@@ -965,8 +970,8 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
@@ -997,17 +1002,17 @@
         "com.netflix.graphql.dgs:graphql-dgs-subscription-types": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets"
             ],
             "project": true
         },
-        "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse": {
+        "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure"
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
             ],
             "project": true
         },
-        "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure": {
+        "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure": {
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-error-types": {
@@ -1059,8 +1064,8 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "1.5.21"
@@ -1086,7 +1091,8 @@
         "org.springframework.boot:spring-boot-autoconfigure": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure"
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
             ],
             "locked": "2.3.9.RELEASE"
         },
@@ -1144,16 +1150,20 @@
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure"
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets"
             ],
             "locked": "5.2.13.RELEASE"
         },
         "org.springframework:spring-webmvc": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure"
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
+            ],
+            "locked": "5.2.13.RELEASE"
+        },
+        "org.springframework:spring-websocket": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
             ],
             "locked": "5.2.13.RELEASE"
         }
