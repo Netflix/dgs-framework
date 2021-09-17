@@ -17,8 +17,6 @@
 package com.netflix.graphql.dgs.internal
 
 import com.apollographql.federation.graphqljava.Federation
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.*
 import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
 import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
@@ -35,6 +33,7 @@ import graphql.schema.*
 import graphql.schema.idl.*
 import graphql.schema.visibility.DefaultGraphqlFieldVisibility
 import graphql.schema.visibility.GraphqlFieldVisibility
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.aop.support.AopUtils
 import org.springframework.context.ApplicationContext
@@ -65,17 +64,11 @@ class DgsSchemaProvider(
     private val cookieValueResolver: Optional<CookieValueResolver> = Optional.empty()
 ) {
 
-    companion object {
-        const val DEFAULT_SCHEMA_LOCATION = "classpath*:schema/**/*.graphql*"
-    }
-
     val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
     val entityFetchers = mutableMapOf<String, Pair<Any, Method>>()
     val dataFetchers = mutableListOf<DatafetcherReference>()
 
     private val defaultParameterNameDiscoverer = DefaultParameterNameDiscoverer()
-    private val objectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
-    private val logger = LoggerFactory.getLogger(DgsSchemaProvider::class.java)
 
     fun schema(schema: String? = null, fieldVisibility: GraphqlFieldVisibility = DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY): GraphQLSchema {
         val startTime = System.currentTimeMillis()
@@ -454,12 +447,20 @@ class DgsSchemaProvider(
         schemas += metaInfSchemas
         return schemas
     }
+
+    companion object {
+        const val DEFAULT_SCHEMA_LOCATION = "classpath*:schema/**/*.graphql*"
+        private val logger: Logger = LoggerFactory.getLogger(DgsSchemaProvider::class.java)
+    }
 }
 
 interface DataFetcherResultProcessor {
     fun supportsType(originalResult: Any): Boolean
     fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any = process(originalResult)
-    @Deprecated("Replaced with process(originalResult, dfe)")
+    @Deprecated(
+        "Replaced with process(originalResult, dfe)",
+        replaceWith = ReplaceWith("process(originalResult: Any, dfe: DgsDataFetchingEnvironment)")
+    )
     fun process(originalResult: Any): Any = originalResult
 }
 

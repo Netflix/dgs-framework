@@ -27,8 +27,6 @@ import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
 
 class DgsWebfluxHttpHandler(private val dgsQueryExecutor: DgsReactiveQueryExecutor) {
-    private val logger: Logger = LoggerFactory.getLogger(DgsWebfluxHttpHandler::class.java)
-    private val mapper = jacksonObjectMapper()
 
     fun graphql(request: ServerRequest): Mono<ServerResponse> {
         @Suppress("UNCHECKED_CAST") val executionResult: Mono<ExecutionResult> =
@@ -64,6 +62,11 @@ class DgsWebfluxHttpHandler(private val dgsQueryExecutor: DgsReactiveQueryExecut
             val graphQlOutput = result.toSpecification()
             ServerResponse.ok().bodyValue(graphQlOutput)
         }
+    }
+
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(DgsWebfluxHttpHandler::class.java)
+        private val mapper = jacksonObjectMapper()
     }
 }
 

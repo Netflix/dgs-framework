@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ValueConstants
 import java.lang.reflect.Method
 import java.lang.reflect.Parameter
+import java.lang.reflect.ParameterizedType
 import java.util.*
 import kotlin.coroutines.Continuation
 import kotlin.reflect.full.callSuspend
@@ -50,7 +51,6 @@ class DataFetcherInvoker(
     private val method: Method
 ) {
 
-    private val logger = LoggerFactory.getLogger(DataFetcherInvoker::class.java)
     private val parameterNames = defaultParameterNameDiscoverer.getParameterNames(method) ?: emptyArray()
 
     fun invokeDataFetcher(): Any? {
@@ -242,6 +242,18 @@ class DataFetcherInvoker(
         } else if (parameter.type.isEnum && parameterValue !== null) {
             (parameter.type.enumConstants as Array<Enum<*>>).find { it.name == parameterValue }
                 ?: throw DgsInvalidInputArgumentException("Invalid enum value '$parameterValue for enum type ${parameter.type.name}")
+        } else if (parameter.type == Optional::class.java) {
+            val targetType: Class<*> = if (collectionType != Object::class.java) {
+                collectionType!!
+            } else {
+                (parameter.parameterizedType as ParameterizedType).actualTypeArguments[0] as Class<*>
+            }
+
+            if (targetType.isEnum) {
+                (targetType.enumConstants as Array<Enum<*>>).find { it.name == parameterValue }
+            } else {
+                parameterValue
+            }
         } else {
             if (parameterValue is List<*> && parameter.type == Set::class.java) {
                 parameterValue.toSet()
@@ -256,4 +268,8 @@ class DataFetcherInvoker(
         } else {
             value
         }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(DataFetcherInvoker::class.java)
+    }
 }

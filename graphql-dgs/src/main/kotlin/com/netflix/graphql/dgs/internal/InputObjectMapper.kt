@@ -34,7 +34,7 @@ import kotlin.reflect.jvm.jvmErasure
 
 @Suppress("UNCHECKED_CAST")
 object InputObjectMapper {
-    val logger: Logger = LoggerFactory.getLogger(InputObjectMapper::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(InputObjectMapper::class.java)
 
     fun <T : Any> mapToKotlinObject(inputMap: Map<String, *>, targetClass: KClass<T>): T {
         val params = targetClass.primaryConstructor!!.parameters
@@ -137,7 +137,7 @@ object InputObjectMapper {
          This would happen if new schema fields are added, but the Java type wasn't updated yet.
          If none of the fields match however, it's a pretty good indication that the wrong type was used, hence this check.
          */
-        if (nrOfFieldErrors == inputMap.size) {
+        if (inputMap.isNotEmpty() && nrOfFieldErrors == inputMap.size) {
             throw DgsInvalidInputArgumentException("Input argument type '$targetClass' doesn't match input $inputMap")
         }
 

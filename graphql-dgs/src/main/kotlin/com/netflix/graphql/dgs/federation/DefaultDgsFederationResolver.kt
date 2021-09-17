@@ -61,8 +61,6 @@ open class DefaultDgsFederationResolver() :
     @Autowired
     lateinit var dgsExceptionHandler: Optional<DataFetcherExceptionHandler>
 
-    val logger: Logger = LoggerFactory.getLogger(DefaultDgsFederationResolver::class.java)
-
     override fun entitiesFetcher(): DataFetcher<Any?> {
         return DataFetcher { env ->
             dgsEntityFetchers(env)
@@ -155,5 +153,9 @@ open class DefaultDgsFederationResolver() :
 
             type
         }
+    }
+
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(DefaultDgsFederationResolver::class.java)
     }
 }

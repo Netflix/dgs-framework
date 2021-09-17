@@ -26,8 +26,8 @@ group = "com.netflix.graphql.dgs"
 
 plugins {
     `java-library`
-    id("nebula.netflixoss") version "10.2.1"
-    id("nebula.dependency-recommender") version "10.0.1"
+    id("nebula.netflixoss") version "10.3.0"
+    id("nebula.dependency-recommender") version "11.0.0"
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
     kotlin("jvm") version Versions.KOTLIN_VERSION
     kotlin("kapt") version Versions.KOTLIN_VERSION

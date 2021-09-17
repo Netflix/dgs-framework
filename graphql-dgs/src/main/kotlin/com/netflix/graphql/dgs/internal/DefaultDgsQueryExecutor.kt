@@ -61,8 +61,6 @@ class DefaultDgsQueryExecutor(
     private val preparsedDocumentProvider: PreparsedDocumentProvider = DgsNoOpPreparsedDocumentProvider,
 ) : DgsQueryExecutor {
 
-    val logger: Logger = LoggerFactory.getLogger(DefaultDgsQueryExecutor::class.java)
-
     val schema = AtomicReference(defaultSchema)
 
     override fun execute(
@@ -175,6 +173,10 @@ class DefaultDgsQueryExecutor(
     @FunctionalInterface
     fun interface ReloadSchemaIndicator {
         fun reloadSchema(): Boolean
+    }
+
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(DefaultDgsQueryExecutor::class.java)
     }
 }
 
