@@ -1386,7 +1386,7 @@ internal class InputArgumentTest {
     }
 
     @Test
-    fun `Kotlin enum @InputArgument`() {
+    fun `Kotlin enum in @InputArgument`() {
         val schema = """
             type Query {
                 hello(type:GreetingType): String
@@ -1407,12 +1407,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -1427,7 +1422,7 @@ internal class InputArgumentTest {
     }
 
     @Test
-    fun `Kotlin Optional enum @InputArgument`() {
+    fun `Kotlin Optional enum in @InputArgument`() {
         val schema = """
             type Query {
                 hello(type:GreetingType): String
@@ -1448,12 +1443,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -1464,6 +1454,51 @@ internal class InputArgumentTest {
         assertThat(executionResult.errors.isEmpty()).isTrue
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("Hello, this is a FRIENDLY greeting", data["hello"])
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `List of enums as @InputArgument`() {
+        val schema = """
+            type Query {
+                khello(input: [GreetingType]): String
+                jhello(input: [GreetingType]): String
+            }
+            
+            enum GreetingType {          
+                FRIENDLY
+                POLITE
+            }
+        """.trimIndent()
+
+        val fetcher = object : Any() {
+
+            @DgsQuery
+            fun khello(@InputArgument(collectionType = KGreetingType::class) input: List<KGreetingType>): String {
+                assertThat(input).isNotEmpty.hasOnlyElementsOfType(KGreetingType::class.java)
+                return "Hello, this is a $input greeting"
+            }
+            @DgsQuery
+            fun jhello(@InputArgument(collectionType = JGreetingType::class) input: List<JGreetingType>): String {
+                assertThat(input).isNotEmpty.hasOnlyElementsOfType(JGreetingType::class.java)
+                return "Hello, this is a $input greeting"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute(
+            """{
+            |   khello(input: [FRIENDLY POLITE])
+            |   jhello(input: [FRIENDLY POLITE])
+            |}""".trimMargin()
+        )
+        assertThat(executionResult.errors.isEmpty()).isTrue
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 

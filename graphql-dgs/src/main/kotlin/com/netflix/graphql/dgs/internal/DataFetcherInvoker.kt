@@ -190,22 +190,23 @@ class DataFetcherInvoker(
         val collectionType = annotation.collectionType.java
         val parameterValue: Any? = environment.getArgument(parameterName)
 
-        val convertValue: Any? = if (parameterValue is List<*> && collectionType != Object::class.java) {
-            try {
-                // Return a list of elements that are converted to their collection type, e.e.g. List<Person>, List<String> etc.
-                parameterValue.map { item -> convertValue(item, parameter, collectionType) }.toList()
-            } catch (ex: Exception) {
-                throw DgsInvalidInputArgumentException(
-                    "Specified type '$collectionType' is invalid for $parameterName.",
-                    ex
-                )
+        val convertValue: Any? =
+            if (parameterValue is List<*> && collectionType != Object::class.java) {
+                try {
+                    // Return a list of elements that are converted to their collection type, e.e.g. List<Person>, List<String> etc.
+                    parameterValue.map { item -> convertValue(item, parameter, collectionType) }.toList()
+                } catch (ex: Exception) {
+                    throw DgsInvalidInputArgumentException(
+                        "Specified type '$collectionType' is invalid for $parameterName.",
+                        ex
+                    )
+                }
+            } else if (parameterValue is Map<*, *> && parameter.type.isAssignableFrom(Map::class.java)) {
+                parameterValue
+            } else {
+                // Return the converted value mapped to the defined type
+                convertValue(parameterValue, parameter, collectionType)
             }
-        } else if (parameterValue is Map<*, *> && parameter.type.isAssignableFrom(Map::class.java)) {
-            parameterValue
-        } else {
-            // Return the converted value mapped to the defined type
-            convertValue(parameterValue, parameter, collectionType)
-        }
 
         val paramType = parameter.type
         val optionalValue = getValueAsOptional(convertValue, parameter)
@@ -239,8 +240,15 @@ class DataFetcherInvoker(
             } else {
                 InputObjectMapper.mapToJavaObject(parameterValue as Map<String, *>, targetType)
             }
-        } else if (parameter.type.isEnum && parameterValue !== null) {
-            (parameter.type.enumConstants as Array<Enum<*>>).find { it.name == parameterValue }
+        } else if ((parameter.type.isEnum || collectionType?.isEnum == true) && parameterValue != null) {
+            val enumConstants: Array<Enum<*>> =
+                if (parameter.type.isEnum) {
+                    parameter.type.enumConstants as Array<Enum<*>>
+                } else {
+                    collectionType?.enumConstants as Array<Enum<*>>
+                }
+
+            enumConstants.find { it.name == parameterValue }
                 ?: throw DgsInvalidInputArgumentException("Invalid enum value '$parameterValue for enum type ${parameter.type.name}")
         } else if (parameter.type == Optional::class.java) {
             val targetType: Class<*> = if (collectionType != Object::class.java) {
