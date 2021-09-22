@@ -55,13 +55,13 @@ dependencies {
             version { require(Versions.GRAPHQL_JAVA_FEDERATION) }
         }
         api("com.jayway.jsonpath:json-path") {
-            version { require("[2.5,)") }
+            version { require("2.6.0") }
         }
         api("io.projectreactor:reactor-core") {
-            version { require("[3.4,)") }
+            version { require("3.4.10") }
         }
         api("io.projectreactor:reactor-test"){
-            version { require("[3.4,)") }
+            version { require("3.4.10") }
         }
     }
 }
