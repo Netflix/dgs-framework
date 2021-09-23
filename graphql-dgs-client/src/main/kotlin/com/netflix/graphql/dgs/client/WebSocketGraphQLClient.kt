@@ -143,6 +143,7 @@ class WebSocketGraphQLClient(
     private fun handleMessage(
         message: OperationMessage
     ): Flux<GraphQLResponse> {
+        @Suppress("BlockingMethodInNonBlockingContext")
         when (message.type) {
             // Do nothing if no data provided
             GQL_CONNECTION_ACK, GQL_CONNECTION_KEEP_ALIVE, GQL_COMPLETE -> {
@@ -151,14 +152,7 @@ class WebSocketGraphQLClient(
             // Convert data to GraphQLResponse
             GQL_DATA -> {
                 val payload = message.payload
-                // Payload can be either QueryPayload or DataPayload
-                if (payload is DataPayload)
-                    return Flux.just(GraphQLResponse(MAPPER.writeValueAsString(payload)))
-                else
-                    throw GraphQLException(
-                        "Message $message has type " +
-                            "GQL_DATA but not a valid data payload"
-                    )
+                return Flux.just(GraphQLResponse(MAPPER.writeValueAsString(payload)))
             }
             // Convert errors received from the server into exceptions, does
             // not include GraphQL execution errors which are bundled in the
@@ -254,7 +248,9 @@ class OperationMessageWebSocketClient(
             .then()
             // Ensure the output flux collapses neatly if an error occurs
             .doOnError { errorSink.tryEmitNext(GraphQLException(it)).orThrow() }
-            .doAfterTerminate { errorSink.tryEmitNext(GraphQLException("Server closed the connection unexpectedly")).orThrow() }
+            .doAfterTerminate {
+                errorSink.tryEmitNext(GraphQLException("Server closed the connection unexpectedly")).orThrow()
+            }
     }
 
     private fun createMessage(

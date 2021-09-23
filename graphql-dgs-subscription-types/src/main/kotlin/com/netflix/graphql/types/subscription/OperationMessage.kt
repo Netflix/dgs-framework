@@ -17,8 +17,6 @@
 package com.netflix.graphql.types.subscription
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
 
 // OperationMessage types
 const val GQL_CONNECTION_INIT = "connection_init"
@@ -36,11 +34,6 @@ data class OperationMessage(
     @JsonProperty("type")
     val type: String,
     @JsonProperty("payload")
-    @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
-    @JsonSubTypes(
-        JsonSubTypes.Type(value = DataPayload::class),
-        JsonSubTypes.Type(value = QueryPayload::class)
-    )
     val payload: Any? = null,
     @JsonProperty("id", required = false)
     val id: String? = ""
