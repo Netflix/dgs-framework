@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.types.subscription.*
+import org.json.JSONObject
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -35,6 +36,13 @@ class OperationMessageTest {
             Arguments.of(
                 """{"type": "connection_init"}""",
                 OperationMessage(GQL_CONNECTION_INIT, null, "")
+            ),
+            Arguments.of(
+                """
+                {"type": "connection_init",
+                 "payload": {}}
+                """.trimIndent(),
+                OperationMessage(GQL_CONNECTION_INIT, JSONObject(), "")
             ),
             Arguments.of(
                 """
