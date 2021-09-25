@@ -18,10 +18,12 @@ package com.netflix.graphql.dgs
 
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import graphql.GraphQL
+import graphql.language.StringValue
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.InstanceOfAssertFactories
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
@@ -38,12 +40,27 @@ class DataFetcherWithDirectivesTest {
         val queryFetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
             fun hellOFetcher(dataFetchingEnvironment: DgsDataFetchingEnvironment): String {
-                val directive = dataFetchingEnvironment.fieldDefinition.directives[0]
-                return "hello ${directive.arguments[0].value}"
+                assertThat(dataFetchingEnvironment.fieldDefinition.directives)
+                    .hasSize(1)
+                    .first()
+                    .extracting({ it.arguments }, InstanceOfAssertFactories.LIST)
+                    .hasSize(1)
+
+                val graphQLArgument =
+                    dataFetchingEnvironment.fieldDefinition.directives.first().arguments.first()
+
+                assertThat(graphQLArgument.argumentValue)
+                    .isNotNull
+                    .extracting { it.value }
+                    .isInstanceOf(StringValue::class.java)
+
+                val value = (graphQLArgument.argumentValue.value as StringValue).value
+                assertThat(value).isEqualTo("some name")
+                return "hello $value"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", queryFetcher))
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to queryFetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 

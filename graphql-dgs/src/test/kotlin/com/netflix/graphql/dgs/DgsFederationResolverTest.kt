@@ -278,7 +278,8 @@ class DgsFederationResolverTest {
         dgsSchemaProvider.schema("""type Query {}""")
 
         val arguments = mapOf<String, Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("__typename", "Movie"), Pair("movieId", "1")))))
-        val dataFetchingEnvironment = DgsDataFetchingEnvironment(DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build())
+        val dataFetchingEnvironment =
+            DgsDataFetchingEnvironment(DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build())
 
         val result = (DefaultDgsFederationResolver(dgsSchemaProvider, Optional.of(dgsExceptionHandler)).entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>)
         assertThat(result).isNotNull
