@@ -51,6 +51,9 @@ dependencies {
         api("com.graphql-java:graphql-java-extended-scalars") {
             version { require(Versions.GRAPHQL_JAVA_EXTENDED_SCALARS) }
         }
+        api("com.graphql-java:graphql-java-extended-validation") {
+            version { require(Versions.GRAPHQL_JAVA_EXTENDED_VALIDATION) }
+        }
         api("com.apollographql.federation:federation-graphql-java-support") {
             version { require(Versions.GRAPHQL_JAVA_FEDERATION) }
         }
