@@ -218,4 +218,39 @@ class GraphQLResponseTest {
 
         server.verify()
     }
+
+    @Test
+    fun useCustomHeaders() {
+
+        val jsonResponse = """
+            {
+              "data": {
+                "submitReview": {
+                  "edges": []
+                }
+              }
+            }
+        """.trimIndent()
+
+        server.expect(requestTo(url))
+            .andExpect(method(HttpMethod.POST))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
+
+        val headers = mapOf(
+            "Accept" to listOf("application/json"),
+            "Content-type" to listOf("application/json")
+        )
+        val graphQLResponse = client.executeQuery(
+            """mutation SubmitUserReview {
+              submitReview(review:{movieId:1, starRating:5, description:""}) {}
+            }""",
+            emptyMap(),
+            null,
+            headers,
+            requestExecutor
+        )
+
+        server.verify()
+    }
 }
