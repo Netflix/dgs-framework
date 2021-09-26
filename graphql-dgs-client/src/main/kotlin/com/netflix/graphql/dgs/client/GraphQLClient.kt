@@ -27,6 +27,13 @@ interface GraphQLClient {
         operationName: String?,
         requestExecutor: RequestExecutor
     ): GraphQLResponse
+    fun executeQuery(
+        query: String,
+        variables: Map<String, Any>,
+        operationName: String?,
+        headers: Map<String, List<String>>,
+        requestExecutor: RequestExecutor
+    ): GraphQLResponse
 }
 
 interface MonoGraphQLClient {
