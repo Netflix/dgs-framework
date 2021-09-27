@@ -32,7 +32,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
     testImplementation("com.graphql-java:graphql-java-extended-scalars")
     testImplementation("io.projectreactor:reactor-test")
-    testImplementation("com.squareup.okhttp3:mockwebserver")
-    testImplementation(project(":graphql-dgs-webflux-starter"))
     testImplementation(project(":graphql-dgs-subscriptions-sse-autoconfigure"))
+    testImplementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
+    testImplementation(project(":graphql-dgs-spring-webmvc-autoconfigure"))
 }

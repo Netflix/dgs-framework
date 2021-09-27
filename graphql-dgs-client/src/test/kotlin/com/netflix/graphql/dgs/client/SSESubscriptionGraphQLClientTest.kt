@@ -44,6 +44,7 @@ internal class SSESubscriptionGraphQLClientTest {
 
     val logger = LoggerFactory.getLogger(SSESubscriptionGraphQLClient::class.java)
 
+    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
     @LocalServerPort
     lateinit var port: Integer
 
