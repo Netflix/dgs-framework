@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.client
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import org.springframework.util.ClassUtils
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -195,12 +196,11 @@ class GraphQLClientException(statusCode: Int, url: String, response: String, req
     RuntimeException("GraphQL server $url responded with status code $statusCode: '$response'. The request sent to the server was \n$request")
 
 internal object GraphQLClients {
-    internal val objectMapper: ObjectMapper = try {
-        Class.forName("com.fasterxml.jackson.module.kotlin.KotlinModule\$Builder")
-        ObjectMapper().registerModule(KotlinModule.Builder().nullIsSameAsDefault(true).build())
-    } catch (ex: ClassNotFoundException) {
-        ObjectMapper().registerKotlinModule()
-    }
+    internal val objectMapper: ObjectMapper =
+        if(ClassUtils.isPresent("com.fasterxml.jackson.module.kotlin.KotlinModule\$Builder", this::class.java.classLoader))
+            ObjectMapper().registerModule(KotlinModule.Builder().nullIsSameAsDefault(true).build())
+        else ObjectMapper().registerKotlinModule()
+
     internal val defaultHeaders = mapOf(
         "Accept" to listOf("application/json"),
         "Content-type" to listOf("application/json")
