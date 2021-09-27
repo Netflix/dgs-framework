@@ -63,7 +63,8 @@ class WebClientGraphQLClientTest {
     fun `Extra header can be provided`() {
         client = WebClientGraphQLClient(WebClient.create("http://localhost:$port/graphql")) { headers ->
             println("extra")
-            headers.add("myheader", "test") }
+            headers.add("myheader", "test")
+        }
         val result = client.reactiveExecuteQuery("{withHeader}").map { r -> r.extractValue<String>("withHeader") }
 
         StepVerifier.create(result)

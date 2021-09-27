@@ -79,7 +79,7 @@ class WebClientGraphQLClient(private val webclient: WebClient, private val heade
         return webclient.post()
             .bodyValue(serializedRequest)
             .headers { consumer -> GraphQLClients.defaultHeaders.forEach(consumer::addAll) }
-            .headers(this.headersConsumer?: Consumer {  })
+            .headers(this.headersConsumer ?: Consumer { })
             .exchange()
             .flatMap { r ->
                 r.bodyToMono(String::class.java)
@@ -98,5 +98,3 @@ class WebClientGraphQLClient(private val webclient: WebClient, private val heade
         return GraphQLResponse(body ?: "", headers)
     }
 }
-
-
