@@ -63,6 +63,7 @@ interface GraphQLClient {
     ): GraphQLResponse = throw UnsupportedOperationException()
 
     companion object {
+        @JvmStatic
         fun createCustom(url: String, requestExecutor: RequestExecutor) = CustomGraphQLClient(url, requestExecutor)
     }
 }
@@ -123,7 +124,9 @@ interface MonoGraphQLClient {
     ): Mono<GraphQLResponse> = throw UnsupportedOperationException()
 
     companion object {
+        @JvmStatic
         fun createCustomReactive(url: String, requestExecutor: MonoRequestExecutor) = CustomMonoGraphQLClient(url, requestExecutor)
+        @JvmStatic
         fun createWithWebClient(webClient: WebClient) = WebClientGraphQLClient(webClient)
     }
 }
