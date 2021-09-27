@@ -92,6 +92,7 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
         variables: Map<String, Any>,
         requestExecutor: RequestExecutor
     ): GraphQLResponse {
+        @Suppress("DEPRECATION", "BlockingMethodInNonBlockingContext")
         return executeQuery(query, variables, null, requestExecutor)
     }
 

@@ -42,6 +42,7 @@ import org.springframework.web.client.RestTemplate
 )
 class CustomGraphQLClientTest {
 
+    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
     @LocalServerPort
     lateinit var port: Integer
 
