@@ -19,10 +19,12 @@ package com.netflix.graphql.dgs.client
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import org.springframework.http.HttpHeaders
 import org.springframework.util.ClassUtils
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.util.function.Consumer
 
 /**
  * GraphQL client interface for blocking clients.
@@ -129,6 +131,8 @@ interface MonoGraphQLClient {
         fun createCustomReactive(url: String, requestExecutor: MonoRequestExecutor) = CustomMonoGraphQLClient(url, requestExecutor)
         @JvmStatic
         fun createWithWebClient(webClient: WebClient) = WebClientGraphQLClient(webClient)
+        @JvmStatic
+        fun createWithWebClient(webClient: WebClient, headersConsumer: Consumer<HttpHeaders>) = WebClientGraphQLClient(webClient, headersConsumer)
     }
 }
 
