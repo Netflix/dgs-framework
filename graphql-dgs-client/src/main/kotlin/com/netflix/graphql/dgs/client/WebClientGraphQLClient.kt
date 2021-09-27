@@ -16,8 +16,10 @@
 
 package com.netflix.graphql.dgs.client
 
+import org.springframework.http.HttpHeaders
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import java.util.function.Consumer
 
 /**
  * A WebClient implementation of the DGS Client.
@@ -29,7 +31,9 @@ import reactor.core.publisher.Mono
  *      GraphQLResponse message = webClientGraphQLClient.reactiveExecuteQuery("{hello}").map(r -> r.extractValue<String>("hello"));
  *      message.subscribe();
  */
-class WebClientGraphQLClient(private val webclient: WebClient) : MonoGraphQLClient {
+class WebClientGraphQLClient(private val webclient: WebClient, private val headersConsumer: Consumer<HttpHeaders>?) : MonoGraphQLClient {
+
+    constructor(webclient: WebClient) : this(webclient, null)
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
      * @return A [Mono] of [GraphQLResponse]. [GraphQLResponse] parses the response and gives easy access to data and errors.
@@ -75,6 +79,7 @@ class WebClientGraphQLClient(private val webclient: WebClient) : MonoGraphQLClie
         return webclient.post()
             .bodyValue(serializedRequest)
             .headers { consumer -> GraphQLClients.defaultHeaders.forEach(consumer::addAll) }
+            .headers(this.headersConsumer?: Consumer {  })
             .exchange()
             .flatMap { r ->
                 r.bodyToMono(String::class.java)

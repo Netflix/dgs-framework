@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.test.StepVerifier
 
@@ -39,6 +40,7 @@ import reactor.test.StepVerifier
 )
 class WebClientGraphQLClientTest {
 
+    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
     @LocalServerPort
     lateinit var port: Integer
     lateinit var client: WebClientGraphQLClient
@@ -54,6 +56,18 @@ class WebClientGraphQLClientTest {
 
         StepVerifier.create(result)
             .expectNext("Hi!")
+            .verifyComplete()
+    }
+
+    @Test
+    fun `Extra header can be provided`() {
+        client = WebClientGraphQLClient(WebClient.create("http://localhost:$port/graphql")) { headers ->
+            println("extra")
+            headers.add("myheader", "test") }
+        val result = client.reactiveExecuteQuery("{withHeader}").map { r -> r.extractValue<String>("withHeader") }
+
+        StepVerifier.create(result)
+            .expectNext("Header value: test")
             .verifyComplete()
     }
 
@@ -81,6 +95,11 @@ class WebClientGraphQLClientTest {
                 throw RuntimeException("Broken!")
             }
 
+            @DgsQuery
+            fun withHeader(@RequestHeader myheader: String): String {
+                return "Header value: $myheader"
+            }
+
             @DgsTypeDefinitionRegistry
             fun typeDefinitionRegistry(): TypeDefinitionRegistry {
                 val newRegistry = TypeDefinitionRegistry()
@@ -89,6 +108,10 @@ class WebClientGraphQLClientTest {
                         .fieldDefinition(
                             FieldDefinition.newFieldDefinition()
                                 .name("hello")
+                                .type(TypeName("String")).build()
+                        ).fieldDefinition(
+                            FieldDefinition.newFieldDefinition()
+                                .name("withHeader")
                                 .type(TypeName("String")).build()
                         ).fieldDefinition(
                             FieldDefinition.newFieldDefinition()
