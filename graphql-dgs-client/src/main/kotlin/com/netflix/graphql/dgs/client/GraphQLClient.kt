@@ -197,7 +197,7 @@ class GraphQLClientException(statusCode: Int, url: String, response: String, req
 
 internal object GraphQLClients {
     internal val objectMapper: ObjectMapper =
-        if(ClassUtils.isPresent("com.fasterxml.jackson.module.kotlin.KotlinModule\$Builder", this::class.java.classLoader))
+        if (ClassUtils.isPresent("com.fasterxml.jackson.module.kotlin.KotlinModule\$Builder", this::class.java.classLoader))
             ObjectMapper().registerModule(KotlinModule.Builder().nullIsSameAsDefault(true).build())
         else ObjectMapper().registerKotlinModule()
 
