@@ -20,8 +20,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import org.springframework.util.ClassUtils
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.server.ResponseStatusException
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.util.function.Consumer
@@ -197,7 +199,7 @@ fun interface MonoRequestExecutor {
  * A transport level exception (e.g. a failed connection). This does *not* represent successful GraphQL responses that contain errors.
  */
 class GraphQLClientException(statusCode: Int, url: String, response: String, request: String) :
-    RuntimeException("GraphQL server $url responded with status code $statusCode: '$response'. The request sent to the server was \n$request")
+    ResponseStatusException(HttpStatus.valueOf(statusCode), "GraphQL server $url responded with status code $statusCode: '$response'. The request sent to the server was \n$request")
 
 internal object GraphQLClients {
     internal val objectMapper: ObjectMapper =
