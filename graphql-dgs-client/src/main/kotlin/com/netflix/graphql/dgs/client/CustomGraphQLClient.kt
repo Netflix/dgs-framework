@@ -21,7 +21,7 @@ package com.netflix.graphql.dgs.client
  * The user is responsible for doing the actual HTTP request, making this pluggable with any HTTP client.
  * For a more convenient option, use [WebClientGraphQLClient] instead.
  */
-class CustomGraphQLClient(private val url: String, private val requestExecutor: RequestExecutor) : GraphQLClient {
+class CustomGraphQLClient(private val url: String, private val requestExecutor: RequestExecutor, private val customDeserializer: Map<Class<*>, (Any) -> Any?>? = null) : GraphQLClient {
     override fun executeQuery(query: String): GraphQLResponse {
         return executeQuery(query, emptyMap(), null)
     }
@@ -40,6 +40,6 @@ class CustomGraphQLClient(private val url: String, private val requestExecutor: 
         )
 
         val response = requestExecutor.execute(url, GraphQLClients.defaultHeaders, serializedRequest)
-        return GraphQLClients.handleResponse(response, serializedRequest, url)
+        return GraphQLClients.handleResponse(response, serializedRequest, url, customDeserializer)
     }
 }

@@ -34,7 +34,7 @@ public class GraphQLResponseJavaTest {
     RestTemplate restTemplate = new RestTemplate();
     MockRestServiceServer server = MockRestServiceServer.bindTo(restTemplate).build();
     String url = "http://localhost:8080/graphql";
-    DefaultGraphQLClient client = new DefaultGraphQLClient(url);
+    DefaultGraphQLClient client = new DefaultGraphQLClient(url, null);
 
     RequestExecutor requestExecutor = (url, headers, body) -> {
         HttpHeaders httpHeaders = new HttpHeaders();

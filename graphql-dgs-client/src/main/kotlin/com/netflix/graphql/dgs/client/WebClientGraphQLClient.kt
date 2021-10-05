@@ -31,9 +31,11 @@ import java.util.function.Consumer
  *      GraphQLResponse message = webClientGraphQLClient.reactiveExecuteQuery("{hello}").map(r -> r.extractValue<String>("hello"));
  *      message.subscribe();
  */
-class WebClientGraphQLClient(private val webclient: WebClient, private val headersConsumer: Consumer<HttpHeaders>?) : MonoGraphQLClient {
+class WebClientGraphQLClient(private val webclient: WebClient, private val headersConsumer: Consumer<HttpHeaders>?, private val customDeserializers: Map<Class<*>, (Any) -> Any?>? = null) : MonoGraphQLClient {
 
-    constructor(webclient: WebClient) : this(webclient, null)
+    constructor(webclient: WebClient) : this(webclient, null, null)
+    constructor(webclient: WebClient, headersConsumer: Consumer<HttpHeaders>?) : this(webclient, headersConsumer, null)
+
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
      * @return A [Mono] of [GraphQLResponse]. [GraphQLResponse] parses the response and gives easy access to data and errors.
@@ -95,6 +97,6 @@ class WebClientGraphQLClient(private val webclient: WebClient, private val heade
             throw GraphQLClientException(statusCode, webclient.toString(), body ?: "", requestBody)
         }
 
-        return GraphQLResponse(body ?: "", headers)
+        return GraphQLResponse(body ?: "", headers, customDeserializers)
     }
 }

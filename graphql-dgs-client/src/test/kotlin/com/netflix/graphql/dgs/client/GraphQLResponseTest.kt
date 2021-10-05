@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.client
 
 import com.jayway.jsonpath.TypeRef
+import graphql.schema.CoercingParseValueException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity
@@ -29,7 +30,11 @@ import org.springframework.test.web.client.match.MockRestRequestMatchers.method
 import org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo
 import org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess
 import org.springframework.web.client.RestTemplate
+import java.time.DateTimeException
 import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
+import java.time.temporal.TemporalAccessor
 
 @Suppress("DEPRECATION")
 class GraphQLResponseTest {
@@ -54,7 +59,12 @@ class GraphQLResponseTest {
     }
 
     private val url = "http://localhost:8080/graphql"
-    private val client = DefaultGraphQLClient(url)
+    private val client = DefaultGraphQLClient(url,
+        mapOf(
+            OffsetDateTime::class.java to { t -> OffsetDateTime.parse(t.toString(), DateTimeFormatter.ISO_OFFSET_DATE_TIME) },
+            Person::class.java to { t -> Person("Custom Person", 20)}
+        )
+    )
 
     @Test
     fun dateParse() {
@@ -194,6 +204,59 @@ class GraphQLResponseTest {
     }
 
     @Test
+    fun dateParseWithNestedDateDeserialization() {
+
+        val jsonResponse = """
+            {
+              "data": {
+                "submitReview": {
+                  "edges": [
+                    {
+                      "node": {
+                        "submittedBy": "pbakker@netflix.com",
+                        "postedDate": "2020-10-29T12:22:47.789933-07:00"
+                      }
+                    },
+                    {
+                      "node": {
+                        "submittedBy": "pbakker@netflix.com",
+                        "postedDate": "2020-10-29T12:22:54.327407-07:00"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+        """.trimIndent()
+
+        server.expect(requestTo(url))
+            .andExpect(method(HttpMethod.POST))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
+
+        val graphQLResponse = client.executeQuery(
+            """mutation {
+              submitReview(review:{movieId:1, starRating:5, description:""}) {
+                edges {
+                  node {
+                    submittedBy
+                    postedDate
+                  }
+                }
+              }
+            }""",
+            emptyMap(), requestExecutor
+        )
+
+        data class Node(val submittedBy: String, val postedDate: OffsetDateTime)
+
+        val node: Node = graphQLResponse.extractValueAsObject("submitReview.edges[0].node", Node::class.java)
+        assertThat(node.postedDate).isInstanceOf(OffsetDateTime::class.java)
+        assertThat(node.postedDate.dayOfMonth).isEqualTo(29)
+        server.verify()
+    }
+
+    @Test
     fun useOperationName() {
 
         val jsonResponse = """
@@ -221,4 +284,59 @@ class GraphQLResponseTest {
 
         server.verify()
     }
+
+    @Test
+    fun customPersonParse() {
+
+        val jsonResponse = """
+            {
+              "data": {
+                "submitReview": {
+                  "edges": [
+                    {
+                      "node": {
+                        "name": "PersonA",
+                        "age": 10
+                      }
+                    },
+                    {
+                      "node": {
+                        "name": "PersonB",
+                        "age": "30"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+        """.trimIndent()
+
+        server.expect(requestTo(url))
+            .andExpect(method(HttpMethod.POST))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
+
+        val graphQLResponse = client.executeQuery(
+            """mutation {
+              submitReview(review:{movieId:1, starRating:5, description:""}) {
+                edges {
+                  node {
+                    name
+                    age
+                  }
+                }
+              }
+            }""",
+            emptyMap(), requestExecutor
+        )
+
+        val person = graphQLResponse.extractValueAsObject("submitReview.edges[0].node", Person::class.java)
+        assertThat(person).isInstanceOf(Person::class.java)
+        assertThat(person.age).isEqualTo(20)
+        assertThat(person.name).isEqualTo("Custom Person")
+        server.verify()
+    }
+
 }
+
+data class Person(val name: String, val age: Int)

@@ -44,7 +44,7 @@ class ErrorsTest {
     }
 
     private val url = "http://localhost:8080/graphql"
-    private val client = DefaultGraphQLClient(url)
+    private val client = DefaultGraphQLClient(url, null)
 
     @Test
     fun unknownErrorType() {

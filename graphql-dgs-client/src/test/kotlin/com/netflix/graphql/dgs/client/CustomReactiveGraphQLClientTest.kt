@@ -45,7 +45,7 @@ class CustomReactiveGraphQLClientTest {
 
     @BeforeEach
     fun setup() {
-        client = MonoGraphQLClient.createCustomReactive("http://localhost:$port/graphql") { url, _, body ->
+        client = MonoGraphQLClient.createCustomReactive("http://localhost:$port/graphql", { url, _, body ->
             WebClient.create(url)
                 .post()
                 .bodyValue(body)
@@ -55,7 +55,7 @@ class CustomReactiveGraphQLClientTest {
                     r.bodyToMono(String::class.java)
                         .map { respBody -> HttpResponse(r.rawStatusCode(), respBody, r.headers().asHttpHeaders()) }
                 }
-        }
+        })
     }
 
     @Test

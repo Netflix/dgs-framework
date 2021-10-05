@@ -51,13 +51,13 @@ class CustomGraphQLClientTest {
 
     @BeforeEach
     fun before() {
-        client = GraphQLClient.createCustom("http://localhost:$port/graphql") { url, headers, body ->
+        client = GraphQLClient.createCustom("http://localhost:$port/graphql", { url, headers, body ->
             val httpHeaders = HttpHeaders()
             headers.forEach { httpHeaders.addAll(it.key, it.value) }
 
             val exchange = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
             HttpResponse(exchange.statusCodeValue, exchange.body)
-        }
+        })
     }
 
     @Test

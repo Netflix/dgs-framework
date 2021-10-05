@@ -47,7 +47,7 @@ class WebClientGraphQLClientTest {
 
     @BeforeEach
     fun setup() {
-        client = MonoGraphQLClient.createWithWebClient(WebClient.create("http://localhost:$port/graphql"))
+        client = MonoGraphQLClient.createWithWebClient(WebClient.create("http://localhost:$port/graphql"), null)
     }
 
     @Test
@@ -61,9 +61,9 @@ class WebClientGraphQLClientTest {
 
     @Test
     fun `Extra header can be provided`() {
-        client = MonoGraphQLClient.createWithWebClient(WebClient.create("http://localhost:$port/graphql")) { headers ->
+        client = MonoGraphQLClient.createWithWebClient(WebClient.create("http://localhost:$port/graphql"), { headers ->
             headers.add("myheader", "test")
-        }
+        })
         val result = client.reactiveExecuteQuery("{withHeader}").map { r -> r.extractValue<String>("withHeader") }
 
         StepVerifier.create(result)

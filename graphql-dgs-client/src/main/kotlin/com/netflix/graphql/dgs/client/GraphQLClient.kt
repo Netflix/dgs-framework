@@ -67,7 +67,7 @@ interface GraphQLClient {
 
     companion object {
         @JvmStatic
-        fun createCustom(url: String, requestExecutor: RequestExecutor) = CustomGraphQLClient(url, requestExecutor)
+        fun createCustom(url: String, requestExecutor: RequestExecutor, customDeserializer: Map<Class<*>, (Any) -> Any?>? = null) = CustomGraphQLClient(url, requestExecutor, customDeserializer)
     }
 }
 
@@ -128,11 +128,11 @@ interface MonoGraphQLClient {
 
     companion object {
         @JvmStatic
-        fun createCustomReactive(url: String, requestExecutor: MonoRequestExecutor) = CustomMonoGraphQLClient(url, requestExecutor)
+        fun createCustomReactive(url: String, requestExecutor: MonoRequestExecutor, customDeserializer: Map<Class<*>, (Any) -> Any?>? = null) = CustomMonoGraphQLClient(url, requestExecutor, customDeserializer)
         @JvmStatic
-        fun createWithWebClient(webClient: WebClient) = WebClientGraphQLClient(webClient)
+        fun createWithWebClient(webClient: WebClient, customDeserializer: Map<Class<*>, (Any) -> Any?>? = null) = WebClientGraphQLClient(webClient, null, customDeserializer)
         @JvmStatic
-        fun createWithWebClient(webClient: WebClient, headersConsumer: Consumer<HttpHeaders>) = WebClientGraphQLClient(webClient, headersConsumer)
+        fun createWithWebClient(webClient: WebClient, headersConsumer: Consumer<HttpHeaders>, customDeserializer: Map<Class<*>, (Any) -> Any?>? = null) = WebClientGraphQLClient(webClient, headersConsumer, customDeserializer)
     }
 }
 
@@ -210,14 +210,14 @@ internal object GraphQLClients {
         "Content-type" to listOf("application/json")
     )
 
-    fun handleResponse(response: HttpResponse, requestBody: String, url: String): GraphQLResponse {
+    fun handleResponse(response: HttpResponse, requestBody: String, url: String, customDeserializer: Map<Class<*>, (Any) -> Any?>? = null): GraphQLResponse {
         val (statusCode, body) = response
         val headers = response.headers
         if (statusCode !in 200..299) {
             throw GraphQLClientException(statusCode, url, body ?: "", requestBody)
         }
 
-        return GraphQLResponse(body ?: "", headers)
+        return GraphQLResponse(body ?: "", headers, customDeserializer)
     }
 }
 

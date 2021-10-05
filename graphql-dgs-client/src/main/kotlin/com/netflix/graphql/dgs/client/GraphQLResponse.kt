@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.client
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -37,7 +38,7 @@ import org.slf4j.LoggerFactory
  * Representation of a GraphQL response, which may contain GraphQL errors.
  * This class gives convenient JSON parsing methods to get data out of the response.
  */
-data class GraphQLResponse(val json: String, val headers: Map<String, List<String>>) {
+data class GraphQLResponse(val json: String, val headers: Map<String, List<String>>, val customDeserializer: Map<Class<*>, (Any) -> Any?>? = null) {
 
     /**
      * A JsonPath DocumentContext. Typically only used internally.
@@ -51,7 +52,20 @@ data class GraphQLResponse(val json: String, val headers: Map<String, List<Strin
     val data: Map<String, Any> = parsed.read("data") ?: emptyMap()
     val errors: List<GraphQLError> = parsed.read("errors", object : TypeRef<List<GraphQLError>>() {}) ?: emptyList()
 
-    constructor(json: String) : this(json, emptyMap())
+    constructor(json: String) : this(json, emptyMap(), null)
+    constructor(json: String, headers: Map<String, List<String>>) : this(json, headers, null)
+
+    init {
+        customDeserializer?.forEach { it ->
+            val inputType = (it.key)
+            val module: SimpleModule = SimpleModule()
+                .addDeserializer(
+                    inputType,
+                    CustomJsonDeserializer(it.value, it.key)
+                )
+            mapper.registerModule(module)
+        }
+    }
 
     /**
      * Deserialize data into the given class.

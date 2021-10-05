@@ -39,7 +39,7 @@ import reactor.core.publisher.Mono
  *    });
  */
 @Deprecated("This has been replaced by [CustomGraphQLClient], [CustomReactiveGraphQLClient] and [WebClientGraphQLClient]")
-class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQLClient {
+class DefaultGraphQLClient(private val url: String, private val customDeserializer: Map<Class<*>, (Any) -> Any?>? = null) : GraphQLClient, MonoGraphQLClient {
 
     /**
      * Executes a query and returns a GraphQLResponse.
@@ -61,7 +61,7 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
     ): GraphQLResponse {
         val serializedRequest = GraphQLClients.objectMapper.writeValueAsString(Request(query, variables, operationName))
         val response = requestExecutor.execute(url, GraphQLClients.defaultHeaders, serializedRequest)
-        return GraphQLClients.handleResponse(response, serializedRequest, url)
+        return GraphQLClients.handleResponse(response, serializedRequest, url, customDeserializer)
     }
 
     override fun executeQuery(query: String): GraphQLResponse {
@@ -151,7 +151,7 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
     ): Mono<GraphQLResponse> {
         val serializedRequest = GraphQLClients.objectMapper.writeValueAsString(Request(query, variables, operationName))
         return requestExecutor.execute(url, GraphQLClients.defaultHeaders, serializedRequest).map { response ->
-            GraphQLClients.handleResponse(response, serializedRequest, url)
+            GraphQLClients.handleResponse(response, serializedRequest, url, customDeserializer)
         }
     }
 }
