@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.client
 
+import graphql.schema.Coercing
 import reactor.core.publisher.Mono
 
 /**
@@ -39,7 +40,7 @@ import reactor.core.publisher.Mono
  *    });
  */
 @Deprecated("This has been replaced by [CustomGraphQLClient], [CustomReactiveGraphQLClient] and [WebClientGraphQLClient]")
-class DefaultGraphQLClient(private val url: String, private val customDeserializer: Map<Class<*>, (Any) -> Any?>? = null) : GraphQLClient, MonoGraphQLClient {
+class DefaultGraphQLClient(private val url: String, private val customDeserializer: List<Coercing<*, String>>? = null) : GraphQLClient, MonoGraphQLClient {
 
     /**
      * Executes a query and returns a GraphQLResponse.
@@ -61,7 +62,7 @@ class DefaultGraphQLClient(private val url: String, private val customDeserializ
     ): GraphQLResponse {
         val serializedRequest = GraphQLClients.objectMapper.writeValueAsString(Request(query, variables, operationName))
         val response = requestExecutor.execute(url, GraphQLClients.defaultHeaders, serializedRequest)
-        return GraphQLClients.handleResponse(response, serializedRequest, url, customDeserializer)
+        return GraphQLClients.handleResponse(response, serializedRequest, url)
     }
 
     override fun executeQuery(query: String): GraphQLResponse {

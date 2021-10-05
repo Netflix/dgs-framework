@@ -16,12 +16,14 @@
 
 package com.netflix.graphql.dgs.client
 
+import graphql.schema.Coercing
+
 /**
  * Blocking implementation of a GraphQL client.
  * The user is responsible for doing the actual HTTP request, making this pluggable with any HTTP client.
  * For a more convenient option, use [WebClientGraphQLClient] instead.
  */
-class CustomGraphQLClient(private val url: String, private val requestExecutor: RequestExecutor, private val customDeserializer: Map<Class<*>, (Any) -> Any?>? = null) : GraphQLClient {
+class CustomGraphQLClient(private val url: String, private val requestExecutor: RequestExecutor, private val customDeserializer: List<Coercing<*, String>>? = null) : GraphQLClient {
     override fun executeQuery(query: String): GraphQLResponse {
         return executeQuery(query, emptyMap(), null)
     }

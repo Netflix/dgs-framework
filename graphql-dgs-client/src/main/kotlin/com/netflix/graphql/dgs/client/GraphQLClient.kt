@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.client
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import graphql.schema.Coercing
 import org.springframework.http.HttpHeaders
 import org.springframework.util.ClassUtils
 import org.springframework.web.reactive.function.client.WebClient
@@ -67,7 +68,7 @@ interface GraphQLClient {
 
     companion object {
         @JvmStatic
-        fun createCustom(url: String, requestExecutor: RequestExecutor, customDeserializer: Map<Class<*>, (Any) -> Any?>? = null) = CustomGraphQLClient(url, requestExecutor, customDeserializer)
+        fun createCustom(url: String, requestExecutor: RequestExecutor, customDeserializer: List<Coercing<*, String>>? = null) = CustomGraphQLClient(url, requestExecutor, customDeserializer)
     }
 }
 
@@ -128,11 +129,11 @@ interface MonoGraphQLClient {
 
     companion object {
         @JvmStatic
-        fun createCustomReactive(url: String, requestExecutor: MonoRequestExecutor, customDeserializer: Map<Class<*>, (Any) -> Any?>? = null) = CustomMonoGraphQLClient(url, requestExecutor, customDeserializer)
+        fun createCustomReactive(url: String, requestExecutor: MonoRequestExecutor, customDeserializer: List<Coercing<*, String>>? = null) = CustomMonoGraphQLClient(url, requestExecutor, customDeserializer)
         @JvmStatic
-        fun createWithWebClient(webClient: WebClient, customDeserializer: Map<Class<*>, (Any) -> Any?>? = null) = WebClientGraphQLClient(webClient, null, customDeserializer)
+        fun createWithWebClient(webClient: WebClient, customDeserializer: List<Coercing<*, String>>? = null) = WebClientGraphQLClient(webClient, null, customDeserializer)
         @JvmStatic
-        fun createWithWebClient(webClient: WebClient, headersConsumer: Consumer<HttpHeaders>, customDeserializer: Map<Class<*>, (Any) -> Any?>? = null) = WebClientGraphQLClient(webClient, headersConsumer, customDeserializer)
+        fun createWithWebClient(webClient: WebClient, headersConsumer: Consumer<HttpHeaders>, customDeserializer: List<Coercing<*, String>>? = null) = WebClientGraphQLClient(webClient, headersConsumer, customDeserializer)
     }
 }
 
@@ -210,7 +211,7 @@ internal object GraphQLClients {
         "Content-type" to listOf("application/json")
     )
 
-    fun handleResponse(response: HttpResponse, requestBody: String, url: String, customDeserializer: Map<Class<*>, (Any) -> Any?>? = null): GraphQLResponse {
+    fun handleResponse(response: HttpResponse, requestBody: String, url: String, customDeserializer: List<Coercing<*, String>>? = null): GraphQLResponse {
         val (statusCode, body) = response
         val headers = response.headers
         if (statusCode !in 200..299) {

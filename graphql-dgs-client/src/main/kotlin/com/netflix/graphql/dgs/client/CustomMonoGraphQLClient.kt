@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.client
 
+import graphql.schema.Coercing
 import reactor.core.publisher.Mono
 
 /**
@@ -23,7 +24,7 @@ import reactor.core.publisher.Mono
  * The user is responsible for doing the actual HTTP request, making this pluggable with any HTTP client.
  * For a more convenient option, use [WebClientGraphQLClient] instead.
  */
-class CustomMonoGraphQLClient(private val url: String, private val monoRequestExecutor: MonoRequestExecutor, private val customDeserializer: Map<Class<*>, (Any) -> Any?>? = null) : MonoGraphQLClient {
+class CustomMonoGraphQLClient(private val url: String, private val monoRequestExecutor: MonoRequestExecutor, private val customDeserializer: List<Coercing<*, String>>? = null) : MonoGraphQLClient {
     override fun reactiveExecuteQuery(query: String): Mono<GraphQLResponse> {
         return reactiveExecuteQuery(query, emptyMap(), null)
     }

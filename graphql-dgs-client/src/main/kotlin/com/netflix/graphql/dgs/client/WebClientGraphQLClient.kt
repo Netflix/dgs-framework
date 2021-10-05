@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.client
 
+import graphql.schema.Coercing
 import org.springframework.http.HttpHeaders
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
@@ -31,7 +32,7 @@ import java.util.function.Consumer
  *      GraphQLResponse message = webClientGraphQLClient.reactiveExecuteQuery("{hello}").map(r -> r.extractValue<String>("hello"));
  *      message.subscribe();
  */
-class WebClientGraphQLClient(private val webclient: WebClient, private val headersConsumer: Consumer<HttpHeaders>?, private val customDeserializers: Map<Class<*>, (Any) -> Any?>? = null) : MonoGraphQLClient {
+class WebClientGraphQLClient(private val webclient: WebClient, private val headersConsumer: Consumer<HttpHeaders>?, private val customDeserializer: List<Coercing<*, String>>? = null) : MonoGraphQLClient {
 
     constructor(webclient: WebClient) : this(webclient, null, null)
     constructor(webclient: WebClient, headersConsumer: Consumer<HttpHeaders>?) : this(webclient, headersConsumer, null)
@@ -97,6 +98,6 @@ class WebClientGraphQLClient(private val webclient: WebClient, private val heade
             throw GraphQLClientException(statusCode, webclient.toString(), body ?: "", requestBody)
         }
 
-        return GraphQLResponse(body ?: "", headers, customDeserializers)
+        return GraphQLResponse(body ?: "", headers, customDeserializer)
     }
 }

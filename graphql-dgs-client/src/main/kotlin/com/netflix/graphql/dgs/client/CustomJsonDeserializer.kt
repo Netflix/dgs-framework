@@ -20,10 +20,12 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
+import graphql.schema.Coercing
 
-class CustomJsonDeserializer<T>(private val parse: (Any) -> Any?, vc: Class<*>) : StdDeserializer<T>(vc) {
-    override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): T? {
+class CustomJsonDeserializer<T>(private val deserializer: Coercing<*, String>, vc: Class<T>): StdDeserializer<T>(vc) {
+
+    override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): T {
         val node: JsonNode = jp.codec.readTree(jp)
-        return parse(node.asText()) as T
+        return deserializer.parseValue(node.asText()) as T
     }
 }

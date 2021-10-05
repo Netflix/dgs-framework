@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.client
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
@@ -31,14 +32,16 @@ import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
+import graphql.schema.Coercing
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.time.OffsetDateTime
 
 /**
  * Representation of a GraphQL response, which may contain GraphQL errors.
  * This class gives convenient JSON parsing methods to get data out of the response.
  */
-data class GraphQLResponse(val json: String, val headers: Map<String, List<String>>, val customDeserializer: Map<Class<*>, (Any) -> Any?>? = null) {
+data class GraphQLResponse(val json: String, val headers: Map<String, List<String>>, val customDeserializer: List<Coercing<*, String>>? = null) {
 
     /**
      * A JsonPath DocumentContext. Typically only used internally.
@@ -57,11 +60,12 @@ data class GraphQLResponse(val json: String, val headers: Map<String, List<Strin
 
     init {
         customDeserializer?.forEach { it ->
-            val inputType = (it.key)
+            val inputType = it.javaClass.typeParameters[0]::class.java
+            val customJsonDeserializer: StdDeserializer<OffsetDateTime> = CustomJsonDeserializer(it, OffsetDateTime::class.java)
             val module: SimpleModule = SimpleModule()
                 .addDeserializer(
-                    inputType,
-                    CustomJsonDeserializer(it.value, it.key)
+                    OffsetDateTime::class.java,
+                    customJsonDeserializer
                 )
             mapper.registerModule(module)
         }

@@ -17,7 +17,15 @@
 package com.netflix.graphql.dgs.client
 
 import com.jayway.jsonpath.TypeRef
+import graphql.language.FloatValue
+import graphql.language.IntValue
+import graphql.language.StringValue
+import graphql.schema.Coercing
+import graphql.schema.CoercingParseLiteralException
+import graphql.schema.CoercingParseValueException
+import graphql.schema.CoercingSerializeException
 import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.annotations.NotNull
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -29,8 +37,9 @@ import org.springframework.test.web.client.match.MockRestRequestMatchers.method
 import org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo
 import org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess
 import org.springframework.web.client.RestTemplate
+import java.math.BigDecimal
 import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
+
 
 @Suppress("DEPRECATION")
 class GraphQLResponseTest {
@@ -57,10 +66,7 @@ class GraphQLResponseTest {
     private val url = "http://localhost:8080/graphql"
     private val client = DefaultGraphQLClient(
         url,
-        mapOf(
-            OffsetDateTime::class.java to { t -> OffsetDateTime.parse(t.toString(), DateTimeFormatter.ISO_OFFSET_DATE_TIME) },
-            Person::class.java to { t -> Person("Custom Person", 20) }
-        )
+        listOf(BigDecimalCoercing())
     )
 
     @Test
@@ -254,6 +260,59 @@ class GraphQLResponseTest {
     }
 
     @Test
+    fun parseWithCustomMoneyDeserialization() {
+
+        val jsonResponse = """
+            {
+              "data": {
+                "production": {
+                  "edges": [
+                    {
+                      "node": {
+                        "name": "ABC",
+                        "budget": "202000000"
+                      }
+                    },
+                    {
+                      "node": {
+                        "name": "XYZ",
+                        "budget": "300333333333"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+        """.trimIndent()
+
+        server.expect(requestTo(url))
+            .andExpect(method(HttpMethod.POST))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
+
+        val graphQLResponse = client.executeQuery(
+            """mutation {
+              production {
+                edges {
+                  node {
+                    name
+                    budget
+                  }
+                }
+              }
+            }""",
+            emptyMap(), requestExecutor
+        )
+
+        data class Node(val name: String, val budget: BigDecimal)
+
+        val node: Node = graphQLResponse.extractValueAsObject("production.edges[0].node", Node::class.java)
+        assertThat(node.budget).isInstanceOf(BigDecimal::class.java)
+        assertThat(node.budget.toPlainString()).isEqualTo("202000000")
+        server.verify()
+    }
+
+    @Test
     fun useOperationName() {
 
         val jsonResponse = """
@@ -281,58 +340,29 @@ class GraphQLResponseTest {
 
         server.verify()
     }
-
-    @Test
-    fun customPersonParse() {
-
-        val jsonResponse = """
-            {
-              "data": {
-                "submitReview": {
-                  "edges": [
-                    {
-                      "node": {
-                        "name": "PersonA",
-                        "age": 10
-                      }
-                    },
-                    {
-                      "node": {
-                        "name": "PersonB",
-                        "age": "30"
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-        """.trimIndent()
-
-        server.expect(requestTo(url))
-            .andExpect(method(HttpMethod.POST))
-            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
-
-        val graphQLResponse = client.executeQuery(
-            """mutation {
-              submitReview(review:{movieId:1, starRating:5, description:""}) {
-                edges {
-                  node {
-                    name
-                    age
-                  }
-                }
-              }
-            }""",
-            emptyMap(), requestExecutor
-        )
-
-        val person = graphQLResponse.extractValueAsObject("submitReview.edges[0].node", Person::class.java)
-        assertThat(person).isInstanceOf(Person::class.java)
-        assertThat(person.age).isEqualTo(20)
-        assertThat(person.name).isEqualTo("Custom Person")
-        server.verify()
-    }
 }
 
-data class Person(val name: String, val age: Int)
+private class BigDecimalCoercing : Coercing<BigDecimal, String> {
+    override fun serialize(@NotNull input: Any): String {
+        val result: BigDecimal = BigDecimal(input.toString())
+        return result.toPlainString()
+    }
+
+    override fun parseValue(input: Any): BigDecimal {
+        return  BigDecimal(input.toString())
+    }
+
+    @NotNull
+    override fun parseLiteral(@NotNull input: Any): BigDecimal {
+        if (input is StringValue) {
+            return try {
+                BigDecimal((input as StringValue).getValue())
+            } catch (e: NumberFormatException) {
+                throw CoercingParseLiteralException("Unable to turn AST input into a 'BigDecimal' : '$input'")
+            }
+        }
+        throw CoercingParseLiteralException(
+            "Expected AST type 'IntValue', 'StringValue' or 'FloatValue'"
+        )
+    }
+}
