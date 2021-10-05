@@ -17,7 +17,6 @@
 package com.netflix.graphql.dgs.client
 
 import com.jayway.jsonpath.TypeRef
-import graphql.schema.CoercingParseValueException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity
@@ -30,11 +29,8 @@ import org.springframework.test.web.client.match.MockRestRequestMatchers.method
 import org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo
 import org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess
 import org.springframework.web.client.RestTemplate
-import java.time.DateTimeException
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
-import java.time.temporal.TemporalAccessor
 
 @Suppress("DEPRECATION")
 class GraphQLResponseTest {
@@ -59,10 +55,11 @@ class GraphQLResponseTest {
     }
 
     private val url = "http://localhost:8080/graphql"
-    private val client = DefaultGraphQLClient(url,
+    private val client = DefaultGraphQLClient(
+        url,
         mapOf(
             OffsetDateTime::class.java to { t -> OffsetDateTime.parse(t.toString(), DateTimeFormatter.ISO_OFFSET_DATE_TIME) },
-            Person::class.java to { t -> Person("Custom Person", 20)}
+            Person::class.java to { t -> Person("Custom Person", 20) }
         )
     )
 
@@ -336,7 +333,6 @@ class GraphQLResponseTest {
         assertThat(person.name).isEqualTo("Custom Person")
         server.verify()
     }
-
 }
 
 data class Person(val name: String, val age: Int)
