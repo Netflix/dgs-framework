@@ -28,14 +28,15 @@ import {
     useSubscription
 } from '@apollo/client';
 
-import {WebSocketLink} from "@apollo/client/link/ws";
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
+import { createClient } from 'graphql-ws';
+
+const webSocketLink = new GraphQLWsLink(createClient({
+    url: 'ws://localhost:8080/subscriptions',
+}));
+
 
 const httpLink = createHttpLink({uri:'http://localhost:8080/graphql' })
-
-const webSocketLink = new WebSocketLink({
-    uri: 'ws://localhost:8080/subscriptions'
-});
-
 const client: ApolloClient<NormalizedCacheObject> = new ApolloClient({
     link: split((operation) => {
         return operation.operationName === "StockWatch"
