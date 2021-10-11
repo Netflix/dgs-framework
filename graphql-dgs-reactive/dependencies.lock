@@ -269,11 +269,6 @@
             "locked": "5.2.13.RELEASE"
         }
     },
-    "ktlint": {
-        "com.pinterest:ktlint": {
-            "locked": "0.40.0"
-        }
-    },
     "nebulaRecommenderBom": {
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.3"
