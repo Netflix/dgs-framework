@@ -205,15 +205,20 @@ class OperationMessageWebSocketClient(
         .onBackpressureBuffer<GraphQLException>(Queues.SMALL_BUFFER_SIZE, false)
 
     fun connect(): Mono<Void> {
-        return Mono.defer { client.execute(URI(url), object: WebSocketHandler {
-            override fun handle(session: WebSocketSession): Mono<Void> {
-                return exchange(session)
-            }
+        return Mono.defer {
+            client.execute(
+                URI(url),
+                object : WebSocketHandler {
+                    override fun handle(session: WebSocketSession): Mono<Void> {
+                        return exchange(session)
+                    }
 
-            override fun getSubProtocols(): List<String> {
-                return listOf(GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL)
-            }
-        }) }
+                    override fun getSubProtocols(): List<String> {
+                        return listOf(GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL)
+                    }
+                }
+            )
+        }
     }
 
     /**
