@@ -32,10 +32,16 @@
             ],
             "locked": "2.12.3"
         },
+        "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
+            "locked": "2.12.3"
+        },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.12.3"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
+            "locked": "2.12.3"
+        },
+        "com.fasterxml.jackson.module:jackson-module-parameter-names": {
             "locked": "2.12.3"
         },
         "com.fasterxml.jackson:jackson-bom": {
@@ -257,11 +263,6 @@
             "locked": "5.2.13.RELEASE"
         }
     },
-    "ktlint": {
-        "com.pinterest:ktlint": {
-            "locked": "0.40.0"
-        }
-    },
     "nebulaRecommenderBom": {
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.3"
@@ -289,10 +290,16 @@
             ],
             "locked": "2.12.3"
         },
+        "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
+            "locked": "2.12.3"
+        },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.12.3"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
+            "locked": "2.12.3"
+        },
+        "com.fasterxml.jackson.module:jackson-module-parameter-names": {
             "locked": "2.12.3"
         },
         "com.fasterxml.jackson:jackson-bom": {
@@ -342,6 +349,9 @@
         },
         "org.springframework:spring-web": {
             "locked": "5.2.13.RELEASE"
+        },
+        "org.springframework:spring-webflux": {
+            "locked": "5.2.13.RELEASE"
         }
     },
     "testAnnotationProcessor": {
@@ -371,10 +381,16 @@
             ],
             "locked": "2.12.3"
         },
+        "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
+            "locked": "2.12.3"
+        },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.12.3"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
+            "locked": "2.12.3"
+        },
+        "com.fasterxml.jackson.module:jackson-module-parameter-names": {
             "locked": "2.12.3"
         },
         "com.fasterxml.jackson:jackson-bom": {
@@ -500,6 +516,9 @@
         },
         "org.springframework:spring-web": {
             "locked": "5.2.13.RELEASE"
+        },
+        "org.springframework:spring-webflux": {
+            "locked": "5.2.13.RELEASE"
         }
     },
     "testRuntimeClasspath": {
@@ -515,6 +534,9 @@
             ],
             "locked": "2.12.3"
         },
+        "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
+            "locked": "2.12.3"
+        },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
@@ -527,6 +549,9 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
             ],
+            "locked": "2.12.3"
+        },
+        "com.fasterxml.jackson.module:jackson-module-parameter-names": {
             "locked": "2.12.3"
         },
         "com.fasterxml.jackson:jackson-bom": {
@@ -727,6 +752,9 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure"
             ],
+            "locked": "5.2.13.RELEASE"
+        },
+        "org.springframework:spring-webflux": {
             "locked": "5.2.13.RELEASE"
         },
         "org.springframework:spring-webmvc": {
