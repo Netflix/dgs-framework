@@ -26,6 +26,7 @@ import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContex
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.FluxDataFetcherResultProcessor
 import com.netflix.graphql.dgs.reactive.internal.MonoDataFetcherResultProcessor
+import com.netflix.graphql.dgs.webflux.handlers.DgsHandshakeWebSocketService
 import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler
 import com.netflix.graphql.dgs.webflux.handlers.DgsWebfluxHttpHandler
 import com.netflix.graphql.dgs.webflux.handlers.WebFluxCookieValueResolver
@@ -163,7 +164,7 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     @Bean
     open fun webSocketService(): WebSocketService {
         val strategy = ReactorNettyRequestUpgradeStrategy { WebsocketServerSpec.builder().protocols("graphql-ws") }
-        return HandshakeWebSocketService(strategy)
+        return DgsHandshakeWebSocketService(strategy)
     }
 
     @Bean

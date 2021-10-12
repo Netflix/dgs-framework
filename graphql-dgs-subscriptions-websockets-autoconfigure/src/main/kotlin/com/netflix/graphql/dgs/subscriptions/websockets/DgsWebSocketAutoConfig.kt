@@ -39,9 +39,8 @@ open class DgsWebSocketAutoConfig {
     internal open class WebSocketConfig(@Suppress("SpringJavaInjectionPointsAutowiringInspection") private val webSocketHandler: WebSocketHandler) : WebSocketConfigurer {
 
         override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
-            val defaultHandshakeHandler = DefaultHandshakeHandler()
-            defaultHandshakeHandler.setSupportedProtocols("graphql-ws")
-            registry.addHandler(webSocketHandler, "/subscriptions").setHandshakeHandler(defaultHandshakeHandler).setAllowedOrigins("*")
+            val handshakeHandler = DgsHandshakeHandler()
+            registry.addHandler(webSocketHandler, "/subscriptions").setHandshakeHandler(handshakeHandler).setAllowedOrigins("*")
         }
     }
 }

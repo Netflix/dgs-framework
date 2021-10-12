@@ -214,7 +214,7 @@ class OperationMessageWebSocketClient(
                     }
 
                     override fun getSubProtocols(): List<String> {
-                        return listOf(GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL)
+                        return listOf("graphql-ws")
                     }
                 }
             )
