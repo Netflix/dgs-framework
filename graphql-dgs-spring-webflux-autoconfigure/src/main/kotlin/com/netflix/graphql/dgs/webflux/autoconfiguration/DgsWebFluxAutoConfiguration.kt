@@ -54,7 +54,6 @@ import org.springframework.web.reactive.function.server.ServerResponse.permanent
 import org.springframework.web.reactive.function.server.json
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping
 import org.springframework.web.reactive.socket.server.WebSocketService
-import org.springframework.web.reactive.socket.server.support.HandshakeWebSocketService
 import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter
 import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyRequestUpgradeStrategy
 import reactor.core.publisher.Mono
@@ -156,15 +155,16 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
 
     @Bean
     open fun websocketSubscriptionHandler(dgsReactiveQueryExecutor: DgsReactiveQueryExecutor): SimpleUrlHandlerMapping {
-        val simpleUrlHandlerMapping = SimpleUrlHandlerMapping(mapOf("/subscriptions" to DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor)))
+        val simpleUrlHandlerMapping =
+            SimpleUrlHandlerMapping(mapOf("/subscriptions" to DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor)))
         simpleUrlHandlerMapping.order = 1
         return simpleUrlHandlerMapping
     }
 
     @Bean
     open fun webSocketService(): WebSocketService {
-        val strategy = ReactorNettyRequestUpgradeStrategy { WebsocketServerSpec.builder().protocols("graphql-ws") }
-        return DgsHandshakeWebSocketService(strategy)
+        val strategy = ReactorNettyRequestUpgradeStrategy { WebsocketServerSpec.builder().protocols("graphql-ws,graphql") }
+        return DgsHandshakeWebSocketService(ReactorNettyRequestUpgradeStrategy())
     }
 
     @Bean

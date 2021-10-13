@@ -63,6 +63,9 @@ dependencies {
         api("io.projectreactor:reactor-test"){
             version { require("3.4.10") }
         }
+        api("io.github.javaunit:autoparams"){
+            version { require(Versions.AUTO_PARAMS_VERSION) }
+        }
     }
 }
 

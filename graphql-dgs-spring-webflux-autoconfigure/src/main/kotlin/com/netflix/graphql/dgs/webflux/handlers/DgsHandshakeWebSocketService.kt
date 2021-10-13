@@ -16,11 +16,10 @@
 
 package com.netflix.graphql.dgs.webflux.handlers
 
-import org.springframework.http.HttpMethod
+import org.slf4j.LoggerFactory
 import org.springframework.web.reactive.socket.WebSocketHandler
 import org.springframework.web.reactive.socket.server.RequestUpgradeStrategy
 import org.springframework.web.reactive.socket.server.support.HandshakeWebSocketService
-import org.springframework.web.server.MethodNotAllowedException
 import org.springframework.web.server.ServerWebExchange
 import reactor.core.publisher.Mono
 
@@ -30,7 +29,6 @@ class DgsHandshakeWebSocketService : HandshakeWebSocketService {
 
     constructor (upgradeStrategy: RequestUpgradeStrategy) : super(upgradeStrategy)
 
-
     override fun handleRequest(exchange: ServerWebExchange, handler: WebSocketHandler): Mono<Void> {
         var newExchange = exchange
         var request = exchange.request
@@ -38,16 +36,17 @@ class DgsHandshakeWebSocketService : HandshakeWebSocketService {
         val protocols = headers[SEC_WEBSOCKET_PROTOCOL]
 
         if (protocols.isNullOrEmpty()) {
-            //request = request.mutate().header(SEC_WEBSOCKET_PROTOCOL, "graphql-ws").build()
-            //newExchange = newExchange.mutate().request(request).build()
-
+            logger.info("protocols is null or empty")
+            request = request.mutate().header(SEC_WEBSOCKET_PROTOCOL, "graphql-ws").build()
+            newExchange = newExchange.mutate().request(request).build()
+            logger.info(newExchange.request.headers.toString())
         }
 
-        return super.handleRequest(newExchange, handler);
+        return super.handleRequest(newExchange, handler)
     }
 
     companion object {
         private const val SEC_WEBSOCKET_PROTOCOL = "Sec-WebSocket-Protocol"
+        private val logger = LoggerFactory.getLogger(DgsHandshakeWebSocketService::class.java)
     }
-
 }

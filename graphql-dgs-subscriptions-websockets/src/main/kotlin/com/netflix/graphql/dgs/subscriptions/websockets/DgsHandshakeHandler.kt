@@ -26,7 +26,7 @@ class DgsHandshakeHandler : DefaultHandshakeHandler() {
     }
 
     override fun selectProtocol(requestedProtocols: List<String>, webSocketHandler: WebSocketHandler): String? {
-        if ( requestedProtocols.isEmpty()) {
+        if (requestedProtocols.isEmpty()) {
             return GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL
         }
         return super.selectProtocol(requestedProtocols, webSocketHandler)

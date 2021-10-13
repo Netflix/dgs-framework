@@ -28,7 +28,9 @@ import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Comp
 import com.netflix.graphql.dgs.webflux.handlers.OperationMessage
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
+import org.javaunit.autoparams.ValueAutoSource
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
 import org.reactivestreams.Publisher
 import org.springframework.boot.autoconfigure.web.reactive.HttpHandlerAutoConfiguration
 import org.springframework.boot.autoconfigure.web.reactive.ReactiveWebServerFactoryAutoConfiguration
@@ -42,6 +44,7 @@ import org.springframework.http.codec.json.Jackson2JsonDecoder
 import org.springframework.http.codec.json.Jackson2JsonEncoder
 import org.springframework.util.MimeTypeUtils
 import org.springframework.web.reactive.config.EnableWebFlux
+import org.springframework.web.reactive.socket.WebSocketHandler
 import org.springframework.web.reactive.socket.WebSocketMessage
 import org.springframework.web.reactive.socket.WebSocketSession
 import org.springframework.web.reactive.socket.client.ReactorNettyWebSocketClient
@@ -60,15 +63,16 @@ import java.time.Duration
 )
 open class WebsocketSubscriptionsTest(@param:LocalServerPort val port: Int) {
 
-    @Test
-    fun `Basic subscription flow`() {
+    @ParameterizedTest
+    @ValueAutoSource(strings = ["", "graphql-ws"])
+    fun `Basic subscription flow`(protocol: String) {
 
         val client: WebSocketClient = ReactorNettyWebSocketClient()
         val url = URI("ws://localhost:$port/subscriptions")
         val output: Sinks.Many<OperationMessage> = Sinks.many().replay().all()
 
         val query = "subscription {ticker}"
-        val execute = clientExecute(client, url, output, query)
+        val execute = clientExecute(client, url, output, query, null, listOf(protocol))
         StepVerifier.create(execute).expectComplete().verify()
 
         StepVerifier.create(output.asFlux().map { it.payload.toString() })
@@ -78,15 +82,16 @@ open class WebsocketSubscriptionsTest(@param:LocalServerPort val port: Int) {
             .verifyComplete()
     }
 
-    @Test
-    fun `Subscription with error flow`() {
+    @ParameterizedTest
+    @ValueAutoSource(strings = ["", "graphql-ws"])
+    fun `Subscription with error flow`(protocol: String) {
 
         val client: WebSocketClient = ReactorNettyWebSocketClient()
         val url = URI("ws://localhost:$port/subscriptions")
         val output: Sinks.Many<OperationMessage> = Sinks.many().replay().all()
 
         val query = "subscription {withError}"
-        val execute = clientExecute(client, url, output, query)
+        val execute = clientExecute(client, url, output, query, null, listOf(protocol))
 
         StepVerifier.create(execute).expectComplete().verify()
 
@@ -98,15 +103,16 @@ open class WebsocketSubscriptionsTest(@param:LocalServerPort val port: Int) {
             .verifyError()
     }
 
-    @Test
-    fun `Client stops subscription`() {
+    @ParameterizedTest
+    @ValueAutoSource(strings = ["", "graphql-ws"])
+    fun `Client stops subscription`(protocol: String) {
 
         val client: WebSocketClient = ReactorNettyWebSocketClient()
         val url = URI("ws://localhost:$port/subscriptions")
         val output: Sinks.Many<OperationMessage> = Sinks.many().replay().all()
 
         val query = "subscription {withDelay}"
-        val execute = clientExecute(client, url, output, query, 2)
+        val execute = clientExecute(client, url, output, query, 2, listOf(protocol))
 
         StepVerifier.create(execute).expectComplete().verify()
 
@@ -121,63 +127,72 @@ open class WebsocketSubscriptionsTest(@param:LocalServerPort val port: Int) {
         url: URI,
         output: Sinks.Many<OperationMessage>,
         query: String,
-        stopAfter: Int? = null
+        stopAfter: Int? = null,
+        protocols: List<String> = listOf()
     ) =
-        client.execute(url) { session ->
+        client.execute(
+            url,
+            object : WebSocketHandler {
+                override fun getSubProtocols(): List<String> {
+                    return protocols
+                }
 
-            var counter = 0
+                override fun handle(session: WebSocketSession): Mono<Void> {
+                    var counter = 0
 
-            return@execute session.send(Mono.just(toWebsocketMessage(OperationMessage(GQL_CONNECTION_INIT), session)))
-                .thenMany(
-                    session.receive().flatMap { message ->
-                        val buffer: DataBuffer = DataBufferUtils.retain(message.payload)
-                        val operationMessage: OperationMessage = decoder.decode(
-                            buffer,
-                            resolvableType,
-                            MimeTypeUtils.APPLICATION_JSON,
-                            null
-                        ) as OperationMessage
+                    return session.send(Mono.just(toWebsocketMessage(OperationMessage(GQL_CONNECTION_INIT), session)))
+                        .thenMany(
+                            session.receive().flatMap { message ->
+                                val buffer: DataBuffer = DataBufferUtils.retain(message.payload)
+                                val operationMessage: OperationMessage = decoder.decode(
+                                    buffer,
+                                    resolvableType,
+                                    MimeTypeUtils.APPLICATION_JSON,
+                                    null
+                                ) as OperationMessage
 
-                        when (operationMessage.type) {
-                            GQL_CONNECTION_ACK -> {
+                                when (operationMessage.type) {
+                                    GQL_CONNECTION_ACK -> {
 
-                                session.send(
-                                    Mono.just(
-                                        toWebsocketMessage(
-                                            OperationMessage(
-                                                GQL_START,
-                                                mapOf("query" to query), "1"
-                                            ),
-                                            session
+                                        session.send(
+                                            Mono.just(
+                                                toWebsocketMessage(
+                                                    OperationMessage(
+                                                        GQL_START,
+                                                        mapOf("query" to query), "1"
+                                                    ),
+                                                    session
+                                                )
+                                            )
                                         )
-                                    )
-                                )
-                            }
-                            GQL_COMPLETE -> {
-                                output.emitComplete(Sinks.EmitFailureHandler.FAIL_FAST)
-                                session.close()
-                            }
-                            GQL_ERROR -> {
-                                output.emitNext(operationMessage, Sinks.EmitFailureHandler.FAIL_FAST)
-                                output.emitError(RuntimeException(), Sinks.EmitFailureHandler.FAIL_FAST)
-                                session.close()
-                            }
-                            else -> {
-                                counter += 1
-                                output.emitNext(operationMessage, Sinks.EmitFailureHandler.FAIL_FAST)
-                                if (stopAfter != null && counter == stopAfter) {
-                                    Flux.just(operationMessage).flatMap {
+                                    }
+                                    GQL_COMPLETE -> {
                                         output.emitComplete(Sinks.EmitFailureHandler.FAIL_FAST)
                                         session.close()
                                     }
-                                } else {
-                                    Flux.just(operationMessage)
+                                    GQL_ERROR -> {
+                                        output.emitNext(operationMessage, Sinks.EmitFailureHandler.FAIL_FAST)
+                                        output.emitError(RuntimeException(), Sinks.EmitFailureHandler.FAIL_FAST)
+                                        session.close()
+                                    }
+                                    else -> {
+                                        counter += 1
+                                        output.emitNext(operationMessage, Sinks.EmitFailureHandler.FAIL_FAST)
+                                        if (stopAfter != null && counter == stopAfter) {
+                                            Flux.just(operationMessage).flatMap {
+                                                output.emitComplete(Sinks.EmitFailureHandler.FAIL_FAST)
+                                                session.close()
+                                            }
+                                        } else {
+                                            Flux.just(operationMessage)
+                                        }
+                                    }
                                 }
                             }
-                        }
-                    }
-                ).log().then()
-        }
+                        ).log().then()
+                }
+            },
+        )
 
     private val resolvableType = ResolvableType.forType(OperationMessage::class.java)
     private val decoder = Jackson2JsonDecoder()

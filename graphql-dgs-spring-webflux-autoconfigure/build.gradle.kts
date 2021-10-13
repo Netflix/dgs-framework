@@ -24,4 +24,6 @@ dependencies {
     testImplementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
     testImplementation("io.projectreactor:reactor-test")
+    testImplementation ("io.github.javaunit:autoparams:0.2.8")
+
 }
