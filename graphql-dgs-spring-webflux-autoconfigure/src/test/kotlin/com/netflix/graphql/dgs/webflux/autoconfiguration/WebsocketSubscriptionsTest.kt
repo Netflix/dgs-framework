@@ -29,7 +29,6 @@ import com.netflix.graphql.dgs.webflux.handlers.OperationMessage
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.javaunit.autoparams.ValueAutoSource
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.reactivestreams.Publisher
 import org.springframework.boot.autoconfigure.web.reactive.HttpHandlerAutoConfiguration
