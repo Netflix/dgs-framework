@@ -121,6 +121,17 @@ public interface ErrorDetail extends ErrorClassification {
          */
         MISSING_RESOURCE(FAILED_PRECONDITION),
 
+        /**
+         * Indicates the operation conflicts with the current state of the target resource.
+         * Conflicts are most likely to occur in the context of a mutation.
+         * <p>
+         * For example, you may get a CONFLICT when writing a field with a reference value that is
+         * older than the one already on the server, resulting in a version control conflict.
+         * <p>
+         * HTTP Mapping: 409 Conflict.
+         * Error Type: FAILED_PRECONDITION
+         */
+        CONFLICT(FAILED_PRECONDITION),
 
         /**
          * Service Error.

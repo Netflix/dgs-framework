@@ -226,6 +226,13 @@ public class TypedGraphQLError implements GraphQLError {
         return new Builder().errorType(ErrorType.BAD_REQUEST);
     }
 
+    /**
+     * Create new Builder instance to further customize an error that results in a {@link ErrorDetail.Common#CONFLICT conflict}.
+     * @return A new TypedGraphQLError.Builder instance to further customize the error. Pre-sets {@link ErrorDetail.Common#CONFLICT}.
+     */
+    public static Builder newConflictBuilder() {
+        return new Builder().errorDetail(ErrorDetail.Common.CONFLICT);
+    }
 
     @Override
     public String toString() {
