@@ -244,6 +244,22 @@ public class TypedGraphQLError implements GraphQLError {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null) return false;
+        if (obj.getClass() != this.getClass()) return false;
+
+        TypedGraphQLError e = (TypedGraphQLError)obj;
+
+        if (!message.equals(e.message)) return false;
+        if (!locations.equals(e.locations)) return false;
+        if (!path.equals(e.path)) return false;
+        if (!extensions.equals(e.extensions)) return false;
+
+        return true;
+    }
+
     public static class Builder {
         private String message;
         private List<Object> path;
