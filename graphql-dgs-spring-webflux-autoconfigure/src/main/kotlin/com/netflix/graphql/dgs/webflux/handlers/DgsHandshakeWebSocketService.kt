@@ -36,10 +36,8 @@ class DgsHandshakeWebSocketService : HandshakeWebSocketService {
         val protocols = headers[SEC_WEBSOCKET_PROTOCOL]
 
         if (protocols.isNullOrEmpty()) {
-            logger.info("protocols is null or empty")
             request = request.mutate().header(SEC_WEBSOCKET_PROTOCOL, "graphql-ws").build()
             newExchange = newExchange.mutate().request(request).build()
-            logger.info(newExchange.request.headers.toString())
         }
 
         return super.handleRequest(newExchange, handler)

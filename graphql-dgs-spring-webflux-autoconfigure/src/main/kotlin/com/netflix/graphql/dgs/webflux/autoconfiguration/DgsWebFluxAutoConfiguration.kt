@@ -163,8 +163,8 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
 
     @Bean
     open fun webSocketService(): WebSocketService {
-        val strategy = ReactorNettyRequestUpgradeStrategy { WebsocketServerSpec.builder().protocols("graphql-ws,graphql") }
-        return DgsHandshakeWebSocketService(ReactorNettyRequestUpgradeStrategy())
+        val strategy = ReactorNettyRequestUpgradeStrategy { WebsocketServerSpec.builder().protocols("graphql-ws") }
+        return DgsHandshakeWebSocketService(strategy)
     }
 
     @Bean

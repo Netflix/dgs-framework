@@ -28,8 +28,6 @@ import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Comp
 import com.netflix.graphql.dgs.webflux.handlers.OperationMessage
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
-import org.javaunit.autoparams.ValueAutoSource
-import org.junit.jupiter.params.ParameterizedTest
 import org.reactivestreams.Publisher
 import org.springframework.boot.autoconfigure.web.reactive.HttpHandlerAutoConfiguration
 import org.springframework.boot.autoconfigure.web.reactive.ReactiveWebServerFactoryAutoConfiguration
@@ -62,16 +60,14 @@ import java.time.Duration
 )
 open class WebsocketSubscriptionsTest(@param:LocalServerPort val port: Int) {
 
-    @ParameterizedTest
-    @ValueAutoSource(strings = ["", "graphql-ws"])
-    fun `Basic subscription flow`(protocol: String) {
+    fun `Basic subscription flow`() {
 
         val client: WebSocketClient = ReactorNettyWebSocketClient()
         val url = URI("ws://localhost:$port/subscriptions")
         val output: Sinks.Many<OperationMessage> = Sinks.many().replay().all()
 
         val query = "subscription {ticker}"
-        val execute = clientExecute(client, url, output, query, null, listOf(protocol))
+        val execute = clientExecute(client, url, output, query, null)
         StepVerifier.create(execute).expectComplete().verify()
 
         StepVerifier.create(output.asFlux().map { it.payload.toString() })
@@ -81,16 +77,14 @@ open class WebsocketSubscriptionsTest(@param:LocalServerPort val port: Int) {
             .verifyComplete()
     }
 
-    @ParameterizedTest
-    @ValueAutoSource(strings = ["", "graphql-ws"])
-    fun `Subscription with error flow`(protocol: String) {
+    fun `Subscription with error flow`() {
 
         val client: WebSocketClient = ReactorNettyWebSocketClient()
         val url = URI("ws://localhost:$port/subscriptions")
         val output: Sinks.Many<OperationMessage> = Sinks.many().replay().all()
 
         val query = "subscription {withError}"
-        val execute = clientExecute(client, url, output, query, null, listOf(protocol))
+        val execute = clientExecute(client, url, output, query, null)
 
         StepVerifier.create(execute).expectComplete().verify()
 
@@ -102,8 +96,6 @@ open class WebsocketSubscriptionsTest(@param:LocalServerPort val port: Int) {
             .verifyError()
     }
 
-    @ParameterizedTest
-    @ValueAutoSource(strings = ["", "graphql-ws"])
     fun `Client stops subscription`(protocol: String) {
 
         val client: WebSocketClient = ReactorNettyWebSocketClient()
@@ -111,7 +103,7 @@ open class WebsocketSubscriptionsTest(@param:LocalServerPort val port: Int) {
         val output: Sinks.Many<OperationMessage> = Sinks.many().replay().all()
 
         val query = "subscription {withDelay}"
-        val execute = clientExecute(client, url, output, query, 2, listOf(protocol))
+        val execute = clientExecute(client, url, output, query, 2)
 
         StepVerifier.create(execute).expectComplete().verify()
 
@@ -126,14 +118,13 @@ open class WebsocketSubscriptionsTest(@param:LocalServerPort val port: Int) {
         url: URI,
         output: Sinks.Many<OperationMessage>,
         query: String,
-        stopAfter: Int? = null,
-        protocols: List<String> = listOf()
+        stopAfter: Int? = null
     ) =
         client.execute(
             url,
             object : WebSocketHandler {
                 override fun getSubProtocols(): List<String> {
-                    return protocols
+                    return listOf("graphql-ws")
                 }
 
                 override fun handle(session: WebSocketSession): Mono<Void> {
