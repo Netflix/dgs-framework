@@ -48,6 +48,7 @@ import org.springframework.context.ApplicationContext
 import reactor.core.publisher.Mono
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.function.Consumer
 
 @Suppress("UNCHECKED_CAST")
 @ExtendWith(MockKExtension::class)
@@ -196,10 +197,12 @@ class DefaultDgsFederationResolverTest {
             assertThat(result.get().data.size).isEqualTo(1)
             assertThat(result.get().errors).hasSize(1)
                 .first().extracting { it.message }
-                .satisfies {
-                    assertThat(it)
-                        .endsWith("MissingFederatedQueryArgument: The federated query is missing field(s) __typename")
-                }
+                .satisfies(
+                    Consumer {
+                        assertThat(it)
+                            .endsWith("MissingFederatedQueryArgument: The federated query is missing field(s) __typename")
+                    }
+                )
         }
     }
 
@@ -416,7 +419,12 @@ class DefaultDgsFederationResolverTest {
             assertThat(result.get().data).hasSize(1)
             assertThat(result.get().errors).hasSize(1)
                 .first().extracting { it.message }
-                .satisfies { assertThat(it).contains("com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException: Invalid input argument exception") }
+                .satisfies(
+                    Consumer {
+                        assertThat(it)
+                            .contains("com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException: Invalid input argument exception")
+                    }
+                )
         }
 
         @Test
@@ -455,7 +463,7 @@ class DefaultDgsFederationResolverTest {
             assertThat(result).isNotNull
             assertThat(result.get().data).hasSize(1)
             assertThat(result.get().errors).hasSize(1).first().extracting { it.message }
-                .satisfies { assertThat(it).contains("IllegalArgumentException") }
+                .satisfies(Consumer { assertThat(it).contains("IllegalArgumentException") })
         }
 
         @Test
@@ -473,7 +481,7 @@ class DefaultDgsFederationResolverTest {
             assertThat(result).isNotNull
             assertThat(result.get().data).hasSize(1)
             assertThat(result.get().errors).hasSize(1).first().extracting { it.message }
-                .satisfies { assertThat(it).contains("MissingDgsEntityFetcherException") }
+                .satisfies(Consumer { assertThat(it).contains("MissingDgsEntityFetcherException") })
         }
     }
 
