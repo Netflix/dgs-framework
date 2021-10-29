@@ -66,8 +66,10 @@ internal class SSESubscriptionGraphQLClientTest {
         val reactiveExecuteQuery = client.reactiveExecuteQuery("subscription {withError}", emptyMap())
 
         StepVerifier.create(reactiveExecuteQuery)
-            .consumeNextWith { r -> r.hasErrors() }
-            .expectComplete()
+            .consumeNextWith {
+                    r -> r.hasErrors()
+            }
+            .expectError()
             .verify()
     }
 
