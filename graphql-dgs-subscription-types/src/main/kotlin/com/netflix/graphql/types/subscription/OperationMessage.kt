@@ -16,7 +16,10 @@
 
 package com.netflix.graphql.types.subscription
 
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 
 // OperationMessage types
 const val GQL_CONNECTION_INIT = "connection_init"
@@ -33,28 +36,46 @@ const val GQL_CONNECTION_KEEP_ALIVE = "ka"
 data class OperationMessage(
     @JsonProperty("type")
     val type: String,
+
     @JsonProperty("payload")
+    @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION, defaultImpl = EmptyPayload::class)
+    @JsonSubTypes(
+        JsonSubTypes.Type(value = EmptyPayload::class),
+        JsonSubTypes.Type(value = DataPayload::class),
+        JsonSubTypes.Type(value = QueryPayload::class)
+    )
     val payload: Any? = null,
     @JsonProperty("id", required = false)
     val id: String? = ""
 )
+
+sealed interface MessagePayload
+
+object EmptyPayload : HashMap<String, Any?>(), MessagePayload {
+    @JvmStatic
+    @JsonCreator
+    @SuppressWarnings("unused")
+    fun emptyPayload(): EmptyPayload {
+        return EmptyPayload
+    }
+}
 
 data class DataPayload(
     @JsonProperty("data")
     val data: Any?,
     @JsonProperty("errors")
     val errors: List<Any>? = emptyList()
-)
+) : MessagePayload
 
 data class QueryPayload(
     @JsonProperty("variables")
-    val variables: Map<String, Any>?,
+    val variables: Map<String, Any>? = emptyMap(),
     @JsonProperty("extensions")
-    val extensions: Map<String, Any> = emptyMap(),
+    val extensions: Map<String, Any>? = emptyMap(),
     @JsonProperty("operationName")
-    val operationName: String?,
+    val operationName: String? = null,
     @JsonProperty("query")
     val query: String
-)
+) : MessagePayload
 
 data class Error(@JsonProperty val message: String = "")
