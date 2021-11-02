@@ -33,6 +33,9 @@ const val GQL_COMPLETE = "complete"
 const val GQL_CONNECTION_TERMINATE = "connection_terminate"
 const val GQL_CONNECTION_KEEP_ALIVE = "ka"
 
+/** Used only when expressing the data type for SSE Subscriptions. */
+const val SSE_GQL_SUBSCRIPTION_DATA = "subscription_data"
+
 data class OperationMessage(
     @JsonProperty("type")
     val type: String,
@@ -65,6 +68,17 @@ data class DataPayload(
     val data: Any?,
     @JsonProperty("errors")
     val errors: List<Any>? = emptyList()
+) : MessagePayload
+
+data class SSEDataPayload(
+    @JsonProperty("data")
+    val data: Any?,
+    @JsonProperty("errors")
+    val errors: List<Any>? = emptyList(),
+    @JsonProperty("subId")
+    val subId: String,
+    @JsonProperty("type")
+    val type: String = SSE_GQL_SUBSCRIPTION_DATA
 ) : MessagePayload
 
 data class QueryPayload(
