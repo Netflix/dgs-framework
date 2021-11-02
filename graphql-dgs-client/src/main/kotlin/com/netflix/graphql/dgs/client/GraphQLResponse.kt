@@ -72,7 +72,7 @@ data class GraphQLResponse(val json: String, val headers: Map<String, List<Strin
         try {
             return parsed.read(dataPath)
         } catch (ex: Exception) {
-            logger.error("Error extracting path '$path' from data: '$data'")
+            logger.warn("Error extracting path '$path' from data: '$data'")
             throw ex
         }
     }
@@ -86,7 +86,7 @@ data class GraphQLResponse(val json: String, val headers: Map<String, List<Strin
         try {
             return parsed.read(dataPath, clazz)
         } catch (ex: Exception) {
-            logger.error("Error extracting path '$path' from data: '$data'")
+            logger.warn("Error extracting path '$path' from data: '$data'")
             throw ex
         }
     }
@@ -101,7 +101,7 @@ data class GraphQLResponse(val json: String, val headers: Map<String, List<Strin
         try {
             return parsed.read(dataPath, typeRef)
         } catch (ex: Exception) {
-            logger.error("Error extracting path '$path' from data: '$data'")
+            logger.warn("Error extracting path '$path' from data: '$data'")
             throw ex
         }
     }

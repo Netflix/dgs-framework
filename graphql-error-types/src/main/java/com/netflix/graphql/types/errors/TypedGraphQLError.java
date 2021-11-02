@@ -226,6 +226,13 @@ public class TypedGraphQLError implements GraphQLError {
         return new Builder().errorType(ErrorType.BAD_REQUEST);
     }
 
+    /**
+     * Create new Builder instance to further customize an error that results in a {@link ErrorDetail.Common#CONFLICT conflict}.
+     * @return A new TypedGraphQLError.Builder instance to further customize the error. Pre-sets {@link ErrorDetail.Common#CONFLICT}.
+     */
+    public static Builder newConflictBuilder() {
+        return new Builder().errorDetail(ErrorDetail.Common.CONFLICT);
+    }
 
     @Override
     public String toString() {
@@ -235,6 +242,22 @@ public class TypedGraphQLError implements GraphQLError {
                 ", path=" + path +
                 ", extensions=" + extensions +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null) return false;
+        if (obj.getClass() != this.getClass()) return false;
+
+        TypedGraphQLError e = (TypedGraphQLError)obj;
+
+        if (!message.equals(e.message)) return false;
+        if (!locations.equals(e.locations)) return false;
+        if (!path.equals(e.path)) return false;
+        if (!extensions.equals(e.extensions)) return false;
+
+        return true;
     }
 
     public static class Builder {

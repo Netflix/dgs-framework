@@ -43,7 +43,6 @@ import java.util.*
  */
 @RestController
 open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor) {
-    private val mapper = jacksonObjectMapper()
 
     @RequestMapping("/subscriptions", produces = ["text/event-stream"])
     fun subscriptionWithId(@RequestParam("query") queryBase64: String): ResponseEntity<SseEmitter> {
@@ -152,6 +151,7 @@ open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor
     )
 
     companion object {
+        private val mapper = jacksonObjectMapper()
         private val logger: Logger = LoggerFactory.getLogger(DgsSSESubscriptionHandler::class.java)
     }
 }
