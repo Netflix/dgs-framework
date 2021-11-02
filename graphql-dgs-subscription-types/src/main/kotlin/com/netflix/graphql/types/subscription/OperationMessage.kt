@@ -34,7 +34,7 @@ const val GQL_CONNECTION_TERMINATE = "connection_terminate"
 const val GQL_CONNECTION_KEEP_ALIVE = "ka"
 
 /** Used only when expressing the data type for SSE Subscriptions. */
-const val SSE_GQL_SUBSCRIPTION_DATA = "subscription_data"
+const val SSE_GQL_SUBSCRIPTION_DATA = "SUBSCRIPTION_DATA"
 
 data class OperationMessage(
     @JsonProperty("type")
