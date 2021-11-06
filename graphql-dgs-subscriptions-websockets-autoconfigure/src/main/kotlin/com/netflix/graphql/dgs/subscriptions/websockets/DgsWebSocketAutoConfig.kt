@@ -24,6 +24,8 @@ import org.springframework.web.socket.WebSocketHandler
 import org.springframework.web.socket.config.annotation.EnableWebSocket
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
+import org.springframework.web.socket.server.HandshakeInterceptor
+import org.springframework.web.socket.server.support.DefaultHandshakeHandler
 
 @Configuration
 @ConditionalOnWebApplication
@@ -35,11 +37,21 @@ open class DgsWebSocketAutoConfig {
 
     @Configuration
     @EnableWebSocket
-    internal open class WebSocketConfig(@Suppress("SpringJavaInjectionPointsAutowiringInspection") private val webSocketHandler: WebSocketHandler) : WebSocketConfigurer {
+    internal open class WebSocketConfig(
+        @Suppress("SpringJavaInjectionPointsAutowiringInspection") private val webSocketHandler: WebSocketHandler,
+        private val handshakeInterceptor: HandshakeInterceptor
+    ) : WebSocketConfigurer {
 
         override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
-            val handshakeHandler = DgsHandshakeHandler()
-            registry.addHandler(webSocketHandler, "/subscriptions").setHandshakeHandler(handshakeHandler).setAllowedOrigins("*")
+            val handshakeHandler = DefaultHandshakeHandler()
+            registry.addHandler(webSocketHandler, "/subscriptions").setHandshakeHandler(handshakeHandler)
+                .addInterceptors(handshakeInterceptor)
+                .setAllowedOrigins("*")
         }
+    }
+
+    @Bean
+    open fun handshakeInterceptor(): HandshakeInterceptor {
+        return DgsHandshakeInterceptor()
     }
 }

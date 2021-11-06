@@ -24,5 +24,4 @@ object Versions {
     const val GRAPHQL_JAVA_EXTENDED_SCALARS = "17.0"
     const val GRAPHQL_JAVA_FEDERATION = "0.7.0"
     const val JACKSON_BOM = "2.12.3"
-    const val AUTO_PARAMS_VERSION = "0.3.0"
 }

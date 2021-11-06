@@ -35,6 +35,7 @@ dependencies {
     testImplementation("com.graphql-java:graphql-java-extended-scalars")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation(project(":graphql-dgs-subscriptions-sse-autoconfigure"))
+    testImplementation(project(":graphql-dgs-subscriptions-websockets-autoconfigure"))
     testImplementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
     testImplementation(project(":graphql-dgs-spring-webmvc-autoconfigure"))
 }
