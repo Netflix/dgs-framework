@@ -27,5 +27,6 @@ dependencies {
     testImplementation("io.projectreactor:reactor-core")
     testImplementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    testImplementation(  "com.apollographql.apollo3:apollo-runtime:3.0.0")
 
 }

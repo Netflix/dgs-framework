@@ -8,6 +8,9 @@ import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
 import org.slf4j.LoggerFactory
+import org.springframework.web.socket.CloseStatus
+import org.springframework.web.socket.PongMessage
+import org.springframework.web.socket.SubProtocolCapable
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 import org.springframework.web.socket.handler.TextWebSocketHandler
@@ -16,10 +19,16 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import javax.annotation.PostConstruct
 
+/**
+ * WebSocketHandler for GraphQL based on
+ * <a href="https://github.com/enisdenjo/graphql-ws/blob/master/PROTOCOL.md">GraphQL Over WebSocket Protocol</a> and
+ * for use in DGS framework.
+ */
 class DgsWebsocketTransport(
     private val dgsQueryExecutor: DgsQueryExecutor,
+    private val webSocketInterceptor: WebSocketInterceptor? = null,
 ) :
-    TextWebSocketHandler() {
+    TextWebSocketHandler(), SubProtocolCapable {
 
     internal val sessions = CopyOnWriteArrayList<WebSocketSession>()
     internal val contexts = ConcurrentHashMap<String, Context<Any>>()
@@ -41,6 +50,12 @@ class DgsWebsocketTransport(
         contexts[session.id] = Context()
     }
 
+    override fun afterConnectionClosed(session: WebSocketSession, status: CloseStatus) {
+        if (status == CloseStatus.NORMAL) {
+            cleanupSubscriptionsForSession(session)
+        }
+    }
+
     public override fun handleTextMessage(session: WebSocketSession, textMessage: TextMessage) {
         val message = objectMapper.readValue(textMessage.payload, Message::class.java)
         val context = contexts[session.id]!!
@@ -48,28 +63,31 @@ class DgsWebsocketTransport(
         when (message) {
             is Message.ConnectionInitMessage -> {
                 logger.info("Initialized connection for {}", session.id)
-                if (context.connectionInitReceived) {
+                if (context.setConnectionInitReceived()) {
                     return session.close(CloseCode.BadRequest.toCloseStatus("Too many initialisation requests"))
                 }
-                context.connectionInitReceived = true
                 sessions.add(session)
 
                 context.connectionParams = message.payload
+                try {
+                    webSocketInterceptor?.connectionInitialization(message.payload)
 
-                // TODO: onConnect listener
-
-                session.sendMessage(
-                    TextMessage(
-                        objectMapper.writeValueAsBytes(
-                            Message.ConnectionAckMessage(
-                                payload = null
+                    session.sendMessage(
+                        TextMessage(
+                            objectMapper.writeValueAsBytes(
+                                Message.ConnectionAckMessage(
+                                    payload = null
+                                )
                             )
                         )
                     )
-                )
-                context.acknowledged = true
+                    context.acknowledged = true
+                } catch (e: Throwable) {
+                    session.close(CloseCode.Forbidden.toCloseStatus("Forbidden"))
+                }
             }
             is Message.PingMessage -> {
+                webSocketInterceptor?.ping(message.payload)
                 session.sendMessage(
                     TextMessage(
                         objectMapper.writeValueAsBytes(
@@ -81,7 +99,7 @@ class DgsWebsocketTransport(
                 )
             }
             is Message.PongMessage -> {
-                // TODO: onPong
+                webSocketInterceptor?.pong(message.payload)
             }
             is Message.SubscribeMessage -> {
                 if (!context.acknowledged) {
@@ -95,10 +113,10 @@ class DgsWebsocketTransport(
                 handleSubscription(id, payload, session)
             }
             is Message.CompleteMessage -> {
+                webSocketInterceptor?.connectionCompletion()
                 logger.info("Complete subscription for " + message.id)
-                val subscription = context.subscriptions[message.id]
+                val subscription = context.subscriptions.remove(message.id)
                 subscription?.cancel()
-                context.subscriptions.remove(message.id)
             }
             else -> session.close(CloseCode.BadRequest.toCloseStatus())
         }
@@ -179,6 +197,7 @@ class DgsWebsocketTransport(
     private companion object {
         val logger = LoggerFactory.getLogger(DgsWebsocketTransport::class.java)
         val objectMapper = jacksonObjectMapper()
+        val subProtocolList = listOf(GRAPHQL_TRANSPORT_WS_PROTOCOL)
     }
 
     var WebSocketSession.connectionInitReceived: Boolean
@@ -186,4 +205,6 @@ class DgsWebsocketTransport(
         set(value) {
             attributes["connectionInitReceived"] = value
         }
+
+    override fun getSubProtocols() = subProtocolList
 }

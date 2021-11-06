@@ -10,7 +10,7 @@ internal class Context<T>(
      * `true`, the client wont be kicked off after
      * the wait timeout has passed.
      */
-    var connectionInitReceived: Boolean = false
+    private var connectionInitReceived: Boolean = false
 
 ) {
     /**
@@ -27,11 +27,6 @@ internal class Context<T>(
      * Holds the active subscriptions for this context. **All operations**
      * that are taking place are aggregated here. The user is _subscribed_
      * to an operation when waiting for result(s).
-     *
-     * If the subscription behind an ID is an `AsyncIterator` - the operation
-     * is streaming; on the contrary, if the subscription is `null` - it is simply
-     * a reservation, meaning - the operation resolves to a single result or is still
-     * pending/being prepared.
      */
     val subscriptions = ConcurrentHashMap<String, Subscription>()
 
@@ -40,4 +35,27 @@ internal class Context<T>(
      * to pass between callbacks.
      */
     var extra: T? = null
+
+    @Synchronized
+    fun setConnectionInitReceived(): Boolean {
+        val previousValue: Boolean = this.connectionInitReceived
+        this.connectionInitReceived = true
+        return previousValue
+    }
+
+    fun isConnectionInitNotProcessed(): Boolean {
+        return !this.connectionInitReceived
+    }
+
+    fun dispose() {
+        subscriptions.forEach { (t, subscription) ->
+
+            try {
+                subscription.cancel()
+            } catch (e: Throwable) {
+                // Ignore and keep on
+            }
+        }
+        this.subscriptions.clear()
+    }
 }

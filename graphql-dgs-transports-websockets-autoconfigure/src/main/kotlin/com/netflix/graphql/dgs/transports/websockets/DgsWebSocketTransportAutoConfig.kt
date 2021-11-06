@@ -11,7 +11,7 @@ import org.springframework.web.socket.server.support.DefaultHandshakeHandler
 
 @Configuration
 @ConditionalOnWebApplication
-open class DgsWebsSocketTransportAutoConfig {
+open class DgsWebSocketTransportAutoConfig {
     open fun webSocketHandler(@Suppress("SpringJavaInjectionPointsAutowiringInspection") dgsQueryExecutor: DgsQueryExecutor): WebSocketHandler {
         return DgsWebsocketTransport(dgsQueryExecutor)
     }
