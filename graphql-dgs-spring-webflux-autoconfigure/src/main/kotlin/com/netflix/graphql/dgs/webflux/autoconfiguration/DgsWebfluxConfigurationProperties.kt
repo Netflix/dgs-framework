@@ -28,8 +28,16 @@ import javax.annotation.PostConstruct
 class DgsWebfluxConfigurationProperties(
     /** Path to the endpoint that will serve GraphQL requests. */
     @DefaultValue("/graphql") var path: String = "/graphql",
+    @NestedConfigurationProperty var graphiql: DgsGraphiQLConfigurationProperties = DgsGraphiQLConfigurationProperties(),
     @NestedConfigurationProperty var schemaJson: DgsSchemaJsonConfigurationProperties = DgsSchemaJsonConfigurationProperties()
 ) {
+    /**
+     * Configuration properties for the GraphiQL endpoint.
+     */
+    data class DgsGraphiQLConfigurationProperties(
+        /** Path to the GraphiQL endpoint without trailing slash. */
+        @DefaultValue("/graphiql") var path: String = "/graphiql"
+    )
     /**
      * Configuration properties for the schema-json endpoint.
      */
@@ -41,6 +49,7 @@ class DgsWebfluxConfigurationProperties(
     @PostConstruct
     fun validatePaths() {
         validatePath(this.path, "dgs.graphql.path")
+        validatePath(this.graphiql.path, "dgs.graphql.graphiql.path")
         validatePath(this.schemaJson.path, "dgs.graphql.schema-json.path")
     }
 
