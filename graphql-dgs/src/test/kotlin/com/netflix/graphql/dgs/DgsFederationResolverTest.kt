@@ -142,7 +142,8 @@ class DgsFederationResolverTest {
         assertThat(result).isNotNull
         assertThat(result.get().data.size).isEqualTo(1)
         assertThat(result.get().errors.size).isEqualTo(1)
-        assertThat(result.get().errors[0].message).contains("RuntimeException")
+        assertThat(result.get().errors.first().message)
+            .endsWith("MissingFederatedQueryArgument: The federated query is missing field(s) __typename")
     }
 
     @Test
