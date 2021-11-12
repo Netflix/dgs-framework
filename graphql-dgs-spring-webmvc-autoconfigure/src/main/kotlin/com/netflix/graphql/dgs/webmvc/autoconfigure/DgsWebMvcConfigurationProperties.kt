@@ -35,7 +35,7 @@ data class DgsWebMvcConfigurationProperties(
     @NestedConfigurationProperty var schemaJson: DgsSchemaJsonConfigurationProperties = DgsSchemaJsonConfigurationProperties()
 ) {
     /**
-     * Configuration properties for the schema-json endpoint.
+     * Configuration properties for the GraphiQL endpoint.
      */
     data class DgsGraphiQLConfigurationProperties(
         /** Path to the GraphiQL endpoint without trailing slash. */
