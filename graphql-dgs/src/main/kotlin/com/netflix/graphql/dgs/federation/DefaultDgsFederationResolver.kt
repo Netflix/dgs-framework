@@ -22,6 +22,7 @@ import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.exceptions.InvalidDgsEntityFetcher
 import com.netflix.graphql.dgs.exceptions.MissingDgsEntityFetcherException
+import com.netflix.graphql.dgs.exceptions.MissingFederatedQueryArgument
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.types.errors.TypedGraphQLError
 import graphql.execution.DataFetcherExceptionHandler
@@ -78,7 +79,7 @@ open class DefaultDgsFederationResolver() :
             .map { values ->
                 Try.tryCall {
                     val typename = values["__typename"]
-                        ?: throw RuntimeException("__typename missing from arguments in federated query")
+                        ?: throw MissingFederatedQueryArgument("__typename")
                     val fetcher = dgsSchemaProvider.entityFetchers[typename]
                         ?: throw MissingDgsEntityFetcherException(typename.toString())
 
@@ -108,38 +109,46 @@ open class DefaultDgsFederationResolver() :
             }
 
         return CompletableFuture.allOf(*resultList.toTypedArray()).thenApply {
+            val trySequence = resultList.asSequence().map { it.join() }
             DataFetcherResult.newResult<List<Any?>>()
                 .data(
-                    resultList.asSequence()
-                        .map { cf -> cf.join() }
+                    trySequence
                         .map { tryResult -> tryResult.orElse(null) }
                         .flatMap { r -> if (r is Collection<*>) r.asSequence() else sequenceOf(r) }
                         .toList()
                 )
                 .errors(
-                    resultList.asSequence()
-                        .map { cf -> cf.join() }
+                    trySequence
                         .filter { tryResult -> tryResult.isFailure }
                         .map { tryResult -> tryResult.throwable }
                         .flatMap { e ->
                             if (e is InvocationTargetException && e.targetException != null) {
                                 if (dgsExceptionHandler.isPresent) {
-                                    val res = dgsExceptionHandler.get().onException(
-                                        DataFetcherExceptionHandlerParameters.newExceptionParameters()
-                                            .dataFetchingEnvironment(env).exception(e.targetException).build()
+                                    val res = dgsExceptionHandler.get().handleException(
+                                        DataFetcherExceptionHandlerParameters
+                                            .newExceptionParameters()
+                                            .dataFetchingEnvironment(env)
+                                            .exception(e.targetException)
+                                            .build()
                                     )
-                                    res.errors.asSequence()
+                                    res.join().errors.asSequence()
                                 } else {
                                     sequenceOf(
                                         TypedGraphQLError.newInternalErrorBuilder()
-                                            .message("%s: %s", e.targetException::class.java.name, e.targetException.message)
+                                            .message(
+                                                "%s: %s",
+                                                e.targetException::class.java.name,
+                                                e.targetException.message
+                                            )
                                             .path(ResultPath.parse("/_entities")).build()
                                     )
                                 }
                             } else {
                                 sequenceOf(
-                                    TypedGraphQLError.newInternalErrorBuilder().message("%s: %s", e::class.java.name, e.message)
-                                        .path(ResultPath.parse("/_entities")).build()
+                                    TypedGraphQLError.newInternalErrorBuilder()
+                                        .message("%s: %s", e::class.java.name, e.message)
+                                        .path(ResultPath.parse("/_entities"))
+                                        .build()
                                 )
                             }
                         }
