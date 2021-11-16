@@ -156,8 +156,7 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     @Bean
     open fun websocketSubscriptionHandler(dgsReactiveQueryExecutor: DgsReactiveQueryExecutor): SimpleUrlHandlerMapping {
 
-        val simpleUrlHandlerMapping =
-            SimpleUrlHandlerMapping(mapOf("/subscriptions" to DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor)))
+        val simpleUrlHandlerMapping = SimpleUrlHandlerMapping(mapOf("/subscriptions" to DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor)))
         simpleUrlHandlerMapping.order = 1
         return simpleUrlHandlerMapping
     }
