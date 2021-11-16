@@ -113,13 +113,10 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
 
     @Bean
     @ConditionalOnProperty(name = ["dgs.graphql.graphiql.enabled"], havingValue = "true", matchIfMissing = true)
-    open fun graphiQlIndexRedirect(@Value("classpath:/static/graphiql/index.html") indexHtml: Resource): RouterFunction<ServerResponse> {
+    open fun graphiQlIndexRedirect(): RouterFunction<ServerResponse> {
         return RouterFunctions.route()
             .GET(configProps.graphiql.path) {
                 permanentRedirect(URI.create(configProps.graphiql.path + "/index.html")).build()
-            }
-            .GET(configProps.graphiql.path + "/index.html") {
-                ok().bodyValue(indexHtml)
             }
             .build()
     }
@@ -159,7 +156,8 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     @Bean
     open fun websocketSubscriptionHandler(dgsReactiveQueryExecutor: DgsReactiveQueryExecutor): SimpleUrlHandlerMapping {
 
-        val simpleUrlHandlerMapping = SimpleUrlHandlerMapping(mapOf("/subscriptions" to DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor)))
+        val simpleUrlHandlerMapping =
+            SimpleUrlHandlerMapping(mapOf("/subscriptions" to DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor)))
         simpleUrlHandlerMapping.order = 1
         return simpleUrlHandlerMapping
     }
