@@ -142,7 +142,8 @@ class DgsFederationResolverTest {
         assertThat(result).isNotNull
         assertThat(result.get().data.size).isEqualTo(1)
         assertThat(result.get().errors.size).isEqualTo(1)
-        assertThat(result.get().errors[0].message).contains("RuntimeException")
+        assertThat(result.get().errors.first().message)
+            .endsWith("MissingFederatedQueryArgument: The federated query is missing field(s) __typename")
     }
 
     @Test
@@ -220,6 +221,36 @@ class DgsFederationResolverTest {
                 }
 
                 return Movie(values["movieId"].toString())
+            }
+        }
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("MovieEntityFetcher", movieEntityFetcher))
+        dgsSchemaProvider.schema("""type Query {}""")
+
+        val arguments = mapOf<String, Any>(Pair(_Entity.argumentName, listOf(mapOf(Pair("__typename", "Movie"), Pair("movieId", "invalid")))))
+        val executionStepInfo = ExecutionStepInfo.newExecutionStepInfo().path(ResultPath.parse("/_entities")).type(GraphQLList.list(GraphQLUnionType.newUnionType().name("Entity").possibleTypes(GraphQLObjectType.newObject().name("Movie").build()).build())).build()
+        val dataFetchingEnvironment = DgsDataFetchingEnvironment(DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).executionStepInfo(executionStepInfo).build())
+        val result = (DefaultDgsFederationResolver(dgsSchemaProvider, Optional.of(dgsExceptionHandler)).entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>)
+        assertThat(result).isNotNull
+        assertThat(result.get().data.size).isEqualTo(1)
+        assertThat(result.get().errors.size).isEqualTo(1)
+        assertThat(result.get().errors[0].message).contains("DgsInvalidInputArgumentException")
+    }
+
+    @Test
+    fun dgsEntityFetcherWithFailedCompletableFuture() {
+
+        val movieEntityFetcher = object {
+            @DgsEntityFetcher(name = "Movie")
+            fun movieEntityFetcher(values: Map<String, Any>): CompletableFuture<Movie> {
+                return CompletableFuture.supplyAsync {
+                    if (values["movieId"] == "invalid") {
+                        throw DgsInvalidInputArgumentException("Invalid input argument exception")
+                    }
+
+                    Movie(values["movieId"].toString())
+                }
             }
         }
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()

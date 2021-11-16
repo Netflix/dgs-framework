@@ -16,4 +16,4 @@
 
 package com.netflix.graphql.dgs.exceptions
 
-open class DgsBadRequestException(override val message: String = "Malformed or incorrect request") : RuntimeException(message)
+class MissingFederatedQueryArgument(vararg fields: String) : DgsBadRequestException("The federated query is missing field(s) ${fields.joinToString()}")
