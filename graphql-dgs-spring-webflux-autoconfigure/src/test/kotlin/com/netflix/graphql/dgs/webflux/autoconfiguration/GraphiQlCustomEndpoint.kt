@@ -17,11 +17,13 @@
 package com.netflix.graphql.dgs.webflux.autoconfiguration
 
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
+import graphql.Assert
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.web.reactive.config.EnableWebFlux
 
 @AutoConfigureWebTestClient
@@ -48,5 +50,7 @@ class GraphiQlCustomEndpoint {
             .exchange()
             .expectStatus()
             .is2xxSuccessful
+            .expectBody<String>()
+            .consumeWith { it -> Assert.assertTrue(it.responseBody!!.contains("fetch('/graphql")) }
     }
 }
