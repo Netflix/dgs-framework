@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.netflix.graphql.types.subscription.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -76,7 +76,7 @@ class OperationMessageTest {
     }
 
     private fun deserialize(message: String) =
-        MAPPER.readValue(message, object : TypeReference<OperationMessage>() {})
+        MAPPER.readValue(message, jacksonTypeRef<OperationMessage>())
 
     companion object {
         val MAPPER = jacksonObjectMapper()
