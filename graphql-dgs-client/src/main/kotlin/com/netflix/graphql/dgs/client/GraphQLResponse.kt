@@ -49,7 +49,7 @@ data class GraphQLResponse(val json: String, val headers: Map<String, List<Strin
      */
 
     val data: Map<String, Any> = parsed.read("data") ?: emptyMap()
-    val errors: List<GraphQLError> = parsed.read("errors", jsonTypeRef<List<GraphQLError>>() ) ?: emptyList()
+    val errors: List<GraphQLError> = parsed.read("errors", jsonTypeRef<List<GraphQLError>>()) ?: emptyList()
 
     constructor(json: String) : this(json, emptyMap())
 
@@ -137,4 +137,4 @@ data class GraphQLResponse(val json: String, val headers: Map<String, List<Strin
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class RequestDetails(val requestId: String?, val edgarLink: String?)
 
-inline fun <reified T> jsonTypeRef(): TypeRef<T> = object: TypeRef<T>() {}
+inline fun <reified T> jsonTypeRef(): TypeRef<T> = object : TypeRef<T>() {}
