@@ -23,6 +23,7 @@ import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 
+@Suppress("DEPRECATION")
 class ReactiveWebClientTest {
     private val url = "http://test"
 
@@ -49,6 +50,6 @@ class ReactiveWebClientTest {
         val mono = DefaultGraphQLClient(url).reactiveExecuteQuery("{ hello }", emptyMap(), requestExecutor)
         val graphQLResponse = mono.block()
         @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-        assertThat(graphQLResponse.data["hello"]).isEqualTo("Hi!")
+        assertThat(graphQLResponse!!.data["hello"]).isEqualTo("Hi!")
     }
 }

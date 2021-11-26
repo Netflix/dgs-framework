@@ -93,17 +93,18 @@ don't miss any language features of newer Java releases while supporting a broad
 Code conventions
 -----
 We use the standard Kotlin coding conventions. Intellij should select the correct style automatically because we checked
-in the `.idea/codeStyle` folder. Furthermore, we're also using [Klint](https://ktlint.github.io/). You can run
-formatting manually using Gradle:
+in the `.idea/codeStyle` folder. Furthermore, we're also using [Kotlinter](https://plugins.gradle.org/plugin/org.jmailen.kotlinter). You can run formatting manually using Gradle:
+
+```bash
+./gradlew lintKotlin  # lint kotlin sources
+./gradlew :graphql-dgs-extended-validation:lintKotlin  # lint kotlin sources for a single module
+./gradlew formatKotlin # format Kotlin Sources
+```
+
+We recommend installing a Git push hook to run the style check to prevent failing the build for your branch.
 
 ```
-./gradlew ktlintFormat
-```
-
-We recommend installing a commit hook to run the style check to prevent failing the build for your branch.
-
-```
-./gradlew addKtlintCheckGitPreCommitHook
+./gradlew installKotlinterPrePushHook
 ```
 
 Pull Request builds

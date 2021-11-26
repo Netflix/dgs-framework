@@ -51,8 +51,19 @@ class CustomScalarsTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("timeFetcher", fetcher))
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(Pair("localDateTimeScalar", LocalDateTimeScalar()))
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "timeFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(
+            Pair(
+                "localDateTimeScalar",
+                LocalDateTimeScalar()
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
         val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
 
@@ -60,7 +71,7 @@ class CustomScalarsTest {
             """
             type Query {
                 now: DateTime
-                 schedule(time: DateTime): Boolean
+                schedule(time: DateTime): Boolean
             }
             
             scalar DateTime
@@ -78,6 +89,8 @@ class CustomScalarsTest {
 
         Assertions.assertEquals(0, executionResult.errors.size)
         val data = executionResult.getData<Map<String, String>>()
-        Assertions.assertTrue(LocalDateTime.parse(data["now"], DateTimeFormatter.ISO_DATE_TIME).plusHours(1).isAfter(LocalDateTime.now()))
+        Assertions.assertTrue(
+            LocalDateTime.parse(data["now"], DateTimeFormatter.ISO_DATE_TIME).plusHours(1).isAfter(LocalDateTime.now())
+        )
     }
 }

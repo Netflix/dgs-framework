@@ -41,11 +41,6 @@ import org.springframework.web.multipart.MultipartFile
  * In addition to regular graphql queries, this method also handles multipart POST requests containing files for upload.
  * This is usually a POST request that  has Content type set to multipart/form-data. Here is an example command.
  *
- * metatron curl -a somedgs https://localhost:8443/graphql -F operations='{ "query": "mutation ($input: FileUploadInput!) { uploadFile(input: $input) }", "variables": { "input": { "description": "test", "files": [null, null] } } }' \
- * -F map='{ "0": ["variables.input.files.0"], "1": ["variables.input.files.1"] }' \
- * -F '0=@file1.txt' \
- * -F '1=@file2.txt'
- *
  * Each part in a multipart request is identified by the -F and is identified by the part name - "operations, map etc."
  * The "operations" part is the graphql query containing the mutation for the file upload, with variables for files set to null.
  * The "map" part and the subsequent parts specify the path of the file in the variables of the query, and will get mapped to
@@ -59,12 +54,13 @@ import org.springframework.web.multipart.MultipartFile
  * The remaining parts in the request contain the mapping of file name to file path, i.e. a map of MultipartFile(s)
  * The format of a multipart request is also described here:
  * https://github.com/jaydenseric/graphql-multipart-request-spec
+ *
+ * This class is defined as "open" only for proxy/aop use cases. It is not considered part of the API, and backwards compatibility is not guaranteed.
+ * Do not manually extend this class.
  */
 
 @RestController
-class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
-
-    val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
+open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
 
     // The @ConfigurationProperties bean name is <prefix>-<fqn>
     @RequestMapping(
@@ -82,14 +78,13 @@ class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
 
         logger.debug("Starting /graphql handling")
 
-        val mapper = jacksonObjectMapper()
         val inputQuery: Map<String, Any>
         val queryVariables: Map<String, Any>
         val extensions: Map<String, Any>
         if (body != null) {
             logger.debug("Reading input value: '{}'", body)
 
-            if ("application/graphql" == headers.getFirst("Content-Type")) {
+            if (headers.getFirst("Content-Type")?.contains("application/graphql") == true) {
                 inputQuery = mapOf(Pair("query", body))
                 queryVariables = emptyMap()
                 extensions = emptyMap()
@@ -101,14 +96,14 @@ class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
                         .body(ex.message ?: "Error parsing query - no details found in the error message")
                 }
 
-                queryVariables = if (inputQuery.get("variables") != null) {
+                queryVariables = if (inputQuery["variables"] != null) {
                     @Suppress("UNCHECKED_CAST")
                     inputQuery["variables"] as Map<String, String>
                 } else {
                     emptyMap()
                 }
 
-                extensions = if (inputQuery.get("extensions") != null) {
+                extensions = if (inputQuery["extensions"] != null) {
                     @Suppress("UNCHECKED_CAST")
                     inputQuery["extensions"] as Map<String, Any>
                 } else {
@@ -120,14 +115,14 @@ class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
         } else if (fileParams != null && mapParam != null && operation != null) {
             inputQuery = operation.let { mapper.readValue(it) }
 
-            queryVariables = if (inputQuery.get("variables") != null) {
+            queryVariables = if (inputQuery["variables"] != null) {
                 @Suppress("UNCHECKED_CAST")
                 inputQuery["variables"] as Map<String, Any>
             } else {
                 emptyMap()
             }
 
-            extensions = if (inputQuery.get("extensions") != null) {
+            extensions = if (inputQuery["extensions"] != null) {
                 @Suppress("UNCHECKED_CAST")
                 inputQuery["extensions"] as Map<String, Any>
             } else {
@@ -167,7 +162,7 @@ class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
                     queryVariables,
                     extensions,
                     headers,
-                    operationName = gqlOperationName,
+                    gqlOperationName,
                     webRequest
                 )
             },
@@ -198,5 +193,10 @@ class DgsRestController(private val dgsQueryExecutor: DgsQueryExecutor) {
         }
 
         return ResponseEntity.ok(result)
+    }
+
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
+        private val mapper = jacksonObjectMapper()
     }
 }

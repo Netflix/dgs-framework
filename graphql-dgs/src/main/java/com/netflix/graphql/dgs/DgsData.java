@@ -28,9 +28,26 @@ import java.lang.annotation.*;
  */
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
+@Repeatable(DgsData.List.class)
 @Inherited
 public @interface DgsData {
     String parentType();
 
     String field() default "";
+
+
+    /**
+     * Container annotation that aggregates several {@link DgsData @DgsData} annotations.
+     */
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @Inherited
+    @Documented
+    @interface List {
+
+        /**
+         * Return the contained {@link DgsData} associated with this method.
+         */
+        DgsData[] value();
+    }
 }

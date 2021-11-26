@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 buildscript {
     repositories {
         mavenCentral()
@@ -24,9 +26,9 @@ group = "com.netflix.graphql.dgs"
 
 plugins {
     `java-library`
-    id("nebula.netflixoss") version "9.1.0"
-    id("nebula.dependency-recommender") version "9.1.1"
-    id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
+    id("nebula.netflixoss") version "10.3.0"
+    id("nebula.dependency-recommender") version "11.0.0"
+    id("org.jmailen.kotlinter") version "3.6.0"
     kotlin("jvm") version Versions.KOTLIN_VERSION
     kotlin("kapt") version Versions.KOTLIN_VERSION
     idea
@@ -42,18 +44,6 @@ allprojects {
     apply(plugin = "nebula.netflixoss")
     apply(plugin = "nebula.dependency-recommender")
 
-    /**
-     * Remove once https://youtrack.jetbrains.com/issue/KT-34394
-     * implementationDependenciesMetadata configuration should not be resolvable. This causes conflicts for resolution
-     */
-    tasks.named("generateLock") {
-        doFirst {
-            project.configurations.filter { it.name.contains("DependenciesMetadata") }.forEach {
-                it.isCanBeResolved = false
-            }
-        }
-    }
-
     dependencyRecommendations {
         mavenBom(mapOf("module" to "org.springframework:spring-framework-bom:${Versions.SPRING_VERSION}"))
         mavenBom(mapOf("module" to "org.springframework.boot:spring-boot-dependencies:${Versions.SPRING_BOOT_VERSION}"))
@@ -64,15 +54,38 @@ allprojects {
     }
 }
 
-subprojects {
+val internalBomModules by extra(
+    listOf(
+        project(":graphql-dgs-platform"),
+        project(":graphql-dgs-platform-dependencies")
+    )
+)
+
+configure(subprojects.filterNot { it in internalBomModules }) {
+
     apply {
         plugin("java-library")
         plugin("kotlin")
         plugin("kotlin-kapt")
-        plugin("org.jlleitschuh.gradle.ktlint")
+        plugin("org.jmailen.kotlinter")
+    }
+
+    /**
+     * Remove once the following ticket is closed:
+     *  Kotlin-JVM: runtimeOnlyDependenciesMetadata, implementationDependenciesMetadata should be marked with isCanBeResolved=false
+     *  https://youtrack.jetbrains.com/issue/KT-34394
+     */
+    tasks.named("generateLock") {
+        doFirst {
+            project.configurations.filter { it.name.contains("DependenciesMetadata") }.forEach {
+                it.isCanBeResolved = false
+            }
+        }
     }
 
     dependencies {
+        // Apply the BOM to applicable subprojects.
+        api(platform(project(":graphql-dgs-platform")))
         // Speed up processing of AutoConfig's produced by Spring Boot
         annotationProcessor("org.springframework.boot:spring-boot-autoconfigure-processor")
         // Produce Config Metadata for properties used in Spring Boot
@@ -85,7 +98,7 @@ subprojects {
         testImplementation("org.springframework.boot:spring-boot-starter-test") {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         }
-        testImplementation("io.mockk:mockk:1.10.3-jdk8")
+        testImplementation("io.mockk:mockk:1.12.1")
     }
 
     java {
@@ -102,27 +115,27 @@ subprojects {
         }
     }
 
+    tasks.withType<JavaCompile>().configureEach {
+        options.compilerArgs + "-parameters"
+    }
+
+    tasks.withType<KotlinCompile>().configureEach {
+        kotlinOptions {
+            freeCompilerArgs += "-Xjvm-default=enable"
+            jvmTarget = "1.8"
+        }
+    }
+
     tasks {
-        compileKotlin {
-            kotlinOptions {
-                freeCompilerArgs = listOf("-Xjvm-default=all")
-                jvmTarget = "1.8"
-            }
-        }
-
-        compileTestKotlin {
-            kotlinOptions {
-                freeCompilerArgs = listOf("-Xjvm-default=all")
-                jvmTarget = "1.8"
-            }
-        }
-
         test {
             useJUnitPlatform()
         }
     }
 
-    configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
-        disabledRules.set(setOf("no-wildcard-imports"))
+    kotlinter {
+        indentSize = 4
+        reporters = arrayOf("checkstyle", "plain")
+        experimentalRules = false
+        disabledRules = arrayOf("no-wildcard-imports")
     }
 }

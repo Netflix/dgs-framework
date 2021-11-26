@@ -15,14 +15,14 @@
  */
 
 dependencies {
-    implementation(project(":graphql-dgs"))
+    api(project(":graphql-dgs-subscription-types"))
 
+    implementation(project(":graphql-dgs"))
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("org.springframework:spring-web")
     implementation("org.springframework:spring-websocket")
-
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    testImplementation("io.mockk:mockk:1.10.3-jdk8")
-    testImplementation("io.reactivex.rxjava3:rxjava:3.+")
+    testImplementation("io.projectreactor:reactor-core")
+    testImplementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 }

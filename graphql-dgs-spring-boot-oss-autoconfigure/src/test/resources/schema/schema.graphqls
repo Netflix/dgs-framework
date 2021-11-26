@@ -11,6 +11,9 @@ type Query {
     deny: String
     errorTest: String
 
+    #Header example
+    helloWithHeader(name: String): String
+
     withNullableNull: String
 
     withNonNullableNull: String!

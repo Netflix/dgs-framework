@@ -1,0 +1,31 @@
+{
+  "groups": [],
+  "properties": [
+    {
+      "name": "dgs.graphql.extensions.scalars.enabled",
+      "type": "java.lang.Boolean",
+      "description": "If enabled, will provide an auto-configuration that will by default registered the Scalar Extensions available in graphql-java-extended-scalars for the DGS Framework."
+    },
+    {
+      "name": "dgs.graphql.extensions.scalars.time-dates.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enabled by default, if dgs.graphql.extensions.scalars.enabled is enabled, will register the DateTime, Date, and Time scalar extensions."
+    },
+    {
+      "name": "dgs.graphql.extensions.scalars.objects.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enabled by default, if dgs.graphql.extensions.scalars.enabled is enabled, will register the Object, Json, Url, and Locale scalar extensions."
+    },
+    {
+      "name": "dgs.graphql.extensions.scalars.numbers.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enabled by default, if dgs.graphql.extensions.scalars.enabled is enabled, will register all numeric scalar extensions such as PositiveInt, NegativeInt, etc."
+    },
+    {
+      "name": "dgs.graphql.extensions.scalars.chars.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enabled by default, if dgs.graphql.extensions.scalars.enabled is enabled, will register the GraphQLChar extension."
+    }
+  ],
+  "hints": []
+}

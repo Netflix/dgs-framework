@@ -16,15 +16,13 @@
 
 package com.netflix.graphql.dgs.client
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import reactor.core.publisher.Mono
 
 /**
- * Default GraphQLClient implementation. Use this class to execute GraphQL queries against a standalone DGS or the gateway.
+ * Default [GraphQLClient] implementation. Use this class to execute GraphQL queries against a standalone DGS or the gateway.
  * The value of this client is in it's JSON parsing of responses.
  * The client is not tied to any particular HTTP client library. The actual HTTP request code is provided by the user.
+ * Note that if you want to use WebClient, there is the [WebClientGraphQLClient] available, which is simpler to use.
  *
  * Example:
  *
@@ -40,67 +38,120 @@ import reactor.core.publisher.Mono
  *       return new HttpResponse(exchange.getStatusCodeValue(), exchange.getBody());
  *    });
  */
+@Deprecated("This has been replaced by [CustomGraphQLClient], [CustomReactiveGraphQLClient] and [WebClientGraphQLClient]")
 class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQLClient {
 
-    companion object {
-        private val objectMapper: ObjectMapper = try {
-            Class.forName("com.fasterxml.jackson.module.kotlin.KotlinModule\$Builder")
-            ObjectMapper().registerModule(KotlinModule.Builder().nullIsSameAsDefault(true).build())
-        } catch (ex: ClassNotFoundException) {
-            ObjectMapper().registerKotlinModule()
-        }
-        private val defaultHeaders = mapOf(
-            "Accept" to listOf("application/json"),
-            "Content-type" to listOf("application/json")
-        )
+    /**
+     * Executes a query and returns a GraphQLResponse.
+     * The actual HTTP request is done by an implementation of RequestExecutor, which is user provided.
+     * The RequestExecutor is typically provided as a lambda expression.
+     * The `Accept` and `Content-Type` headers are set. Additional headers can be set in the RequestExecutor.
+     * @param query The Query as a String
+     * @param variables Query variables. May be empty
+     * @param operationName optional operation name
+     * @param requestExecutor The code that does the actual HTTP request. Typically provided as a lambda expression.
+     * @return GraphQLResponse
+     * @throws GraphQLClientException when the HTTP response code is not 2xx.
+     */
+    override fun executeQuery(
+        query: String,
+        variables: Map<String, Any>,
+        operationName: String?,
+        requestExecutor: RequestExecutor
+    ): GraphQLResponse {
+        val serializedRequest = GraphQLClients.objectMapper.writeValueAsString(Request(query, variables, operationName))
+        val response = requestExecutor.execute(url, GraphQLClients.defaultHeaders, serializedRequest)
+        return GraphQLClients.handleResponse(response, serializedRequest, url)
+    }
 
-        private data class Request(val query: String, val variables: Map<String, Any>)
+    override fun executeQuery(query: String): GraphQLResponse {
+        throw UnsupportedOperationException("Please move to [BlockingGraphQLClient] to use this method")
+    }
+
+    override fun executeQuery(query: String, variables: Map<String, Any>): GraphQLResponse {
+        throw UnsupportedOperationException("Please move to [BlockingGraphQLClient] to use this method")
+    }
+
+    override fun executeQuery(query: String, variables: Map<String, Any>, operationName: String?): GraphQLResponse {
+        throw UnsupportedOperationException("Please move to [BlockingGraphQLClient] to use this method")
     }
 
     /**
      * Executes a query and returns a GraphQLResponse.
      * The actual HTTP request is done by an implementation of RequestExecutor, which is user provided.
      * The RequestExecutor is typically provided as a lambda expression.
-     * The Accept and Content-Type headers are set. Additional headers can be set in the RequestExecutor.
+     * The `Accept` and `Content-Type` headers are set. Additional headers can be set in the RequestExecutor.
      * @param query The Query as a String
      * @param variables Query variables. May be empty
      * @param requestExecutor The code that does the actual HTTP request. Typically provided as a lambda expression.
      * @return GraphQLResponse
      * @throws GraphQLClientException when the HTTP response code is not 2xx.
      */
-    override fun executeQuery(query: String, variables: Map<String, Any>, requestExecutor: RequestExecutor): GraphQLResponse {
-        val serializedRequest = objectMapper.writeValueAsString(Request(query, variables))
+    override fun executeQuery(
+        query: String,
+        variables: Map<String, Any>,
+        requestExecutor: RequestExecutor
+    ): GraphQLResponse {
+        @Suppress("DEPRECATION", "BlockingMethodInNonBlockingContext")
+        return executeQuery(query, variables, null, requestExecutor)
+    }
 
-        val response = requestExecutor.execute(url, defaultHeaders, serializedRequest)
-        return handleResponse(response, serializedRequest)
+    override fun reactiveExecuteQuery(query: String): Mono<GraphQLResponse> {
+        throw UnsupportedOperationException("Please move to [CustomGraphQLClient] to use this method")
+    }
+
+    override fun reactiveExecuteQuery(query: String, variables: Map<String, Any>): Mono<GraphQLResponse> {
+        throw UnsupportedOperationException("Please move to [CustomGraphQLClient] to use this method")
+    }
+
+    override fun reactiveExecuteQuery(
+        query: String,
+        variables: Map<String, Any>,
+        operationName: String?
+    ): Mono<GraphQLResponse> {
+        throw UnsupportedOperationException("Please move to [CustomGraphQLClient] to use this method")
     }
 
     /**
      * Executes a query and returns a reactive Mono<GraphQLResponse>.
      * The actual HTTP request is done by an implementation of RequestExecutor, which is user provided.
      * The RequestExecutor is typically provided as a lambda expression.
-     * The Accept and Content-Type headers are set. Additional headers can be set in the RequestExecutor.
+     * The `Accept` and `Content-Type` headers are set. Additional headers can be set in the RequestExecutor.
      * @param query The Query as a String
      * @param variables Query variables. May be empty
      * @param requestExecutor The code that does the actual HTTP request. Typically provided as a lambda expression.
      * @return Mono<GraphQLResponse>
      * @throws GraphQLClientException when the HTTP response code is not 2xx.
      */
-    override fun reactiveExecuteQuery(query: String, variables: Map<String, Any>, requestExecutor: MonoRequestExecutor): Mono<GraphQLResponse> {
-        val serializedRequest = objectMapper.writeValueAsString(Request(query, variables))
-
-        return requestExecutor.execute(url, defaultHeaders, serializedRequest).map { response ->
-            handleResponse(response, serializedRequest)
-        }
+    override fun reactiveExecuteQuery(
+        query: String,
+        variables: Map<String, Any>,
+        requestExecutor: MonoRequestExecutor
+    ): Mono<GraphQLResponse> {
+        return reactiveExecuteQuery(query, variables, null, requestExecutor)
     }
 
-    private fun handleResponse(response: HttpResponse, requestBody: String): GraphQLResponse {
-        val (statusCode, body) = response
-        val headers = response.headers
-        if (statusCode !in 200..299) {
-            throw GraphQLClientException(statusCode, url, body ?: "", requestBody)
+    /**
+     * Executes a query and returns a reactive Mono<GraphQLResponse>.
+     * The actual HTTP request is done by an implementation of RequestExecutor, which is user provided.
+     * The RequestExecutor is typically provided as a lambda expression.
+     * The `Accept` and `Content-Type` headers are set. Additional headers can be set in the RequestExecutor.
+     * @param query The Query as a String
+     * @param variables Query variables. May be empty
+     * @param operationName optional operation name
+     * @param requestExecutor The code that does the actual HTTP request. Typically provided as a lambda expression.
+     * @return Mono<GraphQLResponse>
+     * @throws GraphQLClientException when the HTTP response code is not 2xx.
+     */
+    override fun reactiveExecuteQuery(
+        query: String,
+        variables: Map<String, Any>,
+        operationName: String?,
+        requestExecutor: MonoRequestExecutor
+    ): Mono<GraphQLResponse> {
+        val serializedRequest = GraphQLClients.objectMapper.writeValueAsString(Request(query, variables, operationName))
+        return requestExecutor.execute(url, GraphQLClients.defaultHeaders, serializedRequest).map { response ->
+            GraphQLClients.handleResponse(response, serializedRequest, url)
         }
-
-        return GraphQLResponse(body ?: "", headers)
     }
 }

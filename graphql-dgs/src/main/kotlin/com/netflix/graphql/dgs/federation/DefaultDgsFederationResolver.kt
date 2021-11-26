@@ -22,13 +22,22 @@ import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.exceptions.InvalidDgsEntityFetcher
 import com.netflix.graphql.dgs.exceptions.MissingDgsEntityFetcherException
+import com.netflix.graphql.dgs.exceptions.MissingFederatedQueryArgument
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.types.errors.TypedGraphQLError
+import graphql.execution.DataFetcherExceptionHandler
+import graphql.execution.DataFetcherExceptionHandlerParameters
+import graphql.execution.DataFetcherResult
+import graphql.execution.ResultPath
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.TypeResolver
+import org.dataloader.Try
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import java.lang.reflect.InvocationTargetException
+import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
@@ -41,8 +50,12 @@ open class DefaultDgsFederationResolver() :
      * This is the most common use case.
      * The default constructor is used to extend the DefaultDgsFederationResolver. In that case injection is used to provide the schemaProvider.
      */
-    constructor(providedDgsSchemaProvider: DgsSchemaProvider) : this() {
+    constructor(
+        providedDgsSchemaProvider: DgsSchemaProvider,
+        dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler>
+    ) : this() {
         dgsSchemaProvider = providedDgsSchemaProvider
+        dgsExceptionHandler = dataFetcherExceptionHandler
     }
 
     /**
@@ -52,7 +65,8 @@ open class DefaultDgsFederationResolver() :
     @Autowired
     lateinit var dgsSchemaProvider: DgsSchemaProvider
 
-    val logger: Logger = LoggerFactory.getLogger(DefaultDgsFederationResolver::class.java)
+    @Autowired
+    lateinit var dgsExceptionHandler: Optional<DataFetcherExceptionHandler>
 
     override fun entitiesFetcher(): DataFetcher<Any?> {
         return DataFetcher { env ->
@@ -60,40 +74,87 @@ open class DefaultDgsFederationResolver() :
         }
     }
 
-    private fun dgsEntityFetchers(env: DataFetchingEnvironment): CompletableFuture<List<Any?>> {
+    private fun dgsEntityFetchers(env: DataFetchingEnvironment): CompletableFuture<DataFetcherResult<List<Any?>>> {
         val resultList = env.getArgument<List<Map<String, Any>>>(_Entity.argumentName)
             .map { values ->
-                val typename = values["__typename"] ?: throw RuntimeException("__typename missing from arguments in federated query")
-                val fetcher = dgsSchemaProvider.entityFetchers[typename]
-                    ?: throw MissingDgsEntityFetcherException(typename.toString())
+                Try.tryCall {
+                    val typename = values["__typename"]
+                        ?: throw MissingFederatedQueryArgument("__typename")
+                    val fetcher = dgsSchemaProvider.entityFetchers[typename]
+                        ?: throw MissingDgsEntityFetcherException(typename.toString())
 
-                if (!fetcher.second.parameterTypes.any { it.isAssignableFrom(Map::class.java) }) {
-                    throw InvalidDgsEntityFetcher("@DgsEntityFetcher ${fetcher.first::class.java.name}.${fetcher.second.name} is invalid. A DgsEntityFetcher must accept an argument of type Map<String, Object>")
-                }
+                    if (!fetcher.second.parameterTypes.any { it.isAssignableFrom(Map::class.java) }) {
+                        throw InvalidDgsEntityFetcher("@DgsEntityFetcher ${fetcher.first::class.java.name}.${fetcher.second.name} is invalid. A DgsEntityFetcher must accept an argument of type Map<String, Object>")
+                    }
+                    val result =
+                        if (fetcher.second.parameterTypes.any { it.isAssignableFrom(DgsDataFetchingEnvironment::class.java) }) {
+                            fetcher.second.invoke(fetcher.first, values, DgsDataFetchingEnvironment(env))
+                        } else {
+                            fetcher.second.invoke(fetcher.first, values)
+                        }
 
-                val result =
-                    if (fetcher.second.parameterTypes.any { it.isAssignableFrom(DgsDataFetchingEnvironment::class.java) }) {
-                        fetcher.second.invoke(fetcher.first, values, DgsDataFetchingEnvironment(env))
-                    } else {
-                        fetcher.second.invoke(fetcher.first, values)
+                    if (result == null) {
+                        CompletableFuture.completedFuture(null)
                     }
 
-                if (result == null) {
-                    throw MissingDgsEntityFetcherException(typename.toString())
+                    if (result is CompletionStage<*>) {
+                        result.toCompletableFuture()
+                    } else {
+                        CompletableFuture.completedFuture(result)
+                    }
                 }
-
-                if (result is CompletionStage<*>) {
-                    result.toCompletableFuture()
-                } else {
-                    CompletableFuture.completedFuture(result)
-                }
+                    .map { tryFuture -> Try.tryFuture(tryFuture) }
+                    .recover { exception -> CompletableFuture.completedFuture(Try.failed(exception)) }
+                    .get()
             }
 
         return CompletableFuture.allOf(*resultList.toTypedArray()).thenApply {
-            resultList.asSequence()
-                .map { cf -> cf.join() }
-                .flatMap { r -> if (r is Collection<*>) r.asSequence() else sequenceOf(r) }
-                .toList()
+            val trySequence = resultList.asSequence().map { it.join() }
+            DataFetcherResult.newResult<List<Any?>>()
+                .data(
+                    trySequence
+                        .map { tryResult -> tryResult.orElse(null) }
+                        .flatMap { r -> if (r is Collection<*>) r.asSequence() else sequenceOf(r) }
+                        .toList()
+                )
+                .errors(
+                    trySequence
+                        .filter { tryResult -> tryResult.isFailure }
+                        .map { tryResult -> tryResult.throwable }
+                        .flatMap { e ->
+                            if (e is InvocationTargetException && e.targetException != null) {
+                                if (dgsExceptionHandler.isPresent) {
+                                    val res = dgsExceptionHandler.get().handleException(
+                                        DataFetcherExceptionHandlerParameters
+                                            .newExceptionParameters()
+                                            .dataFetchingEnvironment(env)
+                                            .exception(e.targetException)
+                                            .build()
+                                    )
+                                    res.join().errors.asSequence()
+                                } else {
+                                    sequenceOf(
+                                        TypedGraphQLError.newInternalErrorBuilder()
+                                            .message(
+                                                "%s: %s",
+                                                e.targetException::class.java.name,
+                                                e.targetException.message
+                                            )
+                                            .path(ResultPath.parse("/_entities")).build()
+                                    )
+                                }
+                            } else {
+                                sequenceOf(
+                                    TypedGraphQLError.newInternalErrorBuilder()
+                                        .message("%s: %s", e::class.java.name, e.message)
+                                        .path(ResultPath.parse("/_entities"))
+                                        .build()
+                                )
+                            }
+                        }
+                        .toList()
+                )
+                .build()
         }
     }
 
@@ -117,5 +178,9 @@ open class DefaultDgsFederationResolver() :
 
             type
         }
+    }
+
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(DefaultDgsFederationResolver::class.java)
     }
 }

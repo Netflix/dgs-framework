@@ -15,7 +15,9 @@
  */
 
 dependencies {
-    api("com.graphql-java:graphql-java:${Versions.GRAPHQL_JAVA}")
-    implementation("com.github.javafaker:javafaker:1.+")
+    api("com.graphql-java:graphql-java")
+    implementation("com.github.javafaker:javafaker:1.+") {
+        exclude("org.yaml", "snakeyaml")
+    }
     implementation("org.slf4j:slf4j-api")
 }

@@ -28,15 +28,16 @@ import org.springframework.web.bind.annotation.RestController
 
 /**
  * Provides an HTTP endpoint to retrieve the available schema.
+ *
+ * This class is defined as "open" only for proxy/aop use cases. It is not considered part of the API, and backwards compatibility is not guaranteed.
+ * Do not manually extend this class.
  */
 @RestController
-class DgsRestSchemaJsonController(private val schemaProvider: DgsSchemaProvider) {
+open class DgsRestSchemaJsonController(open val schemaProvider: DgsSchemaProvider) {
 
     // The @ConfigurationProperties bean name is <prefix>-<fqn>
     @RequestMapping("#{@'dgs.graphql-com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcConfigurationProperties'.schemaJson.path}", produces = ["application/json"])
     fun schema(): String {
-        val mapper = jacksonObjectMapper()
-
         val graphQLSchema: GraphQLSchema = schemaProvider.schema()
         val graphQL = GraphQL.newGraphQL(graphQLSchema).build()
 
@@ -45,5 +46,9 @@ class DgsRestSchemaJsonController(private val schemaProvider: DgsSchemaProvider)
         val execute: ExecutionResult = graphQL.execute(executionInput)
 
         return mapper.writeValueAsString(execute.toSpecification())
+    }
+
+    companion object {
+        private val mapper = jacksonObjectMapper()
     }
 }

@@ -16,29 +16,31 @@
 
 package com.netflix.graphql.dgs.autoconfig
 
-import com.netflix.graphql.dgs.DgsContextBuilder
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
-import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
-import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
+import com.netflix.graphql.dgs.internal.*
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
-import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
-import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import com.netflix.graphql.mocking.MockProvider
 import graphql.execution.*
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
+import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.GraphQLSchema
 import graphql.schema.idl.TypeDefinitionRegistry
+import graphql.schema.visibility.DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
+import graphql.schema.visibility.GraphqlFieldVisibility
+import graphql.schema.visibility.NoIntrospectionGraphqlFieldVisibility.NO_INTROSPECTION_FIELD_VISIBILITY
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -49,9 +51,17 @@ import java.util.*
  * Framework auto configuration based on open source Spring only, without Netflix integrations.
  * This does NOT have logging, tracing, metrics and security integration.
  */
+@Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @Configuration
+@EnableConfigurationProperties(value = [DgsConfigurationProperties::class, DgsIntrospectionConfigurationProperties::class])
 @ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class])
-open class DgsAutoConfiguration {
+open class DgsAutoConfiguration(
+    private val configProps: DgsConfigurationProperties
+) {
+
+    companion object {
+        const val AUTO_CONF_PREFIX = "dgs.graphql"
+    }
 
     @Bean
     open fun dgsQueryExecutor(
@@ -59,16 +69,16 @@ open class DgsAutoConfiguration {
         schema: GraphQLSchema,
         schemaProvider: DgsSchemaProvider,
         dgsDataLoaderProvider: DgsDataLoaderProvider,
-        dgsContextBuilder: DgsContextBuilder,
+        dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
         dataFetcherExceptionHandler: DataFetcherExceptionHandler,
         chainedInstrumentation: ChainedInstrumentation,
         environment: Environment,
         @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
         @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
         idProvider: Optional<ExecutionIdProvider>,
-        reloadSchemaIndicator: ReloadSchemaIndicator
+        reloadSchemaIndicator: ReloadSchemaIndicator,
+        preparsedDocumentProvider: PreparsedDocumentProvider
     ): DgsQueryExecutor {
-
         val queryExecutionStrategy = providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
         val mutationExecutionStrategy = providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
         return DefaultDgsQueryExecutor(
@@ -80,8 +90,15 @@ open class DgsAutoConfiguration {
             queryExecutionStrategy,
             mutationExecutionStrategy,
             idProvider,
-            reloadSchemaIndicator
+            reloadSchemaIndicator,
+            preparsedDocumentProvider
         )
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun preparsedDocumentProvider(): PreparsedDocumentProvider {
+        return DgsNoOpPreparsedDocumentProvider
     }
 
     @Bean
@@ -121,12 +138,23 @@ open class DgsAutoConfiguration {
     open fun dgsSchemaProvider(
         applicationContext: ApplicationContext,
         federationResolver: Optional<DgsFederationResolver>,
-        dataFetcherExceptionHandler: DataFetcherExceptionHandler,
         existingTypeDefinitionFactory: Optional<TypeDefinitionRegistry>,
         existingCodeRegistry: Optional<GraphQLCodeRegistry>,
-        mockProviders: Optional<Set<MockProvider>>
+        mockProviders: Optional<Set<MockProvider>>,
+        dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
+        dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
+        cookieValueResolver: Optional<CookieValueResolver> = Optional.empty()
     ): DgsSchemaProvider {
-        return DgsSchemaProvider(applicationContext, federationResolver, existingTypeDefinitionFactory, mockProviders)
+        return DgsSchemaProvider(
+            applicationContext,
+            federationResolver,
+            existingTypeDefinitionFactory,
+            mockProviders,
+            configProps.schemaLocations,
+            dataFetcherResultProcessors,
+            dataFetcherExceptionHandler,
+            cookieValueResolver
+        )
     }
 
     @Bean
@@ -137,8 +165,23 @@ open class DgsAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    open fun schema(dgsSchemaProvider: DgsSchemaProvider): GraphQLSchema {
-        return dgsSchemaProvider.schema()
+    open fun schema(dgsSchemaProvider: DgsSchemaProvider, fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
+        return dgsSchemaProvider.schema(null, fieldVisibility)
+    }
+
+    @Bean
+    @ConditionalOnProperty(
+        prefix = "$AUTO_CONF_PREFIX.introspection",
+        name = ["enabled"], havingValue = "false", matchIfMissing = false
+    )
+    open fun noIntrospectionFieldVisibility(): GraphqlFieldVisibility {
+        return NO_INTROSPECTION_FIELD_VISIBILITY
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun defaultFieldVisibility(): GraphqlFieldVisibility {
+        return DEFAULT_FIELD_VISIBILITY
     }
 
     @Bean
@@ -146,7 +189,7 @@ open class DgsAutoConfiguration {
     open fun graphQLContextBuilder(
         dgsCustomContextBuilder: Optional<DgsCustomContextBuilder<*>>,
         dgsCustomContextBuilderWithRequest: Optional<DgsCustomContextBuilderWithRequest<*>>
-    ): DgsContextBuilder {
+    ): DefaultDgsGraphQLContextBuilder {
         return DefaultDgsGraphQLContextBuilder(dgsCustomContextBuilder, dgsCustomContextBuilderWithRequest)
     }
 

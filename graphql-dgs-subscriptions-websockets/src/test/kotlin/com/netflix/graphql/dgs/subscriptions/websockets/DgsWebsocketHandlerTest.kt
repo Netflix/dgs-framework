@@ -19,11 +19,11 @@ package com.netflix.graphql.dgs.subscriptions.websockets
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.types.subscription.*
 import graphql.ExecutionResult
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import io.reactivex.rxjava3.core.Flowable
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -31,6 +31,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.reactivestreams.Publisher
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 @ExtendWith(MockKExtension::class)
 class DgsWebsocketHandlerTest {
@@ -64,7 +66,34 @@ class DgsWebsocketHandlerTest {
                    "query": "{ hello }",
                    "variables": {},
                    "extensions": {}
-                }
+                },
+                "id": "123"
+            }
+        """.trimIndent()
+    )
+
+    private val queryMessageWithVariable = TextMessage(
+        """{
+                "type": "$GQL_START",
+                "payload": {
+                   "query": "query HELLO(${'$'}name: String){ hello(name:${'$'}name) }",
+                   "variables": {"name": "Stranger"},
+                   "extensions": {}
+                },
+                "id": "222"
+            }
+        """.trimIndent()
+    )
+
+    private val queryMessageWithNullVariable = TextMessage(
+        """{
+                "type": "$GQL_START",
+                "payload": {
+                   "query": "query HELLO(${'$'}name: String){ hello(name:${'$'}name) }",
+                   "variables": null,
+                   "extensions": {}
+                },
+                "id": "123"
             }
         """.trimIndent()
     )
@@ -91,6 +120,44 @@ class DgsWebsocketHandlerTest {
     }
 
     @Test
+    fun testWithMultipleSubscriptionsPerSession() {
+        connect(session1)
+        start(session1, 1)
+        startWithVariable(session1, 1)
+
+        assertThat(dgsWebsocketHandler.sessions.size).isEqualTo(1)
+        assertThat(dgsWebsocketHandler.subscriptions.size).isEqualTo(1)
+        disconnect(session1)
+        assertThat(dgsWebsocketHandler.sessions.size).isEqualTo(0)
+    }
+
+    @Test
+    fun testWithQueryVariables() {
+        connect(session1)
+        startWithVariable(session1, 1)
+
+        disconnect(session1)
+
+        // ACK, DATA, COMPLETE
+        verify(exactly = 3) {
+            session1.sendMessage(any())
+        }
+    }
+
+    @Test
+    fun testWithNullQueryVariables() {
+        connect(session1)
+        startWithNullVariable(session1, 1)
+
+        disconnect(session1)
+
+        // ACK, DATA, COMPLETE
+        verify(exactly = 3) {
+            session1.sendMessage(any())
+        }
+    }
+
+    @Test
     fun testWithError() {
         connect(session1)
         startWithError(session1)
@@ -98,6 +165,19 @@ class DgsWebsocketHandlerTest {
 
         // ACK, ERROR
         verify(exactly = 2) {
+            session1.sendMessage(any())
+        }
+    }
+
+    @Test
+    fun testWithStop() {
+        connect(session1)
+        start(session1, 1)
+        stop(session1)
+        disconnect(session1)
+
+        // ACK, DATA, COMPLETE
+        verify(exactly = 3) {
             session1.sendMessage(any())
         }
     }
@@ -151,17 +231,71 @@ class DgsWebsocketHandlerTest {
             result1
         }
 
-        every { executionResult.getData<Publisher<ExecutionResult>>() } returns Flowable.fromIterable(results)
-        every { dgsQueryExecutor.execute("{ hello }") } returns executionResult
+        every { executionResult.getData<Publisher<ExecutionResult>>() } returns
+            Mono.just(results).flatMapMany { Flux.fromIterable(results) }
+
+        every { dgsQueryExecutor.execute("{ hello }", emptyMap()) } returns executionResult
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessage)
     }
 
+    private fun startWithVariable(webSocketSession: WebSocketSession, nrOfResults: Int) {
+
+        every { webSocketSession.isOpen } returns true
+
+        val results = (1..nrOfResults).map {
+            val result1 = mockkClass(ExecutionResult::class)
+            every { result1.getData<Any>() } returns it
+            result1
+        }
+
+        every { executionResult.getData<Publisher<ExecutionResult>>() } returns Mono.just(results).flatMapMany { Flux.fromIterable(results) }
+
+        every { dgsQueryExecutor.execute("query HELLO(\$name: String){ hello(name:\$name) }", mapOf("name" to "Stranger")) } returns executionResult
+
+        dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessageWithVariable)
+    }
+
+    private fun startWithNullVariable(webSocketSession: WebSocketSession, nrOfResults: Int) {
+
+        every { webSocketSession.isOpen } returns true
+
+        val results = (1..nrOfResults).map {
+            val result1 = mockkClass(ExecutionResult::class)
+            every { result1.getData<Any>() } returns it
+            result1
+        }
+
+        every { executionResult.getData<Publisher<ExecutionResult>>() } returns Mono.just(results).flatMapMany { Flux.fromIterable(results) }
+
+        every { dgsQueryExecutor.execute("query HELLO(\$name: String){ hello(name:\$name) }", null) } returns executionResult
+
+        dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessageWithNullVariable)
+    }
+
     private fun startWithError(webSocketSession: WebSocketSession) {
         every { webSocketSession.isOpen } returns true
-        every { executionResult.getData<Publisher<ExecutionResult>>() } returns Flowable.error(RuntimeException("That's wrong!"))
-        every { dgsQueryExecutor.execute("{ hello }") } returns executionResult
+        every { executionResult.getData<Publisher<ExecutionResult>>() } returns Mono.error(RuntimeException("That's wrong!"))
+        every { dgsQueryExecutor.execute("{ hello }", emptyMap()) } returns executionResult
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessage)
+    }
+
+    private fun stop(webSocketSession: WebSocketSession) {
+        val currentNrOfSessions = dgsWebsocketHandler.sessions.size
+        every { webSocketSession.close() } just Runs
+
+        val textMessage = TextMessage(
+            """{
+            "type": "$GQL_STOP",
+            "id": "123"
+        }
+            """.trimIndent()
+        )
+
+        dgsWebsocketHandler.handleTextMessage(webSocketSession, textMessage)
+
+        assertThat(dgsWebsocketHandler.sessions.size).isEqualTo(currentNrOfSessions)
+        assertThat(dgsWebsocketHandler.subscriptions[webSocketSession.id]?.get("123")).isNull()
     }
 }

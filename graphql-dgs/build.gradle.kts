@@ -15,22 +15,28 @@
  */
 
 dependencies {
+
     api(project(":graphql-error-types"))
     api(project(":graphql-dgs-mocking"))
 
-    api("com.graphql-java:graphql-java:${Versions.GRAPHQL_JAVA}")
-    api("com.jayway.jsonpath:json-path:2.+")
+    api("com.graphql-java:graphql-java")
+    api("com.jayway.jsonpath:json-path")
+
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     implementation("org.springframework:spring-web")
     implementation("org.springframework:spring-context")
 
+    compileOnly("org.springframework.security:spring-security-core")
+
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-    implementation("com.apollographql.federation:federation-graphql-java-support:${Versions.GRAPHQL_JAVA_FEDERATION}")
-    implementation("org.springframework.security:spring-security-core")
+    implementation("com.apollographql.federation:federation-graphql-java-support")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8")
 
     testImplementation("org.springframework.security:spring-security-core")
-    testImplementation("io.reactivex.rxjava3:rxjava:3.+")
-    testImplementation("io.projectreactor:reactor-core:3.4.0")
-    testImplementation("io.mockk:mockk:1.10.3-jdk8")
+    testImplementation("io.projectreactor:reactor-core")
+    testImplementation("io.projectreactor:reactor-test")
+    testImplementation("com.graphql-java:graphql-java-extended-scalars")
 }

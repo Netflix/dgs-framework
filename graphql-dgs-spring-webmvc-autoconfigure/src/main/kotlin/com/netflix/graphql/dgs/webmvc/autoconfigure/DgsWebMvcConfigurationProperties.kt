@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.webmvc.autoconfigure
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
+import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
 import javax.annotation.PostConstruct
 
@@ -29,23 +30,23 @@ import javax.annotation.PostConstruct
 @Suppress("ConfigurationProperties")
 data class DgsWebMvcConfigurationProperties(
     /** Path to the GraphQL endpoint without trailing slash. */
-    @DefaultValue("/graphql") val path: String,
-    @DefaultValue val graphiql: DgsGraphiQLConfigurationProperties,
-    @DefaultValue val schemaJson: DgsSchemaJsonConfigurationProperties
+    @DefaultValue("/graphql") var path: String = "/graphql",
+    @NestedConfigurationProperty var graphiql: DgsGraphiQLConfigurationProperties = DgsGraphiQLConfigurationProperties(),
+    @NestedConfigurationProperty var schemaJson: DgsSchemaJsonConfigurationProperties = DgsSchemaJsonConfigurationProperties()
 ) {
     /**
-     * Configuration properties for the schema-json endpoint.
+     * Configuration properties for the GraphiQL endpoint.
      */
     data class DgsGraphiQLConfigurationProperties(
         /** Path to the GraphiQL endpoint without trailing slash. */
-        @DefaultValue("/graphiql") val path: String
+        @DefaultValue("/graphiql") var path: String = "/graphiql"
     )
     /**
      * Configuration properties for the schema-json endpoint.
      */
     data class DgsSchemaJsonConfigurationProperties(
         /** Path to the schema-json endpoint without trailing slash. */
-        @DefaultValue("/schema.json") val path: String
+        @DefaultValue("/schema.json") var path: String = "/schema.json"
     )
 
     @PostConstruct
@@ -56,7 +57,7 @@ data class DgsWebMvcConfigurationProperties(
     }
 
     private fun validatePath(path: String, pathProperty: String) {
-        if (!path.startsWith("/") || path.endsWith("/")) {
+        if (path != "/" && (!path.startsWith("/") || path.endsWith("/"))) {
             throw IllegalArgumentException("$pathProperty must start with '/' and not end with '/' but was '$path'")
         }
     }

@@ -19,7 +19,7 @@ package com.netflix.graphql.dgs.autoconfig
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.autoconfig.testcomponents.CustomContextBuilderConfig
 import com.netflix.graphql.dgs.autoconfig.testcomponents.DataLoaderConfig
-import com.netflix.graphql.dgs.autoconfig.testcomponents.HelloDatFetcherConfig
+import com.netflix.graphql.dgs.autoconfig.testcomponents.HelloDataFetcherConfig
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -40,7 +40,7 @@ class DgsAutoConfigurationTest {
 
     @Test
     fun setsUpQueryExecutorWithDataFetcher() {
-        context.withUserConfiguration(HelloDatFetcherConfig::class.java).run { ctx ->
+        context.withUserConfiguration(HelloDataFetcherConfig::class.java).run { ctx ->
             assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
                 val executeQuery = it.executeAndExtractJsonPath<String>("query {hello}", "data.hello")
                 assertThat(executeQuery).isEqualTo("Hello!")
@@ -74,6 +74,28 @@ class DgsAutoConfigurationTest {
             assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
                 val json = it.executeAndExtractJsonPath<Any>("{hello}", "data.hello")
                 assertThat(json).isEqualTo("Hello custom context")
+            }
+        }
+    }
+
+    @Test
+    fun enabledIntrospectionTest() {
+        context.withUserConfiguration(CustomContextBuilderConfig::class.java).run { ctx ->
+            assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
+                val json = it.executeAndExtractJsonPath<Any>(
+                    " query availableQueries {\n" +
+                        "  __schema {\n" +
+                        "    queryType {\n" +
+                        "      fields {\n" +
+                        "        name\n" +
+                        "        description\n" +
+                        "      }\n" +
+                        "    }\n" +
+                        "  }\n" +
+                        "}",
+                    "data.__schema.queryType.fields[0].name"
+                )
+                assertThat(json).isEqualTo("hello")
             }
         }
     }

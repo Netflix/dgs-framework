@@ -1,3 +1,5 @@
 spring:
   application:
     name: dgs-example
+
+logging.level.graphql: DEBUG

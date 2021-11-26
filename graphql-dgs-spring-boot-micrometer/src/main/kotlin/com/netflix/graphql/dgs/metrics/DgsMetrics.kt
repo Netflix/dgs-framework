@@ -16,7 +16,9 @@
 
 package com.netflix.graphql.dgs.metrics
 
+import com.netflix.graphql.dgs.Internal
 import io.micrometer.core.instrument.Tag
+import io.micrometer.core.instrument.Tags
 
 object DgsMetrics {
 
@@ -44,6 +46,20 @@ object DgsMetrics {
 
     /** Defines the tags applied to the [GqlMetric] emitted by the framework. */
     enum class GqlTag(val key: String) {
+        /**
+         * QUERY, MUTATION, SUBSCRIPTION are the possible values.
+         * These represent the GraphQL operation that is executed.
+         */
+        OPERATION("gql.operation"),
+
+        /**
+         * GraphQL operation name if any. There is only one operation name per execution.
+         * If the GraphQL query does not have an operation name, anonymous is used instead.
+         *
+         * The cardinality of this tag will be limited.
+         */
+        OPERATION_NAME("gql.operation.name"),
+
         /** The sanitized query path. */
         PATH("gql.path"),
 
@@ -62,16 +78,68 @@ object DgsMetrics {
         /** The name of the data loader, may or may not be the same as the type of entity. */
         LOADER_NAME("gql.loaderName"),
 
-        /** Used to capture the result of an action, e.g. `ERROR` or `SUCCESS`.*/
-        OUTCOME("outcome")
+        /** Used to capture the result of an action, e.g. `sERROR` or `SUCCESS`.*/
+        OUTCOME("outcome"),
+
+        /** Used to capture the query complexity.*/
+        QUERY_COMPLEXITY("gql.query.complexity"),
+
+        /**
+         * Query Signature Hash of the query that was executed.
+         * Absent in case the query failed to pass GraphQL validation.
+         */
+        QUERY_SIG_HASH("gql.query.sig.hash"),
     }
 
-    enum class GqlTagValue(val owner: GqlTag, val value: String) {
-        /** Value used to reflect as successful  outcome.*/
-        SUCCESS(GqlTag.OUTCOME, "success"),
-        /** Value used to reflect a general failure.*/
-        FAILURE(GqlTag.OUTCOME, "failure");
+    @Internal
+    enum class InternalMetric(val key: String) {
+        /** _Timer_ that captures the elapsed time of a internal method execution.*/
+        TIMED_METHOD("dgs.method.latency"),
+    }
 
-        val tag: Tag = Tag.of(owner.key, value)
+    @Internal
+    enum class CommonTags(val key: String, defaultValue: String) {
+        /**
+         * Tag used to reflect as successful outcome.
+         */
+        SUCCESS(GqlTag.OUTCOME.key, "success") {
+            /** Returns the success [tag] along with the [JAVA_CLASS] of the value.*/
+            override fun <T : Any> tags(v: T): Tags {
+                return Tags.of(tag)
+                    .and(JAVA_CLASS.tags(v))
+            }
+        },
+
+        /**
+         * Tag used to reflect an **unsuccessful** outcome.
+         */
+        FAILURE(GqlTag.OUTCOME.key, "failure") {
+            /** Returns failure [tag] along with the [JAVA_CLASS] of the value.*/
+            override fun <T : Any> tags(v: T): Tags {
+                return Tags.of(tag)
+                    .and(JAVA_CLASS.tags(v))
+            }
+        },
+
+        /** Tag that reflects the class associated with the metric. */
+        JAVA_CLASS("class", "unknown") {
+            override fun <T : Any> tags(v: T): Tags {
+                return Tags.of(key, v::class.java.name)
+            }
+        },
+
+        /**
+         * Value use to reflect the name, or identifier, of a a method.
+         *The metric with this tag will normally be accompanied by the [JAVA_CLASS] tag as well.
+         */
+        JAVA_CLASS_METHOD("method", "unknown") {
+            override fun <T : Any> tags(v: T): Tags {
+                return Tags.of(key, "$v")
+            }
+        };
+
+        val tag: Tag = Tag.of(key, defaultValue)
+
+        abstract fun <T : Any> tags(v: T): Tags
     }
 }

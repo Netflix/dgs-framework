@@ -21,8 +21,11 @@ import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import org.assertj.core.api.Assertions.assertThat
 import org.dataloader.DataLoader
 import org.dataloader.DataLoaderOptions
+import org.dataloader.BatchLoader
+import org.dataloader.DataLoaderRegistry
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -30,6 +33,8 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.support.StaticListableBeanFactory
 import org.springframework.context.ApplicationContext
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionStage
 
 @ExtendWith(MockKExtension::class)
 class DgsDataLoaderProviderTest {
@@ -124,5 +129,36 @@ class DgsDataLoaderProviderTest {
 
         val privateDataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("privateExampleMappedLoaderFromField")
         Assertions.assertNotNull(privateDataLoader)
+    }
+
+    @Test
+    fun dataLoaderConsumer() {
+        every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns mapOf("withRegistry" to ExampleDataLoaderWithRegistry())
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns emptyMap()
+
+        val provider = DgsDataLoaderProvider(applicationContextMock)
+        provider.findDataLoaders()
+        val registry = provider.buildRegistry()
+
+        // Use the dataloader's "load" method to check if the registry was set correctly, because the dataloader instance isn't itself a DgsDataLoaderRegistryConsumer
+        val dataLoader = registry.getDataLoader<String, String>("withRegistry")
+        val load = dataLoader.load("")
+        dataLoader.dispatch()
+        val loaderKeys = load.get()
+        assertThat(loaderKeys).isEqualTo(registry.keys.toMutableList()[0])
+    }
+
+    @DgsDataLoader(name = "withRegistry")
+    class ExampleDataLoaderWithRegistry : BatchLoader<String, String>, DgsDataLoaderRegistryConsumer {
+
+        lateinit var registry: DataLoaderRegistry
+
+        override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry) {
+            this.registry = dataLoaderRegistry
+        }
+
+        override fun load(keys: List<String>): CompletionStage<MutableList<String>>? {
+            return CompletableFuture.completedFuture(registry.keys.toMutableList())
+        }
     }
 }

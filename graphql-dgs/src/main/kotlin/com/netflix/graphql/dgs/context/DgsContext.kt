@@ -24,7 +24,7 @@ import org.dataloader.BatchLoaderEnvironment
  * Context class that is created per request, and is added to both DataFetchingEnvironment and BatchLoaderEnvironment.
  * Custom data can be added by providing a [DgsCustomContextBuilder].
  */
-open class DgsContext(val customContext: Any?, val requestData: DgsRequestData?) {
+open class DgsContext(val customContext: Any? = null, val requestData: DgsRequestData?) {
 
     companion object {
         @JvmStatic
