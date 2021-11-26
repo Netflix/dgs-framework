@@ -350,11 +350,6 @@
             "locked": "5.2.13.RELEASE"
         }
     },
-    "ktlint": {
-        "com.pinterest:ktlint": {
-            "locked": "0.40.0"
-        }
-    },
     "nebulaRecommenderBom": {
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.3"
@@ -395,6 +390,12 @@
             ],
             "locked": "2.12.3"
         },
+        "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "locked": "2.12.3"
+        },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -408,6 +409,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets"
+            ],
+            "locked": "2.12.3"
+        },
+        "com.fasterxml.jackson.module:jackson-module-parameter-names": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
             "locked": "2.12.3"
         },
@@ -653,6 +660,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets"
+            ],
+            "locked": "5.2.13.RELEASE"
+        },
+        "org.springframework:spring-webflux": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
             "locked": "5.2.13.RELEASE"
         },
@@ -880,6 +893,12 @@
             ],
             "locked": "2.12.3"
         },
+        "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "locked": "2.12.3"
+        },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -893,6 +912,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets"
+            ],
+            "locked": "2.12.3"
+        },
+        "com.fasterxml.jackson.module:jackson-module-parameter-names": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
             "locked": "2.12.3"
         },
@@ -1151,6 +1176,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets"
+            ],
+            "locked": "5.2.13.RELEASE"
+        },
+        "org.springframework:spring-webflux": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
             "locked": "5.2.13.RELEASE"
         },

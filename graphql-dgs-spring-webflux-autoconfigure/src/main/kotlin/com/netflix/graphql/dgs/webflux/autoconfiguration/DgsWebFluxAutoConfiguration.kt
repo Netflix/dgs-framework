@@ -31,7 +31,11 @@ import com.netflix.graphql.dgs.webflux.handlers.DgsWebfluxHttpHandler
 import com.netflix.graphql.dgs.webflux.handlers.WebFluxCookieValueResolver
 import graphql.ExecutionInput
 import graphql.GraphQL
-import graphql.execution.*
+import graphql.execution.AsyncExecutionStrategy
+import graphql.execution.AsyncSerialExecutionStrategy
+import graphql.execution.DataFetcherExceptionHandler
+import graphql.execution.ExecutionIdProvider
+import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.introspection.IntrospectionQuery
 import graphql.schema.GraphQLSchema
@@ -112,9 +116,11 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     @Bean
     @ConditionalOnProperty(name = ["dgs.graphql.graphiql.enabled"], havingValue = "true", matchIfMissing = true)
     open fun graphiQlIndexRedirect(): RouterFunction<ServerResponse> {
-        return RouterFunctions.route().GET("/graphiql") {
-            permanentRedirect(URI.create("/graphiql/index.html")).build()
-        }.build()
+        return RouterFunctions.route()
+            .GET(configProps.graphiql.path) {
+                permanentRedirect(URI.create(configProps.graphiql.path + "/index.html")).build()
+            }
+            .build()
     }
 
     @Bean
