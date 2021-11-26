@@ -38,7 +38,7 @@
             "locked": "17.3"
         },
         "com.graphql-java:graphql-java-extended-validation": {
-            "locked": "17.0"
+            "locked": "17.0-hibernate-validator-6.2.0.Final"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -320,7 +320,7 @@
             "locked": "17.3"
         },
         "com.graphql-java:graphql-java-extended-validation": {
-            "locked": "17.0"
+            "locked": "17.0-hibernate-validator-6.2.0.Final"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -455,7 +455,7 @@
             "locked": "17.3"
         },
         "com.graphql-java:graphql-java-extended-validation": {
-            "locked": "17.0"
+            "locked": "17.0-hibernate-validator-6.2.0.Final"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -534,7 +534,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.0"
+            "locked": "1.12.1"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -592,6 +592,12 @@
             ],
             "locked": "2.12.3"
         },
+        "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "locked": "2.12.3"
+        },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -604,6 +610,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
+            ],
+            "locked": "2.12.3"
+        },
+        "com.fasterxml.jackson.module:jackson-module-parameter-names": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
             "locked": "2.12.3"
         },
@@ -627,7 +639,7 @@
             "locked": "17.3"
         },
         "com.graphql-java:graphql-java-extended-validation": {
-            "locked": "17.0"
+            "locked": "17.0-hibernate-validator-6.2.0.Final"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -706,7 +718,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.0"
+            "locked": "1.12.1"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -811,6 +823,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
+            ],
+            "locked": "5.2.13.RELEASE"
+        },
+        "org.springframework:spring-webflux": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
             "locked": "5.2.13.RELEASE"
         },
