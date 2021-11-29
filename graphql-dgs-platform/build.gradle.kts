@@ -45,18 +45,21 @@ dependencies {
     // this will be published as Maven Metadata.
     // For more information at https://docs.gradle.org/current/userguide/rich_versions.html
     constraints {
+        // GraphQL Platform
         api("com.graphql-java:graphql-java") {
-            version { require(Versions.GRAPHQL_JAVA) }
+            version { require("17.3") }
         }
         api("com.graphql-java:graphql-java-extended-scalars") {
-            version { require(Versions.GRAPHQL_JAVA_EXTENDED_SCALARS) }
+            version { require("17.0") }
         }
         api("com.graphql-java:graphql-java-extended-validation") {
-            version { require(Versions.GRAPHQL_JAVA_EXTENDED_VALIDATION) }
+            // The version below will work with Jakarta EE 8 and use Hibernate Validator 6.2.
+            version { require("17.0-hibernate-validator-6.2.0.Final") }
         }
         api("com.apollographql.federation:federation-graphql-java-support") {
-            version { require(Versions.GRAPHQL_JAVA_FEDERATION) }
+            version { require("0.7.0") }
         }
+        // ---
         api("com.jayway.jsonpath:json-path") {
             version { require("2.6.0") }
         }

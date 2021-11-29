@@ -20,12 +20,5 @@ object Versions {
     const val SPRING_BOOT_VERSION = "2.3.9.RELEASE"
     const val SPRING_SECURITY_VERSION = "5.3.9.RELEASE"
     const val SPRING_CLOUD_VERSION = "Hoxton.SR10"
-    const val GRAPHQL_JAVA = "17.3"
-    const val GRAPHQL_JAVA_EXTENDED_SCALARS = "17.0"
-    
-    // The version below will work with Jakarta EE 8
-    // and use Hibernate Validator 6.2.
-    const val GRAPHQL_JAVA_EXTENDED_VALIDATION = "17.0-hibernate-validator-6.2.0.Final"
-    const val GRAPHQL_JAVA_FEDERATION = "0.7.0"
     const val JACKSON_BOM = "2.12.3"
 }
