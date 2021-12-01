@@ -67,7 +67,7 @@ internal class SSESubscriptionGraphQLClientTest {
 
         StepVerifier.create(reactiveExecuteQuery)
             .consumeNextWith { r -> r.hasErrors() }
-            .expectComplete()
+            .expectError()
             .verify()
     }
 

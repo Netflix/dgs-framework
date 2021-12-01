@@ -39,7 +39,6 @@ import graphql.schema.GraphQLTypeVisitor
 import graphql.schema.SchemaTraverser
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.SchemaDirectiveWiring
-import graphql.schema.idl.SchemaGenerator
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.idl.TypeRuntimeWiring
@@ -128,16 +127,18 @@ class DgsSchemaProvider(
         runtimeWiringBuilder.codeRegistry(codeRegistryBuilder.build())
 
         dgsComponents.forEach { dgsComponent -> invokeDgsRuntimeWiring(dgsComponent, runtimeWiringBuilder) }
-        val vars = Collections.singletonMap<Class<*>, Any>(
-            GraphQLCodeRegistry.Builder::class.java, codeRegistryBuilder
-        )
 
-        val schema = SchemaGenerator().makeExecutableSchema(mergedRegistry, runtimeWiringBuilder.build())
-        SchemaTraverser().depthFirstFullSchema(typeVisitors, schema, vars)
-
-        val graphQLSchema =
+        var graphQLSchema =
             Federation.transform(mergedRegistry, runtimeWiringBuilder.build()).fetchEntities(entityFetcher)
                 .resolveEntityType(typeResolver).build()
+
+        val codeRegistry = GraphQLCodeRegistry.newCodeRegistry(graphQLSchema.codeRegistry)
+        val vars = Collections.singletonMap<Class<*>, Any>(
+            GraphQLCodeRegistry.Builder::class.java, codeRegistry
+        )
+        SchemaTraverser().depthFirstFullSchema(typeVisitors, graphQLSchema, vars)
+        graphQLSchema =
+            graphQLSchema.transformWithoutTypes { it.codeRegistry(codeRegistry) }
 
         val endTime = System.currentTimeMillis()
         val totalTime = endTime - startTime

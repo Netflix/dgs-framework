@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-plugins {
-    id("org.springframework.boot") version "2.6.1"
-}
-
 dependencies {
     implementation(project(":graphql-dgs"))
     implementation(project(":graphql-dgs-reactive"))

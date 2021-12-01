@@ -16,15 +16,15 @@
 
 package com.netflix.graphql.dgs.example.springgraphql
 
-//import org.assertj.core.api.Assertions.assertThat
-//import org.junit.jupiter.api.Test
-//import org.springframework.beans.factory.annotation.Autowired
-//import org.springframework.graphql.boot.test.GraphQlTest
-//import org.springframework.graphql.test.tester.GraphQlTester
+// import org.assertj.core.api.Assertions.assertThat
+// import org.junit.jupiter.api.Test
+// import org.springframework.beans.factory.annotation.Autowired
+// import org.springframework.graphql.boot.test.GraphQlTest
+// import org.springframework.graphql.test.tester.GraphQlTester
 //
-//@GraphQlTest
-//// @ImportAutoConfiguration(DgsAutoConfiguration::class)
-//class ExampleTest {
+// @GraphQlTest
+// // @ImportAutoConfiguration(DgsAutoConfiguration::class)
+// class ExampleTest {
 //
 //    @Autowired
 //    private lateinit var graphQlTester: GraphQlTester
@@ -44,4 +44,4 @@ package com.netflix.graphql.dgs.example.springgraphql
 //
 //        assertThat(result).isEqualTo("hello, Stranger!")
 //    }
-//}
+// }

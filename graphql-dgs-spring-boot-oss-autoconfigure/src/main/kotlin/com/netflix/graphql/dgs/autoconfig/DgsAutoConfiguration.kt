@@ -155,7 +155,7 @@ open class DgsAutoConfiguration(
         dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
         dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
         cookieValueResolver: Optional<CookieValueResolver> = Optional.empty(),
-        typeVisitors: List<GraphQLTypeVisitor> = emptyList()
+        typeVisitors: Optional<List<GraphQLTypeVisitor>> = Optional.empty()
     ): DgsSchemaProvider {
         return DgsSchemaProvider(
             applicationContext,
@@ -166,7 +166,7 @@ open class DgsAutoConfiguration(
             dataFetcherResultProcessors,
             dataFetcherExceptionHandler,
             cookieValueResolver,
-            typeVisitors,
+            typeVisitors.orElse(emptyList()),
         )
     }
 

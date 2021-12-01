@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.util.AopTestUtils
+import java.util.function.Consumer
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(
@@ -65,7 +66,7 @@ internal class SimpleQuerySignatureRepositoryTest {
 
         val optQuerySignature = repository.get(document, parameters)
         val sig = assertThat(optQuerySignature).get()
-        sig.extracting { it.value }.satisfies { assertThat(it).isEqualToNormalizingWhitespace(expectedFooDoc) }
+        sig.extracting { it.value }.satisfies(Consumer { assertThat(it).isEqualToNormalizingWhitespace(expectedFooDoc) })
         sig.extracting { it.hash }.isEqualTo(expectedFooSigHash)
     }
 
@@ -77,7 +78,7 @@ internal class SimpleQuerySignatureRepositoryTest {
 
         val optQuerySignature = repository.get(document, parameters)
         val sig = assertThat(optQuerySignature).get()
-        sig.extracting { it.value }.satisfies { assertThat(it).isEqualToNormalizingWhitespace(expectedAnonDoc) }
+        sig.extracting { it.value }.satisfies(Consumer { assertThat(it).isEqualToNormalizingWhitespace(expectedAnonDoc) })
         sig.extracting { it.hash }.isEqualTo(expectedAnonSigHash)
     }
 
