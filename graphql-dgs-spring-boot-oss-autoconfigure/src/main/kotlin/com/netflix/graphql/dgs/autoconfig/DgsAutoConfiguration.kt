@@ -21,16 +21,27 @@ import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
-import com.netflix.graphql.dgs.internal.*
+import com.netflix.graphql.dgs.internal.CookieValueResolver
+import com.netflix.graphql.dgs.internal.DataFetcherResultProcessor
+import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
+import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
+import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
+import com.netflix.graphql.dgs.internal.DgsNoOpPreparsedDocumentProvider
+import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import com.netflix.graphql.mocking.MockProvider
-import graphql.execution.*
+import graphql.execution.AsyncExecutionStrategy
+import graphql.execution.AsyncSerialExecutionStrategy
+import graphql.execution.DataFetcherExceptionHandler
+import graphql.execution.ExecutionIdProvider
+import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.GraphQLSchema
+import graphql.schema.GraphQLTypeVisitor
 import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.visibility.DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
 import graphql.schema.visibility.GraphqlFieldVisibility
@@ -143,7 +154,8 @@ open class DgsAutoConfiguration(
         mockProviders: Optional<Set<MockProvider>>,
         dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
         dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
-        cookieValueResolver: Optional<CookieValueResolver> = Optional.empty()
+        cookieValueResolver: Optional<CookieValueResolver> = Optional.empty(),
+        typeVisitors: List<GraphQLTypeVisitor> = emptyList()
     ): DgsSchemaProvider {
         return DgsSchemaProvider(
             applicationContext,
@@ -153,7 +165,8 @@ open class DgsAutoConfiguration(
             configProps.schemaLocations,
             dataFetcherResultProcessors,
             dataFetcherExceptionHandler,
-            cookieValueResolver
+            cookieValueResolver,
+            typeVisitors,
         )
     }
 

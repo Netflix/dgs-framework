@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.TypeRef;
 import graphql.ExecutionResult;
+import graphql.GraphQL;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.context.request.WebRequest;
 
@@ -246,4 +247,6 @@ public interface DgsQueryExecutor {
      * @see <a href="https://github.com/json-path/JsonPath#what-is-returned-when">Using TypeRef</a>
      */
     <T> T executeAndExtractJsonPathAsObject(String query, String jsonPath, Map<String, Object> variables, TypeRef<T> typeRef, HttpHeaders headers);
+
+    GraphQL graphQL();
 }

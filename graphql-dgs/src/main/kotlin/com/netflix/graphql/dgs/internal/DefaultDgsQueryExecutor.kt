@@ -19,7 +19,12 @@ package com.netflix.graphql.dgs.internal
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.jayway.jsonpath.*
+import com.jayway.jsonpath.Configuration
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
+import com.jayway.jsonpath.Option
+import com.jayway.jsonpath.ParseContext
+import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
 import com.jayway.jsonpath.spi.mapper.MappingException
@@ -29,7 +34,11 @@ import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionExcepti
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor.parseContext
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
-import graphql.*
+import graphql.ExecutionInput
+import graphql.ExecutionResult
+import graphql.ExecutionResultImpl
+import graphql.GraphQL
+import graphql.GraphQLError
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
 import graphql.execution.NonNullableFieldWasNullError
@@ -82,13 +91,8 @@ class DefaultDgsQueryExecutor(
             variables,
             operationName,
             dgsContext,
-            graphQLSchema,
+            graphQL(),
             dataLoaderProvider,
-            chainedInstrumentation,
-            queryExecutionStrategy,
-            mutationExecutionStrategy,
-            idProvider,
-            preparsedDocumentProvider,
         )
 
         // Check for NonNullableFieldWasNull errors, and log them explicitly because they don't run through the exception handlers.
@@ -163,6 +167,26 @@ class DefaultDgsQueryExecutor(
         return BaseDgsQueryExecutor.objectMapper.writeValueAsString(executionResult.toSpecification())
     }
 
+    override fun graphQL(): GraphQL {
+        val graphQLSchema: GraphQLSchema =
+            if (reloadIndicator.reloadSchema())
+                schema.updateAndGet { schemaProvider.schema() }
+            else
+                schema.get()
+
+        val graphQLBuilder = GraphQL.newGraphQL(graphQLSchema)
+            .preparsedDocumentProvider(preparsedDocumentProvider)
+            .instrumentation(chainedInstrumentation)
+            .queryExecutionStrategy(queryExecutionStrategy)
+            .mutationExecutionStrategy(mutationExecutionStrategy)
+            .subscriptionExecutionStrategy(SubscriptionExecutionStrategy())
+        if (idProvider.isPresent) {
+            graphQLBuilder.executionIdProvider(idProvider.get())
+        }
+
+        return graphQLBuilder.build()
+    }
+
     /**
      * Provides the means to identify if executor should reload the [GraphQLSchema] from the given [DgsSchemaProvider].
      * If `true` the schema will be reloaded, else the default schema, provided in the cunstructor of the [DefaultDgsQueryExecutor],
@@ -200,26 +224,9 @@ object BaseDgsQueryExecutor {
         variables: Map<String, Any>?,
         operationName: String?,
         dgsContext: DgsContext,
-        graphQLSchema: GraphQLSchema,
+        graphQL: GraphQL,
         dataLoaderProvider: DgsDataLoaderProvider,
-        chainedInstrumentation: ChainedInstrumentation,
-        queryExecutionStrategy: ExecutionStrategy,
-        mutationExecutionStrategy: ExecutionStrategy,
-        idProvider: Optional<ExecutionIdProvider>,
-        preparsedDocumentProvider: PreparsedDocumentProvider,
     ): CompletableFuture<out ExecutionResult> {
-        val graphQLBuilder =
-            GraphQL.newGraphQL(graphQLSchema)
-                .preparsedDocumentProvider(preparsedDocumentProvider)
-                .instrumentation(chainedInstrumentation)
-                .queryExecutionStrategy(queryExecutionStrategy)
-                .mutationExecutionStrategy(mutationExecutionStrategy)
-                .subscriptionExecutionStrategy(SubscriptionExecutionStrategy())
-        if (idProvider.isPresent) {
-            graphQLBuilder.executionIdProvider(idProvider.get())
-        }
-        val graphQL = graphQLBuilder.build()
-
         val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier { dgsContext }
         val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
             .query(query)

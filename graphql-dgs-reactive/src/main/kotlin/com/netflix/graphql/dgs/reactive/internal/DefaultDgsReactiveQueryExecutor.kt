@@ -28,9 +28,11 @@ import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsNoOpPreparsedDocumentProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import graphql.ExecutionResult
+import graphql.GraphQL
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
 import graphql.execution.NonNullableFieldWasNullError
+import graphql.execution.SubscriptionExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLSchema
@@ -66,10 +68,7 @@ class DefaultDgsReactiveQueryExecutor(
         serverHttpRequest: ServerRequest?
     ): Mono<ExecutionResult> {
         return Mono.fromCallable {
-            if (reloadIndicator.reloadSchema())
-                schema.updateAndGet { schemaProvider.schema() }
-            else
-                schema.get()
+            graphQL()
         }.zipWith(contextBuilder.build(DgsReactiveRequestData(extensions, headers, serverHttpRequest)))
             .flatMap {
                 Mono.fromCompletionStage(
@@ -79,12 +78,7 @@ class DefaultDgsReactiveQueryExecutor(
                         operationName,
                         it.t2,
                         it.t1,
-                        dataLoaderProvider,
-                        chainedInstrumentation,
-                        queryExecutionStrategy,
-                        mutationExecutionStrategy,
-                        idProvider,
-                        preparsedDocumentProvider
+                        dataLoaderProvider
                     )
                 ).doOnEach { result ->
                     if (result.hasValue()) {
@@ -154,6 +148,26 @@ class DefaultDgsReactiveQueryExecutor(
 
             BaseDgsQueryExecutor.objectMapper.writeValueAsString(executionResult.toSpecification())
         }
+    }
+
+    override fun graphQL(): GraphQL {
+        val graphQLSchema: GraphQLSchema =
+            if (reloadIndicator.reloadSchema())
+                schema.updateAndGet { schemaProvider.schema() }
+            else
+                schema.get()
+
+        val graphQLBuilder = GraphQL.newGraphQL(graphQLSchema)
+            .preparsedDocumentProvider(preparsedDocumentProvider)
+            .instrumentation(chainedInstrumentation)
+            .queryExecutionStrategy(queryExecutionStrategy)
+            .mutationExecutionStrategy(mutationExecutionStrategy)
+            .subscriptionExecutionStrategy(SubscriptionExecutionStrategy())
+        if (idProvider.isPresent) {
+            graphQLBuilder.executionIdProvider(idProvider.get())
+        }
+
+        return graphQLBuilder.build()
     }
 
     companion object {

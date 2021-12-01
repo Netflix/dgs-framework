@@ -39,6 +39,7 @@ allprojects {
     group = "com.netflix.graphql.dgs"
     repositories {
         mavenCentral()
+        maven("https://repo.spring.io/milestone")
     }
 
     apply(plugin = "nebula.netflixoss")

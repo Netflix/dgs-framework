@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ include("graphql-dgs-spring-webmvc-autoconfigure")
 include("graphql-dgs-spring-boot-starter")
 include("graphql-dgs-example-java")
 include("graphql-dgs-example-java-webflux")
+include("graphql-dgs-example-spring-graphql-integration")
 include("graphql-dgs-subscriptions-websockets")
 include("graphql-dgs-subscriptions-websockets-autoconfigure")
 include("graphql-dgs-subscriptions-sse")
@@ -40,3 +41,4 @@ include("graphql-dgs-webflux-starter")
 include("graphql-dgs-example-shared")
 include("graphql-dgs-pagination")
 include("graphql-dgs-subscription-types")
+include("spring-graphql-bridge")
