@@ -167,11 +167,17 @@ open class DefaultDgsFederationResolver() :
             val src: Any = env.getObject()
 
             val typeName =
-                if (typeMapping().containsKey(src::class.java)) typeMapping()[src::class.java] else src::class.java.simpleName
+                if (typeMapping().containsKey(src::class.java))
+                    typeMapping()[src::class.java]
+                else
+                    src::class.java.simpleName
+
             val type = env.schema.getObjectType(typeName)
             if (type == null) {
                 logger.warn(
-                    "No type definition found for {}. You probably need to provide either a type mapping, or override DefaultDgsFederationResolver.typeResolver(). Alternatively make sure the type name in the schema and your Java model match",
+                    "No type definition found for {}. You probably need to provide either a type mapping," +
+                        "or override DefaultDgsFederationResolver.typeResolver()." +
+                        "Alternatively make sure the type name in the schema and your Java model match",
                     src::class.java.name
                 )
             }
