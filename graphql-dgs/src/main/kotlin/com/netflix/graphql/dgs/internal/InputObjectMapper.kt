@@ -53,7 +53,8 @@ object InputObjectMapper {
                 }
                 inputValues.add(subValue)
             } else if (parameter.type.jvmErasure.java.isEnum && input !== null) {
-                val enumValue = (parameter.type.jvmErasure.java.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == input }
+                val enumValue =
+                    (parameter.type.jvmErasure.java.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == input }
                 inputValues.add(enumValue)
             } else if (input is List<*>) {
                 val newList = convertList(
@@ -85,7 +86,7 @@ object InputObjectMapper {
     }
 
     fun <T> mapToJavaObject(inputMap: Map<String, *>, targetClass: Class<T>): T {
-        if (targetClass == Object::class.java) {
+        if (targetClass == Object::class.java || targetClass == Map::class.java) {
             return inputMap as T
         }
 
@@ -111,7 +112,6 @@ object InputObjectMapper {
                     } else {
                         mapToJavaObject(it.value as Map<String, *>, fieldClass)
                     }
-
                     trySetField(declaredField, instance, mappedValue)
                 } else if (it.value is List<*>) {
                     val newList = convertList(it.value as List<*>, targetClass, fieldClass.kotlin, fieldArgumentType)
@@ -121,7 +121,8 @@ object InputObjectMapper {
                         trySetField(declaredField, instance, newList)
                     }
                 } else if (fieldClass.isEnum) {
-                    val enumValue = (fieldClass.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == it.value }
+                    val enumValue =
+                        (fieldClass.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == it.value }
                     trySetField(declaredField, instance, enumValue)
                 } else {
                     trySetField(declaredField, instance, it.value)
@@ -133,9 +134,9 @@ object InputObjectMapper {
         }
 
         /**
-         We can't error out if only some fields don't match.
-         This would happen if new schema fields are added, but the Java type wasn't updated yet.
-         If none of the fields match however, it's a pretty good indication that the wrong type was used, hence this check.
+        We can't error out if only some fields don't match.
+        This would happen if new schema fields are added, but the Java type wasn't updated yet.
+        If none of the fields match however, it's a pretty good indication that the wrong type was used, hence this check.
          */
         if (inputMap.isNotEmpty() && nrOfFieldErrors == inputMap.size) {
             throw DgsInvalidInputArgumentException("Input argument type '$targetClass' doesn't match input $inputMap")
@@ -156,7 +157,7 @@ object InputObjectMapper {
     private fun getFieldType(field: Field, targetClass: Class<*>): Type {
         val genericSuperclass = targetClass.genericSuperclass
         val fieldType: Type = field.genericType
-        return if (fieldType is ParameterizedType) {
+        return if (fieldType is ParameterizedType && fieldType.actualTypeArguments.size == 1) {
             fieldType.actualTypeArguments[0]
         } else if (genericSuperclass is ParameterizedType && field.type != field.genericType) {
             val typeParameters = (genericSuperclass.rawType as Class<*>).typeParameters
@@ -167,7 +168,12 @@ object InputObjectMapper {
         }
     }
 
-    private fun convertList(input: List<*>, targetClass: Class<*>, nestedClass: KClass<*>, nestedType: Type? = null): List<*> {
+    private fun convertList(
+        input: List<*>,
+        targetClass: Class<*>,
+        nestedClass: KClass<*>,
+        nestedType: Type? = null
+    ): List<*> {
         val mappedList = input.filterNotNull().map { listItem ->
             if (listItem is List<*>) {
                 when (nestedType) {
