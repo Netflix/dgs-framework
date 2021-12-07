@@ -134,9 +134,9 @@ object InputObjectMapper {
         }
 
         /**
-        We can't error out if only some fields don't match.
-        This would happen if new schema fields are added, but the Java type wasn't updated yet.
-        If none of the fields match however, it's a pretty good indication that the wrong type was used, hence this check.
+         We can't error out if only some fields don't match.
+         This would happen if new schema fields are added, but the Java type wasn't updated yet.
+         If none of the fields match however, it's a pretty good indication that the wrong type was used, hence this check.
          */
         if (inputMap.isNotEmpty() && nrOfFieldErrors == inputMap.size) {
             throw DgsInvalidInputArgumentException("Input argument type '$targetClass' doesn't match input $inputMap")

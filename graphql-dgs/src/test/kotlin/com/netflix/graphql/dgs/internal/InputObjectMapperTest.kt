@@ -193,7 +193,7 @@ internal class InputObjectMapperTest {
     @Test
     fun `A map argument should be able to convert to Map in Kotlin`() {
         val input = mapOf("json" to mapOf("key1" to "value1", "key2" to currentDate, "key3" to mapOf("subkey1" to "hi")))
-        val withMap =  InputObjectMapper.mapToKotlinObject(input, KotlinObjectWithMap::class)
+        val withMap = InputObjectMapper.mapToKotlinObject(input, KotlinObjectWithMap::class)
         assertThat(withMap.json).isInstanceOf(Map::class.java)
         assertThat(withMap.json["key1"]).isEqualTo("value1")
     }
@@ -210,7 +210,7 @@ internal class InputObjectMapperTest {
     data class KotlinSomeObject(val key1: String, val key2: LocalDateTime, val key3: KotlinSubObject?)
     data class KotlinSubObject(val subkey1: String)
     data class KotlinObjectWithSet(val items: Set<Int>)
-    data class KotlinObjectWithMap(val json: Map<String,Any>)
+    data class KotlinObjectWithMap(val json: Map<String, Any>)
 
     data class KotlinWithJavaProperty(val name: String, val objectProperty: JInputObject)
 }
