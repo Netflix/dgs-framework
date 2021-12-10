@@ -24,6 +24,7 @@ import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
 import org.slf4j.LoggerFactory
+import org.springframework.web.socket.SubProtocolCapable
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 import org.springframework.web.socket.handler.TextWebSocketHandler
@@ -32,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import javax.annotation.PostConstruct
 
-class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : TextWebSocketHandler() {
+class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : TextWebSocketHandler(), SubProtocolCapable {
 
     internal val subscriptions = ConcurrentHashMap<String, MutableMap<String, Subscription>>()
     internal val sessions = CopyOnWriteArrayList<WebSocketSession>()
@@ -143,4 +144,6 @@ class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : Text
         val logger = LoggerFactory.getLogger(DgsWebSocketHandler::class.java)
         val objectMapper = jacksonObjectMapper()
     }
+
+    override fun getSubProtocols(): List<String> = listOf(GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL)
 }
