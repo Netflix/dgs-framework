@@ -26,6 +26,7 @@ import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContex
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.FluxDataFetcherResultProcessor
 import com.netflix.graphql.dgs.reactive.internal.MonoDataFetcherResultProcessor
+import com.netflix.graphql.dgs.webflux.handlers.DefaultDgsWebfluxHttpHandler
 import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler
 import com.netflix.graphql.dgs.webflux.handlers.DgsWebfluxHttpHandler
 import com.netflix.graphql.dgs.webflux.handlers.WebFluxCookieValueResolver
@@ -127,13 +128,17 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     }
 
     @Bean
-    open fun dgsGraphQlRouter(dgsQueryExecutor: DgsReactiveQueryExecutor): RouterFunction<ServerResponse> {
-        val graphQlHandler = DgsWebfluxHttpHandler(dgsQueryExecutor)
+    @ConditionalOnMissingBean
+    open fun dgsWebfluxHttpHandler(dgsQueryExecutor: DgsReactiveQueryExecutor): DgsWebfluxHttpHandler {
+        return DefaultDgsWebfluxHttpHandler(dgsQueryExecutor)
+    }
 
+    @Bean
+    open fun dgsGraphQlRouter(dgsWebfluxHttpHandler: DgsWebfluxHttpHandler): RouterFunction<ServerResponse> {
         return RouterFunctions.route()
             .POST(
                 configProps.path, accept(MediaType.APPLICATION_JSON, MediaType.valueOf("application/graphql")),
-                graphQlHandler::graphql
+                dgsWebfluxHttpHandler::graphql
             ).build()
     }
 
