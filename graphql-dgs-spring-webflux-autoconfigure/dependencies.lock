@@ -76,6 +76,9 @@
             ],
             "project": true
         },
+        "io.projectreactor.netty:reactor-netty": {
+            "locked": "0.9.17.RELEASE"
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.21"
         },
@@ -367,6 +370,9 @@
             ],
             "project": true
         },
+        "io.projectreactor.netty:reactor-netty": {
+            "locked": "0.9.17.RELEASE"
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.21"
         },
@@ -527,7 +533,10 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.0"
+            "locked": "1.12.1"
+        },
+        "io.projectreactor.netty:reactor-netty": {
+            "locked": "0.9.17.RELEASE"
         },
         "io.projectreactor:reactor-test": {
             "locked": "3.4.10"
@@ -660,7 +669,10 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.0"
+            "locked": "1.12.1"
+        },
+        "io.projectreactor.netty:reactor-netty": {
+            "locked": "0.9.17.RELEASE"
         },
         "io.projectreactor:reactor-test": {
             "locked": "3.4.10"
