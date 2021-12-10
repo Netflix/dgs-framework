@@ -530,6 +530,12 @@
             ],
             "project": true
         },
+        "io.projectreactor.netty:reactor-netty": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure"
+            ],
+            "locked": "0.9.17.RELEASE"
+        },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client",
@@ -770,7 +776,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.0"
+            "locked": "1.12.1"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -986,7 +992,13 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.0"
+            "locked": "1.12.1"
+        },
+        "io.projectreactor.netty:reactor-netty": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure"
+            ],
+            "locked": "0.9.17.RELEASE"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [

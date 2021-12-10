@@ -316,7 +316,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.0"
+            "locked": "1.12.1"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.21"
@@ -357,7 +357,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.0"
+            "locked": "1.12.1"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.21"
