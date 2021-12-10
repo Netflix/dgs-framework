@@ -520,7 +520,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.0"
+            "locked": "1.12.1"
         },
         "io.projectreactor.kotlin:reactor-kotlin-extensions": {
             "locked": "1.0.3.RELEASE"
@@ -642,7 +642,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.0"
+            "locked": "1.12.1"
         },
         "io.projectreactor.kotlin:reactor-kotlin-extensions": {
             "locked": "1.0.3.RELEASE"

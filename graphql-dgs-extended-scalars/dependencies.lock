@@ -534,7 +534,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.0"
+            "locked": "1.12.1"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -718,7 +718,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.0"
+            "locked": "1.12.1"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
