@@ -14,14 +14,7 @@
  * limitations under the License.
  */
 
-dependencies {
-    api(project(":graphql-dgs"))
-    api(project(":graphql-dgs-reactive"))
-    implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.springframework:spring-webflux")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("io.projectreactor.netty:reactor-netty")
-    testImplementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
-    testImplementation("org.springframework.boot:spring-boot-starter-webflux")
-    testImplementation("io.projectreactor:reactor-test")
-}
+package com.netflix.graphql.types.subscription
+
+// [subscriptions-transport-ws subprotocol](https://github.com/apollographql/subscriptions-transport-ws/blob/master/src/protocol.ts)
+const val GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL = "graphql-ws"

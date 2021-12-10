@@ -27,6 +27,7 @@ import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.FluxDataFetcherResultProcessor
 import com.netflix.graphql.dgs.reactive.internal.MonoDataFetcherResultProcessor
 import com.netflix.graphql.dgs.webflux.handlers.DefaultDgsWebfluxHttpHandler
+import com.netflix.graphql.dgs.webflux.handlers.DgsHandshakeWebSocketService
 import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler
 import com.netflix.graphql.dgs.webflux.handlers.DgsWebfluxHttpHandler
 import com.netflix.graphql.dgs.webflux.handlers.WebFluxCookieValueResolver
@@ -57,8 +58,11 @@ import org.springframework.web.reactive.function.server.ServerResponse.ok
 import org.springframework.web.reactive.function.server.ServerResponse.permanentRedirect
 import org.springframework.web.reactive.function.server.json
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping
+import org.springframework.web.reactive.socket.server.WebSocketService
 import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter
+import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyRequestUpgradeStrategy
 import reactor.core.publisher.Mono
+import reactor.netty.http.server.WebsocketServerSpec
 import java.net.URI
 import java.util.*
 
@@ -162,15 +166,21 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
 
     @Bean
     open fun websocketSubscriptionHandler(dgsReactiveQueryExecutor: DgsReactiveQueryExecutor): SimpleUrlHandlerMapping {
-
-        val simpleUrlHandlerMapping = SimpleUrlHandlerMapping(mapOf("/subscriptions" to DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor)))
+        val simpleUrlHandlerMapping =
+            SimpleUrlHandlerMapping(mapOf("/subscriptions" to DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor)))
         simpleUrlHandlerMapping.order = 1
         return simpleUrlHandlerMapping
     }
 
     @Bean
-    open fun handlerAdapter(): WebSocketHandlerAdapter? {
-        return WebSocketHandlerAdapter()
+    open fun webSocketService(): WebSocketService {
+        val strategy = ReactorNettyRequestUpgradeStrategy { WebsocketServerSpec.builder().protocols("graphql-ws") }
+        return DgsHandshakeWebSocketService(strategy)
+    }
+
+    @Bean
+    open fun handlerAdapter(webSocketService: WebSocketService): WebSocketHandlerAdapter? {
+        return WebSocketHandlerAdapter(webSocketService)
     }
 
     @Bean
