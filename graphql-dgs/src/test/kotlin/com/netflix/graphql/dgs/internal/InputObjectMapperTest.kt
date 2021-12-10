@@ -22,6 +22,7 @@ import com.netflix.graphql.dgs.internal.java.test.inputobjects.JGenericInputObje
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JGenericSubInputObject
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObject
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithKotlinProperty
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithMap
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithSet
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -189,10 +190,27 @@ internal class InputObjectMapperTest {
         assertThat(withSet.items).isInstanceOf(Set::class.java)
     }
 
+    @Test
+    fun `A map argument should be able to convert to Map in Kotlin`() {
+        val input = mapOf("json" to mapOf("key1" to "value1", "key2" to currentDate, "key3" to mapOf("subkey1" to "hi")))
+        val withMap = InputObjectMapper.mapToKotlinObject(input, KotlinObjectWithMap::class)
+        assertThat(withMap.json).isInstanceOf(Map::class.java)
+        assertThat(withMap.json["key1"]).isEqualTo("value1")
+    }
+
+    @Test
+    fun `A map argument should be able to convert to Map in Java`() {
+        val input = mapOf("json" to mapOf("key1" to "value1", "key2" to currentDate, "key3" to mapOf("subkey1" to "hi")))
+        val withMap = mapToJavaObject(input, JInputObjectWithMap::class.java)
+        assertThat(withMap.json).isInstanceOf(Map::class.java)
+        assertThat(withMap.json["key1"]).isEqualTo("value1")
+    }
+
     data class KotlinInputObject(val simpleString: String?, val someDate: LocalDateTime, val someObject: KotlinSomeObject)
     data class KotlinSomeObject(val key1: String, val key2: LocalDateTime, val key3: KotlinSubObject?)
     data class KotlinSubObject(val subkey1: String)
     data class KotlinObjectWithSet(val items: Set<Int>)
+    data class KotlinObjectWithMap(val json: Map<String, Any>)
 
     data class KotlinWithJavaProperty(val name: String, val objectProperty: JInputObject)
 }

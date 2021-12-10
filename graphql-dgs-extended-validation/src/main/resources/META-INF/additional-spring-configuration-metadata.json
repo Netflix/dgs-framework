@@ -1,0 +1,11 @@
+{
+  "groups": [],
+  "properties": [
+    {
+      "name": "dgs.graphql.extensions.validation.enabled",
+      "type": "java.lang.Boolean",
+      "description": "If enabled, will provide an auto-configuration that will by default registered the Bean Validation Extensions available in graphql-java-extended-validation for the DGS Framework."
+    }
+  ],
+  "hints": []
+}

@@ -49,15 +49,13 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build and publish Locally
+      - name: Check
         run: |
-          ./gradlew --info check publishToMavenLocal --warning-mode all
+          ./gradlew --info check
 
-      # - name: Publish Test Report
-      #   if: ${{ always() }}
-      #   uses: scacap/action-surefire-report@v1
-      #   with:
-      #     report_paths: '**/build/test-results/test/TEST-*.xml'
+      - name: Publish Locally
+        run: |
+          ./gradlew --info publishToMavenLocal --warning-mode all
 
       - name: Clone dgs-examples-java
         uses: actions/checkout@master
@@ -75,11 +73,3 @@ jobs:
         run: |
           find /home/runner/.m2/repository/ -type f -name "*graphql-dgs-codegen-gradle*"
           ./scripts/test-examples.py -v -k --path=./build/examples
-
-      # - name: Publish Examples Test Report
-      #   if: ${{ always() }}
-      #   uses: scacap/action-surefire-report@v1
-      #   with:
-      #     check_name: Examples Test Reports
-      #     report_paths: 'build/examples/**/build/test-results/test/TEST-*.xml'
-

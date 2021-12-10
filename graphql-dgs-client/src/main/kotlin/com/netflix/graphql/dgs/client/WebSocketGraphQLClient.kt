@@ -16,8 +16,8 @@
 
 package com.netflix.graphql.dgs.client
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.netflix.graphql.types.subscription.*
 import graphql.GraphQLException
 import org.springframework.web.reactive.socket.WebSocketHandler
@@ -277,7 +277,7 @@ class OperationMessageWebSocketClient(
 
     private fun decodeMessage(message: WebSocketMessage): OperationMessage {
         val messageText = message.payloadAsText
-        val type = object : TypeReference<OperationMessage>() {}
+        val type = jacksonTypeRef<OperationMessage>()
 
         return MAPPER.readValue(messageText, type)
     }

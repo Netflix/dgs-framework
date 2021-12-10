@@ -26,7 +26,7 @@ group = "com.netflix.graphql.dgs"
 
 plugins {
     `java-library`
-    id("nebula.netflixoss") version "10.3.0"
+    id("nebula.netflixoss") version "10.4.0"
     id("nebula.dependency-recommender") version "11.0.0"
     id("org.jmailen.kotlinter") version "3.6.0"
     kotlin("jvm") version Versions.KOTLIN_VERSION
@@ -98,7 +98,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         testImplementation("org.springframework.boot:spring-boot-starter-test") {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         }
-        testImplementation("io.mockk:mockk:1.12.0")
+        testImplementation("io.mockk:mockk:1.12.1")
     }
 
     java {

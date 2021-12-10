@@ -33,7 +33,7 @@ class GraphiQlConfigurer(private val configProps: DgsWebfluxConfigurationPropert
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         val graphqlPath = configProps.path
         registry
-            .addResourceHandler("/graphiql/**")
+            .addResourceHandler(configProps.graphiql.path + "/**")
             .addResourceLocations("classpath:/static/graphiql/")
             .resourceChain(true)
             .addResolver(PathResourceResolver())
@@ -53,7 +53,7 @@ class GraphiQlConfigurer(private val configProps: DgsWebfluxConfigurationPropert
             resource: Resource,
             transformerChain: ResourceTransformerChain
         ): Mono<Resource> {
-            if (exchange.request.uri.toASCIIString().endsWith("graphiql/index.html")) {
+            if (exchange.request.uri.toASCIIString().endsWith(configProps.graphiql.path + "/index.html")) {
                 val content = resource.inputStream.bufferedReader().use(BufferedReader::readText)
                 return Mono.just(
                     TransformedResource(
