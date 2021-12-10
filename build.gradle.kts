@@ -44,13 +44,21 @@ allprojects {
     apply(plugin = "nebula.netflixoss")
     apply(plugin = "nebula.dependency-recommender")
 
+    // We are attempting to define the versions of the artifacts closest to the
+    // place they are referenced such that dependabot can easily pick them up
+    // and suggest an upgrade. The only exception currently are those defined
+    // in buildSrc, most likley because the variables are used in plugins as well
+    // as dependencies. e.g. KOTLIN_VERSION
+    extra["sb.version"] = "2.3.12.RELEASE"
+    val SB_VERSION = extra["sb.version"] as String
+
     dependencyRecommendations {
-        mavenBom(mapOf("module" to "org.springframework:spring-framework-bom:${Versions.SPRING_VERSION}"))
-        mavenBom(mapOf("module" to "org.springframework.boot:spring-boot-dependencies:${Versions.SPRING_BOOT_VERSION}"))
-        mavenBom(mapOf("module" to "org.springframework.security:spring-security-bom:${Versions.SPRING_SECURITY_VERSION}"))
-        mavenBom(mapOf("module" to "org.springframework.cloud:spring-cloud-dependencies:${Versions.SPRING_CLOUD_VERSION}"))
-        mavenBom(mapOf("module" to "com.fasterxml.jackson:jackson-bom:${Versions.JACKSON_BOM}"))
         mavenBom(mapOf("module" to "org.jetbrains.kotlin:kotlin-bom:${Versions.KOTLIN_VERSION}"))
+        mavenBom(mapOf("module" to "org.springframework:spring-framework-bom:5.2.18.RELEASE"))
+        mavenBom(mapOf("module" to "org.springframework.boot:spring-boot-dependencies:${SB_VERSION}"))
+        mavenBom(mapOf("module" to "org.springframework.security:spring-security-bom:5.3.12.RELEASE"))
+        mavenBom(mapOf("module" to "org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR12"))
+        mavenBom(mapOf("module" to "com.fasterxml.jackson:jackson-bom:2.12.5"))
     }
 }
 
@@ -83,6 +91,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         }
     }
 
+    val SB_VERSION = extra["sb.version"] as String
     dependencies {
         // Apply the BOM to applicable subprojects.
         api(platform(project(":graphql-dgs-platform")))
@@ -91,9 +100,9 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         // Produce Config Metadata for properties used in Spring Boot
         annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
         // Speed up processing of AutoConfig's produced by Spring Boot for Kotlin
-        kapt("org.springframework.boot:spring-boot-autoconfigure-processor:${Versions.SPRING_BOOT_VERSION}")
+        kapt("org.springframework.boot:spring-boot-autoconfigure-processor:${SB_VERSION}")
         // Produce Config Metadata for properties used in Spring Boot for Kotlin
-        kapt("org.springframework.boot:spring-boot-configuration-processor:${Versions.SPRING_BOOT_VERSION}")
+        kapt("org.springframework.boot:spring-boot-configuration-processor:${SB_VERSION}")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test") {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
