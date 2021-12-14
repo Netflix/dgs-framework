@@ -56,7 +56,7 @@ allprojects {
         mavenBom(mapOf("module" to "org.jetbrains.kotlin:kotlin-bom:${Versions.KOTLIN_VERSION}"))
         mavenBom(mapOf("module" to "org.springframework:spring-framework-bom:5.2.18.RELEASE"))
         mavenBom(mapOf("module" to "org.springframework.boot:spring-boot-dependencies:${SB_VERSION}"))
-        mavenBom(mapOf("module" to "org.springframework.security:spring-security-bom:5.3.12.RELEASE"))
+        mavenBom(mapOf("module" to "org.springframework.security:spring-security-bom:5.5.3"))
         mavenBom(mapOf("module" to "org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR12"))
         mavenBom(mapOf("module" to "com.fasterxml.jackson:jackson-bom:2.12.5"))
     }
