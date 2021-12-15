@@ -39,6 +39,7 @@ import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
+import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.introspection.IntrospectionQuery
 import graphql.schema.GraphQLSchema
 import org.springframework.beans.factory.annotation.Qualifier
@@ -84,7 +85,8 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
         @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
         @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
         idProvider: Optional<ExecutionIdProvider>,
-        reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator
+        reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator,
+        preparsedDocumentProvider: PreparsedDocumentProvider
     ): DgsReactiveQueryExecutor {
 
         val queryExecutionStrategy =
@@ -100,7 +102,8 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
             queryExecutionStrategy,
             mutationExecutionStrategy,
             idProvider,
-            reloadSchemaIndicator
+            reloadSchemaIndicator,
+            preparsedDocumentProvider
         )
     }
 
