@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ValueConstants
+import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.lang.reflect.Parameter
 import java.lang.reflect.ParameterizedType
@@ -106,7 +107,11 @@ class DataFetcherInvoker(
         return if (method.kotlinFunction?.isSuspend == true) {
 
             val launch = CoroutineScope(Dispatchers.Unconfined).async {
-                return@async method.kotlinFunction!!.callSuspend(dgsComponent, *args.toTypedArray())
+                try {
+                    method.kotlinFunction!!.callSuspend(dgsComponent, *args.toTypedArray())
+                } catch (exception: InvocationTargetException) {
+                    throw exception.cause ?: exception
+                }
             }
 
             launch.asCompletableFuture()
@@ -225,15 +230,19 @@ class DataFetcherInvoker(
     private fun convertValue(parameterValue: Any?, parameter: Parameter, collectionType: Class<out Any>?) =
         if (parameterValue is Map<*, *>) {
             // Account for Optional
-            val targetType = if (parameter.type.isAssignableFrom(Optional::class.java) || parameter.type.isAssignableFrom(List::class.java) || parameter.type.isAssignableFrom(Set::class.java)) {
-                if (collectionType != null && collectionType != Object::class.java) {
-                    collectionType
+            val targetType =
+                if (parameter.type.isAssignableFrom(Optional::class.java) ||
+                    parameter.type.isAssignableFrom(List::class.java) ||
+                    parameter.type.isAssignableFrom(Set::class.java)
+                ) {
+                    if (collectionType != null && collectionType != Object::class.java) {
+                        collectionType
+                    } else {
+                        throw DgsInvalidInputArgumentException("When ${parameter.type.simpleName}<T> is used, the type must be specified using the collectionType argument of the @InputArgument annotation.")
+                    }
                 } else {
-                    throw DgsInvalidInputArgumentException("When ${parameter.type.simpleName}<T> is used, the type must be specified using the collectionType argument of the @InputArgument annotation.")
+                    parameter.type
                 }
-            } else {
-                parameter.type
-            }
 
             if (targetType.isKotlinClass()) {
                 InputObjectMapper.mapToKotlinObject(parameterValue as Map<String, *>, targetType.kotlin)
