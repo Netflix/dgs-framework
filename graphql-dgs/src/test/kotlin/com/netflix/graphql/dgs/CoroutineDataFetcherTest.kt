@@ -121,4 +121,59 @@ class CoroutineDataFetcherTest {
 
         assertThat(concurrentTime).isCloseTo(singleTime, Percentage.withPercentage(200.0))
     }
+
+    @Test
+    fun `Throw the cause of InvocationTargetException from CoroutineDataFetcher`() {
+        class CustomException(message: String?) : Exception(message)
+
+        val fetcher = object : Any() {
+
+            @DgsQuery
+            suspend fun exceptionWithMessage(@InputArgument message: String?) = coroutineScope {
+                throw CustomException(message)
+
+                @Suppress("UNREACHABLE_CODE")
+                return@coroutineScope 0
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "exceptionWithMessageFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val schema = provider.schema(
+            """
+            type Query {
+                exceptionWithMessage(message: String): Int
+            }           
+            """.trimIndent()
+        )
+        val build = GraphQL.newGraphQL(schema).build()
+
+        val context = DgsContext(
+            null,
+            null,
+        )
+
+        val executionResult = build.execute(
+            ExecutionInput.newExecutionInput().context(context).query(
+                """
+                {
+                    result: exceptionWithMessage(message: "Exception from coroutine")        
+                }
+                """.trimIndent()
+            ).build()
+        )
+
+        assertThat(executionResult.errors.size).isEqualTo(1)
+        assertThat(executionResult.errors[0].path).isEqualTo(listOf("result"))
+        assertThat(executionResult.errors[0].message).isEqualTo("Exception while fetching data (/result) : Exception from coroutine")
+    }
 }
