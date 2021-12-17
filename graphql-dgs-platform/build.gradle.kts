@@ -52,6 +52,9 @@ dependencies {
         api("com.graphql-java:graphql-java-extended-scalars") {
             version { require("17.0") }
         }
+        api("com.zhokhov.graphql:graphql-java-datetime") {
+            version { require("4.1.0") }
+        }
         api("com.graphql-java:graphql-java-extended-validation") {
             // The version below will work with Jakarta EE 8 and use Hibernate Validator 6.2.
             version { require("17.0-hibernate-validator-6.2.0.Final") }

@@ -1,0 +1,61 @@
+{
+  "groups": [],
+  "properties": [
+    {
+      "name": "dgs.graphql.datetime.scalars.enabled",
+      "type": "java.lang.Boolean",
+      "description": "If enabled, will provide an auto-configuration that will by default registered the Bean DateTime Scalar Extensions available in graphql-java-datetime for the DGS Framework."
+    },
+    {
+      "name": "dgs.graphql.datetime.scalars.date.scalarName",
+      "type": "java.lang.String",
+      "description": "If set, will provide a custom name for the graphql-java-datetime Date scalar"
+    },
+    {
+      "name": "dgs.graphql.datetime.scalars.localDate.scalarName",
+      "type": "java.lang.String",
+      "description": "If set, will provide a custom name for the graphql-java-datetime LocalDate scalar"
+    },
+    {
+      "name": "dgs.graphql.datetime.scalars.localDate.format",
+      "type": "java.lang.String",
+      "description": "If set, will format LocalDate scalar using pattern"
+    },
+    {
+      "name": "dgs.graphql.datetime.scalars.localDateTime.scalarName",
+      "type": "java.lang.String",
+      "description": "If set, will provide a custom name for the graphql-java-datetime LocalDateTime scalar"
+    },
+    {
+      "name": "dgs.graphql.datetime.scalars.localDateTime.format",
+      "type": "java.lang.String",
+      "description": "If set, will format LocalDatetime scalar using pattern"
+    },
+    {
+      "name": "dgs.graphql.datetime.scalars.localTime.scalarName",
+      "type": "java.lang.String",
+      "description": "If set, will provide a custom name for the graphql-java-datetime LocalTime scalar"
+    },
+    {
+      "name": "dgs.graphql.datetime.scalars.offsetDateTime.scalarName",
+      "type": "java.lang.String",
+      "description": "If set, will provide a custom name for the graphql-java-datetime OffsetDateTime scalar"
+    },
+    {
+      "name": "dgs.graphql.datetime.scalars.yearMonth.scalarName",
+      "type": "java.lang.String",
+      "description": "If set, will provide a custom name for the graphql-java-datetime YearMonth scalar"
+    },
+    {
+      "name": "dgs.graphql.datetime.scalars.duration.scalarName",
+      "type": "java.lang.String",
+      "description": "If set, will provide a custom name for the graphql-java-datetime Duration scalar"
+    },
+    {
+      "name": "dgs.graphql.datetime.scalars.zoneConversionENabled",
+      "type": "java.lang.Boolean",
+      "description": "If set, will automatic zone conversion by adding the following property to your application.yaml. This will automatically convert between UTC and the default TimeZone for LocalDateTime"
+    }
+  ],
+  "hints": []
+}
