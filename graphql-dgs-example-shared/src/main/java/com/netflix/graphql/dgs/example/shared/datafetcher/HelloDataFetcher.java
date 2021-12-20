@@ -21,13 +21,22 @@ import com.netflix.graphql.dgs.context.DgsContext;
 import com.netflix.graphql.dgs.example.shared.context.MyContext;
 import com.netflix.graphql.dgs.example.shared.types.Message;
 import graphql.GraphQLException;
+import graphql.language.FieldDefinition;
+import graphql.language.ObjectTypeExtensionDefinition;
+import graphql.language.TypeName;
 import graphql.relay.Connection;
 import graphql.relay.SimpleListConnection;
+import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
+import graphql.schema.FieldCoordinates;
+import graphql.schema.GraphQLCodeRegistry;
+import graphql.schema.idl.TypeDefinitionRegistry;
 import org.dataloader.DataLoader;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.RequestHeader;
 
+import java.beans.FeatureDescriptor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,12 +44,24 @@ import java.util.concurrent.CompletableFuture;
 
 @DgsComponent
 public class HelloDataFetcher {
+    TypeDefinitionRegistry typeDefinitionRegistry = new TypeDefinitionRegistry();
+    DataFetcher<String> df;
+    FieldCoordinates coordinates;
+
     @DgsQuery
     @DgsEnableDataFetcherInstrumentation(false)
-    public String hello(@InputArgument String name) {
+    public String hello(DgsDataFetchingEnvironment env, @InputArgument String name) {
         if (name == null) {
             name = "Stranger";
         }
+
+        ObjectTypeExtensionDefinition objectTypeExtensionDefinition = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query").fieldDefinition(FieldDefinition.newFieldDefinition().name("myDynamicField").type(new TypeName("String")).build())
+                .build();
+
+        typeDefinitionRegistry.add(objectTypeExtensionDefinition);
+
+        df = (dfe) -> "yes, my extra field!";
+        coordinates = FieldCoordinates.coordinates("Query", "myDynamicField");
 
         return "hello, " + name + "!";
     }
@@ -98,5 +119,18 @@ public class HelloDataFetcher {
     @DgsData(parentType = "Query", field = "withPagination")
     public Connection<Message> withPagination(DataFetchingEnvironment env) {
        return new SimpleListConnection<>(Collections.singletonList(new Message("This is a generated connection"))).get(env);
+    }
+
+    @DgsTypeDefinitionRegistry
+    public TypeDefinitionRegistry registry() {
+        return typeDefinitionRegistry;
+    }
+
+    @DgsCodeRegistry
+    public GraphQLCodeRegistry.Builder registry(GraphQLCodeRegistry.Builder codeRegistryBuilder, TypeDefinitionRegistry registry) {
+        if (df != null && coordinates != null) {
+            return codeRegistryBuilder.dataFetcher(coordinates, df);
+        }
+        return codeRegistryBuilder;
     }
 }

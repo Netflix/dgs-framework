@@ -72,10 +72,11 @@ class DefaultDgsQueryExecutor(
         webRequest: WebRequest?
     ): ExecutionResult {
         val graphQLSchema: GraphQLSchema =
-            if (reloadIndicator.reloadSchema())
+            /*if (reloadIndicator.reloadSchema())
                 schema.updateAndGet { schemaProvider.schema() }
             else
-                schema.get()
+                schema.get()*/
+            schema.updateAndGet{ schemaProvider.schema() }
         val dgsContext = contextBuilder.build(DgsWebMvcRequestData(extensions, headers, webRequest))
         val executionResult = BaseDgsQueryExecutor.baseExecute(
             query,
