@@ -116,6 +116,7 @@ class DataFetcherInvoker(
 
             launch.asCompletableFuture()
         } else {
+            ReflectionUtils.makeAccessible(method)
             ReflectionUtils.invokeMethod(method, dgsComponent, *args.toTypedArray())
         }
     }
