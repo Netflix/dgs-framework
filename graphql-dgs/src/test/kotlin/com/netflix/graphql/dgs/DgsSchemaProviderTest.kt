@@ -171,6 +171,62 @@ internal class DgsSchemaProviderTest {
     }
 
     @Test
+    fun addPrivateFetchers() {
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            private fun someFetcher(dfe: DataFetchingEnvironment): String {
+                return "Hello"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val schema = provider.schema()
+        val build = GraphQL.newGraphQL(schema).build()
+        assertHello(build)
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    open class BaseClassFetcher {
+        @DgsData(parentType = "Query", field = "hello")
+        private fun someFetcher(dfe: DataFetchingEnvironment): String {
+            return "Hello"
+        }
+    }
+
+    @Test
+    fun addSubClassFetchers() {
+        val fetcher = object : BaseClassFetcher() {
+            // We're only interested in the base class for this test
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val schema = provider.schema()
+        val build = GraphQL.newGraphQL(schema).build()
+        assertHello(build)
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
     fun addDefaultTypeResolvers() {
         val schema = """
             type Query {
