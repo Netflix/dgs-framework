@@ -107,7 +107,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         testImplementation("org.springframework.boot:spring-boot-starter-test") {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         }
-        testImplementation("io.mockk:mockk:1.12.1")
+        testImplementation("io.mockk:mockk:1.12.2")
     }
 
     java {
