@@ -22,10 +22,10 @@ import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
 import org.springframework.web.socket.WebSocketHandler
 import org.springframework.web.socket.WebSocketHttpHeaders
-import org.springframework.web.socket.server.HandshakeInterceptor
+import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor
 import java.lang.Exception
 
-class DgsHandshakeInterceptor : HandshakeInterceptor {
+class DgsHandshakeInterceptor : HttpSessionHandshakeInterceptor() {
     private val logger = LoggerFactory.getLogger(DgsHandshakeInterceptor::class.java)
     override fun beforeHandshake(
         request: ServerHttpRequest,
@@ -36,7 +36,7 @@ class DgsHandshakeInterceptor : HandshakeInterceptor {
         if (request.headers[WebSocketHttpHeaders.SEC_WEBSOCKET_PROTOCOL].isNullOrEmpty()) {
             request.headers.set(WebSocketHttpHeaders.SEC_WEBSOCKET_PROTOCOL, GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL)
         }
-        return true
+        return super.beforeHandshake(request, response, wsHandler, attributes)
     }
 
     override fun afterHandshake(
