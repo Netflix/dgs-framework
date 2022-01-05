@@ -29,8 +29,17 @@ import graphql.execution.DataFetcherExceptionHandler
 import graphql.language.InterfaceTypeDefinition
 import graphql.language.TypeName
 import graphql.language.UnionTypeDefinition
-import graphql.schema.*
-import graphql.schema.idl.*
+import graphql.schema.Coercing
+import graphql.schema.DataFetcher
+import graphql.schema.FieldCoordinates
+import graphql.schema.GraphQLCodeRegistry
+import graphql.schema.GraphQLScalarType
+import graphql.schema.GraphQLSchema
+import graphql.schema.idl.RuntimeWiring
+import graphql.schema.idl.SchemaDirectiveWiring
+import graphql.schema.idl.SchemaParser
+import graphql.schema.idl.TypeDefinitionRegistry
+import graphql.schema.idl.TypeRuntimeWiring
 import graphql.schema.visibility.DefaultGraphqlFieldVisibility
 import graphql.schema.visibility.GraphqlFieldVisibility
 import org.slf4j.Logger
@@ -188,8 +197,7 @@ class DgsSchemaProvider(
     ) {
         dgsComponents.forEach { dgsComponent ->
             val javaClass = AopUtils.getTargetClass(dgsComponent)
-
-            javaClass.methods.asSequence()
+            ReflectionUtils.getUniqueDeclaredMethods(javaClass).asSequence()
                 .filter { method ->
                     MergedAnnotations.from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY)
                         .isPresent(DgsData::class.java)
