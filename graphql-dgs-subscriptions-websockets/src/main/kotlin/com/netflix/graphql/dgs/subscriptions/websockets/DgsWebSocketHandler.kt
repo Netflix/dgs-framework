@@ -24,6 +24,9 @@ import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
 import org.slf4j.LoggerFactory
+import org.springframework.security.core.context.SecurityContext
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.util.ClassUtils
 import org.springframework.web.socket.SubProtocolCapable
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
@@ -52,6 +55,7 @@ class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : Text
 
     public override fun handleTextMessage(session: WebSocketSession, message: TextMessage) {
         val (type, payload, id) = objectMapper.readValue(message.payload, OperationMessage::class.java)
+        loadSecurityContextFromSession(session)
         when (type) {
             GQL_CONNECTION_INIT -> {
                 logger.info("Initialized connection for {}", session.id)
@@ -81,6 +85,15 @@ class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : Text
                 session.close()
             }
             else -> session.sendMessage(TextMessage(objectMapper.writeValueAsBytes(OperationMessage("error"))))
+        }
+    }
+
+    private fun loadSecurityContextFromSession(session: WebSocketSession) {
+        if (springSecurityAvailable) {
+            val securityContext = session.attributes["SPRING_SECURITY_CONTEXT"] as? SecurityContext
+            if (securityContext != null) {
+                SecurityContextHolder.setContext(securityContext)
+            }
         }
     }
 
@@ -143,6 +156,13 @@ class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : Text
     private companion object {
         val logger = LoggerFactory.getLogger(DgsWebSocketHandler::class.java)
         val objectMapper = jacksonObjectMapper()
+
+        private val springSecurityAvailable: Boolean by lazy {
+            ClassUtils.isPresent(
+                "org.springframework.security.core.context.SecurityContextHolder",
+                DgsWebSocketHandler::class.java.classLoader
+            )
+        }
     }
 
     override fun getSubProtocols(): List<String> = listOf(GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL)
