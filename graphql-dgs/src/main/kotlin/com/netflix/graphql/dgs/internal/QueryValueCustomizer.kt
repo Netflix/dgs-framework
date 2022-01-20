@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,8 @@
  * limitations under the License.
  */
 
-dependencies {
-    api(project(":graphql-dgs"))
-    api(project(":graphql-dgs-spring-webmvc"))
-    implementation("org.springframework:spring-web")
-    implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.apache.commons:commons-lang3")
+package com.netflix.graphql.dgs.internal
 
-    compileOnly("com.github.ben-manes.caffeine:caffeine")
-    compileOnly("io.micrometer:micrometer-core")
-
-    testImplementation("org.springframework.boot:spring-boot-starter-web")
-    testImplementation("com.github.ben-manes.caffeine:caffeine")
+fun interface QueryValueCustomizer {
+    fun apply(query: String?): String?
 }

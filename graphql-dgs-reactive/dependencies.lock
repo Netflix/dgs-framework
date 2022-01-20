@@ -69,6 +69,9 @@
             ],
             "project": true
         },
+        "io.projectreactor.kotlin:reactor-kotlin-extensions": {
+            "locked": "1.0.3.RELEASE"
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.32"
         },
@@ -354,6 +357,9 @@
             ],
             "project": true
         },
+        "io.projectreactor.kotlin:reactor-kotlin-extensions": {
+            "locked": "1.0.3.RELEASE"
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.32"
         },
@@ -501,7 +507,10 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.1"
+            "locked": "1.12.2"
+        },
+        "io.projectreactor.kotlin:reactor-kotlin-extensions": {
+            "locked": "1.0.3.RELEASE"
         },
         "io.projectreactor:reactor-test": {
             "locked": "3.4.10"
@@ -627,10 +636,19 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.1"
+            "locked": "1.12.2"
+        },
+        "io.projectreactor.kotlin:reactor-kotlin-extensions": {
+            "locked": "1.0.3.RELEASE"
         },
         "io.projectreactor:reactor-test": {
             "locked": "3.4.10"
+        },
+        "org.apache.commons:commons-lang3": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure"
+            ],
+            "locked": "3.10"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.32"

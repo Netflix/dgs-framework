@@ -50,9 +50,20 @@ class DgsRestControllerTest {
             }
         """.trimIndent()
 
-        every { dgsQueryExecutor.execute(queryString, emptyMap(), any(), any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(CompletionStageMappingPublisher<String, String>(null, null)).build()
+        every {
+            dgsQueryExecutor.execute(
+                queryString,
+                emptyMap(),
+                any(),
+                any(),
+                any(),
+                any()
+            )
+        } returns ExecutionResultImpl.newExecutionResult()
+            .data(CompletionStageMappingPublisher<String, String>(null, null)).build()
 
-        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
+        val result =
+            DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
         assertThat(result.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
         assertThat(result.body).isEqualTo("Trying to execute subscription on /graphql. Use /subscriptions instead!")
     }
@@ -66,7 +77,16 @@ class DgsRestControllerTest {
             }
         """.trimIndent()
 
-        every { dgsQueryExecutor.execute(queryString, emptyMap(), any(), any(), any(), any()) } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).build()
+        every {
+            dgsQueryExecutor.execute(
+                queryString,
+                emptyMap(),
+                any(),
+                any(),
+                any(),
+                any()
+            )
+        } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).build()
 
         val result = DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
         val mapper = jacksonObjectMapper()
@@ -134,9 +154,9 @@ class DgsRestControllerTest {
         assertThat(errors.size).isEqualTo(0)
         assertThat(data["hello"]).isEqualTo("hello")
     }
+
+    data class GraphQLResponse(val data: Map<String, Any> = emptyMap(), val errors: List<GraphQLError> = emptyList())
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    data class GraphQLError(val message: String)
 }
-
-data class GraphQLResponse(val data: Map<String, Any> = emptyMap(), val errors: List<GraphQLError> = emptyList())
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class GraphQLError(val message: String)

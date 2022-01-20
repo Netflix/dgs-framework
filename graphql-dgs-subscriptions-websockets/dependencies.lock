@@ -104,6 +104,9 @@
         "org.springframework.security:spring-security-bom": {
             "locked": "5.3.12.RELEASE"
         },
+        "org.springframework.security:spring-security-core": {
+            "locked": "5.3.12.RELEASE"
+        },
         "org.springframework:spring-framework-bom": {
             "locked": "5.2.18.RELEASE"
         },
@@ -520,7 +523,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.1"
+            "locked": "1.12.2"
         },
         "io.projectreactor.kotlin:reactor-kotlin-extensions": {
             "locked": "1.0.3.RELEASE"
@@ -642,7 +645,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.1"
+            "locked": "1.12.2"
         },
         "io.projectreactor.kotlin:reactor-kotlin-extensions": {
             "locked": "1.0.3.RELEASE"

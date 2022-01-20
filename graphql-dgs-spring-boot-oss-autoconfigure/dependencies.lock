@@ -29,6 +29,9 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.5"
         },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.8.8"
+        },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -73,6 +76,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
             "project": true
+        },
+        "io.micrometer:micrometer-core": {
+            "locked": "1.5.14"
+        },
+        "org.apache.commons:commons-lang3": {
+            "locked": "3.10"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.32"
@@ -366,6 +375,9 @@
             ],
             "project": true
         },
+        "org.apache.commons:commons-lang3": {
+            "locked": "3.10"
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.32"
         },
@@ -456,6 +468,9 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.5"
         },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.8.8"
+        },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -502,7 +517,10 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.1"
+            "locked": "1.12.2"
+        },
+        "org.apache.commons:commons-lang3": {
+            "locked": "3.10"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.32"
@@ -564,6 +582,9 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.5"
         },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.8.8"
+        },
         "com.github.javafaker:javafaker": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -616,7 +637,10 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.1"
+            "locked": "1.12.2"
+        },
+        "org.apache.commons:commons-lang3": {
+            "locked": "3.10"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.32"

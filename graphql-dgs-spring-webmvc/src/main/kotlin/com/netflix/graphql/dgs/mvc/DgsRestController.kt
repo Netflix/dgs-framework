@@ -60,7 +60,9 @@ import org.springframework.web.multipart.MultipartFile
  */
 
 @RestController
-open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
+open class DgsRestController(
+    open val dgsQueryExecutor: DgsQueryExecutor
+) {
 
     // The @ConfigurationProperties bean name is <prefix>-<fqn>
     @RequestMapping(
@@ -155,10 +157,15 @@ open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
             return ResponseEntity.badRequest().body("Invalid GraphQL request - operationName must be a String")
         }
 
+        val query: String? = when (val iq = inputQuery["query"]) {
+            is String -> iq
+            else -> null
+        }
+
         val executionResult = TimeTracer.logTime(
             {
                 dgsQueryExecutor.execute(
-                    inputQuery["query"] as String,
+                    query,
                     queryVariables,
                     extensions,
                     headers,

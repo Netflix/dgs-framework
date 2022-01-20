@@ -20,6 +20,7 @@ import com.netflix.graphql.dgs.internal.CookieValueResolver
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.QueryValueCustomizer
 import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
@@ -86,7 +87,8 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
         @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
         idProvider: Optional<ExecutionIdProvider>,
         reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator,
-        preparsedDocumentProvider: PreparsedDocumentProvider
+        preparsedDocumentProvider: PreparsedDocumentProvider,
+        queryValueCustomizer: QueryValueCustomizer
     ): DgsReactiveQueryExecutor {
 
         val queryExecutionStrategy =
@@ -103,7 +105,8 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
             mutationExecutionStrategy,
             idProvider,
             reloadSchemaIndicator,
-            preparsedDocumentProvider
+            preparsedDocumentProvider,
+            queryValueCustomizer
         )
     }
 
