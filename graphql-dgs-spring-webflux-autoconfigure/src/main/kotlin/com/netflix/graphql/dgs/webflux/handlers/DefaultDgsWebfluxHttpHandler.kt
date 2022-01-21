@@ -37,9 +37,12 @@ class DefaultDgsWebfluxHttpHandler(private val dgsQueryExecutor: DgsReactiveQuer
                         QueryInput(it)
                     } else {
                         val readValue = mapper.readValue<Map<String, Any>>(it)
+                        val query: String? = when (val iq = readValue["query"]) {
+                            is String -> iq
+                            else -> null
+                        }
                         QueryInput(
-                            readValue["query"] as String,
-
+                            query,
                             (readValue["variables"] ?: emptyMap<String, Any>()) as Map<String, Any>,
                             (readValue["extensions"] ?: emptyMap<String, Any>()) as Map<String, Any>,
                         )
@@ -71,7 +74,7 @@ class DefaultDgsWebfluxHttpHandler(private val dgsQueryExecutor: DgsReactiveQuer
 }
 
 private data class QueryInput(
-    val query: String,
+    val query: String?,
     val queryVariables: Map<String, Any> = emptyMap(),
     val extensions: Map<String, Any> = emptyMap()
 )

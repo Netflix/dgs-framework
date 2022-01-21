@@ -125,7 +125,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.0.10"
+            "locked": "1.0.14"
         },
         "commons-codec:commons-codec": {
             "locked": "1.14"
@@ -437,7 +437,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.0.10"
+            "locked": "1.0.14"
         },
         "commons-codec:commons-codec": {
             "locked": "1.14"
@@ -631,7 +631,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.0.10"
+            "locked": "1.0.14"
         },
         "commons-codec:commons-codec": {
             "locked": "1.14"
@@ -640,7 +640,7 @@
             "locked": "1.5.14"
         },
         "io.mockk:mockk": {
-            "locked": "1.12.1"
+            "locked": "1.12.2"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -833,7 +833,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.0.10"
+            "locked": "1.0.14"
         },
         "commons-codec:commons-codec": {
             "locked": "1.14"
@@ -842,7 +842,7 @@
             "locked": "1.5.14"
         },
         "io.mockk:mockk": {
-            "locked": "1.12.1"
+            "locked": "1.12.2"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -857,7 +857,13 @@
             "locked": "4.0.4"
         },
         "net.bytebuddy:byte-buddy": {
-            "locked": "1.11.5"
+            "locked": "1.12.5"
+        },
+        "org.apache.commons:commons-lang3": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure"
+            ],
+            "locked": "3.10"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.32"

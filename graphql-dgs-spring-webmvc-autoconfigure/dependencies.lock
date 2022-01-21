@@ -465,6 +465,9 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.5"
         },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.8.8"
+        },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -519,7 +522,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.1"
+            "locked": "1.12.2"
         },
         "jakarta.servlet:jakarta.servlet-api": {
             "locked": "4.0.4"
@@ -585,6 +588,9 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.5"
         },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.8.8"
+        },
         "com.github.javafaker:javafaker": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -645,10 +651,16 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.1"
+            "locked": "1.12.2"
         },
         "jakarta.servlet:jakarta.servlet-api": {
             "locked": "4.0.4"
+        },
+        "org.apache.commons:commons-lang3": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure"
+            ],
+            "locked": "3.10"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.32"

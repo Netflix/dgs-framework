@@ -27,6 +27,7 @@ import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsNoOpPreparsedDocumentProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.QueryValueCustomizer
 import graphql.ExecutionResult
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
@@ -39,6 +40,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.web.reactive.function.server.ServerRequest
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.util.function.*
+import java.lang.IllegalArgumentException
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
@@ -52,33 +55,46 @@ class DefaultDgsReactiveQueryExecutor(
     private val mutationExecutionStrategy: ExecutionStrategy,
     private val idProvider: Optional<ExecutionIdProvider>,
     private val reloadIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator = DefaultDgsQueryExecutor.ReloadSchemaIndicator { false },
-    private val preparsedDocumentProvider: PreparsedDocumentProvider = DgsNoOpPreparsedDocumentProvider
+    private val preparsedDocumentProvider: PreparsedDocumentProvider = DgsNoOpPreparsedDocumentProvider,
+    private val queryValueCustomizer: QueryValueCustomizer = QueryValueCustomizer { query -> query }
 ) : com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor {
 
     private val schema = AtomicReference(defaultSchema)
 
     override fun execute(
-        query: String,
+        query: String?,
         variables: MutableMap<String, Any>?,
         extensions: MutableMap<String, Any>?,
         headers: HttpHeaders?,
         operationName: String?,
         serverHttpRequest: ServerRequest?
     ): Mono<ExecutionResult> {
-        return Mono.fromCallable {
-            if (reloadIndicator.reloadSchema())
-                schema.updateAndGet { schemaProvider.schema() }
-            else
-                schema.get()
-        }.zipWith(contextBuilder.build(DgsReactiveRequestData(extensions, headers, serverHttpRequest)))
-            .flatMap {
+
+        val queryOpt: Optional<String> = Optional.ofNullable(queryValueCustomizer.apply(query)).map { it as String }
+
+        if (!queryOpt.isPresent) {
+            return Mono.error(
+                IllegalArgumentException("Expected the query to have a value but none was provided.")
+            )
+        }
+
+        return Mono
+            .fromCallable {
+                if (reloadIndicator.reloadSchema())
+                    schema.updateAndGet { schemaProvider.schema() }
+                else
+                    schema.get()
+            }
+            .zipWith(contextBuilder.build(DgsReactiveRequestData(extensions, headers, serverHttpRequest)))
+            .flatMap { (gqlSchema, dgsContext) ->
                 Mono.fromCompletionStage(
                     BaseDgsQueryExecutor.baseExecute(
-                        query,
+                        queryOpt.orElse(""),
                         variables,
+                        extensions,
                         operationName,
-                        it.t2,
-                        it.t1,
+                        dgsContext,
+                        gqlSchema,
                         dataLoaderProvider,
                         chainedInstrumentation,
                         queryExecutionStrategy,

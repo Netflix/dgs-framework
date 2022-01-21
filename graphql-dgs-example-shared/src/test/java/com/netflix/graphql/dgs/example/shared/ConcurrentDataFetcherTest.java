@@ -21,7 +21,7 @@ import com.netflix.graphql.dgs.DgsQueryExecutor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @ExampleSpringBootTest
 class ConcurrentDataFetcherTest {
@@ -36,6 +36,6 @@ class ConcurrentDataFetcherTest {
         int ts1 = documentContext.read("data.concurrent1");
         int ts2 = documentContext.read("data.concurrent2");
 
-        assertTrue(ts1 > ts2);
+        assertThat(ts1).isGreaterThanOrEqualTo(ts2);
     }
 }

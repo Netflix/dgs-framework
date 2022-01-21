@@ -473,6 +473,12 @@
             ],
             "project": true
         },
+        "io.projectreactor.kotlin:reactor-kotlin-extensions": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-reactive"
+            ],
+            "locked": "1.0.3.RELEASE"
+        },
         "io.projectreactor.netty:reactor-netty": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure"
@@ -484,6 +490,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
             "locked": "3.4.10"
+        },
+        "org.apache.commons:commons-lang3": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure"
+            ],
+            "locked": "3.10"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.32"
@@ -686,7 +698,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.1"
+            "locked": "1.12.2"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -863,7 +875,13 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.1"
+            "locked": "1.12.2"
+        },
+        "io.projectreactor.kotlin:reactor-kotlin-extensions": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-reactive"
+            ],
+            "locked": "1.0.3.RELEASE"
         },
         "io.projectreactor.netty:reactor-netty": {
             "firstLevelTransitive": [
@@ -876,6 +894,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
             "locked": "3.4.10"
+        },
+        "org.apache.commons:commons-lang3": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure"
+            ],
+            "locked": "3.10"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.32"

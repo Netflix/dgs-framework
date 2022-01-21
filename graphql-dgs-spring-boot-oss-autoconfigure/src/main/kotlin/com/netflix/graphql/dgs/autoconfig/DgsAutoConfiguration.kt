@@ -77,7 +77,8 @@ open class DgsAutoConfiguration(
         @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
         idProvider: Optional<ExecutionIdProvider>,
         reloadSchemaIndicator: ReloadSchemaIndicator,
-        preparsedDocumentProvider: PreparsedDocumentProvider
+        preparsedDocumentProvider: PreparsedDocumentProvider,
+        queryValueCustomizer: QueryValueCustomizer
     ): DgsQueryExecutor {
         val queryExecutionStrategy = providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
         val mutationExecutionStrategy = providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
@@ -91,8 +92,15 @@ open class DgsAutoConfiguration(
             mutationExecutionStrategy,
             idProvider,
             reloadSchemaIndicator,
-            preparsedDocumentProvider
+            preparsedDocumentProvider,
+            queryValueCustomizer
         )
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun defaultQueryValueCustomizer(): QueryValueCustomizer {
+        return QueryValueCustomizer { a -> a }
     }
 
     @Bean

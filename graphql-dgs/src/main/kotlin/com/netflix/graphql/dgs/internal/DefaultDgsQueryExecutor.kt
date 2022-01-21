@@ -41,6 +41,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.web.context.request.WebRequest
+import java.lang.IllegalArgumentException
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.atomic.AtomicReference
@@ -59,12 +60,13 @@ class DefaultDgsQueryExecutor(
     private val idProvider: Optional<ExecutionIdProvider>,
     private val reloadIndicator: ReloadSchemaIndicator = ReloadSchemaIndicator { false },
     private val preparsedDocumentProvider: PreparsedDocumentProvider = DgsNoOpPreparsedDocumentProvider,
+    private val queryValueCustomizer: QueryValueCustomizer = QueryValueCustomizer { query -> query }
 ) : DgsQueryExecutor {
 
     val schema = AtomicReference(defaultSchema)
 
     override fun execute(
-        query: String,
+        query: String?,
         variables: Map<String, Any>,
         extensions: Map<String, Any>?,
         headers: HttpHeaders?,
@@ -77,19 +79,27 @@ class DefaultDgsQueryExecutor(
             else
                 schema.get()
         val dgsContext = contextBuilder.build(DgsWebMvcRequestData(extensions, headers, webRequest))
-        val executionResult = BaseDgsQueryExecutor.baseExecute(
-            query,
-            variables,
-            operationName,
-            dgsContext,
-            graphQLSchema,
-            dataLoaderProvider,
-            chainedInstrumentation,
-            queryExecutionStrategy,
-            mutationExecutionStrategy,
-            idProvider,
-            preparsedDocumentProvider,
-        )
+
+        val cQuery: String = when (val inQuery = queryValueCustomizer.apply(query)) {
+            is String -> inQuery
+            else -> throw IllegalArgumentException("Expecting a none null query!")
+        }
+
+        val executionResult =
+            BaseDgsQueryExecutor.baseExecute(
+                cQuery,
+                variables,
+                extensions,
+                operationName,
+                dgsContext,
+                graphQLSchema,
+                dataLoaderProvider,
+                chainedInstrumentation,
+                queryExecutionStrategy,
+                mutationExecutionStrategy,
+                idProvider,
+                preparsedDocumentProvider,
+            )
 
         // Check for NonNullableFieldWasNull errors, and log them explicitly because they don't run through the exception handlers.
         val result = executionResult.get()
@@ -198,6 +208,7 @@ object BaseDgsQueryExecutor {
     fun baseExecute(
         query: String,
         variables: Map<String, Any>?,
+        extensions: Map<String, Any>?,
         operationName: String?,
         dgsContext: DgsContext,
         graphQLSchema: GraphQLSchema,
@@ -221,16 +232,23 @@ object BaseDgsQueryExecutor {
         val graphQL = graphQLBuilder.build()
 
         val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier { dgsContext }
-        val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
-            .query(query)
-            .dataLoaderRegistry(dataLoaderRegistry)
-            .variables(variables)
-            .operationName(operationName)
-            .context(dgsContext)
-            .build()
+
+        val executionInputBuilder: ExecutionInput.Builder =
+            ExecutionInput
+                .newExecutionInput()
+                .query(query)
+                .operationName(operationName)
+                .variables(variables)
+                .dataLoaderRegistry(dataLoaderRegistry)
+                .context(dgsContext)
+                .graphQLContext { b -> b.of("dgs", dgsContext) }
+
+        if (extensions != null) {
+            executionInputBuilder.extensions(extensions)
+        }
 
         return try {
-            graphQL.executeAsync(executionInput)
+            graphQL.executeAsync(executionInputBuilder.build())
         } catch (e: Exception) {
             logger.error("Encountered an exception while handling query $query", e)
             val errors: List<GraphQLError> = if (e is GraphQLError) listOf<GraphQLError>(e) else emptyList()

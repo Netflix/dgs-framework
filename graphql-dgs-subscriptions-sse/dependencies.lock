@@ -514,7 +514,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.1"
+            "locked": "1.12.2"
         },
         "io.projectreactor:reactor-test": {
             "locked": "3.4.10"
@@ -630,7 +630,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.1"
+            "locked": "1.12.2"
         },
         "io.projectreactor:reactor-test": {
             "locked": "3.4.10"
