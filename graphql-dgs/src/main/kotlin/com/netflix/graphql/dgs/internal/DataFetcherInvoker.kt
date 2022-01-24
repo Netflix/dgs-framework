@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,8 @@ class DataFetcherInvoker(
     defaultParameterNameDiscoverer: DefaultParameterNameDiscoverer,
     private val environment: DataFetchingEnvironment,
     private val dgsComponent: Any,
-    private val method: Method
+    private val method: Method,
+    private val inputObjectMapper: InputObjectMapper,
 ) {
 
     private val parameterNames = defaultParameterNameDiscoverer.getParameterNames(method) ?: emptyArray()
@@ -246,9 +247,9 @@ class DataFetcherInvoker(
                 }
 
             if (targetType.isKotlinClass()) {
-                InputObjectMapper.mapToKotlinObject(parameterValue as Map<String, *>, targetType.kotlin)
+                inputObjectMapper.mapToKotlinObject(parameterValue as Map<String, *>, targetType.kotlin)
             } else {
-                InputObjectMapper.mapToJavaObject(parameterValue as Map<String, *>, targetType)
+                inputObjectMapper.mapToJavaObject(parameterValue as Map<String, *>, targetType)
             }
         } else if ((parameter.type.isEnum || collectionType?.isEnum == true) && parameterValue != null) {
             val enumConstants: Array<Enum<*>> =

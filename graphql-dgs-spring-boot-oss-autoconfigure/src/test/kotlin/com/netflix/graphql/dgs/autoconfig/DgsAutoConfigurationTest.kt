@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package com.netflix.graphql.dgs.autoconfig
 
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.autoconfig.testcomponents.CustomContextBuilderConfig
+import com.netflix.graphql.dgs.autoconfig.testcomponents.CustomInputObjectMapperConfig
+import com.netflix.graphql.dgs.autoconfig.testcomponents.DataFetcherWithInputObject
 import com.netflix.graphql.dgs.autoconfig.testcomponents.DataLoaderConfig
 import com.netflix.graphql.dgs.autoconfig.testcomponents.HelloDataFetcherConfig
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
@@ -97,6 +99,46 @@ class DgsAutoConfigurationTest {
                 )
                 assertThat(json).isEqualTo("hello")
             }
+        }
+    }
+
+    @Test
+    fun `It should be possible to override default input object mapper`() {
+        context.withUserConfiguration(CustomInputObjectMapperConfig::class.java).run { ctx ->
+            assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
+                it.executeAndExtractJsonPathAsObject(
+                    """
+                    query withIgnoredFields {
+                        withIgnoredField(input: { ignoredField: "this should be ignored", name: "this should be included"}) {
+                            ignoredField
+                            name                                             
+                        }
+                    }
+                    """.trimIndent(),
+                    "data.withIgnoredField",
+                    DataFetcherWithInputObject.Input::class.java
+                )
+            }.isEqualTo(DataFetcherWithInputObject.Input(null, "this should be included"))
+        }
+    }
+
+    @Test
+    fun `Nested input objects should use overridden input object mapper`() {
+        context.withUserConfiguration(CustomInputObjectMapperConfig::class.java).run { ctx ->
+            assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
+                it.executeAndExtractJsonPathAsObject(
+                    """
+                    query withIgnoredFields {
+                        withIgnoredFieldNested(nestedInput: { input: { ignoredField: "this should be ignored", name: "this should be included"} }) {
+                            ignoredField
+                            name                                             
+                        }
+                    }
+                    """.trimIndent(),
+                    "data.withIgnoredFieldNested",
+                    DataFetcherWithInputObject.Input::class.java
+                )
+            }.isEqualTo(DataFetcherWithInputObject.Input(null, "this should be included"))
         }
     }
 }

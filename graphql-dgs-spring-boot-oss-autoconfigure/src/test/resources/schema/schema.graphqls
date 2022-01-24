@@ -17,4 +17,22 @@ type Query {
     withNullableNull: String
 
     withNonNullableNull: String!
+
+    withIgnoredField(input: Input): Output
+
+    withIgnoredFieldNested(nestedInput: NestedInput): Output
+}
+
+input Input {
+    ignoredField: String
+    name: String
+}
+
+type Output {
+    ignoredField: String
+    name: String
+}
+
+input NestedInput {
+    input: Input
 }

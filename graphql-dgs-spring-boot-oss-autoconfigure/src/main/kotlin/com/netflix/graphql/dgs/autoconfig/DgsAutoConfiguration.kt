@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,24 @@ import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
-import com.netflix.graphql.dgs.internal.*
+import com.netflix.graphql.dgs.internal.CookieValueResolver
+import com.netflix.graphql.dgs.internal.DataFetcherResultProcessor
+import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
+import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
+import com.netflix.graphql.dgs.internal.DefaultInputObjectMapper
+import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
+import com.netflix.graphql.dgs.internal.DgsNoOpPreparsedDocumentProvider
+import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.InputObjectMapper
+import com.netflix.graphql.dgs.internal.QueryValueCustomizer
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import com.netflix.graphql.mocking.MockProvider
-import graphql.execution.*
+import graphql.execution.AsyncExecutionStrategy
+import graphql.execution.AsyncSerialExecutionStrategy
+import graphql.execution.DataFetcherExceptionHandler
+import graphql.execution.ExecutionIdProvider
+import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.preparsed.PreparsedDocumentProvider
@@ -151,7 +164,8 @@ open class DgsAutoConfiguration(
         mockProviders: Optional<Set<MockProvider>>,
         dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
         dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
-        cookieValueResolver: Optional<CookieValueResolver> = Optional.empty()
+        cookieValueResolver: Optional<CookieValueResolver> = Optional.empty(),
+        inputObjectMapper: Optional<InputObjectMapper> = Optional.empty()
     ): DgsSchemaProvider {
         return DgsSchemaProvider(
             applicationContext,
@@ -161,7 +175,8 @@ open class DgsAutoConfiguration(
             configProps.schemaLocations,
             dataFetcherResultProcessors,
             dataFetcherExceptionHandler,
-            cookieValueResolver
+            cookieValueResolver,
+            inputObjectMapper.orElse(DefaultInputObjectMapper())
         )
     }
 

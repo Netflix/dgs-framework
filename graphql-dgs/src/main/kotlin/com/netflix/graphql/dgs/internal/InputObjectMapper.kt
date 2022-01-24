@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,11 +32,16 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmErasure
 
+interface InputObjectMapper {
+    fun <T : Any> mapToKotlinObject(inputMap: Map<String, *>, targetClass: KClass<T>): T
+    fun <T> mapToJavaObject(inputMap: Map<String, *>, targetClass: Class<T>): T
+}
+
 @Suppress("UNCHECKED_CAST")
-object InputObjectMapper {
+class DefaultInputObjectMapper(val customInputObjectMapper: InputObjectMapper? = null) : InputObjectMapper {
     private val logger: Logger = LoggerFactory.getLogger(InputObjectMapper::class.java)
 
-    fun <T : Any> mapToKotlinObject(inputMap: Map<String, *>, targetClass: KClass<T>): T {
+    override fun <T : Any> mapToKotlinObject(inputMap: Map<String, *>, targetClass: KClass<T>): T {
         val params = targetClass.primaryConstructor!!.parameters
         val inputValues = mutableListOf<Any?>()
 
@@ -47,9 +52,11 @@ object InputObjectMapper {
                 val subValue = if (isObjectOrAny(nestedTarget)) {
                     input
                 } else if (nestedTarget.java.isKotlinClass()) {
-                    mapToKotlinObject(input as Map<String, *>, nestedTarget)
+                    customInputObjectMapper?.mapToKotlinObject(input as Map<String, *>, nestedTarget)
+                        ?: mapToKotlinObject(input as Map<String, *>, nestedTarget)
                 } else {
-                    mapToJavaObject(input as Map<String, *>, nestedTarget.java)
+                    customInputObjectMapper?.mapToJavaObject(input as Map<String, *>, nestedTarget.java)
+                        ?: mapToJavaObject(input as Map<String, *>, nestedTarget.java)
                 }
                 inputValues.add(subValue)
             } else if (parameter.type.jvmErasure.java.isEnum && input !== null) {
@@ -85,7 +92,7 @@ object InputObjectMapper {
         }
     }
 
-    fun <T> mapToJavaObject(inputMap: Map<String, *>, targetClass: Class<T>): T {
+    override fun <T> mapToJavaObject(inputMap: Map<String, *>, targetClass: Class<T>): T {
         if (targetClass == Object::class.java || targetClass == Map::class.java) {
             return inputMap as T
         }
