@@ -41,7 +41,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.web.reactive.function.server.ServerRequest
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.util.function.*
-import java.lang.IllegalArgumentException
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
@@ -70,14 +69,6 @@ class DefaultDgsReactiveQueryExecutor(
         serverHttpRequest: ServerRequest?
     ): Mono<ExecutionResult> {
 
-        val queryOpt: Optional<String> = Optional.ofNullable(queryValueCustomizer.apply(query)).map { it as String }
-
-        if (!queryOpt.isPresent) {
-            return Mono.error(
-                IllegalArgumentException("Expected the query to have a value but none was provided.")
-            )
-        }
-
         return Mono
             .fromCallable {
                 if (reloadIndicator.reloadSchema())
@@ -89,7 +80,7 @@ class DefaultDgsReactiveQueryExecutor(
             .flatMap { (gqlSchema, dgsContext) ->
                 Mono.fromCompletionStage(
                     BaseDgsQueryExecutor.baseExecute(
-                        queryOpt.orElse(""),
+                        queryValueCustomizer.apply(query),
                         variables,
                         extensions,
                         operationName,

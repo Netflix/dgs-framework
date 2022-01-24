@@ -31,6 +31,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.context.request.WebRequest
 
 @ExtendWith(MockKExtension::class)
@@ -42,34 +43,7 @@ class DgsRestControllerTest {
     lateinit var webRequest: WebRequest
 
     @Test
-    fun errorForSubscriptionOnGraphqlEndpoint() {
-        val queryString = "subscription { stocks { name } }"
-        val requestBody = """
-            {
-                "query": "$queryString"
-            }
-        """.trimIndent()
-
-        every {
-            dgsQueryExecutor.execute(
-                queryString,
-                emptyMap(),
-                any(),
-                any(),
-                any(),
-                any()
-            )
-        } returns ExecutionResultImpl.newExecutionResult()
-            .data(CompletionStageMappingPublisher<String, String>(null, null)).build()
-
-        val result =
-            DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
-        assertThat(result.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
-        assertThat(result.body).isEqualTo("Trying to execute subscription on /graphql. Use /subscriptions instead!")
-    }
-
-    @Test
-    fun normalFlow() {
+    fun `Is able to execute a a well formed query`() {
         val queryString = "query { hello }"
         val requestBody = """
             {
@@ -88,7 +62,8 @@ class DgsRestControllerTest {
             )
         } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).build()
 
-        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
+        val result =
+            DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
         val mapper = jacksonObjectMapper()
         val (data, errors) = mapper.readValue(result.body, GraphQLResponse::class.java)
         assertThat(errors.size).isEqualTo(0)
@@ -153,6 +128,46 @@ class DgsRestControllerTest {
         val (data, errors) = mapper.readValue(result.body, GraphQLResponse::class.java)
         assertThat(errors.size).isEqualTo(0)
         assertThat(data["hello"]).isEqualTo("hello")
+    }
+
+    @Test
+    fun `Return an error when a Subscription is attempted on the Graphql Endpoint`() {
+        val queryString = "subscription { stocks { name } }"
+        val requestBody = """
+            {
+                "query": "$queryString"
+            }
+        """.trimIndent()
+
+        every {
+            dgsQueryExecutor.execute(
+                queryString,
+                emptyMap(),
+                any(),
+                any(),
+                any(),
+                any()
+            )
+        } returns ExecutionResultImpl.newExecutionResult()
+            .data(CompletionStageMappingPublisher<String, String>(null, null)).build()
+
+        val result =
+            DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
+        assertThat(result.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
+        assertThat(result.body).isEqualTo("Trying to execute subscription on /graphql. Use /subscriptions instead!")
+    }
+
+    @Test
+    fun `Returns a request error if the no body is present`() {
+        val requestBody = ""
+        val result =
+            DgsRestController(dgsQueryExecutor)
+                .graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
+
+        assertThat(result)
+            .isInstanceOf(ResponseEntity::class.java)
+            .extracting { it.statusCode }
+            .isEqualTo(HttpStatus.BAD_REQUEST)
     }
 
     data class GraphQLResponse(val data: Map<String, Any> = emptyMap(), val errors: List<GraphQLError> = emptyList())
