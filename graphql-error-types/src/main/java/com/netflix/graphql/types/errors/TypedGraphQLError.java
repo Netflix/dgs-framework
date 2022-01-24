@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static graphql.Assert.assertNotNull;
 
@@ -252,10 +253,10 @@ public class TypedGraphQLError implements GraphQLError {
 
         TypedGraphQLError e = (TypedGraphQLError)obj;
 
-        if (!message.equals(e.message)) return false;
-        if (!locations.equals(e.locations)) return false;
-        if (!path.equals(e.path)) return false;
-        if (!extensions.equals(e.extensions)) return false;
+        if (!Objects.equals(message, e.message)) return false;
+        if (!Objects.equals(locations, e.locations)) return false;
+        if (!Objects.equals(path, e.path)) return false;
+        if (!Objects.equals(extensions, e.extensions)) return false;
 
         return true;
     }
