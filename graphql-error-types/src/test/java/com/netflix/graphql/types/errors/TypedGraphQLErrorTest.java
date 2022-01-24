@@ -20,8 +20,12 @@ import graphql.execution.ResultPath;
 import graphql.language.SourceLocation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 public class TypedGraphQLErrorTest {
     @Test
@@ -77,5 +81,57 @@ public class TypedGraphQLErrorTest {
                 .build();
 
         Assertions.assertNotEquals(baseError, differentExtensionsError);
+    }
+
+    @ParameterizedTest
+    @MethodSource("reflexiveEqualitySource")
+    void reflexiveEqualityWithNullFieldsTest(TypedGraphQLError error, TypedGraphQLError sameError) {
+        Assertions.assertEquals(error, sameError);
+    }
+
+    private static Stream<Arguments> reflexiveEqualitySource() {
+        return Stream.of(
+                Arguments.of(
+                        TypedGraphQLError.newBuilder().build(),
+                        TypedGraphQLError.newBuilder().build()
+                ),
+                Arguments.of(
+                        TypedGraphQLError.newBadRequestBuilder().build(),
+                        TypedGraphQLError.newBadRequestBuilder().build()
+                ),
+                Arguments.of(
+                        errorWithoutMessage(),
+                        errorWithoutMessage()
+                ),
+                Arguments.of(
+                        errorWithoutLocation(),
+                        errorWithoutLocation()
+                ),
+                Arguments.of(
+                        errorWithoutPath(),
+                        errorWithoutPath()
+                )
+        );
+    }
+
+    private static TypedGraphQLError errorWithoutMessage() {
+        return TypedGraphQLError.newBuilder()
+                .location(new SourceLocation(0, 0))
+                .path(ResultPath.parse("/someGraphQlEndpoint"))
+                .build();
+    }
+
+    private static TypedGraphQLError errorWithoutLocation() {
+        return TypedGraphQLError.newBuilder()
+                .message("Some error message")
+                .path(ResultPath.parse("/someGraphQlEndpoint"))
+                .build();
+    }
+
+    private static TypedGraphQLError errorWithoutPath() {
+        return TypedGraphQLError.newBuilder()
+                .message("Some error message")
+                .location(new SourceLocation(0, 0))
+                .build();
     }
 }
