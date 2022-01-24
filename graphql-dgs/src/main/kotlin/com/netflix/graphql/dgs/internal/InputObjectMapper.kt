@@ -33,6 +33,15 @@ import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmErasure
 
 interface InputObjectMapper {
+    /**
+     * SPI intended for other frameworks/libraries that need to customize how input objects are mapped.
+     * Not intended to be used by most users.
+     *
+     * A custom mapper might call the DefaultInputObjectMapper, passing itself to the DefaultInputObjectMapper constructor.
+     * The DefaultInputObjectMapper will invoke the custom mapper each time it goes a level deeper into a nested object structure.
+     * This makes it possible to have a custom mapper that still mostly relies on the default one.
+     * Be careful to not create an infinite recursion calling back and forward though!
+     */
     fun <T : Any> mapToKotlinObject(inputMap: Map<String, *>, targetClass: KClass<T>): T
     fun <T> mapToJavaObject(inputMap: Map<String, *>, targetClass: Class<T>): T
 }
