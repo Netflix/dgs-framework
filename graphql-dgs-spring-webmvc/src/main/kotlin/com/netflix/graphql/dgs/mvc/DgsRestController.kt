@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.mvc
 
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.DgsQueryExecutor
@@ -91,11 +92,21 @@ open class DgsRestController(
                 queryVariables = emptyMap()
                 extensions = emptyMap()
             } else {
+
                 try {
                     inputQuery = body.let { mapper.readValue(it) }
-                } catch (ex: JsonParseException) {
-                    return ResponseEntity.badRequest()
-                        .body(ex.message ?: "Error parsing query - no details found in the error message")
+                } catch (ex: Exception) {
+                    return when (ex) {
+                        is JsonParseException ->
+                            ResponseEntity.badRequest()
+                                .body("Invalid query - ${ex.message ?: "no details found in the error message"}.")
+                        is MismatchedInputException ->
+                            ResponseEntity.badRequest()
+                                .body("Invalid query - No content to map to input.")
+                        else ->
+                            ResponseEntity.badRequest()
+                                .body("Invalid query - ${ex.message ?: "no additional details found"}.")
+                    }
                 }
 
                 queryVariables = if (inputQuery["variables"] != null) {

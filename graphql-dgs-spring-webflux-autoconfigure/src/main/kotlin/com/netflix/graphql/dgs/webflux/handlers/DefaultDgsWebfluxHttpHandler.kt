@@ -16,6 +16,8 @@
 
 package com.netflix.graphql.dgs.webflux.handlers
 
+import com.fasterxml.jackson.core.JsonParseException
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
@@ -32,25 +34,26 @@ class DefaultDgsWebfluxHttpHandler(private val dgsQueryExecutor: DgsReactiveQuer
         @Suppress("UNCHECKED_CAST") val executionResult: Mono<ExecutionResult> =
 
             request.bodyToMono(String::class.java)
-                .map {
+                .flatMap { body ->
                     if ("application/graphql" == request.headers().firstHeader("Content-Type")) {
-                        QueryInput(it)
+                        Mono.just(QueryInput(body))
                     } else {
-                        val readValue = mapper.readValue<Map<String, Any>>(it)
-                        val query: String? = when (val iq = readValue["query"]) {
-                            is String -> iq
-                            else -> null
+                        Mono.fromCallable {
+                            val readValue = mapper.readValue<Map<String, Any>>(body)
+                            val query: String? = when (val iq = readValue["query"]) {
+                                is String -> iq
+                                else -> null
+                            }
+                            QueryInput(
+                                query,
+                                (readValue["variables"] ?: emptyMap<String, Any>()) as Map<String, Any>,
+                                (readValue["extensions"] ?: emptyMap<String, Any>()) as Map<String, Any>,
+                            )
                         }
-                        QueryInput(
-                            query,
-                            (readValue["variables"] ?: emptyMap<String, Any>()) as Map<String, Any>,
-                            (readValue["extensions"] ?: emptyMap<String, Any>()) as Map<String, Any>,
-                        )
                     }
                 }
                 .flatMap { queryInput ->
                     logger.debug("Parsed variables: {}", queryInput.queryVariables)
-
                     dgsQueryExecutor.execute(
                         queryInput.query,
                         queryInput.queryVariables,
@@ -62,8 +65,21 @@ class DefaultDgsWebfluxHttpHandler(private val dgsQueryExecutor: DgsReactiveQuer
                 }
 
         return executionResult.flatMap { result ->
-            val graphQlOutput = result.toSpecification()
-            ServerResponse.ok().bodyValue(graphQlOutput)
+            ServerResponse
+                .ok()
+                .bodyValue(result.toSpecification())
+        }.onErrorResume { ex ->
+            when (ex) {
+                is JsonParseException ->
+                    ServerResponse.badRequest()
+                        .bodyValue("Invalid query - ${ex.message ?: "no details found in the error message"}.")
+                is MismatchedInputException ->
+                    ServerResponse.badRequest()
+                        .bodyValue("Invalid query - No content to map to input.")
+                else ->
+                    ServerResponse.badRequest()
+                        .bodyValue("Invalid query - ${ex.message ?: "no additional details found"}.")
+            }
         }
     }
 

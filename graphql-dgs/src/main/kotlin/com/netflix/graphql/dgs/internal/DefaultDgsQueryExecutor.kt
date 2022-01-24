@@ -16,15 +16,9 @@
 
 package com.netflix.graphql.dgs.internal
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.jayway.jsonpath.*
-import com.jayway.jsonpath.spi.json.JacksonJsonProvider
-import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
 import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor.parseContext
@@ -33,7 +27,6 @@ import graphql.*
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
 import graphql.execution.NonNullableFieldWasNullError
-import graphql.execution.SubscriptionExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLSchema
@@ -41,9 +34,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.web.context.request.WebRequest
-import java.lang.IllegalArgumentException
 import java.util.*
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -80,14 +71,9 @@ class DefaultDgsQueryExecutor(
                 schema.get()
         val dgsContext = contextBuilder.build(DgsWebMvcRequestData(extensions, headers, webRequest))
 
-        val cQuery: String = when (val inQuery = queryValueCustomizer.apply(query)) {
-            is String -> inQuery
-            else -> throw IllegalArgumentException("Expecting a none null query!")
-        }
-
         val executionResult =
             BaseDgsQueryExecutor.baseExecute(
-                cQuery,
+                queryValueCustomizer.apply(query),
                 variables,
                 extensions,
                 operationName,
@@ -187,72 +173,5 @@ class DefaultDgsQueryExecutor(
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(DefaultDgsQueryExecutor::class.java)
-    }
-}
-
-object BaseDgsQueryExecutor {
-    private val logger = LoggerFactory.getLogger(BaseDgsQueryExecutor::class.java)
-
-    val objectMapper = jacksonObjectMapper()
-        .registerModule(JavaTimeModule())
-        .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
-        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)!!
-    val parseContext: ParseContext =
-        JsonPath.using(
-            Configuration.builder()
-                .jsonProvider(JacksonJsonProvider(jacksonObjectMapper()))
-                .mappingProvider(JacksonMappingProvider(objectMapper)).build()
-                .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)
-        )
-
-    fun baseExecute(
-        query: String,
-        variables: Map<String, Any>?,
-        extensions: Map<String, Any>?,
-        operationName: String?,
-        dgsContext: DgsContext,
-        graphQLSchema: GraphQLSchema,
-        dataLoaderProvider: DgsDataLoaderProvider,
-        chainedInstrumentation: ChainedInstrumentation,
-        queryExecutionStrategy: ExecutionStrategy,
-        mutationExecutionStrategy: ExecutionStrategy,
-        idProvider: Optional<ExecutionIdProvider>,
-        preparsedDocumentProvider: PreparsedDocumentProvider,
-    ): CompletableFuture<out ExecutionResult> {
-        val graphQLBuilder =
-            GraphQL.newGraphQL(graphQLSchema)
-                .preparsedDocumentProvider(preparsedDocumentProvider)
-                .instrumentation(chainedInstrumentation)
-                .queryExecutionStrategy(queryExecutionStrategy)
-                .mutationExecutionStrategy(mutationExecutionStrategy)
-                .subscriptionExecutionStrategy(SubscriptionExecutionStrategy())
-        if (idProvider.isPresent) {
-            graphQLBuilder.executionIdProvider(idProvider.get())
-        }
-        val graphQL = graphQLBuilder.build()
-
-        val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier { dgsContext }
-
-        val executionInputBuilder: ExecutionInput.Builder =
-            ExecutionInput
-                .newExecutionInput()
-                .query(query)
-                .operationName(operationName)
-                .variables(variables)
-                .dataLoaderRegistry(dataLoaderRegistry)
-                .context(dgsContext)
-                .graphQLContext { b -> b.of("dgs", dgsContext) }
-
-        if (extensions != null) {
-            executionInputBuilder.extensions(extensions)
-        }
-
-        return try {
-            graphQL.executeAsync(executionInputBuilder.build())
-        } catch (e: Exception) {
-            logger.error("Encountered an exception while handling query $query", e)
-            val errors: List<GraphQLError> = if (e is GraphQLError) listOf<GraphQLError>(e) else emptyList()
-            CompletableFuture.completedFuture(ExecutionResultImpl(null, errors))
-        }
     }
 }
