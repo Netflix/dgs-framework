@@ -79,7 +79,10 @@ class DgsSchemaProvider(
 
     private val defaultParameterNameDiscoverer = DefaultParameterNameDiscoverer()
 
-    fun schema(schema: String? = null, fieldVisibility: GraphqlFieldVisibility = DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY): GraphQLSchema {
+    fun schema(
+        schema: String? = null,
+        fieldVisibility: GraphqlFieldVisibility = DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
+    ): GraphQLSchema {
         val startTime = System.currentTimeMillis()
         val dgsComponents = applicationContext.getBeansWithAnnotation(DgsComponent::class.java).values
         val hasDynamicTypeRegistry =
@@ -97,12 +100,14 @@ class DgsSchemaProvider(
             mergedRegistry = mergedRegistry.merge(existingTypeDefinitionRegistry.get())
         }
 
-        val federationResolverInstance = federationResolver.orElseGet { DefaultDgsFederationResolver(this, dataFetcherExceptionHandler) }
+        val federationResolverInstance =
+            federationResolver.orElseGet { DefaultDgsFederationResolver(this, dataFetcherExceptionHandler) }
 
         val entityFetcher = federationResolverInstance.entitiesFetcher()
         val typeResolver = federationResolverInstance.typeResolver()
         val codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry().fieldVisibility(fieldVisibility)
-        val runtimeWiringBuilder = RuntimeWiring.newRuntimeWiring().codeRegistry(codeRegistryBuilder).fieldVisibility(fieldVisibility)
+        val runtimeWiringBuilder =
+            RuntimeWiring.newRuntimeWiring().codeRegistry(codeRegistryBuilder).fieldVisibility(fieldVisibility)
 
         dgsComponents.asSequence()
             .mapNotNull { dgsComponent -> invokeDgsTypeDefinitionRegistry(dgsComponent, mergedRegistry) }
@@ -139,7 +144,10 @@ class DgsSchemaProvider(
         }
     }
 
-    private fun invokeDgsTypeDefinitionRegistry(dgsComponent: Any, registry: TypeDefinitionRegistry): TypeDefinitionRegistry? {
+    private fun invokeDgsTypeDefinitionRegistry(
+        dgsComponent: Any,
+        registry: TypeDefinitionRegistry
+    ): TypeDefinitionRegistry? {
         return dgsComponent.javaClass.methods.asSequence()
             .filter { it.isAnnotationPresent(DgsTypeDefinitionRegistry::class.java) }
             .map { method ->
@@ -197,9 +205,10 @@ class DgsSchemaProvider(
     ) {
         dgsComponents.forEach { dgsComponent ->
             val javaClass = AopUtils.getTargetClass(dgsComponent)
-            ReflectionUtils.getUniqueDeclaredMethods(javaClass).asSequence()
+            ReflectionUtils.getUniqueDeclaredMethods(javaClass, ReflectionUtils.USER_DECLARED_METHODS).asSequence()
                 .filter { method ->
-                    MergedAnnotations.from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY)
+                    MergedAnnotations
+                        .from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY)
                         .isPresent(DgsData::class.java)
                 }
                 .forEach { method ->
@@ -308,7 +317,13 @@ class DgsSchemaProvider(
     private fun createBasicDataFetcher(method: Method, dgsComponent: Any, isSubscription: Boolean): DataFetcher<Any?> {
         return DataFetcher<Any?> { environment ->
             val dfe = DgsDataFetchingEnvironment(environment)
-            val result = DataFetcherInvoker(cookieValueResolver, defaultParameterNameDiscoverer, dfe, dgsComponent, method).invokeDataFetcher()
+            val result = DataFetcherInvoker(
+                cookieValueResolver,
+                defaultParameterNameDiscoverer,
+                dfe,
+                dgsComponent,
+                method
+            ).invokeDataFetcher()
             when {
                 isSubscription -> {
                     result
@@ -461,15 +476,3 @@ class DgsSchemaProvider(
         private val logger: Logger = LoggerFactory.getLogger(DgsSchemaProvider::class.java)
     }
 }
-
-interface DataFetcherResultProcessor {
-    fun supportsType(originalResult: Any): Boolean
-    fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any = process(originalResult)
-    @Deprecated(
-        "Replaced with process(originalResult, dfe)",
-        replaceWith = ReplaceWith("process(originalResult: Any, dfe: DgsDataFetchingEnvironment)")
-    )
-    fun process(originalResult: Any): Any = originalResult
-}
-
-data class DatafetcherReference(val instance: Any, val method: Method, val annotations: MergedAnnotations, val parentType: String, val field: String)
