@@ -39,4 +39,5 @@ dependencies {
     testImplementation("io.projectreactor:reactor-core")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("com.graphql-java:graphql-java-extended-scalars")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
 }

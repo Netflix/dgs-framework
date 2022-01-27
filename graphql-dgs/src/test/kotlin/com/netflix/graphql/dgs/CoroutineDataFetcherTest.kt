@@ -49,25 +49,18 @@ class CoroutineDataFetcherTest {
             suspend fun concurrent(@InputArgument from: Int, to: Int): Int = coroutineScope {
                 var sum = 0
                 withContext(executor.asCoroutineDispatcher()) {
-                    println("before $from")
                     repeat(from.rangeTo(to).count()) {
                         sum++
-
                         // Forcing a blocking call to demonstrate running with a thread pool
                         Thread.sleep(50)
                     }
-                    println("after $from")
-
                     sum
                 }
             }
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "concurrentFetcher",
-                fetcher
-            )
+            "concurrentFetcher" to fetcher
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
@@ -138,10 +131,7 @@ class CoroutineDataFetcherTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "exceptionWithMessageFetcher",
-                fetcher
-            )
+            "exceptionWithMessageFetcher" to fetcher
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
