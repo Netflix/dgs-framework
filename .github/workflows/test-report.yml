@@ -1,0 +1,16 @@
+name: 'Test Report'
+on:
+  workflow_run:
+    workflows: ['CI']                     # runs after CI workflow
+    types:
+      - completed
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: dorny/test-reporter@v1
+      with:
+        artifact: test-results            # Artifact name, ref CI Job
+        name: JUnit Tests
+        path: '**/test-results/**/*.xml'  # Path to test results (inside artifact .zip)
+        reporter: java-junit              # Format of test results.
