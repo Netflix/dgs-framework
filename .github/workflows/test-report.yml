@@ -14,3 +14,4 @@ jobs:
         name: JUnit Tests
         path: '**/test-results/**/*.xml'  # Path to test results (inside artifact .zip)
         reporter: java-junit              # Format of test results.
+        list-tests: 'failed'
