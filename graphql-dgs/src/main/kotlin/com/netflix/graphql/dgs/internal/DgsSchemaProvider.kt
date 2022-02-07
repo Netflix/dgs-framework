@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,8 @@ class DgsSchemaProvider(
     private val schemaLocations: List<String> = listOf(DEFAULT_SCHEMA_LOCATION),
     private val dataFetcherResultProcessors: List<DataFetcherResultProcessor> = emptyList(),
     private val dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
-    private val cookieValueResolver: Optional<CookieValueResolver> = Optional.empty()
+    private val cookieValueResolver: Optional<CookieValueResolver> = Optional.empty(),
+    private val inputObjectMapper: InputObjectMapper = DefaultInputObjectMapper(),
 ) {
 
     val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
@@ -317,13 +318,7 @@ class DgsSchemaProvider(
     private fun createBasicDataFetcher(method: Method, dgsComponent: Any, isSubscription: Boolean): DataFetcher<Any?> {
         return DataFetcher<Any?> { environment ->
             val dfe = DgsDataFetchingEnvironment(environment)
-            val result = DataFetcherInvoker(
-                cookieValueResolver,
-                defaultParameterNameDiscoverer,
-                dfe,
-                dgsComponent,
-                method
-            ).invokeDataFetcher()
+            val result = DataFetcherInvoker(cookieValueResolver, defaultParameterNameDiscoverer, dfe, dgsComponent, method, inputObjectMapper).invokeDataFetcher()
             when {
                 isSubscription -> {
                     result
