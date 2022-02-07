@@ -1,10 +1,9 @@
-name: CI Check
+name: CI
 
 on: [push, pull_request]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -73,3 +72,10 @@ jobs:
         run: |
           find /home/runner/.m2/repository/ -type f -name "*graphql-dgs-codegen-gradle*"
           ./scripts/test-examples.py -v -k --path=./build/examples
+
+      - name: Upload JUnit Tests
+        uses: actions/upload-artifact@v2  # upload test results
+        if: success() || failure()        # run this step even if previous step failed
+        with:
+          name: test-results
+          path: '**/test-results/**/*.xml'

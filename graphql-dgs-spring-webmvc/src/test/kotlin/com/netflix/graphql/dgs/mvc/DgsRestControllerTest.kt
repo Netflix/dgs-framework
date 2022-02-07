@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import graphql.ExecutionResultImpl
-import graphql.execution.reactive.CompletionStageMappingPublisher
+import graphql.execution.reactive.SubscriptionPublisher
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -149,7 +149,7 @@ class DgsRestControllerTest {
                 any()
             )
         } returns ExecutionResultImpl.newExecutionResult()
-            .data(CompletionStageMappingPublisher<String, String>(null, null)).build()
+            .data(SubscriptionPublisher(null, null)).build()
 
         val result =
             DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
