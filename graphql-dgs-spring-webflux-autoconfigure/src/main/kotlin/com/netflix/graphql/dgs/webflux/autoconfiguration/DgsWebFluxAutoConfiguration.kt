@@ -20,13 +20,13 @@ import com.netflix.graphql.dgs.internal.CookieValueResolver
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.FluxDataFetcherResultProcessor
+import com.netflix.graphql.dgs.internal.MonoDataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.QueryValueCustomizer
 import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveQueryExecutor
-import com.netflix.graphql.dgs.reactive.internal.FluxDataFetcherResultProcessor
-import com.netflix.graphql.dgs.reactive.internal.MonoDataFetcherResultProcessor
 import com.netflix.graphql.dgs.webflux.handlers.DefaultDgsWebfluxHttpHandler
 import com.netflix.graphql.dgs.webflux.handlers.DgsHandshakeWebSocketService
 import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler
@@ -190,11 +190,13 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     }
 
     @Bean
+    @ConditionalOnMissingBean
     open fun monoReactiveDataFetcherResultProcessor(): MonoDataFetcherResultProcessor {
         return MonoDataFetcherResultProcessor()
     }
 
     @Bean
+    @ConditionalOnMissingBean
     open fun fluxReactiveDataFetcherResultProcessor(): FluxDataFetcherResultProcessor {
         return FluxDataFetcherResultProcessor()
     }

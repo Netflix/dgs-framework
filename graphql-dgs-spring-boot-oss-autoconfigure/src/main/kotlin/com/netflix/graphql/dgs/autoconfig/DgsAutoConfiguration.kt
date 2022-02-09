@@ -30,7 +30,9 @@ import com.netflix.graphql.dgs.internal.DefaultInputObjectMapper
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsNoOpPreparsedDocumentProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.FluxDataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.InputObjectMapper
+import com.netflix.graphql.dgs.internal.MonoDataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.QueryValueCustomizer
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import com.netflix.graphql.mocking.MockProvider
@@ -50,6 +52,7 @@ import graphql.schema.visibility.GraphqlFieldVisibility
 import graphql.schema.visibility.NoIntrospectionGraphqlFieldVisibility.NO_INTROSPECTION_FIELD_VISIBILITY
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
@@ -219,5 +222,19 @@ open class DgsAutoConfiguration(
     @Bean
     open fun uploadScalar(): UploadScalar {
         return UploadScalar()
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnClass(name = ["reactor.core.publisher.Mono"])
+    open fun monoReactiveDataFetcherResultProcessor(): MonoDataFetcherResultProcessor {
+        return MonoDataFetcherResultProcessor()
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnClass(name = ["reactor.core.publisher.Flux"])
+    open fun fluxReactiveDataFetcherResultProcessor(): FluxDataFetcherResultProcessor {
+        return FluxDataFetcherResultProcessor()
     }
 }
