@@ -80,6 +80,9 @@
         "io.micrometer:micrometer-core": {
             "locked": "1.5.14"
         },
+        "io.projectreactor:reactor-core": {
+            "locked": "3.4.10"
+        },
         "org.apache.commons:commons-lang3": {
             "locked": "3.10"
         },
