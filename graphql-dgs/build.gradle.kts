@@ -28,6 +28,7 @@ dependencies {
     implementation("org.springframework:spring-context")
 
     compileOnly("org.springframework.security:spring-security-core")
+    compileOnly("io.projectreactor:reactor-core")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")

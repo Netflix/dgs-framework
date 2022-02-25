@@ -98,7 +98,7 @@ class DataFetcherInvoker(
                     args.add(environment)
                 }
                 else -> {
-                    logger.warn("Unknown argument '${parameterNames[idx]}' on data fetcher ${dgsComponent.javaClass.name}.${method.name}")
+                    logger.debug("Unknown argument '${parameterNames[idx]}' on data fetcher ${dgsComponent.javaClass.name}.${method.name}")
                     // This might cause an exception, but parameter's the best effort we can do
                     args.add(null)
                 }
