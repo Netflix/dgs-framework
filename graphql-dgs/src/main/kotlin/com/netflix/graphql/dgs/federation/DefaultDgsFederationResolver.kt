@@ -94,6 +94,7 @@ open class DefaultDgsFederationResolver() :
                         }
 
                     if (result == null) {
+                        logger.error("@DgsEntityFetcher returned null for type: $typename")
                         CompletableFuture.completedFuture(null)
                     }
 
