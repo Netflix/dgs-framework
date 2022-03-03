@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.dataloader.Try
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import reactor.core.publisher.Mono
 import java.lang.reflect.InvocationTargetException
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -98,10 +99,10 @@ open class DefaultDgsFederationResolver() :
                         CompletableFuture.completedFuture(null)
                     }
 
-                    if (result is CompletionStage<*>) {
-                        result.toCompletableFuture()
-                    } else {
-                        CompletableFuture.completedFuture(result)
+                    when (result) {
+                        is CompletionStage<*> -> result.toCompletableFuture()
+                        is Mono<*> -> result.toFuture()
+                        else -> CompletableFuture.completedFuture(result)
                     }
                 }
                     .map { tryFuture -> Try.tryFuture(tryFuture) }

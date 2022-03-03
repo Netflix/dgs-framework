@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,12 @@ import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherResult
 import graphql.execution.ExecutionStepInfo
 import graphql.execution.ResultPath
-import graphql.schema.*
+import graphql.schema.DataFetchingEnvironment
+import graphql.schema.DataFetchingEnvironmentImpl
+import graphql.schema.GraphQLList
+import graphql.schema.GraphQLObjectType
+import graphql.schema.GraphQLSchema
+import graphql.schema.GraphQLUnionType
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.SchemaGenerator
 import graphql.schema.idl.SchemaParser
@@ -39,6 +44,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
+import reactor.core.publisher.Mono
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -245,6 +251,33 @@ class DefaultDgsFederationResolverTest {
             testEntityFetcher(movieEntityFetcher)
         }
 
+        @Nested
+        inner class EntityFetcherAsyncTests {
+            @Test
+            fun `Call an Entity Fetcher with CompletableFuture`() {
+                val movieEntityFetcher = object {
+                    @DgsEntityFetcher(name = "Movie")
+                    fun movieEntityFetcher(values: Map<String, Any>): CompletableFuture<Movie> {
+                        return CompletableFuture.completedFuture(Movie(values["movieId"].toString()))
+                    }
+                }
+
+                testEntityFetcher(movieEntityFetcher)
+            }
+
+            @Test
+            fun `Call an Entity Fetcher with Mono`() {
+                val movieEntityFetcher = object {
+                    @DgsEntityFetcher(name = "Movie")
+                    fun movieEntityFetcher(values: Map<String, Any>): Mono<Movie> {
+                        return Mono.just(Movie(values["movieId"].toString()))
+                    }
+                }
+
+                testEntityFetcher(movieEntityFetcher)
+            }
+        }
+
         private fun testEntityFetcher(movieEntityFetcher: Any) {
             every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
             every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
@@ -311,68 +344,18 @@ class DefaultDgsFederationResolverTest {
         }
 
         @Test
-        fun `Entitty Fetcher throwing an exception`() {
-
+        fun `Entity Fetcher throwing an exception`() {
             val movieEntityFetcher = object {
                 @DgsEntityFetcher(name = "Movie")
                 fun movieEntityFetcher(values: Map<String, Any>): Movie {
                     throw DgsInvalidInputArgumentException("Invalid input argument exception")
                 }
             }
-
-            every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("MovieEntityFetcher" to movieEntityFetcher)
-
-            dgsSchemaProvider.schema("""type Query {}""")
-
-            val arguments =
-                mapOf<String, Any>(
-                    _Entity.argumentName to listOf(
-                        mapOf(
-                            "__typename" to "Movie",
-                            "movieId" to "invalid"
-                        )
-                    )
-                )
-
-            val executionStepInfo =
-                ExecutionStepInfo.newExecutionStepInfo()
-                    .path(ResultPath.parse("/_entities"))
-                    .type(
-                        GraphQLList.list(
-                            GraphQLUnionType
-                                .newUnionType()
-                                .name("Entity")
-                                .possibleTypes(GraphQLObjectType.newObject().name("Movie").build())
-                                .build()
-                        )
-                    ).build()
-
-            val dataFetchingEnvironment =
-                DgsDataFetchingEnvironment(
-                    DataFetchingEnvironmentImpl.newDataFetchingEnvironment()
-                        .arguments(arguments)
-                        .executionStepInfo(executionStepInfo)
-                        .build()
-                )
-
-            val result =
-                (
-                    DefaultDgsFederationResolver(dgsSchemaProvider, Optional.of(dgsExceptionHandler)).entitiesFetcher()
-                        .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
-                    )
-
-            assertThat(result).isNotNull
-            assertThat(result.get().data).hasSize(1)
-            assertThat(result.get().errors).hasSize(1)
-                .first().extracting { it.message }
-                .satisfies { assertThat(it).contains("DgsInvalidInputArgumentException") }
+            testExceptionEntityFetcher(movieEntityFetcher)
         }
 
         @Test
         fun `Entity Fetcher with failed CompletableFuture`() {
-
             val movieEntityFetcher = object {
                 @DgsEntityFetcher(name = "Movie")
                 fun movieEntityFetcher(values: Map<String, Any>): CompletableFuture<Movie> {
@@ -385,6 +368,27 @@ class DefaultDgsFederationResolverTest {
                     }
                 }
             }
+            testExceptionEntityFetcher(movieEntityFetcher)
+        }
+
+        @Test
+        fun `Entity Fetcher with failed Mono`() {
+            val movieEntityFetcher = object {
+                @DgsEntityFetcher(name = "Movie")
+                fun movieEntityFetcher(values: Map<String, Any>): Mono<Movie> {
+                    return Mono.fromCallable {
+                        if (values["movieId"] == "invalid") {
+                            throw DgsInvalidInputArgumentException("Invalid input argument exception")
+                        }
+
+                        Movie(values["movieId"].toString())
+                    }
+                }
+            }
+            testExceptionEntityFetcher(movieEntityFetcher)
+        }
+
+        private fun testExceptionEntityFetcher(movieEntityFetcher: Any) {
             every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
             every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
             every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("MovieEntityFetcher" to movieEntityFetcher)
@@ -415,7 +419,7 @@ class DefaultDgsFederationResolverTest {
             assertThat(result.get().data).hasSize(1)
             assertThat(result.get().errors).hasSize(1)
                 .first().extracting { it.message }
-                .satisfies { assertThat(it).contains("DgsInvalidInputArgumentException") }
+                .satisfies { assertThat(it).contains("com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException: Invalid input argument exception") }
         }
 
         @Test
