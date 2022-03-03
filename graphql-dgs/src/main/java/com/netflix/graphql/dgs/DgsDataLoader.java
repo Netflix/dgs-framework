@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Component
 public @interface DgsDataLoader {
-    String name();
+    String GENERATE_DATA_LOADER_NAME = "NETFLIX_DGS_GENERATE_DATALOADER_NAME";
+
+    String name() default GENERATE_DATA_LOADER_NAME;
 
     boolean caching() default true;
 
