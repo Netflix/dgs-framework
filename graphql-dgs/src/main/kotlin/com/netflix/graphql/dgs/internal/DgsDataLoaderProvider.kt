@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.internal
 import com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsDataLoader
+import com.netflix.graphql.dgs.DgsDataLoaderOptionsCustomizer
 import com.netflix.graphql.dgs.DgsDataLoaderRegistryConsumer
 import com.netflix.graphql.dgs.exceptions.InvalidDataLoaderTypeException
 import com.netflix.graphql.dgs.exceptions.UnsupportedSecuredDataLoaderException
@@ -141,7 +142,10 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         if (dgsDataLoader.maxBatchSize > 0) {
             options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
         }
-
+        if (dgsDataLoader.optionsCustomizerName.isNotBlank()) {
+            applicationContext.getBean(dgsDataLoader.optionsCustomizerName, DgsDataLoaderOptionsCustomizer::class.java)
+                .customize(dgsDataLoader, options)
+        }
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
         if (extendedBatchLoader is DgsDataLoaderRegistryConsumer) {
             extendedBatchLoader.setDataLoaderRegistry(dataLoaderRegistry)
@@ -161,7 +165,10 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         if (dgsDataLoader.maxBatchSize > 0) {
             options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
         }
-
+        if (dgsDataLoader.optionsCustomizerName.isNotBlank()) {
+            applicationContext.getBean(dgsDataLoader.optionsCustomizerName, DgsDataLoaderOptionsCustomizer::class.java)
+                .customize(dgsDataLoader, options)
+        }
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
         if (extendedBatchLoader is DgsDataLoaderRegistryConsumer) {
             extendedBatchLoader.setDataLoaderRegistry(dataLoaderRegistry)
@@ -185,6 +192,10 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
             options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
         }
 
+        if (dgsDataLoader.optionsCustomizerName.isNotBlank()) {
+            applicationContext.getBean(dgsDataLoader.optionsCustomizerName, DgsDataLoaderOptionsCustomizer::class.java)
+                .customize(dgsDataLoader, options)
+        }
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
         if (extendedBatchLoader is DgsDataLoaderRegistryConsumer) {
             extendedBatchLoader.setDataLoaderRegistry(dataLoaderRegistry)
@@ -208,6 +219,10 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
             options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
         }
 
+        if (dgsDataLoader.optionsCustomizerName.isNotBlank()) {
+            applicationContext.getBean(dgsDataLoader.optionsCustomizerName, DgsDataLoaderOptionsCustomizer::class.java)
+                .customize(dgsDataLoader, options)
+        }
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
         if (extendedBatchLoader is DgsDataLoaderRegistryConsumer) {
             extendedBatchLoader.setDataLoaderRegistry(dataLoaderRegistry)

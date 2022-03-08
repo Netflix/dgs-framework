@@ -27,6 +27,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import org.dataloader.DataLoader
+import org.dataloader.DataLoaderOptions
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -43,6 +44,8 @@ internal class DgsDataFetchingEnvironmentTest {
 
     @RelaxedMockK
     lateinit var dfeMock: DataFetchingEnvironment
+
+    val notMinusOne = 10
 
     val helloFetcher = object : Any() {
         @DgsData(parentType = "Query", field = "hello")
@@ -108,10 +111,20 @@ internal class DgsDataFetchingEnvironmentTest {
     @BeforeEach
     fun setDataLoaderInstrumentationExtensionProvider() {
         val listableBeanFactory = StaticListableBeanFactory()
+        listableBeanFactory.addBean(
+            "exampleDgsDataLoaderOptionsCustomizer",
+            object : DgsDataLoaderOptionsCustomizer {
+                override fun customize(dgsDataLoader: DgsDataLoader, dataLoaderOptions: DataLoaderOptions) {
+                    dataLoaderOptions.setMaxBatchSize(notMinusOne)
+                }
+            }
+        )
         every { applicationContextMock.getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java) } returns
             listableBeanFactory.getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java)
 
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBean("exampleDgsDataLoaderOptionsCustomizer", DgsDataLoaderOptionsCustomizer::class.java) } returns
+            listableBeanFactory.getBean("exampleDgsDataLoaderOptionsCustomizer", DgsDataLoaderOptionsCustomizer::class.java)
     }
 
     @Test

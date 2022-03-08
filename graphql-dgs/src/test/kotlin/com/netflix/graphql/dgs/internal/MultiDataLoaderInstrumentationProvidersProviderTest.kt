@@ -16,16 +16,9 @@
 
 package com.netflix.graphql.dgs.internal
 
-import com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider
-import com.netflix.graphql.dgs.ExampleBatchLoader
-import com.netflix.graphql.dgs.ExampleBatchLoaderWithContext
-import com.netflix.graphql.dgs.ExampleMappedBatchLoader
-import com.netflix.graphql.dgs.ExampleMappedBatchLoaderWithContext
+import com.netflix.graphql.dgs.*
 import org.assertj.core.api.Assertions.assertThat
-import org.dataloader.BatchLoader
-import org.dataloader.BatchLoaderWithContext
-import org.dataloader.MappedBatchLoader
-import org.dataloader.MappedBatchLoaderWithContext
+import org.dataloader.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -123,6 +116,15 @@ internal class MultiDataLoaderInstrumentationProvidersProviderTest {
         @Bean
         open fun dgsDataLoaderProvider(applicationContext: ApplicationContext): DgsDataLoaderProvider {
             return DgsDataLoaderProvider(applicationContext)
+        }
+
+        @Bean
+        open fun exampleDgsDataLoaderOptionsCustomizer(): DgsDataLoaderOptionsCustomizer {
+            return object : DgsDataLoaderOptionsCustomizer {
+                override fun customize(dgsDataLoader: DgsDataLoader, dataLoaderOptions: DataLoaderOptions) {
+                    dataLoaderOptions.setMaxBatchSize(10)
+                }
+            }
         }
     }
 

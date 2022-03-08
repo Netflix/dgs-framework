@@ -16,13 +16,15 @@
 
 package com.netflix.graphql.dgs
 
-import org.dataloader.BatchLoader
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CompletionStage
+import org.dataloader.DataLoaderOptions
 
-@DgsDataLoader(name = "exampleLoader", optionsCustomizerName = "exampleDgsDataLoaderOptionsCustomizer")
-class ExampleBatchLoader : BatchLoader<String, String> {
-    override fun load(keys: MutableList<String>?): CompletionStage<MutableList<String>> {
-        return CompletableFuture.supplyAsync { mutableListOf("a", "b", "c") }
-    }
+/**
+ * Description: class that implements this interface will be used to customize the DgsDataLoader's
+ * corresponding DataLoaderOptions instance
+ * <p/>
+ * @author mingyueli 2021/3/26
+ */
+interface DgsDataLoaderOptionsCustomizer {
+
+    fun customize(dgsDataLoader: DgsDataLoader, dataLoaderOptions: DataLoaderOptions)
 }

@@ -22,6 +22,8 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import org.assertj.core.api.Assertions.assertThat
+import org.dataloader.DataLoader
+import org.dataloader.DataLoaderOptions
 import org.dataloader.BatchLoader
 import org.dataloader.DataLoaderRegistry
 import org.junit.jupiter.api.Assertions
@@ -39,11 +41,23 @@ class DgsDataLoaderProviderTest {
     @MockK
     lateinit var applicationContextMock: ApplicationContext
 
+    val notMinusOne = 10
+
     @BeforeEach
     fun setDataLoaderInstrumentationExtensionProvider() {
         val listableBeanFactory = StaticListableBeanFactory()
+        listableBeanFactory.addBean(
+            "exampleDgsDataLoaderOptionsCustomizer",
+            object : DgsDataLoaderOptionsCustomizer {
+                override fun customize(dgsDataLoader: DgsDataLoader, dataLoaderOptions: DataLoaderOptions) {
+                    dataLoaderOptions.setMaxBatchSize(notMinusOne)
+                }
+            }
+        )
         every { applicationContextMock.getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java) } returns
             listableBeanFactory.getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java)
+        every { applicationContextMock.getBean("exampleDgsDataLoaderOptionsCustomizer", DgsDataLoaderOptionsCustomizer::class.java) } returns
+            listableBeanFactory.getBean("exampleDgsDataLoaderOptionsCustomizer", DgsDataLoaderOptionsCustomizer::class.java)
     }
 
     @Test
@@ -55,6 +69,12 @@ class DgsDataLoaderProviderTest {
         provider.findDataLoaders()
         val dataLoaderRegistry = provider.buildRegistry()
         Assertions.assertEquals(1, dataLoaderRegistry.dataLoaders.size)
+        dataLoaderRegistry.dataLoaders.forEach {
+            val field = DataLoader::class.java.getDeclaredField("loaderOptions")
+            field.isAccessible = true
+            val dataLoaderOptions = field.get(it) as DataLoaderOptions
+            Assertions.assertEquals(dataLoaderOptions.maxBatchSize(), notMinusOne)
+        }
         val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleLoader")
         Assertions.assertNotNull(dataLoader)
     }
