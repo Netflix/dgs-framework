@@ -23,7 +23,7 @@ import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.exceptions.InvalidDgsEntityFetcher
 import com.netflix.graphql.dgs.exceptions.MissingDgsEntityFetcherException
 import com.netflix.graphql.dgs.exceptions.MissingFederatedQueryArgument
-import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.EntityFetcherRegistry
 import com.netflix.graphql.types.errors.TypedGraphQLError
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherExceptionHandlerParameters
@@ -52,10 +52,10 @@ open class DefaultDgsFederationResolver() :
      * The default constructor is used to extend the DefaultDgsFederationResolver. In that case injection is used to provide the schemaProvider.
      */
     constructor(
-        providedDgsSchemaProvider: DgsSchemaProvider,
+        entityFetcherRegistry: EntityFetcherRegistry,
         dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler>
     ) : this() {
-        dgsSchemaProvider = providedDgsSchemaProvider
+        this.entityFetcherRegistry = entityFetcherRegistry
         dgsExceptionHandler = dataFetcherExceptionHandler
     }
 
@@ -64,7 +64,7 @@ open class DefaultDgsFederationResolver() :
      */
     @Suppress("JoinDeclarationAndAssignment")
     @Autowired
-    lateinit var dgsSchemaProvider: DgsSchemaProvider
+    lateinit var entityFetcherRegistry: EntityFetcherRegistry
 
     @Autowired
     lateinit var dgsExceptionHandler: Optional<DataFetcherExceptionHandler>
@@ -81,7 +81,7 @@ open class DefaultDgsFederationResolver() :
                 Try.tryCall {
                     val typename = values["__typename"]
                         ?: throw MissingFederatedQueryArgument("__typename")
-                    val fetcher = dgsSchemaProvider.entityFetchers[typename]
+                    val fetcher = entityFetcherRegistry.entityFetchers[typename]
                         ?: throw MissingDgsEntityFetcherException(typename.toString())
 
                     if (!fetcher.second.parameterTypes.any { it.isAssignableFrom(Map::class.java) }) {
