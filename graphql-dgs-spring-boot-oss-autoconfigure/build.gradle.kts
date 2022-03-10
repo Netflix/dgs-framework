@@ -27,4 +27,5 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-web")
     testImplementation("com.github.ben-manes.caffeine:caffeine")
+    testImplementation("io.projectreactor:reactor-core")
 }

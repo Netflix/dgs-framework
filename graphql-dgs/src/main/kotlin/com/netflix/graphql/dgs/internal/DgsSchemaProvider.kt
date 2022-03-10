@@ -72,10 +72,10 @@ class DgsSchemaProvider(
     private val dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
     private val cookieValueResolver: Optional<CookieValueResolver> = Optional.empty(),
     private val inputObjectMapper: InputObjectMapper = DefaultInputObjectMapper(),
+    private val entityFetcherRegistry: EntityFetcherRegistry = EntityFetcherRegistry()
 ) {
 
     val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
-    val entityFetchers = mutableMapOf<String, Pair<Any, Method>>()
     val dataFetchers = mutableListOf<DatafetcherReference>()
 
     private val defaultParameterNameDiscoverer = DefaultParameterNameDiscoverer()
@@ -102,7 +102,7 @@ class DgsSchemaProvider(
         }
 
         val federationResolverInstance =
-            federationResolver.orElseGet { DefaultDgsFederationResolver(this, dataFetcherExceptionHandler) }
+            federationResolver.orElseGet { DefaultDgsFederationResolver(entityFetcherRegistry, dataFetcherExceptionHandler) }
 
         val entityFetcher = federationResolverInstance.entitiesFetcher()
         val typeResolver = federationResolverInstance.typeResolver()
@@ -310,7 +310,7 @@ class DgsSchemaProvider(
                     dataFetcherInstrumentationEnabled["${"__entities"}.${dgsEntityFetcherAnnotation.name}"] =
                         enableInstrumentation
 
-                    entityFetchers[dgsEntityFetcherAnnotation.name] = dgsComponent to method
+                    entityFetcherRegistry.entityFetchers[dgsEntityFetcherAnnotation.name] = dgsComponent to method
                 }
         }
     }
