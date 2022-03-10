@@ -64,8 +64,8 @@ open class DgsCaffeineAPQSupportInverseAutoConfiguration(
             if (logger.isWarnEnabled) {
                 logger.warn(
                     "Using DGS Caffeine support for Automatic Persisted Queries (APQ) with " +
-                            "`dgs.graphql.apq.enable=false`, " +
-                            "consider removing the `graphql-dgs-spring-boot-apq-caffeine` dependency"
+                        "`dgs.graphql.apq.enable=false`, " +
+                        "consider removing the `graphql-dgs-spring-boot-apq-caffeine` dependency"
                 )
             }
         } else if (caffeineProperties.enabled) {
@@ -73,7 +73,7 @@ open class DgsCaffeineAPQSupportInverseAutoConfiguration(
                 if (logger.isWarnEnabled) {
                     logger.warn(
                         "Using DGS Caffeine support for Automatic Persisted Queries (APQ) with " +
-                                "`dgs.graphql.apq.default-cache.enabled=true`, but the application was configured incorrectly"
+                            "`dgs.graphql.apq.default-cache.enabled=true`, but the application was configured incorrectly"
                     )
                 }
             } else {
@@ -95,16 +95,16 @@ open class DgsCaffeineAPQSupportInverseAutoConfiguration(
                     if (logger.isWarnEnabled) {
                         logger.warn(
                             "Using DGS Caffeine support for Automatic Persisted Queries (APQ) with " +
-                                    "`dgs.graphql.apq.default-cache.enabled=true`, but no PersistedQueryCache bean was found," +
-                                    " this should never happen"
+                                "`dgs.graphql.apq.default-cache.enabled=true`, but no PersistedQueryCache bean was found," +
+                                " this should never happen"
                         )
                     }
                 } else {
                     if (logger.isWarnEnabled) {
                         logger.warn(
                             "Using DGS Caffeine support for Automatic Persisted Queries (APQ) with " +
-                                    "`dgs.graphql.apq.default-cache.enabled=true`, but another PersistedQueryCache was present, " +
-                                    "making the `graphql-dgs-spring-boot-apq-caffeine` dependency redundant, consider removing it"
+                                "`dgs.graphql.apq.default-cache.enabled=true`, but another PersistedQueryCache was present, " +
+                                "making the `graphql-dgs-spring-boot-apq-caffeine` dependency redundant, consider removing it"
                         )
                     }
                 }
@@ -116,17 +116,17 @@ open class DgsCaffeineAPQSupportInverseAutoConfiguration(
                 if (logger.isWarnEnabled) {
                     logger.warn(
                         "Using DGS Caffeine support for Automatic Persisted Queries (APQ) with " +
-                                "`dgs.graphql.apq.enable=true`, and another PersistedQueryCache was present, " +
-                                "making the `graphql-dgs-spring-boot-apq-caffeine` dependency redundant, consider removing it"
+                            "`dgs.graphql.apq.enable=true`, and another PersistedQueryCache was present, " +
+                            "making the `graphql-dgs-spring-boot-apq-caffeine` dependency redundant, consider removing it"
                     )
                 }
             } catch (e: NoSuchBeanDefinitionException) {
                 if (logger.isWarnEnabled) {
                     logger.warn(
                         "Using DGS Caffeine support for Automatic Persisted Queries (APQ) with " +
-                                "`dgs.graphql.apq.default-cache.enabled=false`, but no other PersistedQueryCache bean was found, " +
-                                "consider removing the `graphql-dgs-spring-boot-apq-caffeine` dependency, or enabling " +
-                                "the `dgs.graphql.apq.default-cache.enabled` property"
+                            "`dgs.graphql.apq.default-cache.enabled=false`, but no other PersistedQueryCache bean was found, " +
+                            "consider removing the `graphql-dgs-spring-boot-apq-caffeine` dependency, or enabling " +
+                            "the `dgs.graphql.apq.default-cache.enabled` property"
                     )
                 }
             }
