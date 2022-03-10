@@ -59,15 +59,14 @@ open class DgsAPQSupportAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(PersistedQueryCache::class)
     open fun missingPersistedQuerySupport(ctx: ApplicationContext): CommandLineRunner {
-        return CommandLineRunner {
-            if (logger.isErrorEnabled) {
-                logger.error(
-                    "Configuration property `dgs.graphql.apq.enabled` was `true`, but no PersistedQueryCache bean was defined",
-                    DgsNoPersistedQueryCacheBeanDefinedException()
-                )
-            }
-            SpringApplication.exit(ctx, { 1 })
+        if (logger.isErrorEnabled) {
+            logger.error(
+                "Configuration property `dgs.graphql.apq.enabled` was `true`, but no PersistedQueryCache bean was defined",
+                DgsNoPersistedQueryCacheBeanDefinedException()
+            )
         }
+        SpringApplication.exit(ctx, { 1 })
+        return CommandLineRunner { }
     }
 
     @Bean

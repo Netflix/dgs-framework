@@ -16,4 +16,5 @@
 
 package com.netflix.graphql.dgs.apq
 
-class DgsNoPersistedQueryCacheBeanDefinedException : RuntimeException()
+class DgsNoPersistedQueryCacheBeanDefinedException :
+    RuntimeException("Configuration property `dgs.graphql.apq.enabled` was `true`, but no PersistedQueryCache bean was defined")

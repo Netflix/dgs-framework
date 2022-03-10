@@ -171,7 +171,6 @@ class DgsWebFluxAutomatedPersistedQueriesSmokeTest {
     )
     @SuppressWarnings("unused")
     open class LocalApp {
-
         @Bean
         open fun myApqCache(): PersistedQueryCache {
             return InMemoryPersistedQueryCache(ConcurrentHashMap())
