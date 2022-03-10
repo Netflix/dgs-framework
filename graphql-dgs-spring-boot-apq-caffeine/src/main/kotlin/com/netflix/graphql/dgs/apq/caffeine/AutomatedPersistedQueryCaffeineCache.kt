@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.apq
+package com.netflix.graphql.dgs.apq.caffeine
 
 import com.github.benmanes.caffeine.cache.Cache
+import com.netflix.graphql.dgs.apq.AutomatedPersistedQueryCacheAdapter
 import graphql.execution.preparsed.PreparsedDocumentEntry
 import graphql.execution.preparsed.persisted.PersistedQueryCache
 import java.util.function.Supplier
@@ -24,7 +25,7 @@ import java.util.function.Supplier
 /**
  * Implementation of [PersistedQueryCache] backed by a Caffeine Cache.
  */
-class AutomatedPersistedQueryCaffeineCache(val cache: Cache<String, PreparsedDocumentEntry>) :
+class AutomatedPersistedQueryCaffeineCache(private val cache: Cache<String, PreparsedDocumentEntry>) :
     AutomatedPersistedQueryCacheAdapter() {
 
     override fun getFromCache(

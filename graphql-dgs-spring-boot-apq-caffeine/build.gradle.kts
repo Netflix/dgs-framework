@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,9 @@
  */
 
 dependencies {
-    api(project(":graphql-dgs"))
-    api(project(":graphql-dgs-spring-webmvc"))
-    implementation("org.springframework:spring-web")
+    api(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
     implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.apache.commons:commons-lang3")
-
-//    compileOnly("io.micrometer:micrometer-core")
-    compileOnly("io.projectreactor:reactor-core")
-
-    testImplementation("org.springframework.boot:spring-boot-starter-web")
-    testImplementation("io.projectreactor:reactor-core")
+    implementation("com.github.ben-manes.caffeine:caffeine")
+    // compileOnly because we only wrap the Caffeine cache when Micrometer is present
+    compileOnly("io.micrometer:micrometer-core")
 }

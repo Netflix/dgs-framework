@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-dependencies {
-    api(project(":graphql-dgs"))
-    api(project(":graphql-dgs-spring-webmvc"))
-    implementation("org.springframework:spring-web")
-    implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.apache.commons:commons-lang3")
+package com.netflix.graphql.dgs.apq.caffeine
 
-//    compileOnly("io.micrometer:micrometer-core")
-    compileOnly("io.projectreactor:reactor-core")
+object CaffeineApqCache {
 
-    testImplementation("org.springframework.boot:spring-boot-starter-web")
-    testImplementation("io.projectreactor:reactor-core")
+    const val CAFFEINE_APQ_CACHE_BEAN_NAME = "apqCaffeineCache"
 }
