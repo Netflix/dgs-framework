@@ -18,8 +18,6 @@ package com.netflix.graphql.dgs.webmvc.apq
 
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
-import graphql.execution.preparsed.persisted.InMemoryPersistedQueryCache
-import graphql.execution.preparsed.persisted.PersistedQueryCache
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.junit.jupiter.api.MethodOrderer
@@ -33,18 +31,16 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.util.concurrent.ConcurrentHashMap
 
 @SpringBootTest(
     properties = [
-        "debug:true",
+//        "debug:true",
         "dgs.graphql.apq.enabled:true"
     ]
 )
@@ -177,11 +173,17 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
     )
     @SuppressWarnings("unused")
     open class LocalApp {
+        // === [ Important ] ===
+        //
+        // This smoke test also tests graphql-dgs-spring-boot-apq-caffeine
+        //  See build.gradle.kts for this project
+        // === [ Important ] ===
+        //
 
-        @Bean
-        open fun myApqCache(): PersistedQueryCache {
-            return InMemoryPersistedQueryCache(ConcurrentHashMap())
-        }
+//        @Bean
+//        open fun myApqCache(): PersistedQueryCache {
+//            return InMemoryPersistedQueryCache(ConcurrentHashMap())
+//        }
 
         @DgsComponent
         class ExampleImplementation {

@@ -16,7 +16,7 @@
 
 package com.netflix.graphql.dgs.apq.caffeine
 
-object CaffeineApqCache {
+object DgsCaffeineApqCache {
 
-    const val CAFFEINE_APQ_CACHE_BEAN_NAME = "apqCaffeineCache"
+    const val CAFFEINE_APQ_CACHE_BEAN_NAME = "dgs_apqCaffeineCache"
 }

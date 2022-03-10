@@ -21,7 +21,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.apache.commons:commons-lang3")
 
-//    compileOnly("io.micrometer:micrometer-core")
     compileOnly("io.projectreactor:reactor-core")
 
     testImplementation("org.springframework.boot:spring-boot-starter-web")

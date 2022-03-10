@@ -24,4 +24,5 @@ dependencies {
     testImplementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
     testImplementation("org.springframework.boot:spring-boot-starter-web")
     testImplementation("com.github.ben-manes.caffeine:caffeine")
+    testImplementation(project(":graphql-dgs-spring-boot-apq-caffeine"))
 }

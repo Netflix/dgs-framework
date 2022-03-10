@@ -17,13 +17,16 @@
 package com.netflix.graphql.dgs.apq.caffeine
 
 import com.netflix.graphql.dgs.Internal
+import com.netflix.graphql.dgs.apq.DgsAPQSupportProperties
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.context.properties.bind.DefaultValue
 
 @ConfigurationProperties(prefix = DgsCaffeineAPQSupportProperties.PREFIX)
 @ConstructorBinding
 @Internal
+@EnableConfigurationProperties(DgsAPQSupportProperties::class)
 @Suppress("ConfigurationProperties")
 data class DgsCaffeineAPQSupportProperties(
     /** Enables/Disables the APQ default cache, backed by a Caffeine Cache.*/

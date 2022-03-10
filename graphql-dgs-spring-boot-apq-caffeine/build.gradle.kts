@@ -15,6 +15,7 @@
  */
 
 dependencies {
+    api(project(":graphql-dgs"))
     api(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("com.github.ben-manes.caffeine:caffeine")
