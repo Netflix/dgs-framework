@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs
 
+import com.netflix.graphql.dgs.exceptions.DgsUnnamedDataLoaderOnFieldException
 import com.netflix.graphql.dgs.exceptions.InvalidDataLoaderTypeException
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import graphql.schema.DataFetchingEnvironmentImpl
@@ -23,6 +24,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.dataloader.BatchLoader
 import org.dataloader.DataLoaderRegistry
 import org.junit.jupiter.api.Assertions
@@ -51,7 +53,12 @@ class DgsDataLoaderProviderTest {
     @Test
     fun findDataLoaders() {
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns mapOf(Pair("helloFetcher", ExampleBatchLoader()))
+        every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                ExampleBatchLoader()
+            )
+        )
 
         val provider = DgsDataLoaderProvider(applicationContextMock)
         provider.findDataLoaders()
@@ -63,7 +70,12 @@ class DgsDataLoaderProviderTest {
 
     @Test
     fun dataLoaderInvalidType() {
-        every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns mapOf(Pair("helloFetcher", object {}))
+        every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                object {}
+            )
+        )
         val provider = DgsDataLoaderProvider(applicationContextMock)
         assertThrows<InvalidDataLoaderTypeException> { provider.findDataLoaders() }
     }
@@ -71,7 +83,12 @@ class DgsDataLoaderProviderTest {
     @Test
     fun findDataLoadersFromFields() {
         every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", ExampleBatchLoaderFromField()))
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                ExampleBatchLoaderFromField()
+            )
+        )
 
         val provider = DgsDataLoaderProvider(applicationContextMock)
         provider.findDataLoaders()
@@ -87,7 +104,12 @@ class DgsDataLoaderProviderTest {
     @Test
     fun findMappedDataLoaders() {
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns mapOf(Pair("helloFetcher", ExampleMappedBatchLoader()))
+        every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                ExampleMappedBatchLoader()
+            )
+        )
 
         val provider = DgsDataLoaderProvider(applicationContextMock)
         provider.findDataLoaders()
@@ -100,7 +122,12 @@ class DgsDataLoaderProviderTest {
     @Test
     fun findMappedDataLoadersFromFields() {
         every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", ExampleMappedBatchLoaderFromField()))
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                ExampleMappedBatchLoaderFromField()
+            )
+        )
 
         val provider = DgsDataLoaderProvider(applicationContextMock)
         provider.findDataLoaders()
@@ -135,13 +162,19 @@ class DgsDataLoaderProviderTest {
         @Test
         fun findDataLoadersWithoutName() {
             every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns mapOf(Pair("helloFetcher", ExampleBatchLoaderWithoutName()))
+            every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns mapOf(
+                Pair(
+                    "helloFetcher",
+                    ExampleBatchLoaderWithoutName()
+                )
+            )
 
             val provider = DgsDataLoaderProvider(applicationContextMock)
             provider.findDataLoaders()
             val dataLoaderRegistry = provider.buildRegistry()
             Assertions.assertEquals(1, dataLoaderRegistry.dataLoaders.size)
-            val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("DGS_DATALOADER_CLASS_com.netflix.graphql.dgs.ExampleBatchLoaderWithoutName")
+            val dataLoader =
+                dataLoaderRegistry.getDataLoader<Any, Any>("ExampleBatchLoaderWithoutName")
             Assertions.assertNotNull(dataLoader)
         }
 
@@ -172,17 +205,20 @@ class DgsDataLoaderProviderTest {
         @Test
         fun findDataLoadersFromFieldsWithoutName() {
             every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", ExampleBatchLoaderWithoutNameFromField()))
+            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+                Pair(
+                    "helloFetcher",
+                    ExampleBatchLoaderWithoutNameFromField()
+                )
+            )
 
             val provider = DgsDataLoaderProvider(applicationContextMock)
-            provider.findDataLoaders()
-            val dataLoaderRegistry = provider.buildRegistry()
-            Assertions.assertEquals(2, dataLoaderRegistry.dataLoaders.size)
-            val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("DGS_DATALOADER_FIELD_com.netflix.graphql.dgs.ExampleBatchLoaderWithoutNameFromField#batchLoader")
-            Assertions.assertNotNull(dataLoader)
-
-            val privateDataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("DGS_DATALOADER_FIELD_com.netflix.graphql.dgs.ExampleBatchLoaderWithoutNameFromField#privateBatchLoader")
-            Assertions.assertNotNull(privateDataLoader)
+            assertThatThrownBy { provider.findDataLoaders() }
+                .hasNoCause()
+                .isExactlyInstanceOf(DgsUnnamedDataLoaderOnFieldException::class.java)
+                .hasMessage(
+                    "Field `batchLoader` in class `com.netflix.graphql.dgs.ExampleBatchLoaderWithoutNameFromField` was annotated with @DgsDataLoader, but the data loader was not given a proper name"
+                )
         }
     }
 

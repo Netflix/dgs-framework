@@ -17,17 +17,19 @@
 package com.netflix.graphql.dgs.internal.utils
 
 import com.netflix.graphql.dgs.DgsDataLoader
-import java.lang.reflect.Field
+import com.netflix.graphql.dgs.Internal
 
+@Internal
 object DataLoaderNameUtil {
 
-    fun getDataLoaderName(field: Field, annotation: DgsDataLoader): String {
-        return if (annotation.name == DgsDataLoader.GENERATE_DATA_LOADER_NAME)
-            "DGS_DATALOADER_FIELD_" + field.declaringClass.name + "#" + field.name else annotation.name
-    }
-
+    /**
+     * When the [annotation]'s [DgsDataLoader.name] is equal to [DgsDataLoader.GENERATE_DATA_LOADER_NAME],
+     * the [clazz]'s [Class.getSimpleName] will be used.
+     * In all other cases the [DgsDataLoader.name] method will be called on [annotation].
+     *
+     * This method does not verify that [annotation] belongs to [clazz] for performance reasons.
+     */
     fun getDataLoaderName(clazz: Class<*>, annotation: DgsDataLoader): String {
-        return if (annotation.name == DgsDataLoader.GENERATE_DATA_LOADER_NAME)
-            "DGS_DATALOADER_CLASS_" + clazz.name else annotation.name
+        return if (annotation.name == DgsDataLoader.GENERATE_DATA_LOADER_NAME) clazz.simpleName else annotation.name
     }
 }
