@@ -46,7 +46,7 @@ class DefaultDgsWebfluxHttpHandler(private val dgsQueryExecutor: DgsReactiveQuer
                             }
                             val operationName: String? = when (val iq = readValue["operationName"]) {
                                 is String -> iq
-                                else -> null
+                                else -> ""
                             }
                             QueryInput(
                                 query,
