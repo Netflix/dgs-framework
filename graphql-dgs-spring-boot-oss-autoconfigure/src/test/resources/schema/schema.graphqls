@@ -36,3 +36,8 @@ type Output {
 input NestedInput {
     input: Input
 }
+
+type MyMovie @key(fields: "id") @extends {
+    id: String
+    title: String
+}

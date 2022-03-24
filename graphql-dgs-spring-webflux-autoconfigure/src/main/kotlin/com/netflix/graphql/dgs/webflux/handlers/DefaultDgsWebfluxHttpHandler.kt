@@ -44,10 +44,15 @@ class DefaultDgsWebfluxHttpHandler(private val dgsQueryExecutor: DgsReactiveQuer
                                 is String -> iq
                                 else -> null
                             }
+                            val operationName: String = when (val iq = readValue["operationName"]) {
+                                is String -> iq
+                                else -> ""
+                            }
                             QueryInput(
                                 query,
                                 (readValue["variables"] ?: emptyMap<String, Any>()) as Map<String, Any>,
                                 (readValue["extensions"] ?: emptyMap<String, Any>()) as Map<String, Any>,
+                                operationName,
                             )
                         }
                     }
@@ -59,7 +64,7 @@ class DefaultDgsWebfluxHttpHandler(private val dgsQueryExecutor: DgsReactiveQuer
                         queryInput.queryVariables,
                         queryInput.extensions,
                         request.headers().asHttpHeaders(),
-                        "",
+                        queryInput.operationName,
                         request
                     )
                 }
@@ -92,5 +97,6 @@ class DefaultDgsWebfluxHttpHandler(private val dgsQueryExecutor: DgsReactiveQuer
 private data class QueryInput(
     val query: String?,
     val queryVariables: Map<String, Any> = emptyMap(),
-    val extensions: Map<String, Any> = emptyMap()
+    val extensions: Map<String, Any> = emptyMap(),
+    val operationName: String = ""
 )

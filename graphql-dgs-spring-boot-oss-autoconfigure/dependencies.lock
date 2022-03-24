@@ -522,6 +522,9 @@
         "io.mockk:mockk": {
             "locked": "1.12.2"
         },
+        "io.projectreactor:reactor-core": {
+            "locked": "3.4.10"
+        },
         "org.apache.commons:commons-lang3": {
             "locked": "3.10"
         },
@@ -641,6 +644,9 @@
         },
         "io.mockk:mockk": {
             "locked": "1.12.2"
+        },
+        "io.projectreactor:reactor-core": {
+            "locked": "3.4.10"
         },
         "org.apache.commons:commons-lang3": {
             "locked": "3.10"

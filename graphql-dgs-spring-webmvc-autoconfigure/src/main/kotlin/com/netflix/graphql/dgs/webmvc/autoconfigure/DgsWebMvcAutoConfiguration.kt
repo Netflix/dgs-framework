@@ -16,13 +16,17 @@
 
 package com.netflix.graphql.dgs.webmvc.autoconfigure
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.internal.CookieValueResolver
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.mvc.DgsRestController
 import com.netflix.graphql.dgs.mvc.DgsRestSchemaJsonController
 import com.netflix.graphql.dgs.mvc.ServletCookieValueResolver
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -36,8 +40,15 @@ import org.springframework.web.servlet.DispatcherServlet
 @EnableConfigurationProperties(DgsWebMvcConfigurationProperties::class)
 open class DgsWebMvcAutoConfiguration {
     @Bean
-    open fun dgsRestController(dgsQueryExecutor: DgsQueryExecutor): DgsRestController {
-        return DgsRestController(dgsQueryExecutor)
+    @Qualifier("dgsObjectMapper")
+    @ConditionalOnMissingBean(name = ["dgsObjectMapper"])
+    open fun dgsObjectMapper(): ObjectMapper {
+        return jacksonObjectMapper()
+    }
+
+    @Bean
+    open fun dgsRestController(dgsQueryExecutor: DgsQueryExecutor, @Qualifier("dgsObjectMapper") objectMapper: ObjectMapper): DgsRestController {
+        return DgsRestController(dgsQueryExecutor, objectMapper)
     }
 
     @Bean

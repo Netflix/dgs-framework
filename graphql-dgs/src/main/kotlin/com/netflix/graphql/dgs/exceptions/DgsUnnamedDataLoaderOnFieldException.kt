@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-dependencies {
-    api(project(":graphql-dgs"))
-    api(project(":graphql-dgs-spring-webmvc"))
-    implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.springframework:spring-webmvc")
-    implementation("jakarta.servlet:jakarta.servlet-api")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+package com.netflix.graphql.dgs.exceptions
 
+import java.lang.reflect.Field
 
-    testImplementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
-    testImplementation("org.springframework.boot:spring-boot-starter-web")
-    testImplementation("com.github.ben-manes.caffeine:caffeine")
-}
+class DgsUnnamedDataLoaderOnFieldException(field: Field) :
+    RuntimeException("Field `${field.name}` in class `${field.declaringClass.name}` was annotated with @DgsDataLoader, but the data loader was not given a proper name")
