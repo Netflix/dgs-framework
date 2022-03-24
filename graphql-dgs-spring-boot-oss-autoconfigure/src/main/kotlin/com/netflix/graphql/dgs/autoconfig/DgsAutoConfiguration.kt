@@ -21,19 +21,8 @@ import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
-import com.netflix.graphql.dgs.internal.CookieValueResolver
-import com.netflix.graphql.dgs.internal.DataFetcherResultProcessor
-import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
-import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
+import com.netflix.graphql.dgs.internal.*
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
-import com.netflix.graphql.dgs.internal.DefaultInputObjectMapper
-import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
-import com.netflix.graphql.dgs.internal.DgsNoOpPreparsedDocumentProvider
-import com.netflix.graphql.dgs.internal.DgsSchemaProvider
-import com.netflix.graphql.dgs.internal.FluxDataFetcherResultProcessor
-import com.netflix.graphql.dgs.internal.InputObjectMapper
-import com.netflix.graphql.dgs.internal.MonoDataFetcherResultProcessor
-import com.netflix.graphql.dgs.internal.QueryValueCustomizer
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import com.netflix.graphql.mocking.MockProvider
 import graphql.execution.AsyncExecutionStrategy
@@ -168,7 +157,8 @@ open class DgsAutoConfiguration(
         dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
         dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
         cookieValueResolver: Optional<CookieValueResolver> = Optional.empty(),
-        inputObjectMapper: Optional<InputObjectMapper> = Optional.empty()
+        inputObjectMapper: Optional<InputObjectMapper> = Optional.empty(),
+        entityFetcherRegistry: EntityFetcherRegistry
     ): DgsSchemaProvider {
         return DgsSchemaProvider(
             applicationContext,
@@ -179,8 +169,14 @@ open class DgsAutoConfiguration(
             dataFetcherResultProcessors,
             dataFetcherExceptionHandler,
             cookieValueResolver,
-            inputObjectMapper.orElse(DefaultInputObjectMapper())
+            inputObjectMapper.orElse(DefaultInputObjectMapper()),
+            entityFetcherRegistry
         )
+    }
+
+    @Bean
+    open fun entityFetcherRegistry(): EntityFetcherRegistry {
+        return EntityFetcherRegistry()
     }
 
     @Bean

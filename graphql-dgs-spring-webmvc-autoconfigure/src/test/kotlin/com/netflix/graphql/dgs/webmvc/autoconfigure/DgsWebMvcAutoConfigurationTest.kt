@@ -16,6 +16,9 @@
 
 package com.netflix.graphql.dgs.webmvc.autoconfigure
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.mvc.DgsRestController
@@ -29,6 +32,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.AutoConfigurations
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration
@@ -45,10 +49,20 @@ class DgsWebMvcAutoConfigurationTest {
 
     private val context = WebApplicationContextRunner().withConfiguration(
         AutoConfigurations.of(
-            DgsWebMvcAutoConfiguration::class.java,
-            MockAutoConfiguration::class.java
+            DgsWebMvcAutoConfiguration::class.java
+
         )
-    )!!
+    )!!.withUserConfiguration(MockUserConfiguration::class.java)
+
+    @Test
+    fun objectMapperAvailable() {
+        context.run { ctx ->
+            Assertions.assertThat(ctx).hasSingleBean(ObjectMapper::class.java)
+            Assertions.assertThat(ctx).getBeans(ObjectMapper::class.java).containsKey("dgsObjectMapper")
+            val modules = ctx.getBeansOfType(ObjectMapper::class.java)["dgsObjectMapper"]?.registeredModuleIds?.contains("com.fasterxml.jackson.datatype.jsr310.JavaTimeModule")
+            Assertions.assertThat(modules).isTrue()
+        }
+    }
 
     @Test
     fun graphqlControllerAvailable() {
@@ -201,7 +215,7 @@ class DgsWebMvcAutoConfigurationTest {
     }
 
     @Configuration
-    open class MockAutoConfiguration {
+    open class MockUserConfiguration {
         @Bean
         open fun dgsSchemaProvider(): DgsSchemaProvider {
             val objectType: GraphQLObjectType = GraphQLObjectType.newObject()
@@ -237,6 +251,14 @@ class DgsWebMvcAutoConfigurationTest {
             } returns ExecutionResultImpl.newExecutionResult()
                 .data(mapOf(Pair("hi", "there"))).build()
             return mockExecutor
+        }
+
+        @Bean
+        @Qualifier("dgsObjectMapper")
+        open fun dgsObjectMapper(): ObjectMapper {
+            val customMapper = jacksonObjectMapper()
+            customMapper.registerModule(JavaTimeModule())
+            return customMapper
         }
     }
 }

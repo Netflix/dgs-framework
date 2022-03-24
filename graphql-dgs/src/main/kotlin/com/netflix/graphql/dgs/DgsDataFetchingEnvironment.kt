@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.MultipleDataLoadersDefinedException
 import com.netflix.graphql.dgs.exceptions.NoDataLoaderFoundException
+import com.netflix.graphql.dgs.internal.utils.DataLoaderNameUtil
 import graphql.GraphQLContext
 import graphql.cachecontrol.CacheControl
 import graphql.execution.ExecutionId
@@ -29,7 +30,12 @@ import graphql.language.Document
 import graphql.language.Field
 import graphql.language.FragmentDefinition
 import graphql.language.OperationDefinition
-import graphql.schema.*
+import graphql.schema.DataFetchingEnvironment
+import graphql.schema.DataFetchingFieldSelectionSet
+import graphql.schema.GraphQLFieldDefinition
+import graphql.schema.GraphQLOutputType
+import graphql.schema.GraphQLSchema
+import graphql.schema.GraphQLType
 import org.dataloader.DataLoader
 import org.dataloader.DataLoaderRegistry
 import java.util.*
@@ -48,13 +54,14 @@ class DgsDataFetchingEnvironment(private val dfe: DataFetchingEnvironment) : Dat
     fun <K, V> getDataLoader(loaderClass: Class<*>): DataLoader<K, V> {
         val annotation = loaderClass.getAnnotation(DgsDataLoader::class.java)
         return if (annotation != null) {
-            dfe.getDataLoader(annotation.name)
+            dfe.getDataLoader(DataLoaderNameUtil.getDataLoaderName(loaderClass, annotation))
         } else {
             val loaders = loaderClass.fields.filter { it.isAnnotationPresent(DgsDataLoader::class.java) }
             if (loaders.size > 1) throw MultipleDataLoadersDefinedException(loaderClass)
-            val loaderName = loaders
-                .firstOrNull()?.getAnnotation(DgsDataLoader::class.java)?.name
-                ?: throw NoDataLoaderFoundException(loaderClass)
+            val loaderField: java.lang.reflect.Field = loaders
+                .firstOrNull() ?: throw NoDataLoaderFoundException(loaderClass)
+            val theAnnotation = loaderField.getAnnotation(DgsDataLoader::class.java)
+            val loaderName = theAnnotation.name
             dfe.getDataLoader(loaderName)
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.exceptions.InvalidDgsEntityFetcher
 import com.netflix.graphql.dgs.exceptions.MissingDgsEntityFetcherException
 import com.netflix.graphql.dgs.exceptions.MissingFederatedQueryArgument
-import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.EntityFetcherRegistry
 import com.netflix.graphql.types.errors.TypedGraphQLError
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherExceptionHandlerParameters
@@ -36,6 +36,7 @@ import org.dataloader.Try
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import reactor.core.publisher.Mono
 import java.lang.reflect.InvocationTargetException
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -51,10 +52,10 @@ open class DefaultDgsFederationResolver() :
      * The default constructor is used to extend the DefaultDgsFederationResolver. In that case injection is used to provide the schemaProvider.
      */
     constructor(
-        providedDgsSchemaProvider: DgsSchemaProvider,
+        entityFetcherRegistry: EntityFetcherRegistry,
         dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler>
     ) : this() {
-        dgsSchemaProvider = providedDgsSchemaProvider
+        this.entityFetcherRegistry = entityFetcherRegistry
         dgsExceptionHandler = dataFetcherExceptionHandler
     }
 
@@ -63,7 +64,7 @@ open class DefaultDgsFederationResolver() :
      */
     @Suppress("JoinDeclarationAndAssignment")
     @Autowired
-    lateinit var dgsSchemaProvider: DgsSchemaProvider
+    lateinit var entityFetcherRegistry: EntityFetcherRegistry
 
     @Autowired
     lateinit var dgsExceptionHandler: Optional<DataFetcherExceptionHandler>
@@ -80,7 +81,7 @@ open class DefaultDgsFederationResolver() :
                 Try.tryCall {
                     val typename = values["__typename"]
                         ?: throw MissingFederatedQueryArgument("__typename")
-                    val fetcher = dgsSchemaProvider.entityFetchers[typename]
+                    val fetcher = entityFetcherRegistry.entityFetchers[typename]
                         ?: throw MissingDgsEntityFetcherException(typename.toString())
 
                     if (!fetcher.second.parameterTypes.any { it.isAssignableFrom(Map::class.java) }) {
@@ -94,13 +95,14 @@ open class DefaultDgsFederationResolver() :
                         }
 
                     if (result == null) {
+                        logger.error("@DgsEntityFetcher returned null for type: $typename")
                         CompletableFuture.completedFuture(null)
                     }
 
-                    if (result is CompletionStage<*>) {
-                        result.toCompletableFuture()
-                    } else {
-                        CompletableFuture.completedFuture(result)
+                    when (result) {
+                        is CompletionStage<*> -> result.toCompletableFuture()
+                        is Mono<*> -> result.toFuture()
+                        else -> CompletableFuture.completedFuture(result)
                     }
                 }
                     .map { tryFuture -> Try.tryFuture(tryFuture) }
