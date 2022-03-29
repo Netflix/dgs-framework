@@ -30,6 +30,8 @@ import kotlinx.coroutines.future.asCompletableFuture
 import org.slf4j.LoggerFactory
 import org.springframework.core.DefaultParameterNameDiscoverer
 import org.springframework.core.annotation.AnnotationUtils
+import org.springframework.http.HttpHeaders
+import org.springframework.util.MultiValueMap
 import org.springframework.util.ReflectionUtils
 import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.RequestHeader
@@ -174,6 +176,13 @@ class DataFetcherInvoker(
         val annotation = AnnotationUtils.getAnnotation(parameter, RequestHeader::class.java)!!
         val name: String = AnnotationUtils.getAnnotationAttributes(annotation)["name"] as String
         val parameterName = name.ifBlank { parameterNames[idx] }
+
+        if (parameter.type.isAssignableFrom(Map::class.java)) {
+            return getValueAsOptional(requestData?.headers?.toSingleValueMap(), parameter)
+        } else if (parameter.type.isAssignableFrom(HttpHeaders::class.java) || parameter.type.isAssignableFrom(MultiValueMap::class.java)) {
+            return getValueAsOptional(requestData?.headers, parameter)
+        }
+
         val value = requestData?.headers?.get(parameterName)?.let {
             if (parameter.type.isAssignableFrom(List::class.java)) {
                 it
