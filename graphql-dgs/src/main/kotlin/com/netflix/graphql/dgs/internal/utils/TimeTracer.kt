@@ -17,6 +17,8 @@
 package com.netflix.graphql.dgs.internal.utils
 
 import org.slf4j.Logger
+import org.slf4j.event.Level
+import java.time.Duration
 
 object TimeTracer {
     fun <R> logTime(action: () -> R, logger: Logger, message: String): R {
@@ -28,5 +30,69 @@ object TimeTracer {
         logger.debug(message, totalTime)
 
         return result
+    }
+
+    @JvmStatic
+    fun <R> measureAndLogTotalMillisecondsElapsedFor(
+        logger: org.slf4j.Logger,
+        messageTemplate: String,
+        action: () -> R
+    ): R {
+        return Measurement.measureAndLogTotalMillisecondsElapsed(
+            logger = logger,
+            level = Level.DEBUG,
+            messageForTotalTimeMs = { ms: Long -> messageTemplate.format(ms) }
+        ).run(action).getActionResultOrElseThrow()
+    }
+
+    @JvmStatic
+    fun <R> measureAndLogTotalMillisecondsElapsedFor(
+        logger: reactor.util.Logger,
+        messageTemplate: String,
+        action: () -> R
+    ): R {
+        return Measurement.measureAndLogTotalMillisecondsElapsed(
+            logger = logger,
+            level = Level.DEBUG,
+            messageForTotalTimeMs = { ms: Long -> messageTemplate.format(ms) }
+        ).run(action).getActionResultOrElseThrow()
+    }
+
+    @JvmStatic
+    fun <R> measureAndLogTotalDurationFor(
+        logger: org.slf4j.Logger,
+        messageCreator: (Duration) -> String,
+        action: () -> R
+    ): R {
+        return Measurement.measureAndLogDurationOf(
+            logger = logger, level = Level.DEBUG, messageForTotalDuration = messageCreator
+        ).run(action).getActionResultOrElseThrow()
+    }
+
+    @JvmStatic
+    fun <R> measureAndLogTotalDurationFor(
+        logger: reactor.util.Logger,
+        messageCreator: (Duration) -> String,
+        action: () -> R
+    ): R {
+        return Measurement.measureAndLogDurationOf(
+            logger = logger, level = Level.DEBUG, messageForTotalDuration = messageCreator
+        ).run(action).getActionResultOrElseThrow()
+    }
+
+    fun <R> org.slf4j.Logger.logTotalMillisecondsElapsedWith(messageTemplate: String, action: () -> R): R {
+        return measureAndLogTotalMillisecondsElapsedFor(this, messageTemplate, action)
+    }
+
+    fun <R> reactor.util.Logger.logTotalMillisecondsElapsedWith(messageTemplate: String, action: () -> R): R {
+        return measureAndLogTotalMillisecondsElapsedFor(this, messageTemplate, action)
+    }
+
+    fun <R> org.slf4j.Logger.logTotalDurationWith(messageCreator: (Duration) -> String, action: () -> R): R {
+        return measureAndLogTotalDurationFor(this, messageCreator, action)
+    }
+
+    fun <R> reactor.util.Logger.logTotalDurationWith(messageCreator: (Duration) -> String, action: () -> R): R {
+        return measureAndLogTotalDurationFor(this, messageCreator, action)
     }
 }
