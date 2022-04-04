@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.federation
 
 import com.apollographql.federation.graphqljava._Entity
+import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.exceptions.InvalidDgsEntityFetcher
@@ -40,6 +41,7 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
+@DgsComponent
 open class DefaultDgsFederationResolver(
     private val entityFetcherRegistry: EntityFetcherRegistry,
     private val dgsExceptionHandler: Optional<DataFetcherExceptionHandler>
