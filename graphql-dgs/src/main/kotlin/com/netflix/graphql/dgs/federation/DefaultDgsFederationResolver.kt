@@ -17,7 +17,6 @@
 package com.netflix.graphql.dgs.federation
 
 import com.apollographql.federation.graphqljava._Entity
-import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.exceptions.InvalidDgsEntityFetcher
@@ -35,39 +34,16 @@ import graphql.schema.TypeResolver
 import org.dataloader.Try
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import reactor.core.publisher.Mono
 import java.lang.reflect.InvocationTargetException
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
-@DgsComponent
-open class DefaultDgsFederationResolver() :
-    DgsFederationResolver {
-
-    /**
-     * This constructor is used by DgsSchemaProvider when no custom DgsFederationResolver is provided.
-     * This is the most common use case.
-     * The default constructor is used to extend the DefaultDgsFederationResolver. In that case injection is used to provide the schemaProvider.
-     */
-    constructor(
-        entityFetcherRegistry: EntityFetcherRegistry,
-        dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler>
-    ) : this() {
-        this.entityFetcherRegistry = entityFetcherRegistry
-        dgsExceptionHandler = dataFetcherExceptionHandler
-    }
-
-    /**
-     * Used when the DefaultDgsFederationResolver is extended.
-     */
-    @Suppress("JoinDeclarationAndAssignment")
-    @Autowired
-    lateinit var entityFetcherRegistry: EntityFetcherRegistry
-
-    @Autowired
-    lateinit var dgsExceptionHandler: Optional<DataFetcherExceptionHandler>
+open class DefaultDgsFederationResolver(
+    private val entityFetcherRegistry: EntityFetcherRegistry,
+    private val dgsExceptionHandler: Optional<DataFetcherExceptionHandler>
+) : DgsFederationResolver {
 
     override fun entitiesFetcher(): DataFetcher<Any?> {
         return DataFetcher { env ->

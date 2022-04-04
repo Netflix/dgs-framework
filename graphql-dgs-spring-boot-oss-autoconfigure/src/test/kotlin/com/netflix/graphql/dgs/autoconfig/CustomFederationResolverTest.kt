@@ -21,12 +21,15 @@ import com.netflix.graphql.dgs.DgsEntityFetcher
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
+import com.netflix.graphql.dgs.internal.EntityFetcherRegistry
+import graphql.execution.DataFetcherExceptionHandler
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.AutoConfigurations
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import java.util.*
 
 class CustomFederationResolverTest {
 
@@ -59,8 +62,11 @@ class CustomFederationResolverTest {
     @Configuration
     open class MyFederationConfig {
         @Bean
-        open fun federationResolver(): DgsFederationResolver {
-            return MyFederationResolver()
+        open fun federationResolver(
+            entityFetcherRegistry: EntityFetcherRegistry,
+            dgsExceptionHandler: Optional<DataFetcherExceptionHandler>
+        ): DgsFederationResolver {
+            return MyFederationResolver(entityFetcherRegistry, dgsExceptionHandler)
         }
 
         @Bean
@@ -77,7 +83,12 @@ class CustomFederationResolverTest {
         }
     }
 
-    class MyFederationResolver : DefaultDgsFederationResolver() {
+    class MyFederationResolver(
+        entityFetcherRegistry: EntityFetcherRegistry,
+        dgsExceptionHandler: Optional<DataFetcherExceptionHandler>
+    ) : DefaultDgsFederationResolver(
+        entityFetcherRegistry, dgsExceptionHandler
+    ) {
         override fun typeMapping(): Map<Class<*>, String> {
             return mapOf(Pair(Movie::class.java, "MyMovie"))
         }

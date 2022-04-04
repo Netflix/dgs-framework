@@ -21,6 +21,7 @@ import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
+import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
 import com.netflix.graphql.dgs.internal.*
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
 import com.netflix.graphql.dgs.scalars.UploadScalar
@@ -85,8 +86,10 @@ open class DgsAutoConfiguration(
         preparsedDocumentProvider: PreparsedDocumentProvider,
         queryValueCustomizer: QueryValueCustomizer
     ): DgsQueryExecutor {
-        val queryExecutionStrategy = providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
-        val mutationExecutionStrategy = providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
+        val queryExecutionStrategy =
+            providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
+        val mutationExecutionStrategy =
+            providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
         return DefaultDgsQueryExecutor(
             schema,
             schemaProvider,
@@ -171,6 +174,18 @@ open class DgsAutoConfiguration(
             cookieValueResolver,
             inputObjectMapper.orElse(DefaultInputObjectMapper()),
             entityFetcherRegistry
+        )
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun dgsFederationResolver(
+        entityFetcherRegistry: EntityFetcherRegistry,
+        dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty()
+    ): DgsFederationResolver {
+        return DefaultDgsFederationResolver(
+            entityFetcherRegistry,
+            dataFetcherExceptionHandler
         )
     }
 
