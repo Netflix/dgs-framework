@@ -118,7 +118,7 @@ class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : Text
             }
 
             override fun onNext(er: ExecutionResult) {
-                val message = OperationMessage(GQL_DATA, DataPayload(er.getData()), id)
+                val message = OperationMessage(GQL_DATA, DataPayload(er.getData(), er.errors), id)
                 val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
                 logger.debug("Sending subscription data: {}", jsonMessage)
 
