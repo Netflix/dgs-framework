@@ -22,11 +22,11 @@ import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.EntityFetcherRegistry
-import graphql.TypeResolutionEnvironment
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherResult
 import graphql.execution.ExecutionStepInfo
 import graphql.execution.ResultPath
+import graphql.execution.TypeResolutionParameters
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.DataFetchingEnvironmentImpl
 import graphql.schema.GraphQLList
@@ -99,14 +99,11 @@ class DefaultDgsFederationResolverTest {
                 DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
                     .typeResolver()
                     .getType(
-                        TypeResolutionEnvironment(
-                            Movie("123", "Stranger Things"),
-                            emptyMap(),
-                            null,
-                            null,
-                            graphQLSchema,
-                            null
-                        )
+                        TypeResolutionParameters
+                            .newParameters()
+                            .schema(graphQLSchema)
+                            .value(Movie("123", "Stranger Things"))
+                            .build()
                     )
             assertThat(type.name).isEqualTo("Movie")
         }
@@ -124,14 +121,11 @@ class DefaultDgsFederationResolverTest {
             val type = DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
                 .typeResolver()
                 .getType(
-                    TypeResolutionEnvironment(
-                        Movie("123", "Stranger Things"),
-                        emptyMap(),
-                        null,
-                        null,
-                        graphQLSchema,
-                        null
-                    )
+                    TypeResolutionParameters
+                        .newParameters()
+                        .schema(graphQLSchema)
+                        .value(Movie("123", "Stranger Things"))
+                        .build()
                 )
             assertThat(type).isNull()
         }
@@ -159,14 +153,11 @@ class DefaultDgsFederationResolverTest {
                 }
 
             val type = customTypeResolver.typeResolver().getType(
-                TypeResolutionEnvironment(
-                    Movie("123", "Stranger Things"),
-                    emptyMap(),
-                    null,
-                    null,
-                    graphQLSchema,
-                    null
-                )
+                TypeResolutionParameters
+                    .newParameters()
+                    .schema(graphQLSchema)
+                    .value(Movie("123", "Stranger Things"))
+                    .build()
             )
             assertThat(type.name).isEqualTo("DgsMovie")
         }

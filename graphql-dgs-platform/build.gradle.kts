@@ -47,7 +47,7 @@ dependencies {
     constraints {
         // GraphQL Platform
         api("com.graphql-java:graphql-java") {
-            version { require("17.3") }
+            version { require("18.0") }
         }
         api("com.graphql-java:graphql-java-extended-scalars") {
             version { require("17.0") }
@@ -57,7 +57,7 @@ dependencies {
             version { require("17.0-hibernate-validator-6.2.0.Final") }
         }
         api("com.apollographql.federation:federation-graphql-java-support") {
-            version { require("0.7.0") }
+            version { require("0.9.0") }
         }
         // ---
         api("com.jayway.jsonpath:json-path") {
