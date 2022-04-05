@@ -64,6 +64,7 @@ import org.springframework.context.ApplicationContext
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
+import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.context.request.WebRequest
@@ -1042,6 +1043,105 @@ internal class InputArgumentTest {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@RequestHeader referer: String): String {
                 return "From, $referer"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val schema = provider.schema()
+
+        val build = GraphQL.newGraphQL(schema).build()
+        val httpHeaders = HttpHeaders()
+        httpHeaders.add("Referer", "localhost")
+        val executionResult = build.execute(ExecutionInput.newExecutionInput("""{hello}""").context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders))))
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("From, localhost", data["hello"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `A @RequestHeader argument with map should be supported`() {
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@RequestHeader headers: Map<String, String>): String {
+                val header = headers.get("Referer")
+                return "From, $header"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val schema = provider.schema()
+
+        val build = GraphQL.newGraphQL(schema).build()
+        val httpHeaders = HttpHeaders()
+        httpHeaders.add("Referer", "localhost")
+        val executionResult = build.execute(ExecutionInput.newExecutionInput("""{hello}""").context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders))))
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("From, localhost", data["hello"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `A @RequestHeader argument with multi-value map should be supported`() {
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@RequestHeader headers: MultiValueMap<String, String>): String {
+                val header = headers.getFirst("Referer")
+                return "From, $header"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            )
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val schema = provider.schema()
+
+        val build = GraphQL.newGraphQL(schema).build()
+        val httpHeaders = HttpHeaders()
+        httpHeaders.add("Referer", "localhost")
+        val executionResult = build.execute(ExecutionInput.newExecutionInput("""{hello}""").context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders))))
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val data = executionResult.getData<Map<String, *>>()
+        Assertions.assertEquals("From, localhost", data["hello"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `A @RequestHeader argument with HttpHeaders should be supported`() {
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@RequestHeader headers: HttpHeaders): String {
+                val header = headers.getFirst("Referer")
+                return "From, $header"
             }
         }
 
