@@ -45,3 +45,4 @@ bin/
 
 # VS Code
 .vscode/
+scripts/__pycache__
