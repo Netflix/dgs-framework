@@ -25,10 +25,14 @@ import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.ParseContext
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
+import com.netflix.graphql.dgs.ExecutionResultWithContext
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.types.errors.ErrorType
 import com.netflix.graphql.types.errors.TypedGraphQLError
-import graphql.*
+import graphql.ExecutionInput
+import graphql.ExecutionResultImpl
+import graphql.GraphQL
+import graphql.GraphQLError
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
 import graphql.execution.SubscriptionExecutionStrategy
@@ -70,19 +74,22 @@ object BaseDgsQueryExecutor {
         mutationExecutionStrategy: ExecutionStrategy,
         idProvider: Optional<ExecutionIdProvider>,
         preparsedDocumentProvider: PreparsedDocumentProvider,
-    ): CompletableFuture<out ExecutionResult> {
+    ): CompletableFuture<out ExecutionResultWithContext> {
 
         if (!StringUtils.hasText(query)) {
             return CompletableFuture.completedFuture(
-                ExecutionResultImpl
-                    .newExecutionResult()
-                    .addError(
-                        TypedGraphQLError
-                            .newBadRequestBuilder()
-                            .message("The query is null or empty.")
-                            .errorType(ErrorType.BAD_REQUEST)
-                            .build()
-                    ).build()
+                ExecutionResultWithContext(
+                    ExecutionResultImpl
+                        .newExecutionResult()
+                        .addError(
+                            TypedGraphQLError
+                                .newBadRequestBuilder()
+                                .message("The query is null or empty.")
+                                .errorType(ErrorType.BAD_REQUEST)
+                                .build()
+                        ).build(),
+                    null
+                )
             )
         }
 
@@ -116,11 +123,13 @@ object BaseDgsQueryExecutor {
         }
 
         return try {
-            graphQL.executeAsync(executionInputBuilder.build())
+            val executionInput = executionInputBuilder.build()
+            graphQL.executeAsync(executionInput)
+                .thenApply { ExecutionResultWithContext(it, executionInput.graphQLContext) }
         } catch (e: Exception) {
             logger.error("Encountered an exception while handling query $query", e)
             val errors: List<GraphQLError> = if (e is GraphQLError) listOf<GraphQLError>(e) else emptyList()
-            CompletableFuture.completedFuture(ExecutionResultImpl(null, errors))
+            CompletableFuture.completedFuture(ExecutionResultWithContext(ExecutionResultImpl(null, errors), null))
         }
     }
 }

@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.internal.DgsCacheControlUtil
 import com.netflix.graphql.dgs.internal.utils.MultipartVariableMapper
 import com.netflix.graphql.dgs.internal.utils.TimeTracer
 import graphql.ExecutionResultImpl
@@ -30,6 +31,7 @@ import graphql.GraphqlErrorBuilder
 import graphql.execution.reactive.SubscriptionPublisher
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -69,7 +71,8 @@ import org.springframework.web.multipart.MultipartFile
 @RestController
 open class DgsRestController(
     open val dgsQueryExecutor: DgsQueryExecutor,
-    open val mapper: ObjectMapper = jacksonObjectMapper()
+    open val mapper: ObjectMapper = jacksonObjectMapper(),
+    @Value("false") open val captureCacheControl: Boolean = false
 ) {
 
     companion object {
@@ -182,9 +185,9 @@ open class DgsRestController(
 
         val query: String? = inputQuery["query"] as? String?
 
-        val executionResult = TimeTracer.logTime(
+        val (executionResult, graphQLContext) = TimeTracer.logTime(
             {
-                dgsQueryExecutor.execute(
+                dgsQueryExecutor.executeAndZipContext(
                     query,
                     queryVariables,
                     extensions,
@@ -206,6 +209,13 @@ open class DgsRestController(
                 .body("Trying to execute subscription on /graphql. Use /subscriptions instead!")
         }
 
+        if (captureCacheControl && graphQLContext == null) {
+            throw IllegalStateException("The application is configured to handle @cacheControl annotations, but no GraphQLContext was passed to the WebMvc request handler")
+        }
+
+        val cacheControlHeader: String? =
+            DgsCacheControlUtil.getCacheControlHeaderFromInstrumentation(graphQLContext)
+
         val result = try {
             TimeTracer.logTime(
                 { mapper.writeValueAsString(executionResult.toSpecification()) },
@@ -219,6 +229,9 @@ open class DgsRestController(
             mapper.writeValueAsString(errorResponse.toSpecification())
         }
 
-        return ResponseEntity.ok(result)
+        return ResponseEntity
+            .ok()
+            .apply { if (cacheControlHeader != null) header(HttpHeaders.CACHE_CONTROL, cacheControlHeader) }
+            .body(result)
     }
 }

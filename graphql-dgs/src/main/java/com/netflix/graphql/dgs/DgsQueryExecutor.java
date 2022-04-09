@@ -78,7 +78,7 @@ public interface DgsQueryExecutor {
     }
 
     /**
-     * Executes a GraphQL query. This method is used internally by all other methods in this interface.
+     * Executes a GraphQL query.
      * @param query The query string
      * @param variables A map of variables
      * @param extensions A map representing GraphQL extensions. This is made available in the {@link com.netflix.graphql.dgs.internal.DgsRequestData} object on {@link com.netflix.graphql.dgs.context.DgsContext}.
@@ -90,6 +90,20 @@ public interface DgsQueryExecutor {
      * @see <a href="https://graphql.org/learn/queries/#operation-name">Operation name</a>
      */
     ExecutionResult execute(String query, Map<String, Object> variables, Map<String,Object> extensions, HttpHeaders headers, String operationName, WebRequest webRequest);
+
+    /**
+     * Executes a GraphQL query. This method is used internally by all other methods in this interface.
+     * @param query The query string
+     * @param variables A map of variables
+     * @param extensions A map representing GraphQL extensions. This is made available in the {@link com.netflix.graphql.dgs.internal.DgsRequestData} object on {@link com.netflix.graphql.dgs.context.DgsContext}.
+     * @param headers Request headers represented as a Spring Framework {@link HttpHeaders}
+     * @param operationName Operation name
+     * @param webRequest A Spring {@link WebRequest} giving access to request details. Can cast to an environment specific class such as {@link org.springframework.web.context.request.ServletWebRequest}.
+     * @return Returns a {@link ExecutionResultWithContext}. This includes a {@link ExecutionResult} and {@link graphql.GraphQLContext} associated with the request.
+     * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
+     * @see <a href="https://graphql.org/learn/queries/#operation-name">Operation name</a>
+     */
+    ExecutionResultWithContext executeAndZipContext(String query, Map<String, Object> variables, Map<String,Object> extensions, HttpHeaders headers, String operationName, WebRequest webRequest);
 
     /**
      * Executes a GraphQL query, parses the returned data, and uses a Json Path to extract specific elements out of the data.

@@ -20,6 +20,7 @@ import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
+import com.netflix.graphql.dgs.ExecutionResultWithContext
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor
@@ -40,7 +41,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.web.reactive.function.server.ServerRequest
 import reactor.core.publisher.Mono
-import reactor.kotlin.core.util.function.*
+import reactor.kotlin.core.util.function.component1
+import reactor.kotlin.core.util.function.component2
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
@@ -68,7 +70,18 @@ class DefaultDgsReactiveQueryExecutor(
         operationName: String?,
         serverHttpRequest: ServerRequest?
     ): Mono<ExecutionResult> {
+        return executeAndZipContext(query, variables, extensions, headers, operationName, serverHttpRequest)
+            .map { it.executionResult }
+    }
 
+    override fun executeAndZipContext(
+        query: String?,
+        variables: MutableMap<String, Any>?,
+        extensions: MutableMap<String, Any>?,
+        headers: HttpHeaders?,
+        operationName: String?,
+        serverHttpRequest: ServerRequest?
+    ): Mono<ExecutionResultWithContext> {
         return Mono
             .fromCallable {
                 if (reloadIndicator.reloadSchema())
@@ -95,7 +108,8 @@ class DefaultDgsReactiveQueryExecutor(
                     )
                 ).doOnEach { result ->
                     if (result.hasValue()) {
-                        val nullValueError = result.get()?.errors?.find { it is NonNullableFieldWasNullError }
+                        val nullValueError =
+                            result.get()?.executionResult?.errors?.find { it is NonNullableFieldWasNullError }
                         if (nullValueError != null) {
                             logger.error(nullValueError.message)
                         }

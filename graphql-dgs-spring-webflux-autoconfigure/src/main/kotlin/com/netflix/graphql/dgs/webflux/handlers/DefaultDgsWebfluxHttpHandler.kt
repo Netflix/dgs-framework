@@ -20,18 +20,24 @@ import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.netflix.graphql.dgs.ExecutionResultWithContext
+import com.netflix.graphql.dgs.internal.DgsCacheControlUtil
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
-import graphql.ExecutionResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpHeaders
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
 
-class DefaultDgsWebfluxHttpHandler(private val dgsQueryExecutor: DgsReactiveQueryExecutor, private val objectMapper: ObjectMapper) : DgsWebfluxHttpHandler {
+class DefaultDgsWebfluxHttpHandler(
+    private val dgsQueryExecutor: DgsReactiveQueryExecutor,
+    private val objectMapper: ObjectMapper,
+    private val captureCacheControl: Boolean
+) : DgsWebfluxHttpHandler {
 
     override fun graphql(request: ServerRequest): Mono<ServerResponse> {
-        @Suppress("UNCHECKED_CAST") val executionResult: Mono<ExecutionResult> =
+        @Suppress("UNCHECKED_CAST") val executionResult: Mono<ExecutionResultWithContext> =
 
             request.bodyToMono(String::class.java)
                 .flatMap { body ->
@@ -59,7 +65,7 @@ class DefaultDgsWebfluxHttpHandler(private val dgsQueryExecutor: DgsReactiveQuer
                 }
                 .flatMap { queryInput ->
                     logger.debug("Parsed variables: {}", queryInput.queryVariables)
-                    dgsQueryExecutor.execute(
+                    dgsQueryExecutor.executeAndZipContext(
                         queryInput.query,
                         queryInput.queryVariables,
                         queryInput.extensions,
@@ -70,9 +76,16 @@ class DefaultDgsWebfluxHttpHandler(private val dgsQueryExecutor: DgsReactiveQuer
                 }
 
         return executionResult.flatMap { result ->
-            ServerResponse
+            if (captureCacheControl && result.graphQLContext == null) {
+                return@flatMap Mono.error(IllegalStateException("The application is configured to handle @cacheControl annotations, but no GraphQLContext was passed to the WebFlux request handler"))
+            }
+            val cacheControlHeader: String? =
+                DgsCacheControlUtil.getCacheControlHeaderFromInstrumentation(result.graphQLContext)
+
+            return@flatMap ServerResponse
                 .ok()
-                .bodyValue(result.toSpecification())
+                .apply { if (cacheControlHeader != null) header(HttpHeaders.CACHE_CONTROL, cacheControlHeader) }
+                .bodyValue(result.executionResult.toSpecification())
         }.onErrorResume { ex ->
             when (ex) {
                 is JsonParseException ->

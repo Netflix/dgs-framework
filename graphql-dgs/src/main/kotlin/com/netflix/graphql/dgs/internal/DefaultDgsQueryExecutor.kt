@@ -16,14 +16,17 @@
 
 package com.netflix.graphql.dgs.internal
 
-import com.jayway.jsonpath.*
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
+import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.ExecutionResultWithContext
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor.parseContext
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
-import graphql.*
+import graphql.ExecutionResult
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
 import graphql.execution.NonNullableFieldWasNullError
@@ -64,6 +67,17 @@ class DefaultDgsQueryExecutor(
         operationName: String?,
         webRequest: WebRequest?
     ): ExecutionResult {
+        return executeAndZipContext(query, variables, extensions, headers, operationName, webRequest).executionResult
+    }
+
+    override fun executeAndZipContext(
+        query: String?,
+        variables: Map<String, Any>?,
+        extensions: Map<String, Any>?,
+        headers: HttpHeaders?,
+        operationName: String?,
+        webRequest: WebRequest?
+    ): ExecutionResultWithContext {
         val graphQLSchema: GraphQLSchema =
             if (reloadIndicator.reloadSchema())
                 schema.updateAndGet { schemaProvider.schema() }
@@ -89,8 +103,8 @@ class DefaultDgsQueryExecutor(
 
         // Check for NonNullableFieldWasNull errors, and log them explicitly because they don't run through the exception handlers.
         val result = executionResult.get()
-        if (result.errors.size > 0) {
-            val nullValueError = result.errors.find { it is NonNullableFieldWasNullError }
+        if (result.executionResult.errors.size > 0) {
+            val nullValueError = result.executionResult.errors.find { it is NonNullableFieldWasNullError }
             if (nullValueError != null) {
                 logger.error(nullValueError.message)
             }

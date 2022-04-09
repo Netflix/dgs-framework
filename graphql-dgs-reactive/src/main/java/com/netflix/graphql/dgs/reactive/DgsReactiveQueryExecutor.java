@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.reactive;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.TypeRef;
+import com.netflix.graphql.dgs.ExecutionResultWithContext;
 import graphql.ExecutionResult;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -83,7 +84,7 @@ public interface DgsReactiveQueryExecutor {
     }
 
     /**
-     * Executes a GraphQL query. This method is used internally by all other methods in this interface.
+     * Executes a GraphQL query.
      * @param query The query string
      * @param variables A map of variables
      * @param extensions A map representing GraphQL extensions. This is made available in the {@link com.netflix.graphql.dgs.internal.DgsRequestData} object on {@link com.netflix.graphql.dgs.context.DgsContext}.
@@ -95,6 +96,20 @@ public interface DgsReactiveQueryExecutor {
      * @see <a href="https://graphql.org/learn/queries/#operation-name">Operation name</a>
      */
     Mono<ExecutionResult> execute(String query, Map<String, Object> variables, Map<String,Object> extensions, HttpHeaders headers, String operationName, ServerRequest serverHttpRequest);
+
+    /**
+     * Executes a GraphQL query. This method is used internally by all other methods in this interface.
+     * @param query The query string
+     * @param variables A map of variables
+     * @param extensions A map representing GraphQL extensions. This is made available in the {@link com.netflix.graphql.dgs.internal.DgsRequestData} object on {@link com.netflix.graphql.dgs.context.DgsContext}.
+     * @param headers Request headers represented as a Spring Framework {@link HttpHeaders}
+     * @param operationName Operation name
+     * @param serverHttpRequest A Spring {@link ServerHttpRequest} giving access to request details.
+     * @return Returns a {@link ExecutionResultWithContext}. This includes a {@link ExecutionResult} and {@link graphql.GraphQLContext} associated with the request.
+     * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
+     * @see <a href="https://graphql.org/learn/queries/#operation-name">Operation name</a>
+     */
+    Mono<ExecutionResultWithContext> executeAndZipContext(String query, Map<String, Object> variables, Map<String,Object> extensions, HttpHeaders headers, String operationName, ServerRequest serverHttpRequest);
 
     /**
      * Executes a GraphQL query, parses the returned data, and uses a Json Path to extract specific elements out of the data.

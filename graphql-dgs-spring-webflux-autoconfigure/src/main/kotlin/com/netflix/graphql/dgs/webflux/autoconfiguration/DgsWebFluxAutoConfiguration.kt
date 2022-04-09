@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.webflux.autoconfiguration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.netflix.graphql.dgs.cacheControl.DgsCacheControlSupportProperties
 import com.netflix.graphql.dgs.internal.CookieValueResolver
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
@@ -72,7 +73,7 @@ import java.util.*
 
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @Configuration
-@EnableConfigurationProperties(DgsWebfluxConfigurationProperties::class)
+@EnableConfigurationProperties(value = [DgsWebfluxConfigurationProperties::class, DgsCacheControlSupportProperties::class])
 open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfigurationProperties) {
 
     @Bean
@@ -145,8 +146,12 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
 
     @Bean
     @ConditionalOnMissingBean
-    open fun dgsWebfluxHttpHandler(dgsQueryExecutor: DgsReactiveQueryExecutor, @Qualifier("dgsObjectMapper") dgsObjectMapper: ObjectMapper): DgsWebfluxHttpHandler {
-        return DefaultDgsWebfluxHttpHandler(dgsQueryExecutor, dgsObjectMapper)
+    open fun dgsWebfluxHttpHandler(
+        dgsQueryExecutor: DgsReactiveQueryExecutor,
+        @Qualifier("dgsObjectMapper") dgsObjectMapper: ObjectMapper,
+        cacheControlProperties: DgsCacheControlSupportProperties
+    ): DgsWebfluxHttpHandler {
+        return DefaultDgsWebfluxHttpHandler(dgsQueryExecutor, dgsObjectMapper, cacheControlProperties.enabled)
     }
 
     @Bean

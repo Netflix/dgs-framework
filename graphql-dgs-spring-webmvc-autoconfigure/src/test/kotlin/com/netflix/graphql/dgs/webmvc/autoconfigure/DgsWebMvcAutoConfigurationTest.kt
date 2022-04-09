@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.ExecutionResultWithContext
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.mvc.DgsRestController
 import com.netflix.graphql.dgs.mvc.DgsRestSchemaJsonController
@@ -240,7 +241,7 @@ class DgsWebMvcAutoConfigurationTest {
         open fun dgsQueryExecutor(): DgsQueryExecutor {
             val mockExecutor = mockk<DgsQueryExecutor>()
             every {
-                mockExecutor.execute(
+                mockExecutor.executeAndZipContext(
                     "{ hello }",
                     any(),
                     any(),
@@ -248,8 +249,11 @@ class DgsWebMvcAutoConfigurationTest {
                     null,
                     any()
                 )
-            } returns ExecutionResultImpl.newExecutionResult()
-                .data(mapOf(Pair("hi", "there"))).build()
+            } returns ExecutionResultWithContext(
+                ExecutionResultImpl.newExecutionResult()
+                    .data(mapOf(Pair("hi", "there"))).build(),
+                null
+            )
             return mockExecutor
         }
 

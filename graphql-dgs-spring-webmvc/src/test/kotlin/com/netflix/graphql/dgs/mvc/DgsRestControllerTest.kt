@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.mvc
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.ExecutionResultWithContext
 import graphql.ExecutionResultImpl
 import graphql.execution.reactive.SubscriptionPublisher
 import io.mockk.every
@@ -52,7 +53,7 @@ class DgsRestControllerTest {
         """.trimIndent()
 
         every {
-            dgsQueryExecutor.execute(
+            dgsQueryExecutor.executeAndZipContext(
                 queryString,
                 emptyMap(),
                 any(),
@@ -60,7 +61,7 @@ class DgsRestControllerTest {
                 any(),
                 any()
             )
-        } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).build()
+        } returns ExecutionResultWithContext(ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).build(), null)
 
         val result =
             DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
@@ -82,7 +83,7 @@ class DgsRestControllerTest {
 
         val capturedOperationName = slot<String>()
         every {
-            dgsQueryExecutor.execute(
+            dgsQueryExecutor.executeAndZipContext(
                 queryString,
                 emptyMap(),
                 any(),
@@ -90,7 +91,7 @@ class DgsRestControllerTest {
                 capture(capturedOperationName),
                 any()
             )
-        } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hi", "there"))).build()
+        } returns ExecutionResultWithContext(ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hi", "there"))).build(), null)
 
         val result =
             DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
@@ -111,7 +112,7 @@ class DgsRestControllerTest {
         """.trimIndent()
 
         every {
-            dgsQueryExecutor.execute(
+            dgsQueryExecutor.executeAndZipContext(
                 requestBody,
                 emptyMap(),
                 any(),
@@ -119,7 +120,7 @@ class DgsRestControllerTest {
                 any(),
                 any()
             )
-        } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).build()
+        } returns ExecutionResultWithContext(ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).build(), null)
 
         val headers = HttpHeaders()
         headers.contentType = MediaType("application", "graphql")
@@ -140,7 +141,7 @@ class DgsRestControllerTest {
         """.trimIndent()
 
         every {
-            dgsQueryExecutor.execute(
+            dgsQueryExecutor.executeAndZipContext(
                 queryString,
                 emptyMap(),
                 any(),
@@ -148,8 +149,11 @@ class DgsRestControllerTest {
                 any(),
                 any()
             )
-        } returns ExecutionResultImpl.newExecutionResult()
-            .data(SubscriptionPublisher(null, null)).build()
+        } returns ExecutionResultWithContext(
+            ExecutionResultImpl.newExecutionResult()
+                .data(SubscriptionPublisher(null, null)).build(),
+            null
+        )
 
         val result =
             DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
