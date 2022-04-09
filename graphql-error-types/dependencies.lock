@@ -33,7 +33,7 @@
             "locked": "2.12.5"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "17.3"
+            "locked": "18.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -249,7 +249,7 @@
             "locked": "2.12.5"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "17.3"
+            "locked": "18.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -298,7 +298,7 @@
             "locked": "2.12.5"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "17.3"
+            "locked": "18.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -333,7 +333,7 @@
             "locked": "2.12.5"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "17.3"
+            "locked": "18.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
