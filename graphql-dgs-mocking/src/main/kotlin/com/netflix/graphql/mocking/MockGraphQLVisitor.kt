@@ -16,10 +16,10 @@
 
 package com.netflix.graphql.mocking
 
-import net.datafaker.Faker
 import graphql.schema.*
 import graphql.util.TraversalControl
 import graphql.util.TraverserContext
+import net.datafaker.Faker
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
