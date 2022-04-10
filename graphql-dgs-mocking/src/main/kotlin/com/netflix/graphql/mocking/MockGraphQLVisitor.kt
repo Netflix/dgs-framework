@@ -16,7 +16,7 @@
 
 package com.netflix.graphql.mocking
 
-import com.github.javafaker.Faker
+import net.datafaker.Faker
 import graphql.schema.*
 import graphql.util.TraversalControl
 import graphql.util.TraverserContext
@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory
 class MockGraphQLVisitor(private val mockConfig: Map<String, Any?>, private val mockFetchers: MutableMap<FieldCoordinates, DataFetcher<*>>) : GraphQLTypeVisitorStub() {
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
     private val providedRoots: MutableList<String?> = mutableListOf()
+    private val faker = Faker()
 
     override fun visitGraphQLFieldDefinition(node: GraphQLFieldDefinition?, context: TraverserContext<GraphQLSchemaElement>?): TraversalControl {
         val pathForNode = getPathForNode(context?.parentNodes, node)
@@ -49,7 +50,7 @@ class MockGraphQLVisitor(private val mockConfig: Map<String, Any?>, private val 
                             else -> return super.visitGraphQLFieldDefinition(node, context)
                         }
 
-                        val mockedValues = (0..Faker().number().numberBetween(0, 10))
+                        val mockedValues = (0..faker.number().numberBetween(0, 10))
                             .map { generateDataForScalar(wrappedType) }
                             .toList()
                         DataFetcher { mockedValues }
@@ -66,11 +67,11 @@ class MockGraphQLVisitor(private val mockConfig: Map<String, Any?>, private val 
 
     private fun generateDataForScalar(type: String): Any {
         return when (type) {
-            "String" -> Faker().book().title()
-            "Boolean" -> Faker().bool().bool()
-            "Int" -> Faker().number().randomDigit()
-            "Float" -> Faker().number().randomDouble(2, 0, 100000)
-            "ID" -> Faker().number().digit()
+            "String" -> faker.book().title()
+            "Boolean" -> faker.bool().bool()
+            "Int" -> faker.number().randomDigit()
+            "Float" -> faker.number().randomDouble(2, 0, 100000)
+            "ID" -> faker.number().digit()
             else -> Object()
         }
     }
