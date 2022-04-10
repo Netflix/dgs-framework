@@ -53,6 +53,7 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
      * @return GraphQLResponse
      * @throws GraphQLClientException when the HTTP response code is not 2xx.
      */
+    @Deprecated("The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.")
     override fun executeQuery(
         query: String,
         variables: Map<String, Any>,
@@ -87,12 +88,13 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
      * @return GraphQLResponse
      * @throws GraphQLClientException when the HTTP response code is not 2xx.
      */
+    @Deprecated("The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.")
     override fun executeQuery(
         query: String,
         variables: Map<String, Any>,
         requestExecutor: RequestExecutor
     ): GraphQLResponse {
-        @Suppress("DEPRECATION", "BlockingMethodInNonBlockingContext")
+        @Suppress("deprecation")
         return executeQuery(query, variables, null, requestExecutor)
     }
 
@@ -123,11 +125,13 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
      * @return Mono<GraphQLResponse>
      * @throws GraphQLClientException when the HTTP response code is not 2xx.
      */
+    @Deprecated("The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.")
     override fun reactiveExecuteQuery(
         query: String,
         variables: Map<String, Any>,
         requestExecutor: MonoRequestExecutor
     ): Mono<GraphQLResponse> {
+        @Suppress("deprecation")
         return reactiveExecuteQuery(query, variables, null, requestExecutor)
     }
 
@@ -143,12 +147,14 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
      * @return Mono<GraphQLResponse>
      * @throws GraphQLClientException when the HTTP response code is not 2xx.
      */
+    @Deprecated("The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.")
     override fun reactiveExecuteQuery(
         query: String,
         variables: Map<String, Any>,
         operationName: String?,
         requestExecutor: MonoRequestExecutor
     ): Mono<GraphQLResponse> {
+        @Suppress("BlockingMethodInNonBlockingContext")
         val serializedRequest = GraphQLClients.objectMapper.writeValueAsString(Request(query, variables, operationName))
         return requestExecutor.execute(url, GraphQLClients.defaultHeaders, serializedRequest).map { response ->
             GraphQLClients.handleResponse(response, serializedRequest, url)

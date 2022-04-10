@@ -40,6 +40,7 @@ import io.mockk.mockkClass
 import io.mockk.slot
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.InstanceOfAssertFactories.MAP
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -337,8 +338,16 @@ class DgsWebsocketHandlerTest {
 
         val returnMessage = jacksonObjectMapper().readValue<OperationMessage>(slotList[0].asBytes())
         assertThat(returnMessage.type).isEqualTo(GQL_DATA)
-        assertThat((returnMessage.payload as DataPayload).errors?.size).isEqualTo(1)
-        assertThat(((returnMessage.payload as DataPayload).errors?.get(0) as Map<String, String>)["message"]).isEqualTo("Exception while fetching data () : Error in data fetcher")
+
+        val payload = returnMessage.payload as DataPayload
+
+        assertThat(payload.errors)
+            .hasSize(1)
+            .element(0)
+            .asInstanceOf(MAP)
+            .extracting("message")
+            .asString()
+            .isEqualTo("Exception while fetching data () : Error in data fetcher")
     }
 
     private fun stop(webSocketSession: WebSocketSession) {

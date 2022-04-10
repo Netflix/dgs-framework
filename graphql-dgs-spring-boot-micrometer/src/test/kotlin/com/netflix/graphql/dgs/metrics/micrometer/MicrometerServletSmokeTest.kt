@@ -807,8 +807,8 @@ class MicrometerServletSmokeTest {
             }
 
             @DgsDataLoader(name = "upperCaseLoader")
-            var batchLoader = BatchLoader { keys: List<String?>? ->
-                CompletableFuture.supplyAsync { keys?.map { it?.toUpperCase() }?.toList() }
+            var batchLoader = BatchLoader { keys: List<String> ->
+                CompletableFuture.supplyAsync { keys.map { it.uppercase() } }
             }
 
             @DgsDataLoader(name = "reverser")

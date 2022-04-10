@@ -35,25 +35,19 @@ class RequestWithScalarTest {
                 )
             )
         )
-        val graphQLResponse = DefaultGraphQLClient("").executeQuery(
+        val client = CustomGraphQLClient(
+            url = "",
+            requestExecutor = { _, _, _ -> HttpResponse(200, """{"data": null}""") }
+        )
+        val graphQLResponse = client.executeQuery(
             """
                    query Calendar(${'$'}timePeriod: DateRange) {
                      getMeetings(timePeriod: ${'$'}timePeriod)
                    }
             """.trimIndent(),
-            variables, this::mockRequestHandler
+            variables
         )
 
         assertThat(graphQLResponse).isNotNull
     }
-
-    private fun mockRequestHandler(url: String, headers: Map<String, List<String>>, body: String): HttpResponse =
-        HttpResponse(
-            200,
-            """
-            {
-                "data": null
-            }
-            """.trimIndent()
-        )
 }

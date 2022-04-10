@@ -22,7 +22,8 @@ interface DataFetcherResultProcessor {
 
     fun supportsType(originalResult: Any): Boolean
 
-    fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any = process(originalResult)
+    fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any =
+        @Suppress("deprecation") process(originalResult)
 
     @Deprecated(
         "Replaced with process(originalResult, dfe)",

@@ -30,7 +30,7 @@ import io.micrometer.core.instrument.Timer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
-import java.util.Optional.*
+import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
@@ -40,7 +40,7 @@ class DgsGraphQLMetricsInstrumentation(
     private val tagsProvider: DgsGraphQLMetricsTagsProvider,
     private val properties: DgsGraphQLMetricsProperties,
     private val limitedTagMetricResolver: LimitedTagMetricResolver,
-    private val optQuerySignatureRepository: Optional<QuerySignatureRepository> = empty()
+    private val optQuerySignatureRepository: Optional<QuerySignatureRepository> = Optional.empty()
 ) : SimpleInstrumentation() {
 
     companion object {
@@ -66,7 +66,7 @@ class DgsGraphQLMetricsInstrumentation(
         val state: MetricsInstrumentationState = parameters.getInstrumentationState()
         state.startTimer()
 
-        state.operationName = ofNullable(parameters.operation)
+        state.operationName = Optional.ofNullable(parameters.operation)
         state.isIntrospectionQuery = QueryUtils.isIntrospectionQuery(parameters.executionInput)
 
         return object : SimpleInstrumentationContext<ExecutionResult>() {
@@ -183,9 +183,9 @@ class DgsGraphQLMetricsInstrumentation(
     ): ExecutionStrategyInstrumentationContext {
         val state: MetricsInstrumentationState = parameters.getInstrumentationState()
         if (parameters.executionContext.getRoot<Any>() == null) {
-            state.operation = of(parameters.executionContext.operationDefinition.operation.name.uppercase())
+            state.operation = Optional.of(parameters.executionContext.operationDefinition.operation.name.uppercase())
             if (!state.operationName.isPresent) {
-                state.operationName = ofNullable(parameters.executionContext.operationDefinition?.name)
+                state.operationName = Optional.ofNullable(parameters.executionContext.operationDefinition?.name)
             }
         }
         return DefaultExecutionStrategyInstrumentationContext
@@ -215,13 +215,13 @@ class DgsGraphQLMetricsInstrumentation(
         private val registry: MeterRegistry,
         private val limitedTagMetricResolver: LimitedTagMetricResolver
     ) : InstrumentationState {
-        private var timerSample: Optional<Timer.Sample> = empty()
+        private var timerSample: Optional<Timer.Sample> = Optional.empty()
 
         var isIntrospectionQuery = false
-        var queryComplexity: Optional<Int> = empty()
-        var operation: Optional<String> = empty()
-        var operationName: Optional<String> = empty()
-        var querySignature: Optional<QuerySignatureRepository.QuerySignature> = empty()
+        var queryComplexity: Optional<Int> = Optional.empty()
+        var operation: Optional<String> = Optional.empty()
+        var operationName: Optional<String> = Optional.empty()
+        var querySignature: Optional<QuerySignatureRepository.QuerySignature> = Optional.empty()
 
         fun startTimer() {
             this.timerSample = Optional.of(Timer.start(this.registry))
@@ -240,7 +240,7 @@ class DgsGraphQLMetricsInstrumentation(
                 )
                 .and(
                     GqlTag.OPERATION.key,
-                    operation.map { it.toUpperCase() }.orElse(TagUtils.TAG_VALUE_NONE)
+                    operation.map { it.uppercase() }.orElse(TagUtils.TAG_VALUE_NONE)
                 )
                 .and(
                     limitedTagMetricResolver.tags(
@@ -275,14 +275,14 @@ class DgsGraphQLMetricsInstrumentation(
                     override fun visitField(env: QueryVisitorFieldEnvironment?) {
                         val childComplexity = valuesByParent.getOrDefault(env, 0)
                         val value = calculateComplexity(env!!, childComplexity!!)
-                        valuesByParent.compute(env.parentEnvironment) { _, oldValue -> ofNullable(oldValue).orElse(0) + value }
+                        valuesByParent.compute(env.parentEnvironment) { _, oldValue -> Optional.ofNullable(oldValue).orElse(0) + value }
                     }
                 })
                 val totalComplexity = valuesByParent.getOrDefault(null, 0)
-                return ofNullable(queryComplexityBuckets.filter { totalComplexity!! < it }.minOrNull())
+                return Optional.ofNullable(queryComplexityBuckets.filter { totalComplexity!! < it }.minOrNull())
             } catch (error: Throwable) {
                 log.error("Unable to compute the query complexity!", error)
-                return empty()
+                return Optional.empty()
             }
         }
 
