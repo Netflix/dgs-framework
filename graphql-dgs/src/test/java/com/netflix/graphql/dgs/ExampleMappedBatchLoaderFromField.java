@@ -21,6 +21,7 @@ import org.dataloader.MappedBatchLoader;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 
+@DgsComponent
 public class ExampleMappedBatchLoaderFromField {
     @DgsDataLoader(name = "exampleMappedLoaderFromField")
     public MappedBatchLoader<String, String> mappedLoader = keys -> CompletableFuture.supplyAsync(() -> {

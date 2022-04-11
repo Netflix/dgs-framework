@@ -27,6 +27,7 @@ import com.netflix.graphql.dgs.internal.utils.DataLoaderNameUtil
 import org.dataloader.BatchLoader
 import org.dataloader.BatchLoaderWithContext
 import org.dataloader.DataLoader
+import org.dataloader.DataLoaderFactory
 import org.dataloader.DataLoaderOptions
 import org.dataloader.DataLoaderRegistry
 import org.dataloader.MappedBatchLoader
@@ -142,40 +143,30 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         batchLoader: BatchLoader<*, *>,
         dgsDataLoader: DgsDataLoader,
         dataLoaderRegistry: DataLoaderRegistry
-    ): DataLoader<out Any, out Any>? {
-        val options = DataLoaderOptions.newOptions()
-            .setBatchingEnabled(dgsDataLoader.batching)
-            .setCachingEnabled(dgsDataLoader.caching)
-        if (dgsDataLoader.maxBatchSize > 0) {
-            options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
-        }
+    ): DataLoader<*, *> {
+        val options = dataLoaderOptions(dgsDataLoader)
 
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
         if (extendedBatchLoader is DgsDataLoaderRegistryConsumer) {
             extendedBatchLoader.setDataLoaderRegistry(dataLoaderRegistry)
         }
 
-        return DataLoader.newDataLoader(extendedBatchLoader, options)
+        return DataLoaderFactory.newDataLoader(extendedBatchLoader, options)
     }
 
     private fun createDataLoader(
         batchLoader: MappedBatchLoader<*, *>,
         dgsDataLoader: DgsDataLoader,
         dataLoaderRegistry: DataLoaderRegistry
-    ): DataLoader<out Any, out Any>? {
-        val options = DataLoaderOptions.newOptions()
-            .setBatchingEnabled(dgsDataLoader.batching)
-            .setCachingEnabled(dgsDataLoader.caching)
-        if (dgsDataLoader.maxBatchSize > 0) {
-            options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
-        }
+    ): DataLoader<*, *> {
+        val options = dataLoaderOptions(dgsDataLoader)
 
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
         if (extendedBatchLoader is DgsDataLoaderRegistryConsumer) {
             extendedBatchLoader.setDataLoaderRegistry(dataLoaderRegistry)
         }
 
-        return DataLoader.newMappedDataLoader(extendedBatchLoader, options)
+        return DataLoaderFactory.newMappedDataLoader(extendedBatchLoader, options)
     }
 
     private fun <T> createDataLoader(
@@ -183,22 +174,16 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         dgsDataLoader: DgsDataLoader,
         supplier: Supplier<T>,
         dataLoaderRegistry: DataLoaderRegistry
-    ): DataLoader<out Any, out Any>? {
-        val options = DataLoaderOptions.newOptions()
-            .setBatchingEnabled(dgsDataLoader.batching)
+    ): DataLoader<*, *> {
+        val options = dataLoaderOptions(dgsDataLoader)
             .setBatchLoaderContextProvider(supplier::get)
-            .setCachingEnabled(dgsDataLoader.caching)
-
-        if (dgsDataLoader.maxBatchSize > 0) {
-            options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
-        }
 
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
         if (extendedBatchLoader is DgsDataLoaderRegistryConsumer) {
             extendedBatchLoader.setDataLoaderRegistry(dataLoaderRegistry)
         }
 
-        return DataLoader.newDataLoader(extendedBatchLoader, options)
+        return DataLoaderFactory.newDataLoader(batchLoader, options)
     }
 
     private fun <T> createDataLoader(
@@ -206,22 +191,26 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         dgsDataLoader: DgsDataLoader,
         supplier: Supplier<T>,
         dataLoaderRegistry: DataLoaderRegistry
-    ): DataLoader<out Any, out Any>? {
-        val options = DataLoaderOptions.newOptions()
-            .setBatchingEnabled(dgsDataLoader.batching)
+    ): DataLoader<*, *> {
+        val options = dataLoaderOptions(dgsDataLoader)
             .setBatchLoaderContextProvider(supplier::get)
-            .setCachingEnabled(dgsDataLoader.caching)
-
-        if (dgsDataLoader.maxBatchSize > 0) {
-            options.setMaxBatchSize(dgsDataLoader.maxBatchSize)
-        }
 
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
         if (extendedBatchLoader is DgsDataLoaderRegistryConsumer) {
             extendedBatchLoader.setDataLoaderRegistry(dataLoaderRegistry)
         }
 
-        return DataLoader.newMappedDataLoader(extendedBatchLoader, options)
+        return DataLoaderFactory.newMappedDataLoader(extendedBatchLoader, options)
+    }
+
+    private fun dataLoaderOptions(annotation: DgsDataLoader): DataLoaderOptions {
+        val options = DataLoaderOptions()
+            .setBatchingEnabled(annotation.batching)
+            .setCachingEnabled(annotation.caching)
+        if (annotation.maxBatchSize > 0) {
+            options.setMaxBatchSize(annotation.maxBatchSize)
+        }
+        return options
     }
 
     private inline fun <reified T> wrappedDataLoader(loader: T, name: String): T {
