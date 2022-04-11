@@ -31,5 +31,9 @@ public @interface InputArgument {
 
     String name() default "";
 
+    /**
+     * @deprecated Explicitly specifying the collectionType is not necessary, it will be inferred from the parameter type
+     */
+    @Deprecated
     Class<?> collectionType() default Object.class;
 }
