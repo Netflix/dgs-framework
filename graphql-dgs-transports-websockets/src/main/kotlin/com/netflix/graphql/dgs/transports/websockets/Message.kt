@@ -62,7 +62,7 @@ sealed class Message(
     data class NextMessage(
         val id: String,
         val payload: ExecutionResult,
-    ) : Message(MessageType.PONG)
+    ) : Message(MessageType.NEXT)
 
     data class ErrorMessage(
         val id: String,

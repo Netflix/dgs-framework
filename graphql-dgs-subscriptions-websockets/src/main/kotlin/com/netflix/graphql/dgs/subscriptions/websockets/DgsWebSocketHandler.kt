@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.subscriptions.websockets
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.transports.websockets.DgsWebsocketTransport
 import com.netflix.graphql.types.subscription.*
 import graphql.ExecutionResult
 import org.reactivestreams.Publisher

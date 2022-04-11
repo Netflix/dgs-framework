@@ -1,15 +1,17 @@
 package com.netflix.graphql.dgs.transports.websockets
 
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.internal.utils.TimeTracer
 import graphql.ExecutionResult
+import graphql.ExecutionResultImpl
 import graphql.GraphqlErrorBuilder
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
 import org.slf4j.LoggerFactory
 import org.springframework.web.socket.CloseStatus
-import org.springframework.web.socket.PongMessage
 import org.springframework.web.socket.SubProtocolCapable
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
@@ -134,64 +136,106 @@ class DgsWebsocketTransport(
         payload: Message.SubscribeMessage.Payload,
         session: WebSocketSession
     ) {
-        val executionResult: ExecutionResult =
-            dgsQueryExecutor.execute(
-                payload.query,
-                payload.variables,
-                payload.extensions,
-                null,
-                payload.operationName,
-                null
+        val executionResult: ExecutionResult = TimeTracer.logTime(
+            {
+                dgsQueryExecutor.execute(
+                    payload.query,
+                    payload.variables,
+                    payload.extensions,
+                    null,
+                    payload.operationName,
+                    null
+                )
+            }, logger, "Executed query in {}ms"
+        )
+        logger.debug(
+            "Execution result - Contains data: '{}' - Number of errors: {}",
+            executionResult.isDataPresent,
+            executionResult.errors.size
+        )
+        val result = try {
+            TimeTracer.logTime(
+                { objectMapper.writeValueAsString(executionResult.toSpecification()) },
+                logger,
+                "Serialized JSON result in {}ms"
             )
+        } catch (ex: InvalidDefinitionException) {
+            val errorMessage = "Error serializing response: ${ex.message}"
+            val errorResponse = ExecutionResultImpl(GraphqlErrorBuilder.newError().message(errorMessage).build())
+            logger.error(errorMessage, ex)
+            objectMapper.writeValueAsString(errorResponse.toSpecification())
+        }
 
-        val subscriptionStream: Publisher<ExecutionResult> = executionResult.getData()
+        val data = executionResult.getData<Any>()
 
-        subscriptionStream.subscribe(object : Subscriber<ExecutionResult> {
-            override fun onSubscribe(s: Subscription) {
-                logger.info("Subscription started for {}", id)
-                contexts[session.id]?.subscriptions?.set(id, s)
+        if (data is Publisher<*>) {
+            val subscriptionStream: Publisher<ExecutionResult> = data as Publisher<ExecutionResult>
 
-                s.request(1)
-            }
+            subscriptionStream.subscribe(object : Subscriber<ExecutionResult> {
+                override fun onSubscribe(s: Subscription) {
+                    logger.info("Subscription started for {}", id)
+                    contexts[session.id]?.subscriptions?.set(id, s)
 
-            override fun onNext(er: ExecutionResult) {
-                val message = Message.NextMessage(payload = er, id = id)
-                val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
-                logger.debug("Sending subscription data: {}", jsonMessage)
-
-                if (session.isOpen) {
-                    session.sendMessage(jsonMessage)
-                    contexts[session.id]?.subscriptions?.get(id)?.request(1)
+                    s.request(1)
                 }
-            }
 
-            override fun onError(t: Throwable) {
-                logger.error("Error on subscription {}", id, t)
+                override fun onNext(er: ExecutionResult) {
+                    val message = Message.NextMessage(payload = er, id = id)
+                    val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
+                    logger.debug("Sending subscription data: {}", jsonMessage)
 
-                val message =
-                    Message.ErrorMessage(
-                        id = id,
-                        payload = listOf(GraphqlErrorBuilder.newError().message(t.message).build())
-                    )
-                val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
-                logger.debug("Sending subscription error: {}", jsonMessage)
-
-                if (session.isOpen) {
-                    session.sendMessage(jsonMessage)
+                    if (session.isOpen) {
+                        session.sendMessage(jsonMessage)
+                        contexts[session.id]?.subscriptions?.get(id)?.request(1)
+                    }
                 }
-            }
 
-            override fun onComplete() {
-                logger.info("Subscription completed for {}", id)
-                val message = Message.CompleteMessage(id)
-                val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
+                override fun onError(t: Throwable) {
+                    logger.error("Error on subscription {}", id, t)
 
-                if (session.isOpen) {
-                    session.sendMessage(jsonMessage)
+                    val message =
+                        Message.ErrorMessage(
+                            id = id,
+                            payload = listOf(GraphqlErrorBuilder.newError().message(t.message).build())
+                        )
+                    val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
+                    logger.debug("Sending subscription error: {}", jsonMessage)
+
+                    if (session.isOpen) {
+                        session.sendMessage(jsonMessage)
+                    }
                 }
-                contexts[session.id]?.subscriptions?.remove(id)
+
+                override fun onComplete() {
+                    logger.info("Subscription completed for {}", id)
+                    val message = Message.CompleteMessage(id)
+                    val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
+
+                    if (session.isOpen) {
+                        session.sendMessage(jsonMessage)
+                    }
+                    contexts[session.id]?.subscriptions?.remove(id)
+                }
+            })
+        } else {
+            val next = Message.NextMessage(payload = executionResult, id = id)
+            val nextMessage = TextMessage(objectMapper.writeValueAsBytes(next))
+            logger.debug("Sending subscription data: {}", nextMessage)
+
+            if (session.isOpen) {
+                session.sendMessage(nextMessage)
+                contexts[session.id]?.subscriptions?.get(id)?.request(1)
             }
-        })
+            val complete = Message.CompleteMessage(id)
+            val completeMessage = TextMessage(objectMapper.writeValueAsBytes(complete))
+
+            if (session.isOpen) {
+                session.sendMessage(completeMessage)
+            }
+            contexts[session.id]?.subscriptions?.remove(id)
+        }
+
+
     }
 
     private companion object {

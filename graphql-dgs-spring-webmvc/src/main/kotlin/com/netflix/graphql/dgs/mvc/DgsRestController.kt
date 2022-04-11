@@ -65,7 +65,8 @@ open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
     // The @ConfigurationProperties bean name is <prefix>-<fqn>
     @RequestMapping(
         "#{@'dgs.graphql-com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcConfigurationProperties'.path}",
-        produces = ["application/json"]
+        produces = ["application/json"],
+        headers = ["Connection!=upgrade", "Connection!=Upgrade"]
     )
     fun graphql(
         @RequestBody body: String?,

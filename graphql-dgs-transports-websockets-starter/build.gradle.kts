@@ -15,15 +15,12 @@
  */
 
 dependencies {
-    api(project(":graphql-dgs-subscription-types"))
-    api(project(":graphql-dgs-transports-websockets"))
+    api(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
+    api(project(":graphql-dgs-spring-webmvc-autoconfigure"))
+    api(project(":graphql-dgs-transports-websockets-autoconfigure"))
+    api(project(":graphql-dgs-client"))
+    api(project(":graphql-error-types"))
 
-    implementation(project(":graphql-dgs"))
-    implementation("org.springframework.boot:spring-boot-autoconfigure")
-    implementation("org.springframework:spring-web")
-    implementation("org.springframework:spring-websocket")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-
-    testImplementation("io.projectreactor:reactor-core")
-    testImplementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation("org.springframework.boot:spring-boot-starter-web")
 }
