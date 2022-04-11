@@ -31,6 +31,7 @@ import graphql.execution.reactive.SubscriptionPublisher
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
@@ -71,6 +72,11 @@ open class DgsRestController(
     open val mapper: ObjectMapper = jacksonObjectMapper()
 ) {
 
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
+        private val GRAPHQL_MEDIA_TYPE = MediaType("application", "graphql")
+    }
+
     // The @ConfigurationProperties bean name is <prefix>-<fqn>
     @RequestMapping(
         "#{@'dgs.graphql-com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcConfigurationProperties'.path}",
@@ -93,14 +99,14 @@ open class DgsRestController(
         if (body != null) {
             logger.debug("Reading input value: '{}'", body)
 
-            if (headers.getFirst("Content-Type")?.contains("application/graphql") == true) {
-                inputQuery = mapOf(Pair("query", body))
+            if (GRAPHQL_MEDIA_TYPE.includes(headers.contentType)) {
+                inputQuery = mapOf("query" to body)
                 queryVariables = emptyMap()
                 extensions = emptyMap()
             } else {
 
                 try {
-                    inputQuery = body.let { mapper.readValue(it) }
+                    inputQuery = mapper.readValue(body)
                 } catch (ex: Exception) {
                     return when (ex) {
                         is JsonParseException ->
@@ -132,7 +138,7 @@ open class DgsRestController(
                 logger.debug("Parsed variables: {}", queryVariables)
             }
         } else if (fileParams != null && mapParam != null && operation != null) {
-            inputQuery = operation.let { mapper.readValue(it) }
+            inputQuery = mapper.readValue(operation)
 
             queryVariables = if (inputQuery["variables"] != null) {
                 @Suppress("UNCHECKED_CAST")
@@ -149,7 +155,7 @@ open class DgsRestController(
             }
 
             // parse the '-F map' of MultipartFile(s) containing object paths
-            val fileMapInput: Map<String, List<String>> = mapParam.let { mapper.readValue(it) }
+            val fileMapInput: Map<String, List<String>> = mapper.readValue(mapParam)
             fileMapInput.forEach { (fileKey, objectPaths) ->
                 val file = fileParams[fileKey]
                 if (file != null) {
@@ -174,10 +180,7 @@ open class DgsRestController(
             return ResponseEntity.badRequest().body("Invalid GraphQL request - operationName must be a String")
         }
 
-        val query: String? = when (val iq = inputQuery["query"]) {
-            is String -> iq
-            else -> null
-        }
+        val query: String? = inputQuery["query"] as? String?
 
         val executionResult = TimeTracer.logTime(
             {
@@ -217,9 +220,5 @@ open class DgsRestController(
         }
 
         return ResponseEntity.ok(result)
-    }
-
-    companion object {
-        private val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
     }
 }
