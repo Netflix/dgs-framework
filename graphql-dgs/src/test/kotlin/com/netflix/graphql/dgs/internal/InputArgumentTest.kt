@@ -331,7 +331,7 @@ internal class InputArgumentTest {
 
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument("person", collectionType = Person::class) person: List<Person>): String {
+            fun someFetcher(@InputArgument("person") person: List<Person>): String {
                 return "Hello, ${person.joinToString(", ") { it.name }}"
             }
         }
@@ -518,8 +518,8 @@ internal class InputArgumentTest {
 
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument("person", collectionType = Person::class) person: Set<Person>): String {
-                return "Hello, ${person.joinToString(", ") { it.name }}"
+            fun someFetcher(@InputArgument("person") people: Set<Person>): String {
+                return "Hello, ${people.joinToString(", ") { it.name }}"
             }
         }
 
@@ -536,11 +536,12 @@ internal class InputArgumentTest {
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
 
-        val executionResult = build.execute("""{hello(person: [{name: "tester"}, {name: "tester 2"}])}""")
-        assertThat(executionResult.errors.size).isEqualTo(1)
-        val exceptionWhileDataFetching = executionResult.errors[0] as ExceptionWhileDataFetching
-        assertThat(exceptionWhileDataFetching.exception).isInstanceOf(DgsInvalidInputArgumentException::class.java)
-        assertThat(exceptionWhileDataFetching.exception.message).contains("Specified type 'interface java.util.Set' is invalid. Found java.util.ArrayList instead")
+        val executionResult = build.execute("""{hello(person: [{name: "tester"}, {name: "tester 2"}, {name: "tester"}])}""")
+        assertThat(executionResult.isDataPresent).isTrue
+        assertThat(executionResult.errors.size).isEqualTo(0)
+
+        val data = executionResult.getData<Map<String, *>>()
+        assertThat(data).extracting("hello").isEqualTo("Hello, tester, tester 2")
 
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
@@ -559,7 +560,7 @@ internal class InputArgumentTest {
 
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument("person", collectionType = String::class) person: List<String>): String {
+            fun someFetcher(@InputArgument("person") person: List<String>): String {
                 return "Hello, ${person.joinToString(", ") { it }}"
             }
         }
@@ -576,7 +577,7 @@ internal class InputArgumentTest {
         assertThat(executionResult.errors.size).isEqualTo(1)
         val exceptionWhileDataFetching = executionResult.errors[0] as ExceptionWhileDataFetching
         assertThat(exceptionWhileDataFetching.exception).isInstanceOf(DgsInvalidInputArgumentException::class.java)
-        assertThat(exceptionWhileDataFetching.exception.message).contains("Specified type 'class java.lang.String' is invalid for person")
+        assertThat(exceptionWhileDataFetching.exception.message).contains("Input argument type 'class java.lang.String' doesn't match input {name=tester}")
 
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
@@ -1391,7 +1392,7 @@ internal class InputArgumentTest {
 
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument("person", collectionType = Person::class) person: Optional<Person>): String {
+            fun someFetcher(@InputArgument("person") person: Optional<Person>): String {
                 return "Hello, ${person.get().name}"
             }
         }
@@ -1413,44 +1414,6 @@ internal class InputArgumentTest {
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("Hello, tester", data["hello"])
 
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
-    }
-
-    @Test
-    fun `An @InputArgument of type Optional should fail when no type is specified`() {
-        val schema = """
-            type Query {
-                hello(person:Person): String
-            }
-            
-            input Person {
-                name:String
-            }
-        """.trimIndent()
-
-        val fetcher = object : Any() {
-            @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument("person") person: Optional<Person>): String {
-                return "Hello, ${person.get().name}"
-            }
-        }
-
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-
-        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
-
-        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
-        val executionResult = build.execute("""{hello(person: {name: "tester"})}""")
-        assertThat(executionResult.errors).hasSize(1)
-        assertThat(executionResult.errors[0].message)
-            .isEqualTo("Exception while fetching data (/hello) : When Optional<T> is used, the type must be specified using the collectionType argument of the @InputArgument annotation.")
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 
@@ -1574,12 +1537,12 @@ internal class InputArgumentTest {
         val fetcher = object : Any() {
 
             @DgsQuery
-            fun khello(@InputArgument(collectionType = KGreetingType::class) input: List<KGreetingType>): String {
+            fun khello(@InputArgument input: List<KGreetingType>): String {
                 assertThat(input).isNotEmpty.hasOnlyElementsOfType(KGreetingType::class.java)
                 return "Hello, this is a $input greeting"
             }
             @DgsQuery
-            fun jhello(@InputArgument(collectionType = JGreetingType::class) input: List<JGreetingType>): String {
+            fun jhello(@InputArgument input: List<JGreetingType>): String {
                 assertThat(input).isNotEmpty.hasOnlyElementsOfType(JGreetingType::class.java)
                 return "Hello, this is a $input greeting"
             }
@@ -2001,7 +1964,7 @@ internal class InputArgumentTest {
 
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument(collectionType = KBarInput::class) objects: List<KBarInput>): String {
+            fun someFetcher(@InputArgument objects: List<KBarInput>): String {
                 return objects.joinToString { "${it.name}: ${it.value}" }
             }
 
@@ -2190,7 +2153,7 @@ internal class InputArgumentTest {
 
         val fetcher = object : Any() {
             @DgsQuery
-            fun movies(@InputArgument(collectionType = JMovieSortBy::class) sortBy: List<JMovieSortBy>): String {
+            fun movies(@InputArgument sortBy: List<JMovieSortBy>): String {
                 return "Sorted by: ${sortBy.joinToString { "${it.field}" }}"
             }
         }
