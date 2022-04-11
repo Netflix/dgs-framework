@@ -29,15 +29,15 @@ import java.util.concurrent.CompletionStage
 
 @DgsDataLoader(name = "testloader")
 class TestDataLoader : BatchLoader<String, String> {
-    override fun load(keys: MutableList<String>?): CompletionStage<MutableList<String>> {
-        return CompletableFuture.supplyAsync { keys?.map { it.toUpperCase() }?.toMutableList() }
+    override fun load(keys: List<String>): CompletionStage<List<String>> {
+        return CompletableFuture.supplyAsync { keys.map { it.uppercase() } }
     }
 }
 
 @DgsComponent
 class FetcherUsingDataLoader {
     @DgsData(parentType = "Query", field = "names")
-    fun hello(dfe: DataFetchingEnvironment): CompletableFuture<MutableList<String>>? {
+    fun hello(dfe: DataFetchingEnvironment): CompletableFuture<List<String>> {
         val dataLoader = dfe.getDataLoader<String, String>("testloader")
         return dataLoader.loadMany(listOf("a", "b", "c"))
     }
@@ -45,15 +45,15 @@ class FetcherUsingDataLoader {
 
 @DgsDataLoader(name = "testMappedLoader")
 class TestMappedDataLoader : MappedBatchLoader<String, String> {
-    override fun load(keys: MutableSet<String>): CompletionStage<MutableMap<String, String>> {
-        return CompletableFuture.supplyAsync { keys.associateWith { it.toUpperCase() }.toMutableMap() }
+    override fun load(keys: Set<String>): CompletionStage<Map<String, String>> {
+        return CompletableFuture.supplyAsync { keys.associateWith { it.uppercase() } }
     }
 }
 
 @DgsComponent
 class FetcherUsingMappedDataLoader {
     @DgsData(parentType = "Query", field = "namesFromMapped")
-    fun hello(dfe: DataFetchingEnvironment): CompletableFuture<MutableList<String>>? {
+    fun hello(dfe: DataFetchingEnvironment): CompletableFuture<List<String>> {
         val dataLoader = dfe.getDataLoader<String, String>("testMappedLoader")
         return dataLoader.loadMany(listOf("a", "b", "c"))
     }

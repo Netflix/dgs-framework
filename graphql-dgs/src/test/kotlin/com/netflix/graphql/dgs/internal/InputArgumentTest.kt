@@ -81,7 +81,7 @@ internal class InputArgumentTest {
 
     @Test
     fun `@InputArgument with name specified on String argument`() {
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument("name") abc: String): String {
                 return "Hello, $abc"
@@ -111,7 +111,7 @@ internal class InputArgumentTest {
 
     @Test
     fun `@InputArgument with no name specified should work`() {
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument name: String): String {
                 return "Hello, $name"
@@ -141,7 +141,7 @@ internal class InputArgumentTest {
 
     @Test
     fun `@InputArgument with no name specified, without matching argument, should be null`() {
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument abc: String?): String {
                 return "Hello, ${abc ?: "no name"}"
@@ -181,7 +181,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument("person") person: Person): String {
                 return "Hello, ${person.name}"
@@ -220,7 +220,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument(name = "person") person: Person): String {
                 return "Hello, ${person.name}"
@@ -255,7 +255,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument("names") names: List<String>): String {
                 return "Hello, ${names.joinToString(", ")}"
@@ -290,7 +290,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument("names") names: Set<String>): String {
                 return "Hello, ${names.joinToString(", ")}"
@@ -329,7 +329,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument("person") person: List<Person>): String {
                 return "Hello, ${person.joinToString(", ") { it.name }}"
@@ -370,7 +370,7 @@ internal class InputArgumentTest {
             scalar Object
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "titles")
             fun someFetcher(@InputArgument("filter") filter: KMovieFilter): String {
                 return filter.movieIds.joinToString { "Title for $it" }
@@ -421,7 +421,7 @@ internal class InputArgumentTest {
             scalar Object
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "titles")
             fun someFetcher(@InputArgument input: KFooInput): String {
                 return input.bars.joinToString { "${it.name}: ${it.value}" }
@@ -472,7 +472,7 @@ internal class InputArgumentTest {
             scalar Object
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "titles")
             fun someFetcher(@InputArgument input: JFooInput): String {
                 return input.bars.joinToString { "${it.name}: ${it.value}" }
@@ -516,7 +516,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument("person") people: Set<Person>): String {
                 return "Hello, ${people.joinToString(", ") { it.name }}"
@@ -558,7 +558,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument("person") person: List<String>): String {
                 return "Hello, ${person.joinToString(", ") { it }}"
@@ -594,7 +594,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsQuery
             fun hello(@InputArgument person: JPerson): String {
                 assertThat(person).isNotNull.extracting { it.name }.isNull()
@@ -628,7 +628,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument("person") person: Person?): String {
                 if (person == null) {
@@ -669,14 +669,14 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(
                 @InputArgument("capitalize") capitalize: Boolean,
                 @InputArgument("person") person: Person
             ): String {
                 return if (capitalize) {
-                    "hello, ${person.name}".capitalize()
+                    "Hello, ${person.name}"
                 } else {
                     "hello, ${person.name}"
                 }
@@ -715,7 +715,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(
                 dfe: DataFetchingEnvironment,
@@ -725,7 +725,7 @@ internal class InputArgumentTest {
                 val otherArg: String = dfe.getArgument("otherArg")
 
                 val msg = if (capitalize) {
-                    "hello, ${person.name}".capitalize()
+                    "Hello, ${person.name}"
                 } else {
                     "hello, ${person.name}"
                 }
@@ -765,7 +765,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(
                 @InputArgument("capitalize") capitalize: Boolean,
@@ -775,7 +775,7 @@ internal class InputArgumentTest {
                 val otherArg: String = dfe.getArgument("otherArg")
 
                 val msg = if (capitalize) {
-                    "hello, ${person.name}".capitalize()
+                    "Hello, ${person.name}"
                 } else {
                     "hello, ${person.name}"
                 }
@@ -813,7 +813,7 @@ internal class InputArgumentTest {
             scalar Upload
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Mutation", field = "upload")
             fun someFetcher(@InputArgument("file") file: MultipartFile): String {
                 return String(file.bytes)
@@ -853,7 +853,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(someArg: String?): String {
 
@@ -891,7 +891,7 @@ internal class InputArgumentTest {
             scalar DateTime
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Mutation", field = "setDate")
             fun someFetcher(@InputArgument("date") date: LocalDateTime): String {
                 return "The date is: ${date.format(DateTimeFormatter.ISO_DATE)}"
@@ -921,7 +921,7 @@ internal class InputArgumentTest {
             scalar DateTime
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Mutation", field = "setDate")
             fun someFetcher(@InputArgument("date") date: LocalDateTime?): String {
                 if (date == null) {
@@ -955,7 +955,7 @@ internal class InputArgumentTest {
             scalar DateTime
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Mutation", field = "setDate")
             fun someFetcher(@InputArgument("date") date: List<LocalDateTime>): String {
                 return "The date is: ${date[0].format(DateTimeFormatter.ISO_DATE)}"
@@ -988,7 +988,7 @@ internal class InputArgumentTest {
             scalar DateTime
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Mutation", field = "setDate")
             fun someFetcher(@InputArgument("input") input: DateTimeInput): String {
                 return "The date is: ${input.date.format(DateTimeFormatter.ISO_DATE)}"
@@ -1017,7 +1017,7 @@ internal class InputArgumentTest {
             
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Mutation", field = "setRatings")
             @Suppress("UNUSED_PARAMETER")
             fun someFetcher(@InputArgument("ratings") ratings: List<Int>): List<Int> {
@@ -1040,7 +1040,7 @@ internal class InputArgumentTest {
 
     @Test
     fun `A @RequestHeader argument without name should be supported`() {
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@RequestHeader referer: String): String {
                 return "From, $referer"
@@ -1072,7 +1072,7 @@ internal class InputArgumentTest {
 
     @Test
     fun `A @RequestHeader argument with map should be supported`() {
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@RequestHeader headers: Map<String, String>): String {
                 val header = headers.get("Referer")
@@ -1105,7 +1105,7 @@ internal class InputArgumentTest {
 
     @Test
     fun `A @RequestHeader argument with multi-value map should be supported`() {
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@RequestHeader headers: MultiValueMap<String, String>): String {
                 val header = headers.getFirst("Referer")
@@ -1138,7 +1138,7 @@ internal class InputArgumentTest {
 
     @Test
     fun `A @RequestHeader argument with HttpHeaders should be supported`() {
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@RequestHeader headers: HttpHeaders): String {
                 val header = headers.getFirst("Referer")
@@ -1171,7 +1171,7 @@ internal class InputArgumentTest {
 
     @Test
     fun `A @RequestHeader argument with name should be supported`() {
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@RequestHeader("referer") input: String): String {
                 return "From, $input"
@@ -1203,7 +1203,7 @@ internal class InputArgumentTest {
 
     @Test
     fun `A @RequestHeader argument with name specified in 'name' argument should be supported`() {
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@RequestHeader(name = "referer") input: String): String {
                 return "From, $input"
@@ -1238,7 +1238,7 @@ internal class InputArgumentTest {
 
     @Test
     fun `A @RequestParam argument with name specified in 'name' argument should be supported`() {
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@RequestParam(name = "message") input: String): String {
                 return input
@@ -1275,7 +1275,7 @@ internal class InputArgumentTest {
 
     @Test
     fun `A @RequestParam argument with no name specified should be supported`() {
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@RequestParam message: String): String {
                 return message
@@ -1312,7 +1312,7 @@ internal class InputArgumentTest {
 
     @Test
     fun `A @RequestParam argument with no name specified as value should be supported`() {
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@RequestParam("message") input: String): String {
                 return input
@@ -1349,7 +1349,7 @@ internal class InputArgumentTest {
 
     @Test
     fun `An @InputArgument could be of type Optional`() {
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument name: Optional<String>): String {
                 return "Hello, ${name.orElse("default value")}"
@@ -1390,7 +1390,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument("person") person: Optional<Person>): String {
                 return "Hello, ${person.get().name}"
@@ -1419,7 +1419,7 @@ internal class InputArgumentTest {
 
     @Test
     fun `An @InputArgument of type Optional receives empty by default`() {
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument name: Optional<String>): String {
                 return "Hello, ${name.orElse("default value")}"
@@ -1461,7 +1461,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument type: KGreetingType): String {
                 assertThat(type).isInstanceOf(KGreetingType::class.java)
@@ -1497,7 +1497,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument type: Optional<KGreetingType>): String {
                 assertThat(type).isNotEmpty.get().isInstanceOf(KGreetingType::class.java)
@@ -1534,7 +1534,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
 
             @DgsQuery
             fun khello(@InputArgument input: List<KGreetingType>): String {
@@ -1578,7 +1578,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument type: Optional<KGreetingType>): String {
                 if (!type.isPresent) {
@@ -1621,7 +1621,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument type: KGreetingType?): String {
                 return "Hello, this is a ${type ?: "SAD"} greeting"
@@ -1660,7 +1660,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument type: JGreetingType): String {
                 assertThat(type).isInstanceOf(JGreetingType::class.java)
@@ -1701,7 +1701,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument type: Optional<JGreetingType>): String {
                 assertThat(type).isNotEmpty.get().isInstanceOf(JGreetingType::class.java)
@@ -1742,7 +1742,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument type: Optional<JGreetingType>): String {
                 if (!type.isPresent) {
@@ -1790,7 +1790,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun hello(@InputArgument input: KInputMessage): String {
                 assertThat(input.type).isInstanceOf(KGreetingType::class.java)
@@ -1840,7 +1840,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument someInput: JInputMessage): String {
                 return "Hello, this is a ${someInput.type ?: "SAD"} greeting"
@@ -1884,7 +1884,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun hello(@InputArgument input: JInputMessage): String {
                 assertThat(input.type).isInstanceOf(JGreetingType::class.java)
@@ -1918,7 +1918,7 @@ internal class InputArgumentTest {
 
     @Test
     fun `An argument not annotated with @InputArgument should fall back to argument name resolution`() {
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(name: String): String {
                 return "Hello, $name"
@@ -1962,7 +1962,7 @@ internal class InputArgumentTest {
             scalar Object
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument objects: List<KBarInput>): String {
                 return objects.joinToString { "${it.name}: ${it.value}" }
@@ -2004,7 +2004,7 @@ internal class InputArgumentTest {
             scalar Object
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument json: Map<String, Any>): String {
                 return json.map { "${it.key}: ${it.value}" }.joinToString()
@@ -2050,7 +2050,7 @@ internal class InputArgumentTest {
             scalar Object
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument filter: KFilter): String {
                 return filter.toString()
@@ -2096,11 +2096,12 @@ internal class InputArgumentTest {
             scalar Object
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument filter: JFilter): String {
-                val map = filter.query as Map<String, Object>
-                return map.entries.map { "${it.key}: ${it.value}" }.joinToString()
+                @SuppressWarnings("unchecked")
+                val map = filter.query as? Map<*, *>
+                return map.orEmpty().entries.joinToString { (key, value) -> "$key: $value" }
             }
 
             @DgsRuntimeWiring
@@ -2151,7 +2152,7 @@ internal class InputArgumentTest {
             }
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsQuery
             fun movies(@InputArgument sortBy: List<JMovieSortBy>): String {
                 return "Sorted by: ${sortBy.joinToString { "${it.field}" }}"
@@ -2159,10 +2160,7 @@ internal class InputArgumentTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+            "helloFetcher" to fetcher
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
@@ -2220,7 +2218,7 @@ internal class InputArgumentTest {
             scalar Object
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsQuery
             fun lists(@InputArgument input: JListOfListsOfLists.JListOfListOfFilters): String {
                 assertThat(input).isNotNull
@@ -2310,7 +2308,7 @@ internal class InputArgumentTest {
             scalar Object
         """.trimIndent()
 
-        val fetcher = object : Any() {
+        val fetcher = object {
 
             @DgsQuery
             fun lists(@InputArgument input: KListOfListsOfLists.KListOfListOfFilters): String {

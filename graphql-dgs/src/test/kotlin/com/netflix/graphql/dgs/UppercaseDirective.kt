@@ -34,7 +34,7 @@ class UppercaseDirective : SchemaDirectiveWiring {
 
         val originalDataFetcher = env.codeRegistry.getDataFetcher(parentType, field)
         val dataFetcher = DataFetcherFactories.wrapDataFetcher(originalDataFetcher) { _, value ->
-            if (value is String) value.toUpperCase() else value
+            if (value is String) value.uppercase() else value
         }
 
         env.codeRegistry.dataFetcher(parentType, field, dataFetcher)

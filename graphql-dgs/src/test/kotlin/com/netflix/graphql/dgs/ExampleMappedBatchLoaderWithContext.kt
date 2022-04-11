@@ -23,11 +23,9 @@ import java.util.concurrent.CompletionStage
 
 @DgsDataLoader(name = "exampleMappedLoaderWithContext")
 class ExampleMappedBatchLoaderWithContext : MappedBatchLoaderWithContext<String, String> {
-    override fun load(keys: MutableSet<String>?, env: BatchLoaderEnvironment): CompletionStage<MutableMap<String, String>> {
+    override fun load(keys: Set<String>, env: BatchLoaderEnvironment): CompletionStage<Map<String, String>> {
         return CompletableFuture.supplyAsync {
-            val result = mutableMapOf<String, String>()
-            keys?.forEach { result[it] = it.toUpperCase() }
-            result
+            keys.associateWith { it.uppercase() }
         }
     }
 }
