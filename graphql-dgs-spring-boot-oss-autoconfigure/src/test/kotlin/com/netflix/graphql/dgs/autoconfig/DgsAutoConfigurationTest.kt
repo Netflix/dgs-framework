@@ -18,6 +18,8 @@ package com.netflix.graphql.dgs.autoconfig
 
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.autoconfig.testcomponents.CustomContextBuilderConfig
+import com.netflix.graphql.dgs.autoconfig.testcomponents.CustomDataFetcherFactory
+import com.netflix.graphql.dgs.autoconfig.testcomponents.CustomDataFetcherFactoryTest
 import com.netflix.graphql.dgs.autoconfig.testcomponents.CustomInputObjectMapperConfig
 import com.netflix.graphql.dgs.autoconfig.testcomponents.DataFetcherWithInputObject
 import com.netflix.graphql.dgs.autoconfig.testcomponents.DataLoaderConfig
@@ -31,13 +33,26 @@ import org.springframework.boot.test.context.runner.WebApplicationContextRunner
 import org.springframework.core.io.ClassPathResource
 
 class DgsAutoConfigurationTest {
-    private val context = WebApplicationContextRunner().withConfiguration(AutoConfigurations.of(DgsAutoConfiguration::class.java))!!
+    private val context =
+        WebApplicationContextRunner().withConfiguration(AutoConfigurations.of(DgsAutoConfiguration::class.java))!!
 
     @Test
     fun noSchemaException() {
         context.withClassLoader(FilteredClassLoader(ClassPathResource("schema/"))).run { ctx ->
             assertThat(ctx).failure.hasRootCauseInstanceOf(NoSchemaFoundException::class.java)
         }
+    }
+
+    @Test
+    fun setUpCustomDataFetcherFactory() {
+        context.withUserConfiguration(CustomDataFetcherFactory::class.java, CustomDataFetcherFactoryTest::class.java)
+            .run { ctx ->
+                assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
+                    val executeQuery =
+                        it.executeAndExtractJsonPath<String>("query {simpleNested{hello}}", "data.simpleNested.hello")
+                    assertThat(executeQuery).isEqualTo("not world")
+                }
+            }
     }
 
     @Test
@@ -86,15 +101,15 @@ class DgsAutoConfigurationTest {
             assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
                 val json = it.executeAndExtractJsonPath<Any>(
                     " query availableQueries {\n" +
-                        "  __schema {\n" +
-                        "    queryType {\n" +
-                        "      fields {\n" +
-                        "        name\n" +
-                        "        description\n" +
-                        "      }\n" +
-                        "    }\n" +
-                        "  }\n" +
-                        "}",
+                            "  __schema {\n" +
+                            "    queryType {\n" +
+                            "      fields {\n" +
+                            "        name\n" +
+                            "        description\n" +
+                            "      }\n" +
+                            "    }\n" +
+                            "  }\n" +
+                            "}",
                     "data.__schema.queryType.fields[0].name"
                 )
                 assertThat(json).isEqualTo("hello")

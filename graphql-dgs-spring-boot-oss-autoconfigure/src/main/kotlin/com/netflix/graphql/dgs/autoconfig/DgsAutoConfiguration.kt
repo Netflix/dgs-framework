@@ -33,6 +33,7 @@ import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.preparsed.PreparsedDocumentProvider
+import graphql.schema.DataFetcherFactory
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.GraphQLSchema
 import graphql.schema.idl.TypeDefinitionRegistry
@@ -85,8 +86,10 @@ open class DgsAutoConfiguration(
         preparsedDocumentProvider: PreparsedDocumentProvider,
         queryValueCustomizer: QueryValueCustomizer
     ): DgsQueryExecutor {
-        val queryExecutionStrategy = providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
-        val mutationExecutionStrategy = providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
+        val queryExecutionStrategy =
+            providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
+        val mutationExecutionStrategy =
+            providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
         return DefaultDgsQueryExecutor(
             schema,
             schemaProvider,
@@ -158,7 +161,8 @@ open class DgsAutoConfiguration(
         dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
         cookieValueResolver: Optional<CookieValueResolver> = Optional.empty(),
         inputObjectMapper: Optional<InputObjectMapper> = Optional.empty(),
-        entityFetcherRegistry: EntityFetcherRegistry
+        entityFetcherRegistry: EntityFetcherRegistry,
+        defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty()
     ): DgsSchemaProvider {
         return DgsSchemaProvider(
             applicationContext,
@@ -170,7 +174,8 @@ open class DgsAutoConfiguration(
             dataFetcherExceptionHandler,
             cookieValueResolver,
             inputObjectMapper.orElse(DefaultInputObjectMapper()),
-            entityFetcherRegistry
+            entityFetcherRegistry,
+            defaultDataFetcherFactory
         )
     }
 

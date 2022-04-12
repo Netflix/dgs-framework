@@ -31,6 +31,7 @@ import graphql.language.TypeName
 import graphql.language.UnionTypeDefinition
 import graphql.schema.Coercing
 import graphql.schema.DataFetcher
+import graphql.schema.DataFetcherFactory
 import graphql.schema.FieldCoordinates
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.GraphQLScalarType
@@ -72,7 +73,8 @@ class DgsSchemaProvider(
     private val dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
     private val cookieValueResolver: Optional<CookieValueResolver> = Optional.empty(),
     private val inputObjectMapper: InputObjectMapper = DefaultInputObjectMapper(),
-    private val entityFetcherRegistry: EntityFetcherRegistry = EntityFetcherRegistry()
+    private val entityFetcherRegistry: EntityFetcherRegistry = EntityFetcherRegistry(),
+    private val defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty()
 ) {
 
     val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
@@ -102,11 +104,20 @@ class DgsSchemaProvider(
         }
 
         val federationResolverInstance =
-            federationResolver.orElseGet { DefaultDgsFederationResolver(entityFetcherRegistry, dataFetcherExceptionHandler) }
+            federationResolver.orElseGet {
+                DefaultDgsFederationResolver(
+                    entityFetcherRegistry,
+                    dataFetcherExceptionHandler
+                )
+            }
 
         val entityFetcher = federationResolverInstance.entitiesFetcher()
         val typeResolver = federationResolverInstance.typeResolver()
         val codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry().fieldVisibility(fieldVisibility)
+        if (defaultDataFetcherFactory.isPresent) {
+            codeRegistryBuilder.defaultDataFetcher(defaultDataFetcherFactory.get())
+        }
+
         val runtimeWiringBuilder =
             RuntimeWiring.newRuntimeWiring().codeRegistry(codeRegistryBuilder).fieldVisibility(fieldVisibility)
 
@@ -318,7 +329,14 @@ class DgsSchemaProvider(
     private fun createBasicDataFetcher(method: Method, dgsComponent: Any, isSubscription: Boolean): DataFetcher<Any?> {
         return DataFetcher<Any?> { environment ->
             val dfe = DgsDataFetchingEnvironment(environment)
-            val result = DataFetcherInvoker(cookieValueResolver, defaultParameterNameDiscoverer, dfe, dgsComponent, method, inputObjectMapper).invokeDataFetcher()
+            val result = DataFetcherInvoker(
+                cookieValueResolver,
+                defaultParameterNameDiscoverer,
+                dfe,
+                dgsComponent,
+                method,
+                inputObjectMapper
+            ).invokeDataFetcher()
             when {
                 isSubscription -> {
                     result
@@ -365,8 +383,8 @@ class DgsSchemaProvider(
                         overrideTypeResolver = dgsComponents.any { component ->
                             component.javaClass.methods.any { method ->
                                 method.isAnnotationPresent(DgsTypeResolver::class.java) &&
-                                    method.getAnnotation(DgsTypeResolver::class.java).name == annotation.name &&
-                                    component != dgsComponent
+                                        method.getAnnotation(DgsTypeResolver::class.java).name == annotation.name &&
+                                        component != dgsComponent
                             }
                         }
                     }
