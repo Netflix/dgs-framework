@@ -22,7 +22,6 @@ import graphql.schema.DataFetcher
 import graphql.schema.DataFetcherFactories
 import graphql.schema.DataFetcherFactory
 import graphql.schema.DataFetchingEnvironment
-import graphql.schema.FieldCoordinates
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -46,8 +45,6 @@ data class SimpleNested(val hello: String)
 class CustomDataFetcherFactoryTest {
     @DgsData(parentType = "Query", field = "simpleNested")
     fun hello(dfe: DataFetchingEnvironment): SimpleNested {
-        val coordinates = FieldCoordinates.coordinates("Query", "simpleNested")
-        val fieldDefinition = dfe.graphQLSchema.getFieldDefinition(coordinates)
         return SimpleNested("world")
     }
 }
