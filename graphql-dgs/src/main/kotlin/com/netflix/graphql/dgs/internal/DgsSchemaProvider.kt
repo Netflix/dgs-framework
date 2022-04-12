@@ -383,8 +383,8 @@ class DgsSchemaProvider(
                         overrideTypeResolver = dgsComponents.any { component ->
                             component.javaClass.methods.any { method ->
                                 method.isAnnotationPresent(DgsTypeResolver::class.java) &&
-                                        method.getAnnotation(DgsTypeResolver::class.java).name == annotation.name &&
-                                        component != dgsComponent
+                                    method.getAnnotation(DgsTypeResolver::class.java).name == annotation.name &&
+                                    component != dgsComponent
                             }
                         }
                     }

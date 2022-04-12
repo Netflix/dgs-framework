@@ -101,15 +101,15 @@ class DgsAutoConfigurationTest {
             assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
                 val json = it.executeAndExtractJsonPath<Any>(
                     " query availableQueries {\n" +
-                            "  __schema {\n" +
-                            "    queryType {\n" +
-                            "      fields {\n" +
-                            "        name\n" +
-                            "        description\n" +
-                            "      }\n" +
-                            "    }\n" +
-                            "  }\n" +
-                            "}",
+                        "  __schema {\n" +
+                        "    queryType {\n" +
+                        "      fields {\n" +
+                        "        name\n" +
+                        "        description\n" +
+                        "      }\n" +
+                        "    }\n" +
+                        "  }\n" +
+                        "}",
                     "data.__schema.queryType.fields[0].name"
                 )
                 assertThat(json).isEqualTo("hello")
