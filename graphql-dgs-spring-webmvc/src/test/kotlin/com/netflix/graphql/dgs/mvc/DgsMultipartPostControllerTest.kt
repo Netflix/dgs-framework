@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.mvc
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import graphql.ExecutionResultImpl
@@ -203,4 +204,9 @@ class DgsMultipartPostControllerTest {
             DgsRestController(dgsQueryExecutor).graphql(null, mapOf("0" to file), operation, map, HttpHeaders(), webRequest)
         }
     }
+
+    data class GraphQLResponse(val data: Map<String, Any> = emptyMap(), val errors: List<GraphQLError> = emptyList())
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    data class GraphQLError(val message: String)
 }

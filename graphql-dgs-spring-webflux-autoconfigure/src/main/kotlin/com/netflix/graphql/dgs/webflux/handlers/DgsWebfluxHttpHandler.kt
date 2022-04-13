@@ -16,62 +16,10 @@
 
 package com.netflix.graphql.dgs.webflux.handlers
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
-import graphql.ExecutionResult
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
 
-class DgsWebfluxHttpHandler(private val dgsQueryExecutor: DgsReactiveQueryExecutor) {
-
-    fun graphql(request: ServerRequest): Mono<ServerResponse> {
-        @Suppress("UNCHECKED_CAST") val executionResult: Mono<ExecutionResult> =
-
-            request.bodyToMono(String::class.java)
-                .map {
-                    if ("application/graphql" == request.headers().firstHeader("Content-Type")) {
-                        QueryInput(it)
-                    } else {
-                        val readValue = mapper.readValue<Map<String, Any>>(it)
-                        QueryInput(
-                            readValue["query"] as String,
-
-                            (readValue["variables"] ?: emptyMap<String, Any>()) as Map<String, Any>,
-                            (readValue["extensions"] ?: emptyMap<String, Any>()) as Map<String, Any>,
-                        )
-                    }
-                }
-                .flatMap { queryInput ->
-                    logger.debug("Parsed variables: {}", queryInput.queryVariables)
-
-                    dgsQueryExecutor.execute(
-                        queryInput.query,
-                        queryInput.queryVariables,
-                        queryInput.extensions,
-                        request.headers().asHttpHeaders(),
-                        "",
-                        request
-                    )
-                }
-
-        return executionResult.flatMap { result ->
-            val graphQlOutput = result.toSpecification()
-            ServerResponse.ok().bodyValue(graphQlOutput)
-        }
-    }
-
-    companion object {
-        private val logger: Logger = LoggerFactory.getLogger(DgsWebfluxHttpHandler::class.java)
-        private val mapper = jacksonObjectMapper()
-    }
+interface DgsWebfluxHttpHandler {
+    fun graphql(request: ServerRequest): Mono<ServerResponse>
 }
-
-private data class QueryInput(
-    val query: String,
-    val queryVariables: Map<String, Any> = emptyMap(),
-    val extensions: Map<String, Any> = emptyMap()
-)

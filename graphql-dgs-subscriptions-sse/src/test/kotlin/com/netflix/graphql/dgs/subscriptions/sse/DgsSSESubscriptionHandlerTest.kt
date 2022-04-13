@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.subscriptions.sse
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.types.subscription.QueryPayload
 import graphql.ExecutionResult
 import graphql.GraphqlErrorBuilder
 import graphql.validation.ValidationError
@@ -45,7 +46,7 @@ internal class DgsSSESubscriptionHandlerTest {
     fun queryError() {
 
         val query = "subscription { stocks { name, price }}"
-        val queryPayload = DgsSSESubscriptionHandler.QueryPayload(operationName = "MySubscription", query = query)
+        val queryPayload = QueryPayload(operationName = "MySubscription", query = query)
         val base64 = Base64.getEncoder().encodeToString(jacksonObjectMapper().writeValueAsBytes(queryPayload))
 
         every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
@@ -71,7 +72,7 @@ internal class DgsSSESubscriptionHandlerTest {
     fun queryValidationError() {
 
         val query = "subscription { stocks { name, price }}"
-        val queryPayload = DgsSSESubscriptionHandler.QueryPayload(operationName = "MySubscription", query = query)
+        val queryPayload = QueryPayload(operationName = "MySubscription", query = query)
         val base64 = Base64.getEncoder().encodeToString(jacksonObjectMapper().writeValueAsBytes(queryPayload))
 
         every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
@@ -95,7 +96,7 @@ internal class DgsSSESubscriptionHandlerTest {
     fun notAPublisherServerError() {
 
         val query = "subscription { stocks { name, price }}"
-        val queryPayload = DgsSSESubscriptionHandler.QueryPayload(operationName = "MySubscription", query = query)
+        val queryPayload = QueryPayload(operationName = "MySubscription", query = query)
         val base64 = Base64.getEncoder().encodeToString(jacksonObjectMapper().writeValueAsBytes(queryPayload))
 
         every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
@@ -110,7 +111,7 @@ internal class DgsSSESubscriptionHandlerTest {
     fun notAPublisherClientError() {
         // Not a subscription query
         val query = "query { stocks { name, price }}"
-        val queryPayload = DgsSSESubscriptionHandler.QueryPayload(operationName = "MySubscription", query = query)
+        val queryPayload = QueryPayload(operationName = "MySubscription", query = query)
         val base64 = Base64.getEncoder().encodeToString(jacksonObjectMapper().writeValueAsBytes(queryPayload))
 
         every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
@@ -125,7 +126,7 @@ internal class DgsSSESubscriptionHandlerTest {
     @Suppress("ReactiveStreamsUnusedPublisher")
     fun success() {
         val query = "query { stocks { name, price }}"
-        val queryPayload = DgsSSESubscriptionHandler.QueryPayload(operationName = "MySubscription", query = query)
+        val queryPayload = QueryPayload(operationName = "MySubscription", query = query)
         val base64 = Base64.getEncoder().encodeToString(jacksonObjectMapper().writeValueAsBytes(queryPayload))
 
         val nestedExecutionResult = mockk<ExecutionResult>()

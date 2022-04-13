@@ -20,6 +20,7 @@ dependencies {
     implementation("org.springframework:spring-webflux")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     testImplementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
     testImplementation("io.projectreactor:reactor-test")
 }

@@ -49,25 +49,18 @@ class CoroutineDataFetcherTest {
             suspend fun concurrent(@InputArgument from: Int, to: Int): Int = coroutineScope {
                 var sum = 0
                 withContext(executor.asCoroutineDispatcher()) {
-                    println("before $from")
                     repeat(from.rangeTo(to).count()) {
                         sum++
-
                         // Forcing a blocking call to demonstrate running with a thread pool
                         Thread.sleep(50)
                     }
-                    println("after $from")
-
                     sum
                 }
             }
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "concurrentFetcher",
-                fetcher
-            )
+            "concurrentFetcher" to fetcher
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
@@ -120,5 +113,57 @@ class CoroutineDataFetcherTest {
         }
 
         assertThat(concurrentTime).isCloseTo(singleTime, Percentage.withPercentage(200.0))
+    }
+
+    @Test
+    fun `Throw the cause of InvocationTargetException from CoroutineDataFetcher`() {
+        class CustomException(message: String?) : Exception(message)
+
+        val fetcher = object : Any() {
+
+            @DgsQuery
+            suspend fun exceptionWithMessage(@InputArgument message: String?) = coroutineScope {
+                throw CustomException(message)
+
+                @Suppress("UNREACHABLE_CODE")
+                return@coroutineScope 0
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            "exceptionWithMessageFetcher" to fetcher
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+
+        val schema = provider.schema(
+            """
+            type Query {
+                exceptionWithMessage(message: String): Int
+            }           
+            """.trimIndent()
+        )
+        val build = GraphQL.newGraphQL(schema).build()
+
+        val context = DgsContext(
+            null,
+            null,
+        )
+
+        val executionResult = build.execute(
+            ExecutionInput.newExecutionInput().context(context).query(
+                """
+                {
+                    result: exceptionWithMessage(message: "Exception from coroutine")        
+                }
+                """.trimIndent()
+            ).build()
+        )
+
+        assertThat(executionResult.errors.size).isEqualTo(1)
+        assertThat(executionResult.errors[0].path).isEqualTo(listOf("result"))
+        assertThat(executionResult.errors[0].message).isEqualTo("Exception while fetching data (/result) : Exception from coroutine")
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,15 @@ import com.netflix.graphql.dgs.internal.*
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import com.netflix.graphql.mocking.MockProvider
-import graphql.execution.*
+import graphql.execution.AsyncExecutionStrategy
+import graphql.execution.AsyncSerialExecutionStrategy
+import graphql.execution.DataFetcherExceptionHandler
+import graphql.execution.ExecutionIdProvider
+import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.preparsed.PreparsedDocumentProvider
+import graphql.schema.DataFetcherFactory
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.GraphQLSchema
 import graphql.schema.idl.TypeDefinitionRegistry
@@ -37,6 +42,7 @@ import graphql.schema.visibility.GraphqlFieldVisibility
 import graphql.schema.visibility.NoIntrospectionGraphqlFieldVisibility.NO_INTROSPECTION_FIELD_VISIBILITY
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
@@ -77,10 +83,13 @@ open class DgsAutoConfiguration(
         @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
         idProvider: Optional<ExecutionIdProvider>,
         reloadSchemaIndicator: ReloadSchemaIndicator,
-        preparsedDocumentProvider: PreparsedDocumentProvider
+        preparsedDocumentProvider: PreparsedDocumentProvider,
+        queryValueCustomizer: QueryValueCustomizer
     ): DgsQueryExecutor {
-        val queryExecutionStrategy = providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
-        val mutationExecutionStrategy = providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
+        val queryExecutionStrategy =
+            providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
+        val mutationExecutionStrategy =
+            providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
         return DefaultDgsQueryExecutor(
             schema,
             schemaProvider,
@@ -91,8 +100,15 @@ open class DgsAutoConfiguration(
             mutationExecutionStrategy,
             idProvider,
             reloadSchemaIndicator,
-            preparsedDocumentProvider
+            preparsedDocumentProvider,
+            queryValueCustomizer
         )
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun defaultQueryValueCustomizer(): QueryValueCustomizer {
+        return QueryValueCustomizer { a -> a }
     }
 
     @Bean
@@ -143,7 +159,10 @@ open class DgsAutoConfiguration(
         mockProviders: Optional<Set<MockProvider>>,
         dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
         dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
-        cookieValueResolver: Optional<CookieValueResolver> = Optional.empty()
+        cookieValueResolver: Optional<CookieValueResolver> = Optional.empty(),
+        inputObjectMapper: Optional<InputObjectMapper> = Optional.empty(),
+        entityFetcherRegistry: EntityFetcherRegistry,
+        defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty()
     ): DgsSchemaProvider {
         return DgsSchemaProvider(
             applicationContext,
@@ -153,8 +172,16 @@ open class DgsAutoConfiguration(
             configProps.schemaLocations,
             dataFetcherResultProcessors,
             dataFetcherExceptionHandler,
-            cookieValueResolver
+            cookieValueResolver,
+            inputObjectMapper.orElse(DefaultInputObjectMapper()),
+            entityFetcherRegistry,
+            defaultDataFetcherFactory
         )
+    }
+
+    @Bean
+    open fun entityFetcherRegistry(): EntityFetcherRegistry {
+        return EntityFetcherRegistry()
     }
 
     @Bean
@@ -196,5 +223,19 @@ open class DgsAutoConfiguration(
     @Bean
     open fun uploadScalar(): UploadScalar {
         return UploadScalar()
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnClass(name = ["reactor.core.publisher.Mono"])
+    open fun monoReactiveDataFetcherResultProcessor(): MonoDataFetcherResultProcessor {
+        return MonoDataFetcherResultProcessor()
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnClass(name = ["reactor.core.publisher.Flux"])
+    open fun fluxReactiveDataFetcherResultProcessor(): FluxDataFetcherResultProcessor {
+        return FluxDataFetcherResultProcessor()
     }
 }

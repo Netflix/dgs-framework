@@ -35,7 +35,7 @@ import java.nio.charset.StandardCharsets.UTF_8
 import javax.servlet.ServletContext
 import javax.servlet.http.HttpServletRequest
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(DgsWebMvcConfigurationProperties::class)
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 open class GraphiQLConfigurer(
@@ -62,14 +62,14 @@ open class GraphiQLConfigurer(
 
     class TokenReplacingTransformer(private val replaceToken: String, private val replaceValue: String) :
         ResourceTransformer {
-        @Throws(IOException::class)
 
+        @Throws(IOException::class)
         override fun transform(
-            request: HttpServletRequest?,
+            request: HttpServletRequest,
             resource: Resource,
-            transformerChain: ResourceTransformerChain?
+            transformerChain: ResourceTransformerChain
         ): Resource {
-            if (request?.requestURI?.endsWith(PATH_TO_GRAPHIQL_INDEX_HTML) == true) {
+            if (request.requestURI.orEmpty().endsWith(PATH_TO_GRAPHIQL_INDEX_HTML)) {
                 val content = resource.inputStream.bufferedReader().use(BufferedReader::readText)
                 return TransformedResource(resource, content.replace(replaceToken, replaceValue).toByteArray(UTF_8))
             }

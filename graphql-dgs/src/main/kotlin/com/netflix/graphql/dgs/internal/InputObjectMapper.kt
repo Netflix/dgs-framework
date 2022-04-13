@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,11 +32,42 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmErasure
 
+/**
+ * SPI intended for other frameworks/libraries that need to customize how input objects are mapped.
+ * Not intended to be used by most users.
+ *
+ * A custom mapper might call the DefaultInputObjectMapper, passing itself to the DefaultInputObjectMapper constructor.
+ * The DefaultInputObjectMapper will invoke the custom mapper each time it goes a level deeper into a nested object structure.
+ * This makes it possible to have a custom mapper that still mostly relies on the default one.
+ * Be careful to not create an infinite recursion calling back and forward though!
+ *
+ * Kotlin and Java objects are converted differently. This is to deal with things like data classes.
+ * The input to the map methods is a map of values that are already converted by scalars.
+ * The input IS NOT JSON. Attempting to use a JSON mapper to converting these values will result in incorrect scalar values.
+ */
+interface InputObjectMapper {
+    /**
+     * Convert a map of input values to a Kotlin object. This must support Kotlin constructs such as data classes, and is typically handled differently from Java.
+     * @param inputMap The fields for an input object represented as a Map. This can be a nested map if nested types are used. Note that the values in this map are already converted by the scalars representing these types.
+     * @param targetClass The class to convert to.
+     * @return The converted object
+     */
+    fun <T : Any> mapToKotlinObject(inputMap: Map<String, *>, targetClass: KClass<T>): T
+
+    /**
+     * Convert a map of input values to a Java object.
+     * @param inputMap The fields for an input object represented as a Map. This can be a nested map if nested types are used. Note that the values in this map are already converted by the scalars representing these types.
+     * @param targetClass The class to convert to.
+     * @return The converted object
+     */
+    fun <T> mapToJavaObject(inputMap: Map<String, *>, targetClass: Class<T>): T
+}
+
 @Suppress("UNCHECKED_CAST")
-object InputObjectMapper {
+class DefaultInputObjectMapper(val customInputObjectMapper: InputObjectMapper? = null) : InputObjectMapper {
     private val logger: Logger = LoggerFactory.getLogger(InputObjectMapper::class.java)
 
-    fun <T : Any> mapToKotlinObject(inputMap: Map<String, *>, targetClass: KClass<T>): T {
+    override fun <T : Any> mapToKotlinObject(inputMap: Map<String, *>, targetClass: KClass<T>): T {
         val params = targetClass.primaryConstructor!!.parameters
         val inputValues = mutableListOf<Any?>()
 
@@ -47,13 +78,16 @@ object InputObjectMapper {
                 val subValue = if (isObjectOrAny(nestedTarget)) {
                     input
                 } else if (nestedTarget.java.isKotlinClass()) {
-                    mapToKotlinObject(input as Map<String, *>, nestedTarget)
+                    customInputObjectMapper?.mapToKotlinObject(input as Map<String, *>, nestedTarget)
+                        ?: mapToKotlinObject(input as Map<String, *>, nestedTarget)
                 } else {
-                    mapToJavaObject(input as Map<String, *>, nestedTarget.java)
+                    customInputObjectMapper?.mapToJavaObject(input as Map<String, *>, nestedTarget.java)
+                        ?: mapToJavaObject(input as Map<String, *>, nestedTarget.java)
                 }
                 inputValues.add(subValue)
             } else if (parameter.type.jvmErasure.java.isEnum && input !== null) {
-                val enumValue = (parameter.type.jvmErasure.java.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == input }
+                val enumValue =
+                    (parameter.type.jvmErasure.java.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == input }
                 inputValues.add(enumValue)
             } else if (input is List<*>) {
                 val newList = convertList(
@@ -84,8 +118,8 @@ object InputObjectMapper {
         }
     }
 
-    fun <T> mapToJavaObject(inputMap: Map<String, *>, targetClass: Class<T>): T {
-        if (targetClass == Object::class.java) {
+    override fun <T> mapToJavaObject(inputMap: Map<String, *>, targetClass: Class<T>): T {
+        if (targetClass == Object::class.java || targetClass == Map::class.java) {
             return inputMap as T
         }
 
@@ -111,7 +145,6 @@ object InputObjectMapper {
                     } else {
                         mapToJavaObject(it.value as Map<String, *>, fieldClass)
                     }
-
                     trySetField(declaredField, instance, mappedValue)
                 } else if (it.value is List<*>) {
                     val newList = convertList(it.value as List<*>, targetClass, fieldClass.kotlin, fieldArgumentType)
@@ -121,7 +154,8 @@ object InputObjectMapper {
                         trySetField(declaredField, instance, newList)
                     }
                 } else if (fieldClass.isEnum) {
-                    val enumValue = (fieldClass.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == it.value }
+                    val enumValue =
+                        (fieldClass.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == it.value }
                     trySetField(declaredField, instance, enumValue)
                 } else {
                     trySetField(declaredField, instance, it.value)
@@ -156,7 +190,7 @@ object InputObjectMapper {
     private fun getFieldType(field: Field, targetClass: Class<*>): Type {
         val genericSuperclass = targetClass.genericSuperclass
         val fieldType: Type = field.genericType
-        return if (fieldType is ParameterizedType) {
+        return if (fieldType is ParameterizedType && fieldType.actualTypeArguments.size == 1) {
             fieldType.actualTypeArguments[0]
         } else if (genericSuperclass is ParameterizedType && field.type != field.genericType) {
             val typeParameters = (genericSuperclass.rawType as Class<*>).typeParameters
@@ -167,7 +201,12 @@ object InputObjectMapper {
         }
     }
 
-    private fun convertList(input: List<*>, targetClass: Class<*>, nestedClass: KClass<*>, nestedType: Type? = null): List<*> {
+    private fun convertList(
+        input: List<*>,
+        targetClass: Class<*>,
+        nestedClass: KClass<*>,
+        nestedType: Type? = null
+    ): List<*> {
         val mappedList = input.filterNotNull().map { listItem ->
             if (listItem is List<*>) {
                 when (nestedType) {

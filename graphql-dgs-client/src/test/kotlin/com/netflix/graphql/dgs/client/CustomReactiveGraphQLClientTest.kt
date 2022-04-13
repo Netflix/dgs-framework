@@ -40,11 +40,12 @@ import reactor.test.StepVerifier
 class CustomReactiveGraphQLClientTest {
 
     @LocalServerPort
-    lateinit var port: Integer
+    var port: Int? = null
     lateinit var client: CustomMonoGraphQLClient
 
     @BeforeEach
     fun setup() {
+        requireNotNull(port) { "port not set" }
         client = MonoGraphQLClient.createCustomReactive("http://localhost:$port/graphql") { url, _, body ->
             WebClient.create(url)
                 .post()

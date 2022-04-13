@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.context
 
 import com.netflix.graphql.dgs.internal.DgsRequestData
+import graphql.GraphQLContext
 import graphql.schema.DataFetchingEnvironment
 import org.dataloader.BatchLoaderEnvironment
 
@@ -27,6 +28,14 @@ import org.dataloader.BatchLoaderEnvironment
 open class DgsContext(val customContext: Any? = null, val requestData: DgsRequestData?) {
 
     companion object {
+
+        const val GRAPHQL_CONTEXT_NAMESPACE_KEY = "netflix.graphql.dgs"
+
+        @JvmStatic
+        fun getDgsContext(graphQLContext: GraphQLContext): DgsContext {
+            return graphQLContext.get(GRAPHQL_CONTEXT_NAMESPACE_KEY)
+        }
+
         @JvmStatic
         fun <T> getCustomContext(dgsContext: Any): T {
             @Suppress("UNCHECKED_CAST")

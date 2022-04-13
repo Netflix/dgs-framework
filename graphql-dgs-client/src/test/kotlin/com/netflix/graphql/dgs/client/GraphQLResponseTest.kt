@@ -16,7 +16,6 @@
 
 package com.netflix.graphql.dgs.client
 
-import com.jayway.jsonpath.TypeRef
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity
@@ -31,7 +30,6 @@ import org.springframework.test.web.client.response.MockRestResponseCreators.wit
 import org.springframework.web.client.RestTemplate
 import java.time.OffsetDateTime
 
-@Suppress("DEPRECATION")
 class GraphQLResponseTest {
 
     private val restTemplate = RestTemplate()
@@ -41,20 +39,12 @@ class GraphQLResponseTest {
         val httpHeaders = HttpHeaders()
         headers.forEach { httpHeaders.addAll(it.key, it.value) }
 
-        val exchange = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
-        HttpResponse(exchange.statusCodeValue, exchange.body)
-    }
-
-    private val requestExecutorWithResponseHeaders = RequestExecutor { url, headers, body ->
-        val httpHeaders = HttpHeaders()
-        headers.forEach { httpHeaders.addAll(it.key, it.value) }
-
-        val exchange = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
-        HttpResponse(exchange.statusCodeValue, exchange.body, exchange.headers.toMap())
+        val response = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
+        HttpResponse(statusCode = response.statusCodeValue, body = response.body, headers = response.headers)
     }
 
     private val url = "http://localhost:8080/graphql"
-    private val client = DefaultGraphQLClient(url)
+    private val client = CustomGraphQLClient(url = url, requestExecutor = requestExecutor)
 
     @Test
     fun dateParse() {
@@ -98,7 +88,7 @@ class GraphQLResponseTest {
                 }
               }
             }""",
-            emptyMap(), requestExecutor
+            emptyMap()
         )
 
         val offsetDateTime = graphQLResponse.extractValueAsObject("submitReview.edges[0].node.postedDate", OffsetDateTime::class.java)
@@ -130,12 +120,12 @@ class GraphQLResponseTest {
                 submittedBy
               }
             }""",
-            emptyMap(), requestExecutorWithResponseHeaders
+            emptyMap()
         )
 
         val submittedBy = graphQLResponse.extractValueAsObject("submitReview.submittedBy", String::class.java)
         assertThat(submittedBy).isEqualTo("abc@netflix.com")
-        assertThat(graphQLResponse.headers["Content-Type"]?.get(0)).isEqualTo("application/json")
+        assertThat(graphQLResponse.headers["Content-Type"].orEmpty().single()).isEqualTo("application/json")
         server.verify()
     }
 
@@ -181,12 +171,12 @@ class GraphQLResponseTest {
                 }
               }
             }""",
-            emptyMap(), requestExecutor
+            emptyMap()
         )
 
-        val listOfSubmittedBy: List<String> = graphQLResponse.extractValueAsObject(
+        val listOfSubmittedBy = graphQLResponse.extractValueAsObject(
             "submitReview.edges[*].node.submittedBy",
-            object : TypeRef<List<String>>() {}
+            jsonTypeRef<List<String>>()
         )
         assertThat(listOfSubmittedBy).isInstanceOf(ArrayList::class.java)
         assertThat(listOfSubmittedBy.size).isEqualTo(2)
@@ -216,8 +206,9 @@ class GraphQLResponseTest {
             """mutation SubmitUserReview {
               submitReview(review:{movieId:1, starRating:5, description:""}) {}
             }""",
-            emptyMap(), "SubmitUserReview", requestExecutor
+            emptyMap(), "SubmitUserReview"
         )
+        assertThat(graphQLResponse.hasErrors()).isFalse
 
         server.verify()
     }

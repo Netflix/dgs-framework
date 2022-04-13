@@ -16,23 +16,33 @@
 
 package com.netflix.graphql.dgs.webflux.autoconfiguration
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.internal.CookieValueResolver
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.FluxDataFetcherResultProcessor
+import com.netflix.graphql.dgs.internal.MonoDataFetcherResultProcessor
+import com.netflix.graphql.dgs.internal.QueryValueCustomizer
 import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveQueryExecutor
-import com.netflix.graphql.dgs.reactive.internal.FluxDataFetcherResultProcessor
-import com.netflix.graphql.dgs.reactive.internal.MonoDataFetcherResultProcessor
+import com.netflix.graphql.dgs.webflux.handlers.DefaultDgsWebfluxHttpHandler
+import com.netflix.graphql.dgs.webflux.handlers.DgsHandshakeWebSocketService
 import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler
 import com.netflix.graphql.dgs.webflux.handlers.DgsWebfluxHttpHandler
 import com.netflix.graphql.dgs.webflux.handlers.WebFluxCookieValueResolver
 import graphql.ExecutionInput
 import graphql.GraphQL
-import graphql.execution.*
+import graphql.execution.AsyncExecutionStrategy
+import graphql.execution.AsyncSerialExecutionStrategy
+import graphql.execution.DataFetcherExceptionHandler
+import graphql.execution.ExecutionIdProvider
+import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
+import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.introspection.IntrospectionQuery
 import graphql.schema.GraphQLSchema
 import org.springframework.beans.factory.annotation.Qualifier
@@ -52,8 +62,11 @@ import org.springframework.web.reactive.function.server.ServerResponse.ok
 import org.springframework.web.reactive.function.server.ServerResponse.permanentRedirect
 import org.springframework.web.reactive.function.server.json
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping
+import org.springframework.web.reactive.socket.server.WebSocketService
 import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter
+import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyRequestUpgradeStrategy
 import reactor.core.publisher.Mono
+import reactor.netty.http.server.WebsocketServerSpec
 import java.net.URI
 import java.util.*
 
@@ -75,7 +88,9 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
         @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
         @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
         idProvider: Optional<ExecutionIdProvider>,
-        reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator
+        reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator,
+        preparsedDocumentProvider: PreparsedDocumentProvider,
+        queryValueCustomizer: QueryValueCustomizer
     ): DgsReactiveQueryExecutor {
 
         val queryExecutionStrategy =
@@ -91,7 +106,9 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
             queryExecutionStrategy,
             mutationExecutionStrategy,
             idProvider,
-            reloadSchemaIndicator
+            reloadSchemaIndicator,
+            preparsedDocumentProvider,
+            queryValueCustomizer
         )
     }
 
@@ -112,19 +129,32 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     @Bean
     @ConditionalOnProperty(name = ["dgs.graphql.graphiql.enabled"], havingValue = "true", matchIfMissing = true)
     open fun graphiQlIndexRedirect(): RouterFunction<ServerResponse> {
-        return RouterFunctions.route().GET("/graphiql") {
-            permanentRedirect(URI.create("/graphiql/index.html")).build()
-        }.build()
+        return RouterFunctions.route()
+            .GET(configProps.graphiql.path) {
+                permanentRedirect(URI.create(configProps.graphiql.path + "/index.html")).build()
+            }
+            .build()
     }
 
     @Bean
-    open fun dgsGraphQlRouter(dgsQueryExecutor: DgsReactiveQueryExecutor): RouterFunction<ServerResponse> {
-        val graphQlHandler = DgsWebfluxHttpHandler(dgsQueryExecutor)
+    @Qualifier("dgsObjectMapper")
+    @ConditionalOnMissingBean(name = ["dgsObjectMapper"])
+    open fun dgsObjectMapper(): ObjectMapper {
+        return jacksonObjectMapper()
+    }
 
+    @Bean
+    @ConditionalOnMissingBean
+    open fun dgsWebfluxHttpHandler(dgsQueryExecutor: DgsReactiveQueryExecutor, @Qualifier("dgsObjectMapper") dgsObjectMapper: ObjectMapper): DgsWebfluxHttpHandler {
+        return DefaultDgsWebfluxHttpHandler(dgsQueryExecutor, dgsObjectMapper)
+    }
+
+    @Bean
+    open fun dgsGraphQlRouter(dgsWebfluxHttpHandler: DgsWebfluxHttpHandler): RouterFunction<ServerResponse> {
         return RouterFunctions.route()
             .POST(
                 configProps.path, accept(MediaType.APPLICATION_JSON, MediaType.valueOf("application/graphql")),
-                graphQlHandler::graphql
+                dgsWebfluxHttpHandler::graphql
             ).build()
     }
 
@@ -151,23 +181,31 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
 
     @Bean
     open fun websocketSubscriptionHandler(dgsReactiveQueryExecutor: DgsReactiveQueryExecutor): SimpleUrlHandlerMapping {
-
-        val simpleUrlHandlerMapping = SimpleUrlHandlerMapping(mapOf("/subscriptions" to DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor)))
+        val simpleUrlHandlerMapping =
+            SimpleUrlHandlerMapping(mapOf("/subscriptions" to DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor)))
         simpleUrlHandlerMapping.order = 1
         return simpleUrlHandlerMapping
     }
 
     @Bean
-    open fun handlerAdapter(): WebSocketHandlerAdapter? {
-        return WebSocketHandlerAdapter()
+    open fun webSocketService(): WebSocketService {
+        val strategy = ReactorNettyRequestUpgradeStrategy { WebsocketServerSpec.builder().protocols("graphql-ws") }
+        return DgsHandshakeWebSocketService(strategy)
     }
 
     @Bean
+    open fun handlerAdapter(webSocketService: WebSocketService): WebSocketHandlerAdapter? {
+        return WebSocketHandlerAdapter(webSocketService)
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
     open fun monoReactiveDataFetcherResultProcessor(): MonoDataFetcherResultProcessor {
         return MonoDataFetcherResultProcessor()
     }
 
     @Bean
+    @ConditionalOnMissingBean
     open fun fluxReactiveDataFetcherResultProcessor(): FluxDataFetcherResultProcessor {
         return FluxDataFetcherResultProcessor()
     }

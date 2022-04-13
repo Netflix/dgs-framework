@@ -17,7 +17,9 @@
 package com.netflix.graphql.dgs.mvc
 
 import com.fasterxml.jackson.core.JsonParseException
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.DgsQueryExecutor
@@ -25,12 +27,17 @@ import com.netflix.graphql.dgs.internal.utils.MultipartVariableMapper
 import com.netflix.graphql.dgs.internal.utils.TimeTracer
 import graphql.ExecutionResultImpl
 import graphql.GraphqlErrorBuilder
-import graphql.execution.reactive.CompletionStageMappingPublisher
+import graphql.execution.reactive.SubscriptionPublisher
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.multipart.MultipartFile
 
@@ -60,7 +67,15 @@ import org.springframework.web.multipart.MultipartFile
  */
 
 @RestController
-open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
+open class DgsRestController(
+    open val dgsQueryExecutor: DgsQueryExecutor,
+    open val mapper: ObjectMapper = jacksonObjectMapper()
+) {
+
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
+        private val GRAPHQL_MEDIA_TYPE = MediaType("application", "graphql")
+    }
 
     // The @ConfigurationProperties bean name is <prefix>-<fqn>
     @RequestMapping(
@@ -85,16 +100,26 @@ open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
         if (body != null) {
             logger.debug("Reading input value: '{}'", body)
 
-            if (headers.getFirst("Content-Type")?.contains("application/graphql") == true) {
-                inputQuery = mapOf(Pair("query", body))
+            if (GRAPHQL_MEDIA_TYPE.includes(headers.contentType)) {
+                inputQuery = mapOf("query" to body)
                 queryVariables = emptyMap()
                 extensions = emptyMap()
             } else {
+
                 try {
-                    inputQuery = body.let { mapper.readValue(it) }
-                } catch (ex: JsonParseException) {
-                    return ResponseEntity.badRequest()
-                        .body(ex.message ?: "Error parsing query - no details found in the error message")
+                    inputQuery = mapper.readValue(body)
+                } catch (ex: Exception) {
+                    return when (ex) {
+                        is JsonParseException ->
+                            ResponseEntity.badRequest()
+                                .body("Invalid query - ${ex.message ?: "no details found in the error message"}.")
+                        is MismatchedInputException ->
+                            ResponseEntity.badRequest()
+                                .body("Invalid query - No content to map to input.")
+                        else ->
+                            ResponseEntity.badRequest()
+                                .body("Invalid query - ${ex.message ?: "no additional details found"}.")
+                    }
                 }
 
                 queryVariables = if (inputQuery["variables"] != null) {
@@ -114,7 +139,7 @@ open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
                 logger.debug("Parsed variables: {}", queryVariables)
             }
         } else if (fileParams != null && mapParam != null && operation != null) {
-            inputQuery = operation.let { mapper.readValue(it) }
+            inputQuery = mapper.readValue(operation)
 
             queryVariables = if (inputQuery["variables"] != null) {
                 @Suppress("UNCHECKED_CAST")
@@ -131,7 +156,7 @@ open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
             }
 
             // parse the '-F map' of MultipartFile(s) containing object paths
-            val fileMapInput: Map<String, List<String>> = mapParam.let { mapper.readValue(it) }
+            val fileMapInput: Map<String, List<String>> = mapper.readValue(mapParam)
             fileMapInput.forEach { (fileKey, objectPaths) ->
                 val file = fileParams[fileKey]
                 if (file != null) {
@@ -156,10 +181,12 @@ open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
             return ResponseEntity.badRequest().body("Invalid GraphQL request - operationName must be a String")
         }
 
+        val query: String? = inputQuery["query"] as? String?
+
         val executionResult = TimeTracer.logTime(
             {
                 dgsQueryExecutor.execute(
-                    inputQuery["query"] as String,
+                    query,
                     queryVariables,
                     extensions,
                     headers,
@@ -175,7 +202,7 @@ open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
             executionResult.errors.size
         )
 
-        if (executionResult.isDataPresent && executionResult.getData<Any>() is CompletionStageMappingPublisher<*, *>) {
+        if (executionResult.isDataPresent && executionResult.getData<Any>() is SubscriptionPublisher) {
             return ResponseEntity.badRequest()
                 .body("Trying to execute subscription on /graphql. Use /subscriptions instead!")
         }
@@ -194,10 +221,5 @@ open class DgsRestController(open val dgsQueryExecutor: DgsQueryExecutor) {
         }
 
         return ResponseEntity.ok(result)
-    }
-
-    companion object {
-        private val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
-        private val mapper = jacksonObjectMapper()
     }
 }

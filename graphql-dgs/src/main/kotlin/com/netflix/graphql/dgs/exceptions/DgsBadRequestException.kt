@@ -16,4 +16,4 @@
 
 package com.netflix.graphql.dgs.exceptions
 
-class DgsBadRequestException(override val message: String = "Malformed or incorrect request") : RuntimeException(message)
+open class DgsBadRequestException(override val message: String = "Malformed or incorrect request") : RuntimeException(message)

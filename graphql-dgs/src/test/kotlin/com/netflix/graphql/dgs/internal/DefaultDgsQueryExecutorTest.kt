@@ -21,6 +21,7 @@ import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.*
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
+import com.netflix.graphql.types.errors.ErrorType
 import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
@@ -88,8 +89,22 @@ internal class DefaultDgsQueryExecutorTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", fetcher), Pair("numbersFetcher", numbersFetcher), Pair("moviesFetcher", moviesFetcher), Pair("withErrorFetcher", fetcherWithError), Pair("echoFetcher", echoFetcher))
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(Pair("DateTimeScalar", LocalDateTimeScalar()))
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+            Pair(
+                "helloFetcher",
+                fetcher
+            ),
+            Pair("numbersFetcher", numbersFetcher),
+            Pair("moviesFetcher", moviesFetcher),
+            Pair("withErrorFetcher", fetcherWithError),
+            Pair("echoFetcher", echoFetcher)
+        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(
+            Pair(
+                "DateTimeScalar",
+                LocalDateTimeScalar()
+            )
+        )
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
         every { dgsDataLoaderProvider.buildRegistryWithContextSupplier(any<Supplier<Any>>()) } returns DataLoaderRegistry()
 
@@ -124,7 +139,25 @@ internal class DefaultDgsQueryExecutorTest {
             """.trimIndent()
         )
 
-        dgsQueryExecutor = DefaultDgsQueryExecutor(schema, provider, dgsDataLoaderProvider, DefaultDgsGraphQLContextBuilder(Optional.empty()), ChainedInstrumentation(), AsyncExecutionStrategy(), AsyncSerialExecutionStrategy(), Optional.empty())
+        dgsQueryExecutor = DefaultDgsQueryExecutor(
+            schema,
+            provider,
+            dgsDataLoaderProvider,
+            DefaultDgsGraphQLContextBuilder(Optional.empty()),
+            ChainedInstrumentation(),
+            AsyncExecutionStrategy(),
+            AsyncSerialExecutionStrategy(),
+            Optional.empty()
+        )
+    }
+
+    @Test
+    fun `Returns a GraphQL Error wth BAD_REQUEST described in the extensions`() {
+        val result = dgsQueryExecutor!!.execute(" ")
+        assertThat(result)
+            .isNotNull
+            .extracting { it.errors.first().extensions["errorType"] }
+            .isEqualTo(ErrorType.BAD_REQUEST.name)
     }
 
     @Test
