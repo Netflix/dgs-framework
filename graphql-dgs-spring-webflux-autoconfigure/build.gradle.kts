@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 dependencies {
     api(project(":graphql-dgs"))
     api(project(":graphql-dgs-reactive"))
-
+    api(project(":graphql-dgs-transports-websockets"))
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework:spring-webflux")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

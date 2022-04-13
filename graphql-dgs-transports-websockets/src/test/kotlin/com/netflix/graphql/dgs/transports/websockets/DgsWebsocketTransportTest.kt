@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -166,6 +166,10 @@ class DgsWebsocketTransportTest {
 
         every { executionResult.getData<Publisher<ExecutionResult>>() } returns
             Mono.just(results).flatMapMany { Flux.fromIterable(results) }
+
+        every { executionResult.toSpecification() } returns mutableMapOf<String, Any>()
+        every { executionResult.isDataPresent } returns true
+        every { executionResult.errors } returns listOf()
 
         every {
             dgsQueryExecutor.execute(

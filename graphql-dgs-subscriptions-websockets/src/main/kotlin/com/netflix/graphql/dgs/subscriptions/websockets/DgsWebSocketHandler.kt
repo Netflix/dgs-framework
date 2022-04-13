@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package com.netflix.graphql.dgs.subscriptions.websockets
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.dgs.transports.websockets.DgsWebsocketTransport
 import com.netflix.graphql.types.subscription.*
 import graphql.ExecutionResult
 import org.reactivestreams.Publisher

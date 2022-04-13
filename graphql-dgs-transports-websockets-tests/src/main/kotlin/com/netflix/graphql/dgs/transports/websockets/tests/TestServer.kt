@@ -16,7 +16,6 @@
 
 package com.netflix.graphql.dgs.transports.websockets.tests
 
-
 import com.example.server.DgsConstants
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsMutation
@@ -42,22 +41,17 @@ class HelloWorldDataFetcher {
         return "Hello World!"
     }
 
-
     @DgsMutation(field = DgsConstants.MUTATION.Hello)
     fun helloMutation(): String {
         return "Hello Mutation!"
     }
 }
 
-
 @DgsComponent
 class GreetingsSubscription {
-
 
     @DgsSubscription(field = DgsConstants.SUBSCRIPTION.Greetings)
     fun greetings(): Publisher<String> {
         return Flux.fromIterable(listOf("Hi", "Bonjour", "Hola", "Ciao", "Zdravo"))
     }
-
 }
-

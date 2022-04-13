@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,18 +47,20 @@ open class DgsWebSocketAutoConfig {
     }
 
     @Bean
-    open fun webSocketHandler(
-        @Qualifier("graphql-ws") subTransWs: WebSocketHandler,
+    @Qualifier("subscriptions-websockets")
+    open fun subscriptionsWebsocketHandler(
         @Qualifier("graphql-transport-ws") graphqlWs: WebSocketHandler,
+        @Qualifier("graphql-ws") subTransWs: WebSocketHandler,
     ): WebSocketHandler {
-        return DgsCompatibleWebsocketHandler(graphqlWs, subTransWs)
+        return com.netflix.graphql.dgs.subscriptions.websockets.DgsCompatibleWebsocketHandler(graphqlWs, subTransWs)
     }
 
     @Configuration
     @EnableWebSocket
     internal open class WebSocketConfig(
-        @Suppress("SpringJavaInjectionPointsAutowiringInspection") private val webSocketHandler: WebSocketHandler,
-        private val handshakeInterceptor: HandshakeInterceptor) :
+        @Suppress("SpringJavaInjectionPointsAutowiringInspection") @Qualifier("subscriptions-websockets") private val webSocketHandler: WebSocketHandler,
+        private val handshakeInterceptor: HandshakeInterceptor
+    ) :
         WebSocketConfigurer {
 
         override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
@@ -68,8 +70,10 @@ open class DgsWebSocketAutoConfig {
                 GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL
             )
             registry.addHandler(webSocketHandler, "/subscriptions").setHandshakeHandler(handshakeHandler)
-              .addInterceptors(handshakeInterceptor)
-              .setAllowedOrigins("*")
+                .addInterceptors(handshakeInterceptor)
+                .setAllowedOrigins("*")
+        }
+    }
 
     @Bean
     open fun handshakeInterceptor(): HandshakeInterceptor {

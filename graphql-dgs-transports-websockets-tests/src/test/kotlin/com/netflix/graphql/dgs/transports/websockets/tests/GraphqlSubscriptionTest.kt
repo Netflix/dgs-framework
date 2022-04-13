@@ -21,23 +21,22 @@ import com.apollographql.apollo3.network.ws.SubscriptionWsProtocol
 import com.apollographql.apollo3.network.ws.WebSocketNetworkTransport
 import com.apollographql.apollo3.testing.runTest
 import com.example.client.GreetingsSubscription
-import jdk.nashorn.internal.ir.annotations.Ignore
 import kotlinx.coroutines.flow.toList
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.web.server.LocalServerPort
 
-//@SpringBootTest(
-//    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-//    classes = [HelloWorldDataFetcher::class]
-//)
+@SpringBootTest(
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+)
 // TODO(amondnet): use subscription + transport-graphql-ws
 @EnableAutoConfiguration
-@Ignore
 class GraphqlSubscriptionTest {
-    //@LocalServerPort
-    private var port: Integer = Integer(8080)
+    @LocalServerPort
+    private lateinit var port: Integer
 
     private lateinit var apolloClient: ApolloClient
 
@@ -46,7 +45,7 @@ class GraphqlSubscriptionTest {
         apolloClient = ApolloClient.Builder()
             .networkTransport(
                 WebSocketNetworkTransport.Builder().serverUrl(
-                    serverUrl = "http://localhost:${port}/subscription",
+                    serverUrl = "http://localhost:$port/subscription",
                 ).protocol(
                     protocolFactory = SubscriptionWsProtocol.Factory()
                 )
@@ -58,7 +57,6 @@ class GraphqlSubscriptionTest {
     @Test
     fun subscriptionOverWebSocket() = runTest {
 
-
         val list = apolloClient.subscription(GreetingsSubscription())
             .toFlow()
             .toList()
@@ -66,5 +64,4 @@ class GraphqlSubscriptionTest {
 
         apolloClient.dispose()
     }
-
 }

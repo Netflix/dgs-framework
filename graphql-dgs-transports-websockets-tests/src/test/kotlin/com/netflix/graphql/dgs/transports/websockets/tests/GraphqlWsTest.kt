@@ -28,14 +28,17 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.web.server.LocalServerPort
 
-//@SpringBootTest(
-//    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
-//)
+@SpringBootTest(
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    classes = [TestApp::class]
+)
 @EnableAutoConfiguration
 class GraphqlWsTest {
-    //@LocalServerPort
-    private var port: Integer = Integer(8000)
+    @LocalServerPort
+    private lateinit var port: Integer
 
     private lateinit var apolloClient: ApolloClient
 
@@ -44,19 +47,18 @@ class GraphqlWsTest {
         apolloClient = ApolloClient.Builder()
             .networkTransport(
                 WebSocketNetworkTransport.Builder().serverUrl(
-                    serverUrl = "http://localhost:${port}/graphql",
+                    serverUrl = "http://localhost:$port/graphql",
                 ).protocol(
                     protocolFactory = GraphQLWsProtocol.Factory()
                 ).build()
             )
             .build()
 
+        // apolloClient.networkTransport.pin
     }
-
 
     @Test
     fun queryOverWebSocket() = runTest {
-
 
         assertEquals("Hello World!", apolloClient.query(HelloQuery()).execute().data?.hello)
     }
@@ -64,13 +66,11 @@ class GraphqlWsTest {
     @Test
     fun mutationOverWebSocket() = runTest {
 
-
         assertEquals("Hello Mutation!", apolloClient.mutation(SetHelloMutation()).execute().data?.hello)
     }
 
     @Test
     fun subscriptionOverWebSocket() = runTest {
-
 
         val list = apolloClient.subscription(GreetingsSubscription())
             .toFlow()

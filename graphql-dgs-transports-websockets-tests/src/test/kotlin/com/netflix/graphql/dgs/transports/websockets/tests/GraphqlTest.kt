@@ -44,7 +44,7 @@ class GraphqlTest {
         apolloClient = ApolloClient.Builder()
             .networkTransport(
                 HttpNetworkTransport.Builder().serverUrl(
-                    serverUrl = "http://localhost:${port}/graphql",
+                    serverUrl = "http://localhost:$port/graphql",
                 ).build()
             )
             .build()
@@ -58,15 +58,12 @@ class GraphqlTest {
     @Test
     fun queryOverWebSocket() = runTest {
 
-
         assertEquals("Hello World!", apolloClient.query(HelloQuery()).execute().data?.hello)
     }
 
     @Test
     fun mutationOverWebSocket() = runTest {
 
-
         assertEquals("Hello Mutation!", apolloClient.mutation(SetHelloMutation()).execute().data?.hello)
     }
-
 }
