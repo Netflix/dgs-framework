@@ -18,14 +18,14 @@ package com.netflix.graphql.dgs.autoconfig
 
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.autoconfig.testcomponents.CustomContextBuilderConfig
-import com.netflix.graphql.dgs.autoconfig.testcomponents.CustomDataFetcherFactory
-import com.netflix.graphql.dgs.autoconfig.testcomponents.CustomDataFetcherFactoryTest
+import com.netflix.graphql.dgs.autoconfig.testcomponents.CustomDataFetcherFactoryFixtures
 import com.netflix.graphql.dgs.autoconfig.testcomponents.CustomInputObjectMapperConfig
 import com.netflix.graphql.dgs.autoconfig.testcomponents.DataFetcherWithInputObject
 import com.netflix.graphql.dgs.autoconfig.testcomponents.DataLoaderConfig
 import com.netflix.graphql.dgs.autoconfig.testcomponents.HelloDataFetcherConfig
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
 import org.assertj.core.api.Assertions.assertThat
+import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.AutoConfigurations
 import org.springframework.boot.test.context.FilteredClassLoader
@@ -45,11 +45,17 @@ class DgsAutoConfigurationTest {
 
     @Test
     fun setUpCustomDataFetcherFactory() {
-        context.withUserConfiguration(CustomDataFetcherFactory::class.java, CustomDataFetcherFactoryTest::class.java)
+        context.withUserConfiguration(
+            CustomDataFetcherFactoryFixtures.CustomDataFetcherFactoryConfiguration::class.java,
+            CustomDataFetcherFactoryFixtures.ExplicitDataFetcherComponent::class.java
+        )
             .run { ctx ->
                 assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
                     val executeQuery =
-                        it.executeAndExtractJsonPath<String>("query {simpleNested{hello}}", "data.simpleNested.hello")
+                        it.executeAndExtractJsonPath<String>(
+                            "query {simpleNested{hello}}",
+                            "data.simpleNested.hello"
+                        )
                     assertThat(executeQuery).isEqualTo("not world")
                 }
             }
@@ -79,7 +85,10 @@ class DgsAutoConfigurationTest {
     fun mappedDataLoaderGetsRegistered() {
         context.withUserConfiguration(DataLoaderConfig::class.java).run { ctx ->
             assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                val json = it.executeAndExtractJsonPath<List<String>>("{namesFromMapped}", "data.namesFromMapped")
+                val json = it.executeAndExtractJsonPath<List<String>>(
+                    "{namesFromMapped}",
+                    "data.namesFromMapped"
+                )
                 assertThat(json).isEqualTo(listOf("A", "B", "C"))
             }
         }
@@ -99,17 +108,22 @@ class DgsAutoConfigurationTest {
     fun enabledIntrospectionTest() {
         context.withUserConfiguration(CustomContextBuilderConfig::class.java).run { ctx ->
             assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
+                @Language("graphql")
+                val query = """
+                     query availableQueries {
+                          __schema {
+                            queryType {
+                              fields {
+                                name
+                                description
+                              }
+                            }
+                          }
+                        }
+                """.trimIndent()
+
                 val json = it.executeAndExtractJsonPath<Any>(
-                    " query availableQueries {\n" +
-                        "  __schema {\n" +
-                        "    queryType {\n" +
-                        "      fields {\n" +
-                        "        name\n" +
-                        "        description\n" +
-                        "      }\n" +
-                        "    }\n" +
-                        "  }\n" +
-                        "}",
+                    query,
                     "data.__schema.queryType.fields[0].name"
                 )
                 assertThat(json).isEqualTo("hello")
@@ -121,15 +135,20 @@ class DgsAutoConfigurationTest {
     fun `It should be possible to override default input object mapper`() {
         context.withUserConfiguration(CustomInputObjectMapperConfig::class.java).run { ctx ->
             assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                it.executeAndExtractJsonPathAsObject(
-                    """
+                @Language("graphql")
+                val query = """
                     query withIgnoredFields {
-                        withIgnoredField(input: { ignoredField: "this should be ignored", name: "this should be included"}) {
+                        withIgnoredField(
+                            input: { ignoredField: "this should be ignored", name: "this should be included" }
+                        ) {
                             ignoredField
                             name                                             
                         }
                     }
-                    """.trimIndent(),
+                """.trimIndent()
+
+                it.executeAndExtractJsonPathAsObject(
+                    query,
                     "data.withIgnoredField",
                     DataFetcherWithInputObject.Input::class.java
                 )
@@ -141,15 +160,22 @@ class DgsAutoConfigurationTest {
     fun `Nested input objects should use overridden input object mapper`() {
         context.withUserConfiguration(CustomInputObjectMapperConfig::class.java).run { ctx ->
             assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                it.executeAndExtractJsonPathAsObject(
-                    """
+                @Language("graphql")
+                val query: String = """
                     query withIgnoredFields {
-                        withIgnoredFieldNested(nestedInput: { input: { ignoredField: "this should be ignored", name: "this should be included"} }) {
+                        withIgnoredFieldNested(
+                            nestedInput: {
+                                input: { ignoredField: "this should be ignored", name: "this should be included" }
+                            }
+                        ) {
                             ignoredField
                             name                                             
                         }
-                    }
-                    """.trimIndent(),
+                    } 
+                """.trimIndent()
+
+                it.executeAndExtractJsonPathAsObject(
+                    query,
                     "data.withIgnoredFieldNested",
                     DataFetcherWithInputObject.Input::class.java
                 )
