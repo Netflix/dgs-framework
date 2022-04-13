@@ -21,6 +21,12 @@ type Query {
     withIgnoredField(input: Input): Output
 
     withIgnoredFieldNested(nestedInput: NestedInput): Output
+
+    simpleNested: SimpleNested!
+}
+
+type SimpleNested {
+    hello: String!
 }
 
 input Input {
