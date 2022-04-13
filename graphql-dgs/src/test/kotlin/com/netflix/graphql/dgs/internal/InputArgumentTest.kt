@@ -1062,7 +1062,10 @@ internal class InputArgumentTest {
         val build = GraphQL.newGraphQL(schema).build()
         val httpHeaders = HttpHeaders()
         httpHeaders.add("Referer", "localhost")
-        val executionResult = build.execute(ExecutionInput.newExecutionInput("""{hello}""").context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders))))
+        val executionResult = build.execute(
+            ExecutionInput.newExecutionInput("""{hello}""")
+                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders)))
+        )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("From, localhost", data["hello"])
@@ -1095,7 +1098,10 @@ internal class InputArgumentTest {
         val build = GraphQL.newGraphQL(schema).build()
         val httpHeaders = HttpHeaders()
         httpHeaders.add("Referer", "localhost")
-        val executionResult = build.execute(ExecutionInput.newExecutionInput("""{hello}""").context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders))))
+        val executionResult = build.execute(
+            ExecutionInput.newExecutionInput("""{hello}""")
+                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders)))
+        )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("From, localhost", data["hello"])
@@ -1128,7 +1134,10 @@ internal class InputArgumentTest {
         val build = GraphQL.newGraphQL(schema).build()
         val httpHeaders = HttpHeaders()
         httpHeaders.add("Referer", "localhost")
-        val executionResult = build.execute(ExecutionInput.newExecutionInput("""{hello}""").context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders))))
+        val executionResult = build.execute(
+            ExecutionInput.newExecutionInput("""{hello}""")
+                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders)))
+        )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("From, localhost", data["hello"])
@@ -1161,7 +1170,10 @@ internal class InputArgumentTest {
         val build = GraphQL.newGraphQL(schema).build()
         val httpHeaders = HttpHeaders()
         httpHeaders.add("Referer", "localhost")
-        val executionResult = build.execute(ExecutionInput.newExecutionInput("""{hello}""").context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders))))
+        val executionResult = build.execute(
+            ExecutionInput.newExecutionInput("""{hello}""")
+                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders)))
+        )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("From, localhost", data["hello"])
@@ -1193,7 +1205,10 @@ internal class InputArgumentTest {
         val build = GraphQL.newGraphQL(schema).build()
         val httpHeaders = HttpHeaders()
         httpHeaders.add("Referer", "localhost")
-        val executionResult = build.execute(ExecutionInput.newExecutionInput("""{hello}""").context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders))))
+        val executionResult = build.execute(
+            ExecutionInput.newExecutionInput("""{hello}""")
+                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders)))
+        )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("From, localhost", data["hello"])
@@ -1227,7 +1242,7 @@ internal class InputArgumentTest {
         httpHeaders.add("Referer", "localhost")
         val executionResult = build.execute(
             ExecutionInput.newExecutionInput("""{hello}""")
-                .context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders)))
+                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders)))
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
@@ -1264,7 +1279,7 @@ internal class InputArgumentTest {
 
         val executionResult = build.execute(
             ExecutionInput.newExecutionInput("""{hello}""")
-                .context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, webRequest)))
+                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, webRequest)))
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
@@ -1301,7 +1316,7 @@ internal class InputArgumentTest {
 
         val executionResult = build.execute(
             ExecutionInput.newExecutionInput("""{hello}""")
-                .context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, webRequest)))
+                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, webRequest)))
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
@@ -1338,7 +1353,7 @@ internal class InputArgumentTest {
 
         val executionResult = build.execute(
             ExecutionInput.newExecutionInput("""{hello}""")
-                .context(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, webRequest)))
+                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, webRequest)))
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()

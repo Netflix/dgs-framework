@@ -26,13 +26,7 @@ import org.dataloader.DataLoader
 class DgsDataFetchingEnvironment(private val dfe: DataFetchingEnvironment) : DataFetchingEnvironment by dfe {
 
     fun getDgsContext(): DgsContext {
-        @Suppress("deprecation")
-        val context = dfe.getContext<Any?>()
-        if (context is DgsContext) {
-            return context
-        } else {
-            throw RuntimeException("""Context object of type '${context::class.java.name}' is not a DgsContext. This method does not work if you have a custom implementation of DgsContextBuilder""")
-        }
+        return DgsContext.from(this)
     }
 
     fun <K, V> getDataLoader(loaderClass: Class<*>): DataLoader<K, V> {
