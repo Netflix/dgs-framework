@@ -108,8 +108,7 @@ object BaseDgsQueryExecutor {
                 .operationName(operationName)
                 .variables(variables)
                 .dataLoaderRegistry(dataLoaderRegistry)
-                .context(dgsContext)
-                .graphQLContext { b -> b.of(DgsContext.GRAPHQL_CONTEXT_NAMESPACE_KEY, dgsContext) }
+                .graphQLContext(dgsContext)
 
         if (extensions != null) {
             executionInputBuilder.extensions(extensions)

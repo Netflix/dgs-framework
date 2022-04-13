@@ -25,13 +25,16 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Percentage
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
 import java.util.*
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.system.measureTimeMillis
 
@@ -40,7 +43,12 @@ class CoroutineDataFetcherTest {
     @MockK
     lateinit var applicationContextMock: ApplicationContext
 
-    val executor = Executors.newFixedThreadPool(8)
+    private val executor: ExecutorService = Executors.newFixedThreadPool(8)
+
+    @AfterEach
+    fun tearDown() {
+        executor.shutdown()
+    }
 
     @Test
     fun `Suspend functions should be supported as datafetchers`() {
@@ -51,8 +59,8 @@ class CoroutineDataFetcherTest {
                 withContext(executor.asCoroutineDispatcher()) {
                     repeat(from.rangeTo(to).count()) {
                         sum++
-                        // Forcing a blocking call to demonstrate running with a thread pool
-                        Thread.sleep(50)
+                        // Forcing a delay to demonstrate concurrency
+                        delay(50)
                     }
                     sum
                 }
@@ -83,7 +91,7 @@ class CoroutineDataFetcherTest {
 
         val concurrentTime = measureTimeMillis {
             val executionResult = build.execute(
-                ExecutionInput.newExecutionInput().context(context).query(
+                ExecutionInput.newExecutionInput().graphQLContext(context).query(
                     """
             {
                 first: concurrent(from: 1, to: 10)
@@ -100,7 +108,7 @@ class CoroutineDataFetcherTest {
 
         val singleTime = measureTimeMillis {
             val executionResult = build.execute(
-                ExecutionInput.newExecutionInput().context(context).query(
+                ExecutionInput.newExecutionInput().graphQLContext(context).query(
                     """
             {
                 first: concurrent(from: 1, to: 10)
@@ -119,14 +127,11 @@ class CoroutineDataFetcherTest {
     fun `Throw the cause of InvocationTargetException from CoroutineDataFetcher`() {
         class CustomException(message: String?) : Exception(message)
 
-        val fetcher = object : Any() {
+        val fetcher = object {
 
             @DgsQuery
-            suspend fun exceptionWithMessage(@InputArgument message: String?) = coroutineScope {
+            suspend fun exceptionWithMessage(@InputArgument message: String?): Nothing = coroutineScope {
                 throw CustomException(message)
-
-                @Suppress("UNREACHABLE_CODE")
-                return@coroutineScope 0
             }
         }
 
@@ -153,7 +158,7 @@ class CoroutineDataFetcherTest {
         )
 
         val executionResult = build.execute(
-            ExecutionInput.newExecutionInput().context(context).query(
+            ExecutionInput.newExecutionInput().graphQLContext(context).query(
                 """
                 {
                     result: exceptionWithMessage(message: "Exception from coroutine")        

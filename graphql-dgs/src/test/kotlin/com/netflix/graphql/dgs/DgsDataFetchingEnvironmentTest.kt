@@ -25,7 +25,6 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.verify
 import org.dataloader.DataLoader
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -251,96 +250,5 @@ internal class DgsDataFetchingEnvironmentTest {
         Assertions.assertTrue(executionResult.isDataPresent)
         val result = executionResult.getData() as Map<String, String>
         Assertions.assertEquals("C", result["hello"])
-    }
-
-    @Suppress("DEPRECATION")
-    @Test
-    fun verifyDelegation() {
-        val dgsDfe = DgsDataFetchingEnvironment(dfeMock)
-
-        dgsDfe.getSource<String>()
-        verify { dfeMock.getSource() }
-
-        dgsDfe.getArgument<String>("name")
-        verify { dfeMock.getArgument("name") }
-
-        dgsDfe.arguments
-        verify { dfeMock.arguments }
-
-        dgsDfe.containsArgument("name")
-        verify { dfeMock.containsArgument("name") }
-
-        dgsDfe.getArgument<String>("name")
-        verify { dfeMock.getArgument<String>("name") }
-
-        dgsDfe.getArgumentOrDefault("name", "")
-        verify { dfeMock.getArgumentOrDefault("name", "") }
-
-        dgsDfe.getContext<String>()
-        verify { dfeMock.getContext<String>() }
-
-        dgsDfe.getLocalContext<String>()
-        verify { dfeMock.getLocalContext() }
-
-        dgsDfe.getRoot<String>()
-        verify { dfeMock.getRoot() }
-
-        dgsDfe.fieldDefinition
-        verify { dfeMock.fieldDefinition }
-
-        @Suppress("DEPRECATION")
-        dgsDfe.fields
-        verify { dfeMock.fields }
-
-        dgsDfe.mergedField
-        verify { dfeMock.mergedField }
-
-        dgsDfe.field
-        verify { dfeMock.field }
-
-        dgsDfe.fieldType
-        verify { dfeMock.fieldType }
-
-        dgsDfe.executionStepInfo
-        verify { dfeMock.executionStepInfo }
-
-        dgsDfe.parentType
-        verify { dfeMock.parentType }
-
-        dgsDfe.graphQLSchema
-        verify { dfeMock.graphQLSchema }
-
-        dgsDfe.fragmentsByName
-        verify { dfeMock.fragmentsByName }
-
-        dgsDfe.executionId
-        verify { dfeMock.executionId }
-
-        dgsDfe.selectionSet
-        verify { dfeMock.selectionSet }
-
-        dgsDfe.queryDirectives
-        verify { dfeMock.queryDirectives }
-
-        dgsDfe.getDataLoader<String, String>("loaderA")
-        verify { dfeMock.getDataLoader<String, String>("loaderA") }
-
-        dgsDfe.dataLoaderRegistry
-        verify { dfeMock.dataLoaderRegistry }
-
-        dgsDfe.cacheControl
-        verify { dfeMock.cacheControl }
-
-        dgsDfe.locale
-        verify { dfeMock.locale }
-
-        dgsDfe.operationDefinition
-        verify { dfeMock.operationDefinition }
-
-        dgsDfe.document
-        verify { dfeMock.document }
-
-        dgsDfe.variables
-        verify { dfeMock.variables }
     }
 }
