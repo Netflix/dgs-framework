@@ -25,26 +25,28 @@ import graphql.schema.DataFetchingEnvironment
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-object TestDataFetcher : DataFetcher<Any> {
-    override fun get(environment: DataFetchingEnvironment): Any {
-        return "not world"
+object CustomDataFetcherFactoryFixtures {
+
+    @Configuration
+    open class CustomDataFetcherFactoryConfiguration {
+        @Bean
+        open fun customDataFetcherFactory(): DataFetcherFactory<*> {
+            return DataFetcherFactories.useDataFetcher(TestDataFetcher)
+        }
+
+        object TestDataFetcher : DataFetcher<Any> {
+            override fun get(environment: DataFetchingEnvironment): Any {
+                return "not world"
+            }
+        }
     }
-}
 
-@Configuration
-open class CustomDataFetcherFactory {
-    @Bean
-    open fun coolDataFetcherFactory(): DataFetcherFactory<*> {
-        return DataFetcherFactories.useDataFetcher(TestDataFetcher)
-    }
-}
-
-data class SimpleNested(val hello: String)
-
-@DgsComponent
-class CustomDataFetcherFactoryTest {
-    @DgsData(parentType = "Query", field = "simpleNested")
-    fun hello(dfe: DataFetchingEnvironment): SimpleNested {
-        return SimpleNested("world")
+    @DgsComponent
+    class ExplicitDataFetcherComponent {
+        @DgsData(parentType = "Query", field = "simpleNested")
+        fun hello(dfe: DataFetchingEnvironment): SimpleNested {
+            return SimpleNested("world")
+        }
+        data class SimpleNested(val hello: String)
     }
 }
