@@ -32,6 +32,7 @@ import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
+import graphql.execution.preparsed.NoOpPreparsedDocumentProvider
 import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.DataFetcherFactory
 import graphql.schema.GraphQLCodeRegistry
@@ -114,7 +115,7 @@ open class DgsAutoConfiguration(
     @Bean
     @ConditionalOnMissingBean
     open fun preparsedDocumentProvider(): PreparsedDocumentProvider {
-        return DgsNoOpPreparsedDocumentProvider
+        return NoOpPreparsedDocumentProvider.INSTANCE
     }
 
     @Bean
