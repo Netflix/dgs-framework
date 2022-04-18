@@ -41,6 +41,7 @@ import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.visibility.DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
 import graphql.schema.visibility.GraphqlFieldVisibility
 import graphql.schema.visibility.NoIntrospectionGraphqlFieldVisibility.NO_INTROSPECTION_FIELD_VISIBILITY
+import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
@@ -53,6 +54,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import java.util.*
+import kotlin.streams.toList
 
 /**
  * Framework auto configuration based on open source Spring only, without Netflix integrations.
@@ -78,7 +80,7 @@ open class DgsAutoConfiguration(
         dgsDataLoaderProvider: DgsDataLoaderProvider,
         dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
         dataFetcherExceptionHandler: DataFetcherExceptionHandler,
-        chainedInstrumentation: ChainedInstrumentation,
+        instrumentations: ObjectProvider<Instrumentation>,
         environment: Environment,
         @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
         @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
@@ -91,18 +93,26 @@ open class DgsAutoConfiguration(
             providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
         val mutationExecutionStrategy =
             providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
+
+        val instrumentationImpls = instrumentations.orderedStream().toList()
+        val instrumentation: Instrumentation? = when {
+            instrumentationImpls.size == 1 -> instrumentationImpls.single()
+            instrumentationImpls.isNotEmpty() -> ChainedInstrumentation(instrumentationImpls)
+            else -> null
+        }
+
         return DefaultDgsQueryExecutor(
-            schema,
-            schemaProvider,
-            dgsDataLoaderProvider,
-            dgsContextBuilder,
-            chainedInstrumentation,
-            queryExecutionStrategy,
-            mutationExecutionStrategy,
-            idProvider,
-            reloadSchemaIndicator,
-            preparsedDocumentProvider,
-            queryValueCustomizer
+            defaultSchema = schema,
+            schemaProvider = schemaProvider,
+            dataLoaderProvider = dgsDataLoaderProvider,
+            contextBuilder = dgsContextBuilder,
+            instrumentation = instrumentation,
+            queryExecutionStrategy = queryExecutionStrategy,
+            mutationExecutionStrategy = mutationExecutionStrategy,
+            idProvider = idProvider,
+            reloadIndicator = reloadSchemaIndicator,
+            preparsedDocumentProvider = preparsedDocumentProvider,
+            queryValueCustomizer = queryValueCustomizer
         )
     }
 
@@ -121,12 +131,6 @@ open class DgsAutoConfiguration(
     @Bean
     open fun dgsDataLoaderProvider(applicationContext: ApplicationContext): DgsDataLoaderProvider {
         return DgsDataLoaderProvider(applicationContext)
-    }
-
-    @Bean
-    open fun dgsInstrumentation(instrumentation: Optional<List<Instrumentation>>): ChainedInstrumentation {
-        val listOfInstrumentations = instrumentation.orElse(emptyList())
-        return ChainedInstrumentation(listOfInstrumentations)
     }
 
     /**

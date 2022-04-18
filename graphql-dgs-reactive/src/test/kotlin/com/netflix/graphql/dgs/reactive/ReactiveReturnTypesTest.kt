@@ -29,7 +29,7 @@ import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContex
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveQueryExecutor
 import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
-import graphql.execution.instrumentation.ChainedInstrumentation
+import graphql.execution.instrumentation.SimpleInstrumentation
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -138,11 +138,14 @@ internal class ReactiveReturnTypesTest {
         )
 
         dgsQueryExecutor = DefaultDgsReactiveQueryExecutor(
-            schema, provider, dgsDataLoaderProvider,
-            DefaultDgsReactiveGraphQLContextBuilder(
-                Optional.empty()
-            ),
-            ChainedInstrumentation(), AsyncExecutionStrategy(), AsyncSerialExecutionStrategy(), Optional.empty()
+            defaultSchema = schema,
+            schemaProvider = provider,
+            dataLoaderProvider = dgsDataLoaderProvider,
+            contextBuilder = DefaultDgsReactiveGraphQLContextBuilder(Optional.empty()),
+            instrumentation = SimpleInstrumentation.INSTANCE,
+            queryExecutionStrategy = AsyncExecutionStrategy(),
+            mutationExecutionStrategy = AsyncSerialExecutionStrategy(),
+            idProvider = Optional.empty()
         )
     }
 

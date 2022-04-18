@@ -16,7 +16,9 @@
 
 package com.netflix.graphql.dgs.internal
 
-import com.jayway.jsonpath.*
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
+import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
@@ -27,7 +29,7 @@ import graphql.*
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
 import graphql.execution.NonNullableFieldWasNullError
-import graphql.execution.instrumentation.ChainedInstrumentation
+import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.preparsed.NoOpPreparsedDocumentProvider
 import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLSchema
@@ -46,7 +48,7 @@ class DefaultDgsQueryExecutor(
     private val schemaProvider: DgsSchemaProvider,
     private val dataLoaderProvider: DgsDataLoaderProvider,
     private val contextBuilder: DefaultDgsGraphQLContextBuilder,
-    private val chainedInstrumentation: ChainedInstrumentation,
+    private val instrumentation: Instrumentation?,
     private val queryExecutionStrategy: ExecutionStrategy,
     private val mutationExecutionStrategy: ExecutionStrategy,
     private val idProvider: Optional<ExecutionIdProvider>,
@@ -74,18 +76,18 @@ class DefaultDgsQueryExecutor(
 
         val executionResult =
             BaseDgsQueryExecutor.baseExecute(
-                queryValueCustomizer.apply(query),
-                variables,
-                extensions,
-                operationName,
-                dgsContext,
-                graphQLSchema,
-                dataLoaderProvider,
-                chainedInstrumentation,
-                queryExecutionStrategy,
-                mutationExecutionStrategy,
-                idProvider,
-                preparsedDocumentProvider,
+                query = queryValueCustomizer.apply(query),
+                variables = variables,
+                extensions = extensions,
+                operationName = operationName,
+                dgsContext = dgsContext,
+                graphQLSchema = graphQLSchema,
+                dataLoaderProvider = dataLoaderProvider,
+                instrumentation = instrumentation,
+                queryExecutionStrategy = queryExecutionStrategy,
+                mutationExecutionStrategy = mutationExecutionStrategy,
+                idProvider = idProvider,
+                preparsedDocumentProvider = preparsedDocumentProvider,
             )
 
         // Check for NonNullableFieldWasNull errors, and log them explicitly because they don't run through the exception handlers.
