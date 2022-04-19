@@ -32,7 +32,6 @@ import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
-import graphql.execution.preparsed.NoOpPreparsedDocumentProvider
 import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.DataFetcherFactory
 import graphql.schema.GraphQLCodeRegistry
@@ -86,7 +85,7 @@ open class DgsAutoConfiguration(
         @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
         idProvider: Optional<ExecutionIdProvider>,
         reloadSchemaIndicator: ReloadSchemaIndicator,
-        preparsedDocumentProvider: PreparsedDocumentProvider,
+        preparsedDocumentProvider: ObjectProvider<PreparsedDocumentProvider>,
         queryValueCustomizer: QueryValueCustomizer
     ): DgsQueryExecutor {
         val queryExecutionStrategy =
@@ -111,7 +110,7 @@ open class DgsAutoConfiguration(
             mutationExecutionStrategy = mutationExecutionStrategy,
             idProvider = idProvider,
             reloadIndicator = reloadSchemaIndicator,
-            preparsedDocumentProvider = preparsedDocumentProvider,
+            preparsedDocumentProvider = preparsedDocumentProvider.ifAvailable,
             queryValueCustomizer = queryValueCustomizer
         )
     }
@@ -120,12 +119,6 @@ open class DgsAutoConfiguration(
     @ConditionalOnMissingBean
     open fun defaultQueryValueCustomizer(): QueryValueCustomizer {
         return QueryValueCustomizer { a -> a }
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    open fun preparsedDocumentProvider(): PreparsedDocumentProvider {
-        return NoOpPreparsedDocumentProvider.INSTANCE
     }
 
     @Bean
