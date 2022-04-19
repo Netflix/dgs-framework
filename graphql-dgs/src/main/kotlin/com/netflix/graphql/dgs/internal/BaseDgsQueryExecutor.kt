@@ -70,7 +70,7 @@ object BaseDgsQueryExecutor {
         queryExecutionStrategy: ExecutionStrategy,
         mutationExecutionStrategy: ExecutionStrategy,
         idProvider: Optional<ExecutionIdProvider>,
-        preparsedDocumentProvider: PreparsedDocumentProvider,
+        preparsedDocumentProvider: PreparsedDocumentProvider?,
     ): CompletableFuture<ExecutionResult> {
 
         if (!StringUtils.hasText(query)) {
@@ -89,10 +89,10 @@ object BaseDgsQueryExecutor {
 
         val graphQLBuilder =
             GraphQL.newGraphQL(graphQLSchema)
-                .preparsedDocumentProvider(preparsedDocumentProvider)
                 .queryExecutionStrategy(queryExecutionStrategy)
                 .mutationExecutionStrategy(mutationExecutionStrategy)
 
+        preparsedDocumentProvider?.let { graphQLBuilder.preparsedDocumentProvider(it) }
         instrumentation?.let { graphQLBuilder.instrumentation(it) }
         idProvider.ifPresent { graphQLBuilder.executionIdProvider(it) }
 
