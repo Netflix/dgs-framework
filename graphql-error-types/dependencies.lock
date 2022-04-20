@@ -22,7 +22,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "compileClasspath": {
@@ -54,7 +54,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "kapt": {
@@ -101,7 +101,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "kotlinCompilerPluginClasspath": {
@@ -121,7 +121,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
@@ -147,7 +147,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
@@ -173,7 +173,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "kotlinKaptWorkerDependencies": {
@@ -201,7 +201,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "kotlinNativeCompilerPluginClasspath": {
@@ -221,7 +221,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "nebulaRecommenderBom": {
@@ -241,7 +241,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "runtimeClasspath": {
@@ -270,7 +270,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "testAnnotationProcessor": {
@@ -290,7 +290,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "testCompileClasspath": {
@@ -304,7 +304,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.2"
+            "locked": "1.12.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.32"
@@ -325,7 +325,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "testRuntimeClasspath": {
@@ -339,7 +339,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.2"
+            "locked": "1.12.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.32"
@@ -360,7 +360,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     }
 }

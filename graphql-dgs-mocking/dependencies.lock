@@ -22,21 +22,21 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "compileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.5"
         },
-        "com.github.javafaker:javafaker": {
-            "locked": "1.0.2"
-        },
         "com.graphql-java:graphql-java": {
             "locked": "18.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
+        },
+        "net.datafaker:datafaker": {
+            "locked": "1.3.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.32"
@@ -57,7 +57,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "kapt": {
@@ -104,7 +104,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "kotlinCompilerPluginClasspath": {
@@ -124,7 +124,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
@@ -150,7 +150,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
@@ -176,7 +176,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "kotlinKaptWorkerDependencies": {
@@ -204,7 +204,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "kotlinNativeCompilerPluginClasspath": {
@@ -224,7 +224,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "nebulaRecommenderBom": {
@@ -244,21 +244,21 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "runtimeClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.5"
         },
-        "com.github.javafaker:javafaker": {
-            "locked": "1.0.2"
-        },
         "com.graphql-java:graphql-java": {
             "locked": "18.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
+        },
+        "net.datafaker:datafaker": {
+            "locked": "1.3.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.32"
@@ -279,7 +279,7 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "testAnnotationProcessor": {
@@ -299,16 +299,13 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
         }
     },
     "testCompileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.12.5"
         },
-        "com.github.javafaker:javafaker": {
-            "locked": "1.0.2"
-        },
         "com.graphql-java:graphql-java": {
             "locked": "18.0"
         },
@@ -316,48 +313,10 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.2"
+            "locked": "1.12.3"
         },
-        "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.5.32"
-        },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.5.32"
-        },
-        "org.slf4j:slf4j-api": {
-            "locked": "1.7.30"
-        },
-        "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.12.RELEASE"
-        },
-        "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.3.12.RELEASE"
-        },
-        "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "Hoxton.SR12"
-        },
-        "org.springframework.security:spring-security-bom": {
-            "locked": "5.3.12.RELEASE"
-        },
-        "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
-        }
-    },
-    "testRuntimeClasspath": {
-        "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.12.5"
-        },
-        "com.github.javafaker:javafaker": {
-            "locked": "1.0.2"
-        },
-        "com.graphql-java:graphql-java": {
-            "locked": "18.0"
-        },
-        "com.netflix.graphql.dgs:graphql-dgs-platform": {
-            "project": true
-        },
-        "io.mockk:mockk": {
-            "locked": "1.12.2"
+        "net.datafaker:datafaker": {
+            "locked": "1.3.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.32"
@@ -381,7 +340,48 @@
             "locked": "5.3.12.RELEASE"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.18.RELEASE"
+            "locked": "5.2.21.RELEASE"
+        }
+    },
+    "testRuntimeClasspath": {
+        "com.fasterxml.jackson:jackson-bom": {
+            "locked": "2.12.5"
+        },
+        "com.graphql-java:graphql-java": {
+            "locked": "18.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
+        },
+        "io.mockk:mockk": {
+            "locked": "1.12.3"
+        },
+        "net.datafaker:datafaker": {
+            "locked": "1.3.0"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.5.32"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
+            "locked": "1.5.32"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.35"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.3.12.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "2.3.12.RELEASE"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "Hoxton.SR12"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.3.12.RELEASE"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.2.21.RELEASE"
         }
     }
 }
