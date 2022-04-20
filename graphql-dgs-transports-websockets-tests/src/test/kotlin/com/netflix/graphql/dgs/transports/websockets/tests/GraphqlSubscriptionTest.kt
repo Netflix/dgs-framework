@@ -24,6 +24,7 @@ import com.example.client.GreetingsSubscription
 import kotlinx.coroutines.flow.toList
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
@@ -34,6 +35,7 @@ import org.springframework.boot.web.server.LocalServerPort
 )
 // TODO(amondnet): use subscription + transport-graphql-ws
 @EnableAutoConfiguration
+@Disabled("use subscription + transport-graphql-ws")
 class GraphqlSubscriptionTest {
     @LocalServerPort
     private lateinit var port: Integer

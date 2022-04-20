@@ -147,4 +147,11 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         experimentalRules = false
         disabledRules = arrayOf("no-wildcard-imports")
     }
+
+    tasks.named<org.jmailen.gradle.kotlinter.tasks.LintTask>("lintKotlinMain") {
+        setSource(source - fileTree("$buildDir/generated"))
+    }
+    tasks.named<org.jmailen.gradle.kotlinter.tasks.FormatTask>("formatKotlinMain") {
+        setSource(source - fileTree("$buildDir/generated"))
+    }
 }
