@@ -19,10 +19,8 @@ plugins {
     id ("com.netflix.dgs.codegen").version("5.1.17")
 }
 dependencies {
-    // implementation(project(":graphql-dgs"))
+    implementation(project(":graphql-dgs"))
     implementation(project(":graphql-dgs-spring-boot-starter"))
-    api(project(":graphql-dgs-transports-websockets-starter"))
-    //api(project(":graphql-dgs-subscriptions-websockets-autoconfigure"))
 
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("org.springframework.boot:spring-boot-starter-web")

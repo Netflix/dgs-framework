@@ -29,9 +29,11 @@ import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithReque
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveQueryExecutor
+import com.netflix.graphql.dgs.transports.websockets.GRAPHQL_TRANSPORT_WS_PROTOCOL
 import com.netflix.graphql.dgs.webflux.handlers.DefaultDgsWebfluxHttpHandler
 import com.netflix.graphql.dgs.webflux.handlers.DgsHandshakeWebSocketService
 import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler
+import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketTransport
 import com.netflix.graphql.dgs.webflux.handlers.DgsWebfluxHttpHandler
 import com.netflix.graphql.dgs.webflux.handlers.WebFluxCookieValueResolver
 import graphql.ExecutionInput
@@ -57,6 +59,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.server.RequestPredicates.accept
+import org.springframework.web.reactive.function.server.RequestPredicates.headers
 import org.springframework.web.reactive.function.server.RouterFunction
 import org.springframework.web.reactive.function.server.RouterFunctions
 import org.springframework.web.reactive.function.server.ServerResponse
@@ -155,7 +158,10 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
 
     @Bean
     @ConditionalOnMissingBean
-    open fun dgsWebfluxHttpHandler(dgsQueryExecutor: DgsReactiveQueryExecutor, @Qualifier("dgsObjectMapper") dgsObjectMapper: ObjectMapper): DgsWebfluxHttpHandler {
+    open fun dgsWebfluxHttpHandler(
+        dgsQueryExecutor: DgsReactiveQueryExecutor,
+        @Qualifier("dgsObjectMapper") dgsObjectMapper: ObjectMapper
+    ): DgsWebfluxHttpHandler {
         return DefaultDgsWebfluxHttpHandler(dgsQueryExecutor, dgsObjectMapper)
     }
 
@@ -163,7 +169,11 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     open fun dgsGraphQlRouter(dgsWebfluxHttpHandler: DgsWebfluxHttpHandler): RouterFunction<ServerResponse> {
         return RouterFunctions.route()
             .POST(
-                configProps.path, accept(MediaType.APPLICATION_JSON, MediaType.valueOf("application/graphql")),
+                configProps.path,
+                accept(
+                    MediaType.APPLICATION_JSON,
+                    MediaType.valueOf("application/graphql")
+                ).and(headers { headers -> headers.firstHeader("Connection")?.lowercase() != "upgrade" }),
                 dgsWebfluxHttpHandler::graphql
             ).build()
     }
@@ -190,16 +200,25 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     }
 
     @Bean
-    open fun websocketSubscriptionHandler(dgsReactiveQueryExecutor: DgsReactiveQueryExecutor): SimpleUrlHandlerMapping {
+    open fun websocketHandlerMapping(dgsReactiveQueryExecutor: DgsReactiveQueryExecutor): SimpleUrlHandlerMapping {
         val simpleUrlHandlerMapping =
-            SimpleUrlHandlerMapping(mapOf("/subscriptions" to DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor)))
+            SimpleUrlHandlerMapping(
+                mapOf(
+                    "/subscriptions" to DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor),
+                    "/graphql" to DgsReactiveWebsocketTransport(dgsReactiveQueryExecutor)
+                )
+            )
         simpleUrlHandlerMapping.order = 1
         return simpleUrlHandlerMapping
     }
 
     @Bean
     open fun webSocketService(): WebSocketService {
-        val strategy = ReactorNettyRequestUpgradeStrategy { WebsocketServerSpec.builder().protocols("graphql-ws") }
+        val strategy = ReactorNettyRequestUpgradeStrategy {
+            WebsocketServerSpec.builder().protocols(
+                GRAPHQL_TRANSPORT_WS_PROTOCOL
+            )
+        }
         return DgsHandshakeWebSocketService(strategy)
     }
 

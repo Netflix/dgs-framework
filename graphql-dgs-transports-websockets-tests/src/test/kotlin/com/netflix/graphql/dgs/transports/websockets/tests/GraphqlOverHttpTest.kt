@@ -17,26 +17,17 @@
 package com.netflix.graphql.dgs.transports.websockets.tests
 
 import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.network.ws.GraphQLWsProtocol
-import com.apollographql.apollo3.network.ws.WebSocketNetworkTransport
+import com.apollographql.apollo3.network.http.HttpNetworkTransport
 import com.apollographql.apollo3.testing.runTest
-import com.example.client.GreetingsSubscription
 import com.example.client.HelloQuery
 import com.example.client.SetHelloMutation
-import kotlinx.coroutines.flow.toList
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 
-@SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = [TestApp::class]
-)
-@EnableAutoConfiguration
-class GraphqlWsTest {
+abstract class GraphqlOverHttpTest {
     @LocalServerPort
     private lateinit var port: Integer
 
@@ -46,37 +37,25 @@ class GraphqlWsTest {
     fun setup() {
         apolloClient = ApolloClient.Builder()
             .networkTransport(
-                WebSocketNetworkTransport.Builder().serverUrl(
+                HttpNetworkTransport.Builder().serverUrl(
                     serverUrl = "http://localhost:$port/graphql",
-                ).protocol(
-                    protocolFactory = GraphQLWsProtocol.Factory()
                 ).build()
             )
             .build()
+    }
 
-        // apolloClient.networkTransport.pin
+    @AfterEach
+    fun teardown() {
+        apolloClient.dispose()
     }
 
     @Test
-    fun queryOverWebSocket() = runTest {
-
+    fun queryOverHttp() = runTest {
         assertEquals("Hello World!", apolloClient.query(HelloQuery()).execute().data?.hello)
     }
 
     @Test
-    fun mutationOverWebSocket() = runTest {
-
+    fun mutationOverHttp() = runTest {
         assertEquals("Hello Mutation!", apolloClient.mutation(SetHelloMutation()).execute().data?.hello)
-    }
-
-    @Test
-    fun subscriptionOverWebSocket() = runTest {
-
-        val list = apolloClient.subscription(GreetingsSubscription())
-            .toFlow()
-            .toList()
-        assertEquals(listOf("Hi", "Bonjour", "Hola", "Ciao", "Zdravo"), list.map { it.data?.greetings })
-
-        apolloClient.dispose()
     }
 }

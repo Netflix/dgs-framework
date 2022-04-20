@@ -19,6 +19,7 @@ dependencies {
     api(project(":graphql-dgs-spring-webmvc"))
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework:spring-webmvc")
+    implementation("org.springframework:spring-websocket")
     implementation("jakarta.servlet:jakarta.servlet-api")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 

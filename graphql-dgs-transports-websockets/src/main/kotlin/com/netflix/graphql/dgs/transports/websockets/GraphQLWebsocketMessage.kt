@@ -24,33 +24,33 @@ object MessageType {
     property = "type"
 )
 @JsonSubTypes(
-    JsonSubTypes.Type(Message.ConnectionInitMessage::class, name = MessageType.CONNECTION_INIT),
-    JsonSubTypes.Type(Message.ConnectionAckMessage::class, name = MessageType.CONNECTION_ACK),
-    JsonSubTypes.Type(Message.PingMessage::class, name = MessageType.PING),
-    JsonSubTypes.Type(Message.PongMessage::class, name = MessageType.PONG),
-    JsonSubTypes.Type(Message.SubscribeMessage::class, name = MessageType.SUBSCRIBE),
-    JsonSubTypes.Type(Message.NextMessage::class, name = MessageType.NEXT),
-    JsonSubTypes.Type(Message.ErrorMessage::class, name = MessageType.ERROR),
-    JsonSubTypes.Type(Message.CompleteMessage::class, name = MessageType.COMPLETE),
+    JsonSubTypes.Type(GraphQLWebsocketMessage.ConnectionInitMessage::class, name = MessageType.CONNECTION_INIT),
+    JsonSubTypes.Type(GraphQLWebsocketMessage.ConnectionAckMessage::class, name = MessageType.CONNECTION_ACK),
+    JsonSubTypes.Type(GraphQLWebsocketMessage.PingMessage::class, name = MessageType.PING),
+    JsonSubTypes.Type(GraphQLWebsocketMessage.PongMessage::class, name = MessageType.PONG),
+    JsonSubTypes.Type(GraphQLWebsocketMessage.SubscribeMessage::class, name = MessageType.SUBSCRIBE),
+    JsonSubTypes.Type(GraphQLWebsocketMessage.NextMessage::class, name = MessageType.NEXT),
+    JsonSubTypes.Type(GraphQLWebsocketMessage.ErrorMessage::class, name = MessageType.ERROR),
+    JsonSubTypes.Type(GraphQLWebsocketMessage.CompleteMessage::class, name = MessageType.COMPLETE),
 )
-sealed class Message(
+sealed class GraphQLWebsocketMessage(
     @JsonProperty("type")
     val type: String
 ) {
     data class ConnectionInitMessage(val payload: Map<String, Any>? = null) :
-        Message(MessageType.CONNECTION_INIT)
+        GraphQLWebsocketMessage(MessageType.CONNECTION_INIT)
 
     data class ConnectionAckMessage(val payload: Map<String, Any>? = null) :
-        Message(MessageType.CONNECTION_ACK)
+        GraphQLWebsocketMessage(MessageType.CONNECTION_ACK)
 
-    data class PingMessage(val payload: Map<String, Any>? = null) : Message(MessageType.PING)
+    data class PingMessage(val payload: Map<String, Any>? = null) : GraphQLWebsocketMessage(MessageType.PING)
 
-    data class PongMessage(val payload: Map<String, Any>? = null) : Message(MessageType.PONG)
+    data class PongMessage(val payload: Map<String, Any>? = null) : GraphQLWebsocketMessage(MessageType.PONG)
 
     data class SubscribeMessage(
         val id: String,
         val payload: Payload,
-    ) : Message(MessageType.SUBSCRIBE) {
+    ) : GraphQLWebsocketMessage(MessageType.SUBSCRIBE) {
         data class Payload(
             val operationName: String? = null,
             val query: String,
@@ -62,14 +62,14 @@ sealed class Message(
     data class NextMessage(
         val id: String,
         val payload: ExecutionResult,
-    ) : Message(MessageType.NEXT)
+    ) : GraphQLWebsocketMessage(MessageType.NEXT)
 
     data class ErrorMessage(
         val id: String,
         val payload: List<GraphQLError>
-    ) : Message(MessageType.ERROR)
+    ) : GraphQLWebsocketMessage(MessageType.ERROR)
 
     data class CompleteMessage(
         val id: String
-    ) : Message(MessageType.COMPLETE)
+    ) : GraphQLWebsocketMessage(MessageType.COMPLETE)
 }

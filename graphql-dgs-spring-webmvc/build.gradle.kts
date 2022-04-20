@@ -17,11 +17,15 @@
 dependencies {
     api(project(":graphql-error-types"))
     api(project(":graphql-dgs"))
+    api(project(":graphql-dgs-transports-websockets"))
 
     implementation(kotlin("reflect"))
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework:spring-web")
+    implementation("org.springframework:spring-websocket")
     compileOnly("javax.servlet:javax.servlet-api:4.0.1")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.projectreactor:reactor-core")
+    testImplementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 }

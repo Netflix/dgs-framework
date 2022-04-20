@@ -35,14 +35,14 @@ interface WebSocketInterceptor {
     fun connectionCompletion() {
     }
     /**
-     * Implement a listener for the [Message.PongMessage]` sent from the client to the server.
+     * Implement a listener for the [GraphQLWebsocketMessage.PongMessage]` sent from the client to the server.
      * If the client sent the pong with a payload, it will be passed through the
      * first argument.
      */
     fun pong(payload: Map<String, Any>? = null) {
     }
     /**
-     * Implement a listener for the [Message.PingMessage] sent from the client to the server.
+     * Implement a listener for the [GraphQLWebsocketMessage.PingMessage] sent from the client to the server.
      * If the client sent the ping with a payload, it will be passed through the
      * first argument.
      *

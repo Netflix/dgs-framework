@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.transports.websockets
+package com.netflix.graphql.dgs.mvc
 
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.internal.utils.TimeTracer
+import com.netflix.graphql.dgs.transports.websockets.CloseCode
+import com.netflix.graphql.dgs.transports.websockets.GRAPHQL_TRANSPORT_WS_PROTOCOL
+import com.netflix.graphql.dgs.transports.websockets.GraphQLWebsocketMessage
+import com.netflix.graphql.dgs.transports.websockets.WebSocketInterceptor
 import graphql.ExecutionResult
 import graphql.ExecutionResultImpl
 import graphql.GraphqlErrorBuilder
@@ -42,7 +46,7 @@ import javax.annotation.PostConstruct
  * <a href="https://github.com/enisdenjo/graphql-ws/blob/master/PROTOCOL.md">GraphQL Over WebSocket Protocol</a> and
  * for use in DGS framework.
  */
-class DgsWebsocketTransport(
+class DgsWebsocketHandler(
     private val dgsQueryExecutor: DgsQueryExecutor,
     private val webSocketInterceptor: WebSocketInterceptor? = null,
 ) :
@@ -56,7 +60,7 @@ class DgsWebsocketTransport(
         val timerTask = object : TimerTask() {
             override fun run() {
                 sessions.filter { !it.isOpen }
-                    .forEach(this@DgsWebsocketTransport::cleanupSubscriptionsForSession)
+                    .forEach(this@DgsWebsocketHandler::cleanupSubscriptionsForSession)
             }
         }
 
@@ -75,11 +79,11 @@ class DgsWebsocketTransport(
     }
 
     public override fun handleTextMessage(session: WebSocketSession, textMessage: TextMessage) {
-        val message = objectMapper.readValue(textMessage.payload, Message::class.java)
+        val message = objectMapper.readValue(textMessage.payload, GraphQLWebsocketMessage::class.java)
         val context = contexts[session.id]!!
 
         when (message) {
-            is Message.ConnectionInitMessage -> {
+            is GraphQLWebsocketMessage.ConnectionInitMessage -> {
                 logger.info("Initialized connection for {}", session.id)
                 if (context.setConnectionInitReceived()) {
                     return session.close(CloseCode.BadRequest.toCloseStatus("Too many initialisation requests"))
@@ -93,7 +97,7 @@ class DgsWebsocketTransport(
                     session.sendMessage(
                         TextMessage(
                             objectMapper.writeValueAsBytes(
-                                Message.ConnectionAckMessage(
+                                GraphQLWebsocketMessage.ConnectionAckMessage(
                                     payload = null
                                 )
                             )
@@ -104,22 +108,22 @@ class DgsWebsocketTransport(
                     session.close(CloseCode.Forbidden.toCloseStatus("Forbidden"))
                 }
             }
-            is Message.PingMessage -> {
+            is GraphQLWebsocketMessage.PingMessage -> {
                 webSocketInterceptor?.ping(message.payload)
                 session.sendMessage(
                     TextMessage(
                         objectMapper.writeValueAsBytes(
-                            Message.PongMessage(
+                            GraphQLWebsocketMessage.PongMessage(
                                 payload = message.payload
                             )
                         )
                     )
                 )
             }
-            is Message.PongMessage -> {
+            is GraphQLWebsocketMessage.PongMessage -> {
                 webSocketInterceptor?.pong(message.payload)
             }
-            is Message.SubscribeMessage -> {
+            is GraphQLWebsocketMessage.SubscribeMessage -> {
                 if (!context.acknowledged) {
                     return session.close(CloseCode.Unauthorized.toCloseStatus("Unauthorized"))
                 }
@@ -130,7 +134,7 @@ class DgsWebsocketTransport(
 
                 handleSubscription(id, payload, session)
             }
-            is Message.CompleteMessage -> {
+            is GraphQLWebsocketMessage.CompleteMessage -> {
                 webSocketInterceptor?.connectionCompletion()
                 logger.info("Complete subscription for " + message.id)
                 val subscription = context.subscriptions.remove(message.id)
@@ -149,7 +153,7 @@ class DgsWebsocketTransport(
 
     private fun handleSubscription(
         id: String,
-        payload: Message.SubscribeMessage.Payload,
+        payload: GraphQLWebsocketMessage.SubscribeMessage.Payload,
         session: WebSocketSession
     ) {
         val executionResult: ExecutionResult = TimeTracer.logTime(
@@ -198,7 +202,7 @@ class DgsWebsocketTransport(
                 }
 
                 override fun onNext(er: ExecutionResult) {
-                    val message = Message.NextMessage(payload = er, id = id)
+                    val message = GraphQLWebsocketMessage.NextMessage(payload = er, id = id)
                     val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
                     logger.debug("Sending subscription data: {}", jsonMessage)
 
@@ -212,7 +216,7 @@ class DgsWebsocketTransport(
                     logger.error("Error on subscription {}", id, t)
 
                     val message =
-                        Message.ErrorMessage(
+                        GraphQLWebsocketMessage.ErrorMessage(
                             id = id,
                             payload = listOf(GraphqlErrorBuilder.newError().message(t.message).build())
                         )
@@ -226,7 +230,7 @@ class DgsWebsocketTransport(
 
                 override fun onComplete() {
                     logger.info("Subscription completed for {}", id)
-                    val message = Message.CompleteMessage(id)
+                    val message = GraphQLWebsocketMessage.CompleteMessage(id)
                     val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
 
                     if (session.isOpen) {
@@ -236,7 +240,7 @@ class DgsWebsocketTransport(
                 }
             })
         } else {
-            val next = Message.NextMessage(payload = executionResult, id = id)
+            val next = GraphQLWebsocketMessage.NextMessage(payload = executionResult, id = id)
             val nextMessage = TextMessage(objectMapper.writeValueAsBytes(next))
             logger.debug("Sending subscription data: {}", nextMessage)
 
@@ -244,7 +248,7 @@ class DgsWebsocketTransport(
                 session.sendMessage(nextMessage)
                 contexts[session.id]?.subscriptions?.get(id)?.request(1)
             }
-            val complete = Message.CompleteMessage(id)
+            val complete = GraphQLWebsocketMessage.CompleteMessage(id)
             val completeMessage = TextMessage(objectMapper.writeValueAsBytes(complete))
 
             if (session.isOpen) {
@@ -255,7 +259,7 @@ class DgsWebsocketTransport(
     }
 
     private companion object {
-        val logger = LoggerFactory.getLogger(DgsWebsocketTransport::class.java)
+        val logger = LoggerFactory.getLogger(DgsWebsocketHandler::class.java)
         val objectMapper = jacksonObjectMapper()
         val subProtocolList = listOf(GRAPHQL_TRANSPORT_WS_PROTOCOL)
     }
@@ -267,4 +271,61 @@ class DgsWebsocketTransport(
         }
 
     override fun getSubProtocols() = subProtocolList
+
+    internal class Context<T>(
+        /**
+         * Indicates that the `ConnectionInit` message
+         * has been received by the server. If this is
+         * `true`, the client wont be kicked off after
+         * the wait timeout has passed.
+         */
+        private var connectionInitReceived: Boolean = false
+
+    ) {
+        /**
+         * Indicates that the connection was acknowledged
+         * by having dispatched the `ConnectionAck` message
+         * to the related client.
+         */
+        var acknowledged: Boolean = false
+
+        /** The parameters passed during the connection initialisation. */
+        var connectionParams: Map<String, Any>? = null
+
+        /**
+         * Holds the active subscriptions for this context. **All operations**
+         * that are taking place are aggregated here. The user is _subscribed_
+         * to an operation when waiting for result(s).
+         */
+        val subscriptions = ConcurrentHashMap<String, Subscription>()
+
+        /**
+         * An extra field where you can store your own context values
+         * to pass between callbacks.
+         */
+        var extra: T? = null
+
+        @Synchronized
+        fun setConnectionInitReceived(): Boolean {
+            val previousValue: Boolean = this.connectionInitReceived
+            this.connectionInitReceived = true
+            return previousValue
+        }
+
+        fun isConnectionInitNotProcessed(): Boolean {
+            return !this.connectionInitReceived
+        }
+
+        fun dispose() {
+            subscriptions.forEach { (_, subscription) ->
+
+                try {
+                    subscription.cancel()
+                } catch (e: Throwable) {
+                    // Ignore and keep on
+                }
+            }
+            this.subscriptions.clear()
+        }
+    }
 }

@@ -17,23 +17,19 @@
 package com.netflix.graphql.dgs.transports.websockets.tests
 
 import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.network.http.HttpNetworkTransport
+import com.apollographql.apollo3.network.ws.GraphQLWsProtocol
+import com.apollographql.apollo3.network.ws.WebSocketNetworkTransport
 import com.apollographql.apollo3.testing.runTest
+import com.example.client.GreetingsSubscription
 import com.example.client.HelloQuery
 import com.example.client.SetHelloMutation
-import org.junit.jupiter.api.AfterEach
+import kotlinx.coroutines.flow.toList
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 
-@SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-)
-@EnableAutoConfiguration
-class GraphqlTest {
+abstract class GraphqlOverWebsocketTest {
     @LocalServerPort
     private lateinit var port: Integer
 
@@ -43,16 +39,15 @@ class GraphqlTest {
     fun setup() {
         apolloClient = ApolloClient.Builder()
             .networkTransport(
-                HttpNetworkTransport.Builder().serverUrl(
+                WebSocketNetworkTransport.Builder().serverUrl(
                     serverUrl = "http://localhost:$port/graphql",
+                ).protocol(
+                    protocolFactory = GraphQLWsProtocol.Factory()
                 ).build()
             )
             .build()
-    }
 
-    @AfterEach
-    fun teardown() {
-        apolloClient.dispose()
+        // apolloClient.networkTransport.pin
     }
 
     @Test
@@ -65,5 +60,16 @@ class GraphqlTest {
     fun mutationOverWebSocket() = runTest {
 
         assertEquals("Hello Mutation!", apolloClient.mutation(SetHelloMutation()).execute().data?.hello)
+    }
+
+    @Test
+    fun subscriptionOverWebSocket() = runTest {
+
+        val list = apolloClient.subscription(GreetingsSubscription())
+            .toFlow()
+            .toList()
+        assertEquals(listOf("Hi", "Bonjour", "Hola", "Ciao", "Zdravo"), list.map { it.data?.greetings })
+
+        apolloClient.dispose()
     }
 }

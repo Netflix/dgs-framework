@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.transports.websockets.tests
+package com.netflix.graphql.dgs.transports.websockets.tests.webmvc
 
 import com.example.server.DgsConstants
 import com.netflix.graphql.dgs.DgsComponent
@@ -26,11 +26,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import reactor.core.publisher.Flux
 
-@SpringBootApplication(scanBasePackages = ["com.netflix.graphql.dgs.transports.websockets"])
-open class TestApp
+@SpringBootApplication(scanBasePackages = ["com.netflix.graphql.dgs.transports.websockets.tests.webmvc"])
+open class WebmvcServer
 
 fun main(args: Array<String>) {
-    runApplication<TestApp>(*args)
+    runApplication<WebmvcServer>(*args)
 }
 
 @DgsComponent

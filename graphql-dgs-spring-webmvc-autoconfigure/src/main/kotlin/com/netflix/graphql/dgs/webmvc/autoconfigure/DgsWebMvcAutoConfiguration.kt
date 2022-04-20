@@ -23,7 +23,9 @@ import com.netflix.graphql.dgs.internal.CookieValueResolver
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.mvc.DgsRestController
 import com.netflix.graphql.dgs.mvc.DgsRestSchemaJsonController
+import com.netflix.graphql.dgs.mvc.DgsWebsocketHandler
 import com.netflix.graphql.dgs.mvc.ServletCookieValueResolver
+import com.netflix.graphql.dgs.transports.websockets.GRAPHQL_TRANSPORT_WS_PROTOCOL
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -34,6 +36,11 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.web.servlet.DispatcherServlet
+import org.springframework.web.socket.WebSocketHandler
+import org.springframework.web.socket.config.annotation.EnableWebSocket
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
+import org.springframework.web.socket.server.support.DefaultHandshakeHandler
 
 @Configuration
 @ConditionalOnWebApplication
@@ -68,6 +75,26 @@ open class DgsWebMvcAutoConfiguration {
         @Bean
         open fun dgsRestSchemaJsonController(dgsSchemaProvider: DgsSchemaProvider): DgsRestSchemaJsonController {
             return DgsRestSchemaJsonController(dgsSchemaProvider)
+        }
+    }
+
+    @Bean
+    @Qualifier("transport-ws")
+    open fun transportWebsocketHandler(@Suppress("SpringJavaInjectionPointsAutowiringInspection") dgsQueryExecutor: DgsQueryExecutor): WebSocketHandler {
+        return DgsWebsocketHandler(dgsQueryExecutor)
+    }
+
+    @Configuration
+    @EnableWebSocket
+    internal open class WebSocketConfig(@Suppress("SpringJavaInjectionPointsAutowiringInspection") @Qualifier("transport-ws") private val webSocketHandler: WebSocketHandler) :
+        WebSocketConfigurer {
+
+        override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
+            val defaultHandshakeHandler = DefaultHandshakeHandler()
+            defaultHandshakeHandler.setSupportedProtocols(GRAPHQL_TRANSPORT_WS_PROTOCOL)
+            registry.addHandler(webSocketHandler, "/graphql")
+                .setHandshakeHandler(defaultHandshakeHandler)
+                .setAllowedOrigins("*")
         }
     }
 }

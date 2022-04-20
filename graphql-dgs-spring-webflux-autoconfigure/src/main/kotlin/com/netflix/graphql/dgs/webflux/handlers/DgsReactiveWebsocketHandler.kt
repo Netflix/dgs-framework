@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.webflux.handlers
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.convertValue
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
+import com.netflix.graphql.dgs.transports.websockets.GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscription
 import org.slf4j.LoggerFactory
@@ -34,7 +35,11 @@ import org.springframework.web.reactive.socket.WebSocketSession
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.util.concurrent.ConcurrentHashMap
-
+/**
+ * WebSocketHandler for GraphQL based on
+ * <a href="https://github.com/apollographql/subscriptions-transport-ws/blob/master/PROTOCOL.md">GraphQL Over WebSocket Protocol</a> and
+ * for use in DGS framework.
+ */
 class DgsReactiveWebsocketHandler(private val dgsReactiveQueryExecutor: DgsReactiveQueryExecutor) : WebSocketHandler {
 
     private val resolvableType = ResolvableType.forType(OperationMessage::class.java)
@@ -42,7 +47,7 @@ class DgsReactiveWebsocketHandler(private val dgsReactiveQueryExecutor: DgsReact
     private val decoder = Jackson2JsonDecoder()
     private val encoder = Jackson2JsonEncoder(decoder.objectMapper)
 
-    override fun getSubProtocols(): List<String> = listOf("graphql-ws")
+    override fun getSubProtocols(): List<String> = listOf(GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL)
 
     override fun handle(webSocketSession: WebSocketSession): Mono<Void> {
         return webSocketSession.send(

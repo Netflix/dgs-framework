@@ -18,7 +18,7 @@ package com.netflix.graphql.dgs.webflux.handlers
 
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.transports.websockets.GRAPHQL_TRANSPORT_WS_PROTOCOL
-import com.netflix.graphql.dgs.transports.websockets.Message
+import com.netflix.graphql.dgs.transports.websockets.GraphQLWebsocketMessage
 import com.netflix.graphql.dgs.transports.websockets.WebSocketInterceptor
 import graphql.ExecutionResult
 import graphql.GraphqlErrorBuilder
@@ -52,7 +52,7 @@ class DgsReactiveWebsocketTransport(
     private val webSocketInterceptor: WebSocketInterceptor? = null,
 ) : WebSocketHandler {
 
-    private val resolvableType = ResolvableType.forType(Message::class.java)
+    private val resolvableType = ResolvableType.forType(GraphQLWebsocketMessage::class.java)
 
     private val decoder = Jackson2JsonDecoder()
     private val encoder = Jackson2JsonEncoder(decoder.objectMapper)
@@ -72,15 +72,15 @@ class DgsReactiveWebsocketTransport(
                 .flatMap { webSocketMessage ->
                     val buffer: DataBuffer = DataBufferUtils.retain(webSocketMessage.payload)
 
-                    val message: Message = decoder.decode(
+                    val message: GraphQLWebsocketMessage = decoder.decode(
                         buffer,
                         resolvableType,
                         MimeTypeUtils.APPLICATION_JSON,
                         null
-                    ) as Message
+                    ) as GraphQLWebsocketMessage
 
                     when (message) {
-                        is Message.ConnectionInitMessage -> {
+                        is GraphQLWebsocketMessage.ConnectionInitMessage -> {
                             if (!connectionInitPayloadRef.compareAndSet(null, message.payload)) {
                                 webSocketSession.close(CloseCode.TooManyInitialisationRequests.toCloseStatus())
                                     .thenMany(Mono.empty())
@@ -89,7 +89,7 @@ class DgsReactiveWebsocketTransport(
                                     webSocketInterceptor?.connectionInitialization(message.payload)
                                     Flux.just(
                                         toWebsocketMessage(
-                                            Message.ConnectionAckMessage(), webSocketSession
+                                            GraphQLWebsocketMessage.ConnectionAckMessage(), webSocketSession
                                         )
                                     )
                                 } catch (e: Throwable) {
@@ -99,19 +99,19 @@ class DgsReactiveWebsocketTransport(
                             }
                         }
 
-                        is Message.PingMessage -> {
+                        is GraphQLWebsocketMessage.PingMessage -> {
                             webSocketInterceptor?.ping(message.payload)
                             Flux.just(
                                 toWebsocketMessage(
-                                    Message.PongMessage(), webSocketSession
+                                    GraphQLWebsocketMessage.PongMessage(), webSocketSession
                                 )
                             )
                         }
-                        is Message.PongMessage -> {
+                        is GraphQLWebsocketMessage.PongMessage -> {
                             webSocketInterceptor?.pong(message.payload)
                             Flux.empty()
                         }
-                        is Message.SubscribeMessage -> {
+                        is GraphQLWebsocketMessage.SubscribeMessage -> {
                             if (connectionInitPayloadRef.get() == null) {
                                 webSocketSession.close(CloseCode.Unauthorized.toCloseStatus()).thenMany(Mono.empty())
                             } else {
@@ -130,7 +130,7 @@ class DgsReactiveWebsocketTransport(
                             }
                         }
 
-                        is Message.CompleteMessage -> {
+                        is GraphQLWebsocketMessage.CompleteMessage -> {
                             val id = message.id
                             subscriptions.remove(id)?.cancel()
                             logger.debug(
@@ -146,7 +146,7 @@ class DgsReactiveWebsocketTransport(
         )
     }
 
-    private fun toWebsocketMessage(message: Message, session: WebSocketSession): WebSocketMessage {
+    private fun toWebsocketMessage(message: GraphQLWebsocketMessage, session: WebSocketSession): WebSocketMessage {
         return WebSocketMessage(
             WebSocketMessage.Type.TEXT,
             encoder.encodeValue(
@@ -188,7 +188,7 @@ class DgsReactiveWebsocketTransport(
         }
         return responseFlux
             .map {
-                val next = Message.NextMessage(payload = executionResult, id = id)
+                val next = GraphQLWebsocketMessage.NextMessage(payload = executionResult, id = id)
                 toWebsocketMessage(next, session)
             }
             .onErrorResume { ex: Throwable? ->
@@ -198,7 +198,7 @@ class DgsReactiveWebsocketTransport(
                 } else {
                     Mono.fromCallable {
                         val error = GraphqlErrorBuilder.newError().message(ex!!.message).build()
-                        toWebsocketMessage(Message.ErrorMessage(id, listOf(error)), session)
+                        toWebsocketMessage(GraphQLWebsocketMessage.ErrorMessage(id, listOf(error)), session)
                     }
                 }
             }

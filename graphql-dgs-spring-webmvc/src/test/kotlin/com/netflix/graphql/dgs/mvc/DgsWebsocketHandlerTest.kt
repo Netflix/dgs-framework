@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.transports.websockets
+package com.netflix.graphql.dgs.mvc
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.transports.websockets.GraphQLWebsocketMessage
+import com.netflix.graphql.dgs.transports.websockets.MessageType
 import graphql.ExecutionResult
 import io.mockk.Runs
 import io.mockk.every
@@ -40,13 +42,13 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @ExtendWith(MockKExtension::class)
-class DgsWebsocketTransportTest {
+class DgsWebsocketHandlerTest {
 
-    private lateinit var dgsWebsocketHandler: DgsWebsocketTransport
+    private lateinit var dgsWebsocketHandler: DgsWebsocketHandler
 
     @BeforeEach
     fun setup() {
-        dgsWebsocketHandler = DgsWebsocketTransport(dgsQueryExecutor)
+        dgsWebsocketHandler = DgsWebsocketHandler(dgsQueryExecutor)
 
         every { session1.id } returns "1"
         every { session2.id } returns "2"
