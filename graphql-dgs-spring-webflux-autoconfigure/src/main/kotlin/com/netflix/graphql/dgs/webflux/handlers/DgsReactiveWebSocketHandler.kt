@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap
  * <a href="https://github.com/apollographql/subscriptions-transport-ws/blob/master/PROTOCOL.md">GraphQL Over WebSocket Protocol</a> and
  * for use in DGS framework.
  */
-class DgsReactiveWebsocketHandler(private val dgsReactiveQueryExecutor: DgsReactiveQueryExecutor) : WebSocketHandler {
+class DgsReactiveWebSocketHandler(private val dgsReactiveQueryExecutor: DgsReactiveQueryExecutor) : WebSocketHandler {
 
     private val resolvableType = ResolvableType.forType(OperationMessage::class.java)
     private val subscriptions = ConcurrentHashMap<String, MutableMap<String, Subscription>>()

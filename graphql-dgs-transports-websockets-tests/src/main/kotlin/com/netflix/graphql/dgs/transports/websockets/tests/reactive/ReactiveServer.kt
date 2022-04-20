@@ -28,7 +28,6 @@ import org.springframework.boot.runApplication
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-
 @SpringBootApplication(
     exclude = [DgsWebMvcAutoConfiguration::class],
     scanBasePackages = ["com.netflix.graphql.dgs.transports.websockets.tests.reactive"]
@@ -58,8 +57,6 @@ open class ReactiveServer {
     }
 }
 
-
 fun main(args: Array<String>) {
     runApplication<ReactiveServer>(*args)
 }
-

@@ -47,7 +47,7 @@ import java.util.concurrent.atomic.AtomicReference
  * <a href="https://github.com/enisdenjo/graphql-ws/blob/master/PROTOCOL.md">GraphQL Over WebSocket Protocol</a> and
  * for use in DGS framework.
  */
-class DgsReactiveWebsocketTransport(
+class DgsReactiveWebSocketTransport(
     private val dgsReactiveQueryExecutor: DgsReactiveQueryExecutor,
     private val webSocketInterceptor: WebSocketInterceptor? = null,
 ) : WebSocketHandler {
@@ -205,7 +205,7 @@ class DgsReactiveWebsocketTransport(
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(DgsReactiveWebsocketTransport::class.java)
+        private val logger = LoggerFactory.getLogger(DgsReactiveWebSocketTransport::class.java)
     }
 
     private class SubscriptionExistsException : RuntimeException()

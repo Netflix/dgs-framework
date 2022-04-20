@@ -33,8 +33,8 @@ import com.netflix.graphql.dgs.transports.websockets.GRAPHQL_SUBSCRIPTIONS_WS_PR
 import com.netflix.graphql.dgs.transports.websockets.GRAPHQL_TRANSPORT_WS_PROTOCOL
 import com.netflix.graphql.dgs.webflux.handlers.DefaultDgsWebfluxHttpHandler
 import com.netflix.graphql.dgs.webflux.handlers.DgsHandshakeWebSocketService
-import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler
-import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketTransport
+import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebSocketHandler
+import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebSocketTransport
 import com.netflix.graphql.dgs.webflux.handlers.DgsWebfluxHttpHandler
 import com.netflix.graphql.dgs.webflux.handlers.WebFluxCookieValueResolver
 import graphql.ExecutionInput
@@ -203,14 +203,14 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
 
     @Bean
     @Qualifier(GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL)
-    open fun graphqlSubscriptionWebsocketHandler(dgsReactiveQueryExecutor: DgsReactiveQueryExecutor): WebSocketHandler {
-        return DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor)
+    open fun graphqlSubscriptionWebSocketHandler(dgsReactiveQueryExecutor: DgsReactiveQueryExecutor): WebSocketHandler {
+        return DgsReactiveWebSocketHandler(dgsReactiveQueryExecutor)
     }
 
     @Bean
     @Qualifier(GRAPHQL_TRANSPORT_WS_PROTOCOL)
-    open fun graphqlOverWebsocketHandler(dgsReactiveQueryExecutor: DgsReactiveQueryExecutor): WebSocketHandler {
-        return DgsReactiveWebsocketTransport(dgsReactiveQueryExecutor)
+    open fun graphqlOverWebSocketHandler(dgsReactiveQueryExecutor: DgsReactiveQueryExecutor): WebSocketHandler {
+        return DgsReactiveWebSocketTransport(dgsReactiveQueryExecutor)
     }
 
     @Bean

@@ -59,5 +59,3 @@ open class WebmvcServer {
 fun main(args: Array<String>) {
     runApplication<WebmvcServer>(*args)
 }
-
-

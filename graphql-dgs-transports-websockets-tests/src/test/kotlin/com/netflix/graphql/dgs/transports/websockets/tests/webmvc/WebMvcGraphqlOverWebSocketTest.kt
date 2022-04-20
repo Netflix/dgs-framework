@@ -17,7 +17,7 @@
 package com.netflix.graphql.dgs.transports.websockets.tests.webmvc
 
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
-import com.netflix.graphql.dgs.transports.websockets.tests.GraphqlOverWebsocketTest
+import com.netflix.graphql.dgs.transports.websockets.tests.GraphqlOverWebSocketTest
 import com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcAutoConfiguration
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
@@ -27,4 +27,4 @@ import org.springframework.boot.test.context.SpringBootTest
     classes = [DgsAutoConfiguration::class, DgsWebMvcAutoConfiguration::class, WebmvcServer::class]
 )
 @EnableAutoConfiguration
-class WebmvcGraphqlOverWebsocketTest : GraphqlOverWebsocketTest()
+class WebMvcGraphqlOverWebSocketTest : GraphqlOverWebSocketTest()

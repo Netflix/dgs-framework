@@ -24,7 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = [DgsAutoConfiguration::class, DgsWebMvcAutoConfiguration::class,WebmvcServer::class]
+    classes = [DgsAutoConfiguration::class, DgsWebMvcAutoConfiguration::class, WebmvcServer::class]
 )
 @EnableAutoConfiguration
-class WebmvcGraphqlOverHttpTest : GraphqlOverHttpTest()
+class WebMvcGraphqlOverHttpTest : GraphqlOverHttpTest()

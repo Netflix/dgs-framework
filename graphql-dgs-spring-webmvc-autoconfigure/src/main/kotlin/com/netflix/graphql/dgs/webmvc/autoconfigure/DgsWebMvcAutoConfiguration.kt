@@ -23,7 +23,7 @@ import com.netflix.graphql.dgs.internal.CookieValueResolver
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.mvc.DgsRestController
 import com.netflix.graphql.dgs.mvc.DgsRestSchemaJsonController
-import com.netflix.graphql.dgs.mvc.DgsWebsocketTransport
+import com.netflix.graphql.dgs.mvc.DgsWebSocketTransport
 import com.netflix.graphql.dgs.mvc.ServletCookieValueResolver
 import com.netflix.graphql.dgs.transports.websockets.GRAPHQL_TRANSPORT_WS_PROTOCOL
 import org.springframework.beans.factory.annotation.Qualifier
@@ -81,13 +81,16 @@ open class DgsWebMvcAutoConfiguration {
     @Bean
     @Qualifier(GRAPHQL_TRANSPORT_WS_PROTOCOL)
     open fun transportWebsocketHandler(@Suppress("SpringJavaInjectionPointsAutowiringInspection") dgsQueryExecutor: DgsQueryExecutor): WebSocketHandler {
-        return DgsWebsocketTransport(dgsQueryExecutor)
+        return DgsWebSocketTransport(dgsQueryExecutor)
     }
 
     @Configuration
     @EnableWebSocket
-    internal open class WebSocketConfig(@Suppress("SpringJavaInjectionPointsAutowiringInspection") @Qualifier(
-        GRAPHQL_TRANSPORT_WS_PROTOCOL) private val webSocketHandler: WebSocketHandler) :
+    internal open class WebSocketConfig(
+        @Suppress("SpringJavaInjectionPointsAutowiringInspection") @Qualifier(
+            GRAPHQL_TRANSPORT_WS_PROTOCOL
+        ) private val webSocketHandler: WebSocketHandler
+    ) :
         WebSocketConfigurer {
 
         override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {

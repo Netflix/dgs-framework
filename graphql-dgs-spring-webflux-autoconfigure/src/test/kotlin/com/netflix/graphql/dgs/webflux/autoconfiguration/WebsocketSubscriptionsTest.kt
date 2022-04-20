@@ -20,11 +20,11 @@ import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsSubscription
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
-import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Companion.GQL_COMPLETE
-import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Companion.GQL_CONNECTION_ACK
-import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Companion.GQL_CONNECTION_INIT
-import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Companion.GQL_ERROR
-import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Companion.GQL_START
+import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebSocketHandler.Companion.GQL_COMPLETE
+import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebSocketHandler.Companion.GQL_CONNECTION_ACK
+import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebSocketHandler.Companion.GQL_CONNECTION_INIT
+import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebSocketHandler.Companion.GQL_ERROR
+import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebSocketHandler.Companion.GQL_START
 import com.netflix.graphql.dgs.webflux.handlers.OperationMessage
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry

@@ -29,7 +29,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.web.server.LocalServerPort
 
-abstract class GraphqlOverWebsocketTest {
+abstract class GraphqlOverWebSocketTest {
     @LocalServerPort
     private lateinit var port: Integer
 

@@ -20,7 +20,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.transports.websockets.GraphQLWebsocketMessage
-import com.netflix.graphql.dgs.transports.websockets.MessageType
+import com.netflix.graphql.dgs.transports.websockets.GraphQLWebsocketMessageType
 import graphql.ExecutionResult
 import io.mockk.Runs
 import io.mockk.every
@@ -42,13 +42,13 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @ExtendWith(MockKExtension::class)
-class DgsWebsocketTransportTest {
+class DgsWebSocketTransportTest {
 
-    private lateinit var dgsWebsocketHandler: DgsWebsocketTransport
+    private lateinit var dgsWebsocketHandler: DgsWebSocketTransport
 
     @BeforeEach
     fun setup() {
-        dgsWebsocketHandler = DgsWebsocketTransport(dgsQueryExecutor)
+        dgsWebsocketHandler = DgsWebSocketTransport(dgsQueryExecutor)
 
         every { session1.id } returns "1"
         every { session2.id } returns "2"
@@ -68,7 +68,7 @@ class DgsWebsocketTransportTest {
 
     private fun queryMessage(session: WebSocketSession) = TextMessage(
         """{
-                "type": "${MessageType.SUBSCRIBE}",
+                "type": "${GraphQLWebsocketMessageType.SUBSCRIBE}",
                 "payload": {
                    "query": "{ hello }",
                    "variables": {},
@@ -81,7 +81,7 @@ class DgsWebsocketTransportTest {
 
     private val connectionInitMessage = TextMessage(
         """{
-                "type": "${MessageType.CONNECTION_INIT}",
+                "type": "${GraphQLWebsocketMessageType.CONNECTION_INIT}",
                 "payload": {
                    "auth": "test"
                 }
@@ -130,7 +130,7 @@ class DgsWebsocketTransportTest {
 
         val textMessage = TextMessage(
             """{
-                "type": "${MessageType.CONNECTION_INIT}"
+                "type": "${GraphQLWebsocketMessageType.CONNECTION_INIT}"
             }
             """.trimIndent()
         )
@@ -141,7 +141,7 @@ class DgsWebsocketTransportTest {
         Assertions.assertThat(dgsWebsocketHandler.sessions.size).isEqualTo(currentNrOfSessions + 1)
 
         val returnMessage = jacksonObjectMapper().readValue<GraphQLWebsocketMessage>(slot.captured.asBytes())
-        Assertions.assertThat(returnMessage.type).isEqualTo(MessageType.CONNECTION_ACK)
+        Assertions.assertThat(returnMessage.type).isEqualTo(GraphQLWebsocketMessageType.CONNECTION_ACK)
     }
 
     private fun disconnect(webSocketSession: WebSocketSession) {
