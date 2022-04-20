@@ -29,7 +29,8 @@ class DgsWebfluxConfigurationProperties(
     /** Path to the endpoint that will serve GraphQL requests. */
     @DefaultValue("/graphql") var path: String = "/graphql",
     @NestedConfigurationProperty var graphiql: DgsGraphiQLConfigurationProperties = DgsGraphiQLConfigurationProperties(),
-    @NestedConfigurationProperty var schemaJson: DgsSchemaJsonConfigurationProperties = DgsSchemaJsonConfigurationProperties()
+    @NestedConfigurationProperty var schemaJson: DgsSchemaJsonConfigurationProperties = DgsSchemaJsonConfigurationProperties(),
+    @NestedConfigurationProperty var websocket: DgsWebSocketConfigurationProperties = DgsWebSocketConfigurationProperties(),
 ) {
     /**
      * Configuration properties for the GraphiQL endpoint.
@@ -38,6 +39,7 @@ class DgsWebfluxConfigurationProperties(
         /** Path to the GraphiQL endpoint without trailing slash. */
         @DefaultValue("/graphiql") var path: String = "/graphiql"
     )
+
     /**
      * Configuration properties for the schema-json endpoint.
      */
@@ -46,11 +48,20 @@ class DgsWebfluxConfigurationProperties(
         @DefaultValue("/schema.json") var path: String = "/schema.json"
     )
 
+    /**
+     * Configuration properties for the WebSocket endpoint.
+     */
+    data class DgsWebSocketConfigurationProperties(
+        /** Path to the WebSocket endpoint without trailing slash. */
+        @DefaultValue("/graphql") var path: String = "/graphql"
+    )
+
     @PostConstruct
     fun validatePaths() {
         validatePath(this.path, "dgs.graphql.path")
         validatePath(this.graphiql.path, "dgs.graphql.graphiql.path")
         validatePath(this.schemaJson.path, "dgs.graphql.schema-json.path")
+        validatePath(this.websocket.path, "dgs.graphql.websocket.path")
     }
 
     private fun validatePath(path: String, pathProperty: String) {

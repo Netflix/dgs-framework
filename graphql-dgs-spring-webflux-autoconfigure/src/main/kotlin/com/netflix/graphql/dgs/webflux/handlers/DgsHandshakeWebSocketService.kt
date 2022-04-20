@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.webflux.handlers
 
 import com.netflix.graphql.dgs.transports.websockets.GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL
+import com.netflix.graphql.dgs.transports.websockets.GRAPHQL_TRANSPORT_WS_PROTOCOL
 import org.slf4j.LoggerFactory
 import org.springframework.web.reactive.socket.WebSocketHandler
 import org.springframework.web.reactive.socket.server.RequestUpgradeStrategy
@@ -37,7 +38,7 @@ class DgsHandshakeWebSocketService : HandshakeWebSocketService {
         val protocols = headers[SEC_WEBSOCKET_PROTOCOL]
 
         if (protocols.isNullOrEmpty()) {
-            request = request.mutate().header(SEC_WEBSOCKET_PROTOCOL, GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL).build()
+            request = request.mutate().header(SEC_WEBSOCKET_PROTOCOL, GRAPHQL_TRANSPORT_WS_PROTOCOL).build()
             newExchange = newExchange.mutate().request(request).build()
         }
 

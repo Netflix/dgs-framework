@@ -23,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = [DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, ReactiveServer::class]
+    classes = [DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, ReactiveServer::class],
+    properties = ["spring.main.web-application-type=reactive"]
 )
 class ReactiveGraphqlOverHttpTest : GraphqlOverHttpTest()

@@ -21,17 +21,29 @@ import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsMutation
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.DgsSubscription
+import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
+import com.netflix.graphql.dgs.webflux.autoconfiguration.DgsWebFluxAutoConfiguration
 import com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcAutoConfiguration
 import org.reactivestreams.Publisher
+import org.springframework.boot.WebApplicationType
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration
+import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.boot.runApplication
+import org.springframework.boot.web.embedded.netty.NettyReactiveWebServerFactory
+import org.springframework.boot.web.reactive.server.ReactiveWebServerFactory
+import org.springframework.context.annotation.Bean
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
+
 @SpringBootApplication(
-    exclude = [DgsWebMvcAutoConfiguration::class],
-    scanBasePackages = ["com.netflix.graphql.dgs.transports.websockets.tests.reactive"]
+    exclude = [DgsWebMvcAutoConfiguration::class, WebMvcAutoConfiguration::class],
+    scanBasePackages = ["com.netflix.graphql.dgs.transports.websockets.tests.reactive"],
 )
+@ImportAutoConfiguration(classes = [DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, WebFluxAutoConfiguration::class])
 open class ReactiveServer {
     @DgsComponent
     class ReactiveHelloWorldDataFetcher {
@@ -55,8 +67,14 @@ open class ReactiveServer {
             return Flux.fromIterable(listOf("Hi", "Bonjour", "Hola", "Ciao", "Zdravo"))
         }
     }
+
+    @Bean
+    open fun reactiveWebServerFactory(): ReactiveWebServerFactory? {
+        return NettyReactiveWebServerFactory()
+    }
 }
 
 fun main(args: Array<String>) {
+
     runApplication<ReactiveServer>(*args)
 }

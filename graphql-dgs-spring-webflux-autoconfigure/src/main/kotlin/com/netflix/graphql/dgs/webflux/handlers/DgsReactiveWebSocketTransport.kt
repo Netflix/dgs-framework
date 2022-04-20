@@ -60,8 +60,9 @@ class DgsReactiveWebSocketTransport(
     override fun getSubProtocols(): List<String> = listOf(GRAPHQL_TRANSPORT_WS_PROTOCOL)
 
     override fun handle(webSocketSession: WebSocketSession): Mono<Void> {
-
+        logger.debug("Handling WebSocketSession: {}", webSocketSession)
         val handshakeInfo: HandshakeInfo = webSocketSession.handshakeInfo
+        logger.debug("handshakeInfo : {}", handshakeInfo)
 
         // Session state
         val connectionInitPayloadRef = AtomicReference<Map<String, Any>>()
@@ -78,15 +79,17 @@ class DgsReactiveWebSocketTransport(
                         MimeTypeUtils.APPLICATION_JSON,
                         null
                     ) as GraphQLWebsocketMessage
+                    logger.debug("message type: {}", message.type)
 
                     when (message) {
                         is GraphQLWebsocketMessage.ConnectionInitMessage -> {
-                            if (!connectionInitPayloadRef.compareAndSet(null, message.payload)) {
+                            if (!connectionInitPayloadRef.compareAndSet(null, message.payload ?: mapOf())) {
                                 webSocketSession.close(CloseCode.TooManyInitialisationRequests.toCloseStatus())
                                     .thenMany(Mono.empty())
                             } else {
                                 try {
                                     webSocketInterceptor?.connectionInitialization(message.payload)
+                                    logger.debug("connection ack")
                                     Flux.just(
                                         toWebsocketMessage(
                                             GraphQLWebsocketMessage.ConnectionAckMessage(), webSocketSession
@@ -112,7 +115,10 @@ class DgsReactiveWebSocketTransport(
                             Flux.empty()
                         }
                         is GraphQLWebsocketMessage.SubscribeMessage -> {
+                            logger.debug("subscribe message: {}", message.payload)
+
                             if (connectionInitPayloadRef.get() == null) {
+                                logger.debug("connectionInitPayloadRef is null")
                                 webSocketSession.close(CloseCode.Unauthorized.toCloseStatus()).thenMany(Mono.empty())
                             } else {
                                 dgsReactiveQueryExecutor.execute(
@@ -126,7 +132,12 @@ class DgsReactiveWebSocketTransport(
                                     .flatMapMany { executionResult ->
                                         handleResponse(webSocketSession, message.id, subscriptions, executionResult)
                                     }
-                                    .doOnTerminate { subscriptions.remove(message.id) }
+                                    .doOnNext {
+                                        logger.debug("response: {}", it)
+                                    }
+                                    .doOnTerminate {
+                                        subscriptions.remove(message.id)
+                                    }
                             }
                         }
 
@@ -142,6 +153,11 @@ class DgsReactiveWebSocketTransport(
 
                         else -> webSocketSession.close(CloseCode.BadRequest.toCloseStatus()).thenMany(Mono.empty())
                     }
+                }.doOnComplete {
+                    logger.debug("WebSocket session {} closed", webSocketSession.id)
+                }.doOnNext {
+                    logger.debug("doOnNext", webSocketSession.id)
+
                 }
         )
     }
@@ -168,12 +184,15 @@ class DgsReactiveWebSocketTransport(
         if (logger.isDebugEnabled) {
             logger.debug(
                 "Execution result ready" +
-                    (if (!CollectionUtils.isEmpty(executionResult.errors)) " with errors: " + executionResult.errors else "") +
-                    "."
+                        (if (!CollectionUtils.isEmpty(executionResult.errors)) " with errors: " + executionResult.errors else "") +
+                        "."
             )
         }
         val responseFlux: Flux<Map<String, Any>> = if ((executionResult.getData() as Any) is Publisher<*>) {
             // Subscription
+            if (logger.isDebugEnabled) {
+                logger.debug("Subscription")
+            }
             Flux.from(executionResult.getData() as Publisher<ExecutionResult>)
                 .map { obj: ExecutionResult -> obj.toSpecification() }
                 .doOnSubscribe { subscription: Subscription ->
@@ -184,11 +203,17 @@ class DgsReactiveWebSocketTransport(
                 }
         } else {
             // Single response (query or mutation) that may contain errors
+            if (logger.isDebugEnabled) {
+                logger.debug("Single response (query or mutation) that may contain errors")
+            }
             Flux.just(executionResult.getData())
         }
         return responseFlux
             .map {
                 val next = GraphQLWebsocketMessage.NextMessage(payload = executionResult, id = id)
+                if (logger.isDebugEnabled) {
+                    logger.debug("next")
+                }
                 toWebsocketMessage(next, session)
             }
             .onErrorResume { ex: Throwable? ->

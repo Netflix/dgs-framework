@@ -19,10 +19,13 @@ package com.netflix.graphql.dgs.transports.websockets.tests.reactive
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
 import com.netflix.graphql.dgs.transports.websockets.tests.GraphqlOverWebSocketTest
 import com.netflix.graphql.dgs.webflux.autoconfiguration.DgsWebFluxAutoConfiguration
+import org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.web.reactive.config.EnableWebFlux
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = [DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, ReactiveServer::class]
+    classes = [DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, ReactiveServer::class, WebFluxAutoConfiguration::class],
+    properties = ["spring.main.web-application-type=reactive"]
 )
 class ReactiveGraphqlOverWebSocketTest : GraphqlOverWebSocketTest()

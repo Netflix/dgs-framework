@@ -27,7 +27,9 @@ import kotlinx.coroutines.flow.toList
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
 import org.springframework.boot.web.server.LocalServerPort
+import java.util.concurrent.TimeUnit
 
 abstract class GraphqlOverWebSocketTest {
     @LocalServerPort
@@ -51,18 +53,21 @@ abstract class GraphqlOverWebSocketTest {
     }
 
     @Test
+    @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
     fun queryOverWebSocket() = runTest {
 
         assertEquals("Hello World!", apolloClient.query(HelloQuery()).execute().data?.hello)
     }
 
     @Test
+    @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
     fun mutationOverWebSocket() = runTest {
 
         assertEquals("Hello Mutation!", apolloClient.mutation(SetHelloMutation()).execute().data?.hello)
     }
 
     @Test
+    @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
     fun subscriptionOverWebSocket() = runTest {
 
         val list = apolloClient.subscription(GreetingsSubscription())

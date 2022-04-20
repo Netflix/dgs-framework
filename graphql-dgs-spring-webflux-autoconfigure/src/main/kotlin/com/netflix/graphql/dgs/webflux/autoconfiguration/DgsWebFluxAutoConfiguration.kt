@@ -32,6 +32,7 @@ import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.transports.websockets.GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL
 import com.netflix.graphql.dgs.transports.websockets.GRAPHQL_TRANSPORT_WS_PROTOCOL
 import com.netflix.graphql.dgs.webflux.handlers.DefaultDgsWebfluxHttpHandler
+import com.netflix.graphql.dgs.webflux.handlers.DgsCompatibleWebsocketHandler
 import com.netflix.graphql.dgs.webflux.handlers.DgsHandshakeWebSocketService
 import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebSocketHandler
 import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebSocketTransport
@@ -63,6 +64,7 @@ import org.springframework.web.reactive.function.server.RequestPredicates.accept
 import org.springframework.web.reactive.function.server.RequestPredicates.headers
 import org.springframework.web.reactive.function.server.RouterFunction
 import org.springframework.web.reactive.function.server.RouterFunctions
+import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.ServerResponse.ok
 import org.springframework.web.reactive.function.server.ServerResponse.permanentRedirect
@@ -76,6 +78,7 @@ import reactor.core.publisher.Mono
 import reactor.netty.http.server.WebsocketServerSpec
 import java.net.URI
 import java.util.*
+import java.util.function.Predicate
 import kotlin.streams.toList
 
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
@@ -168,14 +171,19 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     }
 
     @Bean
-    open fun dgsGraphQlRouter(dgsWebfluxHttpHandler: DgsWebfluxHttpHandler): RouterFunction<ServerResponse> {
+    open fun dgsGraphQlRouter(
+        dgsWebfluxHttpHandler: DgsWebfluxHttpHandler
+    ): RouterFunction<ServerResponse> {
         return RouterFunctions.route()
             .POST(
                 configProps.path,
                 accept(
                     MediaType.APPLICATION_JSON,
                     MediaType.valueOf("application/graphql")
-                ).and(headers { headers -> headers.firstHeader("Connection")?.lowercase() != "upgrade" }),
+                ).and(headers { headers ->
+                    val connection = headers.firstHeader("Connection") ?: headers.firstHeader("connection")
+                    connection?.lowercase() != "upgrade"
+                }),
                 dgsWebfluxHttpHandler::graphql
             ).build()
     }
@@ -216,18 +224,20 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     @Bean
     open fun websocketHandlerMapping(
         @Qualifier(GRAPHQL_TRANSPORT_WS_PROTOCOL) graphqlWs: WebSocketHandler,
-        @Qualifier(GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL) subTransWebsocket: WebSocketHandler
-    ): SimpleUrlHandlerMapping {
+        @Qualifier(GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL) subTransWebsocket: WebSocketHandler,
+
+        ): SimpleUrlHandlerMapping {
         val simpleUrlHandlerMapping =
             SimpleUrlHandlerMapping(
                 mapOf(
                     "/subscriptions" to subTransWebsocket,
-                    "/graphql" to graphqlWs
+                    configProps.websocket.path to graphqlWs
                 )
             )
         simpleUrlHandlerMapping.order = 1
         return simpleUrlHandlerMapping
     }
+
 
     @Bean
     open fun webSocketService(): WebSocketService {

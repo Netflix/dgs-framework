@@ -16,7 +16,7 @@
 
 plugins {
     id("com.apollographql.apollo3").version("3.2.1")
-    id ("com.netflix.dgs.codegen").version("5.1.17")
+    id("com.netflix.dgs.codegen").version("5.1.17")
 }
 dependencies {
     implementation(project(":graphql-dgs"))
@@ -34,7 +34,6 @@ dependencies {
 }
 apollo {
     packageName.set("com.example.client")
-
 }
 
 tasks.withType<com.netflix.graphql.dgs.codegen.gradle.GenerateJavaTask> {
