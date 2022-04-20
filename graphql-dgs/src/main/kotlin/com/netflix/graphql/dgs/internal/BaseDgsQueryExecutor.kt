@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.internal
 
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.jayway.jsonpath.Configuration
@@ -31,10 +32,10 @@ import com.netflix.graphql.types.errors.TypedGraphQLError
 import graphql.*
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
-import graphql.execution.SubscriptionExecutionStrategy
-import graphql.execution.instrumentation.ChainedInstrumentation
+import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLSchema
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.util.StringUtils
 import java.util.*
@@ -42,12 +43,12 @@ import java.util.concurrent.CompletableFuture
 
 object BaseDgsQueryExecutor {
 
-    private val logger = LoggerFactory.getLogger(BaseDgsQueryExecutor::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(BaseDgsQueryExecutor::class.java)
 
-    val objectMapper = jacksonObjectMapper()
+    val objectMapper: ObjectMapper = jacksonObjectMapper()
         .registerModule(JavaTimeModule())
         .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
-        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)!!
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
     val parseContext: ParseContext =
         JsonPath.using(
@@ -65,12 +66,12 @@ object BaseDgsQueryExecutor {
         dgsContext: DgsContext,
         graphQLSchema: GraphQLSchema,
         dataLoaderProvider: DgsDataLoaderProvider,
-        chainedInstrumentation: ChainedInstrumentation,
+        instrumentation: Instrumentation?,
         queryExecutionStrategy: ExecutionStrategy,
         mutationExecutionStrategy: ExecutionStrategy,
         idProvider: Optional<ExecutionIdProvider>,
-        preparsedDocumentProvider: PreparsedDocumentProvider,
-    ): CompletableFuture<out ExecutionResult> {
+        preparsedDocumentProvider: PreparsedDocumentProvider?,
+    ): CompletableFuture<ExecutionResult> {
 
         if (!StringUtils.hasText(query)) {
             return CompletableFuture.completedFuture(
@@ -88,16 +89,14 @@ object BaseDgsQueryExecutor {
 
         val graphQLBuilder =
             GraphQL.newGraphQL(graphQLSchema)
-                .preparsedDocumentProvider(preparsedDocumentProvider)
-                .instrumentation(chainedInstrumentation)
                 .queryExecutionStrategy(queryExecutionStrategy)
                 .mutationExecutionStrategy(mutationExecutionStrategy)
-                .subscriptionExecutionStrategy(SubscriptionExecutionStrategy())
 
-        if (idProvider.isPresent) {
-            graphQLBuilder.executionIdProvider(idProvider.get())
-        }
-        val graphQL = graphQLBuilder.build()
+        preparsedDocumentProvider?.let { graphQLBuilder.preparsedDocumentProvider(it) }
+        instrumentation?.let { graphQLBuilder.instrumentation(it) }
+        idProvider.ifPresent { graphQLBuilder.executionIdProvider(it) }
+
+        val graphQL: GraphQL = graphQLBuilder.build()
 
         val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier { dgsContext }
 
@@ -108,12 +107,8 @@ object BaseDgsQueryExecutor {
                 .operationName(operationName)
                 .variables(variables)
                 .dataLoaderRegistry(dataLoaderRegistry)
-                .context(dgsContext)
-                .graphQLContext { b -> b.of(DgsContext.GRAPHQL_CONTEXT_NAMESPACE_KEY, dgsContext) }
-
-        if (extensions != null) {
-            executionInputBuilder.extensions(extensions)
-        }
+                .graphQLContext(dgsContext)
+                .extensions(extensions.orEmpty())
 
         return try {
             graphQL.executeAsync(executionInputBuilder.build())

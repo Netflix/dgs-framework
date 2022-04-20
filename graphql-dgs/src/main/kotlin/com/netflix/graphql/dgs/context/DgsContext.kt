@@ -20,20 +20,22 @@ import com.netflix.graphql.dgs.internal.DgsRequestData
 import graphql.GraphQLContext
 import graphql.schema.DataFetchingEnvironment
 import org.dataloader.BatchLoaderEnvironment
+import java.util.function.Consumer
 
 /**
  * Context class that is created per request, and is added to both DataFetchingEnvironment and BatchLoaderEnvironment.
  * Custom data can be added by providing a [DgsCustomContextBuilder].
  */
-open class DgsContext(val customContext: Any? = null, val requestData: DgsRequestData?) {
+open class DgsContext(val customContext: Any? = null, val requestData: DgsRequestData?) : Consumer<GraphQLContext.Builder> {
 
     companion object {
 
-        const val GRAPHQL_CONTEXT_NAMESPACE_KEY = "netflix.graphql.dgs"
+        private const val GRAPHQL_CONTEXT_NAMESPACE_KEY = "netflix.graphql.dgs"
+        private const val CONTEXT_KEY = "$GRAPHQL_CONTEXT_NAMESPACE_KEY.context"
 
         @JvmStatic
-        fun getDgsContext(graphQLContext: GraphQLContext): DgsContext {
-            return graphQLContext.get(GRAPHQL_CONTEXT_NAMESPACE_KEY)
+        fun from(dfe: DataFetchingEnvironment): DgsContext {
+            return dfe.graphQlContext[CONTEXT_KEY]
         }
 
         @JvmStatic
@@ -47,7 +49,7 @@ open class DgsContext(val customContext: Any? = null, val requestData: DgsReques
 
         @JvmStatic
         fun <T> getCustomContext(dataFetchingEnvironment: DataFetchingEnvironment): T {
-            val dgsContext = dataFetchingEnvironment.getContext<DgsContext>()
+            val dgsContext = from(dataFetchingEnvironment)
             return getCustomContext(dgsContext)
         }
 
@@ -59,7 +61,7 @@ open class DgsContext(val customContext: Any? = null, val requestData: DgsReques
 
         @JvmStatic
         fun getRequestData(dataFetchingEnvironment: DataFetchingEnvironment): DgsRequestData? {
-            val dgsContext = dataFetchingEnvironment.getContext<DgsContext>()
+            val dgsContext = from(dataFetchingEnvironment)
             return dgsContext.requestData
         }
 
@@ -68,5 +70,9 @@ open class DgsContext(val customContext: Any? = null, val requestData: DgsReques
             val dgsContext = batchLoaderEnvironment.getContext<DgsContext>()
             return dgsContext.requestData
         }
+    }
+
+    override fun accept(contextBuilder: GraphQLContext.Builder) {
+        contextBuilder.put(CONTEXT_KEY, this)
     }
 }

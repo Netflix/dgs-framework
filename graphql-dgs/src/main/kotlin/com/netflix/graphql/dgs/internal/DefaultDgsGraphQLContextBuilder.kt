@@ -37,7 +37,7 @@ open class DefaultDgsGraphQLContextBuilder(
     }
 
     private fun buildDgsContext(dgsRequestData: DgsWebMvcRequestData?): DgsContext {
-        @Suppress("DEPRECATION") val customContext = when {
+        val customContext = when {
             dgsCustomContextBuilderWithRequest.isPresent -> dgsCustomContextBuilderWithRequest.get().build(
                 dgsRequestData?.extensions ?: mapOf(),
                 HttpHeaders.readOnlyHttpHeaders(

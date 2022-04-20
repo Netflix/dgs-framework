@@ -24,7 +24,7 @@ import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.types.errors.ErrorType
 import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
-import graphql.execution.instrumentation.ChainedInstrumentation
+import graphql.execution.instrumentation.SimpleInstrumentation
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -140,14 +140,14 @@ internal class DefaultDgsQueryExecutorTest {
         )
 
         dgsQueryExecutor = DefaultDgsQueryExecutor(
-            schema,
-            provider,
-            dgsDataLoaderProvider,
-            DefaultDgsGraphQLContextBuilder(Optional.empty()),
-            ChainedInstrumentation(),
-            AsyncExecutionStrategy(),
-            AsyncSerialExecutionStrategy(),
-            Optional.empty()
+            defaultSchema = schema,
+            schemaProvider = provider,
+            dataLoaderProvider = dgsDataLoaderProvider,
+            contextBuilder = DefaultDgsGraphQLContextBuilder(Optional.empty()),
+            instrumentation = SimpleInstrumentation.INSTANCE,
+            queryExecutionStrategy = AsyncExecutionStrategy(),
+            mutationExecutionStrategy = AsyncSerialExecutionStrategy(),
+            idProvider = Optional.empty()
         )
     }
 

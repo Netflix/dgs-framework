@@ -25,14 +25,13 @@ import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
-import com.netflix.graphql.dgs.internal.DgsNoOpPreparsedDocumentProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.QueryValueCustomizer
 import graphql.ExecutionResult
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
 import graphql.execution.NonNullableFieldWasNullError
-import graphql.execution.instrumentation.ChainedInstrumentation
+import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLSchema
 import org.slf4j.Logger
@@ -49,12 +48,12 @@ class DefaultDgsReactiveQueryExecutor(
     private val schemaProvider: DgsSchemaProvider,
     private val dataLoaderProvider: DgsDataLoaderProvider,
     private val contextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
-    private val chainedInstrumentation: ChainedInstrumentation,
+    private val instrumentation: Instrumentation?,
     private val queryExecutionStrategy: ExecutionStrategy,
     private val mutationExecutionStrategy: ExecutionStrategy,
     private val idProvider: Optional<ExecutionIdProvider>,
     private val reloadIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator = DefaultDgsQueryExecutor.ReloadSchemaIndicator { false },
-    private val preparsedDocumentProvider: PreparsedDocumentProvider = DgsNoOpPreparsedDocumentProvider,
+    private val preparsedDocumentProvider: PreparsedDocumentProvider? = null,
     private val queryValueCustomizer: QueryValueCustomizer = QueryValueCustomizer { query -> query }
 ) : com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor {
 
@@ -80,18 +79,18 @@ class DefaultDgsReactiveQueryExecutor(
             .flatMap { (gqlSchema, dgsContext) ->
                 Mono.fromCompletionStage(
                     BaseDgsQueryExecutor.baseExecute(
-                        queryValueCustomizer.apply(query),
-                        variables,
-                        extensions,
-                        operationName,
-                        dgsContext,
-                        gqlSchema,
-                        dataLoaderProvider,
-                        chainedInstrumentation,
-                        queryExecutionStrategy,
-                        mutationExecutionStrategy,
-                        idProvider,
-                        preparsedDocumentProvider
+                        query = queryValueCustomizer.apply(query),
+                        variables = variables,
+                        extensions = extensions,
+                        operationName = operationName,
+                        dgsContext = dgsContext,
+                        graphQLSchema = gqlSchema,
+                        dataLoaderProvider = dataLoaderProvider,
+                        instrumentation = instrumentation,
+                        queryExecutionStrategy = queryExecutionStrategy,
+                        mutationExecutionStrategy = mutationExecutionStrategy,
+                        idProvider = idProvider,
+                        preparsedDocumentProvider = preparsedDocumentProvider
                     )
                 ).doOnEach { result ->
                     if (result.hasValue()) {

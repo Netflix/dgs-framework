@@ -42,9 +42,11 @@ import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
+import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.introspection.IntrospectionQuery
 import graphql.schema.GraphQLSchema
+import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -69,6 +71,7 @@ import reactor.core.publisher.Mono
 import reactor.netty.http.server.WebsocketServerSpec
 import java.net.URI
 import java.util.*
+import kotlin.streams.toList
 
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @Configuration
@@ -83,13 +86,13 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
         dgsDataLoaderProvider: DgsDataLoaderProvider,
         dgsContextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
         dataFetcherExceptionHandler: DataFetcherExceptionHandler,
-        chainedInstrumentation: ChainedInstrumentation,
+        instrumentations: ObjectProvider<Instrumentation>,
         environment: Environment,
         @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
         @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
         idProvider: Optional<ExecutionIdProvider>,
         reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator,
-        preparsedDocumentProvider: PreparsedDocumentProvider,
+        preparsedDocumentProvider: ObjectProvider<PreparsedDocumentProvider>,
         queryValueCustomizer: QueryValueCustomizer
     ): DgsReactiveQueryExecutor {
 
@@ -97,18 +100,25 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
             providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
         val mutationExecutionStrategy =
             providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
+        val instrumentationImpls = instrumentations.orderedStream().toList()
+        val instrumentation: Instrumentation? = when {
+            instrumentationImpls.size == 1 -> instrumentationImpls.single()
+            instrumentationImpls.isNotEmpty() -> ChainedInstrumentation(instrumentationImpls)
+            else -> null
+        }
+
         return DefaultDgsReactiveQueryExecutor(
-            schema,
-            schemaProvider,
-            dgsDataLoaderProvider,
-            dgsContextBuilder,
-            chainedInstrumentation,
-            queryExecutionStrategy,
-            mutationExecutionStrategy,
-            idProvider,
-            reloadSchemaIndicator,
-            preparsedDocumentProvider,
-            queryValueCustomizer
+            defaultSchema = schema,
+            schemaProvider = schemaProvider,
+            dataLoaderProvider = dgsDataLoaderProvider,
+            contextBuilder = dgsContextBuilder,
+            instrumentation = instrumentation,
+            queryExecutionStrategy = queryExecutionStrategy,
+            mutationExecutionStrategy = mutationExecutionStrategy,
+            idProvider = idProvider,
+            reloadIndicator = reloadSchemaIndicator,
+            preparsedDocumentProvider = preparsedDocumentProvider.ifAvailable,
+            queryValueCustomizer = queryValueCustomizer
         )
     }
 
