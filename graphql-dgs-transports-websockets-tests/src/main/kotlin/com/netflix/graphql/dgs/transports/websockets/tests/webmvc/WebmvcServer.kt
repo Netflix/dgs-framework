@@ -21,37 +21,43 @@ import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsMutation
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.DgsSubscription
+import com.netflix.graphql.dgs.webflux.autoconfiguration.DgsWebFluxAutoConfiguration
 import org.reactivestreams.Publisher
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import reactor.core.publisher.Flux
 
-@SpringBootApplication(scanBasePackages = ["com.netflix.graphql.dgs.transports.websockets.tests.webmvc"])
-open class WebmvcServer
+@SpringBootApplication(
+    scanBasePackages = ["com.netflix.graphql.dgs.transports.websockets.tests.webmvc"],
+    exclude = [DgsWebFluxAutoConfiguration::class]
+)
+open class WebmvcServer {
+    @DgsComponent
+    class HelloWorldDataFetcher {
+
+        @DgsQuery(field = DgsConstants.QUERY.Hello)
+        fun helloWorld(): String {
+            return "Hello World!"
+        }
+
+        @DgsMutation(field = DgsConstants.MUTATION.Hello)
+        fun helloMutation(): String {
+            return "Hello Mutation!"
+        }
+    }
+
+    @DgsComponent
+    class GreetingsSubscription {
+
+        @DgsSubscription(field = DgsConstants.SUBSCRIPTION.Greetings)
+        fun greetings(): Publisher<String> {
+            return Flux.fromIterable(listOf("Hi", "Bonjour", "Hola", "Ciao", "Zdravo"))
+        }
+    }
+}
 
 fun main(args: Array<String>) {
     runApplication<WebmvcServer>(*args)
 }
 
-@DgsComponent
-class HelloWorldDataFetcher {
 
-    @DgsQuery(field = DgsConstants.QUERY.Hello)
-    fun helloWorld(): String {
-        return "Hello World!"
-    }
-
-    @DgsMutation(field = DgsConstants.MUTATION.Hello)
-    fun helloMutation(): String {
-        return "Hello Mutation!"
-    }
-}
-
-@DgsComponent
-class GreetingsSubscription {
-
-    @DgsSubscription(field = DgsConstants.SUBSCRIPTION.Greetings)
-    fun greetings(): Publisher<String> {
-        return Flux.fromIterable(listOf("Hi", "Bonjour", "Hola", "Ciao", "Zdravo"))
-    }
-}

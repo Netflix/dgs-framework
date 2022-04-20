@@ -21,39 +21,45 @@ import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsMutation
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.DgsSubscription
-import com.netflix.graphql.dgs.transports.websockets.tests.webmvc.WebmvcServer
+import com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcAutoConfiguration
 import org.reactivestreams.Publisher
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-@SpringBootApplication(scanBasePackages = ["com.netflix.graphql.dgs.transports.websockets.tests.reactive"])
-open class ReactiveServer
+
+@SpringBootApplication(
+    exclude = [DgsWebMvcAutoConfiguration::class],
+    scanBasePackages = ["com.netflix.graphql.dgs.transports.websockets.tests.reactive"]
+)
+open class ReactiveServer {
+    @DgsComponent
+    class ReactiveHelloWorldDataFetcher {
+
+        @DgsQuery(field = DgsConstants.QUERY.Hello)
+        fun helloWorld(): Mono<String> {
+            return Mono.just("Hello World!")
+        }
+
+        @DgsMutation(field = DgsConstants.MUTATION.Hello)
+        fun helloMutation(): Mono<String> {
+            return Mono.just("Hello Mutation!")
+        }
+    }
+
+    @DgsComponent
+    class ReactiveGreetingsSubscription {
+
+        @DgsSubscription(field = DgsConstants.SUBSCRIPTION.Greetings)
+        fun greetings(): Publisher<String> {
+            return Flux.fromIterable(listOf("Hi", "Bonjour", "Hola", "Ciao", "Zdravo"))
+        }
+    }
+}
+
 
 fun main(args: Array<String>) {
-    runApplication<WebmvcServer>(*args)
+    runApplication<ReactiveServer>(*args)
 }
 
-@DgsComponent
-class ReactiveHelloWorldDataFetcher {
-
-    @DgsQuery(field = DgsConstants.QUERY.Hello)
-    fun helloWorld(): Mono<String> {
-        return Mono.just("Hello World!")
-    }
-
-    @DgsMutation(field = DgsConstants.MUTATION.Hello)
-    fun helloMutation(): Mono<String> {
-        return Mono.just("Hello Mutation!")
-    }
-}
-
-@DgsComponent
-class ReactiveGreetingsSubscription {
-
-    @DgsSubscription(field = DgsConstants.SUBSCRIPTION.Greetings)
-    fun greetings(): Publisher<String> {
-        return Flux.fromIterable(listOf("Hi", "Bonjour", "Hola", "Ciao", "Zdravo"))
-    }
-}

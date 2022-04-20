@@ -46,7 +46,7 @@ import javax.annotation.PostConstruct
  * <a href="https://github.com/enisdenjo/graphql-ws/blob/master/PROTOCOL.md">GraphQL Over WebSocket Protocol</a> and
  * for use in DGS framework.
  */
-class DgsWebsocketHandler(
+class DgsWebsocketTransport(
     private val dgsQueryExecutor: DgsQueryExecutor,
     private val webSocketInterceptor: WebSocketInterceptor? = null,
 ) :
@@ -60,7 +60,7 @@ class DgsWebsocketHandler(
         val timerTask = object : TimerTask() {
             override fun run() {
                 sessions.filter { !it.isOpen }
-                    .forEach(this@DgsWebsocketHandler::cleanupSubscriptionsForSession)
+                    .forEach(this@DgsWebsocketTransport::cleanupSubscriptionsForSession)
             }
         }
 
@@ -259,7 +259,7 @@ class DgsWebsocketHandler(
     }
 
     private companion object {
-        val logger = LoggerFactory.getLogger(DgsWebsocketHandler::class.java)
+        val logger = LoggerFactory.getLogger(DgsWebsocketTransport::class.java)
         val objectMapper = jacksonObjectMapper()
         val subProtocolList = listOf(GRAPHQL_TRANSPORT_WS_PROTOCOL)
     }

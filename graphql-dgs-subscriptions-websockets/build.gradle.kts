@@ -16,7 +16,6 @@
 
 dependencies {
     api(project(":graphql-dgs-subscription-types"))
-    api(project(":graphql-dgs-transports-websockets"))
 
     implementation(project(":graphql-dgs"))
     implementation("org.springframework.boot:spring-boot-autoconfigure")

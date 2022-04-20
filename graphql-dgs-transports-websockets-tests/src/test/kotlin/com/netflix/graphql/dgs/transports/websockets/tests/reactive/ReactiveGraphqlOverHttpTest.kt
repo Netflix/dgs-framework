@@ -16,13 +16,13 @@
 
 package com.netflix.graphql.dgs.transports.websockets.tests.reactive
 
+import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
 import com.netflix.graphql.dgs.transports.websockets.tests.GraphqlOverHttpTest
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import com.netflix.graphql.dgs.webflux.autoconfiguration.DgsWebFluxAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = [ReactiveServer::class]
+    classes = [DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, ReactiveServer::class]
 )
-@EnableAutoConfiguration
 class ReactiveGraphqlOverHttpTest : GraphqlOverHttpTest()

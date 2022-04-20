@@ -29,7 +29,7 @@ import org.springframework.boot.web.server.LocalServerPort
 
 abstract class GraphqlOverHttpTest {
     @LocalServerPort
-    private lateinit var port: Integer
+    protected lateinit var port: Integer
 
     private lateinit var apolloClient: ApolloClient
 

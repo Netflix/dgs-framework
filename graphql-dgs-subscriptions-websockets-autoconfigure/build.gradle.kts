@@ -16,6 +16,7 @@
 
 dependencies {
     implementation(project(":graphql-dgs"))
+    implementation(project(":graphql-dgs-spring-webmvc"))
     implementation(project(":graphql-dgs-subscriptions-websockets"))
 
     implementation("org.springframework.boot:spring-boot-autoconfigure")

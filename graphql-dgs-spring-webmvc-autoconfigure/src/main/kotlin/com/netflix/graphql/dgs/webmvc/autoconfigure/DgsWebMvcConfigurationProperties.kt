@@ -32,7 +32,8 @@ data class DgsWebMvcConfigurationProperties(
     /** Path to the GraphQL endpoint without trailing slash. */
     @DefaultValue("/graphql") var path: String = "/graphql",
     @NestedConfigurationProperty var graphiql: DgsGraphiQLConfigurationProperties = DgsGraphiQLConfigurationProperties(),
-    @NestedConfigurationProperty var schemaJson: DgsSchemaJsonConfigurationProperties = DgsSchemaJsonConfigurationProperties()
+    @NestedConfigurationProperty var schemaJson: DgsSchemaJsonConfigurationProperties = DgsSchemaJsonConfigurationProperties(),
+    @NestedConfigurationProperty var transports: DgsTransportsConfigurationProperties = DgsTransportsConfigurationProperties()
 ) {
     /**
      * Configuration properties for the GraphiQL endpoint.
@@ -41,12 +42,31 @@ data class DgsWebMvcConfigurationProperties(
         /** Path to the GraphiQL endpoint without trailing slash. */
         @DefaultValue("/graphiql") var path: String = "/graphiql"
     )
+
     /**
      * Configuration properties for the schema-json endpoint.
      */
     data class DgsSchemaJsonConfigurationProperties(
         /** Path to the schema-json endpoint without trailing slash. */
         @DefaultValue("/schema.json") var path: String = "/schema.json"
+    )
+
+    /**
+     * Configuration properties for the Graphql Server Transport.
+     */
+    data class DgsTransportsConfigurationProperties(
+        /** GraphQL over HTTP */
+        var http: DgsTransportConfigurationProperties = DgsTransportConfigurationProperties(true),
+        /** GraphQL over Websocket */
+        var websocket: DgsTransportConfigurationProperties = DgsTransportConfigurationProperties(false),
+    )
+
+    /**
+     * Configuration properties for the Graphql Server Transport.
+     */
+    data class DgsTransportConfigurationProperties(
+        /** GraphQL over HTTP */
+        @DefaultValue("true") var enabled: Boolean = true,
     )
 
     @PostConstruct

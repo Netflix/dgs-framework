@@ -21,9 +21,11 @@ plugins {
 dependencies {
     implementation(project(":graphql-dgs"))
     implementation(project(":graphql-dgs-spring-boot-starter"))
+    implementation(project(":graphql-dgs-webflux-starter"))
 
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
 
     implementation("com.apollographql.apollo3:apollo-runtime:3.2.1")

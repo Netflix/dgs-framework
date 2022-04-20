@@ -29,6 +29,7 @@ import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithReque
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveQueryExecutor
+import com.netflix.graphql.dgs.transports.websockets.GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL
 import com.netflix.graphql.dgs.transports.websockets.GRAPHQL_TRANSPORT_WS_PROTOCOL
 import com.netflix.graphql.dgs.webflux.handlers.DefaultDgsWebfluxHttpHandler
 import com.netflix.graphql.dgs.webflux.handlers.DgsHandshakeWebSocketService
@@ -67,6 +68,7 @@ import org.springframework.web.reactive.function.server.ServerResponse.ok
 import org.springframework.web.reactive.function.server.ServerResponse.permanentRedirect
 import org.springframework.web.reactive.function.server.json
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping
+import org.springframework.web.reactive.socket.WebSocketHandler
 import org.springframework.web.reactive.socket.server.WebSocketService
 import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter
 import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyRequestUpgradeStrategy
@@ -200,12 +202,27 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     }
 
     @Bean
-    open fun websocketHandlerMapping(dgsReactiveQueryExecutor: DgsReactiveQueryExecutor): SimpleUrlHandlerMapping {
+    @Qualifier(GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL)
+    open fun graphqlSubscriptionWebsocketHandler(dgsReactiveQueryExecutor: DgsReactiveQueryExecutor): WebSocketHandler {
+        return DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor)
+    }
+
+    @Bean
+    @Qualifier(GRAPHQL_TRANSPORT_WS_PROTOCOL)
+    open fun graphqlOverWebsocketHandler(dgsReactiveQueryExecutor: DgsReactiveQueryExecutor): WebSocketHandler {
+        return DgsReactiveWebsocketTransport(dgsReactiveQueryExecutor)
+    }
+
+    @Bean
+    open fun websocketHandlerMapping(
+        @Qualifier(GRAPHQL_TRANSPORT_WS_PROTOCOL) graphqlWs: WebSocketHandler,
+        @Qualifier(GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL) subTransWebsocket: WebSocketHandler
+    ): SimpleUrlHandlerMapping {
         val simpleUrlHandlerMapping =
             SimpleUrlHandlerMapping(
                 mapOf(
-                    "/subscriptions" to DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor),
-                    "/graphql" to DgsReactiveWebsocketTransport(dgsReactiveQueryExecutor)
+                    "/subscriptions" to subTransWebsocket,
+                    "/graphql" to graphqlWs
                 )
             )
         simpleUrlHandlerMapping.order = 1

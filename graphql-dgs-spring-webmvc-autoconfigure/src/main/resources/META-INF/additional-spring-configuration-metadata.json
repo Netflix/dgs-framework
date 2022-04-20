@@ -11,6 +11,18 @@
       "type": "java.lang.Boolean",
       "description": "Enables GraphiQL functionality.",
       "defaultValue": "true"
+    },
+    {
+      "name": "dgs.graphql.transports.http.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enables GraphQL over http transport.",
+      "defaultValue": "true"
+    },
+    {
+      "name": "dgs.graphql.transports.websocket.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enables GraphQL over websocket transport.",
+      "defaultValue": "false"
     }
   ]
 }
