@@ -80,6 +80,9 @@
             ],
             "project": true
         },
+        "io.projectreactor:reactor-core": {
+            "locked": "3.4.10"
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.5.32"
         },
@@ -368,6 +371,9 @@
             ],
             "project": true
         },
+        "io.projectreactor:reactor-core": {
+            "locked": "3.4.10"
+        },
         "net.datafaker:datafaker": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -516,6 +522,9 @@
         "io.mockk:mockk": {
             "locked": "1.12.3"
         },
+        "io.projectreactor:reactor-core": {
+            "locked": "3.4.10"
+        },
         "io.projectreactor:reactor-test": {
             "locked": "3.4.10"
         },
@@ -535,6 +544,9 @@
             "locked": "2.3.12.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "2.3.12.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-starter-tomcat": {
             "locked": "2.3.12.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
@@ -626,6 +638,9 @@
         "io.mockk:mockk": {
             "locked": "1.12.3"
         },
+        "io.projectreactor:reactor-core": {
+            "locked": "3.4.10"
+        },
         "io.projectreactor:reactor-test": {
             "locked": "3.4.10"
         },
@@ -675,6 +690,9 @@
             "locked": "2.3.12.RELEASE"
         },
         "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "2.3.12.RELEASE"
+        },
+        "org.springframework.boot:spring-boot-starter-tomcat": {
             "locked": "2.3.12.RELEASE"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
