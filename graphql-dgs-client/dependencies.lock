@@ -663,6 +663,9 @@
             "locked": "1.12.3"
         },
         "io.projectreactor:reactor-core": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
+            ],
             "locked": "3.4.10"
         },
         "io.projectreactor:reactor-test": {

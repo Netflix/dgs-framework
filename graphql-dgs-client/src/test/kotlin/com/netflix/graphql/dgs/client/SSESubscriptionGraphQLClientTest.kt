@@ -27,7 +27,6 @@ import graphql.language.TypeName
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
@@ -42,11 +41,8 @@ import reactor.test.StepVerifier
 )
 internal class SSESubscriptionGraphQLClientTest {
 
-    val logger = LoggerFactory.getLogger(SSESubscriptionGraphQLClient::class.java)
-
-    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
     @LocalServerPort
-    lateinit var port: Integer
+    var port: Int? = null
 
     @Test
     fun `A successful subscription should publish ticks`() {
