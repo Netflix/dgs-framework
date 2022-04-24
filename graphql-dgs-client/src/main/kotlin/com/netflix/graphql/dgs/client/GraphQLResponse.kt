@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory
 data class GraphQLResponse(val json: String, val headers: Map<String, List<String>>) {
 
     /**
-     * A JsonPath DocumentContext. Typically only used internally.
+     * A JsonPath DocumentContext. Typically, only used internally.
      */
     val parsed: DocumentContext = JsonPath.using(jsonPathConfig).parse(json)
 

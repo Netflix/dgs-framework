@@ -49,16 +49,16 @@ allprojects {
     // and suggest an upgrade. The only exception currently are those defined
     // in buildSrc, most likley because the variables are used in plugins as well
     // as dependencies. e.g. KOTLIN_VERSION
-    extra["sb.version"] = "2.3.12.RELEASE"
-    val SB_VERSION = extra["sb.version"] as String
+    extra["sb.version"] = "2.6.7"
+    val springBootVersion = extra["sb.version"] as String
 
     dependencyRecommendations {
         mavenBom(mapOf("module" to "org.jetbrains.kotlin:kotlin-bom:${Versions.KOTLIN_VERSION}"))
-        mavenBom(mapOf("module" to "org.springframework:spring-framework-bom:5.2.21.RELEASE"))
-        mavenBom(mapOf("module" to "org.springframework.boot:spring-boot-dependencies:${SB_VERSION}"))
-        mavenBom(mapOf("module" to "org.springframework.security:spring-security-bom:5.3.12.RELEASE"))
-        mavenBom(mapOf("module" to "org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR12"))
-        mavenBom(mapOf("module" to "com.fasterxml.jackson:jackson-bom:2.12.5"))
+        mavenBom(mapOf("module" to "org.springframework:spring-framework-bom:5.3.18"))
+        mavenBom(mapOf("module" to "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
+        mavenBom(mapOf("module" to "org.springframework.security:spring-security-bom:5.6.3"))
+        mavenBom(mapOf("module" to "org.springframework.cloud:spring-cloud-dependencies:2021.0.1"))
+        mavenBom(mapOf("module" to "com.fasterxml.jackson:jackson-bom:2.13.2"))
     }
 }
 
@@ -91,7 +91,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         }
     }
 
-    val SB_VERSION = extra["sb.version"] as String
+    val springBootVersion = extra["sb.version"] as String
     dependencies {
         // Apply the BOM to applicable subprojects.
         api(platform(project(":graphql-dgs-platform")))
@@ -100,9 +100,9 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         // Produce Config Metadata for properties used in Spring Boot
         annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
         // Speed up processing of AutoConfig's produced by Spring Boot for Kotlin
-        kapt("org.springframework.boot:spring-boot-autoconfigure-processor:${SB_VERSION}")
+        kapt("org.springframework.boot:spring-boot-autoconfigure-processor:${springBootVersion}")
         // Produce Config Metadata for properties used in Spring Boot for Kotlin
-        kapt("org.springframework.boot:spring-boot-configuration-processor:${SB_VERSION}")
+        kapt("org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test") {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
@@ -130,7 +130,14 @@ configure(subprojects.filterNot { it in internalBomModules }) {
 
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
-            freeCompilerArgs += "-Xjvm-default=enable"
+            /*
+             * Prior to Kotlin 1.6 we had `jvm-default=enable`, 1.6.20 adds `-Xjvm-default=all-compatibility`
+             *   > .. generate compatibility stubs in the DefaultImpls classes.
+             *   > Compatibility stubs could be useful for library and runtime authors to keep backward binary
+             *   > compatibility for existing clients compiled against previous library versions.
+             * Ref. https://kotlinlang.org/docs/kotlin-reference.pdf
+             */
+            freeCompilerArgs = freeCompilerArgs + "-Xjvm-default=all-compatibility"
             jvmTarget = "1.8"
         }
     }
