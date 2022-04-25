@@ -51,7 +51,8 @@ open class DgsExtendedScalarsAutoConfiguration {
                     return listOf(
                         ExtendedScalars.DateTime,
                         ExtendedScalars.Date,
-                        ExtendedScalars.Time
+                        ExtendedScalars.Time,
+                        ExtendedScalars.LocalTime
                     )
                 }
             }
