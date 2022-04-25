@@ -38,7 +38,7 @@
             "locked": "18.0"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
-            "locked": "17.0"
+            "locked": "18.0"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -317,7 +317,7 @@
             "locked": "18.0"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
-            "locked": "17.0"
+            "locked": "18.0"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -458,7 +458,7 @@
             "locked": "18.0"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
-            "locked": "17.0"
+            "locked": "18.0"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -637,7 +637,7 @@
             "locked": "18.0"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
-            "locked": "17.0"
+            "locked": "18.0"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
