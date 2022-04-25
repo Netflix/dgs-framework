@@ -18,11 +18,14 @@ package com.netflix.graphql.dgs.example.shared;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.netflix.graphql.dgs.DgsQueryExecutor;
+import org.assertj.core.data.Percentage;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+@Disabled("The need of this test is questionable, since the concurrent execution of data fetchers is left to the graphql-java engine.")
 @ExampleSpringBootTest
 class ConcurrentDataFetcherTest {
 
@@ -35,7 +38,8 @@ class ConcurrentDataFetcherTest {
         DocumentContext documentContext = queryExecutor.executeAndGetDocumentContext("{concurrent1, concurrent2}");
         int ts1 = documentContext.read("data.concurrent1");
         int ts2 = documentContext.read("data.concurrent2");
-
-        assertThat(ts1).isGreaterThanOrEqualTo(ts2);
+        // you can't assume the order of execution of unrelated fields, in this case data.concurrent2 can be fetched
+        // before data.concurrent1 or vice versa.
+        assertThat(ts1).isCloseTo(ts2, Percentage.withPercentage(10.0));
     }
 }
