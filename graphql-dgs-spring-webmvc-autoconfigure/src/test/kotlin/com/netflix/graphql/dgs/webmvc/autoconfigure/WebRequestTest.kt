@@ -28,6 +28,9 @@ import graphql.language.FieldDefinition
 import graphql.language.ObjectTypeDefinition
 import graphql.language.TypeName
 import graphql.schema.idl.TypeDefinitionRegistry
+import org.hamcrest.CoreMatchers.containsString
+import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.hasItem
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -36,17 +39,25 @@ import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
+import org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration
 import java.util.*
 import javax.servlet.http.Cookie
 
 @SpringBootTest(
-    classes = [DgsWebMvcAutoConfiguration::class, DgsAutoConfiguration::class, WebRequestTest.ExampleImplementation::class, WebRequestTest.TestCustomContextBuilder::class],
+    classes = [
+        DgsWebMvcAutoConfiguration::class,
+        DgsAutoConfiguration::class,
+        DelegatingWebMvcConfiguration::class,
+        WebRequestTest.ExampleImplementation::class,
+        WebRequestTest.TestCustomContextBuilder::class
+    ],
     webEnvironment = SpringBootTest.WebEnvironment.MOCK
 )
 @AutoConfigureMockMvc
@@ -61,8 +72,8 @@ class WebRequestTest {
             MockMvcRequestBuilders.post("/graphql")
                 .content("""{"query": "{ usingWebRequest }" }""")
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingWebRequest": "localhost"}}"""))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.usingWebRequest").value("localhost"))
     }
 
     @Test
@@ -72,8 +83,8 @@ class WebRequestTest {
                 .content("""{"query": "{ usingHeader }" }""")
                 .header("myheader", "hello")
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingHeader": "hello"}}"""))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.usingHeader").value("hello"))
     }
 
     @Test
@@ -82,8 +93,8 @@ class WebRequestTest {
             MockMvcRequestBuilders.post("/graphql")
                 .content("""{"query": "{ usingHeader }" }""")
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingHeader": "default header"}}"""))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.usingHeader").value("default header"))
     }
 
     @Test
@@ -92,8 +103,11 @@ class WebRequestTest {
             MockMvcRequestBuilders.post("/graphql")
                 .content("""{"query": "{ usingRequiredHeader }" }""")
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"errors":[{"message":"com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException: Required header 'myheader' was not provided","locations":[],"path":["usingRequiredHeader"],"extensions":{"errorType":"INTERNAL"}}],"data":{"usingRequiredHeader":null}}"""))
+            .andExpect(status().isOk)
+            .andExpect(
+                jsonPath("$.errors[*].message")
+                    .value(hasItem(containsString("Required request header 'myheader' for method parameter type String is not present")))
+            )
     }
 
     @Test
@@ -102,8 +116,8 @@ class WebRequestTest {
             MockMvcRequestBuilders.post("/graphql")
                 .content("""{"query": "{ usingOptionalHeader }" }""")
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingOptionalHeader": "default header from datafetcher"}}"""))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.usingOptionalHeader").value(equalTo("default header from datafetcher")))
     }
 
     @Test
@@ -112,8 +126,11 @@ class WebRequestTest {
             MockMvcRequestBuilders.post("/graphql")
                 .content("""{"query": "{ usingOptionalHeaderAsOptionalType }" }""")
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingOptionalHeaderAsOptionalType": "default header from Optional"}}"""))
+            .andExpect(status().isOk)
+            .andExpect(
+                jsonPath("$.data.usingOptionalHeaderAsOptionalType")
+                    .value("default header from Optional")
+            )
     }
 
     @Test
@@ -123,8 +140,8 @@ class WebRequestTest {
                 .content("""{"query": "{ usingOptionalHeaderAsOptionalType }" }""")
                 .header("myheader", "hello")
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingOptionalHeaderAsOptionalType": "hello"}}"""))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.usingOptionalHeaderAsOptionalType").value("hello"))
     }
 
     @Test
@@ -134,8 +151,8 @@ class WebRequestTest {
                 .content("""{"query": "{ usingParam }" }""")
                 .param("myParam", "paramValue")
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingParam": "paramValue"}}"""))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.usingParam").value("paramValue"))
     }
 
     @Test
@@ -146,8 +163,8 @@ class WebRequestTest {
                 .param("myParam", "paramValue")
                 .param("myParam", "paramValue2")
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingParam": "paramValue, paramValue2"}}"""))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.usingParam").value("paramValue,paramValue2"))
     }
 
     @Test
@@ -156,8 +173,8 @@ class WebRequestTest {
             MockMvcRequestBuilders.post("/graphql")
                 .content("""{"query": "{ usingParam }" }""")
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingParam": "default parameter"}}"""))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.usingParam").value("default parameter"))
     }
 
     @Test
@@ -166,8 +183,11 @@ class WebRequestTest {
             MockMvcRequestBuilders.post("/graphql")
                 .content("""{"query": "{ usingParamRequired }" }""")
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"errors":[{"message":"com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException: Required request parameter 'myParam' was not provided","locations":[],"path":["usingParamRequired"],"extensions":{"errorType":"INTERNAL"}}],"data":{"usingParamRequired":null}}"""))
+            .andExpect(status().isOk)
+            .andExpect(
+                jsonPath("$.errors[*].message")
+                    .value(hasItem(containsString("Required request parameter 'myParam' for method parameter type String is not present")))
+            )
     }
 
     @Test
@@ -176,8 +196,8 @@ class WebRequestTest {
             MockMvcRequestBuilders.post("/graphql")
                 .content("""{"query": "{ usingOptionalParam }" }""")
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingOptionalParam": "default from datafetcher"}}"""))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.usingOptionalParam").value("default from datafetcher"))
     }
 
     @Test
@@ -186,8 +206,11 @@ class WebRequestTest {
             MockMvcRequestBuilders.post("/graphql")
                 .content("""{"query": "{ usingOptionalParamAsOptionalType }" }""")
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingOptionalParamAsOptionalType": "default param from Optional"}}"""))
+            .andExpect(status().isOk)
+            .andExpect(
+                jsonPath("$.data.usingOptionalParamAsOptionalType")
+                    .value("default param from Optional")
+            )
     }
 
     @Test
@@ -197,8 +220,8 @@ class WebRequestTest {
                 .content("""{"query": "{ usingOptionalParamAsOptionalType }" }""")
                 .param("myParam", "hello")
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingOptionalParamAsOptionalType": "hello"}}"""))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.usingOptionalParamAsOptionalType").value("hello"))
     }
 
     @Test
@@ -208,8 +231,8 @@ class WebRequestTest {
                 .content("""{"query": "{ usingContextWithRequest }" }""")
                 .header("myheader", "hello")
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"usingContextWithRequest": "hello"}}"""))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.usingContextWithRequest").value("hello"))
     }
 
     @Test
@@ -219,8 +242,8 @@ class WebRequestTest {
                 .content("""{"query": "{ withCookie }" }""")
                 .cookie(Cookie("myCookie", "cookiehello"))
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"withCookie": "cookiehello"}}"""))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.withCookie").value("cookiehello"))
     }
 
     @Test
@@ -230,8 +253,8 @@ class WebRequestTest {
                 .content("""{"query": "{ withOptionalCookie }" }""")
                 .cookie(Cookie("myCookie", "cookiehello"))
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"withOptionalCookie": "cookiehello"}}"""))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.withOptionalCookie").value("cookiehello"))
     }
 
     @Test
@@ -240,8 +263,8 @@ class WebRequestTest {
             MockMvcRequestBuilders.post("/graphql")
                 .content("""{"query": "{ withEmptyOptionalCookie }" }""")
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"withEmptyOptionalCookie": "emptycookie"}}"""))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.withEmptyOptionalCookie").value("emptycookie"))
     }
 
     @Test
@@ -250,8 +273,8 @@ class WebRequestTest {
             MockMvcRequestBuilders.post("/graphql")
                 .content("""{"query": "{ withEmptyCookie }" }""")
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"withEmptyCookie": "emptycookie"}}"""))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.withEmptyCookie").value("emptycookie"))
     }
 
     @Test
@@ -260,8 +283,11 @@ class WebRequestTest {
             MockMvcRequestBuilders.post("/graphql")
                 .content("""{"query": "{ withRequiredCookie }" }""")
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"errors":[{"message":"com.netflix.graphql.dgs.exceptions.DgsMissingCookieException: Required cookie 'myCookie' was not provided","locations":[],"path":["withRequiredCookie"],"extensions":{"errorType":"INTERNAL"}}],"data":{"withRequiredCookie":null}}"""))
+            .andExpect(status().isOk)
+            .andExpect(
+                jsonPath("$.errors[*].message")
+                    .value(hasItem(containsString("Required cookie 'myCookie' for method parameter type String is not present")))
+            )
     }
 
     @Test
@@ -270,8 +296,8 @@ class WebRequestTest {
             MockMvcRequestBuilders.post("/graphql")
                 .content("""{"query": "{ withDefaultCookie }" }""")
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().json("""{"data":{"withDefaultCookie": "defaultvalue"}}"""))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.withDefaultCookie").value("defaultvalue"))
     }
 
     @DgsComponent

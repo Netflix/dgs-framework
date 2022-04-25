@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs
 
 import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import graphql.GraphQL
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -65,7 +66,12 @@ class TypeResolverTest {
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
-        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val provider = DgsSchemaProvider(
+            applicationContext = applicationContextMock,
+            federationResolver = Optional.empty(),
+            existingTypeDefinitionRegistry = Optional.empty(),
+            methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
+        )
         val schema = provider.schema(
             """
             type Query {
@@ -117,7 +123,12 @@ class TypeResolverTest {
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
-        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val provider = DgsSchemaProvider(
+            applicationContext = applicationContextMock,
+            federationResolver = Optional.empty(),
+            existingTypeDefinitionRegistry = Optional.empty(),
+            methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
+        )
         val schema = provider.schema(
             """
             type Query {
@@ -179,7 +190,12 @@ class TypeResolverTest {
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
-        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val provider = DgsSchemaProvider(
+            applicationContext = applicationContextMock,
+            federationResolver = Optional.empty(),
+            existingTypeDefinitionRegistry = Optional.empty(),
+            methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
+        )
         val schema = provider.schema(
             """
             type Query {

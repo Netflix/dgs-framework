@@ -18,6 +18,8 @@ package com.netflix.graphql.dgs
 
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.method.DataFetchingEnvironmentArgumentResolver
+import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import graphql.ExecutionInput
 import graphql.GraphQL
 import graphql.schema.DataFetchingEnvironment
@@ -122,7 +124,12 @@ internal class DgsDataFetchingEnvironmentTest {
         provider.findDataLoaders()
         val dataLoaderRegistry = provider.buildRegistry()
 
-        val schemaProvider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val schemaProvider = DgsSchemaProvider(
+            applicationContext = applicationContextMock,
+            federationResolver = Optional.empty(),
+            existingTypeDefinitionRegistry = Optional.empty(),
+            methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver()))
+        )
         val schema = schemaProvider.schema()
         val build = GraphQL.newGraphQL(schema).build()
 
@@ -145,7 +152,12 @@ internal class DgsDataFetchingEnvironmentTest {
         provider.findDataLoaders()
         val dataLoaderRegistry = provider.buildRegistry()
 
-        val schemaProvider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val schemaProvider = DgsSchemaProvider(
+            applicationContext = applicationContextMock,
+            federationResolver = Optional.empty(),
+            existingTypeDefinitionRegistry = Optional.empty(),
+            methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver()))
+        )
         val schema = schemaProvider.schema()
         val build = GraphQL.newGraphQL(schema).build()
 
@@ -169,7 +181,12 @@ internal class DgsDataFetchingEnvironmentTest {
         provider.findDataLoaders()
         val dataLoaderRegistry = provider.buildRegistry()
 
-        val schemaProvider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val schemaProvider = DgsSchemaProvider(
+            applicationContext = applicationContextMock,
+            federationResolver = Optional.empty(),
+            existingTypeDefinitionRegistry = Optional.empty(),
+            methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver()))
+        )
         val schema = schemaProvider.schema()
         val build = GraphQL.newGraphQL(schema).build()
 
@@ -193,7 +210,13 @@ internal class DgsDataFetchingEnvironmentTest {
         provider.findDataLoaders()
         val dataLoaderRegistry = provider.buildRegistry()
 
-        val schemaProvider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val schemaProvider = DgsSchemaProvider(
+            applicationContext = applicationContextMock,
+            federationResolver = Optional.empty(),
+            existingTypeDefinitionRegistry = Optional.empty(),
+            methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
+        )
+
         val schema = schemaProvider.schema()
         val build = GraphQL.newGraphQL(schema).build()
 
@@ -214,7 +237,13 @@ internal class DgsDataFetchingEnvironmentTest {
         provider.findDataLoaders()
         val dataLoaderRegistry = provider.buildRegistry()
 
-        val schemaProvider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val schemaProvider = DgsSchemaProvider(
+            applicationContext = applicationContextMock,
+            federationResolver = Optional.empty(),
+            existingTypeDefinitionRegistry = Optional.empty(),
+            methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver()))
+        )
+
         val schema = schemaProvider.schema()
         val build = GraphQL.newGraphQL(schema).build()
 
@@ -238,7 +267,13 @@ internal class DgsDataFetchingEnvironmentTest {
         provider.findDataLoaders()
         val dataLoaderRegistry = provider.buildRegistry()
 
-        val schemaProvider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val schemaProvider = DgsSchemaProvider(
+            applicationContext = applicationContextMock,
+            federationResolver = Optional.empty(),
+            existingTypeDefinitionRegistry = Optional.empty(),
+            methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver()))
+        )
+
         val schema = schemaProvider.schema()
         val build = GraphQL.newGraphQL(schema).build()
 

@@ -22,6 +22,7 @@ import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
 import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
+import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import com.netflix.graphql.mocking.DgsSchemaTransformer
 import com.netflix.graphql.mocking.MockProvider
 import graphql.TypeResolutionEnvironment
@@ -31,6 +32,7 @@ import graphql.language.TypeName
 import graphql.language.UnionTypeDefinition
 import graphql.schema.Coercing
 import graphql.schema.DataFetcher
+import graphql.schema.DataFetcherFactories
 import graphql.schema.DataFetcherFactory
 import graphql.schema.FieldCoordinates
 import graphql.schema.GraphQLCodeRegistry
@@ -47,7 +49,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.aop.support.AopUtils
 import org.springframework.context.ApplicationContext
-import org.springframework.core.DefaultParameterNameDiscoverer
 import org.springframework.core.annotation.MergedAnnotation
 import org.springframework.core.annotation.MergedAnnotations
 import org.springframework.core.io.Resource
@@ -67,20 +68,17 @@ class DgsSchemaProvider(
     private val applicationContext: ApplicationContext,
     private val federationResolver: Optional<DgsFederationResolver>,
     private val existingTypeDefinitionRegistry: Optional<TypeDefinitionRegistry>,
-    private val mockProviders: Optional<Set<MockProvider>>,
+    private val mockProviders: Set<MockProvider> = emptySet(),
     private val schemaLocations: List<String> = listOf(DEFAULT_SCHEMA_LOCATION),
     private val dataFetcherResultProcessors: List<DataFetcherResultProcessor> = emptyList(),
     private val dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
-    private val cookieValueResolver: Optional<CookieValueResolver> = Optional.empty(),
-    private val inputObjectMapper: InputObjectMapper = DefaultInputObjectMapper(),
     private val entityFetcherRegistry: EntityFetcherRegistry = EntityFetcherRegistry(),
-    private val defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty()
+    private val defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty(),
+    private val methodDataFetcherFactory: MethodDataFetcherFactory,
 ) {
 
     val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
-    val dataFetchers = mutableListOf<DatafetcherReference>()
-
-    private val defaultParameterNameDiscoverer = DefaultParameterNameDiscoverer()
+    private val dataFetchers = mutableListOf<DatafetcherReference>()
 
     fun schema(
         schema: String? = null,
@@ -149,8 +147,8 @@ class DgsSchemaProvider(
         val totalTime = endTime - startTime
         logger.debug("DGS initialized schema in {}ms", totalTime)
 
-        return if (mockProviders.isPresent) {
-            DgsSchemaTransformer().transformSchemaWithMockProviders(graphQLSchema, mockProviders.get())
+        return if (mockProviders.isNotEmpty()) {
+            DgsSchemaTransformer().transformSchemaWithMockProviders(graphQLSchema, mockProviders)
         } else {
             graphQLSchema
         }
@@ -327,26 +325,16 @@ class DgsSchemaProvider(
     }
 
     private fun createBasicDataFetcher(method: Method, dgsComponent: Any, isSubscription: Boolean): DataFetcher<Any?> {
-        return DataFetcher<Any?> { environment ->
-            val dfe = DgsDataFetchingEnvironment(environment)
-            val result = DataFetcherInvoker(
-                cookieValueResolver,
-                defaultParameterNameDiscoverer,
-                dfe,
-                dgsComponent,
-                method,
-                inputObjectMapper
-            ).invokeDataFetcher()
-            when {
-                isSubscription -> {
-                    result
-                }
-                result != null -> {
-                    dataFetcherResultProcessors.find { it.supportsType(result) }?.process(result, dfe) ?: result
-                }
-                else -> {
-                    result
-                }
+        val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent, method)
+
+        if (isSubscription) {
+            return dataFetcher
+        }
+
+        return DataFetcherFactories.wrapDataFetcher(dataFetcher) { dfe, result ->
+            result?.let {
+                val env = DgsDataFetchingEnvironment(dfe)
+                dataFetcherResultProcessors.find { it.supportsType(result) }?.process(result, env) ?: result
             }
         }
     }

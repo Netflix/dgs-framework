@@ -18,22 +18,22 @@ package com.netflix.graphql.dgs.webflux.autoconfiguration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.netflix.graphql.dgs.internal.CookieValueResolver
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.FluxDataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.MonoDataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.QueryValueCustomizer
+import com.netflix.graphql.dgs.internal.method.ArgumentResolver
 import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveQueryExecutor
+import com.netflix.graphql.dgs.reactive.internal.method.SyncHandlerMethodArgumentResolverAdapter
 import com.netflix.graphql.dgs.webflux.handlers.DefaultDgsWebfluxHttpHandler
 import com.netflix.graphql.dgs.webflux.handlers.DgsHandshakeWebSocketService
 import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler
 import com.netflix.graphql.dgs.webflux.handlers.DgsWebfluxHttpHandler
-import com.netflix.graphql.dgs.webflux.handlers.WebFluxCookieValueResolver
 import graphql.ExecutionInput
 import graphql.GraphQL
 import graphql.execution.AsyncExecutionStrategy
@@ -48,14 +48,18 @@ import graphql.introspection.IntrospectionQuery
 import graphql.schema.GraphQLSchema
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.ReactiveAdapterRegistry
 import org.springframework.core.env.Environment
 import org.springframework.http.MediaType
+import org.springframework.web.reactive.BindingContext
 import org.springframework.web.reactive.function.server.RequestPredicates.accept
 import org.springframework.web.reactive.function.server.RouterFunction
 import org.springframework.web.reactive.function.server.RouterFunctions
@@ -64,6 +68,12 @@ import org.springframework.web.reactive.function.server.ServerResponse.ok
 import org.springframework.web.reactive.function.server.ServerResponse.permanentRedirect
 import org.springframework.web.reactive.function.server.json
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping
+import org.springframework.web.reactive.result.method.annotation.CookieValueMethodArgumentResolver
+import org.springframework.web.reactive.result.method.annotation.RequestHeaderMapMethodArgumentResolver
+import org.springframework.web.reactive.result.method.annotation.RequestHeaderMethodArgumentResolver
+import org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerAdapter
+import org.springframework.web.reactive.result.method.annotation.RequestParamMapMethodArgumentResolver
+import org.springframework.web.reactive.result.method.annotation.RequestParamMethodArgumentResolver
 import org.springframework.web.reactive.socket.server.WebSocketService
 import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter
 import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyRequestUpgradeStrategy
@@ -220,8 +230,65 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
         return FluxDataFetcherResultProcessor()
     }
 
-    @Bean
-    open fun webfluxCookieResolver(): CookieValueResolver {
-        return WebFluxCookieValueResolver()
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
+    open class WebFluxArgumentHandlerConfiguration {
+
+        @Qualifier
+        private annotation class Dgs
+
+        @Dgs
+        @Bean
+        open fun dgsBindingContext(adapter: ObjectProvider<RequestMappingHandlerAdapter>): BindingContext {
+            return BindingContext(adapter.ifAvailable?.webBindingInitializer)
+        }
+
+        @Bean
+        open fun cookieValueArgumentResolver(
+            beanFactory: ConfigurableBeanFactory,
+            registry: ReactiveAdapterRegistry,
+            @Dgs bindingContext: BindingContext
+        ): ArgumentResolver {
+            return SyncHandlerMethodArgumentResolverAdapter(CookieValueMethodArgumentResolver(beanFactory, registry), bindingContext)
+        }
+
+        @Bean
+        open fun requestHeaderMapArgumentResolver(registry: ReactiveAdapterRegistry, @Dgs bindingContext: BindingContext): ArgumentResolver {
+            return SyncHandlerMethodArgumentResolverAdapter(RequestHeaderMapMethodArgumentResolver(registry), bindingContext)
+        }
+
+        @Bean
+        open fun requestHeaderArgumentResolver(
+            beanFactory: ConfigurableBeanFactory,
+            registry: ReactiveAdapterRegistry,
+            @Dgs bindingContext: BindingContext
+        ): ArgumentResolver {
+            return SyncHandlerMethodArgumentResolverAdapter(RequestHeaderMethodArgumentResolver(beanFactory, registry), bindingContext)
+        }
+
+        @Bean
+        open fun requestParamArgumentResolver(
+            beanFactory: ConfigurableBeanFactory,
+            registry: ReactiveAdapterRegistry,
+            @Dgs bindingContext: BindingContext
+        ): ArgumentResolver {
+            return SyncHandlerMethodArgumentResolverAdapter(
+                RequestParamMethodArgumentResolver(
+                    beanFactory,
+                    registry,
+                    false
+                ),
+                bindingContext
+            )
+        }
+
+        @Bean
+        open fun requestParamMapArgumentResolver(
+            beanFactory: ConfigurableBeanFactory,
+            registry: ReactiveAdapterRegistry,
+            @Dgs bindingContext: BindingContext
+        ): ArgumentResolver {
+            return SyncHandlerMethodArgumentResolverAdapter(RequestParamMapMethodArgumentResolver(registry), bindingContext)
+        }
     }
 }

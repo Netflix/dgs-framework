@@ -484,6 +484,9 @@
         "io.mockk:mockk": {
             "locked": "1.12.3"
         },
+        "javax.servlet:javax.servlet-api": {
+            "locked": "4.0.1"
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.6.21"
         },
@@ -578,6 +581,9 @@
         },
         "io.mockk:mockk": {
             "locked": "1.12.3"
+        },
+        "javax.servlet:javax.servlet-api": {
+            "locked": "4.0.1"
         },
         "net.datafaker:datafaker": {
             "firstLevelTransitive": [
