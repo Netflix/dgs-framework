@@ -183,7 +183,7 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
             extendedBatchLoader.setDataLoaderRegistry(dataLoaderRegistry)
         }
 
-        return DataLoaderFactory.newDataLoader(batchLoader, options)
+        return DataLoaderFactory.newDataLoader(extendedBatchLoader, options)
     }
 
     private fun <T> createDataLoader(
