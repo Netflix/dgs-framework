@@ -63,9 +63,7 @@ import kotlin.streams.toList
 @Configuration
 @EnableConfigurationProperties(value = [DgsConfigurationProperties::class, DgsIntrospectionConfigurationProperties::class])
 @ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class])
-open class DgsAutoConfiguration(
-    private val configProps: DgsConfigurationProperties
-) {
+open class DgsAutoConfiguration(private val configProps: DgsConfigurationProperties) {
 
     companion object {
         const val AUTO_CONF_PREFIX = "dgs.graphql"
@@ -163,17 +161,17 @@ open class DgsAutoConfiguration(
         defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty()
     ): DgsSchemaProvider {
         return DgsSchemaProvider(
-            applicationContext,
-            federationResolver,
-            existingTypeDefinitionFactory,
-            mockProviders,
-            configProps.schemaLocations,
-            dataFetcherResultProcessors,
-            dataFetcherExceptionHandler,
-            cookieValueResolver,
-            inputObjectMapper.orElse(DefaultInputObjectMapper()),
-            entityFetcherRegistry,
-            defaultDataFetcherFactory
+            applicationContext = applicationContext,
+            federationResolver = federationResolver,
+            existingTypeDefinitionRegistry = existingTypeDefinitionFactory,
+            mockProviders = mockProviders,
+            schemaLocations = configProps.schemaLocations,
+            dataFetcherResultProcessors = dataFetcherResultProcessors,
+            dataFetcherExceptionHandler = dataFetcherExceptionHandler,
+            cookieValueResolver = cookieValueResolver,
+            inputObjectMapper = inputObjectMapper.orElse(DefaultInputObjectMapper()),
+            entityFetcherRegistry = entityFetcherRegistry,
+            defaultDataFetcherFactory = defaultDataFetcherFactory
         )
     }
 

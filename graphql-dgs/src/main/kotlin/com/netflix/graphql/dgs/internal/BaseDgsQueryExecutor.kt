@@ -100,6 +100,7 @@ object BaseDgsQueryExecutor {
 
         val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier { dgsContext }
 
+        @Suppress("DEPRECATION")
         val executionInputBuilder: ExecutionInput.Builder =
             ExecutionInput
                 .newExecutionInput()
@@ -107,6 +108,7 @@ object BaseDgsQueryExecutor {
                 .operationName(operationName)
                 .variables(variables)
                 .dataLoaderRegistry(dataLoaderRegistry)
+                .context(dgsContext)
                 .graphQLContext(dgsContext)
                 .extensions(extensions.orEmpty())
 

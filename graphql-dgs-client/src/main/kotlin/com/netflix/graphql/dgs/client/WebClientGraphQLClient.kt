@@ -29,9 +29,13 @@ import java.util.function.Consumer
  * A WebClient instance configured for the graphql endpoint (at least an url) must be provided.
  *
  * Example:
- *      WebClientGraphQLClient webClientGraphQLClient = new WebClientGraphQLClient(WebClient.create("http://localhost:8080/graphql"));
- *      GraphQLResponse message = webClientGraphQLClient.reactiveExecuteQuery("{hello}").map(r -> r.extractValue<String>("hello"));
+ * ```java
+ *      WebClientGraphQLClient webClientGraphQLClient =
+ *          new WebClientGraphQLClient(WebClient.create("http://localhost:8080/graphql"));
+ *      GraphQLResponse message = webClientGraphQLClient.reactiveExecuteQuery("{hello}")
+ *                                                      .map(r -> r.extractValue<String>("hello"));
  *      message.subscribe();
+ * ```
  */
 class WebClientGraphQLClient(
     private val webclient: WebClient,
