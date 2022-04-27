@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.context
 
 import com.netflix.graphql.dgs.internal.DgsRequestData
+import graphql.ExecutionInput
 import graphql.GraphQLContext
 import graphql.schema.DataFetchingEnvironment
 import org.dataloader.BatchLoaderEnvironment
@@ -28,22 +29,31 @@ import java.util.function.Consumer
  */
 open class DgsContext(val customContext: Any? = null, val requestData: DgsRequestData?) : Consumer<GraphQLContext.Builder> {
 
+    private enum class GraphQLContextKey { DGS_CONTEXT_KEY }
+
     companion object {
-
-        private const val GRAPHQL_CONTEXT_NAMESPACE_KEY = "netflix.graphql.dgs"
-        private const val CONTEXT_KEY = "$GRAPHQL_CONTEXT_NAMESPACE_KEY.context"
-
         @JvmStatic
-        fun from(dfe: DataFetchingEnvironment): DgsContext {
-            return dfe.graphQlContext[CONTEXT_KEY]
+        fun from(graphQLContext: GraphQLContext): DgsContext {
+            return graphQLContext[GraphQLContextKey.DGS_CONTEXT_KEY]
         }
 
         @JvmStatic
-        fun <T> getCustomContext(dgsContext: Any): T {
+        fun from(dfe: DataFetchingEnvironment): DgsContext {
+            return from(dfe.graphQlContext)
+        }
+
+        @JvmStatic
+        fun from(ei: ExecutionInput): DgsContext {
+            return from(ei.graphQLContext)
+        }
+
+        @JvmStatic
+        fun <T> getCustomContext(context: Any): T {
             @Suppress("UNCHECKED_CAST")
-            return when (dgsContext) {
-                is DgsContext -> dgsContext.customContext as T
-                else -> throw RuntimeException("The context object passed to getCustomContext is not a DgsContext. It is a ${dgsContext::class.java.name} instead.")
+            return when (context) {
+                is DgsContext -> context.customContext as T
+                is GraphQLContext -> getCustomContext(from(context))
+                else -> throw RuntimeException("The context object passed to getCustomContext is not a DgsContext. It is a ${context::class.java.name} instead.")
             }
         }
 
@@ -73,6 +83,6 @@ open class DgsContext(val customContext: Any? = null, val requestData: DgsReques
     }
 
     override fun accept(contextBuilder: GraphQLContext.Builder) {
-        contextBuilder.put(CONTEXT_KEY, this)
+        contextBuilder.put(GraphQLContextKey.DGS_CONTEXT_KEY, this)
     }
 }
