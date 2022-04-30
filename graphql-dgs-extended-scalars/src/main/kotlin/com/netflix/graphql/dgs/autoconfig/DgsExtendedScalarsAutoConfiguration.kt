@@ -135,7 +135,6 @@ open class DgsExtendedScalarsAutoConfiguration {
         }
     }
 
-
     @ConditionalOnProperty(
         prefix = "dgs.graphql.extensions.scalars.ids",
         name = ["enabled"],

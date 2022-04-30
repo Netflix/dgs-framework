@@ -38,7 +38,6 @@ internal class DgsExtendedScalarsAutoConfigurationTests {
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration.ObjectsExtendedScalarsAutoConfiguration::class.java)
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration.TimeExtendedScalarsAutoConfiguration::class.java)
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration.IDsExtendedScalarsAutoConfiguration::class.java)
-
         }
     }
 
