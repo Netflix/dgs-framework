@@ -135,6 +135,24 @@ open class DgsExtendedScalarsAutoConfiguration {
         }
     }
 
+    @ConditionalOnProperty(
+        prefix = "dgs.graphql.extensions.scalars.ids",
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = true
+    )
+    @Configuration(proxyBeanMethods = false)
+    open class IDsExtendedScalarsAutoConfiguration {
+        @Bean
+        open fun idsExtendedScalarsRegistrar(): ExtendedScalarRegistrar {
+            return object : AbstractExtendedScalarRegistrar() {
+                override fun getScalars(): List<GraphQLScalarType> {
+                    return listOf(ExtendedScalars.UUID)
+                }
+            }
+        }
+    }
+
     @DgsComponent
     @FunctionalInterface
     fun interface ExtendedScalarRegistrar {
