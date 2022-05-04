@@ -155,4 +155,30 @@ class DgsPaginationTypeDefinitionRegistryTest {
         assertThat(paginatedTypeRegistry.types()["CustomScalarConnection"]).isNull()
         assertThat(paginatedTypeRegistry.types()["CustomScalarEdge"]).isNull()
     }
+
+    @Test
+    fun generateForUnions() {
+        val schema = """
+            type Query {
+                something: IMovieConnection
+            }
+            
+            union IMovie @connection = ScaryMovie
+            
+            type ScaryMovie implements IMovie @connection {
+               movieID: ID
+               title: String
+               rating: Integer
+            }
+        """.trimIndent()
+
+        val typeRegistry = SchemaParser().parse(schema)
+        val paginatedTypeRegistry = paginationTypeRegistry.registry(typeRegistry)
+
+        assertThat(paginatedTypeRegistry.types()["IMovieConnection"]).isNotNull
+        assertThat(paginatedTypeRegistry.types()["IMovieEdge"]).isNotNull
+        assertThat(paginatedTypeRegistry.types()["ScaryMovieConnection"]).isNotNull
+        assertThat(paginatedTypeRegistry.types()["ScaryMovieEdge"]).isNotNull
+        assertThat(paginatedTypeRegistry.types()["PageInfo"]).isNotNull
+    }
 }

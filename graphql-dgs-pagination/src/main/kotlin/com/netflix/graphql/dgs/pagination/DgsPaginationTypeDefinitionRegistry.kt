@@ -43,7 +43,7 @@ class DgsPaginationTypeDefinitionRegistry {
 
     private fun parseConnectionDirective(types: MutableList<TypeDefinition<*>>): List<TypeDefinition<*>> {
         val definitions = mutableListOf<ObjectTypeDefinition>()
-        types.filter { it is ObjectTypeDefinition || it is InterfaceTypeDefinition }
+        types.filter { it is ObjectTypeDefinition || it is InterfaceTypeDefinition || it is UnionTypeDefinition }
             .filter { it.hasDirective("connection") }
             .forEach {
                 definitions.add(createConnection(it.name))
