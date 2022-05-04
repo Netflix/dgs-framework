@@ -35,7 +35,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.0"
+            "locked": "18.1"
         },
         "com.graphql-java:graphql-java-extended-validation": {
             "locked": "17.0-hibernate-validator-6.2.0.Final"
@@ -314,7 +314,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.0"
+            "locked": "18.1"
         },
         "com.graphql-java:graphql-java-extended-validation": {
             "locked": "17.0-hibernate-validator-6.2.0.Final"
@@ -455,7 +455,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.0"
+            "locked": "18.1"
         },
         "com.graphql-java:graphql-java-extended-validation": {
             "locked": "17.0-hibernate-validator-6.2.0.Final"
@@ -634,7 +634,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.0"
+            "locked": "18.1"
         },
         "com.graphql-java:graphql-java-extended-validation": {
             "locked": "17.0-hibernate-validator-6.2.0.Final"
