@@ -46,7 +46,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.0"
+            "locked": "18.1"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -125,7 +125,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.3.1"
+            "locked": "1.3.2"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -402,7 +402,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.0"
+            "locked": "18.1"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -434,7 +434,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.3.1"
+            "locked": "1.3.2"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -555,7 +555,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.0"
+            "locked": "18.1"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -634,7 +634,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.3.1"
+            "locked": "1.3.2"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -752,7 +752,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.0"
+            "locked": "18.1"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -831,7 +831,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.3.1"
+            "locked": "1.3.2"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
