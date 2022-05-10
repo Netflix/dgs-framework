@@ -21,13 +21,18 @@ import graphql.ExecutionInput
 import graphql.GraphQLContext
 import graphql.schema.DataFetchingEnvironment
 import org.dataloader.BatchLoaderEnvironment
+import reactor.util.context.ContextView
 import java.util.function.Consumer
 
 /**
  * Context class that is created per request, and is added to both DataFetchingEnvironment and BatchLoaderEnvironment.
  * Custom data can be added by providing a [DgsCustomContextBuilder].
  */
-open class DgsContext(val customContext: Any? = null, val requestData: DgsRequestData?) : Consumer<GraphQLContext.Builder> {
+open class DgsContext(
+    val customContext: Any? = null,
+    val requestData: DgsRequestData?,
+    val reactorContext: ContextView? = null
+) : Consumer<GraphQLContext.Builder> {
 
     private enum class GraphQLContextKey { DGS_CONTEXT_KEY }
 

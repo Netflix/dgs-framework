@@ -41,18 +41,22 @@ open class DefaultDgsReactiveGraphQLContextBuilder(
             )
         } else Mono.empty()
 
-        return customContext.flatMap {
-            Mono.just(
+        return Mono.deferContextual { context ->
+            customContext.flatMap {
+                Mono.just(
+                    DgsContext(
+                        it,
+                        dgsRequestData,
+                        context,
+                    )
+                )
+            }.defaultIfEmpty(
                 DgsContext(
-                    it,
-                    dgsRequestData
+                    requestData = dgsRequestData,
+                    reactorContext = context,
                 )
             )
-        }.defaultIfEmpty(
-            DgsContext(
-                requestData = dgsRequestData
-            )
-        )
+        }
     }
 }
 
