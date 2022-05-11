@@ -17,11 +17,10 @@
 package com.netflix.graphql.dgs.internal
 
 import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
-import com.netflix.graphql.dgs.context.DgsContext
+import com.netflix.graphql.dgs.context.ReactiveDgsContext
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.util.context.Context
-import java.lang.IllegalArgumentException
 
 class MonoDataFetcherResultProcessor : DataFetcherResultProcessor {
     override fun supportsType(originalResult: Any): Boolean {
@@ -52,4 +51,4 @@ class FluxDataFetcherResultProcessor : DataFetcherResultProcessor {
 }
 
 private fun reactorContextFrom(dfe: DgsDataFetchingEnvironment) =
-    DgsContext.from(dfe).reactorContext ?: Context.empty()
+    ReactiveDgsContext.from(dfe)?.reactorContext ?: Context.empty()
