@@ -17,9 +17,10 @@
 package com.netflix.graphql.dgs.internal
 
 import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
+import com.netflix.graphql.dgs.context.ReactiveDgsContext
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import java.lang.IllegalArgumentException
+import reactor.util.context.Context
 
 class MonoDataFetcherResultProcessor : DataFetcherResultProcessor {
     override fun supportsType(originalResult: Any): Boolean {
@@ -28,7 +29,7 @@ class MonoDataFetcherResultProcessor : DataFetcherResultProcessor {
 
     override fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any {
         if (originalResult is Mono<*>) {
-            return originalResult.toFuture()
+            return originalResult.contextWrite(reactorContextFrom(dfe)).toFuture()
         } else {
             throw IllegalArgumentException("Instance passed to ${this::class.qualifiedName} was not a Mono<*>. It was a ${originalResult::class.qualifiedName} instead")
         }
@@ -42,9 +43,12 @@ class FluxDataFetcherResultProcessor : DataFetcherResultProcessor {
 
     override fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any {
         if (originalResult is Flux<*>) {
-            return originalResult.collectList().toFuture()
+            return originalResult.contextWrite(reactorContextFrom(dfe)).collectList().toFuture()
         } else {
             throw IllegalArgumentException("Instance passed to ${this::class.qualifiedName} was not a Flux<*>. It was a ${originalResult::class.qualifiedName} instead")
         }
     }
 }
+
+private fun reactorContextFrom(dfe: DgsDataFetchingEnvironment) =
+    ReactiveDgsContext.from(dfe)?.reactorContext ?: Context.empty()

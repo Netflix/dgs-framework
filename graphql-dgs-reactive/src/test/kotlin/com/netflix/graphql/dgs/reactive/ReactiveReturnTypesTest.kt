@@ -31,9 +31,12 @@ import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveQueryExecutor
 import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
 import graphql.execution.instrumentation.SimpleInstrumentation
+import io.mockk.Runs
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.just
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.dataloader.DataLoaderRegistry
 import org.junit.jupiter.api.BeforeEach
@@ -43,9 +46,12 @@ import org.springframework.context.ApplicationContext
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
+import reactor.util.context.Context
+import reactor.util.context.ContextView
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
+import java.util.function.Consumer
 import java.util.function.Supplier
 
 @ExtendWith(MockKExtension::class)
@@ -56,6 +62,9 @@ internal class ReactiveReturnTypesTest {
     @MockK
     lateinit var dgsDataLoaderProvider: DgsDataLoaderProvider
 
+    @MockK
+    lateinit var stubContextConsumer: Consumer<ContextView>
+
     lateinit var dgsQueryExecutor: DefaultDgsReactiveQueryExecutor
 
     @BeforeEach
@@ -64,14 +73,20 @@ internal class ReactiveReturnTypesTest {
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
             fun hello(): Mono<String> {
-                return Mono.just("hi!")
+                return Mono.deferContextual { context ->
+                    stubContextConsumer.accept(context)
+                    Mono.just("hi!")
+                }
             }
         }
 
         val numbersFetcher = object : Any() {
             @DgsData(parentType = "Query", field = "numbers")
-            fun hello(): Flux<Int> {
-                return Flux.interval(Duration.ofMillis(1)).map { it.toInt() }.take(5)
+            fun numbers(): Flux<Int> {
+                return Flux.deferContextual { context ->
+                    stubContextConsumer.accept(context)
+                    Flux.interval(Duration.ofMillis(1)).map { it.toInt() }.take(5)
+                }
             }
         }
 
@@ -88,6 +103,8 @@ internal class ReactiveReturnTypesTest {
                 return Mono.error { throw RuntimeException("Broken!") }
             }
         }
+
+        every { stubContextConsumer.accept(any()) } just Runs
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
             Pair(
@@ -159,11 +176,12 @@ internal class ReactiveReturnTypesTest {
             }
             """.trimIndent(),
             "data.hello"
-        )
+        ).contextWrite(dummyContext())
 
         StepVerifier.create(helloResult).assertNext {
             assertThat(it).isEqualTo("hi!")
         }.verifyComplete()
+        verify { stubContextConsumer.accept(match(comparingDummyContext())) }
     }
 
     @Test
@@ -175,12 +193,13 @@ internal class ReactiveReturnTypesTest {
             }
             """.trimIndent(),
             "data.numbers"
-        )
+        ).contextWrite(dummyContext())
 
         val step = StepVerifier.create(numbers)
         step.assertNext {
             assertThat(it).isEqualTo(listOf(0, 1, 2, 3, 4))
         }.verifyComplete()
+        verify { stubContextConsumer.accept(match(comparingDummyContext())) }
     }
 
     @Test
@@ -213,6 +232,12 @@ internal class ReactiveReturnTypesTest {
         )
 
         StepVerifier.create(withError).verifyError(QueryException::class.java)
+    }
+
+    private fun dummyContext() = Context.of("some-key", "some context value")
+
+    private fun comparingDummyContext() = { context: ContextView ->
+        context.size() == 1 && context.get<String>("some-key") == "some context value"
     }
 
     private data class Movie(val title: String, val releaseDate: LocalDateTime?)
