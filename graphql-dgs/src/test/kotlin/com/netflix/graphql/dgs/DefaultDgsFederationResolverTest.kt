@@ -22,6 +22,7 @@ import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.EntityFetcherRegistry
+import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherResult
 import graphql.execution.ExecutionStepInfo
@@ -57,24 +58,21 @@ class DefaultDgsFederationResolverTest {
     @MockK
     lateinit var applicationContextMock: ApplicationContext
 
-    lateinit var entityFetcherRegistry: EntityFetcherRegistry
-
     lateinit var dgsSchemaProvider: DgsSchemaProvider
 
-    lateinit var dgsExceptionHandler: DataFetcherExceptionHandler
+    private val entityFetcherRegistry: EntityFetcherRegistry = EntityFetcherRegistry()
+
+    private val dgsExceptionHandler: DataFetcherExceptionHandler = DefaultDataFetcherExceptionHandler()
 
     @BeforeEach
     fun setup() {
-        dgsExceptionHandler = DefaultDataFetcherExceptionHandler()
-        entityFetcherRegistry = EntityFetcherRegistry()
-
         dgsSchemaProvider = DgsSchemaProvider(
             applicationContext = applicationContextMock,
             federationResolver = Optional.empty(),
             existingTypeDefinitionRegistry = Optional.empty(),
-            mockProviders = Optional.empty(),
             dataFetcherExceptionHandler = Optional.of(dgsExceptionHandler),
-            entityFetcherRegistry = entityFetcherRegistry
+            entityFetcherRegistry = entityFetcherRegistry,
+            methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
         )
     }
 

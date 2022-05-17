@@ -23,7 +23,6 @@ import com.netflix.graphql.dgs.exceptions.QueryException
 import graphql.ExecutionResult
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.autoconfigure.AutoConfigurations
@@ -32,7 +31,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.util.LinkedMultiValueMap
 
 class QueryExecutorTest {
-    private val context = WebApplicationContextRunner().withConfiguration(AutoConfigurations.of(DgsAutoConfiguration::class.java))!!
+    private val context = WebApplicationContextRunner()
+        .withConfiguration(AutoConfigurations.of(DgsAutoConfiguration::class.java))
 
     @Test
     fun query() {
@@ -40,17 +40,6 @@ class QueryExecutorTest {
             assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
                 it.executeAndExtractJsonPath<String>("{ hello }", "data.hello")
             }.isEqualTo("Hello!")
-        }
-    }
-
-    @Test
-    fun queryWithoutHeaderThrowsException() {
-        assertThrows(QueryException::class.java) {
-            context.withUserConfiguration(HelloDataFetcherConfig::class.java).run { ctx ->
-                assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                    it.executeAndGetDocumentContext("{ helloWithHeader }", mapOf(), null)
-                }
-            }
         }
     }
 

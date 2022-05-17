@@ -23,6 +23,12 @@ import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
 import com.netflix.graphql.dgs.internal.*
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
+import com.netflix.graphql.dgs.internal.method.ArgumentResolver
+import com.netflix.graphql.dgs.internal.method.ContinuationArgumentResolver
+import com.netflix.graphql.dgs.internal.method.DataFetchingEnvironmentArgumentResolver
+import com.netflix.graphql.dgs.internal.method.FallbackEnvironmentArgumentResolver
+import com.netflix.graphql.dgs.internal.method.InputArgumentResolver
+import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import com.netflix.graphql.mocking.MockProvider
 import graphql.execution.AsyncExecutionStrategy
@@ -63,7 +69,9 @@ import kotlin.streams.toList
 @Configuration
 @EnableConfigurationProperties(value = [DgsConfigurationProperties::class, DgsIntrospectionConfigurationProperties::class])
 @ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class])
-open class DgsAutoConfiguration(private val configProps: DgsConfigurationProperties) {
+open class DgsAutoConfiguration(
+    private val configProps: DgsConfigurationProperties
+) {
 
     companion object {
         const val AUTO_CONF_PREFIX = "dgs.graphql"
@@ -152,26 +160,25 @@ open class DgsAutoConfiguration(private val configProps: DgsConfigurationPropert
         federationResolver: Optional<DgsFederationResolver>,
         existingTypeDefinitionFactory: Optional<TypeDefinitionRegistry>,
         existingCodeRegistry: Optional<GraphQLCodeRegistry>,
-        mockProviders: Optional<Set<MockProvider>>,
+        mockProviders: ObjectProvider<MockProvider>,
         dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
         dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
         cookieValueResolver: Optional<CookieValueResolver> = Optional.empty(),
-        inputObjectMapper: Optional<InputObjectMapper> = Optional.empty(),
         entityFetcherRegistry: EntityFetcherRegistry,
-        defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty()
+        defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty(),
+        methodDataFetcherFactory: MethodDataFetcherFactory
     ): DgsSchemaProvider {
         return DgsSchemaProvider(
             applicationContext = applicationContext,
             federationResolver = federationResolver,
             existingTypeDefinitionRegistry = existingTypeDefinitionFactory,
-            mockProviders = mockProviders,
+            mockProviders = mockProviders.toSet(),
             schemaLocations = configProps.schemaLocations,
             dataFetcherResultProcessors = dataFetcherResultProcessors,
             dataFetcherExceptionHandler = dataFetcherExceptionHandler,
-            cookieValueResolver = cookieValueResolver,
-            inputObjectMapper = inputObjectMapper.orElse(DefaultInputObjectMapper()),
             entityFetcherRegistry = entityFetcherRegistry,
-            defaultDataFetcherFactory = defaultDataFetcherFactory
+            defaultDataFetcherFactory = defaultDataFetcherFactory,
+            methodDataFetcherFactory = methodDataFetcherFactory
         )
     }
 
@@ -233,5 +240,31 @@ open class DgsAutoConfiguration(private val configProps: DgsConfigurationPropert
     @ConditionalOnClass(name = ["reactor.core.publisher.Flux"])
     open fun fluxReactiveDataFetcherResultProcessor(): FluxDataFetcherResultProcessor {
         return FluxDataFetcherResultProcessor()
+    }
+
+    @Bean
+    open fun methodDataFetcherFactory(argumentResolvers: ObjectProvider<ArgumentResolver>): MethodDataFetcherFactory {
+        return MethodDataFetcherFactory(argumentResolvers.orderedStream().toList())
+    }
+
+    @Bean
+    open fun inputArgumentResolver(inputObjectMapper: ObjectProvider<InputObjectMapper>): ArgumentResolver {
+        val mapper = inputObjectMapper.ifAvailable ?: DefaultInputObjectMapper()
+        return InputArgumentResolver(mapper)
+    }
+
+    @Bean
+    open fun dataFetchingEnvironmentArgumentResolver(): ArgumentResolver {
+        return DataFetchingEnvironmentArgumentResolver()
+    }
+
+    @Bean
+    open fun coroutineArgumentResolver(): ArgumentResolver {
+        return ContinuationArgumentResolver()
+    }
+
+    @Bean
+    open fun fallbackEnvironmentArgumentResolver(): ArgumentResolver {
+        return FallbackEnvironmentArgumentResolver()
     }
 }

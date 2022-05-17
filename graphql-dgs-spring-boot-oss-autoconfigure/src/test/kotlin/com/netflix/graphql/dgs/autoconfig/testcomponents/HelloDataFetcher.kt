@@ -21,12 +21,10 @@ import com.netflix.graphql.dgs.DgsData
 import graphql.schema.DataFetchingEnvironment
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpHeaders
-import org.springframework.web.bind.annotation.RequestHeader
 
-/*
-    Config class for the Hello data fetcher test
-     */
+/**
+ * Config class for the Hello data fetcher test
+ */
 @Configuration
 open class HelloDataFetcherConfig {
     @Bean
@@ -55,10 +53,5 @@ class HelloDataFetcher {
     @DgsData(parentType = "Query", field = "withNonNullableNull")
     fun withNonNullableNull(): String? {
         return null
-    }
-
-    @DgsData(parentType = "Query", field = "helloWithHeader")
-    fun helloWithHeader(@RequestHeader(HttpHeaders.AUTHORIZATION) authorization: String): String {
-        return "ciao"
     }
 }

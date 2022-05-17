@@ -17,12 +17,14 @@
 package com.netflix.graphql.dgs
 
 import com.netflix.graphql.dgs.context.DgsContext
+import com.netflix.graphql.dgs.internal.DefaultInputObjectMapper
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.method.ContinuationArgumentResolver
+import com.netflix.graphql.dgs.internal.method.FallbackEnvironmentArgumentResolver
+import com.netflix.graphql.dgs.internal.method.InputArgumentResolver
+import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import graphql.ExecutionInput
 import graphql.GraphQL
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
-import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -31,17 +33,30 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Percentage
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.context.ApplicationContext
+import org.springframework.context.support.GenericApplicationContext
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.system.measureTimeMillis
 
-@ExtendWith(MockKExtension::class)
 class CoroutineDataFetcherTest {
-    @MockK
-    lateinit var applicationContextMock: ApplicationContext
+
+    private val context = GenericApplicationContext()
+
+    private val schemaProvider by lazy {
+        DgsSchemaProvider(
+            applicationContext = context,
+            federationResolver = Optional.empty(),
+            existingTypeDefinitionRegistry = Optional.empty(),
+            methodDataFetcherFactory = MethodDataFetcherFactory(
+                argumentResolvers = listOf(
+                    InputArgumentResolver(DefaultInputObjectMapper()),
+                    ContinuationArgumentResolver(),
+                    FallbackEnvironmentArgumentResolver()
+                )
+            )
+        )
+    }
 
     private val executor: ExecutorService = Executors.newFixedThreadPool(8)
 
@@ -52,7 +67,8 @@ class CoroutineDataFetcherTest {
 
     @Test
     fun `Suspend functions should be supported as datafetchers`() {
-        val fetcher = object : Any() {
+        @DgsComponent
+        class Fetcher {
             @DgsQuery
             suspend fun concurrent(@InputArgument from: Int, to: Int): Int = coroutineScope {
                 var sum = 0
@@ -67,14 +83,10 @@ class CoroutineDataFetcherTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            "concurrentFetcher" to fetcher
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        context.beanFactory.registerSingleton("concurrentFetcher", Fetcher())
+        context.refresh()
 
-        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
-        val schema = provider.schema(
+        val schema = schemaProvider.schema(
             """
             type Query {
                 concurrent(from: Int, to: Int): Int
@@ -124,26 +136,59 @@ class CoroutineDataFetcherTest {
     }
 
     @Test
+    fun `Suspend functions with no arguments should be supported`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsQuery
+            suspend fun concurrent(): Int = coroutineScope {
+                42
+            }
+        }
+
+        context.beanFactory.registerSingleton("concurrentFetcher", Fetcher())
+        context.refresh()
+
+        val schema = schemaProvider.schema(
+            """
+            type Query {
+                concurrent: Int
+            }           
+            """.trimIndent()
+        )
+
+        val build = GraphQL.newGraphQL(schema).build()
+
+        val context = DgsContext(
+            null,
+            null,
+        )
+
+        val executionResult = build.execute(
+            ExecutionInput.newExecutionInput().graphQLContext(context).query(
+                "{ concurrent }"
+            ).build()
+        )
+
+        assertThat(executionResult.isDataPresent).isTrue()
+        assertThat(executionResult.getData<Map<String, Int>>()["concurrent"]).isEqualTo(42)
+    }
+
+    @Test
     fun `Throw the cause of InvocationTargetException from CoroutineDataFetcher`() {
         class CustomException(message: String?) : Exception(message)
 
-        val fetcher = object {
-
+        @DgsComponent
+        class Fetcher {
             @DgsQuery
             suspend fun exceptionWithMessage(@InputArgument message: String?): Nothing = coroutineScope {
                 throw CustomException(message)
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            "exceptionWithMessageFetcher" to fetcher
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        context.beanFactory.registerSingleton("exceptionWithMessageFetcher", Fetcher())
+        context.refresh()
 
-        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
-
-        val schema = provider.schema(
+        val schema = schemaProvider.schema(
             """
             type Query {
                 exceptionWithMessage(message: String): Int

@@ -29,6 +29,7 @@ public @interface InputArgument {
     @AliasFor("name")
     String value() default "";
 
+    @AliasFor("value")
     String name() default "";
 
     /**
