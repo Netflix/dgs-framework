@@ -16,7 +16,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -27,7 +27,7 @@
     },
     "compileClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "0.9.0"
+            "locked": "2.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.13.2"
@@ -87,7 +87,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -143,7 +143,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -163,7 +163,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -189,7 +189,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -215,7 +215,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -246,7 +246,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -266,7 +266,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -286,7 +286,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -297,7 +297,7 @@
     },
     "runtimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "0.9.0"
+            "locked": "2.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.13.2"
@@ -366,7 +366,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -392,7 +392,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -403,7 +403,7 @@
     },
     "testCompileClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "0.9.0"
+            "locked": "2.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.13.2"
@@ -422,7 +422,7 @@
             "locked": "18.1"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
-            "locked": "18.0"
+            "locked": "18.1"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.6.0"
@@ -441,7 +441,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.3"
+            "locked": "1.12.4"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.4.17"
@@ -478,7 +478,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -498,7 +498,7 @@
     },
     "testRuntimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "0.9.0"
+            "locked": "2.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.13.2"
@@ -517,7 +517,7 @@
             "locked": "18.1"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
-            "locked": "18.0"
+            "locked": "18.1"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.6.0"
@@ -536,7 +536,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.3"
+            "locked": "1.12.4"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.4.17"
@@ -585,7 +585,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
