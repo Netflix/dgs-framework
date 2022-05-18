@@ -1,5 +1,11 @@
 {
   "groups": [],
-  "properties": [],
+  "properties": [
+    {
+      "name": "dgs.graphql.introspection.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Setting this value to false will prevent Introspection queries from being performed. Note that this is against GraphQL Specification, that said, some production systems want this lock down in place for security concerns."
+    }
+  ],
   "hints": []
 }

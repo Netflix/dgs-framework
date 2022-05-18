@@ -67,7 +67,7 @@ import kotlin.streams.toList
  */
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @Configuration
-@EnableConfigurationProperties(value = [DgsConfigurationProperties::class, DgsIntrospectionConfigurationProperties::class])
+@EnableConfigurationProperties(DgsConfigurationProperties::class)
 @ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class])
 open class DgsAutoConfiguration(
     private val configProps: DgsConfigurationProperties
