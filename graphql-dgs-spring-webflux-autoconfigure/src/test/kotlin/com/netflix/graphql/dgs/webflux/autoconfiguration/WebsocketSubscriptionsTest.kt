@@ -28,6 +28,7 @@ import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Comp
 import com.netflix.graphql.dgs.webflux.handlers.OperationMessage
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
+import org.junit.jupiter.api.Test
 import org.reactivestreams.Publisher
 import org.springframework.boot.autoconfigure.web.reactive.HttpHandlerAutoConfiguration
 import org.springframework.boot.autoconfigure.web.reactive.ReactiveWebServerFactoryAutoConfiguration
@@ -60,6 +61,7 @@ import java.time.Duration
 )
 open class WebsocketSubscriptionsTest(@param:LocalServerPort val port: Int) {
 
+    @Test
     fun `Basic subscription flow`() {
 
         val client: WebSocketClient = ReactorNettyWebSocketClient()
@@ -71,12 +73,13 @@ open class WebsocketSubscriptionsTest(@param:LocalServerPort val port: Int) {
         StepVerifier.create(execute).expectComplete().verify()
 
         StepVerifier.create(output.asFlux().map { it.payload.toString() })
-            .expectNext("{errors=[], data={ticker=1}, extensions=null, dataPresent=true}")
-            .expectNext("{errors=[], data={ticker=2}, extensions=null, dataPresent=true}")
-            .expectNext("{errors=[], data={ticker=3}, extensions=null, dataPresent=true}")
+            .expectNext("{data={ticker=1}, errors=[]}")
+            .expectNext("{data={ticker=2}, errors=[]}")
+            .expectNext("{data={ticker=3}, errors=[]}")
             .verifyComplete()
     }
 
+    @Test
     fun `Subscription with error flow`() {
 
         val client: WebSocketClient = ReactorNettyWebSocketClient()
@@ -89,14 +92,15 @@ open class WebsocketSubscriptionsTest(@param:LocalServerPort val port: Int) {
         StepVerifier.create(execute).expectComplete().verify()
 
         StepVerifier.create(output.asFlux().map { it.payload.toString() })
-            .expectNext("{errors=[], data={withError=1}, extensions=null, dataPresent=true}")
-            .expectNext("{errors=[], data={withError=2}, extensions=null, dataPresent=true}")
-            .expectNext("{errors=[], data={withError=3}, extensions=null, dataPresent=true}")
+            .expectNext("{data={withError=1}, errors=[]}")
+            .expectNext("{data={withError=2}, errors=[]}")
+            .expectNext("{data={withError=3}, errors=[]}")
             .expectNext("{data=null, errors=[Broken producer]}")
             .verifyError()
     }
 
-    fun `Client stops subscription`(protocol: String) {
+    @Test
+    fun `Client stops subscription`() {
 
         val client: WebSocketClient = ReactorNettyWebSocketClient()
         val url = URI("ws://localhost:$port/subscriptions")
@@ -108,8 +112,8 @@ open class WebsocketSubscriptionsTest(@param:LocalServerPort val port: Int) {
         StepVerifier.create(execute).expectComplete().verify()
 
         StepVerifier.create(output.asFlux().map { it.payload.toString() })
-            .expectNext("{errors=[], data={withDelay=1}, extensions=null, dataPresent=true}")
-            .expectNext("{errors=[], data={withDelay=2}, extensions=null, dataPresent=true}")
+            .expectNext("{data={withDelay=1}, errors=[]}")
+            .expectNext("{data={withDelay=2}, errors=[]}")
             .verifyComplete()
     }
 
