@@ -311,7 +311,7 @@ class DefaultDgsFederationResolverTest {
         fun `Entity fetcher returning null`() {
             val movieEntityFetcher = object {
                 @DgsEntityFetcher(name = "Movie")
-                fun movieEntityFetcher(values: Map<String, Any>): Movie? {
+                fun movieEntityFetcher(@Suppress("unused_parameter") values: Map<String, Any>): Movie? {
                     return null
                 }
             }
@@ -345,7 +345,7 @@ class DefaultDgsFederationResolverTest {
         fun `Entity Fetcher throwing an exception`() {
             val movieEntityFetcher = object {
                 @DgsEntityFetcher(name = "Movie")
-                fun movieEntityFetcher(values: Map<String, Any>): Movie {
+                fun movieEntityFetcher(@Suppress("unused_parameter") values: Map<String, Any>): Movie {
                     throw DgsInvalidInputArgumentException("Invalid input argument exception")
                 }
             }
@@ -430,6 +430,7 @@ class DefaultDgsFederationResolverTest {
 
             val movieEntityFetcher = object {
                 @DgsEntityFetcher(name = "Movie")
+                @Suppress("unused_parameter")
                 fun movieEntityFetcher(values: Map<String, Any>, illegalArgument: Int): Movie {
                     return Movie()
                 }

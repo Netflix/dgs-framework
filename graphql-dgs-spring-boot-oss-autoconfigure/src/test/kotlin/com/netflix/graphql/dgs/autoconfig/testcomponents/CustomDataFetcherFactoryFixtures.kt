@@ -44,7 +44,7 @@ object CustomDataFetcherFactoryFixtures {
     @DgsComponent
     class ExplicitDataFetcherComponent {
         @DgsData(parentType = "Query", field = "simpleNested")
-        fun hello(dfe: DataFetchingEnvironment): SimpleNested {
+        fun hello(): SimpleNested {
             return SimpleNested("world")
         }
         data class SimpleNested(val hello: String)
