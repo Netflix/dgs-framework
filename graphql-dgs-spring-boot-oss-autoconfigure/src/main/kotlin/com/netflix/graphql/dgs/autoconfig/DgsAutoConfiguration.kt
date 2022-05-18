@@ -163,7 +163,6 @@ open class DgsAutoConfiguration(
         mockProviders: ObjectProvider<MockProvider>,
         dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
         dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
-        cookieValueResolver: Optional<CookieValueResolver> = Optional.empty(),
         entityFetcherRegistry: EntityFetcherRegistry,
         defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty(),
         methodDataFetcherFactory: MethodDataFetcherFactory

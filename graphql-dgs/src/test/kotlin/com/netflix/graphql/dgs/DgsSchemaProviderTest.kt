@@ -30,7 +30,6 @@ import graphql.language.FieldDefinition
 import graphql.language.ObjectTypeExtensionDefinition
 import graphql.language.TypeName
 import graphql.schema.DataFetcher
-import graphql.schema.DataFetchingEnvironment
 import graphql.schema.FieldCoordinates
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.idl.TypeDefinitionRegistry
@@ -139,7 +138,7 @@ internal class DgsSchemaProviderTest {
 
     @Test
     fun allowNoSchemasWhenTypeRegistryProvided() {
-        val schemaFiles = schemaProvider(
+        schemaProvider(
             typeDefinitionRegistry = TypeDefinitionRegistry(),
             schemaLocations = listOf("classpath*:notexists/**/*.graphql*")
         ).findSchemaFiles()
@@ -149,7 +148,7 @@ internal class DgsSchemaProviderTest {
     fun addFetchers() {
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(dfe: DataFetchingEnvironment): String {
+            fun someFetcher(): String {
                 return "Hello"
             }
         }
@@ -174,7 +173,7 @@ internal class DgsSchemaProviderTest {
     fun addPrivateFetchers() {
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
-            private fun someFetcher(dfe: DataFetchingEnvironment): String {
+            private fun someFetcher(): String {
                 return "Hello"
             }
         }
@@ -197,7 +196,7 @@ internal class DgsSchemaProviderTest {
 
     open class BaseClassFetcher {
         @DgsData(parentType = "Query", field = "hello")
-        private fun someFetcher(dfe: DataFetchingEnvironment): String {
+        private fun someFetcher(): String {
             return "Hello"
         }
     }
@@ -239,7 +238,7 @@ internal class DgsSchemaProviderTest {
         val resolverDefault = object : Any() {
             @DgsTypeResolver(name = "Video")
             @DgsDefaultTypeResolver
-            fun resolveType(type: Any): String? {
+            fun resolveType(@Suppress("unused_parameter") type: Any): String? {
                 println("Using default resolver")
                 return null
             }
@@ -275,7 +274,7 @@ internal class DgsSchemaProviderTest {
         val resolverDefault = object : Any() {
             @DgsTypeResolver(name = "Video")
             @DgsDefaultTypeResolver
-            fun resolveType(type: Any): String? {
+            fun resolveType(@Suppress("unused_parameter") type: Any): String? {
                 println("Using default resolver")
                 return null
             }
@@ -283,7 +282,7 @@ internal class DgsSchemaProviderTest {
 
         val resolverOverride = object : Any() {
             @DgsTypeResolver(name = "Video")
-            fun resolveType(type: Any): String {
+            fun resolveType(@Suppress("unused_parameter") type: Any): String {
                 println("Using override resolver")
                 return "Show"
             }
@@ -320,11 +319,11 @@ internal class DgsSchemaProviderTest {
 
     @Test
     fun allowMergingStaticAndDynamicSchema() {
-        val codeRegistry = object : Any() {
+        val codeRegistry = object {
             @DgsCodeRegistry
             fun registry(
                 codeRegistryBuilder: GraphQLCodeRegistry.Builder,
-                registry: TypeDefinitionRegistry?
+                @Suppress("unused_parameter") registry: TypeDefinitionRegistry?
             ): GraphQLCodeRegistry.Builder {
                 val df = DataFetcher { "Runtime added field" }
                 val coordinates = FieldCoordinates.coordinates("Query", "myField")
