@@ -62,7 +62,7 @@ internal class TimeScalarsSmokeTest {
         val data = executeQueryExtractingData<Map<String, String>>(
             """{ echoDateTime( dateTime: "2021-07-12T11:30:00.10+02:10") }"""
         )
-        assertThat(data).extracting { it["echoDateTime"] }.isEqualTo("2021-07-12T11:30:00.1+02:10")
+        assertThat(data).extracting { it["echoDateTime"] }.isEqualTo("2021-07-12T11:30:00.100+02:10")
 
         val mData = executeQueryExtractingData<Map<String, String>>(
             """mutation{ echoDateTimeMutation( dateTime: "2021-07-12T11:30:00.10+02:10") }"""
