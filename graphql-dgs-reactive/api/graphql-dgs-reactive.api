@@ -1,0 +1,64 @@
+public abstract interface class com/netflix/graphql/dgs/reactive/DgsReactiveCustomContextBuilderWithRequest {
+	public abstract fun build (Ljava/util/Map;Lorg/springframework/http/HttpHeaders;Lorg/springframework/web/reactive/function/server/ServerRequest;)Lreactor/core/publisher/Mono;
+}
+
+public abstract interface class com/netflix/graphql/dgs/reactive/DgsReactiveQueryExecutor {
+	public fun execute (Ljava/lang/String;)Lreactor/core/publisher/Mono;
+	public fun execute (Ljava/lang/String;Ljava/util/Map;)Lreactor/core/publisher/Mono;
+	public fun execute (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;)Lreactor/core/publisher/Mono;
+	public fun execute (Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lorg/springframework/http/HttpHeaders;)Lreactor/core/publisher/Mono;
+	public abstract fun execute (Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lorg/springframework/http/HttpHeaders;Ljava/lang/String;Lorg/springframework/web/reactive/function/server/ServerRequest;)Lreactor/core/publisher/Mono;
+	public fun executeAndExtractJsonPath (Ljava/lang/String;Ljava/lang/String;)Lreactor/core/publisher/Mono;
+	public abstract fun executeAndExtractJsonPath (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Lreactor/core/publisher/Mono;
+	public fun executeAndExtractJsonPathAsObject (Ljava/lang/String;Ljava/lang/String;Lcom/jayway/jsonpath/TypeRef;)Lreactor/core/publisher/Mono;
+	public fun executeAndExtractJsonPathAsObject (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Class;)Lreactor/core/publisher/Mono;
+	public abstract fun executeAndExtractJsonPathAsObject (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lcom/jayway/jsonpath/TypeRef;)Lreactor/core/publisher/Mono;
+	public abstract fun executeAndExtractJsonPathAsObject (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Class;)Lreactor/core/publisher/Mono;
+	public fun executeAndGetDocumentContext (Ljava/lang/String;)Lreactor/core/publisher/Mono;
+	public abstract fun executeAndGetDocumentContext (Ljava/lang/String;Ljava/util/Map;)Lreactor/core/publisher/Mono;
+}
+
+public class com/netflix/graphql/dgs/reactive/internal/DefaultDgsReactiveGraphQLContextBuilder {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/Optional;)V
+	public synthetic fun <init> (Ljava/util/Optional;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun build (Lcom/netflix/graphql/dgs/reactive/internal/DgsReactiveRequestData;)Lreactor/core/publisher/Mono;
+}
+
+public final class com/netflix/graphql/dgs/reactive/internal/DefaultDgsReactiveQueryExecutor : com/netflix/graphql/dgs/reactive/DgsReactiveQueryExecutor {
+	public static final field Companion Lcom/netflix/graphql/dgs/reactive/internal/DefaultDgsReactiveQueryExecutor$Companion;
+	public fun <init> (Lgraphql/schema/GraphQLSchema;Lcom/netflix/graphql/dgs/internal/DgsSchemaProvider;Lcom/netflix/graphql/dgs/internal/DgsDataLoaderProvider;Lcom/netflix/graphql/dgs/reactive/internal/DefaultDgsReactiveGraphQLContextBuilder;Lgraphql/execution/instrumentation/Instrumentation;Lgraphql/execution/ExecutionStrategy;Lgraphql/execution/ExecutionStrategy;Ljava/util/Optional;Lcom/netflix/graphql/dgs/internal/DefaultDgsQueryExecutor$ReloadSchemaIndicator;Lgraphql/execution/preparsed/PreparsedDocumentProvider;Lcom/netflix/graphql/dgs/internal/QueryValueCustomizer;)V
+	public synthetic fun <init> (Lgraphql/schema/GraphQLSchema;Lcom/netflix/graphql/dgs/internal/DgsSchemaProvider;Lcom/netflix/graphql/dgs/internal/DgsDataLoaderProvider;Lcom/netflix/graphql/dgs/reactive/internal/DefaultDgsReactiveGraphQLContextBuilder;Lgraphql/execution/instrumentation/Instrumentation;Lgraphql/execution/ExecutionStrategy;Lgraphql/execution/ExecutionStrategy;Ljava/util/Optional;Lcom/netflix/graphql/dgs/internal/DefaultDgsQueryExecutor$ReloadSchemaIndicator;Lgraphql/execution/preparsed/PreparsedDocumentProvider;Lcom/netflix/graphql/dgs/internal/QueryValueCustomizer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun execute (Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lorg/springframework/http/HttpHeaders;Ljava/lang/String;Lorg/springframework/web/reactive/function/server/ServerRequest;)Lreactor/core/publisher/Mono;
+	public fun executeAndExtractJsonPath (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Lreactor/core/publisher/Mono;
+	public fun executeAndExtractJsonPathAsObject (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lcom/jayway/jsonpath/TypeRef;)Lreactor/core/publisher/Mono;
+	public fun executeAndExtractJsonPathAsObject (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Class;)Lreactor/core/publisher/Mono;
+	public fun executeAndGetDocumentContext (Ljava/lang/String;Ljava/util/Map;)Lreactor/core/publisher/Mono;
+}
+
+public final class com/netflix/graphql/dgs/reactive/internal/DefaultDgsReactiveQueryExecutor$Companion {
+}
+
+public final class com/netflix/graphql/dgs/reactive/internal/DgsReactiveRequestData : com/netflix/graphql/dgs/internal/DgsRequestData {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/Map;Lorg/springframework/http/HttpHeaders;Lorg/springframework/web/reactive/function/server/ServerRequest;)V
+	public synthetic fun <init> (Ljava/util/Map;Lorg/springframework/http/HttpHeaders;Lorg/springframework/web/reactive/function/server/ServerRequest;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun component2 ()Lorg/springframework/http/HttpHeaders;
+	public final fun component3 ()Lorg/springframework/web/reactive/function/server/ServerRequest;
+	public final fun copy (Ljava/util/Map;Lorg/springframework/http/HttpHeaders;Lorg/springframework/web/reactive/function/server/ServerRequest;)Lcom/netflix/graphql/dgs/reactive/internal/DgsReactiveRequestData;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/reactive/internal/DgsReactiveRequestData;Ljava/util/Map;Lorg/springframework/http/HttpHeaders;Lorg/springframework/web/reactive/function/server/ServerRequest;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/reactive/internal/DgsReactiveRequestData;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getExtensions ()Ljava/util/Map;
+	public fun getHeaders ()Lorg/springframework/http/HttpHeaders;
+	public final fun getServerRequest ()Lorg/springframework/web/reactive/function/server/ServerRequest;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/reactive/internal/method/SyncHandlerMethodArgumentResolverAdapter : com/netflix/graphql/dgs/internal/method/ArgumentResolver {
+	public fun <init> (Lorg/springframework/web/reactive/result/method/SyncHandlerMethodArgumentResolver;Lorg/springframework/web/reactive/BindingContext;)V
+	public fun resolveArgument (Lorg/springframework/core/MethodParameter;Lgraphql/schema/DataFetchingEnvironment;)Ljava/lang/Object;
+	public fun supportsParameter (Lorg/springframework/core/MethodParameter;)Z
+}
+

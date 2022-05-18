@@ -1,0 +1,15 @@
+public final class com/netflix/graphql/mocking/DgsSchemaTransformer {
+	public fun <init> ()V
+	public final fun transformSchema (Lgraphql/schema/GraphQLSchema;Ljava/util/Map;)Lgraphql/schema/GraphQLSchema;
+	public final fun transformSchemaWithMockProviders (Lgraphql/schema/GraphQLSchema;Ljava/util/Set;)Lgraphql/schema/GraphQLSchema;
+}
+
+public final class com/netflix/graphql/mocking/MockGraphQLVisitor : graphql/schema/GraphQLTypeVisitorStub {
+	public fun <init> (Ljava/util/Map;Ljava/util/Map;)V
+	public fun visitGraphQLFieldDefinition (Lgraphql/schema/GraphQLFieldDefinition;Lgraphql/util/TraverserContext;)Lgraphql/util/TraversalControl;
+}
+
+public abstract interface class com/netflix/graphql/mocking/MockProvider {
+	public abstract fun provide ()Ljava/util/Map;
+}
+

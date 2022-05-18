@@ -1,0 +1,38 @@
+public class com/netflix/graphql/dgs/autoconfig/DgsExtendedScalarsAutoConfiguration {
+	public fun <init> ()V
+}
+
+public abstract class com/netflix/graphql/dgs/autoconfig/DgsExtendedScalarsAutoConfiguration$AbstractExtendedScalarRegistrar : com/netflix/graphql/dgs/autoconfig/DgsExtendedScalarsAutoConfiguration$ExtendedScalarRegistrar {
+	public fun <init> ()V
+	public final fun addScalar (Lgraphql/schema/idl/RuntimeWiring$Builder;)Lgraphql/schema/idl/RuntimeWiring$Builder;
+}
+
+public class com/netflix/graphql/dgs/autoconfig/DgsExtendedScalarsAutoConfiguration$CharsExtendedScalarsAutoConfiguration {
+	public fun <init> ()V
+	public fun charsExtendedScalarsRegistrar ()Lcom/netflix/graphql/dgs/autoconfig/DgsExtendedScalarsAutoConfiguration$ExtendedScalarRegistrar;
+}
+
+public abstract interface class com/netflix/graphql/dgs/autoconfig/DgsExtendedScalarsAutoConfiguration$ExtendedScalarRegistrar {
+	public abstract fun getScalars ()Ljava/util/List;
+}
+
+public class com/netflix/graphql/dgs/autoconfig/DgsExtendedScalarsAutoConfiguration$IDsExtendedScalarsAutoConfiguration {
+	public fun <init> ()V
+	public fun idsExtendedScalarsRegistrar ()Lcom/netflix/graphql/dgs/autoconfig/DgsExtendedScalarsAutoConfiguration$ExtendedScalarRegistrar;
+}
+
+public class com/netflix/graphql/dgs/autoconfig/DgsExtendedScalarsAutoConfiguration$NumbersExtendedScalarsAutoConfiguration {
+	public fun <init> ()V
+	public fun numbersExtendedScalarsRegistrar ()Lcom/netflix/graphql/dgs/autoconfig/DgsExtendedScalarsAutoConfiguration$ExtendedScalarRegistrar;
+}
+
+public class com/netflix/graphql/dgs/autoconfig/DgsExtendedScalarsAutoConfiguration$ObjectsExtendedScalarsAutoConfiguration {
+	public fun <init> ()V
+	public fun objectsExtendedScalarsRegistrar ()Lcom/netflix/graphql/dgs/autoconfig/DgsExtendedScalarsAutoConfiguration$ExtendedScalarRegistrar;
+}
+
+public class com/netflix/graphql/dgs/autoconfig/DgsExtendedScalarsAutoConfiguration$TimeExtendedScalarsAutoConfiguration {
+	public fun <init> ()V
+	public fun timesExtendedScalarsRegistrar ()Lcom/netflix/graphql/dgs/autoconfig/DgsExtendedScalarsAutoConfiguration$ExtendedScalarRegistrar;
+}
+

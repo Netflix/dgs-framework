@@ -1,0 +1,277 @@
+public final class com/netflix/graphql/dgs/metrics/DgsMetrics {
+	public static final field INSTANCE Lcom/netflix/graphql/dgs/metrics/DgsMetrics;
+}
+
+public final class com/netflix/graphql/dgs/metrics/DgsMetrics$CommonTags : java/lang/Enum {
+	public static final field FAILURE Lcom/netflix/graphql/dgs/metrics/DgsMetrics$CommonTags;
+	public static final field JAVA_CLASS Lcom/netflix/graphql/dgs/metrics/DgsMetrics$CommonTags;
+	public static final field JAVA_CLASS_METHOD Lcom/netflix/graphql/dgs/metrics/DgsMetrics$CommonTags;
+	public static final field SUCCESS Lcom/netflix/graphql/dgs/metrics/DgsMetrics$CommonTags;
+	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getTag ()Lio/micrometer/core/instrument/Tag;
+	public abstract fun tags (Ljava/lang/Object;)Lio/micrometer/core/instrument/Tags;
+	public static fun valueOf (Ljava/lang/String;)Lcom/netflix/graphql/dgs/metrics/DgsMetrics$CommonTags;
+	public static fun values ()[Lcom/netflix/graphql/dgs/metrics/DgsMetrics$CommonTags;
+}
+
+public final class com/netflix/graphql/dgs/metrics/DgsMetrics$GqlMetric : java/lang/Enum {
+	public static final field DATA_LOADER Lcom/netflix/graphql/dgs/metrics/DgsMetrics$GqlMetric;
+	public static final field ERROR Lcom/netflix/graphql/dgs/metrics/DgsMetrics$GqlMetric;
+	public static final field QUERY Lcom/netflix/graphql/dgs/metrics/DgsMetrics$GqlMetric;
+	public static final field RESOLVER Lcom/netflix/graphql/dgs/metrics/DgsMetrics$GqlMetric;
+	public final fun getKey ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lcom/netflix/graphql/dgs/metrics/DgsMetrics$GqlMetric;
+	public static fun values ()[Lcom/netflix/graphql/dgs/metrics/DgsMetrics$GqlMetric;
+}
+
+public final class com/netflix/graphql/dgs/metrics/DgsMetrics$GqlTag : java/lang/Enum {
+	public static final field ERROR_CODE Lcom/netflix/graphql/dgs/metrics/DgsMetrics$GqlTag;
+	public static final field ERROR_DETAIL Lcom/netflix/graphql/dgs/metrics/DgsMetrics$GqlTag;
+	public static final field FIELD Lcom/netflix/graphql/dgs/metrics/DgsMetrics$GqlTag;
+	public static final field LOADER_BATCH_SIZE Lcom/netflix/graphql/dgs/metrics/DgsMetrics$GqlTag;
+	public static final field LOADER_NAME Lcom/netflix/graphql/dgs/metrics/DgsMetrics$GqlTag;
+	public static final field OPERATION Lcom/netflix/graphql/dgs/metrics/DgsMetrics$GqlTag;
+	public static final field OPERATION_NAME Lcom/netflix/graphql/dgs/metrics/DgsMetrics$GqlTag;
+	public static final field OUTCOME Lcom/netflix/graphql/dgs/metrics/DgsMetrics$GqlTag;
+	public static final field PATH Lcom/netflix/graphql/dgs/metrics/DgsMetrics$GqlTag;
+	public static final field QUERY_COMPLEXITY Lcom/netflix/graphql/dgs/metrics/DgsMetrics$GqlTag;
+	public static final field QUERY_SIG_HASH Lcom/netflix/graphql/dgs/metrics/DgsMetrics$GqlTag;
+	public final fun getKey ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lcom/netflix/graphql/dgs/metrics/DgsMetrics$GqlTag;
+	public static fun values ()[Lcom/netflix/graphql/dgs/metrics/DgsMetrics$GqlTag;
+}
+
+public final class com/netflix/graphql/dgs/metrics/DgsMetrics$InternalMetric : java/lang/Enum {
+	public static final field TIMED_METHOD Lcom/netflix/graphql/dgs/metrics/DgsMetrics$InternalMetric;
+	public final fun getKey ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lcom/netflix/graphql/dgs/metrics/DgsMetrics$InternalMetric;
+	public static fun values ()[Lcom/netflix/graphql/dgs/metrics/DgsMetrics$InternalMetric;
+}
+
+public final class com/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsInstrumentation : graphql/execution/instrumentation/SimpleInstrumentation {
+	public static final field Companion Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsInstrumentation$Companion;
+	public fun <init> (Lcom/netflix/graphql/dgs/internal/DgsSchemaProvider;Lcom/netflix/graphql/dgs/metrics/micrometer/DgsMeterRegistrySupplier;Lcom/netflix/graphql/dgs/metrics/micrometer/tagging/DgsGraphQLMetricsTagsProvider;Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties;Lcom/netflix/graphql/dgs/metrics/micrometer/LimitedTagMetricResolver;Ljava/util/Optional;)V
+	public synthetic fun <init> (Lcom/netflix/graphql/dgs/internal/DgsSchemaProvider;Lcom/netflix/graphql/dgs/metrics/micrometer/DgsMeterRegistrySupplier;Lcom/netflix/graphql/dgs/metrics/micrometer/tagging/DgsGraphQLMetricsTagsProvider;Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties;Lcom/netflix/graphql/dgs/metrics/micrometer/LimitedTagMetricResolver;Ljava/util/Optional;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun beginExecution (Lgraphql/execution/instrumentation/parameters/InstrumentationExecutionParameters;)Lgraphql/execution/instrumentation/InstrumentationContext;
+	public fun beginExecutionStrategy (Lgraphql/execution/instrumentation/parameters/InstrumentationExecutionStrategyParameters;)Lgraphql/execution/instrumentation/ExecutionStrategyInstrumentationContext;
+	public fun beginValidation (Lgraphql/execution/instrumentation/parameters/InstrumentationValidationParameters;)Lgraphql/execution/instrumentation/InstrumentationContext;
+	public fun createState ()Lgraphql/execution/instrumentation/InstrumentationState;
+	public fun instrumentDataFetcher (Lgraphql/schema/DataFetcher;Lgraphql/execution/instrumentation/parameters/InstrumentationFieldFetchParameters;)Lgraphql/schema/DataFetcher;
+	public fun instrumentExecutionResult (Lgraphql/ExecutionResult;Lgraphql/execution/instrumentation/parameters/InstrumentationExecutionParameters;)Ljava/util/concurrent/CompletableFuture;
+}
+
+public final class com/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsInstrumentation$Companion {
+}
+
+public final class com/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsInstrumentation$MetricsInstrumentationState : graphql/execution/instrumentation/InstrumentationState {
+	public fun <init> (Lio/micrometer/core/instrument/MeterRegistry;Lcom/netflix/graphql/dgs/metrics/micrometer/LimitedTagMetricResolver;)V
+	public final fun getOperation ()Ljava/util/Optional;
+	public final fun getOperationName ()Ljava/util/Optional;
+	public final fun getQueryComplexity ()Ljava/util/Optional;
+	public final fun getQuerySignature ()Ljava/util/Optional;
+	public final fun isIntrospectionQuery ()Z
+	public final fun setIntrospectionQuery (Z)V
+	public final fun setOperation (Ljava/util/Optional;)V
+	public final fun setOperationName (Ljava/util/Optional;)V
+	public final fun setQueryComplexity (Ljava/util/Optional;)V
+	public final fun setQuerySignature (Ljava/util/Optional;)V
+	public final fun startTimer ()V
+	public final fun stopTimer (Lio/micrometer/core/instrument/Timer$Builder;)V
+	public final fun tags ()Lio/micrometer/core/instrument/Tags;
+}
+
+public final class com/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties {
+	public fun <init> ()V
+	public fun <init> (Lorg/springframework/boot/actuate/autoconfigure/metrics/AutoTimeProperties;Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$TagsProperties;)V
+	public synthetic fun <init> (Lorg/springframework/boot/actuate/autoconfigure/metrics/AutoTimeProperties;Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$TagsProperties;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lorg/springframework/boot/actuate/autoconfigure/metrics/AutoTimeProperties;
+	public final fun component2 ()Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$TagsProperties;
+	public final fun copy (Lorg/springframework/boot/actuate/autoconfigure/metrics/AutoTimeProperties;Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$TagsProperties;)Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties;Lorg/springframework/boot/actuate/autoconfigure/metrics/AutoTimeProperties;Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$TagsProperties;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAutotime ()Lorg/springframework/boot/actuate/autoconfigure/metrics/AutoTimeProperties;
+	public final fun getTags ()Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$TagsProperties;
+	public fun hashCode ()I
+	public final fun setAutotime (Lorg/springframework/boot/actuate/autoconfigure/metrics/AutoTimeProperties;)V
+	public final fun setTags (Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$TagsProperties;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterKind : java/lang/Enum {
+	public static final field FIRST Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterKind;
+	public static final field FREQUENCY Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterKind;
+	public static final field ROLLUP Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterKind;
+	public static fun valueOf (Ljava/lang/String;)Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterKind;
+	public static fun values ()[Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterKind;
+}
+
+public final class com/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterProperties {
+	public fun <init> ()V
+	public fun <init> (Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterKind;I)V
+	public synthetic fun <init> (Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterKind;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterKind;
+	public final fun component2 ()I
+	public final fun copy (Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterKind;I)Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterProperties;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterProperties;Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterKind;IILjava/lang/Object;)Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterProperties;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKind ()Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterKind;
+	public final fun getLimit ()I
+	public fun hashCode ()I
+	public final fun setKind (Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterKind;)V
+	public final fun setLimit (I)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$TagsProperties {
+	public fun <init> ()V
+	public fun <init> (Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterProperties;)V
+	public synthetic fun <init> (Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterProperties;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterProperties;
+	public final fun copy (Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterProperties;)Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$TagsProperties;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$TagsProperties;Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterProperties;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$TagsProperties;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLimiter ()Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterProperties;
+	public fun hashCode ()I
+	public final fun setLimiter (Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties$CardinalityLimiterProperties;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public class com/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMicrometerAutoConfiguration {
+	public static final field AUTO_CONF_PREFIX Ljava/lang/String;
+	public static final field AUTO_CONF_QUERY_SIG_PREFIX Ljava/lang/String;
+	public static final field AUTO_CONF_TAG_CUSTOMIZERS Ljava/lang/String;
+	public static final field Companion Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMicrometerAutoConfiguration$Companion;
+	public fun <init> ()V
+	public fun collatedMetricsTagsProvider (Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;)Lcom/netflix/graphql/dgs/metrics/micrometer/tagging/DgsGraphQLMetricsTagsProvider;
+	public fun dataLoaderInstrumentationProvider (Lcom/netflix/graphql/dgs/metrics/micrometer/DgsMeterRegistrySupplier;)Lcom/netflix/graphql/dgs/metrics/micrometer/dataloader/DgsDataLoaderInstrumentationProvider;
+	public fun metricsInstrumentation (Lcom/netflix/graphql/dgs/internal/DgsSchemaProvider;Lcom/netflix/graphql/dgs/metrics/micrometer/DgsMeterRegistrySupplier;Lcom/netflix/graphql/dgs/metrics/micrometer/tagging/DgsGraphQLMetricsTagsProvider;Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties;Lcom/netflix/graphql/dgs/metrics/micrometer/LimitedTagMetricResolver;Ljava/util/Optional;)Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsInstrumentation;
+	public fun spectatorLimitedTagMetricResolve (Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties;)Lcom/netflix/graphql/dgs/metrics/micrometer/LimitedTagMetricResolver;
+}
+
+public final class com/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMicrometerAutoConfiguration$Companion {
+}
+
+public class com/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMicrometerAutoConfiguration$MeterRegistryConfiguration {
+	public fun <init> ()V
+	public fun meterRegistrySupplier (Lorg/springframework/beans/factory/ObjectProvider;)Lcom/netflix/graphql/dgs/metrics/micrometer/DgsMeterRegistrySupplier;
+}
+
+public class com/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMicrometerAutoConfiguration$MetricsPropertiesConfiguration {
+	public fun <init> ()V
+}
+
+public class com/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMicrometerAutoConfiguration$OptionalTagCustomizersConfiguration {
+	public fun <init> ()V
+	public fun simpleGqlOutcomeTagCustomizer ()Lcom/netflix/graphql/dgs/metrics/micrometer/tagging/SimpleGqlOutcomeTagCustomizer;
+}
+
+public class com/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMicrometerAutoConfiguration$QuerySignatureRepositoryConfiguration {
+	public static final field AUTO_CONF_QUERY_SIG_CACHING_PREFIX Ljava/lang/String;
+	public static final field Companion Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMicrometerAutoConfiguration$QuerySignatureRepositoryConfiguration$Companion;
+	public fun <init> ()V
+	public fun querySignatureCacheableRepository (Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties;Lcom/netflix/graphql/dgs/metrics/micrometer/DgsMeterRegistrySupplier;Ljava/util/Optional;)Lcom/netflix/graphql/dgs/metrics/micrometer/utils/QuerySignatureRepository;
+	public fun simpleQuerySignatureRepository (Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties;Lcom/netflix/graphql/dgs/metrics/micrometer/DgsMeterRegistrySupplier;)Lcom/netflix/graphql/dgs/metrics/micrometer/utils/QuerySignatureRepository;
+}
+
+public final class com/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMicrometerAutoConfiguration$QuerySignatureRepositoryConfiguration$Companion {
+}
+
+public abstract interface class com/netflix/graphql/dgs/metrics/micrometer/DgsMeterRegistrySupplier {
+	public abstract fun get ()Lio/micrometer/core/instrument/MeterRegistry;
+}
+
+public abstract interface class com/netflix/graphql/dgs/metrics/micrometer/LimitedTagMetricResolver {
+	public abstract fun tag (Ljava/lang/String;Ljava/lang/String;)Ljava/util/Optional;
+	public fun tags (Ljava/lang/String;Ljava/lang/String;)Lio/micrometer/core/instrument/Tags;
+}
+
+public final class com/netflix/graphql/dgs/metrics/micrometer/LimitedTagMetricResolver$DefaultImpls {
+	public static fun tags (Lcom/netflix/graphql/dgs/metrics/micrometer/LimitedTagMetricResolver;Ljava/lang/String;Ljava/lang/String;)Lio/micrometer/core/instrument/Tags;
+}
+
+public final class com/netflix/graphql/dgs/metrics/micrometer/dataloader/DgsDataLoaderInstrumentationProvider : com/netflix/graphql/dgs/DataLoaderInstrumentationExtensionProvider {
+	public fun <init> (Lcom/netflix/graphql/dgs/metrics/micrometer/DgsMeterRegistrySupplier;)V
+	public fun provide (Lorg/dataloader/BatchLoader;Ljava/lang/String;)Lorg/dataloader/BatchLoader;
+	public fun provide (Lorg/dataloader/BatchLoaderWithContext;Ljava/lang/String;)Lorg/dataloader/BatchLoaderWithContext;
+	public fun provide (Lorg/dataloader/MappedBatchLoader;Ljava/lang/String;)Lorg/dataloader/MappedBatchLoader;
+	public fun provide (Lorg/dataloader/MappedBatchLoaderWithContext;Ljava/lang/String;)Lorg/dataloader/MappedBatchLoaderWithContext;
+}
+
+public abstract interface class com/netflix/graphql/dgs/metrics/micrometer/tagging/DgsContextualTagCustomizer {
+	public abstract fun getContextualTags ()Ljava/lang/Iterable;
+}
+
+public abstract interface class com/netflix/graphql/dgs/metrics/micrometer/tagging/DgsExecutionTagCustomizer {
+	public abstract fun getExecutionTags (Lgraphql/execution/instrumentation/parameters/InstrumentationExecutionParameters;Lgraphql/ExecutionResult;Ljava/lang/Throwable;)Ljava/lang/Iterable;
+}
+
+public abstract interface class com/netflix/graphql/dgs/metrics/micrometer/tagging/DgsFieldFetchTagCustomizer {
+	public abstract fun getFieldFetchTags (Lgraphql/execution/instrumentation/parameters/InstrumentationFieldFetchParameters;Ljava/lang/Throwable;)Ljava/lang/Iterable;
+}
+
+public abstract interface class com/netflix/graphql/dgs/metrics/micrometer/tagging/DgsGraphQLMetricsTagsProvider {
+	public fun getContextualTags ()Ljava/lang/Iterable;
+	public fun getExecutionTags (Lgraphql/execution/instrumentation/parameters/InstrumentationExecutionParameters;Lgraphql/ExecutionResult;Ljava/lang/Throwable;)Ljava/lang/Iterable;
+	public fun getFieldFetchTags (Lgraphql/execution/instrumentation/parameters/InstrumentationFieldFetchParameters;Ljava/lang/Throwable;)Ljava/lang/Iterable;
+}
+
+public final class com/netflix/graphql/dgs/metrics/micrometer/tagging/DgsGraphQLMetricsTagsProvider$DefaultImpls {
+	public static fun getContextualTags (Lcom/netflix/graphql/dgs/metrics/micrometer/tagging/DgsGraphQLMetricsTagsProvider;)Ljava/lang/Iterable;
+	public static fun getExecutionTags (Lcom/netflix/graphql/dgs/metrics/micrometer/tagging/DgsGraphQLMetricsTagsProvider;Lgraphql/execution/instrumentation/parameters/InstrumentationExecutionParameters;Lgraphql/ExecutionResult;Ljava/lang/Throwable;)Ljava/lang/Iterable;
+	public static fun getFieldFetchTags (Lcom/netflix/graphql/dgs/metrics/micrometer/tagging/DgsGraphQLMetricsTagsProvider;Lgraphql/execution/instrumentation/parameters/InstrumentationFieldFetchParameters;Ljava/lang/Throwable;)Ljava/lang/Iterable;
+}
+
+public final class com/netflix/graphql/dgs/metrics/micrometer/tagging/SimpleGqlOutcomeTagCustomizer : com/netflix/graphql/dgs/metrics/micrometer/tagging/DgsExecutionTagCustomizer, com/netflix/graphql/dgs/metrics/micrometer/tagging/DgsFieldFetchTagCustomizer {
+	public fun <init> ()V
+	public fun getExecutionTags (Lgraphql/execution/instrumentation/parameters/InstrumentationExecutionParameters;Lgraphql/ExecutionResult;Ljava/lang/Throwable;)Ljava/lang/Iterable;
+	public fun getFieldFetchTags (Lgraphql/execution/instrumentation/parameters/InstrumentationFieldFetchParameters;Ljava/lang/Throwable;)Ljava/lang/Iterable;
+}
+
+public class com/netflix/graphql/dgs/metrics/micrometer/utils/CacheableQuerySignatureRepository : com/netflix/graphql/dgs/metrics/micrometer/utils/SimpleQuerySignatureRepository {
+	public static final field Companion Lcom/netflix/graphql/dgs/metrics/micrometer/utils/CacheableQuerySignatureRepository$Companion;
+	public static final field DEFAULT_MAX_CACHE_SIZE J
+	public static final field QUERY_SIG_CACHE Ljava/lang/String;
+	public fun <init> (Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties;Lcom/netflix/graphql/dgs/metrics/micrometer/DgsMeterRegistrySupplier;Ljava/util/Optional;)V
+	public fun afterPropertiesSet ()V
+	protected fun computeQuerySignature (Ljava/lang/String;Ljava/lang/String;Lgraphql/language/Document;)Lcom/netflix/graphql/dgs/metrics/micrometer/utils/QuerySignatureRepository$QuerySignature;
+}
+
+public final class com/netflix/graphql/dgs/metrics/micrometer/utils/CacheableQuerySignatureRepository$Companion {
+}
+
+public abstract interface class com/netflix/graphql/dgs/metrics/micrometer/utils/QuerySignatureRepository {
+	public static final field Companion Lcom/netflix/graphql/dgs/metrics/micrometer/utils/QuerySignatureRepository$Companion;
+	public abstract fun get (Lgraphql/language/Document;Lgraphql/execution/instrumentation/parameters/InstrumentationExecutionParameters;)Ljava/util/Optional;
+}
+
+public final class com/netflix/graphql/dgs/metrics/micrometer/utils/QuerySignatureRepository$Companion {
+}
+
+public final class com/netflix/graphql/dgs/metrics/micrometer/utils/QuerySignatureRepository$QuerySignature {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/netflix/graphql/dgs/metrics/micrometer/utils/QuerySignatureRepository$QuerySignature;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/metrics/micrometer/utils/QuerySignatureRepository$QuerySignature;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/metrics/micrometer/utils/QuerySignatureRepository$QuerySignature;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHash ()Ljava/lang/String;
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public class com/netflix/graphql/dgs/metrics/micrometer/utils/SimpleQuerySignatureRepository : com/netflix/graphql/dgs/metrics/micrometer/utils/QuerySignatureRepository, org/springframework/beans/factory/InitializingBean {
+	public static final field Companion Lcom/netflix/graphql/dgs/metrics/micrometer/utils/SimpleQuerySignatureRepository$Companion;
+	protected field meterRegistry Lio/micrometer/core/instrument/MeterRegistry;
+	public fun <init> (Lcom/netflix/graphql/dgs/metrics/micrometer/DgsGraphQLMetricsProperties;Lcom/netflix/graphql/dgs/metrics/micrometer/DgsMeterRegistrySupplier;)V
+	public fun afterPropertiesSet ()V
+	protected fun computeQuerySignature (Ljava/lang/String;Ljava/lang/String;Lgraphql/language/Document;)Lcom/netflix/graphql/dgs/metrics/micrometer/utils/QuerySignatureRepository$QuerySignature;
+	public fun get (Lgraphql/language/Document;Lgraphql/execution/instrumentation/parameters/InstrumentationExecutionParameters;)Ljava/util/Optional;
+	protected final fun getMeterRegistry ()Lio/micrometer/core/instrument/MeterRegistry;
+	protected final fun setMeterRegistry (Lio/micrometer/core/instrument/MeterRegistry;)V
+}
+
+public final class com/netflix/graphql/dgs/metrics/micrometer/utils/SimpleQuerySignatureRepository$Companion {
+}
+

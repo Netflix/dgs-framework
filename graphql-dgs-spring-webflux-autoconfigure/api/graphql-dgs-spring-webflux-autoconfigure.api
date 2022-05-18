@@ -1,0 +1,172 @@
+public class com/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebFluxAutoConfiguration {
+	public fun <init> (Lcom/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties;)V
+	public fun dgsGraphQlRouter (Lcom/netflix/graphql/dgs/webflux/handlers/DgsWebfluxHttpHandler;)Lorg/springframework/web/reactive/function/server/RouterFunction;
+	public fun dgsObjectMapper ()Lcom/fasterxml/jackson/databind/ObjectMapper;
+	public fun dgsReactiveQueryExecutor (Lorg/springframework/context/ApplicationContext;Lgraphql/schema/GraphQLSchema;Lcom/netflix/graphql/dgs/internal/DgsSchemaProvider;Lcom/netflix/graphql/dgs/internal/DgsDataLoaderProvider;Lcom/netflix/graphql/dgs/reactive/internal/DefaultDgsReactiveGraphQLContextBuilder;Lgraphql/execution/DataFetcherExceptionHandler;Lorg/springframework/beans/factory/ObjectProvider;Lorg/springframework/core/env/Environment;Ljava/util/Optional;Ljava/util/Optional;Ljava/util/Optional;Lcom/netflix/graphql/dgs/internal/DefaultDgsQueryExecutor$ReloadSchemaIndicator;Lorg/springframework/beans/factory/ObjectProvider;Lcom/netflix/graphql/dgs/internal/QueryValueCustomizer;)Lcom/netflix/graphql/dgs/reactive/DgsReactiveQueryExecutor;
+	public fun dgsWebfluxHttpHandler (Lcom/netflix/graphql/dgs/reactive/DgsReactiveQueryExecutor;Lcom/fasterxml/jackson/databind/ObjectMapper;)Lcom/netflix/graphql/dgs/webflux/handlers/DgsWebfluxHttpHandler;
+	public fun fluxReactiveDataFetcherResultProcessor ()Lcom/netflix/graphql/dgs/internal/FluxDataFetcherResultProcessor;
+	public fun graphiQlConfigurer (Lcom/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties;)Lcom/netflix/graphql/dgs/webflux/autoconfiguration/GraphiQlConfigurer;
+	public fun graphiQlIndexRedirect ()Lorg/springframework/web/reactive/function/server/RouterFunction;
+	public fun handlerAdapter (Lorg/springframework/web/reactive/socket/server/WebSocketService;)Lorg/springframework/web/reactive/socket/server/support/WebSocketHandlerAdapter;
+	public fun monoReactiveDataFetcherResultProcessor ()Lcom/netflix/graphql/dgs/internal/MonoDataFetcherResultProcessor;
+	public fun reactiveGraphQlContextBuilder (Ljava/util/Optional;)Lcom/netflix/graphql/dgs/reactive/internal/DefaultDgsReactiveGraphQLContextBuilder;
+	public fun schemaRouter (Lcom/netflix/graphql/dgs/internal/DgsSchemaProvider;)Lorg/springframework/web/reactive/function/server/RouterFunction;
+	public fun webSocketService ()Lorg/springframework/web/reactive/socket/server/WebSocketService;
+	public fun websocketSubscriptionHandler (Lcom/netflix/graphql/dgs/reactive/DgsReactiveQueryExecutor;)Lorg/springframework/web/reactive/handler/SimpleUrlHandlerMapping;
+}
+
+public class com/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebFluxAutoConfiguration$WebFluxArgumentHandlerConfiguration {
+	public fun <init> ()V
+	public fun cookieValueArgumentResolver (Lorg/springframework/beans/factory/config/ConfigurableBeanFactory;Lorg/springframework/core/ReactiveAdapterRegistry;Lorg/springframework/web/reactive/BindingContext;)Lcom/netflix/graphql/dgs/internal/method/ArgumentResolver;
+	public fun dgsBindingContext (Lorg/springframework/beans/factory/ObjectProvider;)Lorg/springframework/web/reactive/BindingContext;
+	public fun requestHeaderArgumentResolver (Lorg/springframework/beans/factory/config/ConfigurableBeanFactory;Lorg/springframework/core/ReactiveAdapterRegistry;Lorg/springframework/web/reactive/BindingContext;)Lcom/netflix/graphql/dgs/internal/method/ArgumentResolver;
+	public fun requestHeaderMapArgumentResolver (Lorg/springframework/core/ReactiveAdapterRegistry;Lorg/springframework/web/reactive/BindingContext;)Lcom/netflix/graphql/dgs/internal/method/ArgumentResolver;
+	public fun requestParamArgumentResolver (Lorg/springframework/beans/factory/config/ConfigurableBeanFactory;Lorg/springframework/core/ReactiveAdapterRegistry;Lorg/springframework/web/reactive/BindingContext;)Lcom/netflix/graphql/dgs/internal/method/ArgumentResolver;
+	public fun requestParamMapArgumentResolver (Lorg/springframework/beans/factory/config/ConfigurableBeanFactory;Lorg/springframework/core/ReactiveAdapterRegistry;Lorg/springframework/web/reactive/BindingContext;)Lcom/netflix/graphql/dgs/internal/method/ArgumentResolver;
+}
+
+public final class com/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Lcom/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties$DgsGraphiQLConfigurationProperties;Lcom/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties$DgsSchemaJsonConfigurationProperties;)V
+	public synthetic fun <init> (Ljava/lang/String;Lcom/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties$DgsGraphiQLConfigurationProperties;Lcom/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties$DgsSchemaJsonConfigurationProperties;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getGraphiql ()Lcom/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties$DgsGraphiQLConfigurationProperties;
+	public final fun getPath ()Ljava/lang/String;
+	public final fun getSchemaJson ()Lcom/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties$DgsSchemaJsonConfigurationProperties;
+	public final fun setGraphiql (Lcom/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties$DgsGraphiQLConfigurationProperties;)V
+	public final fun setPath (Ljava/lang/String;)V
+	public final fun setSchemaJson (Lcom/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties$DgsSchemaJsonConfigurationProperties;)V
+	public final fun validatePaths ()V
+}
+
+public final class com/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties$DgsGraphiQLConfigurationProperties {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties$DgsGraphiQLConfigurationProperties;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties$DgsGraphiQLConfigurationProperties;Ljava/lang/String;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties$DgsGraphiQLConfigurationProperties;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPath ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun setPath (Ljava/lang/String;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties$DgsSchemaJsonConfigurationProperties {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties$DgsSchemaJsonConfigurationProperties;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties$DgsSchemaJsonConfigurationProperties;Ljava/lang/String;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties$DgsSchemaJsonConfigurationProperties;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPath ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun setPath (Ljava/lang/String;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/webflux/autoconfiguration/GraphiQlConfigurer : org/springframework/web/reactive/config/WebFluxConfigurer {
+	public fun <init> (Lcom/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties;)V
+	public fun addResourceHandlers (Lorg/springframework/web/reactive/config/ResourceHandlerRegistry;)V
+}
+
+public final class com/netflix/graphql/dgs/webflux/autoconfiguration/GraphiQlConfigurer$TokenReplacingTransformer : org/springframework/web/reactive/resource/ResourceTransformer {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lcom/netflix/graphql/dgs/webflux/autoconfiguration/DgsWebfluxConfigurationProperties;)V
+	public fun transform (Lorg/springframework/web/server/ServerWebExchange;Lorg/springframework/core/io/Resource;Lorg/springframework/web/reactive/resource/ResourceTransformerChain;)Lreactor/core/publisher/Mono;
+}
+
+public final class com/netflix/graphql/dgs/webflux/handlers/DataPayload {
+	public fun <init> (Ljava/lang/Object;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/Object;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/Object;Ljava/util/List;)Lcom/netflix/graphql/dgs/webflux/handlers/DataPayload;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/webflux/handlers/DataPayload;Ljava/lang/Object;Ljava/util/List;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/webflux/handlers/DataPayload;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getData ()Ljava/lang/Object;
+	public final fun getErrors ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/webflux/handlers/DefaultDgsWebfluxHttpHandler : com/netflix/graphql/dgs/webflux/handlers/DgsWebfluxHttpHandler {
+	public static final field Companion Lcom/netflix/graphql/dgs/webflux/handlers/DefaultDgsWebfluxHttpHandler$Companion;
+	public fun <init> (Lcom/netflix/graphql/dgs/reactive/DgsReactiveQueryExecutor;Lcom/fasterxml/jackson/databind/ObjectMapper;)V
+	public fun graphql (Lorg/springframework/web/reactive/function/server/ServerRequest;)Lreactor/core/publisher/Mono;
+}
+
+public final class com/netflix/graphql/dgs/webflux/handlers/DefaultDgsWebfluxHttpHandler$Companion {
+}
+
+public final class com/netflix/graphql/dgs/webflux/handlers/DgsHandshakeWebSocketService : org/springframework/web/reactive/socket/server/support/HandshakeWebSocketService {
+	public static final field Companion Lcom/netflix/graphql/dgs/webflux/handlers/DgsHandshakeWebSocketService$Companion;
+	public fun <init> ()V
+	public fun <init> (Lorg/springframework/web/reactive/socket/server/RequestUpgradeStrategy;)V
+	public fun handleRequest (Lorg/springframework/web/server/ServerWebExchange;Lorg/springframework/web/reactive/socket/WebSocketHandler;)Lreactor/core/publisher/Mono;
+}
+
+public final class com/netflix/graphql/dgs/webflux/handlers/DgsHandshakeWebSocketService$Companion {
+}
+
+public final class com/netflix/graphql/dgs/webflux/handlers/DgsReactiveWebsocketHandler : org/springframework/web/reactive/socket/WebSocketHandler {
+	public static final field Companion Lcom/netflix/graphql/dgs/webflux/handlers/DgsReactiveWebsocketHandler$Companion;
+	public static final field GQL_COMPLETE Ljava/lang/String;
+	public static final field GQL_CONNECTION_ACK Ljava/lang/String;
+	public static final field GQL_CONNECTION_INIT Ljava/lang/String;
+	public static final field GQL_CONNECTION_TERMINATE Ljava/lang/String;
+	public static final field GQL_DATA Ljava/lang/String;
+	public static final field GQL_ERROR Ljava/lang/String;
+	public static final field GQL_START Ljava/lang/String;
+	public static final field GQL_STOP Ljava/lang/String;
+	public fun <init> (Lcom/netflix/graphql/dgs/reactive/DgsReactiveQueryExecutor;)V
+	public fun getSubProtocols ()Ljava/util/List;
+	public fun handle (Lorg/springframework/web/reactive/socket/WebSocketSession;)Lreactor/core/publisher/Mono;
+}
+
+public final class com/netflix/graphql/dgs/webflux/handlers/DgsReactiveWebsocketHandler$Companion {
+}
+
+public abstract interface class com/netflix/graphql/dgs/webflux/handlers/DgsWebfluxHttpHandler {
+	public abstract fun graphql (Lorg/springframework/web/reactive/function/server/ServerRequest;)Lreactor/core/publisher/Mono;
+}
+
+public final class com/netflix/graphql/dgs/webflux/handlers/OperationMessage {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Object;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Object;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/Object;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/Object;Ljava/lang/String;)Lcom/netflix/graphql/dgs/webflux/handlers/OperationMessage;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/webflux/handlers/OperationMessage;Ljava/lang/String;Ljava/lang/Object;Ljava/lang/String;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/webflux/handlers/OperationMessage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getId ()Ljava/lang/String;
+	public final fun getPayload ()Ljava/lang/Object;
+	public final fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/webflux/handlers/QueryPayload {
+	public fun <init> (Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;)Lcom/netflix/graphql/dgs/webflux/handlers/QueryPayload;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/webflux/handlers/QueryPayload;Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/webflux/handlers/QueryPayload;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getExtensions ()Ljava/util/Map;
+	public final fun getOperationName ()Ljava/lang/String;
+	public final fun getQuery ()Ljava/lang/String;
+	public final fun getVariables ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/webflux/handlers/WebFluxCookieValueResolver : com/netflix/graphql/dgs/internal/CookieValueResolver {
+	public fun <init> ()V
+	public fun getCookieValue (Ljava/lang/String;Lcom/netflix/graphql/dgs/internal/DgsRequestData;)Ljava/lang/String;
+}
+

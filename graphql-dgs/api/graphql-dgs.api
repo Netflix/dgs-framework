@@ -1,0 +1,649 @@
+public abstract interface class com/netflix/graphql/dgs/DataLoaderInstrumentationExtensionProvider {
+	public abstract fun provide (Lorg/dataloader/BatchLoader;Ljava/lang/String;)Lorg/dataloader/BatchLoader;
+	public abstract fun provide (Lorg/dataloader/BatchLoaderWithContext;Ljava/lang/String;)Lorg/dataloader/BatchLoaderWithContext;
+	public abstract fun provide (Lorg/dataloader/MappedBatchLoader;Ljava/lang/String;)Lorg/dataloader/MappedBatchLoader;
+	public abstract fun provide (Lorg/dataloader/MappedBatchLoaderWithContext;Ljava/lang/String;)Lorg/dataloader/MappedBatchLoaderWithContext;
+}
+
+public abstract interface annotation class com/netflix/graphql/dgs/DgsCodeRegistry : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class com/netflix/graphql/dgs/DgsComponent : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class com/netflix/graphql/dgs/DgsData : java/lang/annotation/Annotation {
+	public abstract fun field ()Ljava/lang/String;
+	public abstract fun parentType ()Ljava/lang/String;
+}
+
+public abstract interface annotation class com/netflix/graphql/dgs/DgsData$List : java/lang/annotation/Annotation {
+	public abstract fun value ()[Lcom/netflix/graphql/dgs/DgsData;
+}
+
+public final class com/netflix/graphql/dgs/DgsDataFetchingEnvironment : graphql/schema/DataFetchingEnvironment {
+	public fun <init> (Lgraphql/schema/DataFetchingEnvironment;)V
+	public fun containsArgument (Ljava/lang/String;)Z
+	public fun getArgument (Ljava/lang/String;)Ljava/lang/Object;
+	public fun getArgumentOrDefault (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun getArguments ()Ljava/util/Map;
+	public fun getCacheControl ()Lgraphql/cachecontrol/CacheControl;
+	public fun getContext ()Ljava/lang/Object;
+	public final fun getDataLoader (Ljava/lang/Class;)Lorg/dataloader/DataLoader;
+	public fun getDataLoader (Ljava/lang/String;)Lorg/dataloader/DataLoader;
+	public fun getDataLoaderRegistry ()Lorg/dataloader/DataLoaderRegistry;
+	public final fun getDgsContext ()Lcom/netflix/graphql/dgs/context/DgsContext;
+	public fun getDocument ()Lgraphql/language/Document;
+	public fun getExecutionId ()Lgraphql/execution/ExecutionId;
+	public fun getExecutionStepInfo ()Lgraphql/execution/ExecutionStepInfo;
+	public fun getField ()Lgraphql/language/Field;
+	public fun getFieldDefinition ()Lgraphql/schema/GraphQLFieldDefinition;
+	public fun getFieldType ()Lgraphql/schema/GraphQLOutputType;
+	public fun getFields ()Ljava/util/List;
+	public fun getFragmentsByName ()Ljava/util/Map;
+	public fun getGraphQLSchema ()Lgraphql/schema/GraphQLSchema;
+	public fun getGraphQlContext ()Lgraphql/GraphQLContext;
+	public fun getLocalContext ()Ljava/lang/Object;
+	public fun getLocale ()Ljava/util/Locale;
+	public fun getMergedField ()Lgraphql/execution/MergedField;
+	public fun getOperationDefinition ()Lgraphql/language/OperationDefinition;
+	public fun getParentType ()Lgraphql/schema/GraphQLType;
+	public fun getQueryDirectives ()Lgraphql/execution/directives/QueryDirectives;
+	public fun getRoot ()Ljava/lang/Object;
+	public fun getSelectionSet ()Lgraphql/schema/DataFetchingFieldSelectionSet;
+	public fun getSource ()Ljava/lang/Object;
+	public fun getVariables ()Ljava/util/Map;
+}
+
+public abstract interface annotation class com/netflix/graphql/dgs/DgsDataLoader : java/lang/annotation/Annotation {
+	public static final field GENERATE_DATA_LOADER_NAME Ljava/lang/String;
+	public abstract fun batching ()Z
+	public abstract fun caching ()Z
+	public abstract fun maxBatchSize ()I
+	public abstract fun name ()Ljava/lang/String;
+}
+
+public abstract interface class com/netflix/graphql/dgs/DgsDataLoaderRegistryConsumer {
+	public abstract fun setDataLoaderRegistry (Lorg/dataloader/DataLoaderRegistry;)V
+}
+
+public abstract interface annotation class com/netflix/graphql/dgs/DgsDefaultTypeResolver : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class com/netflix/graphql/dgs/DgsDirective : java/lang/annotation/Annotation {
+	public abstract fun name ()Ljava/lang/String;
+}
+
+public abstract interface annotation class com/netflix/graphql/dgs/DgsEnableDataFetcherInstrumentation : java/lang/annotation/Annotation {
+	public abstract fun value ()Z
+}
+
+public abstract interface annotation class com/netflix/graphql/dgs/DgsEntityFetcher : java/lang/annotation/Annotation {
+	public abstract fun name ()Ljava/lang/String;
+}
+
+public abstract interface class com/netflix/graphql/dgs/DgsFederationResolver {
+	public abstract fun entitiesFetcher ()Lgraphql/schema/DataFetcher;
+	public abstract fun typeResolver ()Lgraphql/schema/TypeResolver;
+}
+
+public abstract interface annotation class com/netflix/graphql/dgs/DgsMutation : java/lang/annotation/Annotation {
+	public abstract fun field ()Ljava/lang/String;
+}
+
+public abstract interface annotation class com/netflix/graphql/dgs/DgsQuery : java/lang/annotation/Annotation {
+	public abstract fun field ()Ljava/lang/String;
+}
+
+public abstract interface class com/netflix/graphql/dgs/DgsQueryExecutor {
+	public fun execute (Ljava/lang/String;)Lgraphql/ExecutionResult;
+	public fun execute (Ljava/lang/String;Ljava/util/Map;)Lgraphql/ExecutionResult;
+	public fun execute (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;)Lgraphql/ExecutionResult;
+	public fun execute (Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lorg/springframework/http/HttpHeaders;)Lgraphql/ExecutionResult;
+	public abstract fun execute (Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lorg/springframework/http/HttpHeaders;Ljava/lang/String;Lorg/springframework/web/context/request/WebRequest;)Lgraphql/ExecutionResult;
+	public fun executeAndExtractJsonPath (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+	public abstract fun executeAndExtractJsonPath (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Ljava/lang/Object;
+	public abstract fun executeAndExtractJsonPath (Ljava/lang/String;Ljava/lang/String;Lorg/springframework/http/HttpHeaders;)Ljava/lang/Object;
+	public fun executeAndExtractJsonPathAsObject (Ljava/lang/String;Ljava/lang/String;Lcom/jayway/jsonpath/TypeRef;)Ljava/lang/Object;
+	public fun executeAndExtractJsonPathAsObject (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+	public fun executeAndExtractJsonPathAsObject (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lcom/jayway/jsonpath/TypeRef;)Ljava/lang/Object;
+	public abstract fun executeAndExtractJsonPathAsObject (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lcom/jayway/jsonpath/TypeRef;Lorg/springframework/http/HttpHeaders;)Ljava/lang/Object;
+	public fun executeAndExtractJsonPathAsObject (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Class;)Ljava/lang/Object;
+	public abstract fun executeAndExtractJsonPathAsObject (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Class;Lorg/springframework/http/HttpHeaders;)Ljava/lang/Object;
+	public fun executeAndGetDocumentContext (Ljava/lang/String;)Lcom/jayway/jsonpath/DocumentContext;
+	public abstract fun executeAndGetDocumentContext (Ljava/lang/String;Ljava/util/Map;)Lcom/jayway/jsonpath/DocumentContext;
+	public abstract fun executeAndGetDocumentContext (Ljava/lang/String;Ljava/util/Map;Lorg/springframework/http/HttpHeaders;)Lcom/jayway/jsonpath/DocumentContext;
+}
+
+public abstract interface annotation class com/netflix/graphql/dgs/DgsRuntimeWiring : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class com/netflix/graphql/dgs/DgsScalar : java/lang/annotation/Annotation {
+	public abstract fun name ()Ljava/lang/String;
+}
+
+public abstract interface annotation class com/netflix/graphql/dgs/DgsSubscription : java/lang/annotation/Annotation {
+	public abstract fun field ()Ljava/lang/String;
+}
+
+public abstract interface annotation class com/netflix/graphql/dgs/DgsTypeDefinitionRegistry : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class com/netflix/graphql/dgs/DgsTypeResolver : java/lang/annotation/Annotation {
+	public abstract fun name ()Ljava/lang/String;
+}
+
+public abstract interface annotation class com/netflix/graphql/dgs/InputArgument : java/lang/annotation/Annotation {
+	public abstract fun collectionType ()Ljava/lang/Class;
+	public abstract fun name ()Ljava/lang/String;
+	public abstract fun value ()Ljava/lang/String;
+}
+
+public abstract interface annotation class com/netflix/graphql/dgs/Internal : java/lang/annotation/Annotation {
+}
+
+public class com/netflix/graphql/dgs/context/DgsContext : java/util/function/Consumer {
+	public static final field Companion Lcom/netflix/graphql/dgs/context/DgsContext$Companion;
+	public fun <init> (Ljava/lang/Object;Lcom/netflix/graphql/dgs/internal/DgsRequestData;)V
+	public synthetic fun <init> (Ljava/lang/Object;Lcom/netflix/graphql/dgs/internal/DgsRequestData;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun accept (Lgraphql/GraphQLContext$Builder;)V
+	public synthetic fun accept (Ljava/lang/Object;)V
+	public static final fun from (Lgraphql/ExecutionInput;)Lcom/netflix/graphql/dgs/context/DgsContext;
+	public static final fun from (Lgraphql/GraphQLContext;)Lcom/netflix/graphql/dgs/context/DgsContext;
+	public static final fun from (Lgraphql/schema/DataFetchingEnvironment;)Lcom/netflix/graphql/dgs/context/DgsContext;
+	public final fun getCustomContext ()Ljava/lang/Object;
+	public static final fun getCustomContext (Lgraphql/schema/DataFetchingEnvironment;)Ljava/lang/Object;
+	public static final fun getCustomContext (Ljava/lang/Object;)Ljava/lang/Object;
+	public static final fun getCustomContext (Lorg/dataloader/BatchLoaderEnvironment;)Ljava/lang/Object;
+	public final fun getRequestData ()Lcom/netflix/graphql/dgs/internal/DgsRequestData;
+	public static final fun getRequestData (Lgraphql/schema/DataFetchingEnvironment;)Lcom/netflix/graphql/dgs/internal/DgsRequestData;
+	public static final fun getRequestData (Lorg/dataloader/BatchLoaderEnvironment;)Lcom/netflix/graphql/dgs/internal/DgsRequestData;
+}
+
+public final class com/netflix/graphql/dgs/context/DgsContext$Companion {
+	public final fun from (Lgraphql/ExecutionInput;)Lcom/netflix/graphql/dgs/context/DgsContext;
+	public final fun from (Lgraphql/GraphQLContext;)Lcom/netflix/graphql/dgs/context/DgsContext;
+	public final fun from (Lgraphql/schema/DataFetchingEnvironment;)Lcom/netflix/graphql/dgs/context/DgsContext;
+	public final fun getCustomContext (Lgraphql/schema/DataFetchingEnvironment;)Ljava/lang/Object;
+	public final fun getCustomContext (Ljava/lang/Object;)Ljava/lang/Object;
+	public final fun getCustomContext (Lorg/dataloader/BatchLoaderEnvironment;)Ljava/lang/Object;
+	public final fun getRequestData (Lgraphql/schema/DataFetchingEnvironment;)Lcom/netflix/graphql/dgs/internal/DgsRequestData;
+	public final fun getRequestData (Lorg/dataloader/BatchLoaderEnvironment;)Lcom/netflix/graphql/dgs/internal/DgsRequestData;
+}
+
+public abstract interface class com/netflix/graphql/dgs/context/DgsCustomContextBuilder {
+	public abstract fun build ()Ljava/lang/Object;
+}
+
+public abstract interface class com/netflix/graphql/dgs/context/DgsCustomContextBuilderWithRequest {
+	public abstract fun build (Ljava/util/Map;Lorg/springframework/http/HttpHeaders;Lorg/springframework/web/context/request/WebRequest;)Ljava/lang/Object;
+}
+
+public final class com/netflix/graphql/dgs/context/ReactiveDgsContext : com/netflix/graphql/dgs/context/DgsContext {
+	public static final field Companion Lcom/netflix/graphql/dgs/context/ReactiveDgsContext$Companion;
+	public fun <init> (Ljava/lang/Object;Lcom/netflix/graphql/dgs/internal/DgsRequestData;Lreactor/util/context/ContextView;)V
+	public synthetic fun <init> (Ljava/lang/Object;Lcom/netflix/graphql/dgs/internal/DgsRequestData;Lreactor/util/context/ContextView;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static final fun from (Lgraphql/GraphQLContext;)Lcom/netflix/graphql/dgs/context/ReactiveDgsContext;
+	public static final fun from (Lgraphql/schema/DataFetchingEnvironment;)Lcom/netflix/graphql/dgs/context/ReactiveDgsContext;
+	public final fun getReactorContext ()Lreactor/util/context/ContextView;
+}
+
+public final class com/netflix/graphql/dgs/context/ReactiveDgsContext$Companion {
+	public final fun from (Lgraphql/GraphQLContext;)Lcom/netflix/graphql/dgs/context/ReactiveDgsContext;
+	public final fun from (Lgraphql/schema/DataFetchingEnvironment;)Lcom/netflix/graphql/dgs/context/ReactiveDgsContext;
+}
+
+public final class com/netflix/graphql/dgs/exceptions/DefaultDataFetcherExceptionHandler : graphql/execution/DataFetcherExceptionHandler {
+	public static final field Companion Lcom/netflix/graphql/dgs/exceptions/DefaultDataFetcherExceptionHandler$Companion;
+	public fun <init> ()V
+	public fun onException (Lgraphql/execution/DataFetcherExceptionHandlerParameters;)Lgraphql/execution/DataFetcherExceptionHandlerResult;
+}
+
+public final class com/netflix/graphql/dgs/exceptions/DefaultDataFetcherExceptionHandler$Companion {
+}
+
+public class com/netflix/graphql/dgs/exceptions/DgsBadRequestException : java/lang/RuntimeException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getMessage ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/exceptions/DgsEntityNotFoundException : java/lang/RuntimeException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getMessage ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/exceptions/DgsInvalidInputArgumentException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Exception;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Exception;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getCause ()Ljava/lang/Exception;
+	public synthetic fun getCause ()Ljava/lang/Throwable;
+	public fun getMessage ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/exceptions/DgsMissingCookieException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class com/netflix/graphql/dgs/exceptions/DgsQueryExecutionDataExtractionException : java/lang/RuntimeException {
+	public fun <init> (Lcom/jayway/jsonpath/spi/mapper/MappingException;Ljava/lang/String;Ljava/lang/String;Lcom/jayway/jsonpath/TypeRef;)V
+	public fun <init> (Lcom/jayway/jsonpath/spi/mapper/MappingException;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Class;)V
+	public fun <init> (Ljava/lang/Exception;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/Exception;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/Exception;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/netflix/graphql/dgs/exceptions/DgsQueryExecutionDataExtractionException;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/exceptions/DgsQueryExecutionDataExtractionException;Ljava/lang/Exception;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/exceptions/DgsQueryExecutionDataExtractionException;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEx ()Ljava/lang/Exception;
+	public final fun getJsonPath ()Ljava/lang/String;
+	public final fun getJsonResult ()Ljava/lang/String;
+	public final fun getTargetClass ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/exceptions/DgsUnnamedDataLoaderOnFieldException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/reflect/Field;)V
+}
+
+public final class com/netflix/graphql/dgs/exceptions/InvalidDataLoaderTypeException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/Class;)V
+}
+
+public final class com/netflix/graphql/dgs/exceptions/InvalidDgsConfigurationException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class com/netflix/graphql/dgs/exceptions/InvalidDgsEntityFetcher : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class com/netflix/graphql/dgs/exceptions/InvalidTypeResolverException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class com/netflix/graphql/dgs/exceptions/MissingDgsEntityFetcherException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class com/netflix/graphql/dgs/exceptions/MissingFederatedQueryArgument : com/netflix/graphql/dgs/exceptions/DgsBadRequestException {
+	public fun <init> ([Ljava/lang/String;)V
+}
+
+public final class com/netflix/graphql/dgs/exceptions/MultipleDataLoadersDefinedException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/Class;)V
+}
+
+public final class com/netflix/graphql/dgs/exceptions/NoDataLoaderFoundException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/Class;)V
+}
+
+public final class com/netflix/graphql/dgs/exceptions/NoDgsFederationResolverFoundException : java/lang/RuntimeException {
+	public fun <init> ()V
+}
+
+public final class com/netflix/graphql/dgs/exceptions/NoSchemaFoundException : java/lang/RuntimeException {
+	public fun <init> ()V
+}
+
+public final class com/netflix/graphql/dgs/exceptions/QueryException : java/lang/RuntimeException {
+	public fun <init> (Ljava/util/List;)V
+	public final fun getErrors ()Ljava/util/List;
+}
+
+public final class com/netflix/graphql/dgs/exceptions/UnsupportedSecuredDataLoaderException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/Class;)V
+}
+
+public class com/netflix/graphql/dgs/federation/DefaultDgsFederationResolver : com/netflix/graphql/dgs/DgsFederationResolver {
+	public static final field Companion Lcom/netflix/graphql/dgs/federation/DefaultDgsFederationResolver$Companion;
+	public field dgsExceptionHandler Ljava/util/Optional;
+	public field entityFetcherRegistry Lcom/netflix/graphql/dgs/internal/EntityFetcherRegistry;
+	public fun <init> ()V
+	public fun <init> (Lcom/netflix/graphql/dgs/internal/EntityFetcherRegistry;Ljava/util/Optional;)V
+	public fun entitiesFetcher ()Lgraphql/schema/DataFetcher;
+	public final fun getDgsExceptionHandler ()Ljava/util/Optional;
+	public final fun getEntityFetcherRegistry ()Lcom/netflix/graphql/dgs/internal/EntityFetcherRegistry;
+	public final fun setDgsExceptionHandler (Ljava/util/Optional;)V
+	public final fun setEntityFetcherRegistry (Lcom/netflix/graphql/dgs/internal/EntityFetcherRegistry;)V
+	public fun typeMapping ()Ljava/util/Map;
+	public fun typeResolver ()Lgraphql/schema/TypeResolver;
+}
+
+public final class com/netflix/graphql/dgs/federation/DefaultDgsFederationResolver$Companion {
+}
+
+public final class com/netflix/graphql/dgs/internal/BaseDgsQueryExecutor {
+	public static final field INSTANCE Lcom/netflix/graphql/dgs/internal/BaseDgsQueryExecutor;
+	public final fun baseExecute (Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Lcom/netflix/graphql/dgs/context/DgsContext;Lgraphql/schema/GraphQLSchema;Lcom/netflix/graphql/dgs/internal/DgsDataLoaderProvider;Lgraphql/execution/instrumentation/Instrumentation;Lgraphql/execution/ExecutionStrategy;Lgraphql/execution/ExecutionStrategy;Ljava/util/Optional;Lgraphql/execution/preparsed/PreparsedDocumentProvider;)Ljava/util/concurrent/CompletableFuture;
+	public final fun getObjectMapper ()Lcom/fasterxml/jackson/databind/ObjectMapper;
+	public final fun getParseContext ()Lcom/jayway/jsonpath/ParseContext;
+}
+
+public abstract interface class com/netflix/graphql/dgs/internal/CookieValueResolver {
+	public abstract fun getCookieValue (Ljava/lang/String;Lcom/netflix/graphql/dgs/internal/DgsRequestData;)Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/internal/DataFetcherInvoker : graphql/schema/DataFetcher {
+	public fun get (Lgraphql/schema/DataFetchingEnvironment;)Ljava/lang/Object;
+}
+
+public abstract interface class com/netflix/graphql/dgs/internal/DataFetcherResultProcessor {
+	public fun process (Ljava/lang/Object;)Ljava/lang/Object;
+	public fun process (Ljava/lang/Object;Lcom/netflix/graphql/dgs/DgsDataFetchingEnvironment;)Ljava/lang/Object;
+	public abstract fun supportsType (Ljava/lang/Object;)Z
+}
+
+public final class com/netflix/graphql/dgs/internal/DataFetcherResultProcessor$DefaultImpls {
+	public static fun process (Lcom/netflix/graphql/dgs/internal/DataFetcherResultProcessor;Ljava/lang/Object;)Ljava/lang/Object;
+	public static fun process (Lcom/netflix/graphql/dgs/internal/DataFetcherResultProcessor;Ljava/lang/Object;Lcom/netflix/graphql/dgs/DgsDataFetchingEnvironment;)Ljava/lang/Object;
+}
+
+public final class com/netflix/graphql/dgs/internal/DatafetcherReference {
+	public fun <init> (Ljava/lang/Object;Ljava/lang/reflect/Method;Lorg/springframework/core/annotation/MergedAnnotations;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun component2 ()Ljava/lang/reflect/Method;
+	public final fun component3 ()Lorg/springframework/core/annotation/MergedAnnotations;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/Object;Ljava/lang/reflect/Method;Lorg/springframework/core/annotation/MergedAnnotations;Ljava/lang/String;Ljava/lang/String;)Lcom/netflix/graphql/dgs/internal/DatafetcherReference;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/internal/DatafetcherReference;Ljava/lang/Object;Ljava/lang/reflect/Method;Lorg/springframework/core/annotation/MergedAnnotations;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/internal/DatafetcherReference;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAnnotations ()Lorg/springframework/core/annotation/MergedAnnotations;
+	public final fun getField ()Ljava/lang/String;
+	public final fun getInstance ()Ljava/lang/Object;
+	public final fun getMethod ()Ljava/lang/reflect/Method;
+	public final fun getParentType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public class com/netflix/graphql/dgs/internal/DefaultDgsGraphQLContextBuilder {
+	public static final field Companion Lcom/netflix/graphql/dgs/internal/DefaultDgsGraphQLContextBuilder$Companion;
+	public fun <init> (Ljava/util/Optional;Ljava/util/Optional;)V
+	public synthetic fun <init> (Ljava/util/Optional;Ljava/util/Optional;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun build (Lcom/netflix/graphql/dgs/internal/DgsWebMvcRequestData;)Lcom/netflix/graphql/dgs/context/DgsContext;
+}
+
+public final class com/netflix/graphql/dgs/internal/DefaultDgsGraphQLContextBuilder$Companion {
+}
+
+public final class com/netflix/graphql/dgs/internal/DefaultDgsQueryExecutor : com/netflix/graphql/dgs/DgsQueryExecutor {
+	public static final field Companion Lcom/netflix/graphql/dgs/internal/DefaultDgsQueryExecutor$Companion;
+	public fun <init> (Lgraphql/schema/GraphQLSchema;Lcom/netflix/graphql/dgs/internal/DgsSchemaProvider;Lcom/netflix/graphql/dgs/internal/DgsDataLoaderProvider;Lcom/netflix/graphql/dgs/internal/DefaultDgsGraphQLContextBuilder;Lgraphql/execution/instrumentation/Instrumentation;Lgraphql/execution/ExecutionStrategy;Lgraphql/execution/ExecutionStrategy;Ljava/util/Optional;Lcom/netflix/graphql/dgs/internal/DefaultDgsQueryExecutor$ReloadSchemaIndicator;Lgraphql/execution/preparsed/PreparsedDocumentProvider;Lcom/netflix/graphql/dgs/internal/QueryValueCustomizer;)V
+	public synthetic fun <init> (Lgraphql/schema/GraphQLSchema;Lcom/netflix/graphql/dgs/internal/DgsSchemaProvider;Lcom/netflix/graphql/dgs/internal/DgsDataLoaderProvider;Lcom/netflix/graphql/dgs/internal/DefaultDgsGraphQLContextBuilder;Lgraphql/execution/instrumentation/Instrumentation;Lgraphql/execution/ExecutionStrategy;Lgraphql/execution/ExecutionStrategy;Ljava/util/Optional;Lcom/netflix/graphql/dgs/internal/DefaultDgsQueryExecutor$ReloadSchemaIndicator;Lgraphql/execution/preparsed/PreparsedDocumentProvider;Lcom/netflix/graphql/dgs/internal/QueryValueCustomizer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun execute (Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Lorg/springframework/http/HttpHeaders;Ljava/lang/String;Lorg/springframework/web/context/request/WebRequest;)Lgraphql/ExecutionResult;
+	public fun executeAndExtractJsonPath (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Ljava/lang/Object;
+	public fun executeAndExtractJsonPath (Ljava/lang/String;Ljava/lang/String;Lorg/springframework/http/HttpHeaders;)Ljava/lang/Object;
+	public fun executeAndExtractJsonPathAsObject (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lcom/jayway/jsonpath/TypeRef;Lorg/springframework/http/HttpHeaders;)Ljava/lang/Object;
+	public fun executeAndExtractJsonPathAsObject (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Class;Lorg/springframework/http/HttpHeaders;)Ljava/lang/Object;
+	public fun executeAndGetDocumentContext (Ljava/lang/String;Ljava/util/Map;)Lcom/jayway/jsonpath/DocumentContext;
+	public fun executeAndGetDocumentContext (Ljava/lang/String;Ljava/util/Map;Lorg/springframework/http/HttpHeaders;)Lcom/jayway/jsonpath/DocumentContext;
+	public final fun getSchema ()Ljava/util/concurrent/atomic/AtomicReference;
+}
+
+public final class com/netflix/graphql/dgs/internal/DefaultDgsQueryExecutor$Companion {
+}
+
+public abstract interface class com/netflix/graphql/dgs/internal/DefaultDgsQueryExecutor$ReloadSchemaIndicator {
+	public abstract fun reloadSchema ()Z
+}
+
+public final class com/netflix/graphql/dgs/internal/DefaultInputObjectMapper : com/netflix/graphql/dgs/internal/InputObjectMapper {
+	public fun <init> ()V
+	public fun <init> (Lcom/netflix/graphql/dgs/internal/InputObjectMapper;)V
+	public synthetic fun <init> (Lcom/netflix/graphql/dgs/internal/InputObjectMapper;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCustomInputObjectMapper ()Lcom/netflix/graphql/dgs/internal/InputObjectMapper;
+	public fun mapToJavaObject (Ljava/util/Map;Ljava/lang/Class;)Ljava/lang/Object;
+	public fun mapToKotlinObject (Ljava/util/Map;Lkotlin/reflect/KClass;)Ljava/lang/Object;
+}
+
+public final class com/netflix/graphql/dgs/internal/DefaultRequestData {
+	public fun <init> (Ljava/util/Map;Lorg/springframework/http/HttpHeaders;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun component2 ()Lorg/springframework/http/HttpHeaders;
+	public final fun copy (Ljava/util/Map;Lorg/springframework/http/HttpHeaders;)Lcom/netflix/graphql/dgs/internal/DefaultRequestData;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/internal/DefaultRequestData;Ljava/util/Map;Lorg/springframework/http/HttpHeaders;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/internal/DefaultRequestData;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getExtensions ()Ljava/util/Map;
+	public final fun getHeaders ()Lorg/springframework/http/HttpHeaders;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/internal/DgsDataLoaderProvider {
+	public fun <init> (Lorg/springframework/context/ApplicationContext;)V
+	public final fun buildRegistry ()Lorg/dataloader/DataLoaderRegistry;
+	public final fun buildRegistryWithContextSupplier (Ljava/util/function/Supplier;)Lorg/dataloader/DataLoaderRegistry;
+}
+
+public abstract interface class com/netflix/graphql/dgs/internal/DgsRequestData {
+	public abstract fun getExtensions ()Ljava/util/Map;
+	public abstract fun getHeaders ()Lorg/springframework/http/HttpHeaders;
+}
+
+public final class com/netflix/graphql/dgs/internal/DgsSchemaProvider {
+	public static final field Companion Lcom/netflix/graphql/dgs/internal/DgsSchemaProvider$Companion;
+	public static final field DEFAULT_SCHEMA_LOCATION Ljava/lang/String;
+	public fun <init> (Lorg/springframework/context/ApplicationContext;Ljava/util/Optional;Ljava/util/Optional;Ljava/util/Set;Ljava/util/List;Ljava/util/List;Ljava/util/Optional;Lcom/netflix/graphql/dgs/internal/EntityFetcherRegistry;Ljava/util/Optional;Lcom/netflix/graphql/dgs/internal/method/MethodDataFetcherFactory;)V
+	public synthetic fun <init> (Lorg/springframework/context/ApplicationContext;Ljava/util/Optional;Ljava/util/Optional;Ljava/util/Set;Ljava/util/List;Ljava/util/List;Ljava/util/Optional;Lcom/netflix/graphql/dgs/internal/EntityFetcherRegistry;Ljava/util/Optional;Lcom/netflix/graphql/dgs/internal/method/MethodDataFetcherFactory;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getDataFetcherInstrumentationEnabled ()Ljava/util/Map;
+	public final fun schema (Ljava/lang/String;Lgraphql/schema/visibility/GraphqlFieldVisibility;)Lgraphql/schema/GraphQLSchema;
+	public static synthetic fun schema$default (Lcom/netflix/graphql/dgs/internal/DgsSchemaProvider;Ljava/lang/String;Lgraphql/schema/visibility/GraphqlFieldVisibility;ILjava/lang/Object;)Lgraphql/schema/GraphQLSchema;
+}
+
+public final class com/netflix/graphql/dgs/internal/DgsSchemaProvider$Companion {
+}
+
+public final class com/netflix/graphql/dgs/internal/DgsWebMvcRequestData : com/netflix/graphql/dgs/internal/DgsRequestData {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/Map;Lorg/springframework/http/HttpHeaders;Lorg/springframework/web/context/request/WebRequest;)V
+	public synthetic fun <init> (Ljava/util/Map;Lorg/springframework/http/HttpHeaders;Lorg/springframework/web/context/request/WebRequest;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun component2 ()Lorg/springframework/http/HttpHeaders;
+	public final fun component3 ()Lorg/springframework/web/context/request/WebRequest;
+	public final fun copy (Ljava/util/Map;Lorg/springframework/http/HttpHeaders;Lorg/springframework/web/context/request/WebRequest;)Lcom/netflix/graphql/dgs/internal/DgsWebMvcRequestData;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/internal/DgsWebMvcRequestData;Ljava/util/Map;Lorg/springframework/http/HttpHeaders;Lorg/springframework/web/context/request/WebRequest;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/internal/DgsWebMvcRequestData;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getExtensions ()Ljava/util/Map;
+	public fun getHeaders ()Lorg/springframework/http/HttpHeaders;
+	public final fun getWebRequest ()Lorg/springframework/web/context/request/WebRequest;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/internal/EntityFetcherRegistry {
+	public fun <init> ()V
+	public final fun getEntityFetchers ()Ljava/util/Map;
+}
+
+public final class com/netflix/graphql/dgs/internal/FluxDataFetcherResultProcessor : com/netflix/graphql/dgs/internal/DataFetcherResultProcessor {
+	public fun <init> ()V
+	public fun process (Ljava/lang/Object;Lcom/netflix/graphql/dgs/DgsDataFetchingEnvironment;)Ljava/lang/Object;
+	public fun supportsType (Ljava/lang/Object;)Z
+}
+
+public abstract interface class com/netflix/graphql/dgs/internal/InputObjectMapper {
+	public abstract fun mapToJavaObject (Ljava/util/Map;Ljava/lang/Class;)Ljava/lang/Object;
+	public abstract fun mapToKotlinObject (Ljava/util/Map;Lkotlin/reflect/KClass;)Ljava/lang/Object;
+}
+
+public final class com/netflix/graphql/dgs/internal/MonoDataFetcherResultProcessor : com/netflix/graphql/dgs/internal/DataFetcherResultProcessor {
+	public fun <init> ()V
+	public fun process (Ljava/lang/Object;Lcom/netflix/graphql/dgs/DgsDataFetchingEnvironment;)Ljava/lang/Object;
+	public fun supportsType (Ljava/lang/Object;)Z
+}
+
+public abstract interface class com/netflix/graphql/dgs/internal/QueryValueCustomizer {
+	public abstract fun apply (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public abstract interface class com/netflix/graphql/dgs/internal/method/ArgumentResolver {
+	public abstract fun resolveArgument (Lorg/springframework/core/MethodParameter;Lgraphql/schema/DataFetchingEnvironment;)Ljava/lang/Object;
+	public abstract fun supportsParameter (Lorg/springframework/core/MethodParameter;)Z
+}
+
+public final class com/netflix/graphql/dgs/internal/method/ArgumentResolverComposite : com/netflix/graphql/dgs/internal/method/ArgumentResolver {
+	public fun <init> (Ljava/util/List;)V
+	public fun resolveArgument (Lorg/springframework/core/MethodParameter;Lgraphql/schema/DataFetchingEnvironment;)Ljava/lang/Object;
+	public fun supportsParameter (Lorg/springframework/core/MethodParameter;)Z
+}
+
+public final class com/netflix/graphql/dgs/internal/method/ContinuationArgumentResolver : com/netflix/graphql/dgs/internal/method/ArgumentResolver {
+	public fun <init> ()V
+	public fun resolveArgument (Lorg/springframework/core/MethodParameter;Lgraphql/schema/DataFetchingEnvironment;)Ljava/lang/Object;
+	public fun supportsParameter (Lorg/springframework/core/MethodParameter;)Z
+}
+
+public final class com/netflix/graphql/dgs/internal/method/DataFetchingEnvironmentArgumentResolver : com/netflix/graphql/dgs/internal/method/ArgumentResolver {
+	public fun <init> ()V
+	public fun resolveArgument (Lorg/springframework/core/MethodParameter;Lgraphql/schema/DataFetchingEnvironment;)Ljava/lang/Object;
+	public fun supportsParameter (Lorg/springframework/core/MethodParameter;)Z
+}
+
+public final class com/netflix/graphql/dgs/internal/method/FallbackEnvironmentArgumentResolver : com/netflix/graphql/dgs/internal/method/ArgumentResolver {
+	public fun <init> ()V
+	public fun resolveArgument (Lorg/springframework/core/MethodParameter;Lgraphql/schema/DataFetchingEnvironment;)Ljava/lang/Object;
+	public fun supportsParameter (Lorg/springframework/core/MethodParameter;)Z
+}
+
+public final class com/netflix/graphql/dgs/internal/method/InputArgumentResolver : com/netflix/graphql/dgs/internal/method/ArgumentResolver {
+	public static final field Companion Lcom/netflix/graphql/dgs/internal/method/InputArgumentResolver$Companion;
+	public fun <init> (Lcom/netflix/graphql/dgs/internal/InputObjectMapper;)V
+	public fun resolveArgument (Lorg/springframework/core/MethodParameter;Lgraphql/schema/DataFetchingEnvironment;)Ljava/lang/Object;
+	public fun supportsParameter (Lorg/springframework/core/MethodParameter;)Z
+}
+
+public final class com/netflix/graphql/dgs/internal/method/InputArgumentResolver$Companion {
+}
+
+public final class com/netflix/graphql/dgs/internal/method/MethodDataFetcherFactory {
+	public fun <init> (Ljava/util/List;Lorg/springframework/core/ParameterNameDiscoverer;)V
+	public synthetic fun <init> (Ljava/util/List;Lorg/springframework/core/ParameterNameDiscoverer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun createDataFetcher (Ljava/lang/Object;Ljava/lang/reflect/Method;)Lgraphql/schema/DataFetcher;
+}
+
+public final class com/netflix/graphql/dgs/internal/utils/DataLoaderNameUtil {
+	public static final field INSTANCE Lcom/netflix/graphql/dgs/internal/utils/DataLoaderNameUtil;
+	public final fun getDataLoaderName (Ljava/lang/Class;Lcom/netflix/graphql/dgs/DgsDataLoader;)Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/internal/utils/MultipartFileSerializer : com/fasterxml/jackson/databind/ser/std/StdSerializer {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Class;)V
+	public synthetic fun <init> (Ljava/lang/Class;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun serialize (Ljava/lang/Object;Lcom/fasterxml/jackson/core/JsonGenerator;Lcom/fasterxml/jackson/databind/SerializerProvider;)V
+	public fun serialize (Lorg/springframework/web/multipart/MultipartFile;Lcom/fasterxml/jackson/core/JsonGenerator;Lcom/fasterxml/jackson/databind/SerializerProvider;)V
+}
+
+public final class com/netflix/graphql/dgs/internal/utils/MultipartVariableMapper {
+	public static final field INSTANCE Lcom/netflix/graphql/dgs/internal/utils/MultipartVariableMapper;
+	public final fun mapVariable (Ljava/lang/String;Ljava/util/Map;Lorg/springframework/web/multipart/MultipartFile;)V
+}
+
+public final class com/netflix/graphql/dgs/internal/utils/TimeTracer {
+	public static final field INSTANCE Lcom/netflix/graphql/dgs/internal/utils/TimeTracer;
+	public final fun logTime (Lkotlin/jvm/functions/Function0;Lorg/slf4j/Logger;Ljava/lang/String;)Ljava/lang/Object;
+}
+
+public final class com/netflix/graphql/dgs/logging/LogEvent {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Ljava/lang/String;
+	public final fun component11 ()Ljava/lang/String;
+	public final fun component12 ()Ljava/lang/String;
+	public final fun component13 ()Ljava/lang/String;
+	public final fun component14 ()Ljava/lang/String;
+	public final fun component15 ()Ljava/lang/String;
+	public final fun component16 ()Ljava/lang/String;
+	public final fun component17 ()Ljava/lang/String;
+	public final fun component18 ()Ljava/lang/String;
+	public final fun component19 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component20 ()Ljava/lang/String;
+	public final fun component21 ()Ljava/lang/String;
+	public final fun component22 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Ljava/lang/String;
+	public final fun component9 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/netflix/graphql/dgs/logging/LogEvent;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/logging/LogEvent;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/logging/LogEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAuthCallerType ()Ljava/lang/String;
+	public final fun getAuthUser ()Ljava/lang/String;
+	public final fun getCallingApp ()Ljava/lang/String;
+	public final fun getCallingAsg ()Ljava/lang/String;
+	public final fun getCallingInstance ()Ljava/lang/String;
+	public final fun getCallingRegion ()Ljava/lang/String;
+	public final fun getCallingStack ()Ljava/lang/String;
+	public final fun getClientId ()Ljava/lang/String;
+	public final fun getGqlQuery ()Ljava/lang/String;
+	public final fun getGqlQueryVariables ()Ljava/lang/String;
+	public final fun getGqlResponse ()Ljava/lang/String;
+	public final fun getHostAsg ()Ljava/lang/String;
+	public final fun getHostCluster ()Ljava/lang/String;
+	public final fun getHostEnvironment ()Ljava/lang/String;
+	public final fun getHostRegion ()Ljava/lang/String;
+	public final fun getHostStack ()Ljava/lang/String;
+	public final fun getInstanceId ()Ljava/lang/String;
+	public final fun getMapleLegacyCaller ()Ljava/lang/String;
+	public final fun getMapleLegacyCallerAuthzAllowed ()Ljava/lang/String;
+	public final fun getRequestId ()Ljava/lang/String;
+	public final fun getSpanId ()Ljava/lang/String;
+	public final fun getTraceId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun setAuthCallerType (Ljava/lang/String;)V
+	public final fun setAuthUser (Ljava/lang/String;)V
+	public final fun setCallingApp (Ljava/lang/String;)V
+	public final fun setCallingAsg (Ljava/lang/String;)V
+	public final fun setCallingInstance (Ljava/lang/String;)V
+	public final fun setCallingRegion (Ljava/lang/String;)V
+	public final fun setCallingStack (Ljava/lang/String;)V
+	public final fun setClientId (Ljava/lang/String;)V
+	public final fun setGqlQuery (Ljava/lang/String;)V
+	public final fun setGqlQueryVariables (Ljava/lang/String;)V
+	public final fun setGqlResponse (Ljava/lang/String;)V
+	public final fun setHostAsg (Ljava/lang/String;)V
+	public final fun setHostCluster (Ljava/lang/String;)V
+	public final fun setHostEnvironment (Ljava/lang/String;)V
+	public final fun setHostRegion (Ljava/lang/String;)V
+	public final fun setHostStack (Ljava/lang/String;)V
+	public final fun setInstanceId (Ljava/lang/String;)V
+	public final fun setMapleLegacyCaller (Ljava/lang/String;)V
+	public final fun setMapleLegacyCallerAuthzAllowed (Ljava/lang/String;)V
+	public final fun setRequestId (Ljava/lang/String;)V
+	public final fun setSpanId (Ljava/lang/String;)V
+	public final fun setTraceId (Ljava/lang/String;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/scalars/UploadScalar {
+	public fun <init> ()V
+	public final fun addScalar (Lgraphql/schema/idl/RuntimeWiring$Builder;)Lgraphql/schema/idl/RuntimeWiring$Builder;
+	public final fun getUpload ()Lgraphql/schema/GraphQLScalarType;
+}
+
+public final class com/netflix/graphql/dgs/scalars/UploadScalar$MultipartFileCoercing : graphql/schema/Coercing {
+	public static final field INSTANCE Lcom/netflix/graphql/dgs/scalars/UploadScalar$MultipartFileCoercing;
+	public synthetic fun parseLiteral (Ljava/lang/Object;)Ljava/lang/Object;
+	public fun parseLiteral (Ljava/lang/Object;)Lorg/springframework/web/multipart/MultipartFile;
+	public synthetic fun parseValue (Ljava/lang/Object;)Ljava/lang/Object;
+	public fun parseValue (Ljava/lang/Object;)Lorg/springframework/web/multipart/MultipartFile;
+	public synthetic fun serialize (Ljava/lang/Object;)Ljava/lang/Object;
+	public fun serialize (Ljava/lang/Object;)Ljava/lang/Void;
+}
+
+public abstract interface annotation class com/netflix/graphql/dgs/support/Unstable : java/lang/annotation/Annotation {
+	public abstract fun message ()Ljava/lang/String;
+}
+

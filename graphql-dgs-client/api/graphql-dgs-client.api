@@ -1,0 +1,255 @@
+public final class com/netflix/graphql/dgs/client/CustomGraphQLClient : com/netflix/graphql/dgs/client/GraphQLClient {
+	public fun <init> (Ljava/lang/String;Lcom/netflix/graphql/dgs/client/RequestExecutor;)V
+	public fun executeQuery (Ljava/lang/String;)Lcom/netflix/graphql/dgs/client/GraphQLResponse;
+	public fun executeQuery (Ljava/lang/String;Ljava/util/Map;)Lcom/netflix/graphql/dgs/client/GraphQLResponse;
+	public fun executeQuery (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;)Lcom/netflix/graphql/dgs/client/GraphQLResponse;
+}
+
+public final class com/netflix/graphql/dgs/client/CustomMonoGraphQLClient : com/netflix/graphql/dgs/client/MonoGraphQLClient {
+	public fun <init> (Ljava/lang/String;Lcom/netflix/graphql/dgs/client/MonoRequestExecutor;)V
+	public fun reactiveExecuteQuery (Ljava/lang/String;)Lreactor/core/publisher/Mono;
+	public fun reactiveExecuteQuery (Ljava/lang/String;Ljava/util/Map;)Lreactor/core/publisher/Mono;
+	public fun reactiveExecuteQuery (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;)Lreactor/core/publisher/Mono;
+}
+
+public final class com/netflix/graphql/dgs/client/DefaultGraphQLClient : com/netflix/graphql/dgs/client/GraphQLClient, com/netflix/graphql/dgs/client/MonoGraphQLClient {
+	public fun <init> (Ljava/lang/String;)V
+	public fun executeQuery (Ljava/lang/String;)Lcom/netflix/graphql/dgs/client/GraphQLResponse;
+	public fun executeQuery (Ljava/lang/String;Ljava/util/Map;)Lcom/netflix/graphql/dgs/client/GraphQLResponse;
+	public fun executeQuery (Ljava/lang/String;Ljava/util/Map;Lcom/netflix/graphql/dgs/client/RequestExecutor;)Lcom/netflix/graphql/dgs/client/GraphQLResponse;
+	public fun executeQuery (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;)Lcom/netflix/graphql/dgs/client/GraphQLResponse;
+	public fun executeQuery (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Lcom/netflix/graphql/dgs/client/RequestExecutor;)Lcom/netflix/graphql/dgs/client/GraphQLResponse;
+	public fun reactiveExecuteQuery (Ljava/lang/String;)Lreactor/core/publisher/Mono;
+	public fun reactiveExecuteQuery (Ljava/lang/String;Ljava/util/Map;)Lreactor/core/publisher/Mono;
+	public fun reactiveExecuteQuery (Ljava/lang/String;Ljava/util/Map;Lcom/netflix/graphql/dgs/client/MonoRequestExecutor;)Lreactor/core/publisher/Mono;
+	public fun reactiveExecuteQuery (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;)Lreactor/core/publisher/Mono;
+	public fun reactiveExecuteQuery (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Lcom/netflix/graphql/dgs/client/MonoRequestExecutor;)Lreactor/core/publisher/Mono;
+}
+
+public final class com/netflix/graphql/dgs/client/ErrorType : java/lang/Enum {
+	public static final field BAD_REQUEST Lcom/netflix/graphql/dgs/client/ErrorType;
+	public static final field FAILED_PRECONDITION Lcom/netflix/graphql/dgs/client/ErrorType;
+	public static final field INTERNAL Lcom/netflix/graphql/dgs/client/ErrorType;
+	public static final field NOT_FOUND Lcom/netflix/graphql/dgs/client/ErrorType;
+	public static final field PERMISSION_DENIED Lcom/netflix/graphql/dgs/client/ErrorType;
+	public static final field UNAUTHENTICATED Lcom/netflix/graphql/dgs/client/ErrorType;
+	public static final field UNAVAILABLE Lcom/netflix/graphql/dgs/client/ErrorType;
+	public static final field UNKNOWN Lcom/netflix/graphql/dgs/client/ErrorType;
+	public static fun valueOf (Ljava/lang/String;)Lcom/netflix/graphql/dgs/client/ErrorType;
+	public static fun values ()[Lcom/netflix/graphql/dgs/client/ErrorType;
+}
+
+public abstract interface class com/netflix/graphql/dgs/client/GraphQLClient {
+	public static final field Companion Lcom/netflix/graphql/dgs/client/GraphQLClient$Companion;
+	public static fun createCustom (Ljava/lang/String;Lcom/netflix/graphql/dgs/client/RequestExecutor;)Lcom/netflix/graphql/dgs/client/CustomGraphQLClient;
+	public abstract fun executeQuery (Ljava/lang/String;)Lcom/netflix/graphql/dgs/client/GraphQLResponse;
+	public abstract fun executeQuery (Ljava/lang/String;Ljava/util/Map;)Lcom/netflix/graphql/dgs/client/GraphQLResponse;
+	public fun executeQuery (Ljava/lang/String;Ljava/util/Map;Lcom/netflix/graphql/dgs/client/RequestExecutor;)Lcom/netflix/graphql/dgs/client/GraphQLResponse;
+	public abstract fun executeQuery (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;)Lcom/netflix/graphql/dgs/client/GraphQLResponse;
+	public fun executeQuery (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Lcom/netflix/graphql/dgs/client/RequestExecutor;)Lcom/netflix/graphql/dgs/client/GraphQLResponse;
+}
+
+public final class com/netflix/graphql/dgs/client/GraphQLClient$Companion {
+	public final fun createCustom (Ljava/lang/String;Lcom/netflix/graphql/dgs/client/RequestExecutor;)Lcom/netflix/graphql/dgs/client/CustomGraphQLClient;
+}
+
+public final class com/netflix/graphql/dgs/client/GraphQLClient$DefaultImpls {
+	public static fun executeQuery (Lcom/netflix/graphql/dgs/client/GraphQLClient;Ljava/lang/String;Ljava/util/Map;Lcom/netflix/graphql/dgs/client/RequestExecutor;)Lcom/netflix/graphql/dgs/client/GraphQLResponse;
+	public static fun executeQuery (Lcom/netflix/graphql/dgs/client/GraphQLClient;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Lcom/netflix/graphql/dgs/client/RequestExecutor;)Lcom/netflix/graphql/dgs/client/GraphQLResponse;
+}
+
+public final class com/netflix/graphql/dgs/client/GraphQLClientException : org/springframework/web/server/ResponseStatusException {
+	public fun <init> (ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+}
+
+public final class com/netflix/graphql/dgs/client/GraphQLError {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/netflix/graphql/dgs/client/GraphQLErrorExtensions;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/netflix/graphql/dgs/client/GraphQLErrorExtensions;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Lcom/netflix/graphql/dgs/client/GraphQLErrorExtensions;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/netflix/graphql/dgs/client/GraphQLErrorExtensions;)Lcom/netflix/graphql/dgs/client/GraphQLError;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/client/GraphQLError;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/netflix/graphql/dgs/client/GraphQLErrorExtensions;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/client/GraphQLError;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getExtensions ()Lcom/netflix/graphql/dgs/client/GraphQLErrorExtensions;
+	public final fun getLocations ()Ljava/util/List;
+	public final fun getMessage ()Ljava/lang/String;
+	public final fun getPath ()Ljava/util/List;
+	public final fun getPathAsString ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/client/GraphQLErrorDebugInfo {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun copy (Ljava/lang/String;Ljava/util/Map;)Lcom/netflix/graphql/dgs/client/GraphQLErrorDebugInfo;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/client/GraphQLErrorDebugInfo;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/client/GraphQLErrorDebugInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSubquery ()Ljava/lang/String;
+	public final fun getVariables ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/client/GraphQLErrorExtensions {
+	public fun <init> ()V
+	public fun <init> (Lcom/netflix/graphql/dgs/client/ErrorType;Ljava/lang/String;Ljava/lang/String;Lcom/netflix/graphql/dgs/client/GraphQLErrorDebugInfo;Ljava/lang/String;)V
+	public synthetic fun <init> (Lcom/netflix/graphql/dgs/client/ErrorType;Ljava/lang/String;Ljava/lang/String;Lcom/netflix/graphql/dgs/client/GraphQLErrorDebugInfo;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/netflix/graphql/dgs/client/ErrorType;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Lcom/netflix/graphql/dgs/client/GraphQLErrorDebugInfo;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun copy (Lcom/netflix/graphql/dgs/client/ErrorType;Ljava/lang/String;Ljava/lang/String;Lcom/netflix/graphql/dgs/client/GraphQLErrorDebugInfo;Ljava/lang/String;)Lcom/netflix/graphql/dgs/client/GraphQLErrorExtensions;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/client/GraphQLErrorExtensions;Lcom/netflix/graphql/dgs/client/ErrorType;Ljava/lang/String;Ljava/lang/String;Lcom/netflix/graphql/dgs/client/GraphQLErrorDebugInfo;Ljava/lang/String;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/client/GraphQLErrorExtensions;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getClassification ()Ljava/lang/String;
+	public final fun getDebugInfo ()Lcom/netflix/graphql/dgs/client/GraphQLErrorDebugInfo;
+	public final fun getErrorDetail ()Ljava/lang/String;
+	public final fun getErrorType ()Lcom/netflix/graphql/dgs/client/ErrorType;
+	public final fun getOrigin ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/client/GraphQLResponse {
+	public static final field Companion Lcom/netflix/graphql/dgs/client/GraphQLResponse$Companion;
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/Map;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun copy (Ljava/lang/String;Ljava/util/Map;)Lcom/netflix/graphql/dgs/client/GraphQLResponse;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/client/GraphQLResponse;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/client/GraphQLResponse;
+	public final fun dataAsObject (Ljava/lang/Class;)Ljava/lang/Object;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun extractValue (Ljava/lang/String;)Ljava/lang/Object;
+	public final fun extractValueAsObject (Ljava/lang/String;Lcom/jayway/jsonpath/TypeRef;)Ljava/lang/Object;
+	public final fun extractValueAsObject (Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+	public final fun getData ()Ljava/util/Map;
+	public final fun getErrors ()Ljava/util/List;
+	public final fun getHeaders ()Ljava/util/Map;
+	public final fun getJson ()Ljava/lang/String;
+	public final fun getParsed ()Lcom/jayway/jsonpath/DocumentContext;
+	public final fun getRequestDetails ()Lcom/netflix/graphql/dgs/client/RequestDetails;
+	public final fun hasErrors ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/client/GraphQLResponse$Companion {
+}
+
+public final class com/netflix/graphql/dgs/client/HttpResponse {
+	public fun <init> (ILjava/lang/String;)V
+	public fun <init> (ILjava/lang/String;Ljava/util/Map;)V
+	public final fun component1 ()I
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/util/Map;
+	public final fun copy (ILjava/lang/String;Ljava/util/Map;)Lcom/netflix/graphql/dgs/client/HttpResponse;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/client/HttpResponse;ILjava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/client/HttpResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBody ()Ljava/lang/String;
+	public final fun getHeaders ()Ljava/util/Map;
+	public final fun getStatusCode ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/netflix/graphql/dgs/client/MonoGraphQLClient {
+	public static final field Companion Lcom/netflix/graphql/dgs/client/MonoGraphQLClient$Companion;
+	public static fun createCustomReactive (Ljava/lang/String;Lcom/netflix/graphql/dgs/client/MonoRequestExecutor;)Lcom/netflix/graphql/dgs/client/CustomMonoGraphQLClient;
+	public static fun createWithWebClient (Lorg/springframework/web/reactive/function/client/WebClient;)Lcom/netflix/graphql/dgs/client/WebClientGraphQLClient;
+	public static fun createWithWebClient (Lorg/springframework/web/reactive/function/client/WebClient;Ljava/util/function/Consumer;)Lcom/netflix/graphql/dgs/client/WebClientGraphQLClient;
+	public abstract fun reactiveExecuteQuery (Ljava/lang/String;)Lreactor/core/publisher/Mono;
+	public abstract fun reactiveExecuteQuery (Ljava/lang/String;Ljava/util/Map;)Lreactor/core/publisher/Mono;
+	public fun reactiveExecuteQuery (Ljava/lang/String;Ljava/util/Map;Lcom/netflix/graphql/dgs/client/MonoRequestExecutor;)Lreactor/core/publisher/Mono;
+	public abstract fun reactiveExecuteQuery (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;)Lreactor/core/publisher/Mono;
+	public fun reactiveExecuteQuery (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Lcom/netflix/graphql/dgs/client/MonoRequestExecutor;)Lreactor/core/publisher/Mono;
+}
+
+public final class com/netflix/graphql/dgs/client/MonoGraphQLClient$Companion {
+	public final fun createCustomReactive (Ljava/lang/String;Lcom/netflix/graphql/dgs/client/MonoRequestExecutor;)Lcom/netflix/graphql/dgs/client/CustomMonoGraphQLClient;
+	public final fun createWithWebClient (Lorg/springframework/web/reactive/function/client/WebClient;)Lcom/netflix/graphql/dgs/client/WebClientGraphQLClient;
+	public final fun createWithWebClient (Lorg/springframework/web/reactive/function/client/WebClient;Ljava/util/function/Consumer;)Lcom/netflix/graphql/dgs/client/WebClientGraphQLClient;
+}
+
+public final class com/netflix/graphql/dgs/client/MonoGraphQLClient$DefaultImpls {
+	public static fun reactiveExecuteQuery (Lcom/netflix/graphql/dgs/client/MonoGraphQLClient;Ljava/lang/String;Ljava/util/Map;Lcom/netflix/graphql/dgs/client/MonoRequestExecutor;)Lreactor/core/publisher/Mono;
+	public static fun reactiveExecuteQuery (Lcom/netflix/graphql/dgs/client/MonoGraphQLClient;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Lcom/netflix/graphql/dgs/client/MonoRequestExecutor;)Lreactor/core/publisher/Mono;
+}
+
+public abstract interface class com/netflix/graphql/dgs/client/MonoRequestExecutor {
+	public abstract fun execute (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;)Lreactor/core/publisher/Mono;
+}
+
+public final class com/netflix/graphql/dgs/client/OperationMessageWebSocketClient {
+	public static final field Companion Lcom/netflix/graphql/dgs/client/OperationMessageWebSocketClient$Companion;
+	public fun <init> (Ljava/lang/String;Lorg/springframework/web/reactive/socket/client/WebSocketClient;)V
+	public final fun connect ()Lreactor/core/publisher/Mono;
+	public final fun receive ()Lreactor/core/publisher/Flux;
+	public final fun send (Lcom/netflix/graphql/types/subscription/OperationMessage;)V
+}
+
+public final class com/netflix/graphql/dgs/client/OperationMessageWebSocketClient$Companion {
+}
+
+public abstract interface class com/netflix/graphql/dgs/client/ReactiveGraphQLClient {
+	public abstract fun reactiveExecuteQuery (Ljava/lang/String;Ljava/util/Map;)Lreactor/core/publisher/Flux;
+	public abstract fun reactiveExecuteQuery (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;)Lreactor/core/publisher/Flux;
+}
+
+public final class com/netflix/graphql/dgs/client/RequestDetails {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/netflix/graphql/dgs/client/RequestDetails;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/client/RequestDetails;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/client/RequestDetails;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEdgarLink ()Ljava/lang/String;
+	public final fun getRequestId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/netflix/graphql/dgs/client/RequestExecutor {
+	public abstract fun execute (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;)Lcom/netflix/graphql/dgs/client/HttpResponse;
+}
+
+public final class com/netflix/graphql/dgs/client/SSESubscriptionGraphQLClient : com/netflix/graphql/dgs/client/ReactiveGraphQLClient {
+	public fun <init> (Ljava/lang/String;Lorg/springframework/web/reactive/function/client/WebClient;)V
+	public fun reactiveExecuteQuery (Ljava/lang/String;Ljava/util/Map;)Lreactor/core/publisher/Flux;
+	public fun reactiveExecuteQuery (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;)Lreactor/core/publisher/Flux;
+}
+
+public final class com/netflix/graphql/dgs/client/WebClientGraphQLClient : com/netflix/graphql/dgs/client/MonoGraphQLClient {
+	public fun <init> (Lorg/springframework/web/reactive/function/client/WebClient;)V
+	public fun <init> (Lorg/springframework/web/reactive/function/client/WebClient;Ljava/util/function/Consumer;)V
+	public fun reactiveExecuteQuery (Ljava/lang/String;)Lreactor/core/publisher/Mono;
+	public fun reactiveExecuteQuery (Ljava/lang/String;Ljava/util/Map;)Lreactor/core/publisher/Mono;
+	public fun reactiveExecuteQuery (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;)Lreactor/core/publisher/Mono;
+}
+
+public final class com/netflix/graphql/dgs/client/WebSocketGraphQLClient : com/netflix/graphql/dgs/client/ReactiveGraphQLClient {
+	public static final field Companion Lcom/netflix/graphql/dgs/client/WebSocketGraphQLClient$Companion;
+	public fun <init> (Lcom/netflix/graphql/dgs/client/OperationMessageWebSocketClient;)V
+	public fun <init> (Lcom/netflix/graphql/dgs/client/OperationMessageWebSocketClient;Ljava/time/Duration;)V
+	public synthetic fun <init> (Lcom/netflix/graphql/dgs/client/OperationMessageWebSocketClient;Ljava/time/Duration;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Lorg/springframework/web/reactive/socket/client/WebSocketClient;)V
+	public fun <init> (Ljava/lang/String;Lorg/springframework/web/reactive/socket/client/WebSocketClient;Ljava/time/Duration;)V
+	public fun reactiveExecuteQuery (Ljava/lang/String;Ljava/util/Map;)Lreactor/core/publisher/Flux;
+	public fun reactiveExecuteQuery (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;)Lreactor/core/publisher/Flux;
+}
+
+public final class com/netflix/graphql/dgs/client/WebSocketGraphQLClient$Companion {
+}
+
+public final class com/netflix/graphql/dgs/client/exceptions/NoDataPresentException : java/lang/RuntimeException {
+	public fun <init> ()V
+}
+

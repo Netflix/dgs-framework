@@ -1,0 +1,130 @@
+public abstract class com/netflix/graphql/dgs/apq/AutomatedPersistedQueryCacheAdapter : graphql/execution/preparsed/persisted/PersistedQueryCache {
+	public fun <init> ()V
+	protected abstract fun getFromCache (Ljava/lang/String;Ljava/util/function/Supplier;)Lgraphql/execution/preparsed/PreparsedDocumentEntry;
+	public fun getPersistedQueryDocument (Ljava/lang/Object;Lgraphql/ExecutionInput;Lgraphql/execution/preparsed/persisted/PersistedQueryCacheMiss;)Lgraphql/execution/preparsed/PreparsedDocumentEntry;
+}
+
+public final class com/netflix/graphql/dgs/apq/AutomatedPersistedQueryCaffeineCache : com/netflix/graphql/dgs/apq/AutomatedPersistedQueryCacheAdapter {
+	public fun <init> (Lcom/github/benmanes/caffeine/cache/Cache;)V
+	public final fun getCache ()Lcom/github/benmanes/caffeine/cache/Cache;
+}
+
+public class com/netflix/graphql/dgs/apq/DgsAPQSupportAutoConfiguration {
+	public static final field BEAN_APQ_CAFFEINE_CACHE_NAME Ljava/lang/String;
+	public static final field Companion Lcom/netflix/graphql/dgs/apq/DgsAPQSupportAutoConfiguration$Companion;
+	public fun <init> ()V
+	public fun apolloAPQQueryValueCustomizer ()Lcom/netflix/graphql/dgs/internal/QueryValueCustomizer;
+	public fun apolloPersistedQuerySupport (Lgraphql/execution/preparsed/persisted/PersistedQueryCache;)Lgraphql/execution/preparsed/persisted/ApolloPersistedQuerySupport;
+}
+
+public class com/netflix/graphql/dgs/apq/DgsAPQSupportAutoConfiguration$APQBasicCaffeineCacheConfiguration {
+	public fun <init> ()V
+	public fun meteredPersistedQueryCache (Lcom/github/benmanes/caffeine/cache/Cache;)Lgraphql/execution/preparsed/persisted/PersistedQueryCache;
+}
+
+public class com/netflix/graphql/dgs/apq/DgsAPQSupportAutoConfiguration$APQCaffeineCacheConfiguration {
+	public fun <init> ()V
+	public fun apqCaffeineCache (Lcom/netflix/graphql/dgs/apq/DgsAPQSupportProperties;)Lcom/github/benmanes/caffeine/cache/Cache;
+}
+
+public class com/netflix/graphql/dgs/apq/DgsAPQSupportAutoConfiguration$APQMicrometerMeteredCaffeineCacheConfiguration {
+	public fun <init> ()V
+	public fun meteredPersistedQueryCache (Lcom/github/benmanes/caffeine/cache/Cache;Lio/micrometer/core/instrument/MeterRegistry;)Lgraphql/execution/preparsed/persisted/PersistedQueryCache;
+}
+
+public final class com/netflix/graphql/dgs/apq/DgsAPQSupportAutoConfiguration$Companion {
+}
+
+public final class com/netflix/graphql/dgs/apq/DgsAPQSupportProperties {
+	public static final field CACHE_PREFIX Ljava/lang/String;
+	public static final field Companion Lcom/netflix/graphql/dgs/apq/DgsAPQSupportProperties$Companion;
+	public static final field DEFAULT_CACHE_CAFFEINE_ENABLED Z
+	public static final field DEFAULT_CACHE_CAFFEINE_SPEC Ljava/lang/String;
+	public static final field DEFAULT_ENABLED Z
+	public static final field PREFIX Ljava/lang/String;
+	public fun <init> ()V
+	public fun <init> (ZLcom/netflix/graphql/dgs/apq/DgsAPQSupportProperties$DgsAPQDefaultCaffeineCacheProperties;)V
+	public synthetic fun <init> (ZLcom/netflix/graphql/dgs/apq/DgsAPQSupportProperties$DgsAPQDefaultCaffeineCacheProperties;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component2 ()Lcom/netflix/graphql/dgs/apq/DgsAPQSupportProperties$DgsAPQDefaultCaffeineCacheProperties;
+	public final fun copy (ZLcom/netflix/graphql/dgs/apq/DgsAPQSupportProperties$DgsAPQDefaultCaffeineCacheProperties;)Lcom/netflix/graphql/dgs/apq/DgsAPQSupportProperties;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/apq/DgsAPQSupportProperties;ZLcom/netflix/graphql/dgs/apq/DgsAPQSupportProperties$DgsAPQDefaultCaffeineCacheProperties;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/apq/DgsAPQSupportProperties;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDefaultCache ()Lcom/netflix/graphql/dgs/apq/DgsAPQSupportProperties$DgsAPQDefaultCaffeineCacheProperties;
+	public final fun getEnabled ()Z
+	public fun hashCode ()I
+	public final fun setDefaultCache (Lcom/netflix/graphql/dgs/apq/DgsAPQSupportProperties$DgsAPQDefaultCaffeineCacheProperties;)V
+	public final fun setEnabled (Z)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/apq/DgsAPQSupportProperties$Companion {
+}
+
+public final class com/netflix/graphql/dgs/apq/DgsAPQSupportProperties$DgsAPQDefaultCaffeineCacheProperties {
+	public fun <init> ()V
+	public fun <init> (ZLjava/lang/String;)V
+	public synthetic fun <init> (ZLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (ZLjava/lang/String;)Lcom/netflix/graphql/dgs/apq/DgsAPQSupportProperties$DgsAPQDefaultCaffeineCacheProperties;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/apq/DgsAPQSupportProperties$DgsAPQDefaultCaffeineCacheProperties;ZLjava/lang/String;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/apq/DgsAPQSupportProperties$DgsAPQDefaultCaffeineCacheProperties;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCaffeineSpec ()Ljava/lang/String;
+	public final fun getEnabled ()Z
+	public fun hashCode ()I
+	public final fun setCaffeineSpec (Ljava/lang/String;)V
+	public final fun setEnabled (Z)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public class com/netflix/graphql/dgs/autoconfig/DgsAutoConfiguration {
+	public static final field AUTO_CONF_PREFIX Ljava/lang/String;
+	public static final field Companion Lcom/netflix/graphql/dgs/autoconfig/DgsAutoConfiguration$Companion;
+	public fun <init> (Lcom/netflix/graphql/dgs/autoconfig/DgsConfigurationProperties;)V
+	public fun coroutineArgumentResolver ()Lcom/netflix/graphql/dgs/internal/method/ArgumentResolver;
+	public fun dataFetcherExceptionHandler ()Lgraphql/execution/DataFetcherExceptionHandler;
+	public fun dataFetchingEnvironmentArgumentResolver ()Lcom/netflix/graphql/dgs/internal/method/ArgumentResolver;
+	public fun defaultFieldVisibility ()Lgraphql/schema/visibility/GraphqlFieldVisibility;
+	public fun defaultQueryValueCustomizer ()Lcom/netflix/graphql/dgs/internal/QueryValueCustomizer;
+	public fun defaultReloadSchemaIndicator (Lorg/springframework/core/env/Environment;)Lcom/netflix/graphql/dgs/internal/DefaultDgsQueryExecutor$ReloadSchemaIndicator;
+	public fun dgsDataLoaderProvider (Lorg/springframework/context/ApplicationContext;)Lcom/netflix/graphql/dgs/internal/DgsDataLoaderProvider;
+	public fun dgsQueryExecutor (Lorg/springframework/context/ApplicationContext;Lgraphql/schema/GraphQLSchema;Lcom/netflix/graphql/dgs/internal/DgsSchemaProvider;Lcom/netflix/graphql/dgs/internal/DgsDataLoaderProvider;Lcom/netflix/graphql/dgs/internal/DefaultDgsGraphQLContextBuilder;Lgraphql/execution/DataFetcherExceptionHandler;Lorg/springframework/beans/factory/ObjectProvider;Lorg/springframework/core/env/Environment;Ljava/util/Optional;Ljava/util/Optional;Ljava/util/Optional;Lcom/netflix/graphql/dgs/internal/DefaultDgsQueryExecutor$ReloadSchemaIndicator;Lorg/springframework/beans/factory/ObjectProvider;Lcom/netflix/graphql/dgs/internal/QueryValueCustomizer;)Lcom/netflix/graphql/dgs/DgsQueryExecutor;
+	public fun dgsSchemaProvider (Lorg/springframework/context/ApplicationContext;Ljava/util/Optional;Ljava/util/Optional;Ljava/util/Optional;Lorg/springframework/beans/factory/ObjectProvider;Ljava/util/List;Ljava/util/Optional;Lcom/netflix/graphql/dgs/internal/EntityFetcherRegistry;Ljava/util/Optional;Lcom/netflix/graphql/dgs/internal/method/MethodDataFetcherFactory;)Lcom/netflix/graphql/dgs/internal/DgsSchemaProvider;
+	public static synthetic fun dgsSchemaProvider$default (Lcom/netflix/graphql/dgs/autoconfig/DgsAutoConfiguration;Lorg/springframework/context/ApplicationContext;Ljava/util/Optional;Ljava/util/Optional;Ljava/util/Optional;Lorg/springframework/beans/factory/ObjectProvider;Ljava/util/List;Ljava/util/Optional;Lcom/netflix/graphql/dgs/internal/EntityFetcherRegistry;Ljava/util/Optional;Lcom/netflix/graphql/dgs/internal/method/MethodDataFetcherFactory;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/internal/DgsSchemaProvider;
+	public fun entityFetcherRegistry ()Lcom/netflix/graphql/dgs/internal/EntityFetcherRegistry;
+	public fun fallbackEnvironmentArgumentResolver ()Lcom/netflix/graphql/dgs/internal/method/ArgumentResolver;
+	public fun fluxReactiveDataFetcherResultProcessor ()Lcom/netflix/graphql/dgs/internal/FluxDataFetcherResultProcessor;
+	public fun graphQLContextBuilder (Ljava/util/Optional;Ljava/util/Optional;)Lcom/netflix/graphql/dgs/internal/DefaultDgsGraphQLContextBuilder;
+	public fun inputArgumentResolver (Lorg/springframework/beans/factory/ObjectProvider;)Lcom/netflix/graphql/dgs/internal/method/ArgumentResolver;
+	public fun methodDataFetcherFactory (Lorg/springframework/beans/factory/ObjectProvider;)Lcom/netflix/graphql/dgs/internal/method/MethodDataFetcherFactory;
+	public fun monoReactiveDataFetcherResultProcessor ()Lcom/netflix/graphql/dgs/internal/MonoDataFetcherResultProcessor;
+	public fun noIntrospectionFieldVisibility ()Lgraphql/schema/visibility/GraphqlFieldVisibility;
+	public fun schema (Lcom/netflix/graphql/dgs/internal/DgsSchemaProvider;Lgraphql/schema/visibility/GraphqlFieldVisibility;)Lgraphql/schema/GraphQLSchema;
+	public fun uploadScalar ()Lcom/netflix/graphql/dgs/scalars/UploadScalar;
+}
+
+public final class com/netflix/graphql/dgs/autoconfig/DgsAutoConfiguration$Companion {
+}
+
+public final class com/netflix/graphql/dgs/autoconfig/DgsConfigurationProperties {
+	public static final field Companion Lcom/netflix/graphql/dgs/autoconfig/DgsConfigurationProperties$Companion;
+	public static final field PREFIX Ljava/lang/String;
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcom/netflix/graphql/dgs/autoconfig/DgsConfigurationProperties;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/autoconfig/DgsConfigurationProperties;Ljava/util/List;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/autoconfig/DgsConfigurationProperties;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSchemaLocations ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/autoconfig/DgsConfigurationProperties$Companion {
+}
+
+public final class com/netflix/graphql/dgs/diagnostics/SchemaFailureAnalyzer : org/springframework/boot/diagnostics/AbstractFailureAnalyzer {
+	public fun <init> ()V
+	public synthetic fun analyze (Ljava/lang/Throwable;Ljava/lang/Throwable;)Lorg/springframework/boot/diagnostics/FailureAnalysis;
+}
+

@@ -1,0 +1,13 @@
+public final class com/netflix/graphql/dgs/subscriptions/websockets/DgsHandshakeInterceptor : org/springframework/web/socket/server/support/HttpSessionHandshakeInterceptor {
+	public fun <init> ()V
+	public fun afterHandshake (Lorg/springframework/http/server/ServerHttpRequest;Lorg/springframework/http/server/ServerHttpResponse;Lorg/springframework/web/socket/WebSocketHandler;Ljava/lang/Exception;)V
+	public fun beforeHandshake (Lorg/springframework/http/server/ServerHttpRequest;Lorg/springframework/http/server/ServerHttpResponse;Lorg/springframework/web/socket/WebSocketHandler;Ljava/util/Map;)Z
+}
+
+public final class com/netflix/graphql/dgs/subscriptions/websockets/DgsWebSocketHandler : org/springframework/web/socket/handler/TextWebSocketHandler, org/springframework/web/socket/SubProtocolCapable {
+	public fun <init> (Lcom/netflix/graphql/dgs/DgsQueryExecutor;)V
+	public fun getSubProtocols ()Ljava/util/List;
+	public fun handleTextMessage (Lorg/springframework/web/socket/WebSocketSession;Lorg/springframework/web/socket/TextMessage;)V
+	public final fun setupCleanup ()V
+}
+

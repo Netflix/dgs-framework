@@ -1,0 +1,100 @@
+public abstract interface class com/netflix/graphql/types/errors/DebugInfo {
+}
+
+public abstract interface class com/netflix/graphql/types/errors/ErrorDetail : graphql/ErrorClassification {
+	public abstract fun getErrorType ()Lcom/netflix/graphql/types/errors/ErrorType;
+}
+
+public final class com/netflix/graphql/types/errors/ErrorDetail$Common : java/lang/Enum, com/netflix/graphql/types/errors/ErrorDetail {
+	public static final field CONFLICT Lcom/netflix/graphql/types/errors/ErrorDetail$Common;
+	public static final field DEADLINE_EXCEEDED Lcom/netflix/graphql/types/errors/ErrorDetail$Common;
+	public static final field ENHANCE_YOUR_CALM Lcom/netflix/graphql/types/errors/ErrorDetail$Common;
+	public static final field FIELD_NOT_FOUND Lcom/netflix/graphql/types/errors/ErrorDetail$Common;
+	public static final field INVALID_ARGUMENT Lcom/netflix/graphql/types/errors/ErrorDetail$Common;
+	public static final field INVALID_CURSOR Lcom/netflix/graphql/types/errors/ErrorDetail$Common;
+	public static final field MISSING_RESOURCE Lcom/netflix/graphql/types/errors/ErrorDetail$Common;
+	public static final field SERVICE_ERROR Lcom/netflix/graphql/types/errors/ErrorDetail$Common;
+	public static final field THROTTLED_CONCURRENCY Lcom/netflix/graphql/types/errors/ErrorDetail$Common;
+	public static final field THROTTLED_CPU Lcom/netflix/graphql/types/errors/ErrorDetail$Common;
+	public static final field UNIMPLEMENTED Lcom/netflix/graphql/types/errors/ErrorDetail$Common;
+	public fun getErrorType ()Lcom/netflix/graphql/types/errors/ErrorType;
+	public fun toSpecification (Lgraphql/GraphQLError;)Ljava/lang/Object;
+	public static fun valueOf (Ljava/lang/String;)Lcom/netflix/graphql/types/errors/ErrorDetail$Common;
+	public static fun values ()[Lcom/netflix/graphql/types/errors/ErrorDetail$Common;
+}
+
+public final class com/netflix/graphql/types/errors/ErrorType : java/lang/Enum, graphql/ErrorClassification {
+	public static final field BAD_REQUEST Lcom/netflix/graphql/types/errors/ErrorType;
+	public static final field FAILED_PRECONDITION Lcom/netflix/graphql/types/errors/ErrorType;
+	public static final field INTERNAL Lcom/netflix/graphql/types/errors/ErrorType;
+	public static final field NOT_FOUND Lcom/netflix/graphql/types/errors/ErrorType;
+	public static final field PERMISSION_DENIED Lcom/netflix/graphql/types/errors/ErrorType;
+	public static final field UNAUTHENTICATED Lcom/netflix/graphql/types/errors/ErrorType;
+	public static final field UNAVAILABLE Lcom/netflix/graphql/types/errors/ErrorType;
+	public static final field UNKNOWN Lcom/netflix/graphql/types/errors/ErrorType;
+	public static fun valueOf (Ljava/lang/String;)Lcom/netflix/graphql/types/errors/ErrorType;
+	public static fun values ()[Lcom/netflix/graphql/types/errors/ErrorType;
+}
+
+public class com/netflix/graphql/types/errors/InternalError {
+	public fun <init> ()V
+}
+
+public abstract interface class com/netflix/graphql/types/errors/TypedError {
+	public abstract fun getDebugInfo ()Ljava/util/Map;
+	public abstract fun getDebugUri ()Ljava/lang/String;
+	public abstract fun getErrorDetail ()Lcom/netflix/graphql/types/errors/ErrorDetail;
+	public abstract fun getErrorType ()Lcom/netflix/graphql/types/errors/ErrorType;
+	public abstract fun getOrigin ()Ljava/lang/String;
+}
+
+public class com/netflix/graphql/types/errors/TypedGraphQLError : graphql/GraphQLError {
+	public static field BAD_REQUEST Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static field DEADLINE_EXCEEDED Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static field ENHANCE_YOUR_CALM Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static field FAILED_PRECONDITION Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static field FIELD_NOT_FOUND Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static field INTERNAL Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static field INVALID_ARGUMENT Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static field INVALID_CURSOR Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static field MISSING_RESOURCE Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static field NOT_FOUND Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static field PERMISSION_DENIED Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static field SERVICE_ERROR Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static field THROTTLED_CONCURRENCY Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static field THROTTLED_CPU Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static field UNAUTHENTICATED Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static field UNAVAILABLE Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static field UNIMPLEMENTED Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static field UNKNOWN Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lgraphql/ErrorClassification;Ljava/util/List;Ljava/util/Map;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getErrorType ()Lgraphql/ErrorClassification;
+	public fun getExtensions ()Ljava/util/Map;
+	public fun getLocations ()Ljava/util/List;
+	public fun getMessage ()Ljava/lang/String;
+	public fun getPath ()Ljava/util/List;
+	public static fun newBadRequestBuilder ()Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static fun newBuilder ()Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static fun newConflictBuilder ()Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static fun newInternalErrorBuilder ()Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static fun newNotFoundBuilder ()Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public static fun newPermissionDeniedBuilder ()Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public fun toString ()Ljava/lang/String;
+}
+
+public class com/netflix/graphql/types/errors/TypedGraphQLError$Builder {
+	public fun build ()Lcom/netflix/graphql/types/errors/TypedGraphQLError;
+	public fun debugInfo (Ljava/util/Map;)Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public fun debugUri (Ljava/lang/String;)Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public fun errorDetail (Lcom/netflix/graphql/types/errors/ErrorDetail;)Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public fun errorType (Lcom/netflix/graphql/types/errors/ErrorType;)Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public fun extensions (Ljava/util/Map;)Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public fun location (Lgraphql/language/SourceLocation;)Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public fun locations (Ljava/util/List;)Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public fun message (Ljava/lang/String;[Ljava/lang/Object;)Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public fun origin (Ljava/lang/String;)Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public fun path (Lgraphql/execution/ResultPath;)Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+	public fun path (Ljava/util/List;)Lcom/netflix/graphql/types/errors/TypedGraphQLError$Builder;
+}
+

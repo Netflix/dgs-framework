@@ -29,6 +29,7 @@ plugins {
     id("nebula.netflixoss") version "10.6.0"
     id("nebula.dependency-recommender") version "11.0.0"
     id("org.jmailen.kotlinter") version "3.10.0"
+    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.9.0"
     kotlin("jvm") version Versions.KOTLIN_VERSION
     kotlin("kapt") version Versions.KOTLIN_VERSION
     idea
@@ -153,4 +154,11 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         experimentalRules = false
         disabledRules = arrayOf("no-wildcard-imports")
     }
+}
+
+apiValidation {
+  ignoredPackages += listOf(
+    "graphql-dgs-example-java",
+    "graphql-dgs-example-java-webflux",
+    "graphql-dgs-example-shared")
 }

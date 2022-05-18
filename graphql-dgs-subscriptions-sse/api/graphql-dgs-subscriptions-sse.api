@@ -1,0 +1,10 @@
+public class com/netflix/graphql/dgs/subscriptions/sse/DgsSSESubscriptionHandler {
+	public static final field Companion Lcom/netflix/graphql/dgs/subscriptions/sse/DgsSSESubscriptionHandler$Companion;
+	public fun <init> (Lcom/netflix/graphql/dgs/DgsQueryExecutor;)V
+	public fun getDgsQueryExecutor ()Lcom/netflix/graphql/dgs/DgsQueryExecutor;
+	public final fun subscriptionWithId (Ljava/lang/String;)Lreactor/core/publisher/Flux;
+}
+
+public final class com/netflix/graphql/dgs/subscriptions/sse/DgsSSESubscriptionHandler$Companion {
+}
+

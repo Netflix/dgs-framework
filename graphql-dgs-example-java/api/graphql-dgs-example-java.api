@@ -1,0 +1,27 @@
+public class com/netflix/graphql/dgs/example/ExampleApp {
+	public fun <init> ()V
+	public static fun main ([Ljava/lang/String;)V
+}
+
+public class com/netflix/graphql/dgs/example/context/MyContextBuilder : com/netflix/graphql/dgs/context/DgsCustomContextBuilder {
+	public fun <init> ()V
+	public fun build ()Lcom/netflix/graphql/dgs/example/shared/context/MyContext;
+	public synthetic fun build ()Ljava/lang/Object;
+}
+
+public class com/netflix/graphql/dgs/example/datafetcher/FileUploadMutation {
+	public fun <init> ()V
+	public fun uploadFile (Lgraphql/schema/DataFetchingEnvironment;)Z
+}
+
+public class com/netflix/graphql/dgs/example/datafetcher/WithCookie {
+	public fun <init> ()V
+	public fun updateCookie (Ljava/lang/String;Lcom/netflix/graphql/dgs/DgsDataFetchingEnvironment;)Ljava/lang/String;
+	public fun withCookie (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public class com/netflix/graphql/dgs/example/datafetcher/WithHeader {
+	public fun <init> ()V
+	public fun helloWithHeaders (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+}
+

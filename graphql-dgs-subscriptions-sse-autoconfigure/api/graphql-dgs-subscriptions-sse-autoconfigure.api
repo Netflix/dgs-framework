@@ -1,0 +1,5 @@
+public class com/netflix/graphql/dgs/subscriptions/sse/DgsSSEAutoConfig {
+	public fun <init> ()V
+	public fun DgsSSEController (Lcom/netflix/graphql/dgs/DgsQueryExecutor;)Lcom/netflix/graphql/dgs/subscriptions/sse/DgsSSESubscriptionHandler;
+}
+

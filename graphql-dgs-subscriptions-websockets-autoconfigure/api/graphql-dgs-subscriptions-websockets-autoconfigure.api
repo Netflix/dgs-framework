@@ -1,0 +1,6 @@
+public class com/netflix/graphql/dgs/subscriptions/websockets/DgsWebSocketAutoConfig {
+	public fun <init> ()V
+	public fun handshakeInterceptor ()Lorg/springframework/web/socket/server/HandshakeInterceptor;
+	public fun webSocketHandler (Lcom/netflix/graphql/dgs/DgsQueryExecutor;)Lorg/springframework/web/socket/WebSocketHandler;
+}
+

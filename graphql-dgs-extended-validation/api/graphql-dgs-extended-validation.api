@@ -1,0 +1,18 @@
+public class com/netflix/graphql/dgs/autoconfig/DgsExtendedValidationAutoConfiguration {
+	public fun <init> ()V
+	public fun defaultExtendedValidationRegistrar (Lorg/springframework/beans/factory/ObjectProvider;)Lcom/netflix/graphql/dgs/autoconfig/DgsExtendedValidationAutoConfiguration$ExtendedValidationRegistrar;
+}
+
+public class com/netflix/graphql/dgs/autoconfig/DgsExtendedValidationAutoConfiguration$DefaultExtendedValidationRegistrar : com/netflix/graphql/dgs/autoconfig/DgsExtendedValidationAutoConfiguration$ExtendedValidationRegistrar {
+	public fun <init> (Lorg/springframework/beans/factory/ObjectProvider;)V
+	public fun addValidationRules (Lgraphql/schema/idl/RuntimeWiring$Builder;)Lgraphql/schema/idl/RuntimeWiring$Builder;
+}
+
+public abstract interface class com/netflix/graphql/dgs/autoconfig/DgsExtendedValidationAutoConfiguration$ExtendedValidationRegistrar {
+	public abstract fun addValidationRules (Lgraphql/schema/idl/RuntimeWiring$Builder;)Lgraphql/schema/idl/RuntimeWiring$Builder;
+}
+
+public abstract interface class com/netflix/graphql/dgs/autoconfig/ValidationRulesBuilderCustomizer {
+	public abstract fun customize (Lgraphql/validation/rules/ValidationRules$Builder;)V
+}
+

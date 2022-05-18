@@ -1,0 +1,32 @@
+public class com/netflix/graphql/dgs/example/ReactiveExampleApp {
+	public fun <init> ()V
+	public static fun main ([Ljava/lang/String;)V
+}
+
+public class com/netflix/graphql/dgs/example/context/MyContextBuilder : com/netflix/graphql/dgs/reactive/DgsReactiveCustomContextBuilderWithRequest {
+	public fun <init> ()V
+	public fun build (Ljava/util/Map;Lorg/springframework/http/HttpHeaders;Lorg/springframework/web/reactive/function/server/ServerRequest;)Lreactor/core/publisher/Mono;
+}
+
+public class com/netflix/graphql/dgs/example/reactive/datafetchers/ReactiveDataFetchers {
+	public fun <init> ()V
+	public fun flux ()Lreactor/core/publisher/Flux;
+	public fun mono ()Lreactor/core/publisher/Mono;
+}
+
+public class com/netflix/graphql/dgs/example/reactive/datafetchers/UsingWebFluxReactorContext {
+	public fun <init> ()V
+	public fun usingContext ()Lreactor/core/publisher/Mono;
+}
+
+public class com/netflix/graphql/dgs/example/reactive/datafetchers/WithCookie {
+	public fun <init> ()V
+	public fun updateCookie (Ljava/lang/String;Lcom/netflix/graphql/dgs/DgsDataFetchingEnvironment;)Ljava/lang/String;
+	public fun withCookie (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public class com/netflix/graphql/dgs/example/web/RequestIdWebFilter : org/springframework/web/server/WebFilter {
+	public fun <init> ()V
+	public fun filter (Lorg/springframework/web/server/ServerWebExchange;Lorg/springframework/web/server/WebFilterChain;)Lreactor/core/publisher/Mono;
+}
+

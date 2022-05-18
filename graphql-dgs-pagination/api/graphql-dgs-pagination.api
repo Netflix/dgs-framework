@@ -1,0 +1,10 @@
+public class com/netflix/graphql/dgs/pagination/DgsPaginationAutoConfiguration {
+	public fun <init> ()V
+	public fun dgsPaginationTypeDefinitionRegistry ()Lcom/netflix/graphql/dgs/pagination/DgsPaginationTypeDefinitionRegistry;
+}
+
+public final class com/netflix/graphql/dgs/pagination/DgsPaginationTypeDefinitionRegistry {
+	public fun <init> ()V
+	public final fun registry (Lgraphql/schema/idl/TypeDefinitionRegistry;)Lgraphql/schema/idl/TypeDefinitionRegistry;
+}
+

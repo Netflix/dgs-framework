@@ -1,0 +1,131 @@
+public class com/netflix/graphql/dgs/example/datafetcher/HelloDataFetcher {
+	public fun <init> ()V
+	public fun getMessage (Lgraphql/schema/DataFetchingEnvironment;)Ljava/util/concurrent/CompletableFuture;
+	public fun getMessageWithException (Lcom/netflix/graphql/dgs/DgsDataFetchingEnvironment;)Ljava/util/concurrent/CompletableFuture;
+	public fun getMessagesWithException (Lcom/netflix/graphql/dgs/DgsDataFetchingEnvironment;)Ljava/util/concurrent/CompletableFuture;
+	public fun hello (Ljava/lang/String;)Ljava/lang/String;
+	public fun helloWithHeaders (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+	public fun withContext (Lgraphql/schema/DataFetchingEnvironment;)Ljava/lang/String;
+	public fun withDataLoaderContext (Lgraphql/schema/DataFetchingEnvironment;)Ljava/util/concurrent/CompletableFuture;
+	public fun withGraphqlException ()Ljava/lang/String;
+	public fun withPagination (Lgraphql/schema/DataFetchingEnvironment;)Lgraphql/relay/Connection;
+	public fun withRuntimeException ()Ljava/lang/String;
+}
+
+public class com/netflix/graphql/dgs/example/shared/ExtraCodeRegistry {
+	public fun <init> ()V
+	public fun registry (Lgraphql/schema/GraphQLCodeRegistry$Builder;Lgraphql/schema/idl/TypeDefinitionRegistry;)Lgraphql/schema/GraphQLCodeRegistry$Builder;
+}
+
+public class com/netflix/graphql/dgs/example/shared/ExtraTypeDefinitionRegistry {
+	public fun <init> ()V
+	public fun registry ()Lgraphql/schema/idl/TypeDefinitionRegistry;
+}
+
+public class com/netflix/graphql/dgs/example/shared/context/MyContext {
+	public fun <init> ()V
+	public fun getCustomState ()Ljava/lang/String;
+}
+
+public class com/netflix/graphql/dgs/example/shared/dataLoader/ExampleLoaderWithContext : org/dataloader/BatchLoaderWithContext {
+	public fun <init> ()V
+	public fun load (Ljava/util/List;Lorg/dataloader/BatchLoaderEnvironment;)Ljava/util/concurrent/CompletionStage;
+}
+
+public class com/netflix/graphql/dgs/example/shared/dataLoader/MessageDataLoader : org/dataloader/BatchLoader {
+	public fun <init> ()V
+	public fun load (Ljava/util/List;)Ljava/util/concurrent/CompletionStage;
+}
+
+public class com/netflix/graphql/dgs/example/shared/dataLoader/MessagesDataLoaderWithException : org/dataloader/BatchLoaderWithContext {
+	public fun <init> ()V
+	public fun load (Ljava/util/List;Lorg/dataloader/BatchLoaderEnvironment;)Ljava/util/concurrent/CompletionStage;
+}
+
+public class com/netflix/graphql/dgs/example/shared/datafetcher/ConcurrentDataFetcher {
+	public fun <init> ()V
+	public fun concurrent1 ()Ljava/util/concurrent/CompletableFuture;
+	public fun concurrent2 ()Ljava/util/concurrent/CompletableFuture;
+}
+
+public class com/netflix/graphql/dgs/example/shared/datafetcher/CurrentTimeDateFetcher {
+	public fun <init> ()V
+	public fun now ()Ljava/time/LocalTime;
+	public fun schedule (Lgraphql/schema/DataFetchingEnvironment;)Z
+}
+
+public class com/netflix/graphql/dgs/example/shared/datafetcher/MovieDataFetcher {
+	public fun <init> ()V
+	public fun director ()Ljava/lang/String;
+	public fun movies (Lgraphql/schema/DataFetchingEnvironment;)Ljava/util/List;
+}
+
+public class com/netflix/graphql/dgs/example/shared/datafetcher/RatingMutation {
+	public fun <init> ()V
+	public fun addRating (Lcom/netflix/graphql/dgs/example/shared/datafetcher/RatingInput;)Lcom/netflix/graphql/dgs/example/shared/types/Rating;
+}
+
+public class com/netflix/graphql/dgs/example/shared/datafetcher/RequestHeadersDataFetcher {
+	public fun <init> ()V
+	public fun headers (Lcom/netflix/graphql/dgs/DgsDataFetchingEnvironment;)Ljava/lang/String;
+	public fun referer (Ljava/util/List;)Ljava/lang/String;
+}
+
+public class com/netflix/graphql/dgs/example/shared/datafetcher/SubscriptionDataFetcher {
+	public fun <init> ()V
+	public fun stocks ()Lorg/reactivestreams/Publisher;
+}
+
+public class com/netflix/graphql/dgs/example/shared/types/ActionMovie : com/netflix/graphql/dgs/example/shared/types/Movie {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;I)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDirector ()Ljava/lang/String;
+	public fun getNrOfExplosions ()I
+	public fun getTitle ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun setDirector (Ljava/lang/String;)V
+	public fun setNrOfExplosions (I)V
+	public fun setTitle (Ljava/lang/String;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public class com/netflix/graphql/dgs/example/shared/types/Message {
+	public fun <init> (Ljava/lang/String;)V
+	public fun getInfo ()Ljava/lang/String;
+}
+
+public abstract interface class com/netflix/graphql/dgs/example/shared/types/Movie {
+	public abstract fun getDirector ()Ljava/lang/String;
+	public abstract fun getTitle ()Ljava/lang/String;
+	public abstract fun setDirector (Ljava/lang/String;)V
+	public abstract fun setTitle (Ljava/lang/String;)V
+}
+
+public class com/netflix/graphql/dgs/example/shared/types/Rating {
+	public fun <init> (D)V
+	public fun getAvgStars ()D
+}
+
+public class com/netflix/graphql/dgs/example/shared/types/ScaryMovie : com/netflix/graphql/dgs/example/shared/types/Movie {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ZI)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDirector ()Ljava/lang/String;
+	public fun getGory ()Z
+	public fun getScareFactor ()I
+	public fun getTitle ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun setDirector (Ljava/lang/String;)V
+	public fun setGory (Z)V
+	public fun setScareFactor (I)V
+	public fun setTitle (Ljava/lang/String;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public class com/netflix/graphql/dgs/example/shared/types/Stock {
+	public fun <init> (Ljava/lang/String;D)V
+	public fun getName ()Ljava/lang/String;
+	public fun getPrice ()D
+}
+

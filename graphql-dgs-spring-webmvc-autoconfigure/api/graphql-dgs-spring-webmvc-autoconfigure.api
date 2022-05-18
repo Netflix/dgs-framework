@@ -1,0 +1,94 @@
+public class com/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcAutoConfiguration {
+	public fun <init> ()V
+	public fun dgsObjectMapper ()Lcom/fasterxml/jackson/databind/ObjectMapper;
+	public fun dgsRestController (Lcom/netflix/graphql/dgs/DgsQueryExecutor;Lcom/fasterxml/jackson/databind/ObjectMapper;)Lcom/netflix/graphql/dgs/mvc/DgsRestController;
+}
+
+public class com/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcAutoConfiguration$DgsGraphiQLConfiguration {
+	public fun <init> ()V
+}
+
+public class com/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcAutoConfiguration$DgsWebMvcSchemaJsonConfiguration {
+	public fun <init> ()V
+	public fun dgsRestSchemaJsonController (Lcom/netflix/graphql/dgs/internal/DgsSchemaProvider;)Lcom/netflix/graphql/dgs/mvc/DgsRestSchemaJsonController;
+}
+
+public class com/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcAutoConfiguration$WebMvcArgumentHandlerConfiguration {
+	public fun <init> ()V
+	public fun cookieValueResolver (Lorg/springframework/beans/factory/config/ConfigurableBeanFactory;Lorg/springframework/web/bind/support/WebDataBinderFactory;)Lcom/netflix/graphql/dgs/internal/method/ArgumentResolver;
+	public fun dgsWebDataBinderFactory (Lorg/springframework/beans/factory/ObjectProvider;)Lorg/springframework/web/bind/support/WebDataBinderFactory;
+	public fun requestHeaderMapResolver (Lorg/springframework/web/bind/support/WebDataBinderFactory;)Lcom/netflix/graphql/dgs/internal/method/ArgumentResolver;
+	public fun requestHeaderResolver (Lorg/springframework/beans/factory/config/ConfigurableBeanFactory;Lorg/springframework/web/bind/support/WebDataBinderFactory;)Lcom/netflix/graphql/dgs/internal/method/ArgumentResolver;
+	public fun requestParamMapResolver (Lorg/springframework/web/bind/support/WebDataBinderFactory;)Lcom/netflix/graphql/dgs/internal/method/ArgumentResolver;
+	public fun requestParamResolver (Lorg/springframework/web/bind/support/WebDataBinderFactory;)Lcom/netflix/graphql/dgs/internal/method/ArgumentResolver;
+}
+
+public final class com/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsGraphiQLConfigurationProperties;Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsSchemaJsonConfigurationProperties;)V
+	public synthetic fun <init> (Ljava/lang/String;Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsGraphiQLConfigurationProperties;Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsSchemaJsonConfigurationProperties;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsGraphiQLConfigurationProperties;
+	public final fun component3 ()Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsSchemaJsonConfigurationProperties;
+	public final fun copy (Ljava/lang/String;Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsGraphiQLConfigurationProperties;Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsSchemaJsonConfigurationProperties;)Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties;Ljava/lang/String;Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsGraphiQLConfigurationProperties;Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsSchemaJsonConfigurationProperties;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getGraphiql ()Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsGraphiQLConfigurationProperties;
+	public final fun getPath ()Ljava/lang/String;
+	public final fun getSchemaJson ()Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsSchemaJsonConfigurationProperties;
+	public fun hashCode ()I
+	public final fun setGraphiql (Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsGraphiQLConfigurationProperties;)V
+	public final fun setPath (Ljava/lang/String;)V
+	public final fun setSchemaJson (Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsSchemaJsonConfigurationProperties;)V
+	public fun toString ()Ljava/lang/String;
+	public final fun validatePaths ()V
+}
+
+public final class com/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsGraphiQLConfigurationProperties {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsGraphiQLConfigurationProperties;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsGraphiQLConfigurationProperties;Ljava/lang/String;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsGraphiQLConfigurationProperties;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPath ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun setPath (Ljava/lang/String;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsSchemaJsonConfigurationProperties {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsSchemaJsonConfigurationProperties;
+	public static synthetic fun copy$default (Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsSchemaJsonConfigurationProperties;Ljava/lang/String;ILjava/lang/Object;)Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties$DgsSchemaJsonConfigurationProperties;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPath ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun setPath (Ljava/lang/String;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public class com/netflix/graphql/dgs/webmvc/autoconfigure/GraphiQLConfigurer : org/springframework/web/servlet/config/annotation/WebMvcConfigurer {
+	public static final field Companion Lcom/netflix/graphql/dgs/webmvc/autoconfigure/GraphiQLConfigurer$Companion;
+	public fun <init> (Lcom/netflix/graphql/dgs/webmvc/autoconfigure/DgsWebMvcConfigurationProperties;Ljavax/servlet/ServletContext;)V
+	public fun addResourceHandlers (Lorg/springframework/web/servlet/config/annotation/ResourceHandlerRegistry;)V
+	public fun addViewControllers (Lorg/springframework/web/servlet/config/annotation/ViewControllerRegistry;)V
+}
+
+public final class com/netflix/graphql/dgs/webmvc/autoconfigure/GraphiQLConfigurer$Companion {
+}
+
+public final class com/netflix/graphql/dgs/webmvc/autoconfigure/GraphiQLConfigurer$Constants {
+	public static final field INSTANCE Lcom/netflix/graphql/dgs/webmvc/autoconfigure/GraphiQLConfigurer$Constants;
+	public static final field PATH_TO_GRAPHIQL_INDEX_HTML Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/webmvc/autoconfigure/GraphiQLConfigurer$TokenReplacingTransformer : org/springframework/web/servlet/resource/ResourceTransformer {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public fun transform (Ljavax/servlet/http/HttpServletRequest;Lorg/springframework/core/io/Resource;Lorg/springframework/web/servlet/resource/ResourceTransformerChain;)Lorg/springframework/core/io/Resource;
+}
+

@@ -1,0 +1,34 @@
+public class com/netflix/graphql/dgs/mvc/DgsRestController {
+	public static final field Companion Lcom/netflix/graphql/dgs/mvc/DgsRestController$Companion;
+	public fun <init> (Lcom/netflix/graphql/dgs/DgsQueryExecutor;Lcom/fasterxml/jackson/databind/ObjectMapper;)V
+	public synthetic fun <init> (Lcom/netflix/graphql/dgs/DgsQueryExecutor;Lcom/fasterxml/jackson/databind/ObjectMapper;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getDgsQueryExecutor ()Lcom/netflix/graphql/dgs/DgsQueryExecutor;
+	public fun getMapper ()Lcom/fasterxml/jackson/databind/ObjectMapper;
+	public final fun graphql (Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Lorg/springframework/http/HttpHeaders;Lorg/springframework/web/context/request/WebRequest;)Lorg/springframework/http/ResponseEntity;
+}
+
+public final class com/netflix/graphql/dgs/mvc/DgsRestController$Companion {
+}
+
+public class com/netflix/graphql/dgs/mvc/DgsRestSchemaJsonController {
+	public static final field Companion Lcom/netflix/graphql/dgs/mvc/DgsRestSchemaJsonController$Companion;
+	public fun <init> (Lcom/netflix/graphql/dgs/internal/DgsSchemaProvider;)V
+	public fun getSchemaProvider ()Lcom/netflix/graphql/dgs/internal/DgsSchemaProvider;
+	public final fun schema ()Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/mvc/DgsRestSchemaJsonController$Companion {
+}
+
+public final class com/netflix/graphql/dgs/mvc/ServletCookieValueResolver : com/netflix/graphql/dgs/internal/CookieValueResolver {
+	public fun <init> ()V
+	public fun getCookieValue (Ljava/lang/String;Lcom/netflix/graphql/dgs/internal/DgsRequestData;)Ljava/lang/String;
+}
+
+public final class com/netflix/graphql/dgs/mvc/internal/method/HandlerMethodArgumentResolverAdapter : com/netflix/graphql/dgs/internal/method/ArgumentResolver {
+	public fun <init> (Lorg/springframework/web/method/support/HandlerMethodArgumentResolver;Lorg/springframework/web/bind/support/WebDataBinderFactory;)V
+	public synthetic fun <init> (Lorg/springframework/web/method/support/HandlerMethodArgumentResolver;Lorg/springframework/web/bind/support/WebDataBinderFactory;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun resolveArgument (Lorg/springframework/core/MethodParameter;Lgraphql/schema/DataFetchingEnvironment;)Ljava/lang/Object;
+	public fun supportsParameter (Lorg/springframework/core/MethodParameter;)Z
+}
+
