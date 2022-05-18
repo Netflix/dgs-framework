@@ -28,7 +28,7 @@ plugins {
     `java-library`
     id("nebula.netflixoss") version "10.6.0"
     id("nebula.dependency-recommender") version "11.0.0"
-    id("org.jmailen.kotlinter") version "3.6.0"
+    id("org.jmailen.kotlinter") version "3.10.0"
     kotlin("jvm") version Versions.KOTLIN_VERSION
     kotlin("kapt") version Versions.KOTLIN_VERSION
     idea
@@ -149,7 +149,6 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     }
 
     kotlinter {
-        indentSize = 4
         reporters = arrayOf("checkstyle", "plain")
         experimentalRules = false
         disabledRules = arrayOf("no-wildcard-imports")

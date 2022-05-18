@@ -74,7 +74,8 @@ class DgsWebFluxAutomatedPersistedQueriesSmokeTest {
                   |        }
                   |    }
                   | }
-                  |""".trimMargin()
+                  |
+                """.trimMargin()
             )
             .exchange()
             .expectStatus().isOk()
@@ -93,7 +94,8 @@ class DgsWebFluxAutomatedPersistedQueriesSmokeTest {
                   |     }
                   |   ]
                   | }
-                  |""".trimMargin()
+                  |
+                """.trimMargin()
             )
     }
 
@@ -114,7 +116,8 @@ class DgsWebFluxAutomatedPersistedQueriesSmokeTest {
                   |        }
                   |    }
                   | }
-                  |""".trimMargin()
+                  |
+                """.trimMargin()
             )
             .exchange()
             .expectStatus().isOk
@@ -125,7 +128,8 @@ class DgsWebFluxAutomatedPersistedQueriesSmokeTest {
                   |        "__typename":"Query"
                   |    }
                   | }
-                  |""".trimMargin()
+                  |
+                """.trimMargin()
             )
     }
 
@@ -145,7 +149,8 @@ class DgsWebFluxAutomatedPersistedQueriesSmokeTest {
                    |        }
                    |    }
                    | }
-                   |""".trimMargin()
+                   |
+                """.trimMargin()
             )
             .exchange()
             .expectStatus().isOk
@@ -156,7 +161,8 @@ class DgsWebFluxAutomatedPersistedQueriesSmokeTest {
                   |        "__typename":"Query"
                   |    }
                   | }
-                  |""".trimMargin()
+                  |
+                """.trimMargin()
             )
     }
 

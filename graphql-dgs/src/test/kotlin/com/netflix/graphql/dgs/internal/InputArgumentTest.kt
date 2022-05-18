@@ -1208,7 +1208,8 @@ internal class InputArgumentTest {
             """{
             |   khello(input: [FRIENDLY POLITE])
             |   jhello(input: [FRIENDLY POLITE])
-            |}""".trimMargin()
+            |}
+            """.trimMargin()
         )
         assertThat(executionResult.errors.isEmpty()).isTrue
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
