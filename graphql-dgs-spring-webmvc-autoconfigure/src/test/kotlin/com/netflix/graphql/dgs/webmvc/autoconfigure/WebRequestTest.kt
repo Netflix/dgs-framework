@@ -424,32 +424,28 @@ class WebRequestTest {
 
         @DgsData(parentType = "Query", field = "usingHeader")
         fun usingRequestHeader(
-            @RequestHeader(defaultValue = "default header") myheader: String?,
-            dataFetchingEnvironment: DgsDataFetchingEnvironment
+            @RequestHeader(defaultValue = "default header") myheader: String?
         ): String {
             return myheader ?: "empty"
         }
 
         @DgsData(parentType = "Query", field = "usingRequiredHeader")
         fun usingRequiredRequestHeader(
-            @RequestHeader(required = true) myheader: String,
-            dataFetchingEnvironment: DgsDataFetchingEnvironment
+            @RequestHeader(required = true) myheader: String
         ): String {
             return myheader
         }
 
         @DgsData(parentType = "Query", field = "usingOptionalHeader")
         fun usingOptionalRequestHeader(
-            @RequestHeader(required = false) myheader: String?,
-            dataFetchingEnvironment: DgsDataFetchingEnvironment
+            @RequestHeader(required = false) myheader: String?
         ): String {
             return myheader ?: "default header from datafetcher"
         }
 
         @DgsData(parentType = "Query", field = "usingOptionalHeaderAsOptionalType")
         fun usingOptionalRequestHeader(
-            @RequestHeader(required = false) myheader: Optional<String>,
-            dataFetchingEnvironment: DgsDataFetchingEnvironment
+            @RequestHeader(required = false) myheader: Optional<String>
         ): String {
             return myheader.orElse("default header from Optional")
         }
@@ -462,32 +458,28 @@ class WebRequestTest {
 
         @DgsData(parentType = "Query", field = "usingParam")
         fun usingRequestParam(
-            @RequestParam(defaultValue = "default parameter") myParam: String,
-            dataFetchingEnvironment: DgsDataFetchingEnvironment
+            @RequestParam(defaultValue = "default parameter") myParam: String
         ): String {
             return myParam
         }
 
         @DgsData(parentType = "Query", field = "usingParamRequired")
         fun usingRequestParamRequired(
-            @RequestParam(required = true) myParam: String,
-            dataFetchingEnvironment: DgsDataFetchingEnvironment
+            @RequestParam(required = true) myParam: String
         ): String {
             return myParam
         }
 
         @DgsData(parentType = "Query", field = "usingOptionalParam")
         fun usingOptionalRequestParam(
-            @RequestParam(required = false) myParam: String?,
-            dataFetchingEnvironment: DgsDataFetchingEnvironment
+            @RequestParam(required = false) myParam: String?
         ): String {
             return myParam ?: "default from datafetcher"
         }
 
         @DgsData(parentType = "Query", field = "usingOptionalParamAsOptionalType")
         fun usingOptionalParamAsOptionalType(
-            @RequestParam(required = false) myParam: Optional<String>,
-            dataFetchingEnvironment: DgsDataFetchingEnvironment
+            @RequestParam(required = false) myParam: Optional<String>
         ): String {
             return myParam.orElse("default param from Optional")
         }
