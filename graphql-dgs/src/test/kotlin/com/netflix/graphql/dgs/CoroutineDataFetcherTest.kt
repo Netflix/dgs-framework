@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs
 
 import com.netflix.graphql.dgs.context.DgsContext
+import com.netflix.graphql.dgs.internal.DataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.DefaultInputObjectMapper
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.method.ContinuationArgumentResolver
@@ -25,18 +26,23 @@ import com.netflix.graphql.dgs.internal.method.InputArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import graphql.ExecutionInput
 import graphql.GraphQL
-import kotlinx.coroutines.asCoroutineDispatcher
+import io.mockk.Runs
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.reactor.ReactorContext
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Percentage
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.context.support.GenericApplicationContext
+import reactor.core.publisher.Mono
+import reactor.util.context.Context
+import reactor.util.context.ContextView
 import java.util.*
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import java.util.function.Consumer
 import kotlin.system.measureTimeMillis
 
 class CoroutineDataFetcherTest {
@@ -54,32 +60,35 @@ class CoroutineDataFetcherTest {
                     ContinuationArgumentResolver(),
                     FallbackEnvironmentArgumentResolver()
                 )
-            )
+            ),
+            dataFetcherResultProcessors = listOf(stubDataFetcherResultProcessor)
         )
     }
 
-    private val executor: ExecutorService = Executors.newFixedThreadPool(8)
-
-    @AfterEach
-    fun tearDown() {
-        executor.shutdown()
+    private val stubDataFetcherResultProcessor = object : DataFetcherResultProcessor {
+        override fun supportsType(originalResult: Any): Boolean = originalResult is Mono<*>
+        override fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any =
+            (originalResult as Mono<*>).contextWrite(Context.of("some-key", "some context value")).toFuture()
     }
 
     @Test
     fun `Suspend functions should be supported as datafetchers`() {
+        val stubContextConsumer = mockk<Consumer<ContextView?>>()
+        every { stubContextConsumer.accept(any()) } just Runs
+
         @DgsComponent
         class Fetcher {
             @DgsQuery
             suspend fun concurrent(@InputArgument from: Int, to: Int): Int = coroutineScope {
                 var sum = 0
-                withContext(executor.asCoroutineDispatcher()) {
-                    repeat(from.rangeTo(to).count()) {
-                        sum++
-                        // Forcing a delay to demonstrate concurrency
-                        delay(50)
-                    }
-                    sum
+                repeat(from.rangeTo(to).count()) {
+                    sum++
+                    // Forcing a delay to demonstrate concurrency
+                    delay(50)
                 }
+                // Capture ReactorContext from coroutine context
+                stubContextConsumer.accept(coroutineContext[ReactorContext]?.context?.readOnly())
+                sum
             }
         }
 
@@ -98,7 +107,7 @@ class CoroutineDataFetcherTest {
 
         val context = DgsContext(
             null,
-            null,
+            null
         )
 
         val concurrentTime = measureTimeMillis {
@@ -115,7 +124,15 @@ class CoroutineDataFetcherTest {
                 ).build()
             )
 
-            assertThat(executionResult.isDataPresent).isTrue()
+            assertThat(executionResult.getData<Map<String, Int>>())
+                .containsExactlyInAnyOrderEntriesOf(
+                    mapOf(
+                        "first" to 10,
+                        "second" to 9,
+                        "third" to 8,
+                        "fourth" to 7,
+                    )
+                )
         }
 
         val singleTime = measureTimeMillis {
@@ -129,10 +146,16 @@ class CoroutineDataFetcherTest {
                 ).build()
             )
 
-            assertThat(executionResult.isDataPresent).isTrue()
+            assertThat(executionResult.getData<Map<String, Int>>())
+                .containsExactlyInAnyOrderEntriesOf(mapOf("first" to 10))
         }
 
         assertThat(concurrentTime).isCloseTo(singleTime, Percentage.withPercentage(200.0))
+        verify {
+            val expectedContext: (ContextView) -> Boolean =
+                { it.size() == 1 && it.get<String>("some-key") == "some context value" }
+            stubContextConsumer.accept(match(expectedContext))
+        }
     }
 
     @Test

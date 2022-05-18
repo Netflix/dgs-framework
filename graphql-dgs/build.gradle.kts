@@ -35,6 +35,7 @@ dependencies {
     implementation("com.apollographql.federation:federation-graphql-java-support")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
     testImplementation("org.springframework.security:spring-security-core")
     testImplementation("io.projectreactor:reactor-core")
