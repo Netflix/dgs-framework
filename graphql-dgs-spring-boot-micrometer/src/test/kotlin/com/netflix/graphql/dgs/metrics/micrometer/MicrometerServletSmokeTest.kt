@@ -258,7 +258,8 @@ class MicrometerServletSmokeTest {
                 .post("/graphql")
                 .content(
                     """{"query": 
-                    |   "{transform(input: [\"A madam in a racecar.\", \"A man, a plan, a canal - Panama\" ]){ index value upperCased reversed } }" }""".trimMargin()
+                    |   "{transform(input: [\"A madam in a racecar.\", \"A man, a plan, a canal - Panama\" ]){ index value upperCased reversed } }" }
+                    """.trimMargin()
                 )
         ).andExpect(status().isOk)
             .andExpect(
@@ -353,7 +354,8 @@ class MicrometerServletSmokeTest {
                         |       {"message":"Invalid Syntax : offending token 'fail' at line 1 column 1",
                         |           "locations":[{"line":1,"column":1}],"extensions":{"classification":"InvalidSyntax"}}
                         |   ]
-                        |}""".trimMargin(),
+                        |}
+                    """.trimMargin(),
                     false
                 )
             )
@@ -405,7 +407,8 @@ class MicrometerServletSmokeTest {
                        |           "path":["triggerInternalFailure"],"extensions":{"errorType":"INTERNAL"}}
                        |    ],
                        |    "data":{"triggerInternalFailure":null}
-                       |}""".trimMargin(),
+                       |}
+                    """.trimMargin(),
                     false
                 )
             )
@@ -475,7 +478,8 @@ class MicrometerServletSmokeTest {
                         |          "extensions":{"errorType":"BAD_REQUEST"}}
                         |   ],
                         |   "data":{"triggerBadRequestFailure":null}
-                        |}""".trimMargin(),
+                        |}
+                    """.trimMargin(),
                     false
                 )
             )
@@ -544,7 +548,8 @@ class MicrometerServletSmokeTest {
                     |       }
                     |   ],
                     |   "data":{"triggerCustomFailure":null}
-                    |}""".trimMargin(),
+                    |}
+                    """.trimMargin(),
                     false
                 )
             )
@@ -616,7 +621,7 @@ class MicrometerServletSmokeTest {
                     |    ],
                     |    "data":{"triggerInternalFailure":null,"triggerBadRequestFailure":null,"triggerCustomFailure":null}
                     |}
-                     """.trimMargin(),
+                    """.trimMargin(),
                     false
                 )
             )

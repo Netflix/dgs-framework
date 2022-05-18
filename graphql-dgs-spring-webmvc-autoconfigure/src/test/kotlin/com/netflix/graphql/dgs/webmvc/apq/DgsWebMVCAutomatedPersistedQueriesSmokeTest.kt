@@ -74,7 +74,8 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                        |        }
                        |    }
                        | }
-                       |""".trimMargin()
+                       |
+                    """.trimMargin()
                 )
         mvc.perform(uriBuilder)
             .andExpect(status().isOk)
@@ -94,7 +95,8 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                     |     }
                     |   ]
                     | }
-                    |""".trimMargin()
+                    |
+                    """.trimMargin()
                 )
             )
     }
@@ -116,7 +118,8 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                        |        }
                        |    }
                        | }
-                       |""".trimMargin()
+                       |
+                    """.trimMargin()
                 )
         mvc.perform(uriBuilder)
             .andExpect(status().isOk)
@@ -128,7 +131,8 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                     |        "__typename":"Query"
                     |    }
                     | }
-                    |""".trimMargin()
+                    |
+                    """.trimMargin()
                 )
             )
     }
@@ -149,7 +153,8 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                        |        }
                        |    }
                        | }
-                       |""".trimMargin()
+                       |
+                    """.trimMargin()
                 )
         mvc.perform(uriBuilder)
             .andExpect(status().isOk)
@@ -161,7 +166,8 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                     |        "__typename":"Query"
                     |    }
                     | }
-                    |""".trimMargin()
+                    |
+                    """.trimMargin()
                 )
             )
     }
