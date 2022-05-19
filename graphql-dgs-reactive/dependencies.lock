@@ -392,6 +392,12 @@
             ],
             "locked": "1.5.2"
         },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-reactor": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "1.5.2"
+        },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -680,6 +686,12 @@
             "locked": "1.5.2"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "1.5.2"
+        },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-reactor": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],

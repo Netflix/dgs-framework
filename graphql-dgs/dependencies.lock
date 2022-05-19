@@ -83,6 +83,9 @@
         "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8": {
             "locked": "1.5.2"
         },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-reactor": {
+            "locked": "1.5.2"
+        },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.6.7"
         },
@@ -356,6 +359,9 @@
         "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8": {
             "locked": "1.5.2"
         },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-reactor": {
+            "locked": "1.5.2"
+        },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -468,6 +474,9 @@
         "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8": {
             "locked": "1.5.2"
         },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-reactor": {
+            "locked": "1.5.2"
+        },
         "org.jetbrains.kotlinx:kotlinx-coroutines-test": {
             "locked": "1.5.2"
         },
@@ -567,6 +576,9 @@
             "locked": "1.5.2"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8": {
+            "locked": "1.5.2"
+        },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-reactor": {
             "locked": "1.5.2"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-test": {
