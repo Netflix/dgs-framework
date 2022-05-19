@@ -19,21 +19,14 @@ package com.netflix.graphql.dgs.internal
 import com.netflix.graphql.dgs.internal.method.ArgumentResolverComposite
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.future.asCompletableFuture
 import org.springframework.core.BridgeMethodResolver
+import org.springframework.core.CoroutinesUtils
 import org.springframework.core.KotlinDetector
 import org.springframework.core.MethodParameter
 import org.springframework.core.ParameterNameDiscoverer
 import org.springframework.core.annotation.SynthesizingMethodParameter
 import org.springframework.util.ReflectionUtils
-import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
-import java.util.concurrent.CompletableFuture
-import kotlin.reflect.full.callSuspend
-import kotlin.reflect.jvm.kotlinFunction
 
 class DataFetcherInvoker internal constructor(
     private val dgsComponent: Any,
@@ -69,24 +62,11 @@ class DataFetcherInvoker internal constructor(
             args[idx] = resolvers.resolveArgument(parameter, environment)
         }
 
-        if (isSuspending) {
-            return invokeSuspending(args)
+        return if (isSuspending) {
+            CoroutinesUtils.invokeSuspendingFunction(bridgedMethod, dgsComponent, *args)
+        } else {
+            ReflectionUtils.invokeMethod(bridgedMethod, dgsComponent, *args)
         }
-        return ReflectionUtils.invokeMethod(bridgedMethod, dgsComponent, *args)
-    }
-
-    private fun invokeSuspending(args: Array<Any?>): CompletableFuture<Any?> {
-        val kotlinFunction = bridgedMethod.kotlinFunction
-            ?: throw IllegalStateException("Expected a Kotlin suspend function")
-
-        val deferred = CoroutineScope(Dispatchers.Unconfined).async {
-            try {
-                kotlinFunction.callSuspend(dgsComponent, *args.copyOfRange(0, args.size - 1))
-            } catch (exception: InvocationTargetException) {
-                throw exception.cause ?: exception
-            }
-        }
-        return deferred.asCompletableFuture()
     }
 
     private fun formatArgumentError(param: MethodParameter, message: String): String {

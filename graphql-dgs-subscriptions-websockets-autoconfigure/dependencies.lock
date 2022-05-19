@@ -16,7 +16,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -104,7 +104,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -154,7 +154,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -174,7 +174,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -200,7 +200,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -226,7 +226,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -257,7 +257,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -277,7 +277,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -297,7 +297,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -424,6 +424,12 @@
             ],
             "locked": "1.5.2"
         },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-reactor": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "1.5.2"
+        },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -440,7 +446,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -479,7 +485,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -548,7 +554,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.3"
+            "locked": "1.12.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.6.21"
@@ -573,7 +579,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
@@ -667,7 +673,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.3"
+            "locked": "1.12.4"
         },
         "net.datafaker:datafaker": {
             "firstLevelTransitive": [
@@ -706,6 +712,12 @@
             ],
             "locked": "1.5.2"
         },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-reactor": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "1.5.2"
+        },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -725,7 +737,7 @@
             "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.1"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "5.6.3"
