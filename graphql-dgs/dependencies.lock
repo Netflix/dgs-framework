@@ -27,7 +27,7 @@
     },
     "compileClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "0.9.0"
+            "locked": "2.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.13.2"
@@ -300,7 +300,7 @@
     },
     "runtimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "0.9.0"
+            "locked": "2.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.13.2"
@@ -409,7 +409,7 @@
     },
     "testCompileClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "0.9.0"
+            "locked": "2.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.13.2"
@@ -428,7 +428,7 @@
             "locked": "18.1"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
-            "locked": "18.0"
+            "locked": "18.1"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.6.0"
@@ -507,7 +507,7 @@
     },
     "testRuntimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "0.9.0"
+            "locked": "2.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.13.2"
@@ -526,7 +526,7 @@
             "locked": "18.1"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
-            "locked": "18.0"
+            "locked": "18.1"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.6.0"
