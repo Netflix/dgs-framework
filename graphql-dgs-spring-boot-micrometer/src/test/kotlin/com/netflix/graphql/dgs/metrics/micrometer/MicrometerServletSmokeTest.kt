@@ -16,7 +16,13 @@
 
 package com.netflix.graphql.dgs.metrics.micrometer
 
-import com.netflix.graphql.dgs.*
+import com.netflix.graphql.dgs.DgsComponent
+import com.netflix.graphql.dgs.DgsData
+import com.netflix.graphql.dgs.DgsDataLoader
+import com.netflix.graphql.dgs.DgsEnableDataFetcherInstrumentation
+import com.netflix.graphql.dgs.DgsQuery
+import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
+import com.netflix.graphql.dgs.InputArgument
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
 import com.netflix.graphql.dgs.exceptions.DgsBadRequestException
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsContextualTagCustomizer
@@ -857,7 +863,7 @@ class MicrometerServletSmokeTest {
 
         private val defaultHandler: DefaultDataFetcherExceptionHandler = DefaultDataFetcherExceptionHandler()
 
-        override fun onException(handlerParameters: DataFetcherExceptionHandlerParameters): DataFetcherExceptionHandlerResult {
+        override fun handleException(handlerParameters: DataFetcherExceptionHandlerParameters): CompletableFuture<DataFetcherExceptionHandlerResult> {
             return if (handlerParameters.exception is CustomException) {
                 val exception = handlerParameters.exception
                 val graphqlError: GraphQLError =
@@ -867,11 +873,13 @@ class MicrometerServletSmokeTest {
                         .message(exception.message)
                         .path(handlerParameters.path)
                         .build()
-                DataFetcherExceptionHandlerResult.newResult()
-                    .error(graphqlError)
-                    .build()
+                CompletableFuture.completedFuture(
+                    DataFetcherExceptionHandlerResult.newResult()
+                        .error(graphqlError)
+                        .build()
+                )
             } else {
-                defaultHandler.onException(handlerParameters)
+                defaultHandler.handleException(handlerParameters)
             }
         }
     }

@@ -23,6 +23,7 @@ import graphql.execution.DataFetcherExceptionHandlerResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.util.ClassUtils
+import java.util.concurrent.CompletableFuture
 
 /**
  * Default DataFetcherExceptionHandler used by the framework, can be replaced with a custom implementation.
@@ -30,11 +31,21 @@ import org.springframework.util.ClassUtils
  */
 class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
 
-    override fun onException(handlerParameters: DataFetcherExceptionHandlerParameters?): DataFetcherExceptionHandlerResult {
+    @Deprecated("Deprecated in GraphQL Java", replaceWith = ReplaceWith("handleException(handlerParameters)"))
+    override fun onException(handlerParameters: DataFetcherExceptionHandlerParameters): DataFetcherExceptionHandlerResult {
+        return doHandleException(handlerParameters)
+    }
 
-        val exception = handlerParameters!!.exception
-        logger.error("Exception while executing data fetcher for ${handlerParameters.path}: ${exception.message}", exception)
+    override fun handleException(handlerParameters: DataFetcherExceptionHandlerParameters): CompletableFuture<DataFetcherExceptionHandlerResult> {
+        return CompletableFuture.completedFuture(doHandleException(handlerParameters))
+    }
 
+    private fun doHandleException(handlerParameters: DataFetcherExceptionHandlerParameters): DataFetcherExceptionHandlerResult {
+        val exception = handlerParameters.exception
+        logger.error(
+            "Exception while executing data fetcher for ${handlerParameters.path}: ${exception.message}",
+            exception
+        )
         val graphqlError = if (springSecurityAvailable && isSpringSecurityAccessException(exception)) {
             TypedGraphQLError.newPermissionDeniedBuilder()
                 .message("%s: %s", exception::class.java.name, exception.message)
@@ -52,7 +63,6 @@ class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
                 .message("%s: %s", exception::class.java.name, exception.message)
                 .path(handlerParameters.path).build()
         }
-
         return DataFetcherExceptionHandlerResult.newResult()
             .error(graphqlError)
             .build()

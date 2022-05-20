@@ -125,7 +125,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     }
 
     tasks.withType<JavaCompile>().configureEach {
-        options.compilerArgs + "-parameters"
+        options.compilerArgs.addAll(listOf("-parameters", "-deprecation"))
     }
 
     tasks.withType<KotlinCompile>().configureEach {
