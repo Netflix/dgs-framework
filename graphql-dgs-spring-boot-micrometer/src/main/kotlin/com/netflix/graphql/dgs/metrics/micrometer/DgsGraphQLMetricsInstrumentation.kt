@@ -174,7 +174,6 @@ class DgsGraphQLMetricsInstrumentation(
             if (parameters.document != null) {
                 state.querySignature = optQuerySignatureRepository.flatMap { it.get(parameters.document, parameters) }
             }
-            state.queryComplexity = ComplexityUtils.resolveComplexity(parameters)
         }
     }
 
@@ -188,6 +187,7 @@ class DgsGraphQLMetricsInstrumentation(
                 state.operationName = Optional.ofNullable(parameters.executionContext.operationDefinition?.name)
             }
         }
+        state.queryComplexity = ComplexityUtils.resolveComplexity(parameters)
         return DefaultExecutionStrategyInstrumentationContext
     }
 
@@ -266,7 +266,7 @@ class DgsGraphQLMetricsInstrumentation(
 
         private val queryComplexityBuckets = listOf(5, 10, 25, 50, 100, 200, 500, 1000, 2000, 5000, 10000)
 
-        fun resolveComplexity(parameters: InstrumentationValidationParameters): Optional<Int> {
+        fun resolveComplexity(parameters: InstrumentationExecutionStrategyParameters): Optional<Int> {
             try {
                 val queryTraverser: QueryTraverser = newQueryTraverser(parameters)
                 val valuesByParent: MutableMap<QueryVisitorFieldEnvironment?, Int?> =
@@ -300,7 +300,7 @@ class DgsGraphQLMetricsInstrumentation(
             return fieldComplexityCalculator(childComplexity)
         }
 
-        private fun newQueryTraverser(parameters: InstrumentationValidationParameters): QueryTraverser {
+        private fun newQueryTraverser(parameters: InstrumentationExecutionStrategyParameters): QueryTraverser {
             return QueryTraverser
                 .newQueryTraverser()
                 .schema(parameters.schema)
