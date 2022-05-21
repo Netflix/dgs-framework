@@ -398,6 +398,65 @@ class MicrometerServletSmokeTest {
     }
 
     @Test
+    fun `Assert metrics for a bad input error`() {
+        mvc.perform(
+            MockMvcRequestBuilders
+                .post("/graphql")
+                .content("""{ "query": "{ hello }" }""")
+        ).andExpect(status().isOk)
+            .andExpect(
+                content().json(
+                    """
+                    |   { "errors": [
+                    |       { 
+                    |           "message": "Validation error of type MissingFieldArgument: Missing field argument name @ 'hello'",
+                    |           "locations": [ 
+                    |               {
+                    |                   "line":1,
+                    |                   "column":3
+                    |               }
+                    |           ],
+                    |           "extensions": { "classification":"ValidationError" }
+                    |       }
+                    |     ]
+                    |   }
+                    """.trimMargin(),
+                    false
+                )
+            )
+        val meters = fetchMeters("gql.")
+
+        assertThat(meters).containsOnlyKeys("gql.error", "gql.query")
+
+        assertThat(meters["gql.error"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.error"]?.first()?.id?.tags)
+            .containsAll(
+                Tags.of("execution-tag", "foo")
+                    .and("contextual-tag", "foo")
+                    .and("gql.operation", "none")
+                    .and("gql.operation.name", "anonymous")
+                    .and("gql.query.complexity", "none")
+                    .and("gql.query.sig.hash", "none")
+                    .and("gql.errorDetail", "none")
+                    .and("gql.errorCode", "ValidationError")
+                    .and("gql.path", "[hello]")
+                    .and("outcome", "failure")
+            )
+
+        assertThat(meters["gql.query"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.query"]?.first()?.id?.tags)
+            .containsAll(
+                Tags.of("execution-tag", "foo")
+                    .and("contextual-tag", "foo")
+                    .and("outcome", "failure")
+                    .and("gql.operation", "none")
+                    .and("gql.operation.name", "anonymous")
+                    .and("gql.query.complexity", "none")
+                    .and("gql.query.sig.hash", "none")
+            )
+    }
+
+    @Test
     fun `Assert metrics for internal error`() {
         mvc.perform(
             MockMvcRequestBuilders
@@ -468,7 +527,7 @@ class MicrometerServletSmokeTest {
     }
 
     @Test
-    fun `Assert metrics for a DGS bad-request error`() {
+    fun `Assert metrics for a bad-request error`() {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
@@ -747,6 +806,7 @@ class MicrometerServletSmokeTest {
                 |type Query{
                 |    ping:String
                 |    someTrivialThings: String 
+                |    hello(name: String!): String 
                 |    transform(input:[String]): [StringTransformation]
                 |    triggerInternalFailure: String
                 |    triggerBadRequestFailure:String
@@ -770,6 +830,11 @@ class MicrometerServletSmokeTest {
             @DgsQuery()
             fun ping(): String {
                 return "pong"
+            }
+
+            @DgsQuery()
+            fun hello(@InputArgument name: String): String {
+                return "Hello $name"
             }
 
             @DgsQuery()

@@ -303,10 +303,10 @@ class DgsGraphQLMetricsInstrumentation(
         private fun newQueryTraverser(parameters: InstrumentationExecutionStrategyParameters): QueryTraverser {
             return QueryTraverser
                 .newQueryTraverser()
-                .schema(parameters.schema)
-                .document(parameters.document)
-                .operationName(parameters.operation)
-                .variables(parameters.variables)
+                .schema(parameters.executionContext.graphQLSchema)
+                .document(parameters.executionContext.document)
+                .operationName(parameters.executionContext.operationDefinition.name)
+                .variables(parameters.executionContext.variables)
                 .build()
         }
     }
