@@ -19,6 +19,14 @@ package com.netflix.graphql.dgs.context
 import com.netflix.graphql.dgs.internal.DgsRequestData
 import graphql.ExecutionInput
 import graphql.GraphQLContext
+import graphql.execution.instrumentation.parameters.InstrumentationCreateStateParameters
+import graphql.execution.instrumentation.parameters.InstrumentationExecuteOperationParameters
+import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
+import graphql.execution.instrumentation.parameters.InstrumentationExecutionStrategyParameters
+import graphql.execution.instrumentation.parameters.InstrumentationFieldCompleteParameters
+import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
+import graphql.execution.instrumentation.parameters.InstrumentationFieldParameters
+import graphql.execution.instrumentation.parameters.InstrumentationValidationParameters
 import graphql.schema.DataFetchingEnvironment
 import org.dataloader.BatchLoaderEnvironment
 import java.util.function.Consumer
@@ -45,6 +53,45 @@ open class DgsContext(val customContext: Any? = null, val requestData: DgsReques
         @JvmStatic
         fun from(ei: ExecutionInput): DgsContext {
             return from(ei.graphQLContext)
+        }
+        @JvmStatic
+        fun from(p: InstrumentationCreateStateParameters): DgsContext {
+            return from(p.executionInput.graphQLContext)
+        }
+
+        @JvmStatic
+        fun from(p: InstrumentationExecuteOperationParameters): DgsContext {
+            return from(p.executionContext.graphQLContext)
+        }
+
+        @JvmStatic
+        fun from(p: InstrumentationExecutionParameters): DgsContext {
+            return from(p.graphQLContext)
+        }
+
+        @JvmStatic
+        fun from(p: InstrumentationExecutionStrategyParameters): DgsContext {
+            return from(p.executionContext.graphQLContext)
+        }
+
+        @JvmStatic
+        fun from(p: InstrumentationFieldCompleteParameters): DgsContext {
+            return from(p.executionContext.graphQLContext)
+        }
+
+        @JvmStatic
+        fun from(p: InstrumentationFieldFetchParameters): DgsContext {
+            return from(p.executionContext.graphQLContext)
+        }
+
+        @JvmStatic
+        fun from(p: InstrumentationFieldParameters): DgsContext {
+            return from(p.executionContext.graphQLContext)
+        }
+
+        @JvmStatic
+        fun from(p: InstrumentationValidationParameters): DgsContext {
+            return from(p.graphQLContext)
         }
 
         @JvmStatic
