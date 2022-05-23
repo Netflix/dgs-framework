@@ -45,6 +45,7 @@ import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.idl.TypeRuntimeWiring
 import graphql.schema.visibility.DefaultGraphqlFieldVisibility
 import graphql.schema.visibility.GraphqlFieldVisibility
+import org.intellij.lang.annotations.Language
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.aop.support.AopUtils
@@ -81,7 +82,7 @@ class DgsSchemaProvider(
     private val dataFetchers = mutableListOf<DatafetcherReference>()
 
     fun schema(
-        schema: String? = null,
+        @Language("GraphQL") schema: String? = null,
         fieldVisibility: GraphqlFieldVisibility = DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
     ): GraphQLSchema {
         val startTime = System.currentTimeMillis()
