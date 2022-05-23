@@ -20,6 +20,7 @@ import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
+import com.netflix.graphql.dgs.context.GraphQLContextContributor
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor
@@ -28,6 +29,7 @@ import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.QueryValueCustomizer
 import graphql.ExecutionResult
+import graphql.GraphQLContext
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
 import graphql.execution.NonNullableFieldWasNullError
@@ -48,6 +50,7 @@ class DefaultDgsReactiveQueryExecutor(
     private val schemaProvider: DgsSchemaProvider,
     private val dataLoaderProvider: DgsDataLoaderProvider,
     private val contextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
+    private val graphQLContextContributors: List<GraphQLContextContributor>,
     private val instrumentation: Instrumentation?,
     private val queryExecutionStrategy: ExecutionStrategy,
     private val mutationExecutionStrategy: ExecutionStrategy,
@@ -84,6 +87,8 @@ class DefaultDgsReactiveQueryExecutor(
                         extensions = extensions,
                         operationName = operationName,
                         dgsContext = dgsContext,
+                        // TODO: build up graphQLContextContributors, empty for reactive ATM
+                        contributedGraphQLContext = GraphQLContext.newContext().build(),
                         graphQLSchema = gqlSchema,
                         dataLoaderProvider = dataLoaderProvider,
                         instrumentation = instrumentation,

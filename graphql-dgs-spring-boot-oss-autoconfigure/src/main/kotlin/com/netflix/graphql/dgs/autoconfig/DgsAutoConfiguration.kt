@@ -20,6 +20,7 @@ import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
+import com.netflix.graphql.dgs.context.GraphQLContextContributor
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
 import com.netflix.graphql.dgs.internal.*
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
@@ -80,6 +81,7 @@ open class DgsAutoConfiguration(
         schemaProvider: DgsSchemaProvider,
         dgsDataLoaderProvider: DgsDataLoaderProvider,
         dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
+        graphQLContextContributors: List<GraphQLContextContributor>,
         dataFetcherExceptionHandler: DataFetcherExceptionHandler,
         instrumentations: ObjectProvider<Instrumentation>,
         environment: Environment,
@@ -107,6 +109,7 @@ open class DgsAutoConfiguration(
             schemaProvider = schemaProvider,
             dataLoaderProvider = dgsDataLoaderProvider,
             contextBuilder = dgsContextBuilder,
+            graphQLContextContributors = graphQLContextContributors,
             instrumentation = instrumentation,
             queryExecutionStrategy = queryExecutionStrategy,
             mutationExecutionStrategy = mutationExecutionStrategy,

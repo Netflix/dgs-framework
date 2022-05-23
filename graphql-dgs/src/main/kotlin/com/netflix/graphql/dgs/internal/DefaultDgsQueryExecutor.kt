@@ -21,11 +21,13 @@ import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.context.GraphQLContextContributor
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor.parseContext
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
-import graphql.*
+import graphql.ExecutionResult
+import graphql.GraphQLContext
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
 import graphql.execution.NonNullableFieldWasNullError
@@ -47,6 +49,7 @@ class DefaultDgsQueryExecutor(
     private val schemaProvider: DgsSchemaProvider,
     private val dataLoaderProvider: DgsDataLoaderProvider,
     private val contextBuilder: DefaultDgsGraphQLContextBuilder,
+    private val graphQLContextContributors: List<GraphQLContextContributor>,
     private val instrumentation: Instrumentation?,
     private val queryExecutionStrategy: ExecutionStrategy,
     private val mutationExecutionStrategy: ExecutionStrategy,
@@ -73,6 +76,9 @@ class DefaultDgsQueryExecutor(
                 schema.get()
         val dgsContext = contextBuilder.build(DgsWebMvcRequestData(extensions, headers, webRequest))
 
+        val builderForContributors = GraphQLContext.newContext()
+        graphQLContextContributors.forEach{it.contribute(builderForContributors, extensions, headers, webRequest)}
+
         val executionResult =
             BaseDgsQueryExecutor.baseExecute(
                 query = queryValueCustomizer.apply(query),
@@ -80,6 +86,7 @@ class DefaultDgsQueryExecutor(
                 extensions = extensions,
                 operationName = operationName,
                 dgsContext = dgsContext,
+                contributedGraphQLContext = builderForContributors.build(),
                 graphQLSchema = graphQLSchema,
                 dataLoaderProvider = dataLoaderProvider,
                 instrumentation = instrumentation,

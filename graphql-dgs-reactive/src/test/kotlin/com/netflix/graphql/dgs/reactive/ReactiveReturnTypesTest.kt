@@ -160,6 +160,7 @@ internal class ReactiveReturnTypesTest {
             schemaProvider = provider,
             dataLoaderProvider = dgsDataLoaderProvider,
             contextBuilder = DefaultDgsReactiveGraphQLContextBuilder(Optional.empty()),
+            graphQLContextContributors = Collections.emptyList(),
             instrumentation = SimpleInstrumentation.INSTANCE,
             queryExecutionStrategy = AsyncExecutionStrategy(),
             mutationExecutionStrategy = AsyncSerialExecutionStrategy(),

@@ -145,6 +145,7 @@ internal class DefaultDgsQueryExecutorTest {
             schemaProvider = provider,
             dataLoaderProvider = dgsDataLoaderProvider,
             contextBuilder = DefaultDgsGraphQLContextBuilder(Optional.empty()),
+            graphQLContextContributors = Collections.emptyList(),
             instrumentation = SimpleInstrumentation.INSTANCE,
             queryExecutionStrategy = AsyncExecutionStrategy(),
             mutationExecutionStrategy = AsyncSerialExecutionStrategy(),

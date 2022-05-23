@@ -64,6 +64,7 @@ object BaseDgsQueryExecutor {
         extensions: Map<String, Any>?,
         operationName: String?,
         dgsContext: DgsContext,
+        contributedGraphQLContext: GraphQLContext,
         graphQLSchema: GraphQLSchema,
         dataLoaderProvider: DgsDataLoaderProvider,
         instrumentation: Instrumentation?,
@@ -110,6 +111,9 @@ object BaseDgsQueryExecutor {
                 .dataLoaderRegistry(dataLoaderRegistry)
                 .context(dgsContext)
                 .graphQLContext(dgsContext)
+                .graphQLContext {
+                    it.of(contributedGraphQLContext)
+                }
                 .extensions(extensions.orEmpty())
 
         return try {
