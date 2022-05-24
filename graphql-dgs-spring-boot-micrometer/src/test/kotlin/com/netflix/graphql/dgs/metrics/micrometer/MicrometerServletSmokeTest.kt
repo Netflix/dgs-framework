@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.metrics.micrometer
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsData
 import com.netflix.graphql.dgs.DgsDataLoader
+import com.netflix.graphql.dgs.DgsDataLoaderRegistryConsumer
 import com.netflix.graphql.dgs.DgsEnableDataFetcherInstrumentation
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
@@ -45,6 +46,7 @@ import io.micrometer.core.instrument.Tags
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import org.assertj.core.api.Assertions.assertThat
 import org.dataloader.BatchLoader
+import org.dataloader.DataLoaderRegistry
 import org.dataloader.MappedBatchLoader
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -890,12 +892,18 @@ class MicrometerServletSmokeTest {
             @DgsDataLoader(name = "reverser")
             class ReverseStringDataLoader(
                 @Qualifier("dataLoaderTaskExecutor") private val dataLoaderTaskExecutor: Executor
-            ) : MappedBatchLoader<String, String> {
+            ) : MappedBatchLoader<String, String>, DgsDataLoaderRegistryConsumer {
+
+                var dataLoaderRegistry: Optional<DataLoaderRegistry> = Optional.empty()
+
                 override fun load(keys: Set<String>): CompletionStage<Map<String, String>> {
                     return CompletableFuture.supplyAsync(
                         { keys.associateWith { it.reversed() } },
                         dataLoaderTaskExecutor
                     )
+                }
+                override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry) {
+                    this.dataLoaderRegistry = Optional.of(dataLoaderRegistry)
                 }
             }
         }

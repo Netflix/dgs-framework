@@ -29,7 +29,8 @@ class DgsDataLoaderInstrumentationProvider(
                     .to(BatchLoaderInterceptor(original, name, meterRegistrySupplier.get()))
             ByteBuddy()
                 .subclass(BatchLoader::class.java)
-                .method(ElementMatchers.named("load")).intercept(withBinders)
+                .method(ElementMatchers.named("load"))
+                .intercept(withBinders)
                 .make()
                 .load(javaClass.classLoader)
                 .loaded
@@ -44,7 +45,8 @@ class DgsDataLoaderInstrumentationProvider(
 
             ByteBuddy()
                 .subclass(BatchLoaderWithContext::class.java)
-                .method(ElementMatchers.named("load")).intercept(withBinders)
+                .method(ElementMatchers.named("load"))
+                .intercept(withBinders)
                 .make()
                 .load(javaClass.classLoader)
                 .loaded
@@ -60,7 +62,8 @@ class DgsDataLoaderInstrumentationProvider(
 
             ByteBuddy()
                 .subclass(MappedBatchLoader::class.java)
-                .method(ElementMatchers.named("load")).intercept(withBinders)
+                .method(ElementMatchers.named("load"))
+                .intercept(withBinders)
                 .make()
                 .load(javaClass.classLoader)
                 .loaded
@@ -77,7 +80,8 @@ class DgsDataLoaderInstrumentationProvider(
                 .to(MappedBatchLoaderWithContextInterceptor(original, name, meterRegistrySupplier.get()))
             ByteBuddy()
                 .subclass(MappedBatchLoaderWithContext::class.java)
-                .method(ElementMatchers.named("load")).intercept(withBinders)
+                .method(ElementMatchers.named("load"))
+                .intercept(withBinders)
                 .make()
                 .load(javaClass.classLoader)
                 .loaded
