@@ -29,6 +29,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
+import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -43,10 +44,22 @@ class MalformedQueryContentTest {
     lateinit var mvc: MockMvc
 
     @Test
+    fun `Should provide a valid content-type`() {
+        val uriBuilder =
+            MockMvcRequestBuilders
+                .post("/graphql")
+                .content("  ")
+
+        mvc.perform(uriBuilder)
+            .andExpect(status().isUnsupportedMediaType)
+    }
+
+    @Test
     fun `Should return a bad request error if the POST request has no content`() {
         val uriBuilder =
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("  ")
 
         mvc.perform(uriBuilder)
@@ -59,6 +72,7 @@ class MalformedQueryContentTest {
         val uriBuilder =
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("{")
 
         mvc.perform(uriBuilder)
@@ -71,6 +85,7 @@ class MalformedQueryContentTest {
         val uriBuilder =
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("{  }")
 
         mvc.perform(uriBuilder)

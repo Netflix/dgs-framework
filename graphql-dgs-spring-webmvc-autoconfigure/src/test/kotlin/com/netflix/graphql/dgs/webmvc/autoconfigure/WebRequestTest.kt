@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -70,6 +71,7 @@ class WebRequestTest {
     fun `WebRequest should be available on DgsContext`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ usingWebRequest }" }""")
         )
             .andExpect(status().isOk)
@@ -80,6 +82,7 @@ class WebRequestTest {
     fun `@RequestHeader should be available`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ usingHeader }" }""")
                 .header("myheader", "hello")
         )
@@ -91,6 +94,7 @@ class WebRequestTest {
     fun `@RequestHeader should support defaultValue`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ usingHeader }" }""")
         )
             .andExpect(status().isOk)
@@ -101,6 +105,7 @@ class WebRequestTest {
     fun `@RequestHeader should throw an exception when not provided but required and no default is set`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ usingRequiredHeader }" }""")
         )
             .andExpect(status().isOk)
@@ -114,6 +119,7 @@ class WebRequestTest {
     fun `@RequestHeader should use null if not required and not provided`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ usingOptionalHeader }" }""")
         )
             .andExpect(status().isOk)
@@ -124,6 +130,7 @@ class WebRequestTest {
     fun `@RequestHeader should support Optional for not provided values`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ usingOptionalHeaderAsOptionalType }" }""")
         )
             .andExpect(status().isOk)
@@ -137,6 +144,7 @@ class WebRequestTest {
     fun `@RequestHeader should support Optional for provided values`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ usingOptionalHeaderAsOptionalType }" }""")
                 .header("myheader", "hello")
         )
@@ -148,6 +156,7 @@ class WebRequestTest {
     fun `@RequestParam should be available`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ usingParam }" }""")
                 .param("myParam", "paramValue")
         )
@@ -159,6 +168,7 @@ class WebRequestTest {
     fun `@RequestParam should properly handle multiple param values`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ usingParam }" }""")
                 .param("myParam", "paramValue")
                 .param("myParam", "paramValue2")
@@ -171,6 +181,7 @@ class WebRequestTest {
     fun `@RequestParam should use default when no parameter was provided`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ usingParam }" }""")
         )
             .andExpect(status().isOk)
@@ -181,6 +192,7 @@ class WebRequestTest {
     fun `@RequestParam should throw exception when no parameter was provided and no default is set`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ usingParamRequired }" }""")
         )
             .andExpect(status().isOk)
@@ -194,6 +206,7 @@ class WebRequestTest {
     fun `@RequestParam should use null when not required and not provided`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ usingOptionalParam }" }""")
         )
             .andExpect(status().isOk)
@@ -204,6 +217,7 @@ class WebRequestTest {
     fun `@RequestParam should support Optional parameters with non required null values`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ usingOptionalParamAsOptionalType }" }""")
         )
             .andExpect(status().isOk)
@@ -217,6 +231,7 @@ class WebRequestTest {
     fun `@RequestParam should support Optional parameters`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ usingOptionalParamAsOptionalType }" }""")
                 .param("myParam", "hello")
         )
@@ -228,6 +243,7 @@ class WebRequestTest {
     fun `Custom context builder should have access to headers`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ usingContextWithRequest }" }""")
                 .header("myheader", "hello")
         )
@@ -239,6 +255,7 @@ class WebRequestTest {
     fun `@CookieValue should give access to cookie`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ withCookie }" }""")
                 .cookie(Cookie("myCookie", "cookiehello"))
         )
@@ -250,6 +267,7 @@ class WebRequestTest {
     fun `@CookieValue should allow Optional type`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ withOptionalCookie }" }""")
                 .cookie(Cookie("myCookie", "cookiehello"))
         )
@@ -261,6 +279,7 @@ class WebRequestTest {
     fun `@CookieValue should allow empty Optional type`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ withEmptyOptionalCookie }" }""")
         )
             .andExpect(status().isOk)
@@ -271,6 +290,7 @@ class WebRequestTest {
     fun `@CookieValue should allow null when not required`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ withEmptyCookie }" }""")
         )
             .andExpect(status().isOk)
@@ -281,6 +301,7 @@ class WebRequestTest {
     fun `@CookieValue should throw exception when required but not set`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ withRequiredCookie }" }""")
         )
             .andExpect(status().isOk)
@@ -294,6 +315,7 @@ class WebRequestTest {
     fun `@CookieValue should support default value`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"query": "{ withDefaultCookie }" }""")
         )
             .andExpect(status().isOk)

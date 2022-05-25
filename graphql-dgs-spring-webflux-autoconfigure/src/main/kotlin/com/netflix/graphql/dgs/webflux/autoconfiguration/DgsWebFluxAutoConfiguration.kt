@@ -34,6 +34,7 @@ import com.netflix.graphql.dgs.webflux.handlers.DefaultDgsWebfluxHttpHandler
 import com.netflix.graphql.dgs.webflux.handlers.DgsHandshakeWebSocketService
 import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler
 import com.netflix.graphql.dgs.webflux.handlers.DgsWebfluxHttpHandler
+import com.netflix.graphql.dgs.webflux.handlers.GraphQLMediaTypes
 import graphql.ExecutionInput
 import graphql.GraphQL
 import graphql.execution.AsyncExecutionStrategy
@@ -58,7 +59,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.ReactiveAdapterRegistry
 import org.springframework.core.env.Environment
-import org.springframework.http.MediaType
 import org.springframework.web.reactive.BindingContext
 import org.springframework.web.reactive.function.server.RequestPredicates.accept
 import org.springframework.web.reactive.function.server.RouterFunction
@@ -165,7 +165,10 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
 
     @Bean
     @ConditionalOnMissingBean
-    open fun dgsWebfluxHttpHandler(dgsQueryExecutor: DgsReactiveQueryExecutor, @Qualifier("dgsObjectMapper") dgsObjectMapper: ObjectMapper): DgsWebfluxHttpHandler {
+    open fun dgsWebfluxHttpHandler(
+        dgsQueryExecutor: DgsReactiveQueryExecutor,
+        @Qualifier("dgsObjectMapper") dgsObjectMapper: ObjectMapper
+    ): DgsWebfluxHttpHandler {
         return DefaultDgsWebfluxHttpHandler(dgsQueryExecutor, dgsObjectMapper)
     }
 
@@ -173,7 +176,8 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     open fun dgsGraphQlRouter(dgsWebfluxHttpHandler: DgsWebfluxHttpHandler): RouterFunction<ServerResponse> {
         return RouterFunctions.route()
             .POST(
-                configProps.path, accept(MediaType.APPLICATION_JSON, MediaType.valueOf("application/graphql")),
+                configProps.path,
+                accept(*GraphQLMediaTypes.ACCEPTABLE_MEDIA_TYPES.toTypedArray()),
                 dgsWebfluxHttpHandler::graphql
             ).build()
     }
@@ -249,12 +253,21 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
             registry: ReactiveAdapterRegistry,
             @Dgs bindingContext: BindingContext
         ): ArgumentResolver {
-            return SyncHandlerMethodArgumentResolverAdapter(CookieValueMethodArgumentResolver(beanFactory, registry), bindingContext)
+            return SyncHandlerMethodArgumentResolverAdapter(
+                CookieValueMethodArgumentResolver(beanFactory, registry),
+                bindingContext
+            )
         }
 
         @Bean
-        open fun requestHeaderMapArgumentResolver(registry: ReactiveAdapterRegistry, @Dgs bindingContext: BindingContext): ArgumentResolver {
-            return SyncHandlerMethodArgumentResolverAdapter(RequestHeaderMapMethodArgumentResolver(registry), bindingContext)
+        open fun requestHeaderMapArgumentResolver(
+            registry: ReactiveAdapterRegistry,
+            @Dgs bindingContext: BindingContext
+        ): ArgumentResolver {
+            return SyncHandlerMethodArgumentResolverAdapter(
+                RequestHeaderMapMethodArgumentResolver(registry),
+                bindingContext
+            )
         }
 
         @Bean
@@ -263,7 +276,10 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
             registry: ReactiveAdapterRegistry,
             @Dgs bindingContext: BindingContext
         ): ArgumentResolver {
-            return SyncHandlerMethodArgumentResolverAdapter(RequestHeaderMethodArgumentResolver(beanFactory, registry), bindingContext)
+            return SyncHandlerMethodArgumentResolverAdapter(
+                RequestHeaderMethodArgumentResolver(beanFactory, registry),
+                bindingContext
+            )
         }
 
         @Bean
@@ -288,7 +304,10 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
             registry: ReactiveAdapterRegistry,
             @Dgs bindingContext: BindingContext
         ): ArgumentResolver {
-            return SyncHandlerMethodArgumentResolverAdapter(RequestParamMapMethodArgumentResolver(registry), bindingContext)
+            return SyncHandlerMethodArgumentResolverAdapter(
+                RequestParamMapMethodArgumentResolver(registry),
+                bindingContext
+            )
         }
     }
 }

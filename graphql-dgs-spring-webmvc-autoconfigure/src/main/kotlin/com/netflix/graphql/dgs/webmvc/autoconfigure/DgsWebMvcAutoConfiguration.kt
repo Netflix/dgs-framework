@@ -21,8 +21,12 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.method.ArgumentResolver
+import com.netflix.graphql.dgs.mvc.DefaultDgsGraphQLRequestHeaderValidator
+import com.netflix.graphql.dgs.mvc.DgsGraphQLRequestHeaderValidator
 import com.netflix.graphql.dgs.mvc.DgsRestController
 import com.netflix.graphql.dgs.mvc.DgsRestSchemaJsonController
+import com.netflix.graphql.dgs.mvc.GraphQLRequestContentTypePredicate
+import com.netflix.graphql.dgs.mvc.GraphQLRequestHeaderValidationRule
 import com.netflix.graphql.dgs.mvc.internal.method.HandlerMethodArgumentResolverAdapter
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Qualifier
@@ -44,6 +48,7 @@ import org.springframework.web.servlet.DispatcherServlet
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
 import org.springframework.web.servlet.mvc.method.annotation.ServletCookieValueMethodArgumentResolver
 import org.springframework.web.servlet.mvc.method.annotation.ServletRequestDataBinderFactory
+import kotlin.streams.toList
 
 @Configuration
 @ConditionalOnWebApplication
@@ -114,6 +119,34 @@ open class DgsWebMvcAutoConfiguration {
         @Bean
         open fun cookieValueResolver(beanFactory: ConfigurableBeanFactory, @Dgs dataBinderFactory: WebDataBinderFactory): ArgumentResolver {
             return HandlerMethodArgumentResolverAdapter(ServletCookieValueMethodArgumentResolver(beanFactory), dataBinderFactory)
+        }
+    }
+
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+    open class WebMvcHeaderValidationConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean
+        open fun defaultOSSDgsGraphQLRequestHeadersValidator(
+            validationRulesProvider: ObjectProvider<GraphQLRequestHeaderValidationRule>,
+            contentTypePredicatesProviders: ObjectProvider<GraphQLRequestContentTypePredicate>,
+        ): DgsGraphQLRequestHeaderValidator {
+            return DefaultDgsGraphQLRequestHeaderValidator(
+                validationRules = validationRulesProvider.orderedStream().toList(),
+                contentTypePredicates = contentTypePredicatesProviders.orderedStream().toList()
+            )
+        }
+
+        @Bean
+        open fun graphQLRequestContentTypePredicates(): List<GraphQLRequestContentTypePredicate> {
+            return GraphQLRequestContentTypePredicate.RECOMMENDED_GRAPHQL_CONTENT_TYPE_PREDICATES
+        }
+
+        @Bean
+        @ConditionalOnProperty("dgs.graphql.header.validation.enabled", havingValue = "true", matchIfMissing = true)
+        open fun graphqlRequestHeaderValidationRules(): List<GraphQLRequestHeaderValidationRule> {
+            return DgsGraphQLRequestHeaderValidator.RECOMMENDED_GRAPHQL_REQUEST_HEADERS_VALIDATOR
         }
     }
 }

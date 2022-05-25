@@ -28,14 +28,17 @@ import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
 
-class DefaultDgsWebfluxHttpHandler(private val dgsQueryExecutor: DgsReactiveQueryExecutor, private val objectMapper: ObjectMapper) : DgsWebfluxHttpHandler {
+class DefaultDgsWebfluxHttpHandler(
+    private val dgsQueryExecutor: DgsReactiveQueryExecutor,
+    private val objectMapper: ObjectMapper
+) : DgsWebfluxHttpHandler {
 
     override fun graphql(request: ServerRequest): Mono<ServerResponse> {
         @Suppress("UNCHECKED_CAST") val executionResult: Mono<ExecutionResult> =
 
             request.bodyToMono(String::class.java)
                 .flatMap { body ->
-                    if ("application/graphql" == request.headers().firstHeader("Content-Type")) {
+                    if (GraphQLMediaTypes.isApplicationGraphQL(request)) {
                         Mono.just(QueryInput(body))
                     } else {
                         Mono.fromCallable {
