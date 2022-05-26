@@ -101,10 +101,7 @@ internal class InputArgumentTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+            "helloFetcher" to fetcher
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
@@ -129,12 +126,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -159,10 +151,7 @@ internal class InputArgumentTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+            "helloFetcher" to fetcher
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
@@ -198,10 +187,7 @@ internal class InputArgumentTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+            "helloFetcher" to fetcher
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
@@ -234,12 +220,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -268,10 +249,7 @@ internal class InputArgumentTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+            "helloFetcher" to fetcher
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
@@ -301,10 +279,7 @@ internal class InputArgumentTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+            "helloFetcher" to fetcher
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
@@ -338,10 +313,7 @@ internal class InputArgumentTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+            "helloFetcher" to fetcher
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
@@ -351,6 +323,39 @@ internal class InputArgumentTest {
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("Hello, tester, tester 2", data["hello"])
+
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    }
+
+    @Test
+    fun `@InputArgument on an optional list of integers`() {
+        val expectedNumbers = listOf(1, 2, 3)
+
+        val schema = """
+            type Query {
+                numbers(list: [Int]): String
+            }
+        """.trimIndent()
+
+        val fetcher = object {
+            @DgsQuery(field = "numbers")
+            fun numbers(@InputArgument("list") listOptional: Optional<List<Int>>, dfe: DataFetchingEnvironment): String {
+                assertThat(listOptional).isNotEmpty
+                assertThat(listOptional.get()).containsExactlyElementsOf(expectedNumbers)
+                return "Numbers are ${listOptional.map{ it.joinToString(", ") }.orElse("na")}"
+            }
+        }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("numbersFetcher" to fetcher)
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{ numbers(list: [1, 2, 3]) }""")
+        assertThat(executionResult.isDataPresent).isTrue
+
+        val data = executionResult.getData<Map<String, *>>()
+        assertThat(data["numbers"]).isEqualTo("Numbers are 1, 2, 3")
 
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
@@ -381,12 +386,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -431,10 +431,7 @@ internal class InputArgumentTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+            "helloFetcher" to fetcher
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
@@ -480,10 +477,7 @@ internal class InputArgumentTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+            "helloFetcher" to fetcher
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
@@ -517,10 +511,7 @@ internal class InputArgumentTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+            "helloFetcher" to fetcher
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
@@ -627,10 +618,7 @@ internal class InputArgumentTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+            "helloFetcher" to fetcher
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
@@ -671,10 +659,7 @@ internal class InputArgumentTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+            "helloFetcher" to fetcher
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
@@ -719,10 +704,7 @@ internal class InputArgumentTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+            "helloFetcher" to fetcher
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
@@ -766,12 +748,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -802,11 +779,8 @@ internal class InputArgumentTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            ),
-            Pair("Upload", UploadScalar()),
+            "helloFetcher" to fetcher,
+            "Upload" to UploadScalar(),
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
@@ -817,7 +791,7 @@ internal class InputArgumentTest {
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute(
             ExecutionInput.newExecutionInput().query("mutation(\$input: Upload!)  { upload(file: \$input) }")
-                .variables(mapOf(Pair("input", file)))
+                .variables(mapOf("input" to file))
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
@@ -840,12 +814,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -1015,12 +984,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -1056,10 +1020,7 @@ internal class InputArgumentTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
+            "helloFetcher" to fetcher
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
@@ -1082,12 +1043,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -1239,12 +1195,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -1276,12 +1227,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -1315,12 +1261,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -1354,12 +1295,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -1395,12 +1331,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -1485,12 +1416,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -1560,12 +1486,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -1608,12 +1529,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -1649,12 +1565,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -1694,12 +1605,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
@@ -1741,12 +1647,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 

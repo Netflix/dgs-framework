@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcAutoConfiguration

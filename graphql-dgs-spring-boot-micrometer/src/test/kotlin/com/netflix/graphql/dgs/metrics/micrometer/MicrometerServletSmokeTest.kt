@@ -110,6 +110,7 @@ class MicrometerServletSmokeTest {
             // We will also assert that the tag reflected by the metric is not affected by the alias.
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content("""{ "query": "query my_op_1{ping}" }""")
         ).andExpect(status().isOk)
             .andExpect(content().json("""{"data":{"ping":"pong"}}""", false))
@@ -149,6 +150,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content("""{ "query": "{someTrivialThings}" }""")
         ).andExpect(status().isOk)
             .andExpect(content().json("""{"data":{"someTrivialThings":"some insignificance"}}""", false))
@@ -177,6 +179,7 @@ class MicrometerServletSmokeTest {
             // We will also assert that the tag reflected by the metric is not affected by the alias.
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content("""{ "query": " mutation my_op_1{buzz}" }""".trimMargin())
         ).andExpect(status().isOk)
             .andExpect(content().json("""{"data":{"buzz":"buzz"}}""", false))
@@ -218,6 +221,7 @@ class MicrometerServletSmokeTest {
             // We will also assert that the tag reflected by the metric is not affected by the alias.
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content(
                     """
                     | {
@@ -264,6 +268,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content(
                     """{"query": 
                     |   "{transform(input: [\"A madam in a racecar.\", \"A man, a plan, a canal - Panama\" ]){ index value upperCased reversed } }" }
@@ -352,6 +357,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content("""{ "query": "fail" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -404,6 +410,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content("""{ "query": "{ hello }" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -463,6 +470,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content("""{ "query": "{triggerInternalFailure}" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -533,6 +541,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content("""{ "query": "{triggerBadRequestFailure}" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -601,6 +610,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content("""{ "query": "{triggerCustomFailure}" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -671,6 +681,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content("""{ "query": "{ triggerInternalFailure triggerBadRequestFailure triggerCustomFailure }" }""")
         ).andExpect(status().isOk)
             .andExpect(

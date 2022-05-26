@@ -11,6 +11,12 @@
       "type": "java.lang.Boolean",
       "description": "Enables GraphiQL functionality.",
       "defaultValue": "true"
+    },
+    {
+      "name": "dgs.graphql.header.validation.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enables recommended GDS GraphQL HTTP Header validation rules.",
+      "defaultValue": "true"
     }
   ]
 }
