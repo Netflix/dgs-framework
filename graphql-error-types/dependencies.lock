@@ -19,7 +19,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -51,7 +51,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -98,7 +98,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -118,7 +118,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -144,7 +144,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -170,7 +170,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -201,7 +201,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -221,7 +221,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -241,7 +241,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -270,7 +270,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -290,7 +290,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -325,7 +325,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -360,7 +360,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"

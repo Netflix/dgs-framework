@@ -19,7 +19,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -125,7 +125,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.3.3"
+            "locked": "1.3.4"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -172,7 +172,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-context-support": {
             "locked": "5.3.19"
@@ -222,7 +222,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -242,7 +242,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -268,7 +268,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -294,7 +294,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -325,7 +325,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -345,7 +345,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -365,7 +365,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -434,7 +434,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.3.3"
+            "locked": "1.3.4"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -449,7 +449,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.3.0"
+            "locked": "1.4.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.6.21"
@@ -499,7 +499,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-context": {
             "firstLevelTransitive": [
@@ -534,7 +534,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.18"
@@ -640,7 +640,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.3.3"
+            "locked": "1.3.4"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -693,7 +693,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-context-support": {
             "locked": "5.3.19"
@@ -837,7 +837,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.3.3"
+            "locked": "1.3.4"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -867,7 +867,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.3.0"
+            "locked": "1.4.0"
         },
         "org.apache.commons:commons-lang3": {
             "firstLevelTransitive": [
@@ -955,7 +955,7 @@
             "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.3"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-context": {
             "firstLevelTransitive": [
