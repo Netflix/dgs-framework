@@ -50,7 +50,7 @@ class GraphQLCSRFRequestHeaderValidationRule : GraphQLRequestHeaderValidationRul
          *
          * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
          */
-        val NON_PREFLIGHTED_CONTENT_TYPES = listOf(
+        val NON_PREFLIGHTED_CONTENT_TYPES = setOf(
             MediaType.APPLICATION_FORM_URLENCODED, MediaType.MULTIPART_FORM_DATA, MediaType.TEXT_PLAIN
         )
 
@@ -66,7 +66,7 @@ class GraphQLCSRFRequestHeaderValidationRule : GraphQLRequestHeaderValidationRul
          */
         val GRAPHQL_PREFLIGHT_REQUESTS_HEADERS = listOf(
             HEADER_APOLLO_REQUIRE_PREFLIGHT, HEADER_X_APOLLO_OPERATION_NAME, HEADER_GRAPHQL_REQUIRE_PREFLIGHT
-        )
+        ).map { it.lowercase() }.toSet()
 
         /**
          * > We don't want random websites to be able to execute actual GraphQL operations
@@ -91,12 +91,9 @@ class GraphQLCSRFRequestHeaderValidationRule : GraphQLRequestHeaderValidationRul
          *
          * From [Apollo Server](https://github.com/apollographql/apollo-server/blob/version-4/packages/server/src/preventCsrf.ts)
          */
-        fun assertGraphQLCsrf(
-            headers: HttpHeaders,
-            csrfPreventionRequestHeaders: List<String> = GRAPHQL_PREFLIGHT_REQUESTS_HEADERS
-        ) {
+        fun assertGraphQLCsrf(headers: HttpHeaders) {
             val contentType: MediaType? = headers.contentType
-            if (contentType != null && !NON_PREFLIGHTED_CONTENT_TYPES.contains(contentType)) {
+            if (contentType != null && isPreflightedContentType(contentType)) {
                 // We managed to parse a MIME type that was not one of the
                 // CORS-safe-listed ones. (Probably application/json!) That means that if
                 // the client is a browser, the browser must have applied CORS
@@ -107,13 +104,23 @@ class GraphQLCSRFRequestHeaderValidationRule : GraphQLRequestHeaderValidationRul
             // one of the three CORS-safelisted values. Let's look for another header that
             // (if this was a browser) must have been set by the user's code and would
             // have caused a preflight.
-            val csrfInFlightHeader: String? = csrfPreventionRequestHeaders.find { headers.contains(it) }
-            if (StringUtils.hasText(csrfInFlightHeader)) {
+            if (containsCSRFinFlightHeader(headers)) {
                 return
             }
             throw DgsGraphQLRequestHeaderValidator.GraphQLRequestHeaderRuleException(
-                "Expecting a CSRF Prevention Header but none was found, supported headers are $csrfPreventionRequestHeaders."
+                "Expecting a CSRF Prevention Header but none was found, " +
+                    "supported headers are $GRAPHQL_PREFLIGHT_REQUESTS_HEADERS."
             )
+        }
+
+        private fun isPreflightedContentType(mediaType: MediaType): Boolean {
+            return NON_PREFLIGHTED_CONTENT_TYPES.find { it.isCompatibleWith(mediaType) } == null
+        }
+
+        private fun containsCSRFinFlightHeader(headers: HttpHeaders): Boolean {
+            val csrfInFlightHeader: String? =
+                headers.keys.find { GRAPHQL_PREFLIGHT_REQUESTS_HEADERS.contains(it.lowercase()) }
+            return StringUtils.hasText(csrfInFlightHeader)
         }
     }
 
