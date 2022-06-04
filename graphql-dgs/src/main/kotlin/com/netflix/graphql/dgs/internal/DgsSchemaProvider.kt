@@ -61,6 +61,9 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 /**
  * Main framework class that scans for components and configures a runtime executable schema.
@@ -78,13 +81,47 @@ class DgsSchemaProvider(
     private val methodDataFetcherFactory: MethodDataFetcherFactory,
 ) {
 
-    val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
+    private val schemaReadWriteLock = ReentrantReadWriteLock()
+
+    private val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
+
     private val dataFetchers = mutableListOf<DatafetcherReference>()
+
+    /**
+     * Returns an immutable list of [DatafetcherReference]s that were identified after the schema was loaded.
+     * The returned list will be unstable until the [schema] is fully loaded.
+     */
+    fun resolvedDataFetchers(): List<DatafetcherReference> {
+        return schemaReadWriteLock.read {
+            dataFetchers.toList()
+        }
+    }
+
+    /**
+     * Given a field, expressed as a GraphQL `<Type>.<field name>` tuple, return...
+     * 1. `true` if the given field has _instrumentation_ enabled, or is missing an explicit setting.
+     * 2. `false` if the given field has _instrumentation_ explicitly disabled.
+     *
+     * The method should be considered unstable until the [schema] is fully loaded.
+     */
+    fun isFieldInstrumentationEnabled(field: String): Boolean {
+        return schemaReadWriteLock.read {
+            dataFetcherInstrumentationEnabled.getOrDefault(field, true)
+        }
+    }
 
     fun schema(
         @Language("GraphQL") schema: String? = null,
         fieldVisibility: GraphqlFieldVisibility = DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
     ): GraphQLSchema {
+        schemaReadWriteLock.write {
+            dataFetchers.clear()
+            dataFetcherInstrumentationEnabled.clear()
+            return computeSchema(schema, fieldVisibility)
+        }
+    }
+
+    private fun computeSchema(schema: String? = null, fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
         val startTime = System.currentTimeMillis()
         val dgsComponents = applicationContext.getBeansWithAnnotation(DgsComponent::class.java).values
         val hasDynamicTypeRegistry =
@@ -249,6 +286,8 @@ class DgsSchemaProvider(
     ) {
         val field = dgsDataAnnotation.getString("field").ifEmpty { method.name }
         val parentType = dgsDataAnnotation.getString("parentType")
+
+        //
         dataFetchers.add(DatafetcherReference(dgsComponent, method, mergedAnnotations, parentType, field))
 
         val enableInstrumentation =

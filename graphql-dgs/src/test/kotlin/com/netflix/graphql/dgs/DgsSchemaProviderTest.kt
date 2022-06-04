@@ -38,17 +38,21 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatNoException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.fail
 import org.reactivestreams.Publisher
 import org.springframework.context.ApplicationContext
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.function.Consumer
 
 @Suppress("unused")
 @ExtendWith(MockKExtension::class)
@@ -97,6 +101,13 @@ internal class DgsSchemaProviderTest {
     private val interfaceHelloFetcher = object : DefaultHelloFetcherInterface {
         override fun someFetcher(): String =
             "Hello"
+    }
+
+    @BeforeEach
+    fun setupApplicationMockedContext() {
+        withNoComponents()
+        withNoScalars()
+        withNoDirectives()
     }
 
     @Test
@@ -153,20 +164,23 @@ internal class DgsSchemaProviderTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
-        val schema = schemaProvider().schema()
+        val schemaProvider = schemaProvider()
+        assertThat(schemaProvider.resolvedDataFetchers()).isEmpty()
+        val schema = schemaProvider.schema()
+        assertThat(schemaProvider.resolvedDataFetchers())
+            .isNotEmpty.hasSize(1).first().satisfies(
+                Consumer {
+                    assertThat(it.parentType).isEqualTo("Query")
+                    assertThat(it.field).isEqualTo("hello")
+                }
+            )
+
         val build = GraphQL.newGraphQL(schema).build()
         assertHello(build)
 
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        verifyComponents()
     }
 
     @Test
@@ -178,20 +192,23 @@ internal class DgsSchemaProviderTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
-        val schema = schemaProvider().schema()
+        val schemaProvider = schemaProvider()
+        assertThat(schemaProvider.resolvedDataFetchers()).isEmpty()
+        val schema = schemaProvider.schema()
+        assertThat(schemaProvider.resolvedDataFetchers())
+            .isNotEmpty.hasSize(1).first().satisfies(
+                Consumer {
+                    assertThat(it.parentType).isEqualTo("Query")
+                    assertThat(it.field).isEqualTo("hello")
+                }
+            )
+
         val build = GraphQL.newGraphQL(schema).build()
         assertHello(build)
 
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        verifyComponents()
     }
 
     open class BaseClassFetcher {
@@ -207,20 +224,13 @@ internal class DgsSchemaProviderTest {
             // We're only interested in the base class for this test
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val schema = schemaProvider().schema()
         val build = GraphQL.newGraphQL(schema).build()
         assertHello(build)
 
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        verifyComponents()
     }
 
     @Test
@@ -239,20 +249,14 @@ internal class DgsSchemaProviderTest {
             @DgsTypeResolver(name = "Video")
             @DgsDefaultTypeResolver
             fun resolveType(@Suppress("unused_parameter") type: Any): String? {
-                println("Using default resolver")
                 return null
             }
         }
-
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair("defaultResolver", resolverDefault),
-            Pair("videoFetcher", defaultVideoFetcher)
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-
-        // verify that it should not trigger a build failure
-        GraphQL.newGraphQL(schemaProvider().schema(schema)).build()
+        withComponents("defaultResolver" to resolverDefault, "videoFetcher" to defaultVideoFetcher)
+        assertThatNoException().isThrownBy {
+            // verify that it should not trigger a build failure
+            GraphQL.newGraphQL(schemaProvider().schema(schema)).build()
+        }
     }
 
     @Test
@@ -275,25 +279,22 @@ internal class DgsSchemaProviderTest {
             @DgsTypeResolver(name = "Video")
             @DgsDefaultTypeResolver
             fun resolveType(@Suppress("unused_parameter") type: Any): String? {
-                println("Using default resolver")
-                return null
+                fail { "We are not expecting to resolve via the default resolver" }
             }
         }
 
         val resolverOverride = object : Any() {
             @DgsTypeResolver(name = "Video")
             fun resolveType(@Suppress("unused_parameter") type: Any): String {
-                println("Using override resolver")
                 return "Show"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair("defaultResolver", resolverDefault),
-            Pair("overrideResolver", resolverOverride), Pair("videoFetcher", defaultVideoFetcher)
+        withComponents(
+            "defaultResolver" to resolverDefault,
+            "overrideResolver" to resolverOverride,
+            "videoFetcher" to defaultVideoFetcher
         )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
         val build = GraphQL.newGraphQL(schemaProvider().schema(schema)).build()
         assertVideo(build)
@@ -301,20 +302,13 @@ internal class DgsSchemaProviderTest {
 
     @Test
     fun addFetchersWithoutDataFetchingEnvironment() {
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                defaultHelloFetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to defaultHelloFetcher)
 
         val schema = schemaProvider().schema()
         val build = GraphQL.newGraphQL(schema).build()
         assertHello(build)
 
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        verifyComponents()
     }
 
     @Test
@@ -331,15 +325,7 @@ internal class DgsSchemaProviderTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                defaultHelloFetcher
-            ),
-            Pair("codeRegistry", codeRegistry)
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to defaultHelloFetcher, "codeRegistry" to codeRegistry)
 
         val typeDefinitionRegistry = TypeDefinitionRegistry()
         val objectTypeExtensionDefinition = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition()
@@ -372,10 +358,6 @@ internal class DgsSchemaProviderTest {
         }
         """.trimIndent()
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-
         schemaProvider().schema(schema)
     }
 
@@ -388,44 +370,23 @@ internal class DgsSchemaProviderTest {
         """.trimIndent()
 
         val dgsSchemaProvider = schemaProvider()
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf()
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
         assertThat(dgsSchemaProvider.schema(schema)).isNotNull
     }
 
     @Test
     fun enableInstrumentationForDataFetchers() {
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                defaultHelloFetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-
+        withComponents("helloFetcher" to defaultHelloFetcher)
         val provider = schemaProvider()
         provider.schema()
-        assertThat(provider.dataFetcherInstrumentationEnabled).containsKey("Query.hello")
-        assertThat(provider.dataFetcherInstrumentationEnabled["Query.hello"]).isTrue
+        assertThat(provider.isFieldInstrumentationEnabled("Query.hello")).isTrue
     }
 
     @Test
     fun enableInstrumentationForDataFetchersFromInterfaces() {
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                interfaceHelloFetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-
+        withComponents("helloFetcher" to interfaceHelloFetcher)
         val schemaProvider = schemaProvider()
         schemaProvider.schema()
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled).containsKey("Query.hello")
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled["Query.hello"]).isTrue
+        assertThat(schemaProvider.isFieldInstrumentationEnabled("Query.hello")).isTrue
     }
 
     @Test
@@ -449,8 +410,7 @@ internal class DgsSchemaProviderTest {
 
         val schemaProvider = schemaProvider()
         schemaProvider.schema()
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled).containsKey("Query.hello")
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled["Query.hello"]).isFalse
+        assertThat(schemaProvider.isFieldInstrumentationEnabled("Query.hello")).isFalse
     }
 
     @Test
@@ -461,19 +421,12 @@ internal class DgsSchemaProviderTest {
                 return CompletableFuture.supplyAsync { "hello" }
             }
         }
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                noTracingDataFetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        withComponents("helloFetcher" to noTracingDataFetcher)
 
         val schemaProvider = schemaProvider()
         schemaProvider.schema()
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled).containsKey("Query.hello")
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled["Query.hello"]).isFalse
+        assertThat(schemaProvider.isFieldInstrumentationEnabled("Query.hello")).isFalse
     }
 
     @Test
@@ -485,19 +438,11 @@ internal class DgsSchemaProviderTest {
                 return CompletableFuture.supplyAsync { "hello" }
             }
         }
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                noTracingDataFetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
+        withComponents("helloFetcher" to noTracingDataFetcher)
         val schemaProvider = schemaProvider()
         schemaProvider.schema()
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled).containsKey("Query.hello")
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled["Query.hello"]).isTrue
+        assertThat(schemaProvider.isFieldInstrumentationEnabled("Query.hello")).isTrue
     }
 
     @Test
@@ -523,28 +468,13 @@ internal class DgsSchemaProviderTest {
                 return "Title on Interface"
             }
         }
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "videoFetcher",
-                defaultVideoFetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "titleFetcher",
-                titleFetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        withComponents("videoFetcher" to defaultVideoFetcher, "titleFetcher" to titleFetcher)
 
         val schemaProvider = schemaProvider()
         schemaProvider.schema(schema)
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled).containsKey("Video.title")
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled["Video.title"]).isTrue
-
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled).containsKey("Show.title")
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled["Show.title"]).isTrue
+        assertThat(schemaProvider.isFieldInstrumentationEnabled("Video.title")).isTrue
+        assertThat(schemaProvider.isFieldInstrumentationEnabled("Show.title")).isTrue
     }
 
     @Test
@@ -571,28 +501,13 @@ internal class DgsSchemaProviderTest {
                 return "Title on Interface"
             }
         }
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "videoFetcher",
-                defaultVideoFetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "titleFetcher",
-                titleFetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        withComponents("videoFetcher" to defaultVideoFetcher, "titleFetcher" to titleFetcher)
 
         val schemaProvider = schemaProvider()
         schemaProvider.schema(schema)
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled).containsKey("Video.title")
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled["Video.title"]).isFalse
-
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled).containsKey("Show.title")
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled["Show.title"]).isFalse
+        assertThat(schemaProvider.isFieldInstrumentationEnabled("Video.title")).isFalse
+        assertThat(schemaProvider.isFieldInstrumentationEnabled("Show.title")).isFalse
     }
 
     @Test
@@ -618,28 +533,13 @@ internal class DgsSchemaProviderTest {
                 return CompletableFuture.supplyAsync { "Title on Interface" }
             }
         }
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "videoFetcher",
-                defaultVideoFetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "titleFetcher",
-                titleFetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+
+        withComponents("videoFetcher" to defaultVideoFetcher, "titleFetcher" to titleFetcher)
 
         val schemaProvider = schemaProvider()
         schemaProvider.schema(schema)
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled).containsKey("Video.title")
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled["Video.title"]).isFalse
-
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled).containsKey("Show.title")
-        assertThat(schemaProvider.dataFetcherInstrumentationEnabled["Show.title"]).isFalse
+        assertThat(schemaProvider.isFieldInstrumentationEnabled("Video.title")).isFalse
+        assertThat(schemaProvider.isFieldInstrumentationEnabled("Show.title")).isFalse
     }
 
     @Test
@@ -651,21 +551,14 @@ internal class DgsSchemaProviderTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val schemaProvider = schemaProvider()
         val schema = schemaProvider.schema()
         val build = GraphQL.newGraphQL(schema).build()
         assertHello(build)
 
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        verifyComponents()
     }
 
     @Test
@@ -677,21 +570,14 @@ internal class DgsSchemaProviderTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val schemaProvider = schemaProvider()
         val schema = schemaProvider.schema()
         val build = GraphQL.newGraphQL(schema).build()
         assertHello(build)
 
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        verifyComponents()
     }
 
     @Test
@@ -703,20 +589,13 @@ internal class DgsSchemaProviderTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val schema = schemaProvider().schema()
         val build = GraphQL.newGraphQL(schema).build()
         assertHello(build)
 
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        verifyComponents()
     }
 
     @Test
@@ -728,14 +607,7 @@ internal class DgsSchemaProviderTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val schema = schemaProvider().schema(
             """
@@ -747,7 +619,7 @@ internal class DgsSchemaProviderTest {
         val build = GraphQL.newGraphQL(schema).build()
         assertInputMessage(build)
 
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        verifyComponents()
     }
 
     @Test
@@ -759,14 +631,7 @@ internal class DgsSchemaProviderTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val schema = schemaProvider().schema(
             """
@@ -778,7 +643,7 @@ internal class DgsSchemaProviderTest {
         val build = GraphQL.newGraphQL(schema).build()
         assertInputMessage(build)
 
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        verifyComponents()
     }
 
     @Test
@@ -790,14 +655,7 @@ internal class DgsSchemaProviderTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val schema = schemaProvider().schema(
             """
@@ -809,7 +667,7 @@ internal class DgsSchemaProviderTest {
         val build = GraphQL.newGraphQL(schema).build()
         assertSubscription(build)
 
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        verifyComponents()
     }
 
     @Test
@@ -821,14 +679,7 @@ internal class DgsSchemaProviderTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val schema = schemaProvider().schema(
             """
@@ -840,7 +691,7 @@ internal class DgsSchemaProviderTest {
         val build = GraphQL.newGraphQL(schema).build()
         assertSubscription(build)
 
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        verifyComponents()
     }
 
     private fun assertHello(build: GraphQL) {
@@ -852,10 +703,11 @@ internal class DgsSchemaProviderTest {
 
     private fun assertVideo(build: GraphQL) {
         val executionResult = build.execute("{video{title}}")
-        assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult.isDataPresent).isTrue
+        assertThat(executionResult.errors).isEmpty()
         val data = executionResult.getData<Map<String, *>>()
-        val video = data["video"] as Map<*, *>
-        assertEquals("ShowA", video["title"])
+        assertThat(data).containsKey("video")
+        assertThat(data["video"] as Map<*, *>).hasFieldOrPropertyWithValue("title", "ShowA")
     }
 
     private fun assertSubscription(build: GraphQL) {
@@ -877,5 +729,25 @@ internal class DgsSchemaProviderTest {
         assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         assertEquals("hello", data["addMessage"])
+    }
+
+    private fun withComponents(vararg components: Pair<String, Any>) {
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(*components)
+    }
+
+    private fun withNoComponents() = withComponents()
+    private fun withScalars(vararg scalars: Pair<String, Any>) {
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(*scalars)
+    }
+
+    private fun withNoScalars() = withScalars()
+    private fun withDirectives(vararg directives: Pair<String, Any>) {
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns mapOf(*directives)
+    }
+
+    private fun withNoDirectives() = withDirectives()
+
+    private fun verifyComponents() {
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 }
