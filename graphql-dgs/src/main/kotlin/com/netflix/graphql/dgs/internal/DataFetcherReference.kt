@@ -19,7 +19,7 @@ package com.netflix.graphql.dgs.internal
 import org.springframework.core.annotation.MergedAnnotations
 import java.lang.reflect.Method
 
-data class DatafetcherReference(
+data class DataFetcherReference(
     val instance: Any,
     val method: Method,
     val annotations: MergedAnnotations,

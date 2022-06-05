@@ -85,13 +85,13 @@ class DgsSchemaProvider(
 
     private val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
 
-    private val dataFetchers = mutableListOf<DatafetcherReference>()
+    private val dataFetchers = mutableListOf<DataFetcherReference>()
 
     /**
-     * Returns an immutable list of [DatafetcherReference]s that were identified after the schema was loaded.
+     * Returns an immutable list of [DataFetcherReference]s that were identified after the schema was loaded.
      * The returned list will be unstable until the [schema] is fully loaded.
      */
-    fun resolvedDataFetchers(): List<DatafetcherReference> {
+    fun resolvedDataFetchers(): List<DataFetcherReference> {
         return schemaReadWriteLock.read {
             dataFetchers.toList()
         }
@@ -287,8 +287,7 @@ class DgsSchemaProvider(
         val field = dgsDataAnnotation.getString("field").ifEmpty { method.name }
         val parentType = dgsDataAnnotation.getString("parentType")
 
-        //
-        dataFetchers.add(DatafetcherReference(dgsComponent, method, mergedAnnotations, parentType, field))
+        dataFetchers.add(DataFetcherReference(dgsComponent, method, mergedAnnotations, parentType, field))
 
         val enableInstrumentation =
             if (method.isAnnotationPresent(DgsEnableDataFetcherInstrumentation::class.java)) {

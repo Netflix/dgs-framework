@@ -15,8 +15,8 @@ import graphql.analysis.QueryVisitorFieldEnvironment
 import graphql.analysis.QueryVisitorStub
 import graphql.execution.instrumentation.*
 import graphql.execution.instrumentation.SimpleInstrumentationContext.whenCompleted
+import graphql.execution.instrumentation.parameters.InstrumentationExecuteOperationParameters
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
-import graphql.execution.instrumentation.parameters.InstrumentationExecutionStrategyParameters
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import graphql.execution.instrumentation.parameters.InstrumentationValidationParameters
 import graphql.schema.DataFetcher
@@ -177,9 +177,7 @@ class DgsGraphQLMetricsInstrumentation(
         }
     }
 
-    override fun beginExecutionStrategy(
-        parameters: InstrumentationExecutionStrategyParameters
-    ): ExecutionStrategyInstrumentationContext {
+    override fun beginExecuteOperation(parameters: InstrumentationExecuteOperationParameters): InstrumentationContext<ExecutionResult> {
         val state: MetricsInstrumentationState = parameters.getInstrumentationState()
         if (parameters.executionContext.getRoot<Any>() == null) {
             state.operation = Optional.of(parameters.executionContext.operationDefinition.operation.name.uppercase())
@@ -187,8 +185,9 @@ class DgsGraphQLMetricsInstrumentation(
                 state.operationName = Optional.ofNullable(parameters.executionContext.operationDefinition?.name)
             }
         }
+
         state.queryComplexity = ComplexityUtils.resolveComplexity(parameters)
-        return DefaultExecutionStrategyInstrumentationContext
+        return super.beginExecuteOperation(parameters)
     }
 
     private fun recordDataFetcherMetrics(
@@ -266,7 +265,7 @@ class DgsGraphQLMetricsInstrumentation(
 
         private val queryComplexityBuckets = listOf(5, 10, 25, 50, 100, 200, 500, 1000, 2000, 5000, 10000)
 
-        fun resolveComplexity(parameters: InstrumentationExecutionStrategyParameters): Optional<Int> {
+        fun resolveComplexity(parameters: InstrumentationExecuteOperationParameters): Optional<Int> {
             try {
                 val queryTraverser: QueryTraverser = newQueryTraverser(parameters)
                 val valuesByParent: MutableMap<QueryVisitorFieldEnvironment?, Int?> =
@@ -300,7 +299,7 @@ class DgsGraphQLMetricsInstrumentation(
             return fieldComplexityCalculator(childComplexity)
         }
 
-        private fun newQueryTraverser(parameters: InstrumentationExecutionStrategyParameters): QueryTraverser {
+        private fun newQueryTraverser(parameters: InstrumentationExecuteOperationParameters): QueryTraverser {
             return QueryTraverser
                 .newQueryTraverser()
                 .schema(parameters.executionContext.graphQLSchema)
