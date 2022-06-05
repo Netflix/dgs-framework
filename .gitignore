@@ -2,8 +2,10 @@
 
 # Gradle
 /build/
+/out/
 # Also covers /buildSrc/build/
 /*/build/
+/*/out/
 /.gradle/
 /buildSrc/.gradle/
 
