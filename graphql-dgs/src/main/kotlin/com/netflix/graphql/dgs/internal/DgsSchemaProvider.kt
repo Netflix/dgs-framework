@@ -79,7 +79,7 @@ class DgsSchemaProvider(
 ) {
 
     val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
-    private val dataFetchers = mutableListOf<DatafetcherReference>()
+    private val dataFetchers = mutableListOf<DataFetcherReference>()
 
     fun schema(
         @Language("GraphQL") schema: String? = null,
@@ -249,7 +249,8 @@ class DgsSchemaProvider(
     ) {
         val field = dgsDataAnnotation.getString("field").ifEmpty { method.name }
         val parentType = dgsDataAnnotation.getString("parentType")
-        dataFetchers.add(DatafetcherReference(dgsComponent, method, mergedAnnotations, parentType, field))
+
+        dataFetchers.add(DataFetcherReference(dgsComponent, method, mergedAnnotations, parentType, field))
 
         val enableInstrumentation =
             if (method.isAnnotationPresent(DgsEnableDataFetcherInstrumentation::class.java)) {

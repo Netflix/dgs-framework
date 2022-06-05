@@ -25,11 +25,12 @@ import graphql.execution.instrumentation.parameters.InstrumentationExecutionPara
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Tags
+import java.util.*
 
-internal class DgsGraphQLCollatedMetricsTagsProvider(
-    private val contextualTagCustomizer: Collection<DgsContextualTagCustomizer>,
-    private val executionTagCustomizer: Collection<DgsExecutionTagCustomizer>,
-    private val fieldFetchTagCustomizer: Collection<DgsFieldFetchTagCustomizer>
+class DgsGraphQLCollatedMetricsTagsProvider(
+    private val contextualTagCustomizer: Collection<DgsContextualTagCustomizer> = Collections.emptyList(),
+    private val executionTagCustomizer: Collection<DgsExecutionTagCustomizer> = Collections.emptyList(),
+    private val fieldFetchTagCustomizer: Collection<DgsFieldFetchTagCustomizer> = Collections.emptyList()
 ) : DgsGraphQLMetricsTagsProvider {
 
     override fun getContextualTags(): Iterable<Tag> {
