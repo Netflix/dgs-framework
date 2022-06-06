@@ -26,7 +26,7 @@ import java.io.IOException
 /**
  * This class is used only for logging purposes since we cannot serialize a MultipartFile to json otherwise.
  */
-class MultipartFileSerializer @JvmOverloads constructor(t: Class<MultipartFile>? = null) : StdSerializer<MultipartFile>(t) {
+class MultipartFileSerializer : StdSerializer<MultipartFile>(MultipartFile::class.java) {
 
     @Throws(IOException::class, JsonProcessingException::class)
     override fun serialize(
