@@ -89,7 +89,7 @@ internal class InputArgumentTest {
                 listOf(
                     InputArgumentResolver(DefaultInputObjectMapper()),
                     DataFetchingEnvironmentArgumentResolver(),
-                    FallbackEnvironmentArgumentResolver()
+                    FallbackEnvironmentArgumentResolver(DefaultInputObjectMapper())
                 )
             )
         )
@@ -169,6 +169,28 @@ internal class InputArgumentTest {
         assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
         assertThat(data).containsEntry("hello", "Hello, no name")
+    }
+
+    @Test
+    fun `Inferred input argument, on String type`() {
+        val fetcher = object {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(name: String): String {
+                return "Hello, $name"
+            }
+        }
+
+        withComponents("helloFetcher" to fetcher)
+
+        val schema = provider.schema()
+
+        val build = GraphQL.newGraphQL(schema).build()
+        val executionResult = build.execute("""{hello(name: "tester")}""")
+
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
+        val data = executionResult.getData<Map<String, *>>()
+        assertThat(data).containsEntry("hello", "Hello, tester")
     }
 
     @Test

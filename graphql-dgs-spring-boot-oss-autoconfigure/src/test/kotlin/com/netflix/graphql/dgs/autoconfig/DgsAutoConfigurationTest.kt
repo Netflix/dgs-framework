@@ -24,6 +24,11 @@ import com.netflix.graphql.dgs.autoconfig.testcomponents.DataFetcherWithInputObj
 import com.netflix.graphql.dgs.autoconfig.testcomponents.DataLoaderConfig
 import com.netflix.graphql.dgs.autoconfig.testcomponents.HelloDataFetcherConfig
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
+import com.netflix.graphql.dgs.internal.InputObjectMapper
+import com.netflix.graphql.dgs.internal.method.ContinuationArgumentResolver
+import com.netflix.graphql.dgs.internal.method.DataFetchingEnvironmentArgumentResolver
+import com.netflix.graphql.dgs.internal.method.FallbackEnvironmentArgumentResolver
+import com.netflix.graphql.dgs.internal.method.InputArgumentResolver
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
@@ -128,6 +133,17 @@ class DgsAutoConfigurationTest {
                 )
                 assertThat(json).isEqualTo("hello")
             }
+        }
+    }
+
+    @Test
+    fun `DGS Input Argument beans are available`() {
+        context.run { ctx ->
+            assertThat(ctx).getBean("defaultInputObjectMapper", InputObjectMapper::class.java).isNotNull
+            assertThat(ctx).getBean("inputArgumentResolver", InputArgumentResolver::class.java).isNotNull
+            assertThat(ctx).getBean("dataFetchingEnvironmentArgumentResolver", DataFetchingEnvironmentArgumentResolver::class.java).isNotNull
+            assertThat(ctx).getBean("coroutineArgumentResolver", ContinuationArgumentResolver::class.java).isNotNull
+            assertThat(ctx).getBean("fallbackEnvironmentArgumentResolver", FallbackEnvironmentArgumentResolver::class.java).isNotNull
         }
     }
 
