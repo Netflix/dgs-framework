@@ -21,6 +21,7 @@ import com.netflix.graphql.dgs.DgsData
 import com.netflix.graphql.dgs.DgsDataLoader
 import com.netflix.graphql.dgs.DgsDataLoaderRegistryConsumer
 import com.netflix.graphql.dgs.DgsEnableDataFetcherInstrumentation
+import com.netflix.graphql.dgs.DgsMutation
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import com.netflix.graphql.dgs.InputArgument
@@ -856,39 +857,39 @@ class MicrometerServletSmokeTest {
                 return "some insignificance"
             }
 
-            @DgsData(parentType = "Mutation", field = "buzz")
+            @DgsMutation
             fun buzz(): String {
                 return "buzz"
             }
 
-            @DgsData(parentType = "Query", field = "transform")
+            @DgsQuery
             fun transform(@InputArgument input: List<String>): List<Map<String, String>> {
                 return input.mapIndexed { i, v -> mapOf("index" to "$i", "value" to v) }
             }
 
-            @DgsData(parentType = "Query", field = "triggerInternalFailure")
+            @DgsQuery
             fun triggerInternalFailure(): String {
                 throw IllegalStateException("Exception triggered.")
             }
 
-            @DgsData(parentType = "Query", field = "triggerBadRequestFailure")
+            @DgsQuery
             fun triggerBadRequestFailure(): String {
                 throw DgsBadRequestException("Exception triggered.")
             }
 
-            @DgsData(parentType = "Query", field = "triggerCustomFailure")
+            @DgsQuery
             fun triggerCustomFailure(): String {
                 throw CustomException("Exception triggered.")
             }
 
-            @DgsData(parentType = "StringTransformation", field = "upperCased")
+            @DgsData(parentType = "StringTransformation")
             fun upperCased(dfe: DataFetchingEnvironment): CompletableFuture<String>? {
                 val dataLoader = dfe.getDataLoader<String, String>("upperCaseLoader")
                 val input = dfe.getSource<Map<String, String>>()
                 return dataLoader.load(input.getOrDefault("value", ""))
             }
 
-            @DgsData(parentType = "StringTransformation", field = "reversed")
+            @DgsData(parentType = "StringTransformation")
             fun reversed(dfe: DataFetchingEnvironment): CompletableFuture<String>? {
                 val dataLoader = dfe.getDataLoader<String, String>("reverser")
                 val input = dfe.getSource<Map<String, String>>()
@@ -936,7 +937,7 @@ class MicrometerServletSmokeTest {
             val executor = ThreadPoolTaskExecutor()
             executor.corePoolSize = 1
             executor.maxPoolSize = 1
-            executor.setThreadNamePrefix("${MicrometerServletSmokeTest::class.java.simpleName}-test-")
+            executor.threadNamePrefix = "${MicrometerServletSmokeTest::class.java.simpleName}-test-"
             executor.setQueueCapacity(10)
             executor.initialize()
             return executor
