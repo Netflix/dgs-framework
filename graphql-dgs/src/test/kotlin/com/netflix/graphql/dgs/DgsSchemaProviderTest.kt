@@ -53,6 +53,7 @@ import reactor.test.StepVerifier
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
+import kotlin.reflect.full.findAnnotation
 
 @Suppress("unused")
 @ExtendWith(MockKExtension::class)
@@ -63,7 +64,8 @@ internal class DgsSchemaProviderTest {
 
     private fun schemaProvider(
         typeDefinitionRegistry: TypeDefinitionRegistry? = null,
-        schemaLocations: List<String> = listOf(DgsSchemaProvider.DEFAULT_SCHEMA_LOCATION)
+        schemaLocations: List<String> = listOf(DgsSchemaProvider.DEFAULT_SCHEMA_LOCATION),
+        componentFilter: (Any) -> Boolean = { true }
     ): DgsSchemaProvider {
         return DgsSchemaProvider(
             applicationContext = applicationContextMock,
@@ -75,7 +77,8 @@ internal class DgsSchemaProviderTest {
                     InputArgumentResolver(DefaultInputObjectMapper()),
                     DataFetchingEnvironmentArgumentResolver()
                 )
-            )
+            ),
+            componentFilter = componentFilter
         )
     }
 
@@ -690,6 +693,37 @@ internal class DgsSchemaProviderTest {
         )
         val build = GraphQL.newGraphQL(schema).build()
         assertSubscription(build)
+
+        verifyComponents()
+    }
+
+    annotation class TestAnnotation
+
+    @Test
+    fun `SchemaProvider with component filter`() {
+        val fetcher1 = @TestAnnotation object : Any() {
+            @DgsQuery(field = "hello")
+            fun someName(): String {
+                return "Goodbye"
+            }
+        }
+        val fetcher2 = object : Any() {
+            @DgsQuery(field = "hello")
+            fun someName(): String {
+                return "Hello"
+            }
+        }
+
+        withComponents(
+            "helloFetcher1" to fetcher1,
+            "helloFetcher2" to fetcher2
+        )
+
+        val schema = schemaProvider(componentFilter = {
+            it::class.findAnnotation<TestAnnotation>() == null
+        }).schema()
+        val build = GraphQL.newGraphQL(schema).build()
+        assertHello(build)
 
         verifyComponents()
     }
