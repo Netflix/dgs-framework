@@ -58,7 +58,7 @@ class CoroutineDataFetcherTest {
                 argumentResolvers = listOf(
                     InputArgumentResolver(DefaultInputObjectMapper()),
                     ContinuationArgumentResolver(),
-                    FallbackEnvironmentArgumentResolver()
+                    FallbackEnvironmentArgumentResolver(DefaultInputObjectMapper())
                 )
             ),
             dataFetcherResultProcessors = listOf(stubDataFetcherResultProcessor)

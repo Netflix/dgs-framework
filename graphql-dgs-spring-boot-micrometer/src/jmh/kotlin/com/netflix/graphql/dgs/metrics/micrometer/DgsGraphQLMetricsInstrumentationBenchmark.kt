@@ -78,7 +78,7 @@ open class DgsGraphQLMetricsInstrumentationBenchmark {
                 listOf(
                     InputArgumentResolver(DefaultInputObjectMapper()),
                     DataFetchingEnvironmentArgumentResolver(),
-                    FallbackEnvironmentArgumentResolver()
+                    FallbackEnvironmentArgumentResolver(DefaultInputObjectMapper())
                 )
             )
         )
