@@ -58,7 +58,11 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.InstanceOfAssertFactories
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
@@ -85,101 +89,112 @@ internal class InputArgumentTest {
                 listOf(
                     InputArgumentResolver(DefaultInputObjectMapper()),
                     DataFetchingEnvironmentArgumentResolver(),
-                    FallbackEnvironmentArgumentResolver()
+                    FallbackEnvironmentArgumentResolver(DefaultInputObjectMapper())
                 )
             )
         )
     }
 
+    @BeforeEach
+    fun setupApplicationMockedContext() {
+        withNoComponents()
+        withNoScalars()
+        withNoDirectives()
+    }
+    @AfterEach
+    fun verifyApplicationMockedContext() {
+        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        verify { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) }
+        verify { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) }
+    }
+
     @Test
-    fun `@InputArgument with name specified on String argument`() {
+    fun `@InputArgument with name specified, on String argument`() {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument("name") abc: String): String {
+                assertThat(abc).isEqualTo("tester")
                 return "Hello, $abc"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-
+        withComponents("helloFetcher" to fetcher)
         val schema = provider.schema()
 
         val build = GraphQL.newGraphQL(schema).build()
         val executionResult = build.execute("""{hello(name: "tester")}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, tester", data["hello"])
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).containsEntry("hello", "Hello, tester")
     }
 
     @Test
-    fun `@InputArgument with no name specified should work`() {
+    fun `@InputArgument with no name specified, on a String argument`() {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument name: String): String {
+                assertThat(name).isEqualTo("tester")
                 return "Hello, $name"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-
+        withComponents("helloFetcher" to fetcher)
         val schema = provider.schema()
 
         val build = GraphQL.newGraphQL(schema).build()
         val executionResult = build.execute("""{hello(name: "tester")}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, tester", data["hello"])
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).containsEntry("hello", "Hello, tester")
     }
 
     @Test
-    fun `@InputArgument with no name specified, without matching argument, should be null`() {
+    fun `@InputArgument with no name specified and without matching argument, should be null`() {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument abc: String?): String {
+                assertThat(abc).isNull()
                 return "Hello, ${abc ?: "no name"}"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
+        val schema = provider.schema()
+
+        val build = GraphQL.newGraphQL(schema).build()
+        val executionResult = build.execute("""{hello(name: "tester")}""")
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
+        val data = executionResult.getData<Map<String, *>>()
+        assertThat(data).containsEntry("hello", "Hello, no name")
+    }
+
+    @Test
+    fun `Inferred input argument, on String type`() {
+        val fetcher = object {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(name: String): String {
+                return "Hello, $name"
+            }
+        }
+
+        withComponents("helloFetcher" to fetcher)
 
         val schema = provider.schema()
 
         val build = GraphQL.newGraphQL(schema).build()
         val executionResult = build.execute("""{hello(name: "tester")}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
-        val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, no name", data["hello"])
 
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
+        val data = executionResult.getData<Map<String, *>>()
+        assertThat(data).containsEntry("hello", "Hello, tester")
     }
 
     @Test
-    fun `@InputArgument on an input type`() {
+    fun `@InputArgument on an input type, with input argument name`() {
         val schema = """
             type Query {
                 hello(person:Person): String
@@ -193,30 +208,23 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument("person") person: Person): String {
+                assertThat(person).isNotNull.extracting { it.name }.isEqualTo("tester")
                 return "Hello, ${person.name}"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello(person: {name: "tester"})}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, tester", data["hello"])
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).containsEntry("hello", "Hello, tester")
     }
 
     @Test
-    fun `@InputArgument with name specified as 'name'`() {
+    fun `@InputArgument on an optional input type, with input argument name`() {
         val schema = """
             type Query {
                 hello(person:Person): String
@@ -229,31 +237,84 @@ internal class InputArgumentTest {
 
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument(name = "person") person: Person): String {
+            fun someFetcher(@InputArgument("person") person: Optional<Person>): String {
+                assertThat(person).isNotNull.isNotEmpty.get().extracting { it.name }.isEqualTo("tester")
+                return "Hello, ${person.get().name}"
+            }
+        }
+
+        withComponents("helloFetcher" to fetcher)
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello(person: {name: "tester"})}""")
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
+        val data = executionResult.getData<Map<String, *>>()
+        assertThat(data).containsEntry("hello", "Hello, tester")
+    }
+
+    @Test
+    fun `@InputArgument on an input type, with no name specified`() {
+        val schema = """
+            type Query {
+                hello(person:Person): String
+            }
+            
+            input Person {
+                name:String
+            }
+        """.trimIndent()
+
+        val fetcher = object {
+            @DgsQuery(field = "hello")
+            fun someFetcher(@InputArgument person: Person): String {
+                assertThat(person).isNotNull.extracting { it.name }.isEqualTo("tester")
                 return "Hello, ${person.name}"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello(person: {name: "tester"})}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, tester", data["hello"])
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data["hello"]).isEqualTo("Hello, tester")
     }
 
     @Test
-    fun `@InputArgument on a list of strings`() {
+    fun `@InputArgument on an optional input type, with no name specified`() {
+        val schema = """
+            type Query {
+                hello(person:Person): String
+            }
+            
+            input Person {
+                name:String
+            }
+        """.trimIndent()
+
+        val fetcher = object {
+            @DgsQuery(field = "hello")
+            fun someFetcher(@InputArgument person: Optional<Person>): String {
+                assertThat(person).isNotNull.isNotEmpty.get().extracting { it.name }.isEqualTo("tester")
+                return "Hello, ${person.get().name}"
+            }
+        }
+
+        withComponents("helloFetcher" to fetcher)
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello(person: {name: "tester"})}""")
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
+        val data = executionResult.getData<Map<String, *>>()
+        assertThat(data["hello"]).isEqualTo("Hello, tester")
+    }
+
+    @Test
+    fun `@InputArgument on a list of strings, with input argument name`() {
         val schema = """
             type Query {
                 hello(names: [String]): String
@@ -263,30 +324,49 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument("names") names: List<String>): String {
+                assertThat(names).isNotEmpty.containsOnly("tester 1", "tester 2")
                 return "Hello, ${names.joinToString(", ")}"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello(names: ["tester 1", "tester 2"])}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, tester 1, tester 2", data["hello"])
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).containsEntry("hello", "Hello, tester 1, tester 2")
     }
 
     @Test
-    fun `@InputArgument on a Set of strings`() {
+    fun `@InputArgument on an optional list of strings, with input argument name`() {
+        val schema = """
+            type Query {
+                hello(names: [String]): String
+            }
+        """.trimIndent()
+
+        val fetcher = object {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument("names") names: Optional<List<String>>): String {
+                assertThat(names).isNotEmpty.get(InstanceOfAssertFactories.LIST).containsOnly("tester 1", "tester 2")
+                return "Hello, ${names.get().joinToString(", ")}"
+            }
+        }
+
+        withComponents("helloFetcher" to fetcher)
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello(names: ["tester 1", "tester 2"])}""")
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
+        val data = executionResult.getData<Map<String, *>>()
+        assertThat(data).containsEntry("hello", "Hello, tester 1, tester 2")
+    }
+
+    @Test
+    fun `@InputArgument on a set of strings, with input argument name`() {
         val schema = """
             type Query {
                 hello(names: [String]): String
@@ -296,30 +376,47 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument("names") names: Set<String>): String {
+                assertThat(names).isNotEmpty.containsOnly("tester 1", "tester 2")
                 return "Hello, ${names.joinToString(", ")}"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-
+        withComponents("helloFetcher" to fetcher)
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello(names: ["tester 1", "tester 2"])}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, tester 1, tester 2", data["hello"])
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).containsEntry("hello", "Hello, tester 1, tester 2")
     }
 
     @Test
-    fun `@InputArgument on a list of input types`() {
+    fun `@InputArgument on a set of strings, with no input argument name`() {
+        val schema = """
+            type Query {
+                hello(names: [String]): String
+            }
+        """.trimIndent()
+
+        val fetcher = object {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument names: Set<String>): String {
+                assertThat(names).isNotEmpty.containsOnly("tester 1", "tester 2")
+                return "Hello, ${names.joinToString(", ")}"
+            }
+        }
+
+        withComponents("helloFetcher" to fetcher)
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello(names: ["tester 1", "tester 2"])}""")
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
+        val data = executionResult.getData<Map<String, *>>()
+        assertThat(data).containsEntry("hello", "Hello, tester 1, tester 2")
+    }
+
+    @Test
+    fun `@InputArgument on a list of input types, with input argument name`() {
         val schema = """
             type Query {
                 hello(person:[Person]): String
@@ -333,26 +430,156 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument("person") person: List<Person>): String {
+                assertThat(person).isNotEmpty.extracting("name").containsOnly("tester 1", "tester 2")
                 return "Hello, ${person.joinToString(", ") { it.name }}"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
-        val executionResult = build.execute("""{hello(person: [{name: "tester"}, {name: "tester 2"}])}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        val executionResult = build.execute("""{hello(person: [{name: "tester 1"}, {name: "tester 2"}])}""")
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, tester, tester 2", data["hello"])
+        assertThat(data["hello"]).isEqualTo("Hello, tester 1, tester 2")
+    }
 
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    @Test
+    fun `@InputArgument on a list of input types, with no input argument name`() {
+        val schema = """
+            type Query {
+                hello(persons:[Person]): String
+            }
+            
+            input Person {
+                name:String
+            }
+        """.trimIndent()
+
+        val fetcher = object {
+            @DgsQuery(field = "hello")
+            fun someFetcher(@InputArgument persons: List<Person>): String {
+                assertThat(persons).isNotEmpty
+                assertThat(persons.map { it.name }).isNotNull.containsOnly("tester", "tester 2")
+                return "Hello, ${persons.joinToString(", ") { it.name }}"
+            }
+        }
+
+        withComponents("helloFetcher" to fetcher)
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello(persons: [{name: "tester"}, {name: "tester 2"}])}""")
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
+        val data = executionResult.getData<Map<String, *>>()
+        assertThat(data["hello"]).isEqualTo("Hello, tester, tester 2")
+    }
+
+    @Test
+    @Disabled("Reproduces Issue #1083")
+    fun `@InputArgument on an optional list of input types, with input argument name`() {
+        val schema = """
+            type Query {
+                hello(person:[Person]): String
+            }
+            
+            input Person {
+                name:String
+            }
+        """.trimIndent()
+
+        val fetcher = object {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument("person") person: Optional<List<Person>>): String {
+                assertThat(person)
+                    .isNotEmpty
+                    .get()
+                    .extracting { ls -> ls.map { it.name } }.asList()
+                    .containsOnly("tester 1", "tester 2")
+                return "Hello, ${person.get().joinToString(", ")}"
+            }
+        }
+
+        withComponents("helloFetcher" to fetcher)
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello(person: [{name: "tester 1"}, {name: "tester 2"}])}""")!!
+
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
+
+        val data = executionResult.getData<Map<String, *>>()
+        assertThat(data["hello"]).isEqualTo("Hello, tester 1, tester 2")
+    }
+
+    @Test
+    @Disabled("Reproduces Issue #1083")
+    fun `@InputArgument on an optional list of input types, with no input argument name`() {
+        val schema = """
+            type Query {
+                hello(person:[Person]): String
+            }
+            
+            input Person {
+                name:String
+            }
+        """.trimIndent()
+
+        val fetcher = object {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument person: Optional<List<Person>>): String {
+                assertThat(person)
+                    .isNotEmpty
+                    .get()
+                    .extracting { ls -> ls.map { it.name } }.asList()
+                    .containsOnly("tester 1", "tester 2")
+                return "Hello, ${person.get().joinToString(", ")}"
+            }
+        }
+
+        withComponents("helloFetcher" to fetcher)
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{hello(person: [{name: "tester 1"}, {name: "tester 2"}])}""")!!
+
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
+
+        val data = executionResult.getData<Map<String, *>>()
+        assertThat(data["hello"]).isEqualTo("Hello, tester 1, tester 2")
+    }
+
+    @Test
+    fun `@InputArgument on an optional list of integers`() {
+        val expectedNumbers = listOf(1, 2, 3)
+
+        val schema = """
+            type Query {
+                numbers(list: [Int]): String
+            }
+        """.trimIndent()
+
+        val fetcher = object {
+            @DgsQuery(field = "numbers")
+            fun numbers(@InputArgument("list") listOptional: Optional<List<Int>>, dfe: DataFetchingEnvironment): String {
+                assertThat(listOptional).isNotEmpty
+                assertThat(listOptional.get()).containsExactlyElementsOf(expectedNumbers)
+                return "Numbers are ${listOptional.map{ it.joinToString(", ") }.orElse("na")}"
+            }
+        }
+
+        withComponents("numbersFetcher" to fetcher)
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{ numbers(list: [1, 2, 3]) }""")
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.isDataPresent).isTrue
+
+        val data = executionResult.getData<Map<String, *>>()
+        assertThat(data["numbers"]).isEqualTo("Numbers are 1, 2, 3")
     }
 
     @Test
@@ -381,17 +608,11 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{titles(filter: {movieIds: [1, "two"]})}""")
+        assertThat(executionResult).isNotNull
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("Title for 1, Title for two", data["titles"])
@@ -430,17 +651,11 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{titles(input: {bars: [{name: "bar 1", value: 1}, {name: "bar 2", value: "two"}]})}""")
+        assertThat(executionResult).isNotNull
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("bar 1: 1, bar 2: two", data["titles"])
@@ -479,17 +694,11 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{titles(input: {bars: [{name: "bar 1", value: 1}, {name: "bar 2", value: "two"}]})}""")
+        assertThat(executionResult).isNotNull
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("bar 1: 1, bar 2: two", data["titles"])
@@ -516,25 +725,17 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
 
         val executionResult = build.execute("""{hello(person: [{name: "tester"}, {name: "tester 2"}, {name: "tester"}])}""")
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
         assertThat(executionResult.isDataPresent).isTrue
-        assertThat(executionResult.errors.size).isEqualTo(0)
 
         val data = executionResult.getData<Map<String, *>>()
         assertThat(data).extracting("hello").isEqualTo("Hello, tester, tester 2")
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 
     @Test
@@ -556,20 +757,16 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
 
         val executionResult = build.execute("""{hello(person: [{name: "tester"}, {name: "tester 2"}])}""")
-        assertThat(executionResult.errors.size).isEqualTo(1)
+        assertThat(executionResult.errors).hasSize(1)
         val exceptionWhileDataFetching = executionResult.errors[0] as ExceptionWhileDataFetching
         assertThat(exceptionWhileDataFetching.exception).isInstanceOf(ConversionFailedException::class.java)
         assertThat(exceptionWhileDataFetching.exception.message)
             .contains("Failed to convert from type [java.util.LinkedHashMap<?, ?>] to type [@com.netflix.graphql.dgs.InputArgument java.lang.String] for value '{name=tester}'")
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
 
     @Test
@@ -592,16 +789,14 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
 
         val executionResult = build.execute("""{hello(person: {})}""")
-        assertThat(executionResult.errors).hasSize(0)
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
     }
 
     @Test
@@ -626,22 +821,15 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, Stranger", data["hello"])
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("Hello, Stranger")
     }
 
     @Test
@@ -662,6 +850,8 @@ internal class InputArgumentTest {
                 @InputArgument("capitalize") capitalize: Boolean,
                 @InputArgument("person") person: Person
             ): String {
+                assertThat(capitalize).isTrue
+                assertThat(person).isNotNull.extracting { it.name }.isEqualTo("tester")
                 return if (capitalize) {
                     "Hello, ${person.name}"
                 } else {
@@ -670,22 +860,15 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello(capitalize: true, person: {name: "tester"})}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, tester", data["hello"])
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("Hello, tester")
     }
 
     @Test
@@ -709,6 +892,10 @@ internal class InputArgumentTest {
             ): String {
                 val otherArg: String = dfe.getArgument("otherArg")
 
+                assertThat(capitalize).isTrue
+                assertThat(person).isNotNull.extracting { it.name }.isEqualTo("tester")
+                assertThat(otherArg).isEqualTo("!")
+
                 val msg = if (capitalize) {
                     "Hello, ${person.name}"
                 } else {
@@ -718,22 +905,15 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello(capitalize: true, person: {name: "tester"}, otherArg: "!")}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, tester!", data["hello"])
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("Hello, tester!")
     }
 
     @Test
@@ -766,22 +946,15 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello(capitalize: true, person: {name: "tester"}, otherArg: "!")}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, tester!", data["hello"])
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("Hello, tester!")
     }
 
     @Test
@@ -801,27 +974,20 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            ),
-            Pair("Upload", UploadScalar()),
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-
+        withComponents("helloFetcher" to fetcher, "Upload" to UploadScalar())
         val file: MultipartFile =
             MockMultipartFile("hello.txt", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".toByteArray())
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute(
             ExecutionInput.newExecutionInput().query("mutation(\$input: Upload!)  { upload(file: \$input) }")
-                .variables(mapOf(Pair("input", file)))
+                .variables(mapOf("input" to file))
         )
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello World", data["upload"])
+        assertThat(data).extracting("upload").isEqualTo("Hello World")
     }
 
     @Test
@@ -835,27 +1001,20 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(someArg: String?): String {
-
+                assertThat(someArg).isNull()
                 return "Hello, $someArg"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, null", data["hello"])
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("Hello, null")
     }
 
     @Test
@@ -871,19 +1030,21 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Mutation", field = "setDate")
             fun someFetcher(@InputArgument("date") date: LocalDateTime): String {
+                assertThat(date).isNotNull
                 return "The date is: ${date.format(DateTimeFormatter.ISO_DATE)}"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf("DateTime" to LocalDateTimeScalar())
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
+        withScalars("DateTime" to LocalDateTimeScalar())
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""mutation {setDate(date: "2021-01-27T10:15:30")}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("The date is: 2021-01-27", data["setDate"])
+        assertThat(data).extracting("setDate").isEqualTo("The date is: 2021-01-27")
     }
 
     @Test
@@ -899,23 +1060,24 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Mutation", field = "setDate")
             fun someFetcher(@InputArgument("date") date: LocalDateTime?): String {
+                assertThat(date).isNull()
                 if (date == null) {
                     return "The future is now"
                 }
-
                 return "The date is: ${date.format(DateTimeFormatter.ISO_DATE)}"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf("DateTime" to LocalDateTimeScalar())
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
+        withScalars("DateTime" to LocalDateTimeScalar())
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""mutation {setDate(date: null)}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("The future is now", data["setDate"])
+        assertThat(data).extracting("setDate").isEqualTo("The future is now")
     }
 
     @Test
@@ -931,19 +1093,21 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Mutation", field = "setDate")
             fun someFetcher(@InputArgument("date") date: List<LocalDateTime>): String {
+                assertThat(date).isNotEmpty.hasSize(1)
                 return "The date is: ${date[0].format(DateTimeFormatter.ISO_DATE)}"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf("DateTime" to LocalDateTimeScalar())
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
+        withScalars("DateTime" to LocalDateTimeScalar())
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""mutation {setDate(date: ["2021-01-27T10:15:30"])}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("The date is: 2021-01-27", data["setDate"])
+        assertThat(data).extracting("setDate").isEqualTo("The date is: 2021-01-27")
     }
 
     @Test
@@ -967,15 +1131,16 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf("DateTime" to LocalDateTimeScalar())
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
+        withScalars("DateTime" to LocalDateTimeScalar())
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""mutation {setDate(input: {date: "2021-01-27T10:15:30"})}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("The date is: 2021-01-27", data["setDate"])
+        assertThat(data).extracting("setDate").isEqualTo("The date is: 2021-01-27")
     }
 
     @Test
@@ -991,19 +1156,20 @@ internal class InputArgumentTest {
             @DgsData(parentType = "Mutation", field = "setRatings")
             @Suppress("UNUSED_PARAMETER")
             fun someFetcher(@InputArgument("ratings") ratings: List<Int>): List<Int> {
+                assertThat(ratings).isNotEmpty.containsOnly(1, 2, 3)
                 return listOf(1, 2, 3)
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""mutation {setRatings(ratings: [1, 2, 3])}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals(listOf(1, 2, 3), data["setRatings"])
+        assertThat(data).extracting("setRatings").asList().containsOnly(1, 2, 3)
     }
 
     @Test
@@ -1011,29 +1177,21 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument name: Optional<String>): String {
+                assertThat(name).isNotEmpty.get().isEqualTo("tester")
                 return "Hello, ${name.orElse("default value")}"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val schema = provider.schema()
-
         val build = GraphQL.newGraphQL(schema).build()
         val executionResult = build.execute("""{hello(name: "tester")}""")
-        Assertions.assertTrue(executionResult.errors.isEmpty())
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, tester", data["hello"])
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("Hello, tester")
     }
 
     @Test
@@ -1051,26 +1209,20 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument("person") person: Optional<Person>): String {
+                assertThat(person).isNotEmpty.get().extracting { it.name }.isEqualTo("tester")
                 return "Hello, ${person.get().name}"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello(person: {name: "tester"})}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, tester", data["hello"])
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("Hello, tester")
     }
 
     @Test
@@ -1078,29 +1230,21 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument name: Optional<String>): String {
+                assertThat(name).isEmpty
                 return "Hello, ${name.orElse("default value")}"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-
+        withComponents("helloFetcher" to fetcher)
         val schema = provider.schema()
 
         val build = GraphQL.newGraphQL(schema).build()
         val executionResult = build.execute("""{hello}""")
-        Assertions.assertTrue(executionResult.errors.isEmpty())
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, default value", data["hello"])
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("Hello, default value")
     }
 
     @Test
@@ -1125,16 +1269,15 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello(type: FRIENDLY)}""")
-        assertThat(executionResult.errors.isEmpty()).isTrue
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, this is a FRIENDLY greeting", data["hello"])
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("Hello, this is a FRIENDLY greeting")
     }
 
     @Test
@@ -1159,16 +1302,15 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello(type: FRIENDLY)}""")
-        assertThat(executionResult.errors.isEmpty()).isTrue
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, this is a FRIENDLY greeting", data["hello"])
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("Hello, this is a FRIENDLY greeting")
     }
 
     @Test
@@ -1199,9 +1341,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute(
@@ -1212,7 +1352,11 @@ internal class InputArgumentTest {
             """.trimMargin()
         )
         assertThat(executionResult.errors.isEmpty()).isTrue
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
+        val data = executionResult.getData<Map<String, *>>()
     }
 
     @Test
@@ -1231,29 +1375,20 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument type: Optional<KGreetingType>): String {
-                if (!type.isPresent) {
-                    return "Hello, this is a default greeting"
-                }
-
-                return "Hello, this is a ${type.get()} greeting"
+                assertThat(type).isEmpty
+                return "Hello, this is a default greeting"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello}""")
-        assertThat(executionResult.errors.isEmpty()).isTrue
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, this is a default greeting", data["hello"])
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("Hello, this is a default greeting")
     }
 
     @Test
@@ -1272,25 +1407,20 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument type: KGreetingType?): String {
-                return "Hello, this is a ${type ?: "SAD"} greeting"
+                assertThat(type).isNull()
+                return "Hello, this is a SAD greeting"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello}""")
-        assertThat(executionResult.errors.isEmpty()).isTrue
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, this is a SAD greeting", data["hello"])
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("Hello, this is a SAD greeting")
     }
 
     @Test
@@ -1310,26 +1440,19 @@ internal class InputArgumentTest {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument type: JGreetingType): String {
                 assertThat(type).isInstanceOf(JGreetingType::class.java)
-
                 return "Hello, this is a $type greeting"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello(type: FRIENDLY)}""")
-        assertThat(executionResult.errors.isEmpty()).isTrue
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, this is a FRIENDLY greeting", data["hello"])
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("Hello, this is a FRIENDLY greeting")
     }
 
     @Test
@@ -1349,26 +1472,19 @@ internal class InputArgumentTest {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument type: Optional<JGreetingType>): String {
                 assertThat(type).isNotEmpty.get().isInstanceOf(JGreetingType::class.java)
-
                 return "Hello, this is a ${type.get()} greeting"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello(type: FRIENDLY)}""")
-        assertThat(executionResult.errors.isEmpty()).isTrue
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, this is a FRIENDLY greeting", data["hello"])
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("Hello, this is a FRIENDLY greeting")
     }
 
     @Test
@@ -1387,29 +1503,20 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument type: Optional<JGreetingType>): String {
-                if (!type.isPresent) {
-                    return "Hello, this is a default greeting"
-                }
-
-                return "Hello, this is a ${type.get()} greeting"
+                assertThat(type).isEmpty
+                return "Hello, this is a default greeting"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello}""")
-        assertThat(executionResult.errors.isEmpty()).isTrue
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, this is a default greeting", data["hello"])
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("Hello, this is a default greeting")
     }
 
     @Test
@@ -1441,9 +1548,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute(
@@ -1452,13 +1557,11 @@ internal class InputArgumentTest {
             """.trimIndent()
         )
 
+        assertThat(executionResult).isNotNull
         assertThat(executionResult.errors).isEmpty()
-        assertThat(executionResult)
-            .extracting { it.getData<Map<String, *>>() }
-            .extracting { it["hello"] }
-            .isEqualTo("Hello, this is a FRIENDLY greeting with [POLITE, FRIENDLY]")
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(executionResult.isDataPresent).isTrue
+        val data = executionResult.getData<Map<String, *>>()
+        assertThat(data).extracting("hello").isEqualTo("Hello, this is a FRIENDLY greeting with [POLITE, FRIENDLY]")
     }
 
     @Test
@@ -1481,25 +1584,20 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument someInput: JInputMessage): String {
-                return "Hello, this is a ${someInput.type ?: "SAD"} greeting"
+                assertThat(someInput.type).isNull()
+                return "Hello, this is a SAD greeting"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello(someInput: {type: null})}""")
-        assertThat(executionResult.errors.isEmpty()).isTrue
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, this is a SAD greeting", data["hello"])
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("Hello, this is a SAD greeting")
     }
 
     @Test
@@ -1531,9 +1629,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute(
@@ -1542,13 +1638,11 @@ internal class InputArgumentTest {
             """.trimIndent()
         )
 
+        assertThat(executionResult).isNotNull
         assertThat(executionResult.errors).isEmpty()
-        assertThat(executionResult)
-            .extracting { it.getData<Map<String, *>>() }
-            .extracting { it["hello"] }
-            .isEqualTo("Hello, this is a FRIENDLY greeting with [POLITE, FRIENDLY]")
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(executionResult.isDataPresent).isTrue
+        val data = executionResult.getData<Map<String, *>>()
+        assertThat(data).extracting("hello").isEqualTo("Hello, this is a FRIENDLY greeting with [POLITE, FRIENDLY]")
     }
 
     @Test
@@ -1556,28 +1650,21 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(name: String): String {
+                assertThat(name).isEqualTo("tester")
                 return "Hello, $name"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val schema = provider.schema()
-
         val build = GraphQL.newGraphQL(schema).build()
         val executionResult = build.execute("""{hello(name: "tester")}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Hello, tester", data["hello"])
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("Hello, tester")
     }
 
     @Test
@@ -1599,7 +1686,8 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument objects: List<KBarInput>): String {
-                return objects.joinToString { "${it.name}: ${it.value}" }
+                assertThat(objects).isNotEmpty
+                return objects.joinToString { a -> "${a.name}: ${a.value}" }
             }
 
             @DgsRuntimeWiring
@@ -1608,22 +1696,15 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello(objects: [{name: "Test 1", value: 1}, {name: "Test 2", value: "two"}])}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Test 1: 1, Test 2: two", data["hello"])
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("Test 1: 1, Test 2: two")
     }
 
     @Test
@@ -1640,31 +1721,24 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument json: Map<String, Any>): String {
-                return json.map { "${it.key}: ${it.value}" }.joinToString()
+                assertThat(json).isNotEmpty.containsKeys("keyA", "keyB").containsValues("value A", "value B")
+                return json.map { a -> "${a.key}: ${a.value}" }.joinToString()
             }
-
             @DgsRuntimeWiring
             fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
                 return builder.scalar(ExtendedScalars.Object)
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello(json: {keyA: "value A", keyB: "value B"})}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("keyA: value A, keyB: value B", data["hello"])
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("keyA: value A, keyB: value B")
     }
 
     @Test
@@ -1685,36 +1759,28 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument filter: KFilter): String {
+                assertThat(filter).isNotNull.extracting { it.query }.isNotNull()
                 return filter.toString()
             }
-
             @DgsRuntimeWiring
             fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
                 return builder.scalar(ExtendedScalars.Object)
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello(filter: {query: {and: ["title", "genre"]}})}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("KFilter(query={and=[title, genre]})", data["hello"])
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("KFilter(query={and=[title, genre]})")
     }
 
     @Test
     fun `A field of an input type of type Object should be assigned the actual value and skip converting`() {
-
         val schema = """
             type Query {
                 hello(filter: Filter): String
@@ -1730,6 +1796,7 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument filter: JFilter): String {
+                assertThat(filter).isNotNull.extracting { it.query }.isNotNull
                 @SuppressWarnings("unchecked")
                 val map = filter.query as? Map<*, *>
                 return map.orEmpty().entries.joinToString { (key, value) -> "$key: $value" }
@@ -1741,22 +1808,15 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute("""{hello(filter: {query: {and: ["title", "genre"]}})}""")
-        Assertions.assertTrue(executionResult.isDataPresent)
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("and: [title, genre]", data["hello"])
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(data).extracting("hello").isEqualTo("and: [title, genre]")
     }
 
     @Test
@@ -1785,15 +1845,12 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsQuery
             fun movies(@InputArgument sortBy: List<JMovieSortBy>): String {
+                assertThat(sortBy).isNotEmpty.hasSize(2)
                 return "Sorted by: ${sortBy.joinToString { "${it.field}" }}"
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            "helloFetcher" to fetcher
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("helloFetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
         val executionResult = build.execute(
@@ -1808,11 +1865,12 @@ internal class InputArgumentTest {
              }
             """.trimIndent()
         )
-        Assertions.assertTrue(executionResult.isDataPresent)
-        val data = executionResult.getData<Map<String, *>>()
-        Assertions.assertEquals("Sorted by: RELEASEDATE, TITLE", data["movies"])
 
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+        assertThat(executionResult).isNotNull
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
+        val data = executionResult.getData<Map<String, *>>()
+        assertThat(data).extracting("movies").isEqualTo("Sorted by: RELEASEDATE, TITLE")
     }
 
     @Test
@@ -1881,9 +1939,7 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("fetcher" to fetcher)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("fetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
 
@@ -1897,7 +1953,9 @@ internal class InputArgumentTest {
             """.trimIndent()
         )
 
+        assertThat(executionResult).isNotNull
         assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
         val data = executionResult.getData<Map<String, *>>()
         assertThat(data).hasEntrySatisfying("lists") { assertThat(it).isEqualTo("Ok") }
         assertThat(data).hasEntrySatisfying("enums") { assertThat(it).isEqualTo("Ok") }
@@ -1971,12 +2029,9 @@ internal class InputArgumentTest {
             }
         }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("fetcher" to fetcher)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        withComponents("fetcher" to fetcher)
 
         val build = GraphQL.newGraphQL(provider.schema(schema)).build()
-
         val executionResult = build.execute(
             """
                 {
@@ -1992,7 +2047,18 @@ internal class InputArgumentTest {
         assertThat(data).hasEntrySatisfying("lists") { assertThat(it).isEqualTo("Ok") }
         assertThat(data).hasEntrySatisfying("enums") { assertThat(it).isEqualTo("Ok") }
         assertThat(data).hasEntrySatisfying("strings") { assertThat(it).isEqualTo("Ok") }
-
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
     }
+
+    private fun withComponents(vararg components: Pair<String, Any>) {
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(*components)
+    }
+    private fun withNoComponents() = withComponents()
+    private fun withScalars(vararg scalars: Pair<String, Any>) {
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(*scalars)
+    }
+    private fun withNoScalars() = withScalars()
+    private fun withDirectives(vararg directives: Pair<String, Any>) {
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns mapOf(*directives)
+    }
+    private fun withNoDirectives() = withDirectives()
 }

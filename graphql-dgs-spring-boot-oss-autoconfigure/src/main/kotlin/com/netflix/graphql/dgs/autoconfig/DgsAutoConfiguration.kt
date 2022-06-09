@@ -24,10 +24,6 @@ import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
 import com.netflix.graphql.dgs.internal.*
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
 import com.netflix.graphql.dgs.internal.method.ArgumentResolver
-import com.netflix.graphql.dgs.internal.method.ContinuationArgumentResolver
-import com.netflix.graphql.dgs.internal.method.DataFetchingEnvironmentArgumentResolver
-import com.netflix.graphql.dgs.internal.method.FallbackEnvironmentArgumentResolver
-import com.netflix.graphql.dgs.internal.method.InputArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import com.netflix.graphql.mocking.MockProvider
@@ -68,7 +64,7 @@ import kotlin.streams.toList
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @Configuration
 @EnableConfigurationProperties(DgsConfigurationProperties::class)
-@ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class])
+@ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class, DgsInputArgumentConfiguration::class])
 open class DgsAutoConfiguration(
     private val configProps: DgsConfigurationProperties
 ) {
@@ -244,26 +240,5 @@ open class DgsAutoConfiguration(
     @Bean
     open fun methodDataFetcherFactory(argumentResolvers: ObjectProvider<ArgumentResolver>): MethodDataFetcherFactory {
         return MethodDataFetcherFactory(argumentResolvers.orderedStream().toList())
-    }
-
-    @Bean
-    open fun inputArgumentResolver(inputObjectMapper: ObjectProvider<InputObjectMapper>): ArgumentResolver {
-        val mapper = inputObjectMapper.ifAvailable ?: DefaultInputObjectMapper()
-        return InputArgumentResolver(mapper)
-    }
-
-    @Bean
-    open fun dataFetchingEnvironmentArgumentResolver(): ArgumentResolver {
-        return DataFetchingEnvironmentArgumentResolver()
-    }
-
-    @Bean
-    open fun coroutineArgumentResolver(): ArgumentResolver {
-        return ContinuationArgumentResolver()
-    }
-
-    @Bean
-    open fun fallbackEnvironmentArgumentResolver(): ArgumentResolver {
-        return FallbackEnvironmentArgumentResolver()
     }
 }

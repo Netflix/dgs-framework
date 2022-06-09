@@ -41,7 +41,7 @@ internal class DefaultDataFetcherExceptionHandlerTest {
     fun securityError() {
         every { dataFetcherExceptionHandlerParameters.exception }.returns(AccessDeniedException("Denied"))
 
-        val result = DefaultDataFetcherExceptionHandler().onException(dataFetcherExceptionHandlerParameters)
+        val result = DefaultDataFetcherExceptionHandler().handleException(dataFetcherExceptionHandlerParameters).get()
         assertThat(result.errors.size).isEqualTo(1)
 
         val extensions = result.errors[0].extensions
@@ -55,7 +55,7 @@ internal class DefaultDataFetcherExceptionHandlerTest {
     fun normalError() {
         every { dataFetcherExceptionHandlerParameters.exception }.returns(RuntimeException("Something broke"))
 
-        val result = DefaultDataFetcherExceptionHandler().onException(dataFetcherExceptionHandlerParameters)
+        val result = DefaultDataFetcherExceptionHandler().handleException(dataFetcherExceptionHandlerParameters).get()
         assertThat(result.errors.size).isEqualTo(1)
 
         val extensions = result.errors[0].extensions
@@ -69,7 +69,7 @@ internal class DefaultDataFetcherExceptionHandlerTest {
     fun normalErrorWithSpecialCharacterString() {
         every { dataFetcherExceptionHandlerParameters.exception }.returns(RuntimeException("/bgt_budgetingProject/specificPass: not a PassId: bdgt%3Apass%2F3"))
 
-        val result = DefaultDataFetcherExceptionHandler().onException(dataFetcherExceptionHandlerParameters)
+        val result = DefaultDataFetcherExceptionHandler().handleException(dataFetcherExceptionHandlerParameters).get()
         assertThat(result.errors.size).isEqualTo(1)
 
         val extensions = result.errors[0].extensions
@@ -83,7 +83,7 @@ internal class DefaultDataFetcherExceptionHandlerTest {
     fun entityNotFoundException() {
         every { dataFetcherExceptionHandlerParameters.exception }.returns(DgsEntityNotFoundException("Movie with movieId '1' was not found"))
 
-        val result = DefaultDataFetcherExceptionHandler().onException(dataFetcherExceptionHandlerParameters)
+        val result = DefaultDataFetcherExceptionHandler().handleException(dataFetcherExceptionHandlerParameters).get()
         assertThat(result.errors.size).isEqualTo(1)
 
         val extensions = result.errors[0].extensions
@@ -97,7 +97,7 @@ internal class DefaultDataFetcherExceptionHandlerTest {
     fun badRequestException() {
         every { dataFetcherExceptionHandlerParameters.exception }.returns(DgsBadRequestException("Malformed movie request"))
 
-        val result = DefaultDataFetcherExceptionHandler().onException(dataFetcherExceptionHandlerParameters)
+        val result = DefaultDataFetcherExceptionHandler().handleException(dataFetcherExceptionHandlerParameters).get()
         assertThat(result.errors.size).isEqualTo(1)
 
         val extensions = result.errors[0].extensions
