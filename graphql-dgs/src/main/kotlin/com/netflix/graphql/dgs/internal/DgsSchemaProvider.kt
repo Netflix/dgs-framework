@@ -79,6 +79,7 @@ class DgsSchemaProvider(
     private val entityFetcherRegistry: EntityFetcherRegistry = EntityFetcherRegistry(),
     private val defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty(),
     private val methodDataFetcherFactory: MethodDataFetcherFactory,
+    private val componentFilter: (Any) -> Boolean = { true }
 ) {
 
     private val schemaReadWriteLock = ReentrantReadWriteLock()
@@ -123,7 +124,8 @@ class DgsSchemaProvider(
 
     private fun computeSchema(schema: String? = null, fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
         val startTime = System.currentTimeMillis()
-        val dgsComponents = applicationContext.getBeansWithAnnotation(DgsComponent::class.java).values
+        val dgsComponents =
+            applicationContext.getBeansWithAnnotation(DgsComponent::class.java).values.filter(componentFilter)
         val hasDynamicTypeRegistry =
             dgsComponents.any { it.javaClass.methods.any { m -> m.isAnnotationPresent(DgsTypeDefinitionRegistry::class.java) } }
 
