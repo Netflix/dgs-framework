@@ -79,19 +79,20 @@ class DgsSchemaProvider(
     private val entityFetcherRegistry: EntityFetcherRegistry = EntityFetcherRegistry(),
     private val defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty(),
     private val methodDataFetcherFactory: MethodDataFetcherFactory,
+    private val componentFilter: (Any) -> Boolean = { true }
 ) {
 
     private val schemaReadWriteLock = ReentrantReadWriteLock()
 
     private val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
 
-    private val dataFetchers = mutableListOf<DatafetcherReference>()
+    private val dataFetchers = mutableListOf<DataFetcherReference>()
 
     /**
-     * Returns an immutable list of [DatafetcherReference]s that were identified after the schema was loaded.
+     * Returns an immutable list of [DataFetcherReference]s that were identified after the schema was loaded.
      * The returned list will be unstable until the [schema] is fully loaded.
      */
-    fun resolvedDataFetchers(): List<DatafetcherReference> {
+    fun resolvedDataFetchers(): List<DataFetcherReference> {
         return schemaReadWriteLock.read {
             dataFetchers.toList()
         }
@@ -123,7 +124,8 @@ class DgsSchemaProvider(
 
     private fun computeSchema(schema: String? = null, fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
         val startTime = System.currentTimeMillis()
-        val dgsComponents = applicationContext.getBeansWithAnnotation(DgsComponent::class.java).values
+        val dgsComponents =
+            applicationContext.getBeansWithAnnotation(DgsComponent::class.java).values.filter(componentFilter)
         val hasDynamicTypeRegistry =
             dgsComponents.any { it.javaClass.methods.any { m -> m.isAnnotationPresent(DgsTypeDefinitionRegistry::class.java) } }
 
@@ -287,8 +289,7 @@ class DgsSchemaProvider(
         val field = dgsDataAnnotation.getString("field").ifEmpty { method.name }
         val parentType = dgsDataAnnotation.getString("parentType")
 
-        //
-        dataFetchers.add(DatafetcherReference(dgsComponent, method, mergedAnnotations, parentType, field))
+        dataFetchers.add(DataFetcherReference(dgsComponent, method, mergedAnnotations, parentType, field))
 
         val enableInstrumentation =
             if (method.isAnnotationPresent(DgsEnableDataFetcherInstrumentation::class.java)) {

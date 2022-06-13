@@ -16,12 +16,11 @@
 
 package com.netflix.graphql.dgs.internal.method
 
+import com.netflix.graphql.dgs.internal.InputObjectMapper
 import graphql.schema.DataFetchingEnvironment
 import org.springframework.core.MethodParameter
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
-import org.springframework.core.convert.support.DefaultConversionService
-import org.springframework.util.ClassUtils
 
 /**
  * Resolves arguments based on the name by looking for any matching
@@ -29,19 +28,15 @@ import org.springframework.util.ClassUtils
  * a fallback if no other resolvers can handle the argument.
  */
 @Order(Ordered.LOWEST_PRECEDENCE)
-class FallbackEnvironmentArgumentResolver : ArgumentResolver {
-
-    private val conversionService = DefaultConversionService()
+class FallbackEnvironmentArgumentResolver(
+    inputObjectMapper: InputObjectMapper
+) : AbstractInputArgumentResolver(inputObjectMapper) {
 
     override fun supportsParameter(parameter: MethodParameter): Boolean {
         return parameter.parameterName != null
     }
 
-    override fun resolveArgument(parameter: MethodParameter, dfe: DataFetchingEnvironment): Any? {
-        val value = dfe.getArgument<Any?>(parameter.parameterName)
-        if (ClassUtils.isAssignableValue(parameter.parameterType, value)) {
-            return value
-        }
-        return conversionService.convert(value, parameter.parameterType)
+    override fun resolveArgumentName(parameter: MethodParameter): String? {
+        return parameter.parameterName
     }
 }

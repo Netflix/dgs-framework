@@ -26,9 +26,10 @@ group = "com.netflix.graphql.dgs"
 
 plugins {
     `java-library`
-    id("nebula.netflixoss") version "10.6.0"
     id("nebula.dependency-recommender") version "11.0.0"
+    id("nebula.netflixoss") version "10.6.0"
     id("org.jmailen.kotlinter") version "3.10.0"
+    id("me.champeau.jmh") version "0.6.6"
     kotlin("jvm") version Versions.KOTLIN_VERSION
     kotlin("kapt") version Versions.KOTLIN_VERSION
     idea
@@ -76,6 +77,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         plugin("kotlin")
         plugin("kotlin-kapt")
         plugin("org.jmailen.kotlinter")
+        plugin("me.champeau.jmh")
     }
 
     /**
@@ -92,6 +94,8 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     }
 
     val springBootVersion = extra["sb.version"] as String
+    val jmhVersion = "1.35"
+
     dependencies {
         // Apply the BOM to applicable subprojects.
         api(platform(project(":graphql-dgs-platform")))
@@ -103,6 +107,13 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         kapt("org.springframework.boot:spring-boot-autoconfigure-processor:${springBootVersion}")
         // Produce Config Metadata for properties used in Spring Boot for Kotlin
         kapt("org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}")
+
+        // Sets sets the JMH version to use across modules.
+        // Please refer to the following links for further reference.
+        // * https://github.com/melix/jmh-gradle-plugin
+        // * https://openjdk.java.net/projects/code-tools/jmh/
+        jmh("org.openjdk.jmh:jmh-core:${jmhVersion}")
+        jmh("org.openjdk.jmh:jmh-generator-annprocess:${jmhVersion}")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test") {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
@@ -123,6 +134,20 @@ configure(subprojects.filterNot { it in internalBomModules }) {
                 "$projectDir/src/main/resources"
             )
         }
+    }
+
+    jmh {
+        includeTests.set(true)
+        jmhTimeout.set("5s")
+        timeUnit.set("ms")
+        warmupIterations.set(2)
+        iterations.set(2)
+        fork.set(2)
+        duplicateClassesStrategy.set(DuplicatesStrategy.EXCLUDE)
+    }
+
+    tasks.withType<Jar>() {
+        duplicatesStrategy = DuplicatesStrategy.WARN
     }
 
     tasks.withType<JavaCompile>().configureEach {
