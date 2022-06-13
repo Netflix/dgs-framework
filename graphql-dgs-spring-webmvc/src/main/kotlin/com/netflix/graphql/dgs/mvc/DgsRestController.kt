@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody
 
 /**
  * HTTP entrypoint for the framework. Functionality in this class should be limited, so that as much code as possible
@@ -91,23 +92,32 @@ open class DgsRestController(
         @RequestParam(name = "map") mapParam: String?,
         @RequestHeader headers: HttpHeaders,
         webRequest: WebRequest
-    ): ResponseEntity<String> {
+    ): ResponseEntity<StreamingResponseBody> {
+
 
         logger.debug("Validate HTTP Headers for the GraphQL endpoint...")
         try {
             dgsGraphQLRequestHeaderValidator.assert(headers)
         } catch (e: DgsGraphQLRequestHeaderValidator.GraphqlRequestContentTypePredicateException) {
             logger.debug("Unsupported Media-Type {}.", headers.contentType, e)
-            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("Unsupported media type.")
+            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(StreamingResponseBody {
+                    out -> out.write("Unsupported media type.".toByteArray())
+            })
         } catch (e: DgsGraphQLRequestHeaderValidator.GraphQLRequestHeaderRuleException) {
             logger.debug("The Request Headers failed a DGS Header validation rule.", e)
-            return ResponseEntity.badRequest().body(e.message)
+            return ResponseEntity.badRequest().body(StreamingResponseBody {
+                    out -> out.write(e.message?.toByteArray())
+            })
         } catch (e: DgsGraphQLRequestHeaderValidator.GraphqlRequestHeaderValidationException) {
             logger.debug("The DGS Request Header Validator deemed the request headers as invalid.", e)
-            return ResponseEntity.badRequest().body(e.message)
+            return ResponseEntity.badRequest().body(StreamingResponseBody {
+                    out -> out.write(e.message?.toByteArray())
+            })
         } catch (e: Exception) {
             logger.error("The DGS Request Header Validator failed with exception!", e)
-            return ResponseEntity.internalServerError().body("Unable to validate the HTTP Request Headers.")
+            return ResponseEntity.internalServerError().body(StreamingResponseBody {
+                    out -> out.write("Unable to validate the HTTP Request Headers.".toByteArray())
+            })
         }
 
         logger.debug("Starting HTTP GraphQL handling...")
@@ -129,13 +139,20 @@ open class DgsRestController(
                     return when (ex) {
                         is JsonParseException ->
                             ResponseEntity.badRequest()
-                                .body("Invalid query - ${ex.message ?: "no details found in the error message"}.")
+                                .body(
+                                    StreamingResponseBody {
+                                            out -> out.write("Invalid query - ${ex.message ?: "no details found in the error message"}.".toByteArray())
+                                    })
                         is MismatchedInputException ->
                             ResponseEntity.badRequest()
-                                .body("Invalid query - No content to map to input.")
+                                .body(StreamingResponseBody {
+                                        out -> out.write("Invalid query - No content to map to input.".toByteArray())
+                                })
                         else ->
                             ResponseEntity.badRequest()
-                                .body("Invalid query - ${ex.message ?: "no additional details found"}.")
+                                .body(StreamingResponseBody {
+                                        out -> out.write("Invalid query - ${ex.message ?: "no additional details found"}.".toByteArray())
+                                })
                     }
                 }
 
@@ -188,14 +205,18 @@ open class DgsRestController(
                 }
             }
         } else {
-            return ResponseEntity.badRequest().body("Invalid GraphQL request - no request body was provided")
+            return ResponseEntity.badRequest().body(StreamingResponseBody {
+                    out -> out.write("Invalid GraphQL request - no request body was provided".toByteArray())
+            })
         }
 
         val opName = inputQuery["operationName"]
         val gqlOperationName = if (opName is String?) {
             opName
         } else {
-            return ResponseEntity.badRequest().body("Invalid GraphQL request - operationName must be a String")
+            return ResponseEntity.badRequest().body(StreamingResponseBody {
+                    out -> out.write("Invalid GraphQL request - operationName must be a String".toByteArray())
+            })
         }
 
         val query: String? = inputQuery["query"] as? String?
@@ -221,22 +242,29 @@ open class DgsRestController(
 
         if (executionResult.isDataPresent && executionResult.getData<Any>() is SubscriptionPublisher) {
             return ResponseEntity.badRequest()
-                .body("Trying to execute subscription on /graphql. Use /subscriptions instead!")
+                .body(StreamingResponseBody {
+                        out -> out.write("Trying to execute subscription on /graphql. Use /subscriptions instead!".toByteArray())
+                })
         }
 
-        val result = try {
-            TimeTracer.logTime(
-                { mapper.writeValueAsString(executionResult.toSpecification()) },
-                logger,
-                "Serialized JSON result in {}ms"
-            )
-        } catch (ex: InvalidDefinitionException) {
-            val errorMessage = "Error serializing response: ${ex.message}"
-            val errorResponse = ExecutionResultImpl(GraphqlErrorBuilder.newError().message(errorMessage).build())
-            logger.error(errorMessage, ex)
-            mapper.writeValueAsString(errorResponse.toSpecification())
-        }
 
-        return ResponseEntity.ok(result)
+        return ResponseEntity.ok(StreamingResponseBody {
+         out ->
+            run {
+                try {
+                    TimeTracer.logTime(
+                        { mapper.writeValue(out, executionResult.toSpecification()) },
+                        logger,
+                        "Serialized JSON result in {}ms"
+                    )
+                } catch (ex: InvalidDefinitionException) {
+                    val errorMessage = "Error serializing response: ${ex.message}"
+                    val errorResponse =
+                        ExecutionResultImpl(GraphqlErrorBuilder.newError().message(errorMessage).build())
+                    logger.error(errorMessage, ex)
+                    mapper.writeValueAsString(errorResponse.toSpecification())
+                }
+            }
+        })
     }
 }
