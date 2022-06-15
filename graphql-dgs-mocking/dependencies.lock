@@ -60,6 +60,131 @@
             "locked": "5.3.18"
         }
     },
+    "jmh": {
+        "org.openjdk.jmh:jmh-core": {
+            "locked": "1.35"
+        },
+        "org.openjdk.jmh:jmh-generator-annprocess": {
+            "locked": "1.35"
+        },
+        "org.openjdk.jmh:jmh-generator-bytecode": {
+            "locked": "1.29"
+        }
+    },
+    "jmhAnnotationProcessor": {
+        "com.fasterxml.jackson:jackson-bom": {
+            "locked": "2.13.2"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.6.21"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.6.7"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "2021.0.2"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.6.5"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.3.18"
+        }
+    },
+    "jmhCompileClasspath": {
+        "com.fasterxml.jackson:jackson-bom": {
+            "locked": "2.13.2"
+        },
+        "com.graphql-java:graphql-java": {
+            "locked": "18.1"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
+        },
+        "net.datafaker:datafaker": {
+            "locked": "1.4.0"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.6.21"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
+            "locked": "1.6.21"
+        },
+        "org.openjdk.jmh:jmh-core": {
+            "locked": "1.35"
+        },
+        "org.openjdk.jmh:jmh-generator-annprocess": {
+            "locked": "1.35"
+        },
+        "org.openjdk.jmh:jmh-generator-bytecode": {
+            "locked": "1.29"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.36"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.6.7"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "2021.0.2"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.6.5"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.3.18"
+        }
+    },
+    "jmhRuntimeClasspath": {
+        "com.fasterxml.jackson:jackson-bom": {
+            "locked": "2.13.2"
+        },
+        "com.graphql-java:graphql-java": {
+            "locked": "18.1"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
+        },
+        "io.mockk:mockk": {
+            "locked": "1.12.4"
+        },
+        "net.datafaker:datafaker": {
+            "locked": "1.4.0"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.6.21"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
+            "locked": "1.6.21"
+        },
+        "org.openjdk.jmh:jmh-core": {
+            "locked": "1.35"
+        },
+        "org.openjdk.jmh:jmh-generator-annprocess": {
+            "locked": "1.35"
+        },
+        "org.openjdk.jmh:jmh-generator-bytecode": {
+            "locked": "1.29"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.36"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.6.7"
+        },
+        "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "2.6.7"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "2021.0.2"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.6.5"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.3.18"
+        }
+    },
     "kapt": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
             "locked": "2.6.7"
@@ -69,6 +194,14 @@
         }
     },
     "kaptClasspath_kaptKotlin": {
+        "org.springframework.boot:spring-boot-autoconfigure-processor": {
+            "locked": "2.6.7"
+        },
+        "org.springframework.boot:spring-boot-configuration-processor": {
+            "locked": "2.6.7"
+        }
+    },
+    "kaptJmh": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
             "locked": "2.6.7"
         },
@@ -112,6 +245,32 @@
             "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.6.21"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.6.7"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "2021.0.2"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.6.5"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.3.18"
+        }
+    },
+    "kotlinCompilerPluginClasspathJmh": {
+        "com.fasterxml.jackson:jackson-bom": {
+            "locked": "2.13.2"
+        },
+        "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
+            "locked": "1.6.21"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.6.21"
+        },
+        "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
             "locked": "1.6.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
