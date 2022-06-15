@@ -23,9 +23,13 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.cglib.proxy.Enhancer
+import org.springframework.cglib.proxy.NoOp
 import org.springframework.context.ApplicationContext
 import java.util.*
 
@@ -34,8 +38,8 @@ class CustomDirectivesTest {
     @MockK
     lateinit var applicationContextMock: ApplicationContext
 
-    @Test
-    fun testCustomDirectives() {
+    @BeforeEach
+    fun setupApplicationMockedContext() {
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
             fun hello(): String = "hello"
@@ -51,6 +55,10 @@ class CustomDirectivesTest {
             )
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf()
+    }
+
+    @Test
+    fun testCustomDirectives() {
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns mapOf(
             Pair(
                 "uppercase",
@@ -105,5 +113,37 @@ class CustomDirectivesTest {
         assertEquals(0, wordExecutionResult.errors.size)
         val wordData = wordExecutionResult.getData<Map<String, String>>()
         assertThat(wordData["word"]).contains("xxx")
+    }
+
+    @Test
+    fun testProxiedDirective() {
+        val enhancer = Enhancer()
+        enhancer.setSuperclass(OpenDirective::class.java)
+        enhancer.setCallback(NoOp.INSTANCE)
+        val proxiedDirective = enhancer.create()
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns mapOf(
+            Pair(
+                "proxied",
+                proxiedDirective
+            )
+        )
+
+        val provider = DgsSchemaProvider(
+            applicationContext = applicationContextMock,
+            federationResolver = Optional.empty(),
+            existingTypeDefinitionRegistry = Optional.empty(),
+            methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
+        )
+
+        assertDoesNotThrow() {
+            provider.schema(
+                """
+                type Query {
+                    hello: String
+                }
+                """.trimIndent()
+            )
+        }
     }
 }
