@@ -18,16 +18,14 @@ package com.netflix.graphql.dgs;
 
 import org.springframework.stereotype.Component;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Mark a class as a custom Directive implementation that gets registered to the framework.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 @Component
 public @interface DgsDirective {
     String name() default "";

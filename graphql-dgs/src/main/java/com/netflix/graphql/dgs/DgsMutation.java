@@ -21,6 +21,7 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @DgsData(parentType = "Mutation")
+@Inherited
 public @interface DgsMutation {
     String field() default "";
 }

@@ -19,10 +19,7 @@ package com.netflix.graphql.dgs;
 import com.netflix.graphql.dgs.internal.utils.DataLoaderNameUtil;
 import org.springframework.stereotype.Component;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Marks a class or field as a DataLoader, which will be registered to the framework as a DataLoader.
@@ -32,6 +29,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Component
+@Inherited
 public @interface DgsDataLoader {
 
     /**

@@ -16,10 +16,7 @@
 
 package com.netflix.graphql.dgs;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Annotation to mark a function as a provider of runtime wiring.
@@ -28,5 +25,6 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 public @interface DgsRuntimeWiring {
 }

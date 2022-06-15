@@ -16,10 +16,7 @@
 
 package com.netflix.graphql.dgs;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Annotation to mark a method a provider of a CodeRegistry, which is a programmatic way of creating a schema.
@@ -27,5 +24,6 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 public @interface DgsCodeRegistry {
 }
