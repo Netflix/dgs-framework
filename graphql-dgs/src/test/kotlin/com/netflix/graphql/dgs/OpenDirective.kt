@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs;
+package com.netflix.graphql.dgs
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import graphql.schema.GraphQLFieldDefinition
+import graphql.schema.idl.SchemaDirectiveWiring
+import graphql.schema.idl.SchemaDirectiveWiringEnvironment
 
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-@DgsData(parentType = "Subscription")
-@Inherited
-public @interface DgsSubscription {
-    String field() default "";
+/**
+ *  An `@DgsDirective` example for test purpose.
+ */
+@DgsDirective
+open class OpenDirective : SchemaDirectiveWiring {
+    override fun onField(env: SchemaDirectiveWiringEnvironment<GraphQLFieldDefinition>): GraphQLFieldDefinition {
+        return env.element
+    }
 }
