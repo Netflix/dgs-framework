@@ -49,7 +49,7 @@ class DefaultDgsQueryExecutor(
     private val schemaProvider: DgsSchemaProvider,
     private val dataLoaderProvider: DgsDataLoaderProvider,
     private val contextBuilder: DefaultDgsGraphQLContextBuilder,
-    private val graphQLContextContributors: List<GraphQLContextContributor>,
+    private val graphQLContextContributors: List<GraphQLContextContributor>?,
     private val instrumentation: Instrumentation?,
     private val queryExecutionStrategy: ExecutionStrategy,
     private val mutationExecutionStrategy: ExecutionStrategy,
@@ -77,7 +77,7 @@ class DefaultDgsQueryExecutor(
         val dgsContext = contextBuilder.build(DgsWebMvcRequestData(extensions, headers, webRequest))
 
         val builderForContributors = GraphQLContext.newContext()
-        graphQLContextContributors?.forEach { it.contribute(builderForContributors, extensions, headers, webRequest) }
+        graphQLContextContributors?.forEach { it.contribute(builderForContributors, extensions, webRequest) }
 
         val executionResult =
             BaseDgsQueryExecutor.baseExecute(
@@ -114,6 +114,10 @@ class DefaultDgsQueryExecutor(
 
     override fun <T : Any?> executeAndExtractJsonPath(query: String, jsonPath: String, headers: HttpHeaders): T {
         return JsonPath.read(getJsonResult(query, emptyMap(), headers), jsonPath)
+    }
+
+    override fun <T : Any?> executeAndExtractJsonPath(query: String, jsonPath: String, headers: HttpHeaders, webRequest: WebRequest): T {
+        return JsonPath.read(getJsonResult(query, emptyMap(), headers, webRequest), jsonPath)
     }
 
     override fun <T> executeAndExtractJsonPathAsObject(
@@ -158,8 +162,8 @@ class DefaultDgsQueryExecutor(
         return parseContext.parse(getJsonResult(query, variables, headers))
     }
 
-    private fun getJsonResult(query: String, variables: Map<String, Any>, headers: HttpHeaders? = null): String {
-        val executionResult = execute(query, variables, null, headers, null, null)
+    private fun getJsonResult(query: String, variables: Map<String, Any>, headers: HttpHeaders? = null, webRequest: WebRequest? = null): String {
+        val executionResult = execute(query, variables, null, headers, null, webRequest)
 
         if (executionResult.errors.size > 0) {
             throw QueryException(executionResult.errors)

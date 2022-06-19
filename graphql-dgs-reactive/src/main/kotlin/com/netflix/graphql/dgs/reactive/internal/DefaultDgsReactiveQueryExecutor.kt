@@ -50,7 +50,7 @@ class DefaultDgsReactiveQueryExecutor(
     private val schemaProvider: DgsSchemaProvider,
     private val dataLoaderProvider: DgsDataLoaderProvider,
     private val contextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
-    private val graphQLContextContributors: List<ReactiveGraphQLContextContributor>,
+    private val graphQLContextContributors: List<ReactiveGraphQLContextContributor>?,
     private val instrumentation: Instrumentation?,
     private val queryExecutionStrategy: ExecutionStrategy,
     private val mutationExecutionStrategy: ExecutionStrategy,
@@ -85,7 +85,6 @@ class DefaultDgsReactiveQueryExecutor(
                     it.contribute(
                         builderForContributors,
                         extensions,
-                        headers,
                         serverHttpRequest
                     )
                 }

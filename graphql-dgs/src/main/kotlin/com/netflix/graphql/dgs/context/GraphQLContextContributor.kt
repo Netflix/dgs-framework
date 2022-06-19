@@ -17,7 +17,6 @@
 package com.netflix.graphql.dgs.context
 
 import graphql.GraphQLContext
-import org.springframework.http.HttpHeaders
 import org.springframework.web.context.request.WebRequest
 
 /**
@@ -28,7 +27,6 @@ interface GraphQLContextContributor {
     fun contribute(
         builder: GraphQLContext.Builder,
         extensions: Map<String, Any>?,
-        headers: HttpHeaders?,
         webRequest: WebRequest?
     )
 }

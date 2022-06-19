@@ -45,7 +45,6 @@ public class ExampleInstrumentation extends SimpleInstrumentation {
                 }
             };
         }
-        ;
         return null;
     }
 

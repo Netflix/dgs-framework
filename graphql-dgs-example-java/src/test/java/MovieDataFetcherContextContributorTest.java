@@ -24,8 +24,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.ServletWebRequest;
 
-import static com.netflix.graphql.dgs.example.context.MyContextContributor.CONTEXT_CONTRIBUTOR_HEADER;
+import static com.netflix.graphql.dgs.example.context.MyContextContributor.CONTEXT_CONTRIBUTOR_HEADER_NAME;
+import static com.netflix.graphql.dgs.example.context.MyContextContributor.CONTEXT_CONTRIBUTOR_HEADER_VALUE;
+import static com.netflix.graphql.dgs.example.context.MyContextContributor.CONTRIBUTOR_ENABLED_CONTEXT_VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = {MovieDataFetcher.class, MyContextContributor.class, ExampleInstrumentation.class, DgsAutoConfiguration.class, DgsPaginationAutoConfiguration.class})
@@ -37,8 +41,13 @@ public class MovieDataFetcherContextContributorTest {
     @Test
     void moviesExtensionShouldHaveContributedEnabledExtension() {
         HttpHeaders headers = new HttpHeaders();
-        headers.add(CONTEXT_CONTRIBUTOR_HEADER, "enabled");
-        String contributorEnabled = queryExecutor.executeAndExtractJsonPath("{ movies { director } }", "extensions.contributorEnabled", headers);
+        headers.add(CONTEXT_CONTRIBUTOR_HEADER_NAME, CONTEXT_CONTRIBUTOR_HEADER_VALUE);
+
+        final MockHttpServletRequest mockServletRequest = new MockHttpServletRequest();
+        mockServletRequest.addHeader(CONTEXT_CONTRIBUTOR_HEADER_NAME, CONTEXT_CONTRIBUTOR_HEADER_VALUE);
+
+        ServletWebRequest servletWebRequest = new ServletWebRequest(mockServletRequest);
+        String contributorEnabled = queryExecutor.executeAndExtractJsonPath("{ movies { director } }", "extensions.contributorEnabled", headers, servletWebRequest);
         assertThat(contributorEnabled).isEqualTo("true");
     }
 }

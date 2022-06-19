@@ -20,7 +20,6 @@ import com.netflix.graphql.dgs.context.GraphQLContextContributor;
 import graphql.GraphQLContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
@@ -30,14 +29,15 @@ import java.util.Map;
 public class MyContextContributor implements GraphQLContextContributor {
 
     public static final String CONTRIBUTOR_ENABLED_CONTEXT_KEY = "contributorEnabled";
-    public static final String CONTEXT_CONTRIBUTOR_HEADER = "context-contributor-header";
-
+    public static final String CONTRIBUTOR_ENABLED_CONTEXT_VALUE = "true";
+    public static final String CONTEXT_CONTRIBUTOR_HEADER_NAME = "context-contributor-header";
+    public static final String CONTEXT_CONTRIBUTOR_HEADER_VALUE = "enabled";
     @Override
-    public void contribute(@NotNull GraphQLContext.Builder builder, @Nullable Map<String, ?> extensions, @Nullable HttpHeaders headers, @Nullable WebRequest webRequest) {
-        if (headers != null) {
-            String contributedContextHeader = headers.getFirst(CONTEXT_CONTRIBUTOR_HEADER);
-            if ("enabled".equals(contributedContextHeader)) {
-                builder.put(CONTRIBUTOR_ENABLED_CONTEXT_KEY, "true");
+    public void contribute(@NotNull GraphQLContext.Builder builder, @Nullable Map<String, ?> extensions, @Nullable WebRequest webRequest) {
+        if (webRequest != null) {
+            String contributedContextHeader = webRequest.getHeader(CONTEXT_CONTRIBUTOR_HEADER_NAME);
+            if (CONTEXT_CONTRIBUTOR_HEADER_VALUE.equals(contributedContextHeader)) {
+                builder.put(CONTRIBUTOR_ENABLED_CONTEXT_KEY, CONTRIBUTOR_ENABLED_CONTEXT_VALUE);
             }
         }
     }

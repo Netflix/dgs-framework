@@ -159,6 +159,26 @@ public interface DgsQueryExecutor {
                                     HttpHeaders headers);
 
     /**
+     * Executes a GraphQL query, parses the returned data, and uses a Json Path to extract specific elements out of the data.
+     * The method is generic, and tries to cast the result into the type you specify. This does NOT work on Lists. Use {@link #executeAndExtractJsonPathAsObject(String, String, TypeRef)}instead.
+     * <p>
+     * This only works for primitive types and map representations.
+     * Use {@link #executeAndExtractJsonPathAsObject(String, String, Class)} for complex types and lists. *
+     *
+     * @param query    Query string
+     * @param jsonPath JsonPath expression.
+     * @param headers  Spring {@link HttpHeaders}
+     * @param webRequest Spring {@link WebRequest}
+     * @param <T>      The type of primitive or map representation that should be returned.
+     * @return The extracted value from the result, converted to type T
+     * @see <a href="https://github.com/json-path/JsonPath">JsonPath syntax docs</a>
+     */
+    <T> T executeAndExtractJsonPath(@Language("GraphQL") String query,
+                                    @Language("JSONPath") String jsonPath,
+                                    HttpHeaders headers,
+                                    WebRequest webRequest);
+
+    /**
      * Executes a GraphQL query, parses the returned data, and return a {@link DocumentContext}.
      * A {@link DocumentContext} can be used to extract multiple values using JsonPath, without re-executing the query.
      *

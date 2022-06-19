@@ -44,6 +44,7 @@ import graphql.schema.visibility.DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VIS
 import graphql.schema.visibility.GraphqlFieldVisibility
 import graphql.schema.visibility.NoIntrospectionGraphqlFieldVisibility.NO_INTROSPECTION_FIELD_VISIBILITY
 import org.springframework.beans.factory.ObjectProvider
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
@@ -81,7 +82,7 @@ open class DgsAutoConfiguration(
         schemaProvider: DgsSchemaProvider,
         dgsDataLoaderProvider: DgsDataLoaderProvider,
         dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
-        graphQLContextContributors: List<GraphQLContextContributor>,
+        @Autowired(required = false) graphQLContextContributors: List<GraphQLContextContributor>? = null,
         dataFetcherExceptionHandler: DataFetcherExceptionHandler,
         instrumentations: ObjectProvider<Instrumentation>,
         environment: Environment,

@@ -17,7 +17,6 @@
 package com.netflix.graphql.dgs.reactive
 
 import graphql.GraphQLContext
-import org.springframework.http.HttpHeaders
 import org.springframework.web.reactive.function.server.ServerRequest
 
 /**
@@ -28,7 +27,6 @@ interface ReactiveGraphQLContextContributor {
     fun contribute(
         builder: GraphQLContext.Builder,
         extensions: Map<String, Any>?,
-        headers: HttpHeaders?,
         serverRequest: ServerRequest?
     )
 }
