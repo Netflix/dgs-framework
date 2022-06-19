@@ -77,7 +77,7 @@ class DefaultDgsQueryExecutor(
         val dgsContext = contextBuilder.build(DgsWebMvcRequestData(extensions, headers, webRequest))
 
         val builderForContributors = GraphQLContext.newContext()
-        graphQLContextContributors.forEach{it.contribute(builderForContributors, extensions, headers, webRequest)}
+        graphQLContextContributors?.forEach{it.contribute(builderForContributors, extensions, headers, webRequest)}
 
         val executionResult =
             BaseDgsQueryExecutor.baseExecute(

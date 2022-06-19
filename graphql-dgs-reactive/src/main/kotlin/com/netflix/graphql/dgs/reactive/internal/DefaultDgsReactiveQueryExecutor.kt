@@ -20,7 +20,7 @@ import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
-import com.netflix.graphql.dgs.context.GraphQLContextContributor
+import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor
@@ -28,6 +28,7 @@ import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.QueryValueCustomizer
+import com.netflix.graphql.dgs.reactive.ReactiveGraphQLContextContributor
 import graphql.ExecutionResult
 import graphql.GraphQLContext
 import graphql.execution.ExecutionIdProvider
@@ -50,7 +51,7 @@ class DefaultDgsReactiveQueryExecutor(
     private val schemaProvider: DgsSchemaProvider,
     private val dataLoaderProvider: DgsDataLoaderProvider,
     private val contextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
-    private val graphQLContextContributors: List<GraphQLContextContributor>,
+    private val graphQLContextContributors: List<ReactiveGraphQLContextContributor>,
     private val instrumentation: Instrumentation?,
     private val queryExecutionStrategy: ExecutionStrategy,
     private val mutationExecutionStrategy: ExecutionStrategy,
@@ -71,15 +72,28 @@ class DefaultDgsReactiveQueryExecutor(
         serverHttpRequest: ServerRequest?
     ): Mono<ExecutionResult> {
 
-        return Mono
-            .fromCallable {
+        return Mono.zip(
+            Mono.fromCallable {
                 if (reloadIndicator.reloadSchema())
                     schema.updateAndGet { schemaProvider.schema() }
                 else
                     schema.get()
+            },
+            contextBuilder.build(DgsReactiveRequestData(extensions, headers, serverHttpRequest)),
+            Mono.fromCallable {
+                val builderForContributors = GraphQLContext.newContext()
+                graphQLContextContributors?.forEach {
+                    it.contribute(
+                        builderForContributors,
+                        extensions,
+                        headers,
+                        serverHttpRequest
+                    )
+                }
+                builderForContributors
             }
-            .zipWith(contextBuilder.build(DgsReactiveRequestData(extensions, headers, serverHttpRequest)))
-            .flatMap { (gqlSchema, dgsContext) ->
+        )
+            .flatMap { (gqlSchema, dgsContext, builderForContributors) ->
                 Mono.fromCompletionStage(
                     BaseDgsQueryExecutor.baseExecute(
                         query = queryValueCustomizer.apply(query),
@@ -87,8 +101,7 @@ class DefaultDgsReactiveQueryExecutor(
                         extensions = extensions,
                         operationName = operationName,
                         dgsContext = dgsContext,
-                        // TODO: build up graphQLContextContributors, empty for reactive ATM
-                        contributedGraphQLContext = GraphQLContext.newContext().build(),
+                        contributedGraphQLContext = builderForContributors.build(),
                         graphQLSchema = gqlSchema,
                         dataLoaderProvider = dataLoaderProvider,
                         instrumentation = instrumentation,

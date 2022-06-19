@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.context
+package com.netflix.graphql.dgs.reactive
 
 import graphql.GraphQLContext
 import org.springframework.http.HttpHeaders
-import org.springframework.web.context.request.WebRequest
+import org.springframework.web.reactive.function.server.ServerRequest
 
 /**
  * For each bean implementing this interface found, the framework will call the [build] method for every request.
  * The [contribute] method is then able to use the [GraphQLContext.Builder] to provide additional entries to place in the context.
  */
-interface GraphQLContextContributor {
+interface ReactiveGraphQLContextContributor {
     fun contribute(
         builder: GraphQLContext.Builder,
         extensions: Map<String, Any>?,
         headers: HttpHeaders?,
-        webRequest: WebRequest?
+        serverRequest: ServerRequest?
     )
 }

@@ -18,7 +18,6 @@ package com.netflix.graphql.dgs.webflux.autoconfiguration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.netflix.graphql.dgs.context.GraphQLContextContributor
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
@@ -28,6 +27,7 @@ import com.netflix.graphql.dgs.internal.QueryValueCustomizer
 import com.netflix.graphql.dgs.internal.method.ArgumentResolver
 import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
+import com.netflix.graphql.dgs.reactive.ReactiveGraphQLContextContributor
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.method.SyncHandlerMethodArgumentResolverAdapter
@@ -96,7 +96,7 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
         schemaProvider: DgsSchemaProvider,
         dgsDataLoaderProvider: DgsDataLoaderProvider,
         dgsContextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
-        graphQLContextContributors: List<GraphQLContextContributor>,
+        graphQLContextContributors: List<ReactiveGraphQLContextContributor>,
         dataFetcherExceptionHandler: DataFetcherExceptionHandler,
         instrumentations: ObjectProvider<Instrumentation>,
         environment: Environment,
