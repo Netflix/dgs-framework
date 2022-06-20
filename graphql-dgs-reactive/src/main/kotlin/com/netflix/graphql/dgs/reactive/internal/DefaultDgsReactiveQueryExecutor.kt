@@ -27,6 +27,7 @@ import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.QueryValueCustomizer
+import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.ReactiveGraphQLContextContributor
 import graphql.ExecutionResult
 import graphql.GraphQLContext
@@ -58,14 +59,14 @@ class DefaultDgsReactiveQueryExecutor(
     private val reloadIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator = DefaultDgsQueryExecutor.ReloadSchemaIndicator { false },
     private val preparsedDocumentProvider: PreparsedDocumentProvider? = null,
     private val queryValueCustomizer: QueryValueCustomizer = QueryValueCustomizer { query -> query }
-) : com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor {
+) : DgsReactiveQueryExecutor {
 
     private val schema = AtomicReference(defaultSchema)
 
     override fun execute(
         query: String?,
-        variables: MutableMap<String, Any>?,
-        extensions: MutableMap<String, Any>?,
+        variables: Map<String, Any>?,
+        extensions: Map<String, Any>?,
         headers: HttpHeaders?,
         operationName: String?,
         serverHttpRequest: ServerRequest?
@@ -122,16 +123,17 @@ class DefaultDgsReactiveQueryExecutor(
     override fun <T : Any> executeAndExtractJsonPath(
         query: String,
         jsonPath: String,
-        variables: MutableMap<String, Any>
+        variables: MutableMap<String, Any>?,
+        serverHttpRequest: ServerRequest?
     ): Mono<T> {
-        return getJsonResult(query, variables).map { JsonPath.read(it, jsonPath) }
+        return getJsonResult(query, variables, serverHttpRequest).map { JsonPath.read(it, jsonPath) }
     }
 
     override fun executeAndGetDocumentContext(
         query: String,
         variables: MutableMap<String, Any>
     ): Mono<DocumentContext> {
-        return getJsonResult(query, variables).map(BaseDgsQueryExecutor.parseContext::parse)
+        return getJsonResult(query, variables, null).map(BaseDgsQueryExecutor.parseContext::parse)
     }
 
     override fun <T : Any?> executeAndExtractJsonPathAsObject(
@@ -140,7 +142,7 @@ class DefaultDgsReactiveQueryExecutor(
         variables: MutableMap<String, Any>,
         clazz: Class<T>
     ): Mono<T> {
-        return getJsonResult(query, variables)
+        return getJsonResult(query, variables, null)
             .map(BaseDgsQueryExecutor.parseContext::parse)
             .map {
                 try {
@@ -157,7 +159,7 @@ class DefaultDgsReactiveQueryExecutor(
         variables: MutableMap<String, Any>,
         typeRef: TypeRef<T>
     ): Mono<T> {
-        return getJsonResult(query, variables)
+        return getJsonResult(query, variables, null)
             .map(BaseDgsQueryExecutor.parseContext::parse)
             .map {
                 try {
@@ -168,8 +170,19 @@ class DefaultDgsReactiveQueryExecutor(
             }
     }
 
-    private fun getJsonResult(query: String, variables: Map<String, Any>): Mono<String> {
-        return execute(query, variables).map { executionResult ->
+    private fun getJsonResult(
+        query: String,
+        variables: Map<String, Any>?,
+        serverHttpRequest: ServerRequest?
+    ): Mono<String> {
+        return execute(
+            query,
+            variables ?: Collections.emptyMap(),
+            null,
+            null,
+            null,
+            serverHttpRequest
+        ).map { executionResult ->
             if (executionResult.errors.size > 0) {
                 throw QueryException(executionResult.errors)
             }
