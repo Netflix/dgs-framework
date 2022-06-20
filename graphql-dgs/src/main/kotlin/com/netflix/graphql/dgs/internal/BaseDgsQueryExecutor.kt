@@ -107,7 +107,7 @@ object BaseDgsQueryExecutor {
                 .newExecutionInput()
                 .query(query)
                 .operationName(operationName)
-                .variables(variables)
+                .variables(variables.orEmpty())
                 .dataLoaderRegistry(dataLoaderRegistry)
                 .context(dgsContext)
                 .graphQLContext(dgsContext)

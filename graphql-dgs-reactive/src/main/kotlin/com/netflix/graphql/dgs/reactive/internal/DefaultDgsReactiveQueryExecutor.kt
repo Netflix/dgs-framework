@@ -177,7 +177,7 @@ class DefaultDgsReactiveQueryExecutor(
     ): Mono<String> {
         return execute(
             query,
-            variables ?: Collections.emptyMap(),
+            variables,
             null,
             null,
             null,
