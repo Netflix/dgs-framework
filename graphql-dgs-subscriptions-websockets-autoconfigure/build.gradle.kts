@@ -20,4 +20,6 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("org.springframework:spring-websocket")
+    implementation("jakarta.annotation:jakarta.annotation-api")
+
 }
