@@ -17,6 +17,12 @@
       "type": "java.lang.Boolean",
       "description": "Enables recommended GDS GraphQL HTTP Header validation rules.",
       "defaultValue": "true"
+    },
+    {
+      "name": "dgs.graphql.graphiql.title",
+      "type": "java.lang.String",
+      "description": "Customize the GraphiQL title",
+      "defaultValue": "Simple GraphiQL Example"
     }
   ]
 }

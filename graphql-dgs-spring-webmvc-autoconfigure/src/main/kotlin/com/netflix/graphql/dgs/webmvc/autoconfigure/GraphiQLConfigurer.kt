@@ -31,7 +31,7 @@ import org.springframework.web.servlet.resource.ResourceTransformerChain
 import org.springframework.web.servlet.resource.TransformedResource
 import java.io.BufferedReader
 import java.io.IOException
-import java.nio.charset.StandardCharsets.UTF_8
+import java.nio.charset.StandardCharsets
 import javax.servlet.ServletContext
 import javax.servlet.http.HttpServletRequest
 
@@ -57,10 +57,10 @@ open class GraphiQLConfigurer(
             .setCachePeriod(3600)
             .resourceChain(true)
             .addResolver(PathResourceResolver())
-            .addTransformer(TokenReplacingTransformer("<DGS_GRAPHQL_PATH>", graphqlPath))
+            .addTransformer(TokenReplacingTransformer(mapOf("<DGS_GRAPHQL_PATH>" to graphqlPath, "<DGS_GRAPHIQL_TITLE>" to configProps.graphiql.title)))
     }
 
-    class TokenReplacingTransformer(private val replaceToken: String, private val replaceValue: String) :
+    class TokenReplacingTransformer(private val replaceMap: Map<String, String>) :
         ResourceTransformer {
 
         @Throws(IOException::class)
@@ -70,8 +70,9 @@ open class GraphiQLConfigurer(
             transformerChain: ResourceTransformerChain
         ): Resource {
             if (request.requestURI.orEmpty().endsWith(PATH_TO_GRAPHIQL_INDEX_HTML)) {
-                val content = resource.inputStream.bufferedReader().use(BufferedReader::readText)
-                return TransformedResource(resource, content.replace(replaceToken, replaceValue).toByteArray(UTF_8))
+                var content = resource.inputStream.bufferedReader().use(BufferedReader::readText)
+                replaceMap.forEach { content = content.replace(it.key, it.value) }
+                return TransformedResource(resource, content.toByteArray(StandardCharsets.UTF_8))
             }
             return resource
         }
