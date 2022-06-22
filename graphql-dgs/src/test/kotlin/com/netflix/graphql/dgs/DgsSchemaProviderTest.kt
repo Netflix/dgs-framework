@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs
 
+import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
 import com.netflix.graphql.dgs.internal.DefaultInputObjectMapper
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
@@ -38,6 +39,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.assertj.core.api.Assertions.assertThatNoException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -234,6 +236,26 @@ internal class DgsSchemaProviderTest {
         assertHello(build)
 
         verifyComponents()
+    }
+
+    @Test
+    fun withNoTypeResolvers() {
+        val schema = """
+            type Query {
+                video: Video
+            }
+
+            interface Video {
+                title: String
+            }
+        """.trimIndent()
+
+        withComponents("videoFetcher" to defaultVideoFetcher)
+        val error: InvalidTypeResolverException = assertThrows {
+            val build = GraphQL.newGraphQL(schemaProvider().schema(schema)).build()
+            build.execute("{video{title}}")
+        }
+        assertThat(error.message).isEqualTo("The default type resolver could not find a suitable Java type for GraphQL interface type `Video`. Provide a @DgsTypeResolver for Show.")
     }
 
     @Test

@@ -447,7 +447,7 @@ class DgsSchemaProvider(
                         val instance = env.getObject<Any>()
                         val resolvedType = env.schema.getObjectType(instance::class.java.simpleName)
                         resolvedType
-                            ?: throw InvalidTypeResolverException("The default type resolver could not find a suitable Java type for GraphQL type `${instance::class.java.simpleName}. Provide a @DgsTypeResolver.`")
+                            ?: throw InvalidTypeResolverException("The default type resolver could not find a suitable Java type for GraphQL interface type `${it}`. Provide a @DgsTypeResolver for ${instance::class.java.simpleName}.")
                     }
             )
         }
