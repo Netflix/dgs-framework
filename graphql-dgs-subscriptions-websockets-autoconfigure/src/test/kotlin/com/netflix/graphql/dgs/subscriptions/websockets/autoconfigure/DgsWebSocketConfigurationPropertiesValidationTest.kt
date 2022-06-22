@@ -42,14 +42,14 @@ class DgsWebSocketConfigurationPropertiesValidationTest {
     }
 
     @Test
-    fun graphiqlControllerInvalidCustomPathEndsWithSlash() {
+    fun websocketInvalidCustomPathEndsWithSlash() {
         context
             .withPropertyValues("dgs.graphql.websocket.path: /pws/")
             .run { ctx ->
-                Assertions.assertThat(ctx).hasFailed().failure.getRootCause().hasMessageContaining("dgs.graphql.websocket.path must start with '/' and not end with '/'")
+                Assertions.assertThat(ctx).hasFailed()
+                    .failure.rootCause.hasMessageContaining("dgs.graphql.websocket.path must start with '/' and not end with '/'")
             }
     }
-
 
     @Configuration
     @EnableConfigurationProperties(DgsWebSocketConfigurationProperties::class)

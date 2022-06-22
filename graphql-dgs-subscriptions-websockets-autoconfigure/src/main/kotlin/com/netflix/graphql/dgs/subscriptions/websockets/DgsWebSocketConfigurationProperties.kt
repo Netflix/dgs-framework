@@ -38,5 +38,4 @@ data class DgsWebSocketConfigurationProperties(
             throw IllegalArgumentException("$pathProperty must start with '/' and not end with '/' but was '$path'")
         }
     }
-
 }

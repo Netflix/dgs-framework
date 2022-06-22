@@ -27,13 +27,13 @@ import java.util.*
 class DgsWebSocketConfigurationPropertiesTest {
 
     @Test
-    fun graphQLPathDefault() {
+    fun websocketPathDefault() {
         val properties = bind(Collections.emptyMap())
         Assertions.assertThat(properties.path).isEqualTo("/subscriptions")
     }
 
     @Test
-    fun graphQLPathCustom() {
+    fun websocketPathCustom() {
         val properties = bind("dgs.graphql.websocket.path", "/private/subscriptions")
         Assertions.assertThat(properties.path).isEqualTo("/private/subscriptions")
     }
@@ -46,5 +46,4 @@ class DgsWebSocketConfigurationPropertiesTest {
         val source: ConfigurationPropertySource = MapConfigurationPropertySource(map)
         return Binder(source).bindOrCreate("dgs.graphql.websocket", DgsWebSocketConfigurationProperties::class.java)
     }
-
 }
