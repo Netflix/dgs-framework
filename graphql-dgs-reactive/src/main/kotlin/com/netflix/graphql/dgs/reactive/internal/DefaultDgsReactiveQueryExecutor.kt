@@ -23,8 +23,8 @@ import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor
+import com.netflix.graphql.dgs.internal.DataLoaderProvider
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
-import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.QueryValueCustomizer
 import graphql.ExecutionResult
@@ -46,7 +46,7 @@ import java.util.concurrent.atomic.AtomicReference
 class DefaultDgsReactiveQueryExecutor(
     defaultSchema: GraphQLSchema,
     private val schemaProvider: DgsSchemaProvider,
-    private val dataLoaderProvider: DgsDataLoaderProvider,
+    private val dataLoaderProvider: DataLoaderProvider,
     private val contextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
     private val instrumentation: Instrumentation?,
     private val queryExecutionStrategy: ExecutionStrategy,

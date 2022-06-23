@@ -46,7 +46,7 @@ import javax.annotation.PostConstruct
 /**
  * Framework implementation class responsible for finding and configuring data loaders.
  */
-class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) {
+open class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) : DataLoaderProvider {
 
     private data class LoaderHolder<T>(val theLoader: T, val annotation: DgsDataLoader, val name: String, val dispatchPredicate: DispatchPredicate? = null)
 
@@ -55,11 +55,11 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
     private val mappedBatchLoaders = mutableListOf<LoaderHolder<MappedBatchLoader<*, *>>>()
     private val mappedBatchLoadersWithContext = mutableListOf<LoaderHolder<MappedBatchLoaderWithContext<*, *>>>()
 
-    fun buildRegistry(): DataLoaderRegistry {
+    override fun buildRegistry(): DataLoaderRegistry {
         return buildRegistryWithContextSupplier { null }
     }
 
-    fun <T> buildRegistryWithContextSupplier(contextSupplier: Supplier<T>): DataLoaderRegistry {
+    override fun <T> buildRegistryWithContextSupplier(contextSupplier: Supplier<T>): DataLoaderRegistry {
         val startTime = System.currentTimeMillis()
         val dgsDataLoaderRegistry = DgsDataLoaderRegistry()
 
@@ -129,7 +129,7 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         addDataLoaderFields()
     }
 
-    private fun addDataLoaderFields() {
+    protected open fun addDataLoaderFields() {
         applicationContext.getBeansWithAnnotation(DgsComponent::class.java).values.forEach { dgsComponent ->
             val javaClass = AopUtils.getTargetClass(dgsComponent)
 
@@ -158,7 +158,7 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         }
     }
 
-    private fun addDataLoaderComponents() {
+    protected open fun addDataLoaderComponents() {
         val dataLoaders = applicationContext.getBeansWithAnnotation(DgsDataLoader::class.java)
         dataLoaders.values.forEach { dgsComponent ->
             val javaClass = AopUtils.getTargetClass(dgsComponent)
@@ -188,7 +188,7 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         }
     }
 
-    private fun createDataLoader(
+    protected open fun createDataLoader(
         batchLoader: BatchLoader<*, *>,
         dgsDataLoader: DgsDataLoader,
         dataLoaderName: String,
@@ -204,7 +204,7 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         return DataLoaderFactory.newDataLoader(extendedBatchLoader, options)
     }
 
-    private fun createDataLoader(
+    protected open fun createDataLoader(
         batchLoader: MappedBatchLoader<*, *>,
         dgsDataLoader: DgsDataLoader,
         dataLoaderName: String,
@@ -220,7 +220,7 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         return DataLoaderFactory.newMappedDataLoader(extendedBatchLoader, options)
     }
 
-    private fun <T> createDataLoader(
+    protected open fun <T> createDataLoader(
         batchLoader: BatchLoaderWithContext<*, *>,
         dgsDataLoader: DgsDataLoader,
         dataLoaderName: String,
@@ -238,7 +238,7 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         return DataLoaderFactory.newDataLoader(extendedBatchLoader, options)
     }
 
-    private fun <T> createDataLoader(
+    protected open fun <T> createDataLoader(
         batchLoader: MappedBatchLoaderWithContext<*, *>,
         dgsDataLoader: DgsDataLoader,
         dataLoaderName: String,
@@ -256,7 +256,7 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         return DataLoaderFactory.newMappedDataLoader(extendedBatchLoader, options)
     }
 
-    private fun dataLoaderOptions(annotation: DgsDataLoader): DataLoaderOptions {
+    protected open fun dataLoaderOptions(annotation: DgsDataLoader): DataLoaderOptions {
         val options = DataLoaderOptions()
             .setBatchingEnabled(annotation.batching)
             .setCachingEnabled(annotation.caching)

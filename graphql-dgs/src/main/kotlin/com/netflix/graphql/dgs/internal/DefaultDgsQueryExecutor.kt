@@ -46,7 +46,7 @@ import java.util.concurrent.atomic.AtomicReference
 class DefaultDgsQueryExecutor(
     defaultSchema: GraphQLSchema,
     private val schemaProvider: DgsSchemaProvider,
-    private val dataLoaderProvider: DgsDataLoaderProvider,
+    private val dataLoaderProvider: DataLoaderProvider,
     private val contextBuilder: DefaultDgsGraphQLContextBuilder,
     private val instrumentation: Instrumentation?,
     private val queryExecutionStrategy: ExecutionStrategy,

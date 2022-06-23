@@ -90,7 +90,7 @@ open class DgsAutoConfiguration(
         applicationContext: ApplicationContext,
         schema: GraphQLSchema,
         schemaProvider: DgsSchemaProvider,
-        dgsDataLoaderProvider: DgsDataLoaderProvider,
+        dataLoaderProvider: DataLoaderProvider,
         dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
         dataFetcherExceptionHandler: DataFetcherExceptionHandler,
         instrumentations: ObjectProvider<Instrumentation>,
@@ -117,7 +117,7 @@ open class DgsAutoConfiguration(
         return DefaultDgsQueryExecutor(
             defaultSchema = schema,
             schemaProvider = schemaProvider,
-            dataLoaderProvider = dgsDataLoaderProvider,
+            dataLoaderProvider = dataLoaderProvider,
             contextBuilder = dgsContextBuilder,
             instrumentation = instrumentation,
             queryExecutionStrategy = queryExecutionStrategy,
@@ -136,7 +136,8 @@ open class DgsAutoConfiguration(
     }
 
     @Bean
-    open fun dgsDataLoaderProvider(applicationContext: ApplicationContext): DgsDataLoaderProvider {
+    @ConditionalOnMissingBean
+    open fun dgsDataLoaderProvider(applicationContext: ApplicationContext): DataLoaderProvider {
         return DgsDataLoaderProvider(applicationContext)
     }
 

@@ -18,8 +18,8 @@ package com.netflix.graphql.dgs.webflux.autoconfiguration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.netflix.graphql.dgs.internal.DataLoaderProvider
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
-import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.FluxDataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.MonoDataFetcherResultProcessor
@@ -93,7 +93,7 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
         applicationContext: ApplicationContext,
         schema: GraphQLSchema,
         schemaProvider: DgsSchemaProvider,
-        dgsDataLoaderProvider: DgsDataLoaderProvider,
+        dataLoaderProvider: DataLoaderProvider,
         dgsContextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
         dataFetcherExceptionHandler: DataFetcherExceptionHandler,
         instrumentations: ObjectProvider<Instrumentation>,
@@ -119,7 +119,7 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
         return DefaultDgsReactiveQueryExecutor(
             defaultSchema = schema,
             schemaProvider = schemaProvider,
-            dataLoaderProvider = dgsDataLoaderProvider,
+            dataLoaderProvider = dataLoaderProvider,
             contextBuilder = dgsContextBuilder,
             instrumentation = instrumentation,
             queryExecutionStrategy = queryExecutionStrategy,

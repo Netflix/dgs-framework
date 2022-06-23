@@ -70,7 +70,7 @@ object BaseDgsQueryExecutor {
         operationName: String?,
         dgsContext: DgsContext,
         graphQLSchema: GraphQLSchema,
-        dataLoaderProvider: DgsDataLoaderProvider,
+        dataLoaderProvider: DataLoaderProvider,
         instrumentation: Instrumentation?,
         queryExecutionStrategy: ExecutionStrategy,
         mutationExecutionStrategy: ExecutionStrategy,
