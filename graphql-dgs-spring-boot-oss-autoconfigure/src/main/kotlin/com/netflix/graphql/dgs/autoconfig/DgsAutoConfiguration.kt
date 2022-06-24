@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.autoconfig
 
+import com.netflix.graphql.dgs.DataLoaderProvider
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
@@ -59,7 +60,6 @@ import org.springframework.core.PriorityOrdered
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 import java.util.*
-import kotlin.streams.toList
 
 /**
  * Framework auto configuration based on open source Spring only, without Netflix integrations.
@@ -87,20 +87,20 @@ open class DgsAutoConfiguration(
 
     @Bean
     open fun dgsQueryExecutor(
-        applicationContext: ApplicationContext,
-        schema: GraphQLSchema,
-        schemaProvider: DgsSchemaProvider,
-        dataLoaderProvider: DataLoaderProvider,
-        dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
-        dataFetcherExceptionHandler: DataFetcherExceptionHandler,
-        instrumentations: ObjectProvider<Instrumentation>,
-        environment: Environment,
-        @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
-        @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
-        idProvider: Optional<ExecutionIdProvider>,
-        reloadSchemaIndicator: ReloadSchemaIndicator,
-        preparsedDocumentProvider: ObjectProvider<PreparsedDocumentProvider>,
-        queryValueCustomizer: QueryValueCustomizer
+            applicationContext: ApplicationContext,
+            schema: GraphQLSchema,
+            schemaProvider: DgsSchemaProvider,
+            dataLoaderProvider: DataLoaderProvider,
+            dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
+            dataFetcherExceptionHandler: DataFetcherExceptionHandler,
+            instrumentations: ObjectProvider<Instrumentation>,
+            environment: Environment,
+            @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
+            @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
+            idProvider: Optional<ExecutionIdProvider>,
+            reloadSchemaIndicator: ReloadSchemaIndicator,
+            preparsedDocumentProvider: ObjectProvider<PreparsedDocumentProvider>,
+            queryValueCustomizer: QueryValueCustomizer
     ): DgsQueryExecutor {
         val queryExecutionStrategy =
             providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
@@ -138,7 +138,7 @@ open class DgsAutoConfiguration(
     @Bean
     @ConditionalOnMissingBean
     open fun dgsDataLoaderProvider(applicationContext: ApplicationContext): DataLoaderProvider {
-        return DgsDataLoaderProvider(applicationContext)
+        return DefaultDgsDataLoaderProvider(applicationContext)
     }
 
     /**

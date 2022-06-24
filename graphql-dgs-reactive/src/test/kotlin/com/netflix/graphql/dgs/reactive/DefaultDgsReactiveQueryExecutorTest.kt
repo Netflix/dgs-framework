@@ -24,7 +24,7 @@ import com.netflix.graphql.dgs.DgsDirective
 import com.netflix.graphql.dgs.DgsScalar
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
-import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
+import com.netflix.graphql.dgs.internal.DefaultDgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
@@ -52,7 +52,7 @@ internal class DefaultDgsReactiveQueryExecutorTest {
     lateinit var applicationContextMock: ApplicationContext
 
     @MockK
-    lateinit var dgsDataLoaderProvider: DgsDataLoaderProvider
+    lateinit var dgsDataLoaderProvider: DefaultDgsDataLoaderProvider
 
     lateinit var dgsQueryExecutor: DefaultDgsReactiveQueryExecutor
 

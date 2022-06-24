@@ -21,7 +21,7 @@ import com.netflix.graphql.dgs.DgsData
 import com.netflix.graphql.dgs.DgsDirective
 import com.netflix.graphql.dgs.DgsScalar
 import com.netflix.graphql.dgs.exceptions.QueryException
-import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
+import com.netflix.graphql.dgs.internal.DefaultDgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.FlowDataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.FluxDataFetcherResultProcessor
@@ -63,7 +63,7 @@ internal class ReactiveReturnTypesTest {
     lateinit var applicationContextMock: ApplicationContext
 
     @MockK
-    lateinit var dgsDataLoaderProvider: DgsDataLoaderProvider
+    lateinit var dgsDataLoaderProvider: DefaultDgsDataLoaderProvider
 
     @MockK
     lateinit var stubContextConsumer: Consumer<ContextView>

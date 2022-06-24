@@ -16,7 +16,7 @@
 
 package com.netflix.graphql.dgs
 
-import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
+import com.netflix.graphql.dgs.internal.DefaultDgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.method.DataFetchingEnvironmentArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
@@ -120,7 +120,7 @@ internal class DgsDataFetchingEnvironmentTest {
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", helloFetcher))
         every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns mapOf(Pair("helloLoader", ExampleBatchLoader()))
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-        val provider = DgsDataLoaderProvider(applicationContextMock)
+        val provider = DefaultDgsDataLoaderProvider(applicationContextMock)
         provider.findDataLoaders()
         val dataLoaderRegistry = provider.buildRegistry()
 
@@ -148,7 +148,7 @@ internal class DgsDataFetchingEnvironmentTest {
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", helloFetcherWithBasicDFE))
         every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns mapOf(Pair("helloLoader", ExampleBatchLoader()))
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-        val provider = DgsDataLoaderProvider(applicationContextMock)
+        val provider = DefaultDgsDataLoaderProvider(applicationContextMock)
         provider.findDataLoaders()
         val dataLoaderRegistry = provider.buildRegistry()
 
@@ -177,7 +177,7 @@ internal class DgsDataFetchingEnvironmentTest {
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", helloFetcherWithField), Pair("helloLoader", ExampleBatchLoaderFromField()))
 
-        val provider = DgsDataLoaderProvider(applicationContextMock)
+        val provider = DefaultDgsDataLoaderProvider(applicationContextMock)
         provider.findDataLoaders()
         val dataLoaderRegistry = provider.buildRegistry()
 
@@ -206,7 +206,7 @@ internal class DgsDataFetchingEnvironmentTest {
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", helloFetcherWithMultipleField), Pair("helloLoader", ExampleMultipleBatchLoadersAsField()))
 
-        val provider = DgsDataLoaderProvider(applicationContextMock)
+        val provider = DefaultDgsDataLoaderProvider(applicationContextMock)
         provider.findDataLoaders()
         val dataLoaderRegistry = provider.buildRegistry()
 
@@ -233,7 +233,7 @@ internal class DgsDataFetchingEnvironmentTest {
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", helloFetcherMapped))
         every { applicationContextMock.getBeansWithAnnotation(DgsDataLoader::class.java) } returns mapOf(Pair("helloLoader", ExampleMappedBatchLoader()))
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-        val provider = DgsDataLoaderProvider(applicationContextMock)
+        val provider = DefaultDgsDataLoaderProvider(applicationContextMock)
         provider.findDataLoaders()
         val dataLoaderRegistry = provider.buildRegistry()
 
@@ -263,7 +263,7 @@ internal class DgsDataFetchingEnvironmentTest {
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("helloFetcher", helloFetcherWithFieldMapped), Pair("helloLoader", ExampleMappedBatchLoaderFromField()))
 
-        val provider = DgsDataLoaderProvider(applicationContextMock)
+        val provider = DefaultDgsDataLoaderProvider(applicationContextMock)
         provider.findDataLoaders()
         val dataLoaderRegistry = provider.buildRegistry()
 

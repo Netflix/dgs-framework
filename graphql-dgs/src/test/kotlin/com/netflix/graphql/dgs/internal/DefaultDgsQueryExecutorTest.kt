@@ -51,7 +51,7 @@ internal class DefaultDgsQueryExecutorTest {
     lateinit var applicationContextMock: ApplicationContext
 
     @MockK
-    lateinit var dgsDataLoaderProvider: DgsDataLoaderProvider
+    lateinit var dgsDataLoaderProvider: DefaultDgsDataLoaderProvider
 
     lateinit var dgsQueryExecutor: DefaultDgsQueryExecutor
 

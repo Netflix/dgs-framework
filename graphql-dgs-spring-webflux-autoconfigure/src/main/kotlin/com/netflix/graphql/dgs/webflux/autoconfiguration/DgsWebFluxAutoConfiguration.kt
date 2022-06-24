@@ -18,7 +18,7 @@ package com.netflix.graphql.dgs.webflux.autoconfiguration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.netflix.graphql.dgs.internal.DataLoaderProvider
+import com.netflix.graphql.dgs.DataLoaderProvider
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.FluxDataFetcherResultProcessor
@@ -81,7 +81,6 @@ import reactor.core.publisher.Mono
 import reactor.netty.http.server.WebsocketServerSpec
 import java.net.URI
 import java.util.*
-import kotlin.streams.toList
 
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @Configuration
@@ -90,20 +89,20 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
 
     @Bean
     open fun dgsReactiveQueryExecutor(
-        applicationContext: ApplicationContext,
-        schema: GraphQLSchema,
-        schemaProvider: DgsSchemaProvider,
-        dataLoaderProvider: DataLoaderProvider,
-        dgsContextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
-        dataFetcherExceptionHandler: DataFetcherExceptionHandler,
-        instrumentations: ObjectProvider<Instrumentation>,
-        environment: Environment,
-        @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
-        @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
-        idProvider: Optional<ExecutionIdProvider>,
-        reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator,
-        preparsedDocumentProvider: ObjectProvider<PreparsedDocumentProvider>,
-        queryValueCustomizer: QueryValueCustomizer
+            applicationContext: ApplicationContext,
+            schema: GraphQLSchema,
+            schemaProvider: DgsSchemaProvider,
+            dataLoaderProvider: DataLoaderProvider,
+            dgsContextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
+            dataFetcherExceptionHandler: DataFetcherExceptionHandler,
+            instrumentations: ObjectProvider<Instrumentation>,
+            environment: Environment,
+            @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
+            @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
+            idProvider: Optional<ExecutionIdProvider>,
+            reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator,
+            preparsedDocumentProvider: ObjectProvider<PreparsedDocumentProvider>,
+            queryValueCustomizer: QueryValueCustomizer
     ): DgsReactiveQueryExecutor {
         val queryExecutionStrategy =
             providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))

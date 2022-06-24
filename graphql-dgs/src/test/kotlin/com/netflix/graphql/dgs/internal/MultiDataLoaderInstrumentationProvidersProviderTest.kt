@@ -43,7 +43,7 @@ internal class MultiDataLoaderInstrumentationProvidersProviderTest {
     lateinit var testAcc: MultiValueMap<String, String>
 
     @Autowired
-    lateinit var dgsDataLoaderProvider: DgsDataLoaderProvider
+    lateinit var dgsDataLoaderProvider: DefaultDgsDataLoaderProvider
 
     private val expectedAppliedOrder = listOf("head", "mid", "tail")
 
@@ -121,8 +121,8 @@ internal class MultiDataLoaderInstrumentationProvidersProviderTest {
         }
 
         @Bean
-        open fun dgsDataLoaderProvider(applicationContext: ApplicationContext): DgsDataLoaderProvider {
-            return DgsDataLoaderProvider(applicationContext)
+        open fun dgsDataLoaderProvider(applicationContext: ApplicationContext): DefaultDgsDataLoaderProvider {
+            return DefaultDgsDataLoaderProvider(applicationContext)
         }
     }
 

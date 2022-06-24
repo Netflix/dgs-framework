@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.internal
+package com.netflix.graphql.dgs
 
 import org.dataloader.DataLoaderRegistry
 import java.util.function.Supplier

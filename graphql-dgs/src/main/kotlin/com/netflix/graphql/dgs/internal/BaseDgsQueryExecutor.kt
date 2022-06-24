@@ -26,6 +26,7 @@ import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.ParseContext
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
+import com.netflix.graphql.dgs.DataLoaderProvider
 import com.netflix.graphql.dgs.DgsExecutionResult
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsBadRequestException
