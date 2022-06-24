@@ -87,20 +87,20 @@ open class DgsAutoConfiguration(
 
     @Bean
     open fun dgsQueryExecutor(
-            applicationContext: ApplicationContext,
-            schema: GraphQLSchema,
-            schemaProvider: DgsSchemaProvider,
-            dataLoaderProvider: DataLoaderProvider,
-            dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
-            dataFetcherExceptionHandler: DataFetcherExceptionHandler,
-            instrumentations: ObjectProvider<Instrumentation>,
-            environment: Environment,
-            @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
-            @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
-            idProvider: Optional<ExecutionIdProvider>,
-            reloadSchemaIndicator: ReloadSchemaIndicator,
-            preparsedDocumentProvider: ObjectProvider<PreparsedDocumentProvider>,
-            queryValueCustomizer: QueryValueCustomizer
+        applicationContext: ApplicationContext,
+        schema: GraphQLSchema,
+        schemaProvider: DgsSchemaProvider,
+        dataLoaderProvider: DataLoaderProvider,
+        dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
+        dataFetcherExceptionHandler: DataFetcherExceptionHandler,
+        instrumentations: ObjectProvider<Instrumentation>,
+        environment: Environment,
+        @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
+        @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
+        idProvider: Optional<ExecutionIdProvider>,
+        reloadSchemaIndicator: ReloadSchemaIndicator,
+        preparsedDocumentProvider: ObjectProvider<PreparsedDocumentProvider>,
+        queryValueCustomizer: QueryValueCustomizer
     ): DgsQueryExecutor {
         val queryExecutionStrategy =
             providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))

@@ -81,6 +81,7 @@ import reactor.core.publisher.Mono
 import reactor.netty.http.server.WebsocketServerSpec
 import java.net.URI
 import java.util.*
+import kotlin.streams.toList
 
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @Configuration
@@ -89,20 +90,20 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
 
     @Bean
     open fun dgsReactiveQueryExecutor(
-            applicationContext: ApplicationContext,
-            schema: GraphQLSchema,
-            schemaProvider: DgsSchemaProvider,
-            dataLoaderProvider: DataLoaderProvider,
-            dgsContextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
-            dataFetcherExceptionHandler: DataFetcherExceptionHandler,
-            instrumentations: ObjectProvider<Instrumentation>,
-            environment: Environment,
-            @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
-            @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
-            idProvider: Optional<ExecutionIdProvider>,
-            reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator,
-            preparsedDocumentProvider: ObjectProvider<PreparsedDocumentProvider>,
-            queryValueCustomizer: QueryValueCustomizer
+        applicationContext: ApplicationContext,
+        schema: GraphQLSchema,
+        schemaProvider: DgsSchemaProvider,
+        dataLoaderProvider: DataLoaderProvider,
+        dgsContextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
+        dataFetcherExceptionHandler: DataFetcherExceptionHandler,
+        instrumentations: ObjectProvider<Instrumentation>,
+        environment: Environment,
+        @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
+        @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
+        idProvider: Optional<ExecutionIdProvider>,
+        reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator,
+        preparsedDocumentProvider: ObjectProvider<PreparsedDocumentProvider>,
+        queryValueCustomizer: QueryValueCustomizer
     ): DgsReactiveQueryExecutor {
         val queryExecutionStrategy =
             providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
