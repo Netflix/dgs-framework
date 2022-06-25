@@ -435,11 +435,28 @@ class DgsSchemaProvider(
 
         // Add a fallback type resolver for types that don't have a type resolver registered.
         // This works when the Java type has the same name as the GraphQL type.
-        val unregisteredTypes = mergedRegistry.types()
+        // Check for unregistered interface types
+        val unregisteredInterfaceTypes = mergedRegistry.types()
             .asSequence()
-            .filter { (_, typeDef) -> typeDef is InterfaceTypeDefinition || typeDef is UnionTypeDefinition }
+            .filter { (_, typeDef) -> typeDef is InterfaceTypeDefinition }
             .map { (name, _) -> name }
             .filter { it !in registeredTypeResolvers }
+        checkTypeResolverExists(unregisteredInterfaceTypes, runtimeWiringBuilder, "interface")
+
+        // Check for unregistered union types
+        val unregisteredUnionTypes = mergedRegistry.types()
+            .asSequence()
+            .filter { (_, typeDef) -> typeDef is UnionTypeDefinition }
+            .map { (name, _) -> name }
+            .filter { it !in registeredTypeResolvers }
+        checkTypeResolverExists(unregisteredUnionTypes, runtimeWiringBuilder, "union")
+    }
+
+    private fun checkTypeResolverExists(
+        unregisteredTypes: Sequence<String>,
+        runtimeWiringBuilder: RuntimeWiring.Builder,
+        typeName: String
+    ) {
         unregisteredTypes.forEach {
             runtimeWiringBuilder.type(
                 TypeRuntimeWiring.newTypeWiring(it)
@@ -447,7 +464,7 @@ class DgsSchemaProvider(
                         val instance = env.getObject<Any>()
                         val resolvedType = env.schema.getObjectType(instance::class.java.simpleName)
                         resolvedType
-                            ?: throw InvalidTypeResolverException("The default type resolver could not find a suitable Java type for GraphQL type `${instance::class.java.simpleName}. Provide a @DgsTypeResolver.`")
+                            ?: throw InvalidTypeResolverException("The default type resolver could not find a suitable Java type for GraphQL $typeName type `$it`. Provide a @DgsTypeResolver for `${instance::class.java.simpleName}`.")
                     }
             )
         }
