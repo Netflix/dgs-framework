@@ -449,7 +449,7 @@ class DgsSchemaProvider(
             .filter { (_, typeDef) -> typeDef is UnionTypeDefinition }
             .map { (name, _) -> name }
             .filter { it !in registeredTypeResolvers }
-       checkTypeResolverExists(unregisteredUnionTypes, runtimeWiringBuilder, "union")
+        checkTypeResolverExists(unregisteredUnionTypes, runtimeWiringBuilder, "union")
     }
 
     private fun checkTypeResolverExists(
