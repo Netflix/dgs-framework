@@ -63,6 +63,10 @@ internal class DgsSchemaProviderTest {
     @MockK
     lateinit var applicationContextMock: ApplicationContext
 
+    data class MovieSearch(val title: String, val length: Int)
+
+    data class SeriesSearch(val name: String, val episodes: Int)
+
     private fun schemaProvider(
         typeDefinitionRegistry: TypeDefinitionRegistry? = null,
         schemaLocations: List<String> = listOf(DgsSchemaProvider.DEFAULT_SCHEMA_LOCATION),
@@ -105,6 +109,16 @@ internal class DgsSchemaProviderTest {
     private val interfaceHelloFetcher = object : DefaultHelloFetcherInterface {
         override fun someFetcher(): String =
             "Hello"
+    }
+
+    private val searchFetcher = object : Any() {
+        @DgsData(parentType = "Query", field = "search")
+        fun someFetcher(): List<Any> {
+            return listOf(
+                MovieSearch("Extraction", 90),
+                SeriesSearch("The Witcher", 15)
+            )
+        }
     }
 
     @BeforeEach
@@ -238,7 +252,7 @@ internal class DgsSchemaProviderTest {
     }
 
     @Test
-    fun withNoTypeResolvers() {
+    fun withNoTypeResolversOfInterface() {
         val schema = """
             type Query {
                 video: Video
@@ -254,7 +268,50 @@ internal class DgsSchemaProviderTest {
             val build = GraphQL.newGraphQL(schemaProvider().schema(schema)).build()
             build.execute("{video{title}}")
         }
-        assertThat(error.message).isEqualTo("The default type resolver could not find a suitable Java type for GraphQL interface type `Video`. Provide a @DgsTypeResolver for Show.")
+        assertThat(error.message).isEqualTo("The default type resolver could not find a suitable Java type for GraphQL interface type `Video`. Provide a @DgsTypeResolver for `Show`.")
+    }
+
+    @Test
+    fun withNoTypeResolversOfUnion() {
+        val schema = """
+            type Query {
+                search: [SearchResult]
+            }
+            
+            union SearchResult = MovieSearchResult | SeriesSearchResult
+            
+            type MovieSearchResult {
+                title: String
+                length: Int
+            }
+            
+            type SeriesSearchResult {
+                title: String
+                episodes: Int
+            }
+        """.trimIndent()
+
+        withComponents("searchResultTypeResolver" to searchFetcher)
+        val error: InvalidTypeResolverException = assertThrows {
+            val build = GraphQL.newGraphQL(schemaProvider().schema(schema)).build()
+            build.execute(
+                """
+                     query {
+                        search {
+                            ...on MovieSearchResult {
+                                title
+                                length
+                            }
+                            ...on SeriesSearchResult {
+                                title
+                                episodes
+                            }
+                        }
+                    }
+                """.trimIndent()
+            )
+        }
+        assertThat(error.message).isEqualTo("The default type resolver could not find a suitable Java type for GraphQL union type `SearchResult`. Provide a @DgsTypeResolver for `MovieSearch`.")
     }
 
     @Test
