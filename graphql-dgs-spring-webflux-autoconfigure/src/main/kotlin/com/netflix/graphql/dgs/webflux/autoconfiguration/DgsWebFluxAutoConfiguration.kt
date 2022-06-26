@@ -49,7 +49,6 @@ import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.introspection.IntrospectionQuery
 import graphql.schema.GraphQLSchema
 import org.springframework.beans.factory.ObjectProvider
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -97,7 +96,7 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
         schemaProvider: DgsSchemaProvider,
         dgsDataLoaderProvider: DgsDataLoaderProvider,
         dgsContextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
-        @Autowired(required = false) graphQLContextContributors: List<ReactiveGraphQLContextContributor>? = null,
+        graphQLContextContributors: ObjectProvider<ReactiveGraphQLContextContributor>,
         dataFetcherExceptionHandler: DataFetcherExceptionHandler,
         instrumentations: ObjectProvider<Instrumentation>,
         environment: Environment,
@@ -125,7 +124,7 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
             schemaProvider = schemaProvider,
             dataLoaderProvider = dgsDataLoaderProvider,
             contextBuilder = dgsContextBuilder,
-            graphQLContextContributors = graphQLContextContributors,
+            graphQLContextContributors = graphQLContextContributors.orderedStream().toList(),
             instrumentation = instrumentation,
             queryExecutionStrategy = queryExecutionStrategy,
             mutationExecutionStrategy = mutationExecutionStrategy,
