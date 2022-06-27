@@ -50,6 +50,8 @@ open class DgsWebSocketAutoConfig {
             registry.addHandler(webSocketHandler, configProps.path).setHandshakeHandler(handshakeHandler)
                 .addInterceptors(handshakeInterceptor)
                 .setAllowedOrigins("*")
+                .withSockJS()
+                .setHeartbeatTime(20_000L)
         }
     }
 
