@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.netflix.graphql.types.subscription
 
 import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -81,6 +82,7 @@ data class SSEDataPayload(
     val type: String = SSE_GQL_SUBSCRIPTION_DATA
 ) : MessagePayload
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class QueryPayload(
     @JsonProperty("variables")
     val variables: Map<String, Any>? = emptyMap(),
@@ -89,7 +91,9 @@ data class QueryPayload(
     @JsonProperty("operationName")
     val operationName: String? = null,
     @JsonProperty("query")
-    val query: String
+    val query: String,
+    @JsonProperty("key")
+    val key: String = ""
 ) : MessagePayload
 
 data class Error(@JsonProperty val message: String = "")

@@ -31,7 +31,9 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.http.codec.ServerSentEvent
-import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ServerErrorException
@@ -49,14 +51,24 @@ import com.netflix.graphql.types.subscription.Error as SseError
 @RestController
 open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor) {
 
-    @RequestMapping("/subscriptions", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    @GetMapping("/subscriptions", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun subscriptionWithId(@RequestParam("query") queryBase64: String): Flux<ServerSentEvent<String>> {
         val query = try {
             String(Base64.getDecoder().decode(queryBase64), StandardCharsets.UTF_8)
         } catch (ex: IllegalArgumentException) {
             throw ServerWebInputException("Error decoding base64-encoded query")
         }
+        return handleSubscription(query)
+    }
 
+    @PostMapping("/subscriptions", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun subscriptionFromPost(
+        @RequestBody body: String
+    ): Flux<ServerSentEvent<String>> {
+        return handleSubscription(body)
+    }
+
+    private fun handleSubscription(query: String): Flux<ServerSentEvent<String>> {
         val queryPayload = try {
             mapper.readValue(query, QueryPayload::class.java)
         } catch (ex: Exception) {
@@ -88,12 +100,17 @@ open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor
             throw ServerErrorException("Invalid return type for subscription datafetcher. Was a non-subscription query send to the subscription endpoint?", exc)
         }
 
-        val subscriptionId = UUID.randomUUID().toString()
+        val subscriptionId = if (queryPayload.key == "") {
+            UUID.randomUUID().toString()
+        } else {
+            queryPayload.key
+        }
         return Flux.from(publisher)
             .map {
                 val payload = SSEDataPayload(data = it.getData(), errors = it.errors, subId = subscriptionId)
                 ServerSentEvent.builder(mapper.writeValueAsString(payload))
                     .id(UUID.randomUUID().toString())
+                    .event("next")
                     .build()
             }.onErrorResume { exc ->
                 logger.warn("An exception occurred on subscription {}", subscriptionId, exc)
@@ -102,6 +119,7 @@ open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor
                 Flux.just(
                     ServerSentEvent.builder(mapper.writeValueAsString(payload))
                         .id(UUID.randomUUID().toString())
+                        .event("error")
                         .build()
                 )
             }
