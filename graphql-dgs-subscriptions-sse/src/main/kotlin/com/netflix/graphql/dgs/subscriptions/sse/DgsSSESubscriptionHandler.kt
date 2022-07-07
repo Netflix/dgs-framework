@@ -51,7 +51,7 @@ import com.netflix.graphql.types.subscription.Error as SseError
 @RestController
 open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor) {
 
-    @GetMapping("/subscriptions", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    @GetMapping("\${dgs.graphql.sse.path:/subscriptions}", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun subscriptionWithId(@RequestParam("query") queryBase64: String): Flux<ServerSentEvent<String>> {
         val query = try {
             String(Base64.getDecoder().decode(queryBase64), StandardCharsets.UTF_8)
@@ -61,7 +61,7 @@ open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor
         return handleSubscription(query)
     }
 
-    @PostMapping("/subscriptions", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    @PostMapping("\${dgs.graphql.sse.path:/subscriptions}", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun subscriptionFromPost(
         @RequestBody body: String
     ): Flux<ServerSentEvent<String>> {
