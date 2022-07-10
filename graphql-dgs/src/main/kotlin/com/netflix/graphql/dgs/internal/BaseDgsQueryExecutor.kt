@@ -73,7 +73,7 @@ object BaseDgsQueryExecutor {
         preparsedDocumentProvider: PreparsedDocumentProvider?,
     ): CompletableFuture<ExecutionResult> {
 
-        var inputVariables = variables ?: Collections.emptyMap();
+        var inputVariables = variables ?: Collections.emptyMap()
 
         if (!StringUtils.hasText(query)) {
             return CompletableFuture.completedFuture(
