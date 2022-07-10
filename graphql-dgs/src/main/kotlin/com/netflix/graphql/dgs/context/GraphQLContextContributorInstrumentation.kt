@@ -21,9 +21,20 @@ import graphql.execution.instrumentation.InstrumentationState
 import graphql.execution.instrumentation.SimpleInstrumentation
 import graphql.execution.instrumentation.parameters.InstrumentationCreateStateParameters
 
+/**
+ * Instrumentation that allows GraphQLContextContributor's to contribute to values stored in the GraphQLContext object.
+ * For each contributor, invoke the GraphQLContextContributor's contribute method, and then put the resulting contents
+ * of the intermediate GraphQLContext into the existing GraphQLContext.
+ *
+ * @see com.netflix.graphql.dgs.context.GraphQLContextContributor.contribute()
+ */
 class GraphQLContextContributorInstrumentation(private val graphQLContextContributors: List<GraphQLContextContributor>) :
     SimpleInstrumentation() {
 
+    /**
+     * createState is the very first method invoked in an Instrumentation, and thus is where this logic is placed to
+     * contribute to the GraphQLContext as early as possible.
+     */
     override fun createState(parameters: InstrumentationCreateStateParameters?): InstrumentationState? {
         var graphqlContext = parameters?.executionInput?.graphQLContext
         if (graphqlContext != null && graphQLContextContributors.iterator().hasNext()) {
