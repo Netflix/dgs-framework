@@ -106,16 +106,17 @@ class DefaultDgsReactiveQueryExecutor(
     override fun <T : Any> executeAndExtractJsonPath(
         query: String,
         jsonPath: String,
-        variables: MutableMap<String, Any>
+        variables: MutableMap<String, Any>?,
+        serverRequest: ServerRequest?
     ): Mono<T> {
-        return getJsonResult(query, variables).map { JsonPath.read(it, jsonPath) }
+        return getJsonResult(query, variables, serverRequest).map { JsonPath.read(it, jsonPath) }
     }
 
     override fun executeAndGetDocumentContext(
         query: String,
         variables: MutableMap<String, Any>
     ): Mono<DocumentContext> {
-        return getJsonResult(query, variables).map(BaseDgsQueryExecutor.parseContext::parse)
+        return getJsonResult(query, variables, null).map(BaseDgsQueryExecutor.parseContext::parse)
     }
 
     override fun <T : Any?> executeAndExtractJsonPathAsObject(
@@ -124,7 +125,7 @@ class DefaultDgsReactiveQueryExecutor(
         variables: MutableMap<String, Any>,
         clazz: Class<T>
     ): Mono<T> {
-        return getJsonResult(query, variables)
+        return getJsonResult(query, variables, null)
             .map(BaseDgsQueryExecutor.parseContext::parse)
             .map {
                 try {
@@ -141,7 +142,7 @@ class DefaultDgsReactiveQueryExecutor(
         variables: MutableMap<String, Any>,
         typeRef: TypeRef<T>
     ): Mono<T> {
-        return getJsonResult(query, variables)
+        return getJsonResult(query, variables, null)
             .map(BaseDgsQueryExecutor.parseContext::parse)
             .map {
                 try {
@@ -152,8 +153,9 @@ class DefaultDgsReactiveQueryExecutor(
             }
     }
 
-    private fun getJsonResult(query: String, variables: Map<String, Any>): Mono<String> {
-        return execute(query, variables).map { executionResult ->
+    private fun getJsonResult(query: String, variables: MutableMap<String, Any>?, serverRequest: ServerRequest?): Mono<String> {
+        val httpHeaders = serverRequest?.headers()?.asHttpHeaders()
+        return execute(query, variables, null, httpHeaders, null, serverRequest).map { executionResult ->
             if (executionResult.errors.size > 0) {
                 throw QueryException(executionResult.errors)
             }

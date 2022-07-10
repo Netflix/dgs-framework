@@ -14,34 +14,40 @@
  * limitations under the License.
  */
 
-import com.netflix.graphql.dgs.DgsQueryExecutor;
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration;
 import com.netflix.graphql.dgs.example.shared.context.ExampleGraphQLContextContributor;
-import com.netflix.graphql.dgs.example.shared.instrumentation.ExampleInstrumentationDependingOnContextContributor;
 import com.netflix.graphql.dgs.example.shared.datafetcher.MovieDataFetcher;
+import com.netflix.graphql.dgs.example.shared.instrumentation.ExampleInstrumentationDependingOnContextContributor;
 import com.netflix.graphql.dgs.pagination.DgsPaginationAutoConfiguration;
+import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor;
+import com.netflix.graphql.dgs.webflux.autoconfiguration.DgsWebFluxAutoConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.mock.web.reactive.function.server.MockServerRequest;
+import org.springframework.web.reactive.config.WebFluxConfigurationSupport;
+import reactor.core.publisher.Mono;
+
 
 import static com.netflix.graphql.dgs.example.shared.context.ExampleGraphQLContextContributor.CONTEXT_CONTRIBUTOR_HEADER_NAME;
 import static com.netflix.graphql.dgs.example.shared.context.ExampleGraphQLContextContributor.CONTEXT_CONTRIBUTOR_HEADER_VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {MovieDataFetcher.class, ExampleGraphQLContextContributor.class, ExampleInstrumentationDependingOnContextContributor.class, DgsAutoConfiguration.class, DgsPaginationAutoConfiguration.class})
-public class GraphQLContextContributorTest {
+@SpringBootTest(classes = {WebFluxConfigurationSupport.class, DgsAutoConfiguration.class, MovieDataFetcher.class, ExampleGraphQLContextContributor.class, ExampleInstrumentationDependingOnContextContributor.class, DgsWebFluxAutoConfiguration.class, DgsPaginationAutoConfiguration.class})
+public class ReactiveGraphQLContextContributorTest {
 
     @Autowired
-    DgsQueryExecutor queryExecutor;
+    DgsReactiveQueryExecutor queryExecutor;
 
     @Test
-    void moviesExtensionShouldHaveContributedEnabledExtension() {
-        final MockHttpServletRequest mockServletRequest = new MockHttpServletRequest();
-        mockServletRequest.addHeader(CONTEXT_CONTRIBUTOR_HEADER_NAME, CONTEXT_CONTRIBUTOR_HEADER_VALUE);
-        ServletWebRequest servletWebRequest = new ServletWebRequest(mockServletRequest);
-        String contributorEnabled = queryExecutor.executeAndExtractJsonPath("{ movies { director } }", "extensions.contributorEnabled", servletWebRequest);
-        assertThat(contributorEnabled).isEqualTo("true");
+    void moviesExtensionShouldHaveContributedEnabledExtensionServerRequestSpecified() {
+        final MockServerRequest.Builder builder = MockServerRequest.builder();
+        builder.header(CONTEXT_CONTRIBUTOR_HEADER_NAME, CONTEXT_CONTRIBUTOR_HEADER_VALUE);
+
+        Mono<String> contributorEnabled = queryExecutor.executeAndExtractJsonPath(
+                "{ movies { director } }",
+                "extensions.contributorEnabled",
+                builder.build());
+        assertThat(contributorEnabled.block()).isEqualTo("true");
     }
 }

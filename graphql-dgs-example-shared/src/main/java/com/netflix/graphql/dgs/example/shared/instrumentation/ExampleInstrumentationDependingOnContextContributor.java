@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.example.instrumentation;
+package com.netflix.graphql.dgs.example.shared.instrumentation;
 
+import com.netflix.graphql.dgs.example.shared.context.ExampleGraphQLContextContributor;
 import graphql.ExecutionResult;
 import graphql.ExecutionResultImpl;
 import graphql.GraphQLContext;
@@ -28,15 +29,18 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.CompletableFuture;
 
-import static com.netflix.graphql.dgs.example.context.MyContextContributor.CONTRIBUTOR_ENABLED_CONTEXT_KEY;
-
+/**
+ * Example Instrumentation that depends on the fact that ContextContributors have already been invoked.
+ * Specifically the ExampleGraphQLContextContributor has affected the contents of the GraphQLContext object and has set
+ * the CONTRIBUTOR_ENABLED_CONTEXT_KEY.
+ */
 @Component
-public class ExampleInstrumentation extends SimpleInstrumentation {
+public class ExampleInstrumentationDependingOnContextContributor extends SimpleInstrumentation {
 
     @Override
     public InstrumentationState createState(InstrumentationCreateStateParameters parameters) {
         GraphQLContext context = parameters.getExecutionInput().getGraphQLContext();
-        String contextContributorIndicator = context.get(CONTRIBUTOR_ENABLED_CONTEXT_KEY);
+        String contextContributorIndicator = context.get(ExampleGraphQLContextContributor.CONTRIBUTOR_ENABLED_CONTEXT_KEY);
         if (contextContributorIndicator != null) {
             return new InstrumentationState() {
                 @Override
@@ -53,7 +57,7 @@ public class ExampleInstrumentation extends SimpleInstrumentation {
             ExecutionResult executionResult, InstrumentationExecutionParameters parameters) {
         final @Nullable InstrumentationState state = parameters.getInstrumentationState();
 
-        // if context contributor has not set the property, skip
+        // skip if the expected property has not been set by context contributor
         if (state == null) {
             return super.instrumentExecutionResult(executionResult, parameters);
         }
@@ -62,7 +66,7 @@ public class ExampleInstrumentation extends SimpleInstrumentation {
         return CompletableFuture.completedFuture(
                 ExecutionResultImpl.newExecutionResult()
                         .from(executionResult)
-                        .addExtension(CONTRIBUTOR_ENABLED_CONTEXT_KEY, state.toString())
+                        .addExtension(ExampleGraphQLContextContributor.CONTRIBUTOR_ENABLED_CONTEXT_KEY, state.toString())
                         .build());
     }
 

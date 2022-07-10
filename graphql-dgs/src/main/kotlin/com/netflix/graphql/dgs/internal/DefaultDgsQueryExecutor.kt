@@ -25,7 +25,7 @@ import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionExcepti
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor.parseContext
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
-import graphql.*
+import graphql.ExecutionResult
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
 import graphql.execution.NonNullableFieldWasNullError
@@ -35,6 +35,7 @@ import graphql.schema.GraphQLSchema
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
+import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
@@ -109,6 +110,14 @@ class DefaultDgsQueryExecutor(
         return JsonPath.read(getJsonResult(query, emptyMap(), headers), jsonPath)
     }
 
+    override fun <T : Any?> executeAndExtractJsonPath(query: String, jsonPath: String, servletWebRequest: ServletWebRequest): T {
+        val httpHeaders = HttpHeaders()
+        servletWebRequest.headerNames.forEach { name ->
+            httpHeaders[name] = servletWebRequest.getHeaderValues(name).asList()
+        }
+        return JsonPath.read(getJsonResult(query, emptyMap(), httpHeaders, servletWebRequest), jsonPath)
+    }
+
     override fun <T> executeAndExtractJsonPathAsObject(
         query: String,
         jsonPath: String,
@@ -151,8 +160,8 @@ class DefaultDgsQueryExecutor(
         return parseContext.parse(getJsonResult(query, variables, headers))
     }
 
-    private fun getJsonResult(query: String, variables: Map<String, Any>, headers: HttpHeaders? = null): String {
-        val executionResult = execute(query, variables, null, headers, null, null)
+    private fun getJsonResult(query: String, variables: Map<String, Any>, headers: HttpHeaders? = null, servletWebRequest: ServletWebRequest? = null): String {
+        val executionResult = execute(query, variables, null, headers, null, servletWebRequest)
 
         if (executionResult.errors.size > 0) {
             throw QueryException(executionResult.errors)
