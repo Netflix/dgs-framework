@@ -26,6 +26,7 @@ import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.ParseContext
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
+import com.netflix.graphql.dgs.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.DataLoaderProvider
 import com.netflix.graphql.dgs.DgsExecutionResult
 import com.netflix.graphql.dgs.context.DgsContext
@@ -71,7 +72,7 @@ object BaseDgsQueryExecutor {
         operationName: String?,
         dgsContext: DgsContext,
         graphQLSchema: GraphQLSchema,
-        dataLoaderProvider: DataLoaderProvider,
+        dgsDataLoaderProvider: DgsDataLoaderProvider,
         instrumentation: Instrumentation?,
         queryExecutionStrategy: ExecutionStrategy,
         mutationExecutionStrategy: ExecutionStrategy,
@@ -110,7 +111,7 @@ object BaseDgsQueryExecutor {
 
         val graphQL: GraphQL = graphQLBuilder.build()
 
-        val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier { dgsContext }
+        val dataLoaderRegistry = dgsDataLoaderProvider.buildRegistryWithContextSupplier { dgsContext }
 
         return try {
             @Suppress("DEPRECATION")

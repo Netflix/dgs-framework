@@ -16,7 +16,7 @@
 
 package com.netflix.graphql.dgs.autoconfig
 
-import com.netflix.graphql.dgs.DataLoaderProvider
+import com.netflix.graphql.dgs.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
@@ -90,7 +90,7 @@ open class DgsAutoConfiguration(
         applicationContext: ApplicationContext,
         schema: GraphQLSchema,
         schemaProvider: DgsSchemaProvider,
-        dataLoaderProvider: DataLoaderProvider,
+        dgsDataLoaderProvider: DgsDataLoaderProvider,
         dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
         dataFetcherExceptionHandler: DataFetcherExceptionHandler,
         instrumentations: ObjectProvider<Instrumentation>,
@@ -117,7 +117,7 @@ open class DgsAutoConfiguration(
         return DefaultDgsQueryExecutor(
             defaultSchema = schema,
             schemaProvider = schemaProvider,
-            dataLoaderProvider = dataLoaderProvider,
+            dgsDataLoaderProvider = dgsDataLoaderProvider,
             contextBuilder = dgsContextBuilder,
             instrumentation = instrumentation,
             queryExecutionStrategy = queryExecutionStrategy,
@@ -137,7 +137,7 @@ open class DgsAutoConfiguration(
 
     @Bean
     @ConditionalOnMissingBean
-    open fun dgsDataLoaderProvider(applicationContext: ApplicationContext): DataLoaderProvider {
+    open fun dgsDataLoaderProvider(applicationContext: ApplicationContext): DgsDataLoaderProvider {
         return DefaultDgsDataLoaderProvider(applicationContext)
     }
 

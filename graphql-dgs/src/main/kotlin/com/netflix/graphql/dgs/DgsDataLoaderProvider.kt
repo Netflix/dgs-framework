@@ -19,7 +19,7 @@ package com.netflix.graphql.dgs
 import org.dataloader.DataLoaderRegistry
 import java.util.function.Supplier
 
-interface DataLoaderProvider {
+interface DgsDataLoaderProvider {
     fun buildRegistry(): DataLoaderRegistry
     fun <T> buildRegistryWithContextSupplier(contextSupplier: Supplier<T>): DataLoaderRegistry
 }

@@ -137,7 +137,7 @@ internal class DefaultDgsReactiveQueryExecutorTest {
         dgsQueryExecutor = DefaultDgsReactiveQueryExecutor(
             defaultSchema = schema,
             schemaProvider = provider,
-            dataLoaderProvider = dgsDataLoaderProvider,
+            dgsDataLoaderProvider = dgsDataLoaderProvider,
             contextBuilder = DefaultDgsReactiveGraphQLContextBuilder(Optional.empty()),
             instrumentation = SimpleInstrumentation.INSTANCE,
             queryExecutionStrategy = AsyncExecutionStrategy(),

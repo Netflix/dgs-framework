@@ -17,9 +17,9 @@
 package com.netflix.graphql.dgs.internal
 
 import com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider
-import com.netflix.graphql.dgs.DataLoaderProvider
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsDataLoader
+import com.netflix.graphql.dgs.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.DgsDataLoaderRegistryConsumer
 import com.netflix.graphql.dgs.DgsDispatchPredicate
 import com.netflix.graphql.dgs.exceptions.DgsUnnamedDataLoaderOnFieldException
@@ -47,7 +47,7 @@ import javax.annotation.PostConstruct
 /**
  * Framework implementation class responsible for finding and configuring data loaders.
  */
-open class DefaultDgsDataLoaderProvider(private val applicationContext: ApplicationContext) : DataLoaderProvider {
+open class DefaultDgsDataLoaderProvider(private val applicationContext: ApplicationContext) : DgsDataLoaderProvider {
 
     private data class LoaderHolder<T>(val theLoader: T, val annotation: DgsDataLoader, val name: String, val dispatchPredicate: DispatchPredicate? = null)
 

@@ -20,7 +20,7 @@ import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
-import com.netflix.graphql.dgs.DataLoaderProvider
+import com.netflix.graphql.dgs.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
@@ -47,7 +47,7 @@ import java.util.concurrent.atomic.AtomicReference
 class DefaultDgsQueryExecutor(
     defaultSchema: GraphQLSchema,
     private val schemaProvider: DgsSchemaProvider,
-    private val dataLoaderProvider: DataLoaderProvider,
+    private val dgsDataLoaderProvider: DgsDataLoaderProvider,
     private val contextBuilder: DefaultDgsGraphQLContextBuilder,
     private val instrumentation: Instrumentation?,
     private val queryExecutionStrategy: ExecutionStrategy,
@@ -84,7 +84,7 @@ class DefaultDgsQueryExecutor(
                 operationName = operationName,
                 dgsContext = dgsContext,
                 graphQLSchema = graphQLSchema,
-                dataLoaderProvider = dataLoaderProvider,
+                dgsDataLoaderProvider = dgsDataLoaderProvider,
                 instrumentation = instrumentation,
                 queryExecutionStrategy = queryExecutionStrategy,
                 mutationExecutionStrategy = mutationExecutionStrategy,
