@@ -20,7 +20,6 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.TypeRef;
 import graphql.ExecutionResult;
 import org.intellij.lang.annotations.Language;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import reactor.core.publisher.Mono;
@@ -46,7 +45,7 @@ public interface DgsReactiveQueryExecutor {
      * @return Returns a GraphQL {@link ExecutionResult}. This includes data and errors.
      */
     default Mono<ExecutionResult> execute(@Language("GraphQL") String query) {
-        return execute(query, null, null, null, null, null);
+        return execute(query, null, null, null, null);
     }
 
     /**
@@ -57,7 +56,7 @@ public interface DgsReactiveQueryExecutor {
      */
     default Mono<ExecutionResult> execute(@Language("GraphQL") String query,
                                           Map<String, Object> variables) {
-        return execute(query, variables, null, null, null, null);
+        return execute(query, variables, null, null, null);
     }
 
     /**
@@ -71,7 +70,7 @@ public interface DgsReactiveQueryExecutor {
     default Mono<ExecutionResult> execute(@Language("GraphQL") String query,
                                           Map<String, Object> variables,
                                           String operationName) {
-        return execute(query, variables, null, null, operationName, null);
+        return execute(query, variables, null, operationName, null);
     }
 
     /**
@@ -80,15 +79,15 @@ public interface DgsReactiveQueryExecutor {
      * @param extensions A map representing GraphQL extensions. This is made available in the
      *                   {@link com.netflix.graphql.dgs.internal.DgsRequestData} object on
      *                   {@link com.netflix.graphql.dgs.context.DgsContext}.
-     * @param headers    Request headers represented as a Spring Framework {@link HttpHeaders}
+     * @param serverHttpRequest A Spring {@link ServerHttpRequest} giving access to request details.
      * @return Returns a GraphQL {@link ExecutionResult}. This includes data and errors.
      * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
      */
     default Mono<ExecutionResult> execute(@Language("GraphQL") String query,
                                           Map<String, Object> variables,
                                           Map<String, Object> extensions,
-                                          HttpHeaders headers) {
-        return execute(query, variables, extensions, headers, null, null);
+                                          ServerRequest serverHttpRequest) {
+        return execute(query, variables, extensions, null, serverHttpRequest);
     }
 
     /**
@@ -98,7 +97,6 @@ public interface DgsReactiveQueryExecutor {
      * @param variables         A map of variables
      * @param extensions        A map representing GraphQL extensions. This is made available in the {@link com.netflix.graphql.dgs.internal.DgsRequestData}
      *                          object on {@link com.netflix.graphql.dgs.context.DgsContext}.
-     * @param headers           Request headers represented as a Spring Framework {@link HttpHeaders}
      * @param operationName     Operation name
      * @param serverHttpRequest A Spring {@link ServerHttpRequest} giving access to request details.
      * @return Returns a GraphQL {@link ExecutionResult}. This includes data and errors.
@@ -108,7 +106,6 @@ public interface DgsReactiveQueryExecutor {
     Mono<ExecutionResult> execute(@Language("GraphQL") String query,
                                   Map<String, Object> variables,
                                   Map<String, Object> extensions,
-                                  HttpHeaders headers,
                                   String operationName,
                                   ServerRequest serverHttpRequest);
 

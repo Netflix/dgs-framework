@@ -67,7 +67,6 @@ class DgsRestControllerTest {
                 emptyMap(),
                 any(),
                 any(),
-                any(),
                 any()
             )
         } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).build()
@@ -94,7 +93,6 @@ class DgsRestControllerTest {
             dgsQueryExecutor.execute(
                 queryString,
                 emptyMap(),
-                any(),
                 any(),
                 capture(capturedOperationName),
                 any()
@@ -125,7 +123,6 @@ class DgsRestControllerTest {
                 emptyMap(),
                 any(),
                 any(),
-                any(),
                 any()
             )
         } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).build()
@@ -152,7 +149,6 @@ class DgsRestControllerTest {
             dgsQueryExecutor.execute(
                 queryString,
                 emptyMap(),
-                any(),
                 any(),
                 any(),
                 any()

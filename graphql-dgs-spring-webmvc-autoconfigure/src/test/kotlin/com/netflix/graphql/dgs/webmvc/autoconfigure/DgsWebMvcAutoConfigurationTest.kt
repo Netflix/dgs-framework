@@ -245,7 +245,6 @@ class DgsWebMvcAutoConfigurationTest {
                     "{ hello }",
                     any(),
                     any(),
-                    any(),
                     null,
                     any()
                 )

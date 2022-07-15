@@ -85,7 +85,7 @@ class RequestParamTest {
 
         val executionResult = build.execute(
             ExecutionInput.newExecutionInput("""{hello}""")
-                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, request)))
+                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), request)))
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
@@ -122,7 +122,7 @@ class RequestParamTest {
 
         val executionResult = build.execute(
             ExecutionInput.newExecutionInput("""{hello}""")
-                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, request)))
+                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), request)))
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
@@ -159,7 +159,7 @@ class RequestParamTest {
 
         val executionResult = build.execute(
             ExecutionInput.newExecutionInput("""{hello}""")
-                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, request)))
+                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), request)))
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()

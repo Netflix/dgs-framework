@@ -36,7 +36,6 @@ import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLSchema
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpHeaders
 import org.springframework.web.reactive.function.server.ServerRequest
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.util.function.*
@@ -63,7 +62,6 @@ class DefaultDgsReactiveQueryExecutor(
         query: String?,
         variables: MutableMap<String, Any>?,
         extensions: MutableMap<String, Any>?,
-        headers: HttpHeaders?,
         operationName: String?,
         serverHttpRequest: ServerRequest?
     ): Mono<ExecutionResult> {
@@ -75,7 +73,7 @@ class DefaultDgsReactiveQueryExecutor(
                 else
                     schema.get()
             }
-            .zipWith(contextBuilder.build(DgsReactiveRequestData(extensions, headers, serverHttpRequest)))
+            .zipWith(contextBuilder.build(DgsReactiveRequestData(extensions, serverHttpRequest)))
             .flatMap { (gqlSchema, dgsContext) ->
                 Mono.fromCompletionStage(
                     BaseDgsQueryExecutor.baseExecute(

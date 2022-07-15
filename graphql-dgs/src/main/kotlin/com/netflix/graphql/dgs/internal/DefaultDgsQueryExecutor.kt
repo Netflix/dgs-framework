@@ -34,7 +34,6 @@ import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLSchema
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpHeaders
 import org.springframework.web.context.request.WebRequest
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
@@ -62,7 +61,6 @@ class DefaultDgsQueryExecutor(
         query: String?,
         variables: Map<String, Any>,
         extensions: Map<String, Any>?,
-        headers: HttpHeaders?,
         operationName: String?,
         webRequest: WebRequest?
     ): ExecutionResult {
@@ -71,7 +69,7 @@ class DefaultDgsQueryExecutor(
                 schema.updateAndGet { schemaProvider.schema() }
             else
                 schema.get()
-        val dgsContext = contextBuilder.build(DgsWebMvcRequestData(extensions, headers, webRequest))
+        val dgsContext = contextBuilder.build(DgsWebMvcRequestData(extensions, webRequest))
 
         val executionResult =
             BaseDgsQueryExecutor.baseExecute(
@@ -105,8 +103,8 @@ class DefaultDgsQueryExecutor(
         return JsonPath.read(getJsonResult(query, variables), jsonPath)
     }
 
-    override fun <T : Any?> executeAndExtractJsonPath(query: String, jsonPath: String, headers: HttpHeaders): T {
-        return JsonPath.read(getJsonResult(query, emptyMap(), headers), jsonPath)
+    override fun <T : Any?> executeAndExtractJsonPath(query: String, jsonPath: String, webRequest: WebRequest?): T {
+        return JsonPath.read(getJsonResult(query, emptyMap()), jsonPath)
     }
 
     override fun <T> executeAndExtractJsonPathAsObject(
@@ -114,9 +112,9 @@ class DefaultDgsQueryExecutor(
         jsonPath: String,
         variables: Map<String, Any>,
         clazz: Class<T>,
-        headers: HttpHeaders?
+        webRequest: WebRequest?
     ): T {
-        val jsonResult = getJsonResult(query, variables, headers)
+        val jsonResult = getJsonResult(query, variables, webRequest)
         return try {
             parseContext.parse(jsonResult).read(jsonPath, clazz)
         } catch (ex: MappingException) {
@@ -129,9 +127,9 @@ class DefaultDgsQueryExecutor(
         jsonPath: String,
         variables: Map<String, Any>,
         typeRef: TypeRef<T>,
-        headers: HttpHeaders?
+        webRequest: WebRequest?
     ): T {
-        val jsonResult = getJsonResult(query, variables, headers)
+        val jsonResult = getJsonResult(query, variables, webRequest)
         return try {
             parseContext.parse(jsonResult).read(jsonPath, typeRef)
         } catch (ex: MappingException) {
@@ -146,13 +144,13 @@ class DefaultDgsQueryExecutor(
     override fun executeAndGetDocumentContext(
         query: String,
         variables: MutableMap<String, Any>,
-        headers: HttpHeaders?
+        webRequest: WebRequest?
     ): DocumentContext {
-        return parseContext.parse(getJsonResult(query, variables, headers))
+        return parseContext.parse(getJsonResult(query, variables, webRequest))
     }
 
-    private fun getJsonResult(query: String, variables: Map<String, Any>, headers: HttpHeaders? = null): String {
-        val executionResult = execute(query, variables, null, headers, null, null)
+    private fun getJsonResult(query: String, variables: Map<String, Any>, webRequest: WebRequest? = null): String {
+        val executionResult = execute(query, variables, null, null, webRequest)
 
         if (executionResult.errors.size > 0) {
             throw QueryException(executionResult.errors)

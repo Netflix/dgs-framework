@@ -40,7 +40,7 @@ open class DefaultDgsGraphQLContextBuilder(
             dgsCustomContextBuilderWithRequest.isPresent -> dgsCustomContextBuilderWithRequest.get().build(
                 dgsRequestData?.extensions ?: mapOf(),
                 HttpHeaders.readOnlyHttpHeaders(
-                    dgsRequestData?.headers
+                    dgsRequestData?.webRequest?.httpHeaders()
                         ?: HttpHeaders()
                 ),
                 dgsRequestData?.webRequest
@@ -57,6 +57,16 @@ open class DefaultDgsGraphQLContextBuilder(
         )
     }
 
+    private fun WebRequest.httpHeaders(): HttpHeaders {
+        val httpHeaders = HttpHeaders()
+        this.headerNames.forEach { headerName ->
+            this.getHeaderValues(headerName)?.toMutableList()?.also {
+                httpHeaders.addAll(headerName, it)
+            }
+        }
+        return httpHeaders
+    }
+
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(DefaultDgsGraphQLContextBuilder::class.java)
     }
@@ -70,7 +80,6 @@ data class DefaultRequestData(
 
 interface DgsRequestData {
     val extensions: Map<String, Any>?
-    val headers: HttpHeaders?
 }
 
 /**
@@ -80,6 +89,5 @@ interface DgsRequestData {
  */
 data class DgsWebMvcRequestData(
     override val extensions: Map<String, Any>? = null,
-    override val headers: HttpHeaders? = null,
     val webRequest: WebRequest? = null,
 ) : DgsRequestData

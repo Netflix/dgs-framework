@@ -66,7 +66,6 @@ class DefaultDgsWebfluxHttpHandler(
                         queryInput.query,
                         queryInput.queryVariables,
                         queryInput.extensions,
-                        request.headers().asHttpHeaders(),
                         queryInput.operationName,
                         request
                     )

@@ -90,7 +90,7 @@ class RequestHeaderTest {
 
         val executionResult = build.execute(
             ExecutionInput.newExecutionInput("""{hello}""")
-                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, request)))
+                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), request)))
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
@@ -130,7 +130,7 @@ class RequestHeaderTest {
 
         val executionResult = build.execute(
             ExecutionInput.newExecutionInput("""{hello}""")
-                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, request)))
+                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), request)))
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
@@ -170,7 +170,7 @@ class RequestHeaderTest {
 
         val executionResult = build.execute(
             ExecutionInput.newExecutionInput("""{hello}""")
-                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, request)))
+                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), request)))
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
@@ -209,7 +209,7 @@ class RequestHeaderTest {
 
         val executionResult = build.execute(
             ExecutionInput.newExecutionInput("""{hello}""")
-                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, request)))
+                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), request)))
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
@@ -248,7 +248,7 @@ class RequestHeaderTest {
 
         val executionResult = build.execute(
             ExecutionInput.newExecutionInput("""{hello}""")
-                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, request)))
+                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), request)))
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
@@ -287,7 +287,7 @@ class RequestHeaderTest {
 
         val executionResult = build.execute(
             ExecutionInput.newExecutionInput("""{hello}""")
-                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, request)))
+                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), request)))
         )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()

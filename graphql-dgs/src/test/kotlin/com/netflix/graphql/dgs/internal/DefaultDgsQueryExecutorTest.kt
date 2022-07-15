@@ -18,7 +18,12 @@ package com.netflix.graphql.dgs.internal
 
 import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
-import com.netflix.graphql.dgs.*
+import com.netflix.graphql.dgs.DgsComponent
+import com.netflix.graphql.dgs.DgsData
+import com.netflix.graphql.dgs.DgsDirective
+import com.netflix.graphql.dgs.DgsScalar
+import com.netflix.graphql.dgs.InputArgument
+import com.netflix.graphql.dgs.LocalDateTimeScalar
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.method.InputArgumentResolver
@@ -37,7 +42,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
-import org.springframework.http.HttpHeaders
+import org.springframework.mock.web.MockHttpServletRequest
+import org.springframework.web.context.request.ServletWebRequest
 import java.time.LocalDateTime
 import java.util.*
 import java.util.function.Supplier
@@ -264,8 +270,11 @@ internal class DefaultDgsQueryExecutorTest {
 
     @Test
     fun extractJsonAsObjectTypeRefWithHeadersNotThrow() {
-        val httpHeaders = HttpHeaders()
-        httpHeaders.add("test", "headerValue")
+        val webRequest = ServletWebRequest(
+            MockHttpServletRequest().apply {
+                addHeader("test", "headerValue")
+            }
+        )
 
         val expectedMessage = "hello dgs"
         val message = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
@@ -273,7 +282,7 @@ internal class DefaultDgsQueryExecutorTest {
             "data.echo",
             mapOf("message" to expectedMessage),
             object : TypeRef<String>() {},
-            httpHeaders
+            webRequest
         )
 
         assertThat(message).isEqualTo(expectedMessage)
@@ -294,8 +303,11 @@ internal class DefaultDgsQueryExecutorTest {
 
     @Test
     fun extractJsonAsObjectClazzWithHeadersNotThrow() {
-        val httpHeaders = HttpHeaders()
-        httpHeaders.add("test", "headerValue")
+        val webRequest = ServletWebRequest(
+            MockHttpServletRequest().apply {
+                addHeader("test", "headerValue")
+            }
+        )
 
         val expectedMessage = "hello dgs"
         val message = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
@@ -303,7 +315,7 @@ internal class DefaultDgsQueryExecutorTest {
             "data.echo",
             mapOf("message" to expectedMessage),
             String::class.java,
-            httpHeaders
+            webRequest
         )
 
         assertThat(message).isEqualTo(expectedMessage)

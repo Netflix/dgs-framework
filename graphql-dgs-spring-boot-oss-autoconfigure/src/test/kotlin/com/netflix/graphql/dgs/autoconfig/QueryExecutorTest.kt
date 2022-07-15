@@ -28,7 +28,8 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.autoconfigure.AutoConfigurations
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner
 import org.springframework.http.HttpHeaders
-import org.springframework.util.LinkedMultiValueMap
+import org.springframework.mock.web.MockHttpServletRequest
+import org.springframework.web.context.request.ServletWebRequest
 
 class QueryExecutorTest {
     private val context = WebApplicationContextRunner()
@@ -45,11 +46,14 @@ class QueryExecutorTest {
 
     @Test
     fun queryWithHeaderNotThrowsException() {
-        val headers = LinkedMultiValueMap<String, String>()
-        headers.add(HttpHeaders.AUTHORIZATION, "test")
+        val webRequest = ServletWebRequest(
+            MockHttpServletRequest().apply {
+                addHeader(HttpHeaders.AUTHORIZATION, "test")
+            }
+        )
         context.withUserConfiguration(HelloDataFetcherConfig::class.java).run { ctx ->
             assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                it.executeAndGetDocumentContext("{ helloWithHeader }", mapOf(), HttpHeaders(headers))
+                it.executeAndGetDocumentContext("{ helloWithHeader }", mapOf(), webRequest)
             }
         }
     }

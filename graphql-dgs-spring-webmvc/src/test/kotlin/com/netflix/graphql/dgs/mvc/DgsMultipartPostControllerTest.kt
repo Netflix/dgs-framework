@@ -76,7 +76,7 @@ class DgsMultipartPostControllerTest {
         val queryString = "mutation(${'$'}file: Upload!) {uploadFile(file: ${'$'}file)}"
         val variablesMap: MutableMap<String, Any> = Maps.newHashMap("file", file1)
 
-        every { dgsQueryExecutor.execute(queryString, variablesMap, any(), any(), any(), any()) } returns(
+        every { dgsQueryExecutor.execute(queryString, variablesMap, any(), any(), any()) } returns(
             ExecutionResultImpl.newExecutionResult().data(mapOf("Response" to "success")).build()
             )
         // HTTP Headers with only the expected content-type but no preflight
@@ -122,7 +122,7 @@ class DgsMultipartPostControllerTest {
         val queryString = "mutation(${'$'}file: Upload!) {uploadFile(file: ${'$'}file)}"
         val variablesMap: MutableMap<String, Any> = Maps.newHashMap("file", file1)
 
-        every { dgsQueryExecutor.execute(queryString, variablesMap, any(), any(), any(), any()) } returns(
+        every { dgsQueryExecutor.execute(queryString, variablesMap, any(), any(), any()) } returns(
             ExecutionResultImpl.newExecutionResult().data(mapOf("Response" to "success")).build()
             )
 
@@ -171,7 +171,7 @@ class DgsMultipartPostControllerTest {
         val queryInputMap = Maps.newHashMap<String, Any>("description", "test")
         queryInputMap["files"] = Lists.newArrayList(file1, file2)
 
-        every { dgsQueryExecutor.execute(queryString, mapOf("input" to queryInputMap), any(), any(), any(), any()) } returns(
+        every { dgsQueryExecutor.execute(queryString, mapOf("input" to queryInputMap), any(), any(), any()) } returns(
             ExecutionResultImpl.newExecutionResult().data(mapOf("Response" to "success")).build()
             )
 
@@ -216,7 +216,7 @@ class DgsMultipartPostControllerTest {
         val queryString = "mutation(${'$'}files: [Upload!]!) {uploadFile(files: ${'$'}files)}"
         val variablesMap: MutableMap<String, Any> = Maps.newHashMap("files", Lists.newArrayList(file1, file2))
 
-        every { dgsQueryExecutor.execute(queryString, variablesMap, any(), any(), any(), any()) } returns(
+        every { dgsQueryExecutor.execute(queryString, variablesMap, any(), any(), any()) } returns(
             ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("Response", "success"))).build()
             )
 

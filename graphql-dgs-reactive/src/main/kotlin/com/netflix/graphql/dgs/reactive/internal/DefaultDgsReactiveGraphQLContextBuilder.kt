@@ -35,7 +35,7 @@ open class DefaultDgsReactiveGraphQLContextBuilder(
             dgsReactiveCustomContextBuilderWithRequest.get().build(
                 dgsRequestData?.extensions ?: mapOf(),
                 HttpHeaders.readOnlyHttpHeaders(
-                    dgsRequestData?.headers
+                    dgsRequestData?.serverRequest?.headers()?.asHttpHeaders()
                         ?: HttpHeaders()
                 ),
                 dgsRequestData?.serverRequest
@@ -66,6 +66,5 @@ open class DefaultDgsReactiveGraphQLContextBuilder(
  */
 data class DgsReactiveRequestData(
     override val extensions: Map<String, Any>? = emptyMap(),
-    override val headers: HttpHeaders? = HttpHeaders.readOnlyHttpHeaders(HttpHeaders()),
     val serverRequest: ServerRequest? = null,
 ) : DgsRequestData

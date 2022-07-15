@@ -206,7 +206,6 @@ open class DgsRestController(
                     query,
                     queryVariables,
                     extensions,
-                    headers,
                     gqlOperationName,
                     webRequest
                 )

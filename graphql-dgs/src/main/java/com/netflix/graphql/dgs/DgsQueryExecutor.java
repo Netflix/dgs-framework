@@ -20,7 +20,6 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.TypeRef;
 import graphql.ExecutionResult;
 import org.intellij.lang.annotations.Language;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.Collections;
@@ -42,7 +41,7 @@ public interface DgsQueryExecutor {
      * @return Returns a GraphQL {@link ExecutionResult}. This includes data and errors.
      */
     default ExecutionResult execute(@Language("GraphQL") String query) {
-        return execute(query, Collections.emptyMap(), null, null, null, null);
+        return execute(query, Collections.emptyMap(), null, null, null);
     }
 
     /**
@@ -53,7 +52,7 @@ public interface DgsQueryExecutor {
      */
     default ExecutionResult execute(@Language("GraphQL") String query,
                                     Map<String, Object> variables) {
-        return execute(query, variables, null, null, null, null);
+        return execute(query, variables, null, null, null);
     }
 
     /**
@@ -67,7 +66,7 @@ public interface DgsQueryExecutor {
     default ExecutionResult execute(@Language("GraphQL") String query,
                                     Map<String, Object> variables,
                                     String operationName) {
-        return execute(query, variables, null, null, operationName, null);
+        return execute(query, variables, null, operationName, null);
     }
 
     /**
@@ -81,8 +80,8 @@ public interface DgsQueryExecutor {
     default ExecutionResult execute(@Language("GraphQL") String query,
                                     Map<String, Object> variables,
                                     Map<String, Object> extensions,
-                                    HttpHeaders headers) {
-        return execute(query, variables, extensions, headers, null, null);
+                                    WebRequest webRequest) {
+        return execute(query, variables, extensions, null, webRequest);
     }
 
     /**
@@ -91,7 +90,6 @@ public interface DgsQueryExecutor {
      * @param query         The query string
      * @param variables     A map of variables
      * @param extensions    A map representing GraphQL extensions. This is made available in the {@link com.netflix.graphql.dgs.internal.DgsRequestData} object on {@link com.netflix.graphql.dgs.context.DgsContext}.
-     * @param headers       Request headers represented as a Spring Framework {@link HttpHeaders}
      * @param operationName Operation name
      * @param webRequest    A Spring {@link WebRequest} giving access to request details. Can cast to an environment specific class such as {@link org.springframework.web.context.request.ServletWebRequest}.
      * @return Returns a GraphQL {@link ExecutionResult}. This includes data and errors.
@@ -101,7 +99,6 @@ public interface DgsQueryExecutor {
     ExecutionResult execute(@Language("GraphQL") String query,
                             Map<String, Object> variables,
                             Map<String, Object> extensions,
-                            HttpHeaders headers,
                             String operationName,
                             WebRequest webRequest);
 
@@ -149,14 +146,14 @@ public interface DgsQueryExecutor {
      *
      * @param query    Query string
      * @param jsonPath JsonPath expression.
-     * @param headers  Spring {@link HttpHeaders}
+     * @param webRequest    A Spring {@link WebRequest} giving access to request details. Can cast to an environment specific class such as {@link org.springframework.web.context.request.ServletWebRequest}.
      * @param <T>      The type of primitive or map representation that should be returned.
      * @return The extracted value from the result, converted to type T
      * @see <a href="https://github.com/json-path/JsonPath">JsonPath syntax docs</a>
      */
     <T> T executeAndExtractJsonPath(@Language("GraphQL") String query,
                                     @Language("JSONPath") String jsonPath,
-                                    HttpHeaders headers);
+                                    WebRequest webRequest);
 
     /**
      * Executes a GraphQL query, parses the returned data, and return a {@link DocumentContext}.
@@ -186,13 +183,13 @@ public interface DgsQueryExecutor {
      *
      * @param query     Query string
      * @param variables A Map of variables
-     * @param headers   Spring {@link HttpHeaders}
+     * @param webRequest    A Spring {@link WebRequest} giving access to request details. Can cast to an environment specific class such as {@link org.springframework.web.context.request.ServletWebRequest}.
      * @return {@link DocumentContext} is a JsonPath type used to extract values from.
      * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
      */
     DocumentContext executeAndGetDocumentContext(@Language("GraphQL") String query,
                                                  Map<String, Object> variables,
-                                                 HttpHeaders headers);
+                                                 WebRequest webRequest);
 
     /**
      * Executes a GraphQL query, parses the returned data, extracts a value using JsonPath, and converts that value into the given type.
@@ -239,7 +236,7 @@ public interface DgsQueryExecutor {
      * @param jsonPath  JsonPath expression.
      * @param variables A Map of variables
      * @param clazz     The type to convert the extracted value to.
-     * @param headers   Request headers represented as a Spring Framework {@link HttpHeaders}
+     * @param webRequest    A Spring {@link WebRequest} giving access to request details. Can cast to an environment specific class such as {@link org.springframework.web.context.request.ServletWebRequest}.
      * @param <T>       The type that the extracted value should be converted to.
      * @return The extracted value from the result, converted to type T
      * @see <a href="https://github.com/json-path/JsonPath">JsonPath syntax docs</a>
@@ -249,7 +246,7 @@ public interface DgsQueryExecutor {
                                             @Language("JSONPath") String jsonPath,
                                             Map<String, Object> variables,
                                             Class<T> clazz,
-                                            HttpHeaders headers);
+                                            WebRequest webRequest);
 
     /**
      * Executes a GraphQL query, parses the returned data, extracts a value using JsonPath, and converts that value into the given type.
@@ -301,7 +298,7 @@ public interface DgsQueryExecutor {
      * @param jsonPath  JsonPath expression.
      * @param variables A Map of variables
      * @param typeRef   A JsonPath {@link TypeRef} representing the expected result type.
-     * @param headers   Request headers represented as a Spring Framework {@link HttpHeaders}
+     * @param webRequest    A Spring {@link WebRequest} giving access to request details. Can cast to an environment specific class such as {@link org.springframework.web.context.request.ServletWebRequest}.
      * @param <T>       The type that the extracted value should be converted to.
      * @return The extracted value from the result, converted to type T
      * @see <a href="https://github.com/json-path/JsonPath">JsonPath syntax docs</a>
@@ -312,5 +309,5 @@ public interface DgsQueryExecutor {
                                             @Language("JSONPath") String jsonPath,
                                             Map<String, Object> variables,
                                             TypeRef<T> typeRef,
-                                            HttpHeaders headers);
+                                            WebRequest webRequest);
 }
