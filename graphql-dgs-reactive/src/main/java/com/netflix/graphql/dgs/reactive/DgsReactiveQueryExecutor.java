@@ -21,7 +21,6 @@ import com.jayway.jsonpath.TypeRef;
 import graphql.ExecutionResult;
 import org.intellij.lang.annotations.Language;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import reactor.core.publisher.Mono;
 
@@ -100,7 +99,7 @@ public interface DgsReactiveQueryExecutor {
      *                          object on {@link com.netflix.graphql.dgs.context.DgsContext}.
      * @param headers           Request headers represented as a Spring Framework {@link HttpHeaders}
      * @param operationName     Operation name
-     * @param serverHttpRequest A Spring {@link ServerHttpRequest} giving access to request details.
+     * @param serverRequest A Spring {@link ServerRequest} giving access to request details.
      * @return Returns a GraphQL {@link ExecutionResult}. This includes data and errors.
      * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
      * @see <a href="https://graphql.org/learn/queries/#operation-name">Operation name</a>
@@ -110,7 +109,7 @@ public interface DgsReactiveQueryExecutor {
                                   Map<String, Object> extensions,
                                   HttpHeaders headers,
                                   String operationName,
-                                  ServerRequest serverHttpRequest);
+                                  ServerRequest serverRequest);
 
     /**
      * Executes a GraphQL query, parses the returned data, and uses a Json Path to extract specific elements out of the data.
@@ -128,7 +127,7 @@ public interface DgsReactiveQueryExecutor {
      */
     default <T> Mono<T> executeAndExtractJsonPath(@Language("GraphQL") String query,
                                                   @Language("JSONPath") String jsonPath) {
-        return executeAndExtractJsonPath(query, jsonPath, Collections.emptyMap());
+        return executeAndExtractJsonPath(query, jsonPath, Collections.emptyMap(), null);
     }
 
     /**
@@ -142,6 +141,7 @@ public interface DgsReactiveQueryExecutor {
      * @param query     Query string
      * @param jsonPath  JsonPath expression.
      * @param variables A Map of variables
+     * @param serverRequest A Spring {@link ServerRequest} giving access to request details.     *
      * @param <T>       The type of primitive or map representation that should be returned.
      * @return A Mono that might contain the resolved type.
      * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
@@ -149,7 +149,30 @@ public interface DgsReactiveQueryExecutor {
      */
     <T> Mono<T> executeAndExtractJsonPath(@Language("GraphQL") String query,
                                           @Language("JSONPath") String jsonPath,
-                                          Map<String, Object> variables);
+                                          Map<String, Object> variables,
+                                          ServerRequest serverRequest);
+
+    /**
+     * Executes a GraphQL query, parses the returned data, and uses a Json Path to extract specific elements out of the data.
+     * The method is generic, and tries to cast the result into the type you specify.
+     * This does NOT work on Lists. Use {@link #executeAndExtractJsonPathAsObject(String, String, TypeRef)}instead.
+     * <p>
+     * This only works for primitive types and map representations.
+     * Use {@link #executeAndExtractJsonPathAsObject(String, String, Class)} for complex types and lists.*
+     *
+     * @param query     Query string
+     * @param jsonPath  JsonPath expression.
+     * @param serverRequest A Spring {@link ServerRequest} giving access to request details.
+     * @param <T>       The type of primitive or map representation that should be returned.
+     * @return A Mono that might contain the resolved type.
+     * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
+     * @see <a href="https://github.com/json-path/JsonPath">JsonPath syntax docs</a>
+     */
+    default <T> Mono<T> executeAndExtractJsonPath(@Language("GraphQL") String query,
+                                                  @Language("JSONPath") String jsonPath,
+                                                  ServerRequest serverRequest) {
+        return executeAndExtractJsonPath(query, jsonPath, null, serverRequest );
+    }
 
     /**
      * Executes a GraphQL query, parses the returned data, and return a {@link DocumentContext}.
