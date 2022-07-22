@@ -73,6 +73,8 @@ object BaseDgsQueryExecutor {
         preparsedDocumentProvider: PreparsedDocumentProvider?,
     ): CompletableFuture<ExecutionResult> {
 
+        var inputVariables = variables ?: Collections.emptyMap()
+
         if (!StringUtils.hasText(query)) {
             return CompletableFuture.completedFuture(
                 ExecutionResultImpl
@@ -106,7 +108,7 @@ object BaseDgsQueryExecutor {
                 .newExecutionInput()
                 .query(query)
                 .operationName(operationName)
-                .variables(variables)
+                .variables(inputVariables)
                 .dataLoaderRegistry(dataLoaderRegistry)
                 .context(dgsContext)
                 .graphQLContext(dgsContext)

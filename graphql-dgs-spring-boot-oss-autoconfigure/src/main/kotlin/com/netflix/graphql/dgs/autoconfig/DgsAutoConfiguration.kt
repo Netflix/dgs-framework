@@ -20,6 +20,8 @@ import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
+import com.netflix.graphql.dgs.context.GraphQLContextContributor
+import com.netflix.graphql.dgs.context.GraphQLContextContributorInstrumentation
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
 import com.netflix.graphql.dgs.internal.*
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
@@ -53,6 +55,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.PriorityOrdered
+import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 import java.util.*
 import kotlin.streams.toList
@@ -71,6 +75,14 @@ open class DgsAutoConfiguration(
 
     companion object {
         const val AUTO_CONF_PREFIX = "dgs.graphql"
+    }
+
+    @Bean
+    @Order(PriorityOrdered.HIGHEST_PRECEDENCE)
+    open fun graphQLContextContributionInstrumentation(
+        graphQLContextContributors: ObjectProvider<GraphQLContextContributor>
+    ): Instrumentation {
+        return GraphQLContextContributorInstrumentation(graphQLContextContributors.orderedStream().toList())
     }
 
     @Bean
