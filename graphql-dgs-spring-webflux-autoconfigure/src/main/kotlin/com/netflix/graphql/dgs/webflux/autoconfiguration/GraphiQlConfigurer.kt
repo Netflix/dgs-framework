@@ -47,13 +47,12 @@ class GraphiQlConfigurer(private val configProps: DgsWebfluxConfigurationPropert
     ) :
         ResourceTransformer {
         @Throws(IOException::class)
-
         override fun transform(
             exchange: ServerWebExchange,
             resource: Resource,
             transformerChain: ResourceTransformerChain
         ): Mono<Resource> {
-            if (exchange.request.uri.toASCIIString().endsWith(configProps.graphiql.path + "/index.html")) {
+            if (exchange.request.uri.path.endsWith(configProps.graphiql.path + "/index.html")) {
                 var content = resource.inputStream.bufferedReader().use(BufferedReader::readText)
                 replaceMap.forEach { content = content.replace(it.key, it.value) }
                 return Mono.just(
