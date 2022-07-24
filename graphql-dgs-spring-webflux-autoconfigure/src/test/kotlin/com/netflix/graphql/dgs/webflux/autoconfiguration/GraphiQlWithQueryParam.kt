@@ -26,41 +26,25 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.web.reactive.config.EnableWebFlux
 
-@AutoConfigureWebTestClient
 @EnableWebFlux
-@SpringBootTest(classes = [DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, WebRequestTestWithCustomEndpoint.ExampleImplementation::class])
-class GraphiQlUI {
+@AutoConfigureWebTestClient
+@SpringBootTest(classes = [CustomDgsWebfluxHttpHandler.TestConfig::class, DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, CustomDgsWebfluxHttpHandler.ExampleImplementation::class])
+class GraphiQlWithQueryParam {
+
     @Autowired
     lateinit var webTestClient: WebTestClient
 
     @Test
-    fun `GraphiQL should be available`() {
-        webTestClient.get().uri("/graphiql/index.html").exchange()
-            .expectStatus().isOk
-    }
-
-    @Test
-    fun `graphiql should redirect to correct page`() {
-        webTestClient.get().uri("/graphiql").exchange()
-            .expectStatus().isPermanentRedirect
-    }
-
-    @Test
-    fun `graphiql should load page when URI has no query parameters`() {
-        webTestClient.get().uri("/graphiql/index.html").exchange()
-            .expectStatus().isOk
-    }
-
-    @Test
-    fun `graphiql title should be default`() {
-        webTestClient.get().uri("/graphiql/index.html")
+    fun `GraphiQL should load page when URI has query parameters`() {
+        webTestClient.get()
+            .uri("/graphiql/index.html?query=%7B%0A%20%20__schema%20%7B%0A%20%20%20%20description%0A%20%20%7D%0A%7D")
             .exchange()
-            .expectStatus()
-            .isOk
+            .expectStatus().isOk
             .expectBody<String>()
             .consumeWith {
-                 Assertions.assertThat(it.responseBody.orEmpty())
-                     .contains("Simple GraphiQL Example")
+                Assertions.assertThat(it.responseBody.orEmpty())
+                    .doesNotContain("DGS_GRAPHIQL_TITLE")
+                    .doesNotContain("DGS_GRAPHQL_PATH")
             }
     }
 }

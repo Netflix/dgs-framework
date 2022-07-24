@@ -17,11 +17,13 @@
 package com.netflix.graphql.dgs.webflux.autoconfiguration
 
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.web.reactive.config.EnableWebFlux
 
 @AutoConfigureWebTestClient
@@ -40,8 +42,10 @@ class GraphiQlCustomTitle {
             .exchange()
             .expectStatus()
             .isOk
-            .expectBody()
-            .toString()
-            .contains("Custom GraphiQL Title")
+            .expectBody<String>()
+            .consumeWith {
+                Assertions.assertThat(it.responseBody.orEmpty())
+                    .contains("Custom GraphiQL Title")
+            }
     }
 }
