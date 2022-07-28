@@ -162,6 +162,28 @@ public interface DgsReactiveQueryExecutor {
      *
      * @param query     Query string
      * @param jsonPath  JsonPath expression.
+     * @param variables A Map of variables
+     * @param <T>       The type of primitive or map representation that should be returned.
+     * @return A Mono that might contain the resolved type.
+     * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
+     * @see <a href="https://github.com/json-path/JsonPath">JsonPath syntax docs</a>
+     */
+    default <T> Mono<T> executeAndExtractJsonPath(@Language("GraphQL") String query,
+                                          @Language("JSONPath") String jsonPath,
+                                          Map<String, Object> variables){
+        return executeAndExtractJsonPath(query,jsonPath,variables, null);
+    }
+
+    /**
+     * Executes a GraphQL query, parses the returned data, and uses a Json Path to extract specific elements out of the data.
+     * The method is generic, and tries to cast the result into the type you specify.
+     * This does NOT work on Lists. Use {@link #executeAndExtractJsonPathAsObject(String, String, TypeRef)}instead.
+     * <p>
+     * This only works for primitive types and map representations.
+     * Use {@link #executeAndExtractJsonPathAsObject(String, String, Class)} for complex types and lists.*
+     *
+     * @param query     Query string
+     * @param jsonPath  JsonPath expression.
      * @param serverRequest A Spring {@link ServerRequest} giving access to request details.
      * @param <T>       The type of primitive or map representation that should be returned.
      * @return A Mono that might contain the resolved type.
