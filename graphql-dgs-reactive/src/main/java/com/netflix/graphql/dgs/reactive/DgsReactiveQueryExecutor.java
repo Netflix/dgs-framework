@@ -169,9 +169,9 @@ public interface DgsReactiveQueryExecutor {
      * @see <a href="https://github.com/json-path/JsonPath">JsonPath syntax docs</a>
      */
     default <T> Mono<T> executeAndExtractJsonPath(@Language("GraphQL") String query,
-                                          @Language("JSONPath") String jsonPath,
-                                          Map<String, Object> variables){
-        return executeAndExtractJsonPath(query,jsonPath,variables, null);
+                                                  @Language("JSONPath") String jsonPath,
+                                                  Map<String, Object> variables) {
+        return executeAndExtractJsonPath(query, jsonPath, variables, null);
     }
 
     /**
