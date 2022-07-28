@@ -34,6 +34,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
 import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -65,12 +66,14 @@ class DgsWebMVCCacheControlSmokeTest {
     fun `CacheControl WebMvc Smoke test with caching`() {
         val uriBuilder = MockMvcRequestBuilders
             .post("/graphql")
+            .contentType(MediaType.APPLICATION_JSON)
             .content(
                 """
                   |{
                   |    "query": "{ product { upc } }"
                   | }
-                  |""".trimMargin()
+                  |
+                """.trimMargin()
             )
         mvc.perform(uriBuilder)
             .andExpect(status().isOk)
@@ -91,12 +94,14 @@ class DgsWebMVCCacheControlSmokeTest {
     private fun noCacheRequest() {
         val uriBuilder = MockMvcRequestBuilders
             .post("/graphql")
+            .contentType(MediaType.APPLICATION_JSON)
             .content(
                 """
                   |{
                   |    "query": "{ noCache }"
                   | }
-                  |""".trimMargin()
+                  |
+                """.trimMargin()
             )
         mvc.perform(uriBuilder)
             .andExpect(status().isOk)

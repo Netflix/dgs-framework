@@ -22,7 +22,6 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 
 @ConfigurationProperties(prefix = DgsCacheControlSupportProperties.PREFIX)
 @ConstructorBinding
-@Suppress("ConfigurationProperties")
 data class DgsCacheControlSupportProperties(
     /** Enables/Disables support for [Apollo Server-side caching using @cacheControl](https://www.apollographql.com/docs/apollo-server/performance/caching). */
     @DefaultValue("$DEFAULT_ENABLED")

@@ -36,6 +36,7 @@ import org.springframework.context.annotation.FilterType
 import org.springframework.context.annotation.Import
 import org.springframework.http.CacheControl
 import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.config.EnableWebFlux
 import java.time.Duration
@@ -73,12 +74,14 @@ class DgsWebFluxCacheControlSmokeTest {
         webTestClient
             .post()
             .uri("/graphql")
+            .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(
                 """
                   |{
                   |    "query": "{ product { upc } }"
                   | }
-                  |""".trimMargin()
+                  |
+                """.trimMargin()
             )
             .exchange()
             .expectStatus().isOk()
@@ -96,12 +99,14 @@ class DgsWebFluxCacheControlSmokeTest {
         webTestClient
             .post()
             .uri("/graphql")
+            .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(
                 """
                   |{
                   |    "query": "{ noCache }"
                   | }
-                  |""".trimMargin()
+                  |
+                """.trimMargin()
             )
             .exchange()
             .expectStatus().isOk()

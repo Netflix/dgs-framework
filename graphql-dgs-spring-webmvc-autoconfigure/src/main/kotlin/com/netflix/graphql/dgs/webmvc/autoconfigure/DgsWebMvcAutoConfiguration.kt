@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.cacheControl.DgsCacheControlSupportProperties
-import com.netflix.graphql.dgs.internal.CookieValueResolver
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.method.ArgumentResolver
 import com.netflix.graphql.dgs.mvc.DefaultDgsGraphQLRequestHeaderValidator
@@ -69,7 +68,7 @@ open class DgsWebMvcAutoConfiguration {
         @Qualifier("dgsObjectMapper") objectMapper: ObjectMapper,
         cacheControlProperties: DgsCacheControlSupportProperties
     ): DgsRestController {
-        return DgsRestController(dgsQueryExecutor, objectMapper, cacheControlProperties.enabled)
+        return DgsRestController(dgsQueryExecutor, objectMapper, DefaultDgsGraphQLRequestHeaderValidator(), cacheControlProperties.enabled)
     }
 
     @Configuration

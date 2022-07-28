@@ -31,7 +31,6 @@ import graphql.GraphqlErrorBuilder
 import graphql.execution.reactive.SubscriptionPublisher
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -74,7 +73,7 @@ open class DgsRestController(
     open val dgsQueryExecutor: DgsQueryExecutor,
     open val mapper: ObjectMapper = jacksonObjectMapper(),
     open val dgsGraphQLRequestHeaderValidator: DgsGraphQLRequestHeaderValidator = DefaultDgsGraphQLRequestHeaderValidator(),
-    @Value("false") open val captureCacheControl: Boolean = false
+    open val captureCacheControl: Boolean = false
 ) {
 
     companion object {
