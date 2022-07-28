@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,28 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.autoconfig
+package com.netflix.graphql.dgs.subscriptions.websockets
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
+import javax.annotation.PostConstruct
 
-/**
- * Configuration properties for DGS Graphql Introspection.
- */
 @ConstructorBinding
-@ConfigurationProperties(prefix = "dgs.graphql.introspection")
+@ConfigurationProperties(prefix = "dgs.graphql.websocket")
 @Suppress("ConfigurationProperties")
-data class DgsIntrospectionConfigurationProperties(
-    /**
-     * Setting this value to `false` will prevent Introspection queries from being performed.
-     * Note that this is against GraphQL Specification, that said, some production systems want this lock down in place
-     * for security concerns.
-     */
-    @DefaultValue("true") val enabled: Boolean
-)
+data class DgsWebSocketConfigurationProperties(
+    @DefaultValue("/subscriptions") var path: String = "/subscriptions"
+) {
+
+    @PostConstruct
+    fun validatePaths() {
+        validatePath(this.path, "dgs.graphql.websocket.path")
+    }
+
+    private fun validatePath(path: String, pathProperty: String) {
+        if (path != "/" && (!path.startsWith("/") || path.endsWith("/"))) {
+            throw IllegalArgumentException("$pathProperty must start with '/' and not end with '/' but was '$path'")
+        }
+    }
+}

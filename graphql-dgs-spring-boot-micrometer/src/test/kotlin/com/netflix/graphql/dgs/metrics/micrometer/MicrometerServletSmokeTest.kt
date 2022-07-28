@@ -16,7 +16,15 @@
 
 package com.netflix.graphql.dgs.metrics.micrometer
 
-import com.netflix.graphql.dgs.*
+import com.netflix.graphql.dgs.DgsComponent
+import com.netflix.graphql.dgs.DgsData
+import com.netflix.graphql.dgs.DgsDataLoader
+import com.netflix.graphql.dgs.DgsDataLoaderRegistryConsumer
+import com.netflix.graphql.dgs.DgsEnableDataFetcherInstrumentation
+import com.netflix.graphql.dgs.DgsMutation
+import com.netflix.graphql.dgs.DgsQuery
+import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
+import com.netflix.graphql.dgs.InputArgument
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
 import com.netflix.graphql.dgs.exceptions.DgsBadRequestException
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsContextualTagCustomizer
@@ -39,6 +47,7 @@ import io.micrometer.core.instrument.Tags
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import org.assertj.core.api.Assertions.assertThat
 import org.dataloader.BatchLoader
+import org.dataloader.DataLoaderRegistry
 import org.dataloader.MappedBatchLoader
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -102,6 +111,7 @@ class MicrometerServletSmokeTest {
             // We will also assert that the tag reflected by the metric is not affected by the alias.
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content("""{ "query": "query my_op_1{ping}" }""")
         ).andExpect(status().isOk)
             .andExpect(content().json("""{"data":{"ping":"pong"}}""", false))
@@ -141,6 +151,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content("""{ "query": "{someTrivialThings}" }""")
         ).andExpect(status().isOk)
             .andExpect(content().json("""{"data":{"someTrivialThings":"some insignificance"}}""", false))
@@ -169,6 +180,7 @@ class MicrometerServletSmokeTest {
             // We will also assert that the tag reflected by the metric is not affected by the alias.
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content("""{ "query": " mutation my_op_1{buzz}" }""".trimMargin())
         ).andExpect(status().isOk)
             .andExpect(content().json("""{"data":{"buzz":"buzz"}}""", false))
@@ -210,6 +222,7 @@ class MicrometerServletSmokeTest {
             // We will also assert that the tag reflected by the metric is not affected by the alias.
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content(
                     """
                     | {
@@ -256,9 +269,11 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content(
                     """{"query": 
-                    |   "{transform(input: [\"A madam in a racecar.\", \"A man, a plan, a canal - Panama\" ]){ index value upperCased reversed } }" }""".trimMargin()
+                    |   "{transform(input: [\"A madam in a racecar.\", \"A man, a plan, a canal - Panama\" ]){ index value upperCased reversed } }" }
+                    """.trimMargin()
                 )
         ).andExpect(status().isOk)
             .andExpect(
@@ -343,6 +358,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content("""{ "query": "fail" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -353,7 +369,8 @@ class MicrometerServletSmokeTest {
                         |       {"message":"Invalid Syntax : offending token 'fail' at line 1 column 1",
                         |           "locations":[{"line":1,"column":1}],"extensions":{"classification":"InvalidSyntax"}}
                         |   ]
-                        |}""".trimMargin(),
+                        |}
+                    """.trimMargin(),
                     false
                 )
             )
@@ -390,10 +407,71 @@ class MicrometerServletSmokeTest {
     }
 
     @Test
+    fun `Assert metrics for a bad input error`() {
+        mvc.perform(
+            MockMvcRequestBuilders
+                .post("/graphql")
+                .contentType("application/json")
+                .content("""{ "query": "{ hello }" }""")
+        ).andExpect(status().isOk)
+            .andExpect(
+                content().json(
+                    """
+                    |   { "errors": [
+                    |       { 
+                    |           "message": "Validation error of type MissingFieldArgument: Missing field argument name @ 'hello'",
+                    |           "locations": [ 
+                    |               {
+                    |                   "line":1,
+                    |                   "column":3
+                    |               }
+                    |           ],
+                    |           "extensions": { "classification":"ValidationError" }
+                    |       }
+                    |     ]
+                    |   }
+                    """.trimMargin(),
+                    false
+                )
+            )
+        val meters = fetchMeters("gql.")
+
+        assertThat(meters).containsOnlyKeys("gql.error", "gql.query")
+
+        assertThat(meters["gql.error"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.error"]?.first()?.id?.tags)
+            .containsAll(
+                Tags.of("execution-tag", "foo")
+                    .and("contextual-tag", "foo")
+                    .and("gql.operation", "none")
+                    .and("gql.operation.name", "anonymous")
+                    .and("gql.query.complexity", "none")
+                    .and("gql.query.sig.hash", "none")
+                    .and("gql.errorDetail", "none")
+                    .and("gql.errorCode", "ValidationError")
+                    .and("gql.path", "[hello]")
+                    .and("outcome", "failure")
+            )
+
+        assertThat(meters["gql.query"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.query"]?.first()?.id?.tags)
+            .containsAll(
+                Tags.of("execution-tag", "foo")
+                    .and("contextual-tag", "foo")
+                    .and("outcome", "failure")
+                    .and("gql.operation", "none")
+                    .and("gql.operation.name", "anonymous")
+                    .and("gql.query.complexity", "none")
+                    .and("gql.query.sig.hash", "none")
+            )
+    }
+
+    @Test
     fun `Assert metrics for internal error`() {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content("""{ "query": "{triggerInternalFailure}" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -405,7 +483,8 @@ class MicrometerServletSmokeTest {
                        |           "path":["triggerInternalFailure"],"extensions":{"errorType":"INTERNAL"}}
                        |    ],
                        |    "data":{"triggerInternalFailure":null}
-                       |}""".trimMargin(),
+                       |}
+                    """.trimMargin(),
                     false
                 )
             )
@@ -459,10 +538,11 @@ class MicrometerServletSmokeTest {
     }
 
     @Test
-    fun `Assert metrics for a DGS bad-request error`() {
+    fun `Assert metrics for a bad-request error`() {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content("""{ "query": "{triggerBadRequestFailure}" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -475,7 +555,8 @@ class MicrometerServletSmokeTest {
                         |          "extensions":{"errorType":"BAD_REQUEST"}}
                         |   ],
                         |   "data":{"triggerBadRequestFailure":null}
-                        |}""".trimMargin(),
+                        |}
+                    """.trimMargin(),
                     false
                 )
             )
@@ -530,6 +611,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content("""{ "query": "{triggerCustomFailure}" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -544,7 +626,8 @@ class MicrometerServletSmokeTest {
                     |       }
                     |   ],
                     |   "data":{"triggerCustomFailure":null}
-                    |}""".trimMargin(),
+                    |}
+                    """.trimMargin(),
                     false
                 )
             )
@@ -599,6 +682,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType("application/json")
                 .content("""{ "query": "{ triggerInternalFailure triggerBadRequestFailure triggerCustomFailure }" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -616,7 +700,7 @@ class MicrometerServletSmokeTest {
                     |    ],
                     |    "data":{"triggerInternalFailure":null,"triggerBadRequestFailure":null,"triggerCustomFailure":null}
                     |}
-                     """.trimMargin(),
+                    """.trimMargin(),
                     false
                 )
             )
@@ -736,6 +820,7 @@ class MicrometerServletSmokeTest {
                 |type Query{
                 |    ping:String
                 |    someTrivialThings: String 
+                |    hello(name: String!): String 
                 |    transform(input:[String]): [StringTransformation]
                 |    triggerInternalFailure: String
                 |    triggerBadRequestFailure:String
@@ -762,44 +847,49 @@ class MicrometerServletSmokeTest {
             }
 
             @DgsQuery()
+            fun hello(@InputArgument name: String): String {
+                return "Hello $name"
+            }
+
+            @DgsQuery()
             @DgsEnableDataFetcherInstrumentation(false)
             fun someTrivialThings(): String {
                 return "some insignificance"
             }
 
-            @DgsData(parentType = "Mutation", field = "buzz")
+            @DgsMutation
             fun buzz(): String {
                 return "buzz"
             }
 
-            @DgsData(parentType = "Query", field = "transform")
+            @DgsQuery
             fun transform(@InputArgument input: List<String>): List<Map<String, String>> {
                 return input.mapIndexed { i, v -> mapOf("index" to "$i", "value" to v) }
             }
 
-            @DgsData(parentType = "Query", field = "triggerInternalFailure")
+            @DgsQuery
             fun triggerInternalFailure(): String {
                 throw IllegalStateException("Exception triggered.")
             }
 
-            @DgsData(parentType = "Query", field = "triggerBadRequestFailure")
+            @DgsQuery
             fun triggerBadRequestFailure(): String {
                 throw DgsBadRequestException("Exception triggered.")
             }
 
-            @DgsData(parentType = "Query", field = "triggerCustomFailure")
+            @DgsQuery
             fun triggerCustomFailure(): String {
                 throw CustomException("Exception triggered.")
             }
 
-            @DgsData(parentType = "StringTransformation", field = "upperCased")
+            @DgsData(parentType = "StringTransformation")
             fun upperCased(dfe: DataFetchingEnvironment): CompletableFuture<String>? {
                 val dataLoader = dfe.getDataLoader<String, String>("upperCaseLoader")
                 val input = dfe.getSource<Map<String, String>>()
                 return dataLoader.load(input.getOrDefault("value", ""))
             }
 
-            @DgsData(parentType = "StringTransformation", field = "reversed")
+            @DgsData(parentType = "StringTransformation")
             fun reversed(dfe: DataFetchingEnvironment): CompletableFuture<String>? {
                 val dataLoader = dfe.getDataLoader<String, String>("reverser")
                 val input = dfe.getSource<Map<String, String>>()
@@ -814,12 +904,18 @@ class MicrometerServletSmokeTest {
             @DgsDataLoader(name = "reverser")
             class ReverseStringDataLoader(
                 @Qualifier("dataLoaderTaskExecutor") private val dataLoaderTaskExecutor: Executor
-            ) : MappedBatchLoader<String, String> {
+            ) : MappedBatchLoader<String, String>, DgsDataLoaderRegistryConsumer {
+
+                var dataLoaderRegistry: Optional<DataLoaderRegistry> = Optional.empty()
+
                 override fun load(keys: Set<String>): CompletionStage<Map<String, String>> {
                     return CompletableFuture.supplyAsync(
                         { keys.associateWith { it.reversed() } },
                         dataLoaderTaskExecutor
                     )
+                }
+                override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry) {
+                    this.dataLoaderRegistry = Optional.of(dataLoaderRegistry)
                 }
             }
         }
@@ -841,7 +937,7 @@ class MicrometerServletSmokeTest {
             val executor = ThreadPoolTaskExecutor()
             executor.corePoolSize = 1
             executor.maxPoolSize = 1
-            executor.setThreadNamePrefix("${MicrometerServletSmokeTest::class.java.simpleName}-test-")
+            executor.threadNamePrefix = "${MicrometerServletSmokeTest::class.java.simpleName}-test-"
             executor.setQueueCapacity(10)
             executor.initialize()
             return executor
@@ -852,7 +948,7 @@ class MicrometerServletSmokeTest {
 
         private val defaultHandler: DefaultDataFetcherExceptionHandler = DefaultDataFetcherExceptionHandler()
 
-        override fun onException(handlerParameters: DataFetcherExceptionHandlerParameters): DataFetcherExceptionHandlerResult {
+        override fun handleException(handlerParameters: DataFetcherExceptionHandlerParameters): CompletableFuture<DataFetcherExceptionHandlerResult> {
             return if (handlerParameters.exception is CustomException) {
                 val exception = handlerParameters.exception
                 val graphqlError: GraphQLError =
@@ -862,11 +958,13 @@ class MicrometerServletSmokeTest {
                         .message(exception.message)
                         .path(handlerParameters.path)
                         .build()
-                DataFetcherExceptionHandlerResult.newResult()
-                    .error(graphqlError)
-                    .build()
+                CompletableFuture.completedFuture(
+                    DataFetcherExceptionHandlerResult.newResult()
+                        .error(graphqlError)
+                        .build()
+                )
             } else {
-                defaultHandler.onException(handlerParameters)
+                defaultHandler.handleException(handlerParameters)
             }
         }
     }

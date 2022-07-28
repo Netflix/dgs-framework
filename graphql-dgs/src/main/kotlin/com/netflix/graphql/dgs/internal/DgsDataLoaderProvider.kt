@@ -62,21 +62,21 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
 
         val dataLoaderRegistry = DataLoaderRegistry()
         batchLoaders.forEach {
-            dataLoaderRegistry.register(it.name, createDataLoader(it.theLoader, it.annotation, dataLoaderRegistry))
+            dataLoaderRegistry.register(it.name, createDataLoader(it.theLoader, it.annotation, it.name, dataLoaderRegistry))
         }
         mappedBatchLoaders.forEach {
-            dataLoaderRegistry.register(it.name, createDataLoader(it.theLoader, it.annotation, dataLoaderRegistry))
+            dataLoaderRegistry.register(it.name, createDataLoader(it.theLoader, it.annotation, it.name, dataLoaderRegistry))
         }
         batchLoadersWithContext.forEach {
             dataLoaderRegistry.register(
                 it.name,
-                createDataLoader(it.theLoader, it.annotation, contextSupplier, dataLoaderRegistry)
+                createDataLoader(it.theLoader, it.annotation, it.name, contextSupplier, dataLoaderRegistry)
             )
         }
         mappedBatchLoadersWithContext.forEach {
             dataLoaderRegistry.register(
                 it.name,
-                createDataLoader(it.theLoader, it.annotation, contextSupplier, dataLoaderRegistry)
+                createDataLoader(it.theLoader, it.annotation, it.name, contextSupplier, dataLoaderRegistry)
             )
         }
 
@@ -127,6 +127,7 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         dataLoaders.values.forEach { dgsComponent ->
             val javaClass = AopUtils.getTargetClass(dgsComponent)
             val annotation = javaClass.getAnnotation(DgsDataLoader::class.java)
+
             fun <T : Any> createHolder(t: T): LoaderHolder<T> =
                 LoaderHolder(t, annotation, DataLoaderNameUtil.getDataLoaderName(javaClass, annotation))
             when (dgsComponent) {
@@ -142,29 +143,31 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
     private fun createDataLoader(
         batchLoader: BatchLoader<*, *>,
         dgsDataLoader: DgsDataLoader,
+        dataLoaderName: String,
         dataLoaderRegistry: DataLoaderRegistry
     ): DataLoader<*, *> {
         val options = dataLoaderOptions(dgsDataLoader)
 
-        val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
-        if (extendedBatchLoader is DgsDataLoaderRegistryConsumer) {
-            extendedBatchLoader.setDataLoaderRegistry(dataLoaderRegistry)
+        if (batchLoader is DgsDataLoaderRegistryConsumer) {
+            batchLoader.setDataLoaderRegistry(dataLoaderRegistry)
         }
 
+        val extendedBatchLoader = wrappedDataLoader(batchLoader, dataLoaderName)
         return DataLoaderFactory.newDataLoader(extendedBatchLoader, options)
     }
 
     private fun createDataLoader(
         batchLoader: MappedBatchLoader<*, *>,
         dgsDataLoader: DgsDataLoader,
+        dataLoaderName: String,
         dataLoaderRegistry: DataLoaderRegistry
     ): DataLoader<*, *> {
         val options = dataLoaderOptions(dgsDataLoader)
 
-        val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
-        if (extendedBatchLoader is DgsDataLoaderRegistryConsumer) {
-            extendedBatchLoader.setDataLoaderRegistry(dataLoaderRegistry)
+        if (batchLoader is DgsDataLoaderRegistryConsumer) {
+            batchLoader.setDataLoaderRegistry(dataLoaderRegistry)
         }
+        val extendedBatchLoader = wrappedDataLoader(batchLoader, dataLoaderName)
 
         return DataLoaderFactory.newMappedDataLoader(extendedBatchLoader, options)
     }
@@ -172,34 +175,36 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
     private fun <T> createDataLoader(
         batchLoader: BatchLoaderWithContext<*, *>,
         dgsDataLoader: DgsDataLoader,
+        dataLoaderName: String,
         supplier: Supplier<T>,
         dataLoaderRegistry: DataLoaderRegistry
     ): DataLoader<*, *> {
         val options = dataLoaderOptions(dgsDataLoader)
             .setBatchLoaderContextProvider(supplier::get)
 
-        val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
-        if (extendedBatchLoader is DgsDataLoaderRegistryConsumer) {
-            extendedBatchLoader.setDataLoaderRegistry(dataLoaderRegistry)
+        if (batchLoader is DgsDataLoaderRegistryConsumer) {
+            batchLoader.setDataLoaderRegistry(dataLoaderRegistry)
         }
 
-        return DataLoaderFactory.newDataLoader(batchLoader, options)
+        val extendedBatchLoader = wrappedDataLoader(batchLoader, dataLoaderName)
+        return DataLoaderFactory.newDataLoader(extendedBatchLoader, options)
     }
 
     private fun <T> createDataLoader(
         batchLoader: MappedBatchLoaderWithContext<*, *>,
         dgsDataLoader: DgsDataLoader,
+        dataLoaderName: String,
         supplier: Supplier<T>,
         dataLoaderRegistry: DataLoaderRegistry
     ): DataLoader<*, *> {
         val options = dataLoaderOptions(dgsDataLoader)
             .setBatchLoaderContextProvider(supplier::get)
 
-        val extendedBatchLoader = wrappedDataLoader(batchLoader, dgsDataLoader.name)
-        if (extendedBatchLoader is DgsDataLoaderRegistryConsumer) {
-            extendedBatchLoader.setDataLoaderRegistry(dataLoaderRegistry)
+        if (batchLoader is DgsDataLoaderRegistryConsumer) {
+            batchLoader.setDataLoaderRegistry(dataLoaderRegistry)
         }
 
+        val extendedBatchLoader = wrappedDataLoader(batchLoader, dataLoaderName)
         return DataLoaderFactory.newMappedDataLoader(extendedBatchLoader, options)
     }
 

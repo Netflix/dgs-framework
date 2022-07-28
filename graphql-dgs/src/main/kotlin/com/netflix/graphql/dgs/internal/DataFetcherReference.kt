@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,13 @@
 
 package com.netflix.graphql.dgs.internal
 
-import graphql.ExecutionInput
-import graphql.execution.preparsed.PreparsedDocumentEntry
-import graphql.execution.preparsed.PreparsedDocumentProvider
-import java.util.function.Function
+import org.springframework.core.annotation.MergedAnnotations
+import java.lang.reflect.Method
 
-object DgsNoOpPreparsedDocumentProvider : PreparsedDocumentProvider {
-
-    override fun getDocument(
-        executionInput: ExecutionInput,
-        parseAndValidateFunction: Function<ExecutionInput, PreparsedDocumentEntry>
-    ): PreparsedDocumentEntry {
-        return parseAndValidateFunction.apply(executionInput)
-    }
-}
+data class DataFetcherReference(
+    val instance: Any,
+    val method: Method,
+    val annotations: MergedAnnotations,
+    val parentType: String,
+    val field: String
+)

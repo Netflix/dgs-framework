@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.internal
+package com.netflix.graphql.dgs.webflux.handlers
 
-import org.springframework.core.annotation.MergedAnnotations
-import java.lang.reflect.Method
+import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.server.ServerRequest
 
-data class DatafetcherReference(
-    val instance: Any,
-    val method: Method,
-    val annotations: MergedAnnotations,
-    val parentType: String,
-    val field: String
-)
+object GraphQLMediaTypes {
+    private val GRAPHQL_MEDIA_TYPE = MediaType("application", "graphql")
+    val ACCEPTABLE_MEDIA_TYPES = listOf(GRAPHQL_MEDIA_TYPE, MediaType.APPLICATION_JSON)
+
+    fun isApplicationGraphQL(request: ServerRequest): Boolean {
+        return request.headers().contentType().map { GRAPHQL_MEDIA_TYPE.includes(it) }.orElse(false)
+    }
+}

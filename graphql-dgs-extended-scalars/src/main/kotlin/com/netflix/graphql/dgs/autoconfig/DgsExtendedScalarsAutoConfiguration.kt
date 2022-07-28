@@ -51,7 +51,8 @@ open class DgsExtendedScalarsAutoConfiguration {
                     return listOf(
                         ExtendedScalars.DateTime,
                         ExtendedScalars.Date,
-                        ExtendedScalars.Time
+                        ExtendedScalars.Time,
+                        ExtendedScalars.LocalTime
                     )
                 }
             }
@@ -129,6 +130,24 @@ open class DgsExtendedScalarsAutoConfiguration {
             return object : AbstractExtendedScalarRegistrar() {
                 override fun getScalars(): List<GraphQLScalarType> {
                     return listOf(ExtendedScalars.GraphQLChar)
+                }
+            }
+        }
+    }
+
+    @ConditionalOnProperty(
+        prefix = "dgs.graphql.extensions.scalars.ids",
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = true
+    )
+    @Configuration(proxyBeanMethods = false)
+    open class IDsExtendedScalarsAutoConfiguration {
+        @Bean
+        open fun idsExtendedScalarsRegistrar(): ExtendedScalarRegistrar {
+            return object : AbstractExtendedScalarRegistrar() {
+                override fun getScalars(): List<GraphQLScalarType> {
+                    return listOf(ExtendedScalars.UUID)
                 }
             }
         }

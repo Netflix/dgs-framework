@@ -21,6 +21,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.util.ClassUtils
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.server.ResponseStatusException
@@ -207,9 +208,11 @@ internal object GraphQLClients {
             ObjectMapper().registerModule(KotlinModule.Builder().nullIsSameAsDefault(true).build())
         else ObjectMapper().registerKotlinModule()
 
-    internal val defaultHeaders = mapOf(
-        "Accept" to listOf("application/json"),
-        "Content-type" to listOf("application/json")
+    internal val defaultHeaders: HttpHeaders = HttpHeaders.readOnlyHttpHeaders(
+        HttpHeaders().apply {
+            accept = listOf(MediaType.APPLICATION_JSON)
+            contentType = MediaType.APPLICATION_JSON
+        }
     )
 
     fun handleResponse(response: HttpResponse, requestBody: String, url: String): GraphQLResponse {

@@ -2,4 +2,6 @@ spring:
   application:
     name: dgs-example
 
-logging.level.graphql: DEBUG
+logging:
+  level:
+    com.netflix.graphql.dgs.example: DEBUG

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.autoconfig
+package com.netflix.graphql.dgs.subscriptions.websockets.autoconfigure
 
+import com.netflix.graphql.dgs.subscriptions.websockets.DgsWebSocketConfigurationProperties
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.context.properties.bind.Binder
@@ -23,26 +24,26 @@ import org.springframework.boot.context.properties.source.ConfigurationPropertyS
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource
 import java.util.*
 
-class DgsIntrospectionConfigurationPropertiesTest {
+class DgsWebSocketConfigurationPropertiesTest {
 
     @Test
-    fun enableIntrospectionFlag() {
-        val properties = bind("dgs.graphql.introspection.enabled", "true")
-        Assertions.assertThat(properties.enabled).isEqualTo(true)
+    fun websocketPathDefault() {
+        val properties = bind(Collections.emptyMap())
+        Assertions.assertThat(properties.path).isEqualTo("/subscriptions")
     }
 
     @Test
-    fun disableIntrospectionFlag() {
-        val properties = bind("dgs.graphql.introspection.enabled", "false")
-        Assertions.assertThat(properties.enabled).isEqualTo(false)
+    fun websocketPathCustom() {
+        val properties = bind("dgs.graphql.websocket.path", "/private/subscriptions")
+        Assertions.assertThat(properties.path).isEqualTo("/private/subscriptions")
     }
 
-    private fun bind(name: String, value: String): DgsIntrospectionConfigurationProperties {
+    private fun bind(name: String, value: String): DgsWebSocketConfigurationProperties {
         return bind(Collections.singletonMap(name, value))
     }
 
-    private fun bind(map: Map<String?, String?>): DgsIntrospectionConfigurationProperties {
+    private fun bind(map: Map<String?, String?>): DgsWebSocketConfigurationProperties {
         val source: ConfigurationPropertySource = MapConfigurationPropertySource(map)
-        return Binder(source).bindOrCreate("dgs.graphql.introspection", DgsIntrospectionConfigurationProperties::class.java)
+        return Binder(source).bindOrCreate("dgs.graphql.websocket", DgsWebSocketConfigurationProperties::class.java)
     }
 }

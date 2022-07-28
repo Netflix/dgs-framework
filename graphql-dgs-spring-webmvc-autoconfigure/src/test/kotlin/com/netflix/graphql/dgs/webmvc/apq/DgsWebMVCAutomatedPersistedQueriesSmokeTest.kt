@@ -33,6 +33,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
+import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -64,6 +65,7 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
         val uriBuilder =
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     """
                        |{
@@ -74,7 +76,8 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                        |        }
                        |    }
                        | }
-                       |""".trimMargin()
+                       |
+                    """.trimMargin()
                 )
         mvc.perform(uriBuilder)
             .andExpect(status().isOk)
@@ -94,7 +97,8 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                     |     }
                     |   ]
                     | }
-                    |""".trimMargin()
+                    |
+                    """.trimMargin()
                 )
             )
     }
@@ -105,6 +109,7 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
         val uriBuilder =
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     """
                        |{
@@ -116,7 +121,8 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                        |        }
                        |    }
                        | }
-                       |""".trimMargin()
+                       |
+                    """.trimMargin()
                 )
         mvc.perform(uriBuilder)
             .andExpect(status().isOk)
@@ -128,7 +134,8 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                     |        "__typename":"Query"
                     |    }
                     | }
-                    |""".trimMargin()
+                    |
+                    """.trimMargin()
                 )
             )
     }
@@ -139,6 +146,7 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
         val uriBuilder =
             MockMvcRequestBuilders
                 .post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     """
                        |{
@@ -149,7 +157,8 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                        |        }
                        |    }
                        | }
-                       |""".trimMargin()
+                       |
+                    """.trimMargin()
                 )
         mvc.perform(uriBuilder)
             .andExpect(status().isOk)
@@ -161,7 +170,8 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                     |        "__typename":"Query"
                     |    }
                     | }
-                    |""".trimMargin()
+                    |
+                    """.trimMargin()
                 )
             )
     }

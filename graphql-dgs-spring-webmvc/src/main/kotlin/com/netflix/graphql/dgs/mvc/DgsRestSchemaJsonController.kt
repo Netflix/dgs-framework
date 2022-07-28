@@ -23,6 +23,7 @@ import graphql.ExecutionResult
 import graphql.GraphQL
 import graphql.introspection.IntrospectionQuery
 import graphql.schema.GraphQLSchema
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -36,7 +37,10 @@ import org.springframework.web.bind.annotation.RestController
 open class DgsRestSchemaJsonController(open val schemaProvider: DgsSchemaProvider) {
 
     // The @ConfigurationProperties bean name is <prefix>-<fqn>
-    @RequestMapping("#{@'dgs.graphql-com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcConfigurationProperties'.schemaJson.path}", produces = ["application/json"])
+    @RequestMapping(
+        "#{@'dgs.graphql-com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcConfigurationProperties'.schemaJson.path}",
+        produces = [ MediaType.APPLICATION_JSON_VALUE ]
+    )
     fun schema(): String {
         val graphQLSchema: GraphQLSchema = schemaProvider.schema()
         val graphQL = GraphQL.newGraphQL(graphQLSchema).build()

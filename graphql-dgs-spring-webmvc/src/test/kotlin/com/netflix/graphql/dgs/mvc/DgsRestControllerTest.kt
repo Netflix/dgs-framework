@@ -27,6 +27,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.slot
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.HttpHeaders
@@ -37,11 +38,20 @@ import org.springframework.web.context.request.WebRequest
 
 @ExtendWith(MockKExtension::class)
 class DgsRestControllerTest {
+
+    private val httpHeaders = HttpHeaders()
+
     @MockK
     lateinit var dgsQueryExecutor: DgsQueryExecutor
 
     @MockK
     lateinit var webRequest: WebRequest
+
+    @BeforeEach
+    fun setHeaders() {
+        httpHeaders.clear()
+        httpHeaders.contentType = MediaType.APPLICATION_JSON
+    }
 
     @Test
     fun `Is able to execute a a well formed query`() {
@@ -63,8 +73,7 @@ class DgsRestControllerTest {
             )
         } returns ExecutionResultWithContext(ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).build(), null)
 
-        val result =
-            DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
+        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, httpHeaders, webRequest)
         val mapper = jacksonObjectMapper()
         val (data, errors) = mapper.readValue(result.body, GraphQLResponse::class.java)
         assertThat(errors.size).isEqualTo(0)
@@ -94,7 +103,7 @@ class DgsRestControllerTest {
         } returns ExecutionResultWithContext(ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hi", "there"))).build(), null)
 
         val result =
-            DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
+            DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, httpHeaders, webRequest)
         val mapper = jacksonObjectMapper()
         val (data, errors) = mapper.readValue(result.body, GraphQLResponse::class.java)
         assertThat(errors.size).isEqualTo(0)
@@ -156,7 +165,7 @@ class DgsRestControllerTest {
         )
 
         val result =
-            DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
+            DgsRestController(dgsQueryExecutor).graphql(requestBody, null, null, null, httpHeaders, webRequest)
         assertThat(result.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
         assertThat(result.body).isEqualTo("Trying to execute subscription on /graphql. Use /subscriptions instead!")
     }
@@ -166,7 +175,7 @@ class DgsRestControllerTest {
         val requestBody = ""
         val result =
             DgsRestController(dgsQueryExecutor)
-                .graphql(requestBody, null, null, null, HttpHeaders(), webRequest)
+                .graphql(requestBody, null, null, null, httpHeaders, webRequest)
 
         assertThat(result)
             .isInstanceOf(ResponseEntity::class.java)

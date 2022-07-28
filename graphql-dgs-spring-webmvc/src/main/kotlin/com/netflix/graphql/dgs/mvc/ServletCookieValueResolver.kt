@@ -22,6 +22,7 @@ import com.netflix.graphql.dgs.internal.DgsWebMvcRequestData
 import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.util.WebUtils
 
+@Deprecated("Cookie resolving is now handled by ArgumentResolvers")
 class ServletCookieValueResolver : CookieValueResolver {
     override fun getCookieValue(name: String, requestData: DgsRequestData?): String? {
         return if (requestData is DgsWebMvcRequestData) {

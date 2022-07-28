@@ -26,11 +26,12 @@ import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionExcepti
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveQueryExecutor
 import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
-import graphql.execution.instrumentation.ChainedInstrumentation
+import graphql.execution.instrumentation.SimpleInstrumentation
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -109,7 +110,7 @@ internal class DefaultDgsReactiveQueryExecutorTest {
             federationResolver = Optional.empty(),
             dataFetcherExceptionHandler = Optional.empty(),
             existingTypeDefinitionRegistry = Optional.empty(),
-            mockProviders = Optional.empty()
+            methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
         )
 
         val schema = provider.schema(
@@ -135,11 +136,14 @@ internal class DefaultDgsReactiveQueryExecutorTest {
         )
 
         dgsQueryExecutor = DefaultDgsReactiveQueryExecutor(
-            schema, provider, dgsDataLoaderProvider,
-            DefaultDgsReactiveGraphQLContextBuilder(
-                Optional.empty()
-            ),
-            ChainedInstrumentation(), AsyncExecutionStrategy(), AsyncSerialExecutionStrategy(), Optional.empty()
+            defaultSchema = schema,
+            schemaProvider = provider,
+            dataLoaderProvider = dgsDataLoaderProvider,
+            contextBuilder = DefaultDgsReactiveGraphQLContextBuilder(Optional.empty()),
+            instrumentation = SimpleInstrumentation.INSTANCE,
+            queryExecutionStrategy = AsyncExecutionStrategy(),
+            mutationExecutionStrategy = AsyncSerialExecutionStrategy(),
+            idProvider = Optional.empty()
         )
     }
 

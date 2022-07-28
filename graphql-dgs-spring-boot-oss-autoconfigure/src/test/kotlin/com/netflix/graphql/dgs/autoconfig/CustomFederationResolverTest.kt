@@ -30,15 +30,15 @@ import org.springframework.context.annotation.Configuration
 
 class CustomFederationResolverTest {
 
-    private val context = WebApplicationContextRunner()
-        .withConfiguration(AutoConfigurations.of(DgsAutoConfiguration::class.java))!!
+    private val context: WebApplicationContextRunner = WebApplicationContextRunner()
+        .withConfiguration(AutoConfigurations.of(DgsAutoConfiguration::class.java))
 
     @Test
     fun `When a custom federation resolver is registered, it should be used`() {
         context.withUserConfiguration(MyFederationConfig::class.java).run { ctx ->
             assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                val representation = mapOf(Pair("__typename", "MyMovie"), Pair("id", "1"))
-                val variables = mapOf(Pair("representations", listOf(representation)))
+                val representation = mapOf("__typename" to "MyMovie", "id" to "1")
+                val variables = mapOf("representations" to listOf(representation))
 
                 val title = it.executeAndExtractJsonPathAsObject(
                     """query (${'$'}representations:[_Any!]!) { 
@@ -72,14 +72,14 @@ class CustomFederationResolverTest {
     @DgsComponent
     class MovieDataFetcher {
         @DgsEntityFetcher(name = "MyMovie")
-        fun movieEntityFetcher(arguments: Map<String, Any>): Movie {
+        fun movieEntityFetcher(@Suppress("unused_parameter") arguments: Map<String, Any>): Movie {
             return Movie()
         }
     }
 
     class MyFederationResolver : DefaultDgsFederationResolver() {
         override fun typeMapping(): Map<Class<*>, String> {
-            return mapOf(Pair(Movie::class.java, "MyMovie"))
+            return mapOf(Movie::class.java to "MyMovie")
         }
     }
 

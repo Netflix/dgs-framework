@@ -33,6 +33,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
@@ -72,18 +73,19 @@ import org.springframework.web.multipart.MultipartFile
 open class DgsRestController(
     open val dgsQueryExecutor: DgsQueryExecutor,
     open val mapper: ObjectMapper = jacksonObjectMapper(),
+    open val dgsGraphQLRequestHeaderValidator: DgsGraphQLRequestHeaderValidator = DefaultDgsGraphQLRequestHeaderValidator(),
     @Value("false") open val captureCacheControl: Boolean = false
 ) {
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
-        private val GRAPHQL_MEDIA_TYPE = MediaType("application", "graphql")
     }
 
     // The @ConfigurationProperties bean name is <prefix>-<fqn>
+    // TODO Allow users to disable multipart-form/data
     @RequestMapping(
         "#{@'dgs.graphql-com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcConfigurationProperties'.path}",
-        produces = ["application/json"]
+        produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     fun graphql(
         @RequestBody body: String?,
@@ -94,15 +96,31 @@ open class DgsRestController(
         webRequest: WebRequest
     ): ResponseEntity<String> {
 
-        logger.debug("Starting /graphql handling")
+        logger.debug("Validate HTTP Headers for the GraphQL endpoint...")
+        try {
+            dgsGraphQLRequestHeaderValidator.assert(headers)
+        } catch (e: DgsGraphQLRequestHeaderValidator.GraphqlRequestContentTypePredicateException) {
+            logger.debug("Unsupported Media-Type {}.", headers.contentType, e)
+            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("Unsupported media type.")
+        } catch (e: DgsGraphQLRequestHeaderValidator.GraphQLRequestHeaderRuleException) {
+            logger.debug("The Request Headers failed a DGS Header validation rule.", e)
+            return ResponseEntity.badRequest().body(e.message)
+        } catch (e: DgsGraphQLRequestHeaderValidator.GraphqlRequestHeaderValidationException) {
+            logger.debug("The DGS Request Header Validator deemed the request headers as invalid.", e)
+            return ResponseEntity.badRequest().body(e.message)
+        } catch (e: Exception) {
+            logger.error("The DGS Request Header Validator failed with exception!", e)
+            return ResponseEntity.internalServerError().body("Unable to validate the HTTP Request Headers.")
+        }
+
+        logger.debug("Starting HTTP GraphQL handling...")
 
         val inputQuery: Map<String, Any>
         val queryVariables: Map<String, Any>
         val extensions: Map<String, Any>
         if (body != null) {
             logger.debug("Reading input value: '{}'", body)
-
-            if (GRAPHQL_MEDIA_TYPE.includes(headers.contentType)) {
+            if (GraphQLMediaTypes.includesApplicationGraphQL(headers)) {
                 inputQuery = mapOf("query" to body)
                 queryVariables = emptyMap()
                 extensions = emptyMap()

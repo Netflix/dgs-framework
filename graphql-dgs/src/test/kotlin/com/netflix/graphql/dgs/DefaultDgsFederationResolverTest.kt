@@ -22,6 +22,7 @@ import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.EntityFetcherRegistry
+import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherResult
 import graphql.execution.ExecutionStepInfo
@@ -48,6 +49,7 @@ import org.springframework.context.ApplicationContext
 import reactor.core.publisher.Mono
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.function.Consumer
 
 @Suppress("UNCHECKED_CAST")
 @ExtendWith(MockKExtension::class)
@@ -56,24 +58,21 @@ class DefaultDgsFederationResolverTest {
     @MockK
     lateinit var applicationContextMock: ApplicationContext
 
-    lateinit var entityFetcherRegistry: EntityFetcherRegistry
-
     lateinit var dgsSchemaProvider: DgsSchemaProvider
 
-    lateinit var dgsExceptionHandler: DataFetcherExceptionHandler
+    private val entityFetcherRegistry: EntityFetcherRegistry = EntityFetcherRegistry()
+
+    private val dgsExceptionHandler: DataFetcherExceptionHandler = DefaultDataFetcherExceptionHandler()
 
     @BeforeEach
     fun setup() {
-        dgsExceptionHandler = DefaultDataFetcherExceptionHandler()
-        entityFetcherRegistry = EntityFetcherRegistry()
-
         dgsSchemaProvider = DgsSchemaProvider(
             applicationContext = applicationContextMock,
             federationResolver = Optional.empty(),
             existingTypeDefinitionRegistry = Optional.empty(),
-            mockProviders = Optional.empty(),
             dataFetcherExceptionHandler = Optional.of(dgsExceptionHandler),
-            entityFetcherRegistry = entityFetcherRegistry
+            entityFetcherRegistry = entityFetcherRegistry,
+            methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
         )
     }
 
@@ -196,10 +195,12 @@ class DefaultDgsFederationResolverTest {
             assertThat(result.get().data.size).isEqualTo(1)
             assertThat(result.get().errors).hasSize(1)
                 .first().extracting { it.message }
-                .satisfies {
-                    assertThat(it)
-                        .endsWith("MissingFederatedQueryArgument: The federated query is missing field(s) __typename")
-                }
+                .satisfies(
+                    Consumer {
+                        assertThat(it)
+                            .endsWith("MissingFederatedQueryArgument: The federated query is missing field(s) __typename")
+                    }
+                )
         }
     }
 
@@ -310,7 +311,7 @@ class DefaultDgsFederationResolverTest {
         fun `Entity fetcher returning null`() {
             val movieEntityFetcher = object {
                 @DgsEntityFetcher(name = "Movie")
-                fun movieEntityFetcher(values: Map<String, Any>): Movie? {
+                fun movieEntityFetcher(@Suppress("unused_parameter") values: Map<String, Any>): Movie? {
                     return null
                 }
             }
@@ -344,7 +345,7 @@ class DefaultDgsFederationResolverTest {
         fun `Entity Fetcher throwing an exception`() {
             val movieEntityFetcher = object {
                 @DgsEntityFetcher(name = "Movie")
-                fun movieEntityFetcher(values: Map<String, Any>): Movie {
+                fun movieEntityFetcher(@Suppress("unused_parameter") values: Map<String, Any>): Movie {
                     throw DgsInvalidInputArgumentException("Invalid input argument exception")
                 }
             }
@@ -416,7 +417,12 @@ class DefaultDgsFederationResolverTest {
             assertThat(result.get().data).hasSize(1)
             assertThat(result.get().errors).hasSize(1)
                 .first().extracting { it.message }
-                .satisfies { assertThat(it).contains("com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException: Invalid input argument exception") }
+                .satisfies(
+                    Consumer {
+                        assertThat(it)
+                            .contains("com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException: Invalid input argument exception")
+                    }
+                )
         }
 
         @Test
@@ -424,6 +430,7 @@ class DefaultDgsFederationResolverTest {
 
             val movieEntityFetcher = object {
                 @DgsEntityFetcher(name = "Movie")
+                @Suppress("unused_parameter")
                 fun movieEntityFetcher(values: Map<String, Any>, illegalArgument: Int): Movie {
                     return Movie()
                 }
@@ -455,7 +462,7 @@ class DefaultDgsFederationResolverTest {
             assertThat(result).isNotNull
             assertThat(result.get().data).hasSize(1)
             assertThat(result.get().errors).hasSize(1).first().extracting { it.message }
-                .satisfies { assertThat(it).contains("IllegalArgumentException") }
+                .satisfies(Consumer { assertThat(it).contains("IllegalArgumentException") })
         }
 
         @Test
@@ -473,7 +480,7 @@ class DefaultDgsFederationResolverTest {
             assertThat(result).isNotNull
             assertThat(result.get().data).hasSize(1)
             assertThat(result.get().errors).hasSize(1).first().extracting { it.message }
-                .satisfies { assertThat(it).contains("MissingDgsEntityFetcherException") }
+                .satisfies(Consumer { assertThat(it).contains("MissingDgsEntityFetcherException") })
         }
     }
 

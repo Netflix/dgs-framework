@@ -20,6 +20,9 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework:spring-web")
     implementation("org.springframework:spring-webmvc")
+    implementation("io.projectreactor:reactor-core")
 
     testImplementation("io.projectreactor:reactor-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-tomcat")
 }

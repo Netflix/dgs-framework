@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.reactive.internal
 
 import com.netflix.graphql.dgs.context.DgsContext
+import com.netflix.graphql.dgs.context.ReactiveDgsContext
 import com.netflix.graphql.dgs.internal.DgsRequestData
 import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithRequest
 import org.springframework.http.HttpHeaders
@@ -41,18 +42,20 @@ open class DefaultDgsReactiveGraphQLContextBuilder(
             )
         } else Mono.empty()
 
-        return customContext.flatMap {
-            Mono.just(
-                DgsContext(
+        return Mono.deferContextual { context ->
+            customContext.map {
+                ReactiveDgsContext(
                     it,
-                    dgsRequestData
+                    dgsRequestData,
+                    context
+                )
+            }.defaultIfEmpty(
+                ReactiveDgsContext(
+                    requestData = dgsRequestData,
+                    reactorContext = context
                 )
             )
-        }.defaultIfEmpty(
-            DgsContext(
-                requestData = dgsRequestData
-            )
-        )
+        }
     }
 }
 

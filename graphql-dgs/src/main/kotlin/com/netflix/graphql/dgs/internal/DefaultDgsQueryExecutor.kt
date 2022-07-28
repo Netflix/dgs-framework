@@ -30,12 +30,13 @@ import graphql.ExecutionResult
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
 import graphql.execution.NonNullableFieldWasNullError
-import graphql.execution.instrumentation.ChainedInstrumentation
+import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLSchema
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
+import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
@@ -48,12 +49,12 @@ class DefaultDgsQueryExecutor(
     private val schemaProvider: DgsSchemaProvider,
     private val dataLoaderProvider: DgsDataLoaderProvider,
     private val contextBuilder: DefaultDgsGraphQLContextBuilder,
-    private val chainedInstrumentation: ChainedInstrumentation,
+    private val instrumentation: Instrumentation?,
     private val queryExecutionStrategy: ExecutionStrategy,
     private val mutationExecutionStrategy: ExecutionStrategy,
     private val idProvider: Optional<ExecutionIdProvider>,
     private val reloadIndicator: ReloadSchemaIndicator = ReloadSchemaIndicator { false },
-    private val preparsedDocumentProvider: PreparsedDocumentProvider = DgsNoOpPreparsedDocumentProvider,
+    private val preparsedDocumentProvider: PreparsedDocumentProvider? = null,
     private val queryValueCustomizer: QueryValueCustomizer = QueryValueCustomizer { query -> query }
 ) : DgsQueryExecutor {
 
@@ -87,18 +88,18 @@ class DefaultDgsQueryExecutor(
 
         val executionResult =
             BaseDgsQueryExecutor.baseExecute(
-                queryValueCustomizer.apply(query),
-                variables,
-                extensions,
-                operationName,
-                dgsContext,
-                graphQLSchema,
-                dataLoaderProvider,
-                chainedInstrumentation,
-                queryExecutionStrategy,
-                mutationExecutionStrategy,
-                idProvider,
-                preparsedDocumentProvider,
+                query = queryValueCustomizer.apply(query),
+                variables = variables,
+                extensions = extensions,
+                operationName = operationName,
+                dgsContext = dgsContext,
+                graphQLSchema = graphQLSchema,
+                dataLoaderProvider = dataLoaderProvider,
+                instrumentation = instrumentation,
+                queryExecutionStrategy = queryExecutionStrategy,
+                mutationExecutionStrategy = mutationExecutionStrategy,
+                idProvider = idProvider,
+                preparsedDocumentProvider = preparsedDocumentProvider,
             )
 
         // Check for NonNullableFieldWasNull errors, and log them explicitly because they don't run through the exception handlers.
@@ -119,6 +120,14 @@ class DefaultDgsQueryExecutor(
 
     override fun <T : Any?> executeAndExtractJsonPath(query: String, jsonPath: String, headers: HttpHeaders): T {
         return JsonPath.read(getJsonResult(query, emptyMap(), headers), jsonPath)
+    }
+
+    override fun <T : Any?> executeAndExtractJsonPath(query: String, jsonPath: String, servletWebRequest: ServletWebRequest): T {
+        val httpHeaders = HttpHeaders()
+        servletWebRequest.headerNames.forEach { name ->
+            httpHeaders[name] = servletWebRequest.getHeaderValues(name).asList()
+        }
+        return JsonPath.read(getJsonResult(query, emptyMap(), httpHeaders, servletWebRequest), jsonPath)
     }
 
     override fun <T> executeAndExtractJsonPathAsObject(
@@ -163,8 +172,8 @@ class DefaultDgsQueryExecutor(
         return parseContext.parse(getJsonResult(query, variables, headers))
     }
 
-    private fun getJsonResult(query: String, variables: Map<String, Any>, headers: HttpHeaders? = null): String {
-        val executionResult = execute(query, variables, null, headers, null, null)
+    private fun getJsonResult(query: String, variables: Map<String, Any>, headers: HttpHeaders? = null, servletWebRequest: ServletWebRequest? = null): String {
+        val executionResult = execute(query, variables, null, headers, null, servletWebRequest)
 
         if (executionResult.errors.size > 0) {
             throw QueryException(executionResult.errors)

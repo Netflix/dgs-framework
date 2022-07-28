@@ -37,6 +37,7 @@ internal class DgsExtendedScalarsAutoConfigurationTests {
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration::class.java)
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration.ObjectsExtendedScalarsAutoConfiguration::class.java)
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration.TimeExtendedScalarsAutoConfiguration::class.java)
+                .hasSingleBean(DgsExtendedScalarsAutoConfiguration.IDsExtendedScalarsAutoConfiguration::class.java)
         }
     }
 
@@ -95,6 +96,18 @@ internal class DgsExtendedScalarsAutoConfigurationTests {
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
             assertThat(context)
                 .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.CharsExtendedScalarsAutoConfiguration::class.java)
+        }
+    }
+
+    @Test
+    fun `IDs scalars can be disabled`() {
+        context.withPropertyValues(
+            "dgs.graphql.extensions.scalars.ids.enabled=false"
+        ).run { context ->
+            assertThat(context)
+                .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
+            assertThat(context)
+                .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.IDsExtendedScalarsAutoConfiguration::class.java)
         }
     }
 }

@@ -41,7 +41,7 @@ class DefaultDgsWebfluxHttpHandler(
 
             request.bodyToMono(String::class.java)
                 .flatMap { body ->
-                    if ("application/graphql" == request.headers().firstHeader("Content-Type")) {
+                    if (GraphQLMediaTypes.isApplicationGraphQL(request)) {
                         Mono.just(QueryInput(body))
                     } else {
                         Mono.fromCallable {
