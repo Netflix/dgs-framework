@@ -75,9 +75,7 @@ class DgsWebsocketTransport(
                     session.sendMessage(
                         TextMessage(
                             objectMapper.writeValueAsBytes(
-                                Message.ConnectionAckMessage(
-                                    payload = null
-                                )
+                                Message.ConnectionAckMessage()
                             )
                         )
                     )
@@ -199,12 +197,6 @@ class DgsWebsocketTransport(
         val objectMapper = jacksonObjectMapper()
         val subProtocolList = listOf(GRAPHQL_TRANSPORT_WS_PROTOCOL)
     }
-
-    var WebSocketSession.connectionInitReceived: Boolean
-        get() = attributes["connectionInitReceived"] == true
-        set(value) {
-            attributes["connectionInitReceived"] = value
-        }
 
     override fun getSubProtocols() = subProtocolList
 }

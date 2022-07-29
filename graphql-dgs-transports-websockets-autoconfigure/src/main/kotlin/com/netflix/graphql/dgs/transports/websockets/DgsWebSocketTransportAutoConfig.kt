@@ -2,6 +2,7 @@ package com.netflix.graphql.dgs.transports.websockets
 
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.socket.WebSocketHandler
 import org.springframework.web.socket.config.annotation.EnableWebSocket
@@ -12,6 +13,7 @@ import org.springframework.web.socket.server.support.DefaultHandshakeHandler
 @Configuration
 @ConditionalOnWebApplication
 open class DgsWebSocketTransportAutoConfig {
+    @Bean
     open fun webSocketHandler(@Suppress("SpringJavaInjectionPointsAutowiringInspection") dgsQueryExecutor: DgsQueryExecutor): WebSocketHandler {
         return DgsWebsocketTransport(dgsQueryExecutor)
     }
@@ -24,7 +26,7 @@ open class DgsWebSocketTransportAutoConfig {
         override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
             val defaultHandshakeHandler = DefaultHandshakeHandler()
             defaultHandshakeHandler.setSupportedProtocols(GRAPHQL_TRANSPORT_WS_PROTOCOL)
-            registry.addHandler(webSocketHandler, "/graphql").setHandshakeHandler(defaultHandshakeHandler)
+            registry.addHandler(webSocketHandler, "/subscriptions").setHandshakeHandler(defaultHandshakeHandler)
                 .setAllowedOrigins("*")
         }
     }

@@ -40,7 +40,7 @@ sealed class Message(
     data class ConnectionInitMessage(val payload: Map<String, Any>? = null) :
         Message(MessageType.CONNECTION_INIT)
 
-    data class ConnectionAckMessage(val payload: Map<String, Any>? = null) :
+    data class ConnectionAckMessage(val payload: Map<String, Any>? = emptyMap()) :
         Message(MessageType.CONNECTION_ACK)
 
     data class PingMessage(val payload: Map<String, Any>? = null) : Message(MessageType.PING)
@@ -62,7 +62,7 @@ sealed class Message(
     data class NextMessage(
         val id: String,
         val payload: ExecutionResult,
-    ) : Message(MessageType.PONG)
+    ) : Message(MessageType.NEXT)
 
     data class ErrorMessage(
         val id: String,
