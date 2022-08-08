@@ -37,15 +37,15 @@ sealed class Message(
     @JsonProperty("type")
     val type: String
 ) {
-    data class ConnectionInitMessage(val payload: Map<String, Any>? = null) :
+    data class ConnectionInitMessage(val payload: Map<String, Any>? = emptyMap()) :
         Message(MessageType.CONNECTION_INIT)
 
     data class ConnectionAckMessage(val payload: Map<String, Any>? = emptyMap()) :
         Message(MessageType.CONNECTION_ACK)
 
-    data class PingMessage(val payload: Map<String, Any>? = null) : Message(MessageType.PING)
+    data class PingMessage(val payload: Map<String, Any>? = emptyMap()) : Message(MessageType.PING)
 
-    data class PongMessage(val payload: Map<String, Any>? = null) : Message(MessageType.PONG)
+    data class PongMessage(val payload: Map<String, Any>? = emptyMap()) : Message(MessageType.PONG)
 
     data class SubscribeMessage(
         val id: String,

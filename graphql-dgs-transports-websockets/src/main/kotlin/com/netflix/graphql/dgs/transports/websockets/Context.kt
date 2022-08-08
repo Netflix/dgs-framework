@@ -43,10 +43,6 @@ internal class Context<T>(
         return previousValue
     }
 
-    fun isConnectionInitNotProcessed(): Boolean {
-        return !this.connectionInitReceived
-    }
-
     fun dispose() {
         subscriptions.forEach { (t, subscription) ->
 
