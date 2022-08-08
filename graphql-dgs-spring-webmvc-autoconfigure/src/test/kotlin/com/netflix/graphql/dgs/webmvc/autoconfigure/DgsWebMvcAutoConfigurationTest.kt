@@ -16,6 +16,9 @@
 
 package com.netflix.graphql.dgs.webmvc.autoconfigure
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.mvc.DgsRestController
@@ -27,8 +30,9 @@ import graphql.schema.GraphQLObjectType
 import graphql.schema.GraphQLSchema
 import io.mockk.every
 import io.mockk.mockk
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.AutoConfigurations
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration
@@ -43,45 +47,55 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 class DgsWebMvcAutoConfigurationTest {
 
-    private val context = WebApplicationContextRunner().withConfiguration(
-        AutoConfigurations.of(
-            DgsWebMvcAutoConfiguration::class.java,
-            MockAutoConfiguration::class.java
-        )
-    )!!
+    private val context =
+        WebApplicationContextRunner()
+            .withConfiguration(AutoConfigurations.of(DgsWebMvcAutoConfiguration::class.java))
+            .withUserConfiguration(MockUserConfiguration::class.java)
+
+    @Test
+    fun objectMapperAvailable() {
+        context.run { ctx ->
+            assertThat(ctx).hasSingleBean(ObjectMapper::class.java)
+            assertThat(ctx).getBeans(ObjectMapper::class.java).containsKey("dgsObjectMapper")
+            // Expecting the JavaTimeModule from the dgsObjectMapper provided via MockUserConfiguration
+            val modules = ctx.getBeansOfType(ObjectMapper::class.java)["dgsObjectMapper"]
+                ?.registeredModuleIds?.contains(MockUserConfiguration.jacksonJavaTimeModule.moduleName)
+            assertThat(modules).isTrue()
+        }
+    }
 
     @Test
     fun graphqlControllerAvailable() {
         context.run { ctx ->
-            Assertions.assertThat(ctx).hasSingleBean(DgsRestController::class.java)
+            assertThat(ctx).hasSingleBean(DgsRestController::class.java)
         }
     }
 
     @Test
     fun graphiqlAvailableWhenEnabledPropertyNotSpecified() {
         context.run { ctx ->
-            Assertions.assertThat(ctx).hasSingleBean(GraphiQLConfigurer::class.java)
+            assertThat(ctx).hasSingleBean(GraphiQLConfigurer::class.java)
         }
     }
 
     @Test
     fun graphiqlAvailableWhenEnabledPropertySetToTrue() {
         context.withPropertyValues("dgs.graphql.graphiql.enabled: true").run { ctx ->
-            Assertions.assertThat(ctx).hasSingleBean(GraphiQLConfigurer::class.java)
+            assertThat(ctx).hasSingleBean(GraphiQLConfigurer::class.java)
         }
     }
 
     @Test
     fun graphiqlNotAvailableWhenEnabledPropertySetToFalse() {
         context.withPropertyValues("dgs.graphql.graphiql.enabled: false").run { ctx ->
-            Assertions.assertThat(ctx).doesNotHaveBean(GraphiQLConfigurer::class.java)
+            assertThat(ctx).doesNotHaveBean(GraphiQLConfigurer::class.java)
         }
     }
 
     @Test
     fun schemaJsonControllerAvailableWhenEnabledPropertyNotSpecified() {
         context.run { ctx ->
-            Assertions.assertThat(ctx)
+            assertThat(ctx)
                 .hasSingleBean(DgsRestSchemaJsonController::class.java)
         }
     }
@@ -89,7 +103,7 @@ class DgsWebMvcAutoConfigurationTest {
     @Test
     fun schemaJsonControllerAvailableWhenEnabledPropertySetToTrue() {
         context.withPropertyValues("dgs.graphql.schema-json.enabled: true").run { ctx ->
-            Assertions.assertThat(ctx)
+            assertThat(ctx)
                 .hasSingleBean(DgsRestSchemaJsonController::class.java)
         }
     }
@@ -97,7 +111,7 @@ class DgsWebMvcAutoConfigurationTest {
     @Test
     fun schemaJsonControllerNotAvailableWhenEnabledPropertySetToFalse() {
         context.withPropertyValues("dgs.graphql.schema-json.enabled: false").run { ctx ->
-            Assertions.assertThat(ctx)
+            assertThat(ctx)
                 .doesNotHaveBean(DgsRestSchemaJsonController::class.java)
         }
     }
@@ -201,7 +215,8 @@ class DgsWebMvcAutoConfigurationTest {
     }
 
     @Configuration
-    open class MockAutoConfiguration {
+    open class MockUserConfiguration {
+
         @Bean
         open fun dgsSchemaProvider(): DgsSchemaProvider {
             val objectType: GraphQLObjectType = GraphQLObjectType.newObject()
@@ -237,6 +252,16 @@ class DgsWebMvcAutoConfigurationTest {
             } returns ExecutionResultImpl.newExecutionResult()
                 .data(mapOf(Pair("hi", "there"))).build()
             return mockExecutor
+        }
+
+        @Bean
+        @Qualifier("dgsObjectMapper")
+        open fun dgsObjectMapper(): ObjectMapper {
+            return jacksonObjectMapper().registerModule(jacksonJavaTimeModule)
+        }
+
+        companion object {
+            val jacksonJavaTimeModule = JavaTimeModule()
         }
     }
 }

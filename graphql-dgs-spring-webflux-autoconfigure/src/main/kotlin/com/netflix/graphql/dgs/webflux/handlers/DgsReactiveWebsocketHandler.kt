@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.webflux.handlers
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.convertValue
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
+import graphql.ExecutionResult
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscription
 import org.slf4j.LoggerFactory
@@ -70,10 +71,10 @@ class DgsReactiveWebsocketHandler(private val dgsReactiveQueryExecutor: DgsReact
                             logger.debug("Starting subscription {} for session {}", queryPayload, webSocketSession.id)
                             dgsReactiveQueryExecutor.execute(queryPayload.query, queryPayload.variables)
                                 .flatMapMany { executionResult ->
-                                    val publisher: Publisher<Any> = executionResult.getData()
-                                    Flux.from(publisher).map {
+                                    val publisher: Publisher<ExecutionResult> = executionResult.getData()
+                                    Flux.from(publisher).map { executionResult ->
                                         toWebsocketMessage(
-                                            OperationMessage(GQL_DATA, it, operationMessage.id),
+                                            OperationMessage(GQL_DATA, DataPayload(data = executionResult.getData(), errors = executionResult.errors), operationMessage.id),
                                             webSocketSession
                                         )
                                     }.doOnSubscribe {

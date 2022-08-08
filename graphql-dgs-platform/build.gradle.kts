@@ -45,15 +45,21 @@ dependencies {
     // this will be published as Maven Metadata.
     // For more information at https://docs.gradle.org/current/userguide/rich_versions.html
     constraints {
+        // GraphQL Platform
         api("com.graphql-java:graphql-java") {
-            version { require(Versions.GRAPHQL_JAVA) }
+            version { require("18.1") }
         }
         api("com.graphql-java:graphql-java-extended-scalars") {
-            version { require(Versions.GRAPHQL_JAVA_EXTENDED_SCALARS) }
+            version { require("18.1") }
+        }
+        api("com.graphql-java:graphql-java-extended-validation") {
+            // The version below will work with Jakarta EE 8 and use Hibernate Validator 6.2.
+            version { require("18.1-hibernate-validator-6.2.0.Final") }
         }
         api("com.apollographql.federation:federation-graphql-java-support") {
-            version { require(Versions.GRAPHQL_JAVA_FEDERATION) }
+            version { require("2.0.0") }
         }
+        // ---
         api("com.jayway.jsonpath:json-path") {
             version { require("2.6.0") }
         }
@@ -63,6 +69,13 @@ dependencies {
         api("io.projectreactor:reactor-test"){
             version { require("3.4.10") }
         }
+        // CVEs
+        api("org.apache.logging.log4j:log4j-to-slf4j:2.18.0") {
+            because("Refer to CVE-2021-44228; https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228")
+         }
+         api("org.apache.logging.log4j:log4j-api:2.18.0") {
+            because("Refer to CVE-2021-44228; https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228")
+         }
     }
 }
 

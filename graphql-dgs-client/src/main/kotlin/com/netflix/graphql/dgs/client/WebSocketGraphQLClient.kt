@@ -16,10 +16,11 @@
 
 package com.netflix.graphql.dgs.client
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.netflix.graphql.types.subscription.*
 import graphql.GraphQLException
+import org.springframework.web.reactive.socket.WebSocketHandler
 import org.springframework.web.reactive.socket.WebSocketMessage
 import org.springframework.web.reactive.socket.WebSocketSession
 import org.springframework.web.reactive.socket.client.ReactorNettyWebSocketClient
@@ -204,7 +205,20 @@ class OperationMessageWebSocketClient(
         .onBackpressureBuffer<GraphQLException>(Queues.SMALL_BUFFER_SIZE, false)
 
     fun connect(): Mono<Void> {
-        return Mono.defer { client.execute(URI(url), this::exchange) }
+        return Mono.defer {
+            client.execute(
+                URI(url),
+                object : WebSocketHandler {
+                    override fun handle(session: WebSocketSession): Mono<Void> {
+                        return exchange(session)
+                    }
+
+                    override fun getSubProtocols(): List<String> {
+                        return listOf(GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL)
+                    }
+                }
+            )
+        }
     }
 
     /**
@@ -263,7 +277,7 @@ class OperationMessageWebSocketClient(
 
     private fun decodeMessage(message: WebSocketMessage): OperationMessage {
         val messageText = message.payloadAsText
-        val type = object : TypeReference<OperationMessage>() {}
+        val type = jacksonTypeRef<OperationMessage>()
 
         return MAPPER.readValue(messageText, type)
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
 import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
+import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import com.netflix.graphql.mocking.DgsSchemaTransformer
 import com.netflix.graphql.mocking.MockProvider
 import graphql.TypeResolutionEnvironment
@@ -29,15 +30,26 @@ import graphql.execution.DataFetcherExceptionHandler
 import graphql.language.InterfaceTypeDefinition
 import graphql.language.TypeName
 import graphql.language.UnionTypeDefinition
-import graphql.schema.*
-import graphql.schema.idl.*
+import graphql.schema.Coercing
+import graphql.schema.DataFetcher
+import graphql.schema.DataFetcherFactories
+import graphql.schema.DataFetcherFactory
+import graphql.schema.FieldCoordinates
+import graphql.schema.GraphQLCodeRegistry
+import graphql.schema.GraphQLScalarType
+import graphql.schema.GraphQLSchema
+import graphql.schema.idl.RuntimeWiring
+import graphql.schema.idl.SchemaDirectiveWiring
+import graphql.schema.idl.SchemaParser
+import graphql.schema.idl.TypeDefinitionRegistry
+import graphql.schema.idl.TypeRuntimeWiring
 import graphql.schema.visibility.DefaultGraphqlFieldVisibility
 import graphql.schema.visibility.GraphqlFieldVisibility
+import org.intellij.lang.annotations.Language
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.aop.support.AopUtils
 import org.springframework.context.ApplicationContext
-import org.springframework.core.DefaultParameterNameDiscoverer
 import org.springframework.core.annotation.MergedAnnotation
 import org.springframework.core.annotation.MergedAnnotations
 import org.springframework.core.io.Resource
@@ -49,6 +61,9 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 /**
  * Main framework class that scans for components and configures a runtime executable schema.
@@ -57,22 +72,60 @@ class DgsSchemaProvider(
     private val applicationContext: ApplicationContext,
     private val federationResolver: Optional<DgsFederationResolver>,
     private val existingTypeDefinitionRegistry: Optional<TypeDefinitionRegistry>,
-    private val mockProviders: Optional<Set<MockProvider>>,
+    private val mockProviders: Set<MockProvider> = emptySet(),
     private val schemaLocations: List<String> = listOf(DEFAULT_SCHEMA_LOCATION),
     private val dataFetcherResultProcessors: List<DataFetcherResultProcessor> = emptyList(),
     private val dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
-    private val cookieValueResolver: Optional<CookieValueResolver> = Optional.empty()
+    private val entityFetcherRegistry: EntityFetcherRegistry = EntityFetcherRegistry(),
+    private val defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty(),
+    private val methodDataFetcherFactory: MethodDataFetcherFactory,
+    private val componentFilter: (Any) -> Boolean = { true }
 ) {
 
-    val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
-    val entityFetchers = mutableMapOf<String, Pair<Any, Method>>()
-    val dataFetchers = mutableListOf<DatafetcherReference>()
+    private val schemaReadWriteLock = ReentrantReadWriteLock()
 
-    private val defaultParameterNameDiscoverer = DefaultParameterNameDiscoverer()
+    private val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
 
-    fun schema(schema: String? = null, fieldVisibility: GraphqlFieldVisibility = DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY): GraphQLSchema {
+    private val dataFetchers = mutableListOf<DataFetcherReference>()
+
+    /**
+     * Returns an immutable list of [DataFetcherReference]s that were identified after the schema was loaded.
+     * The returned list will be unstable until the [schema] is fully loaded.
+     */
+    fun resolvedDataFetchers(): List<DataFetcherReference> {
+        return schemaReadWriteLock.read {
+            dataFetchers.toList()
+        }
+    }
+
+    /**
+     * Given a field, expressed as a GraphQL `<Type>.<field name>` tuple, return...
+     * 1. `true` if the given field has _instrumentation_ enabled, or is missing an explicit setting.
+     * 2. `false` if the given field has _instrumentation_ explicitly disabled.
+     *
+     * The method should be considered unstable until the [schema] is fully loaded.
+     */
+    fun isFieldInstrumentationEnabled(field: String): Boolean {
+        return schemaReadWriteLock.read {
+            dataFetcherInstrumentationEnabled.getOrDefault(field, true)
+        }
+    }
+
+    fun schema(
+        @Language("GraphQL") schema: String? = null,
+        fieldVisibility: GraphqlFieldVisibility = DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
+    ): GraphQLSchema {
+        schemaReadWriteLock.write {
+            dataFetchers.clear()
+            dataFetcherInstrumentationEnabled.clear()
+            return computeSchema(schema, fieldVisibility)
+        }
+    }
+
+    private fun computeSchema(schema: String? = null, fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
         val startTime = System.currentTimeMillis()
-        val dgsComponents = applicationContext.getBeansWithAnnotation(DgsComponent::class.java).values
+        val dgsComponents =
+            applicationContext.getBeansWithAnnotation(DgsComponent::class.java).values.filter(componentFilter)
         val hasDynamicTypeRegistry =
             dgsComponents.any { it.javaClass.methods.any { m -> m.isAnnotationPresent(DgsTypeDefinitionRegistry::class.java) } }
 
@@ -88,12 +141,23 @@ class DgsSchemaProvider(
             mergedRegistry = mergedRegistry.merge(existingTypeDefinitionRegistry.get())
         }
 
-        val federationResolverInstance = federationResolver.orElseGet { DefaultDgsFederationResolver(this, dataFetcherExceptionHandler) }
+        val federationResolverInstance =
+            federationResolver.orElseGet {
+                DefaultDgsFederationResolver(
+                    entityFetcherRegistry,
+                    dataFetcherExceptionHandler
+                )
+            }
 
         val entityFetcher = federationResolverInstance.entitiesFetcher()
         val typeResolver = federationResolverInstance.typeResolver()
         val codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry().fieldVisibility(fieldVisibility)
-        val runtimeWiringBuilder = RuntimeWiring.newRuntimeWiring().codeRegistry(codeRegistryBuilder).fieldVisibility(fieldVisibility)
+        if (defaultDataFetcherFactory.isPresent) {
+            codeRegistryBuilder.defaultDataFetcher(defaultDataFetcherFactory.get())
+        }
+
+        val runtimeWiringBuilder =
+            RuntimeWiring.newRuntimeWiring().codeRegistry(codeRegistryBuilder).fieldVisibility(fieldVisibility)
 
         dgsComponents.asSequence()
             .mapNotNull { dgsComponent -> invokeDgsTypeDefinitionRegistry(dgsComponent, mergedRegistry) }
@@ -123,14 +187,17 @@ class DgsSchemaProvider(
         val totalTime = endTime - startTime
         logger.debug("DGS initialized schema in {}ms", totalTime)
 
-        return if (mockProviders.isPresent) {
-            DgsSchemaTransformer().transformSchemaWithMockProviders(graphQLSchema, mockProviders.get())
+        return if (mockProviders.isNotEmpty()) {
+            DgsSchemaTransformer().transformSchemaWithMockProviders(graphQLSchema, mockProviders)
         } else {
             graphQLSchema
         }
     }
 
-    private fun invokeDgsTypeDefinitionRegistry(dgsComponent: Any, registry: TypeDefinitionRegistry): TypeDefinitionRegistry? {
+    private fun invokeDgsTypeDefinitionRegistry(
+        dgsComponent: Any,
+        registry: TypeDefinitionRegistry
+    ): TypeDefinitionRegistry? {
         return dgsComponent.javaClass.methods.asSequence()
             .filter { it.isAnnotationPresent(DgsTypeDefinitionRegistry::class.java) }
             .map { method ->
@@ -188,10 +255,10 @@ class DgsSchemaProvider(
     ) {
         dgsComponents.forEach { dgsComponent ->
             val javaClass = AopUtils.getTargetClass(dgsComponent)
-
-            javaClass.methods.asSequence()
+            ReflectionUtils.getUniqueDeclaredMethods(javaClass, ReflectionUtils.USER_DECLARED_METHODS).asSequence()
                 .filter { method ->
-                    MergedAnnotations.from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY)
+                    MergedAnnotations
+                        .from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY)
                         .isPresent(DgsData::class.java)
                 }
                 .forEach { method ->
@@ -221,7 +288,8 @@ class DgsSchemaProvider(
     ) {
         val field = dgsDataAnnotation.getString("field").ifEmpty { method.name }
         val parentType = dgsDataAnnotation.getString("parentType")
-        dataFetchers.add(DatafetcherReference(dgsComponent, method, mergedAnnotations, parentType, field))
+
+        dataFetchers.add(DataFetcherReference(dgsComponent, method, mergedAnnotations, parentType, field))
 
         val enableInstrumentation =
             if (method.isAnnotationPresent(DgsEnableDataFetcherInstrumentation::class.java)) {
@@ -292,25 +360,22 @@ class DgsSchemaProvider(
                     dataFetcherInstrumentationEnabled["${"__entities"}.${dgsEntityFetcherAnnotation.name}"] =
                         enableInstrumentation
 
-                    entityFetchers[dgsEntityFetcherAnnotation.name] = dgsComponent to method
+                    entityFetcherRegistry.entityFetchers[dgsEntityFetcherAnnotation.name] = dgsComponent to method
                 }
         }
     }
 
     private fun createBasicDataFetcher(method: Method, dgsComponent: Any, isSubscription: Boolean): DataFetcher<Any?> {
-        return DataFetcher<Any?> { environment ->
-            val dfe = DgsDataFetchingEnvironment(environment)
-            val result = DataFetcherInvoker(cookieValueResolver, defaultParameterNameDiscoverer, dfe, dgsComponent, method).invokeDataFetcher()
-            when {
-                isSubscription -> {
-                    result
-                }
-                result != null -> {
-                    dataFetcherResultProcessors.find { it.supportsType(result) }?.process(result, dfe) ?: result
-                }
-                else -> {
-                    result
-                }
+        val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent, method)
+
+        if (isSubscription) {
+            return dataFetcher
+        }
+
+        return DataFetcherFactories.wrapDataFetcher(dataFetcher) { dfe, result ->
+            result?.let {
+                val env = DgsDataFetchingEnvironment(dfe)
+                dataFetcherResultProcessors.find { it.supportsType(result) }?.process(result, env) ?: result
             }
         }
     }
@@ -370,11 +435,28 @@ class DgsSchemaProvider(
 
         // Add a fallback type resolver for types that don't have a type resolver registered.
         // This works when the Java type has the same name as the GraphQL type.
-        val unregisteredTypes = mergedRegistry.types()
+        // Check for unregistered interface types
+        val unregisteredInterfaceTypes = mergedRegistry.types()
             .asSequence()
-            .filter { (_, typeDef) -> typeDef is InterfaceTypeDefinition || typeDef is UnionTypeDefinition }
+            .filter { (_, typeDef) -> typeDef is InterfaceTypeDefinition }
             .map { (name, _) -> name }
             .filter { it !in registeredTypeResolvers }
+        checkTypeResolverExists(unregisteredInterfaceTypes, runtimeWiringBuilder, "interface")
+
+        // Check for unregistered union types
+        val unregisteredUnionTypes = mergedRegistry.types()
+            .asSequence()
+            .filter { (_, typeDef) -> typeDef is UnionTypeDefinition }
+            .map { (name, _) -> name }
+            .filter { it !in registeredTypeResolvers }
+        checkTypeResolverExists(unregisteredUnionTypes, runtimeWiringBuilder, "union")
+    }
+
+    private fun checkTypeResolverExists(
+        unregisteredTypes: Sequence<String>,
+        runtimeWiringBuilder: RuntimeWiring.Builder,
+        typeName: String
+    ) {
         unregisteredTypes.forEach {
             runtimeWiringBuilder.type(
                 TypeRuntimeWiring.newTypeWiring(it)
@@ -382,7 +464,7 @@ class DgsSchemaProvider(
                         val instance = env.getObject<Any>()
                         val resolvedType = env.schema.getObjectType(instance::class.java.simpleName)
                         resolvedType
-                            ?: throw InvalidTypeResolverException("The default type resolver could not find a suitable Java type for GraphQL type `${instance::class.java.simpleName}. Provide a @DgsTypeResolver.`")
+                            ?: throw InvalidTypeResolverException("The default type resolver could not find a suitable Java type for GraphQL $typeName type `$it`. Provide a @DgsTypeResolver for `${instance::class.java.simpleName}`.")
                     }
             )
         }
@@ -453,15 +535,3 @@ class DgsSchemaProvider(
         private val logger: Logger = LoggerFactory.getLogger(DgsSchemaProvider::class.java)
     }
 }
-
-interface DataFetcherResultProcessor {
-    fun supportsType(originalResult: Any): Boolean
-    fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any = process(originalResult)
-    @Deprecated(
-        "Replaced with process(originalResult, dfe)",
-        replaceWith = ReplaceWith("process(originalResult: Any, dfe: DgsDataFetchingEnvironment)")
-    )
-    fun process(originalResult: Any): Any = originalResult
-}
-
-data class DatafetcherReference(val instance: Any, val method: Method, val annotations: MergedAnnotations, val parentType: String, val field: String)

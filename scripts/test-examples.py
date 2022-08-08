@@ -72,7 +72,7 @@ def clone_repos(config, target):
 
 def infer_version():
     regex = re.compile(r"Inferred project: dgs-framework, version: ([0-9A-Z\-.]+)")
-    out = subprocess.check_output([gradlew, "-p", gradle_wd, "project"]).decode("utf-8")
+    out = subprocess.check_output([gradlew, "--info", "--stacktrace", "-p", gradle_wd, "project"]).decode("utf-8")
     Out.debug(f"Process output:\n{out}", State.verbose)
     match = re.search(regex, out)
     return match.group(1) if match else ""
@@ -142,7 +142,7 @@ def main(argv):
 
     help_message = f"""
         {BColors.HEADER}Options{BColors.ENDC}:
-            -c | codegen=   : Version we need to apply, if left empty it will calculate the version based
+            -c | version=   : Version we need to apply, if left empty it will calculate the version based
                               on Gradle's Project task.
             -p | path=      : Path where the examples should be found. Defaults to [{examples_path}].
             -g              : Clone the examples before attempting to execute them, this is done via git-clone.
@@ -151,15 +151,15 @@ def main(argv):
                               If this flag is set the directory will be kept.
             -v              : Verbose
 
-        {BColors.HEADER}Example{BColors.ENDC}: {script_name} -c <codegen version>
+        {BColors.HEADER}Example{BColors.ENDC}: {script_name} -c <project version>
         """
 
     projects_dir = examples_path
-    codegen_version = ""
+    p_version = ""
     git_clone_projects = False
     keep_project_dir = False
     try:
-        opts, args = getopt.getopt(argv, "hvkgc:p:", ["codegen=", "path="])
+        opts, args = getopt.getopt(argv, "hvkgc:p:", ["version=", "path="])
     except getopt.GetoptError:
         Out.usage(script_name, help_message)
         sys.exit(2)
@@ -167,8 +167,8 @@ def main(argv):
         if opt == '-h':
             Out.usage(script_name, help_message)
             sys.exit()
-        elif opt in ("-c", "--codegen"):
-            codegen_version = arg
+        elif opt in ("-c", "--version"):
+            p_version = arg
         elif opt in ("-p", "--path"):
             projects_dir = os.path.abspath(arg)
         elif opt in "-g":
@@ -178,11 +178,11 @@ def main(argv):
         elif opt in "-v":
             State.verbose = True
 
-    if not codegen_version:
+    if not p_version:
         Out.info("Version not supplied, inferring...")
-        codegen_version = infer_version()
-        if codegen_version:
-            Out.info(f"Version resolved to {BColors.OKGREEN}{codegen_version}{BColors.ENDC}")
+        p_version = infer_version()
+        if p_version:
+            Out.info(f"Version resolved to {BColors.OKGREEN}{p_version}{BColors.ENDC}")
         else:
             Out.error("Unable to resolved a version!")
             exit(2)
@@ -205,7 +205,7 @@ def main(argv):
         Out.info(f"Processing project [{project_root}]...")
         build_file = infer_build_file(project_root)
         settings_file = infer_gradle_settings_file(project_root)
-        update_build(build_file, codegen_version)
+        update_build(build_file, p_version)
         run_example_build(project_root, build_file=build_file, settings_file=settings_file)
 
     if not keep_project_dir:

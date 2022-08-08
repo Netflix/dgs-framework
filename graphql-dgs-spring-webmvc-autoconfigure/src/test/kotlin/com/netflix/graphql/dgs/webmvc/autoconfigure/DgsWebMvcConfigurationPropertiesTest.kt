@@ -50,6 +50,18 @@ class DgsWebMvcConfigurationPropertiesTest {
     }
 
     @Test
+    fun graphiQLTitleDefault() {
+        val properties = bind("dgs.graphql.graphiql.title", "Simple GraphiQL Example")
+        assertThat(properties.graphiql.title).isEqualTo("Simple GraphiQL Example")
+    }
+
+    @Test
+    fun graphiQLTitleCustom() {
+        val properties = bind("dgs.graphql.graphiql.title", "Custom GraphiQL Example")
+        assertThat(properties.graphiql.title).isEqualTo("Custom GraphiQL Example")
+    }
+
+    @Test
     fun schemaJsonPathDefault() {
         val properties = bind(Collections.emptyMap())
         assertThat(properties.schemaJson.path).isEqualTo("/schema.json")
@@ -66,10 +78,12 @@ class DgsWebMvcConfigurationPropertiesTest {
         val propertyValues: MutableMap<String?, String?> = HashMap()
         propertyValues["dgs.graphql.path"] = "/private/gql"
         propertyValues["dgs.graphql.graphiql.path"] = "/private/giql"
+        propertyValues["dgs.graphql.graphiql.title"] = "Simple GraphiQL Example"
         propertyValues["dgs.graphql.schema-json.path"] = "/private/sj"
         val properties = bind(propertyValues)
         assertThat(properties.path).isEqualTo("/private/gql")
         assertThat(properties.graphiql.path).isEqualTo("/private/giql")
+        assertThat(properties.graphiql.title).isEqualTo("Simple GraphiQL Example")
         assertThat(properties.schemaJson.path).isEqualTo("/private/sj")
     }
 

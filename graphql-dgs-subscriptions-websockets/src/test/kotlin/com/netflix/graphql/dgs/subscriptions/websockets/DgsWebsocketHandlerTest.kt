@@ -19,12 +19,28 @@ package com.netflix.graphql.dgs.subscriptions.websockets
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.types.subscription.*
+import com.netflix.graphql.types.subscription.DataPayload
+import com.netflix.graphql.types.subscription.GQL_CONNECTION_ACK
+import com.netflix.graphql.types.subscription.GQL_CONNECTION_INIT
+import com.netflix.graphql.types.subscription.GQL_CONNECTION_TERMINATE
+import com.netflix.graphql.types.subscription.GQL_DATA
+import com.netflix.graphql.types.subscription.GQL_ERROR
+import com.netflix.graphql.types.subscription.GQL_START
+import com.netflix.graphql.types.subscription.GQL_STOP
+import com.netflix.graphql.types.subscription.OperationMessage
+import graphql.ExceptionWhileDataFetching
 import graphql.ExecutionResult
-import io.mockk.*
+import graphql.execution.ResultPath
+import io.mockk.Runs
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.just
+import io.mockk.mockkClass
+import io.mockk.slot
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.InstanceOfAssertFactories.MAP
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -170,6 +186,18 @@ class DgsWebsocketHandlerTest {
     }
 
     @Test
+    fun testWithErrorAfterData() {
+        connect(session1)
+        nextWithError(session1, 2)
+        disconnect(session1)
+
+        // ACK, ERROR
+        verify(exactly = 4) {
+            session1.sendMessage(any())
+        }
+    }
+
+    @Test
     fun testWithStop() {
         connect(session1)
         start(session1, 1)
@@ -228,6 +256,7 @@ class DgsWebsocketHandlerTest {
         val results = (1..nrOfResults).map {
             val result1 = mockkClass(ExecutionResult::class)
             every { result1.getData<Any>() } returns it
+            every { result1.errors } returns emptyList()
             result1
         }
 
@@ -246,6 +275,7 @@ class DgsWebsocketHandlerTest {
         val results = (1..nrOfResults).map {
             val result1 = mockkClass(ExecutionResult::class)
             every { result1.getData<Any>() } returns it
+            every { result1.errors } returns emptyList()
             result1
         }
 
@@ -263,6 +293,7 @@ class DgsWebsocketHandlerTest {
         val results = (1..nrOfResults).map {
             val result1 = mockkClass(ExecutionResult::class)
             every { result1.getData<Any>() } returns it
+            every { result1.errors } returns emptyList()
             result1
         }
 
@@ -278,7 +309,45 @@ class DgsWebsocketHandlerTest {
         every { executionResult.getData<Publisher<ExecutionResult>>() } returns Mono.error(RuntimeException("That's wrong!"))
         every { dgsQueryExecutor.execute("{ hello }", emptyMap()) } returns executionResult
 
+        val slot = slot<TextMessage>()
+        every { webSocketSession.sendMessage(capture(slot)) } just Runs
+
         dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessage)
+
+        val returnMessage = jacksonObjectMapper().readValue<OperationMessage>(slot.captured.asBytes())
+        assertThat(returnMessage.type).isEqualTo(GQL_ERROR)
+        assertThat((returnMessage.payload as DataPayload).errors?.size).isEqualTo(1)
+        assertThat((returnMessage.payload as DataPayload).errors?.get(0)).isEqualTo("That's wrong!")
+    }
+
+    private fun nextWithError(webSocketSession: WebSocketSession, nrOfResults: Int) {
+        val results = (1..nrOfResults).map {
+            val result1 = mockkClass(ExecutionResult::class)
+            every { result1.getData<Any>() } returns null
+            every { result1.errors } returns listOf(ExceptionWhileDataFetching(ResultPath.rootPath(), RuntimeException("Error in data fetcher"), null))
+            result1
+        }
+        every { webSocketSession.isOpen } returns true
+        every { executionResult.getData<Publisher<ExecutionResult>>() } returns Mono.just(results).flatMapMany { Flux.fromIterable(results) }
+        every { dgsQueryExecutor.execute("{ hello }", emptyMap()) } returns executionResult
+
+        val slotList = mutableListOf<TextMessage>()
+        every { webSocketSession.sendMessage(capture(slotList)) } just Runs
+
+        dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessage)
+
+        val returnMessage = jacksonObjectMapper().readValue<OperationMessage>(slotList[0].asBytes())
+        assertThat(returnMessage.type).isEqualTo(GQL_DATA)
+
+        val payload = returnMessage.payload as DataPayload
+
+        assertThat(payload.errors)
+            .hasSize(1)
+            .element(0)
+            .asInstanceOf(MAP)
+            .extracting("message")
+            .asString()
+            .isEqualTo("Exception while fetching data () : Error in data fetcher")
     }
 
     private fun stop(webSocketSession: WebSocketSession) {

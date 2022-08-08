@@ -40,7 +40,7 @@ class WebRequestTestWithoutCustomContext {
 
     @Test
     fun `A simple request should execute correctly when no custom context builder is available`() {
-        val exchange = webTestClient.post().uri("/graphql").bodyValue(
+        webTestClient.post().uri("/graphql").bodyValue(
             """
             {"query": "{hello}"}
             """.trimIndent()

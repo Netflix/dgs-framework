@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +22,21 @@ import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.exceptions.InvalidDgsEntityFetcher
 import com.netflix.graphql.dgs.exceptions.MissingDgsEntityFetcherException
-import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.exceptions.MissingFederatedQueryArgument
+import com.netflix.graphql.dgs.internal.EntityFetcherRegistry
 import com.netflix.graphql.types.errors.TypedGraphQLError
-import graphql.GraphQLError
-import graphql.execution.*
+import graphql.execution.DataFetcherExceptionHandler
+import graphql.execution.DataFetcherExceptionHandlerParameters
+import graphql.execution.DataFetcherResult
+import graphql.execution.ResultPath
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.TypeResolver
+import org.dataloader.Try
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import reactor.core.publisher.Mono
 import java.lang.reflect.InvocationTargetException
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -46,8 +51,11 @@ open class DefaultDgsFederationResolver() :
      * This is the most common use case.
      * The default constructor is used to extend the DefaultDgsFederationResolver. In that case injection is used to provide the schemaProvider.
      */
-    constructor(providedDgsSchemaProvider: DgsSchemaProvider, dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler>) : this() {
-        dgsSchemaProvider = providedDgsSchemaProvider
+    constructor(
+        entityFetcherRegistry: EntityFetcherRegistry,
+        dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler>
+    ) : this() {
+        this.entityFetcherRegistry = entityFetcherRegistry
         dgsExceptionHandler = dataFetcherExceptionHandler
     }
 
@@ -56,7 +64,7 @@ open class DefaultDgsFederationResolver() :
      */
     @Suppress("JoinDeclarationAndAssignment")
     @Autowired
-    lateinit var dgsSchemaProvider: DgsSchemaProvider
+    lateinit var entityFetcherRegistry: EntityFetcherRegistry
 
     @Autowired
     lateinit var dgsExceptionHandler: Optional<DataFetcherExceptionHandler>
@@ -68,13 +76,12 @@ open class DefaultDgsFederationResolver() :
     }
 
     private fun dgsEntityFetchers(env: DataFetchingEnvironment): CompletableFuture<DataFetcherResult<List<Any?>>> {
-        val errorsList = mutableListOf<GraphQLError>()
         val resultList = env.getArgument<List<Map<String, Any>>>(_Entity.argumentName)
             .map { values ->
-                try {
+                Try.tryCall {
                     val typename = values["__typename"]
-                        ?: throw RuntimeException("__typename missing from arguments in federated query")
-                    val fetcher = dgsSchemaProvider.entityFetchers[typename]
+                        ?: throw MissingFederatedQueryArgument("__typename")
+                    val fetcher = entityFetcherRegistry.entityFetchers[typename]
                         ?: throw MissingDgsEntityFetcherException(typename.toString())
 
                     if (!fetcher.second.parameterTypes.any { it.isAssignableFrom(Map::class.java) }) {
@@ -88,47 +95,67 @@ open class DefaultDgsFederationResolver() :
                         }
 
                     if (result == null) {
+                        logger.error("@DgsEntityFetcher returned null for type: $typename")
                         CompletableFuture.completedFuture(null)
                     }
 
-                    if (result is CompletionStage<*>) {
-                        result.toCompletableFuture()
-                    } else {
-                        CompletableFuture.completedFuture(result)
+                    when (result) {
+                        is CompletionStage<*> -> result.toCompletableFuture()
+                        is Mono<*> -> result.toFuture()
+                        else -> CompletableFuture.completedFuture(result)
                     }
-                } catch (e: Exception) {
-                    if (e is InvocationTargetException && e.targetException != null) {
-                        if (dgsExceptionHandler.isPresent) {
-                            val res = dgsExceptionHandler.get().onException(
-                                DataFetcherExceptionHandlerParameters.newExceptionParameters()
-                                    .dataFetchingEnvironment(env).exception(e.targetException).build()
-                            )
-                            res.errors.forEach { errorsList.add(it) }
-                        } else {
-                            errorsList.add(
-                                TypedGraphQLError.newInternalErrorBuilder()
-                                    .message("%s: %s", e.targetException::class.java.name, e.targetException.message)
-                                    .path(ResultPath.parse("/_entities")).build()
-                            )
-                        }
-                    } else {
-                        errorsList.add(
-                            TypedGraphQLError.newInternalErrorBuilder().message("%s: %s", e::class.java.name, e.message)
-                                .path(ResultPath.parse("/_entities")).build()
-                        )
-                    }
-                    CompletableFuture.completedFuture(null)
                 }
+                    .map { tryFuture -> Try.tryFuture(tryFuture) }
+                    .recover { exception -> CompletableFuture.completedFuture(Try.failed(exception)) }
+                    .get()
             }
 
         return CompletableFuture.allOf(*resultList.toTypedArray()).thenApply {
-            DataFetcherResult.newResult<List<Any?>>().data(
-                resultList.asSequence()
-                    .map { cf -> cf.join() }
-                    .flatMap { r -> if (r is Collection<*>) r.asSequence() else sequenceOf(r) }
-                    .toList()
-            )
-                .errors(errorsList)
+            val trySequence = resultList.asSequence().map { it.join() }
+            DataFetcherResult.newResult<List<Any?>>()
+                .data(
+                    trySequence
+                        .map { tryResult -> tryResult.orElse(null) }
+                        .flatMap { r -> if (r is Collection<*>) r.asSequence() else sequenceOf(r) }
+                        .toList()
+                )
+                .errors(
+                    trySequence
+                        .filter { tryResult -> tryResult.isFailure }
+                        .map { tryResult -> tryResult.throwable }
+                        .flatMap { e ->
+                            if (e is InvocationTargetException && e.targetException != null) {
+                                if (dgsExceptionHandler.isPresent) {
+                                    val res = dgsExceptionHandler.get().handleException(
+                                        DataFetcherExceptionHandlerParameters
+                                            .newExceptionParameters()
+                                            .dataFetchingEnvironment(env)
+                                            .exception(e.targetException)
+                                            .build()
+                                    )
+                                    res.join().errors.asSequence()
+                                } else {
+                                    sequenceOf(
+                                        TypedGraphQLError.newInternalErrorBuilder()
+                                            .message(
+                                                "%s: %s",
+                                                e.targetException::class.java.name,
+                                                e.targetException.message
+                                            )
+                                            .path(ResultPath.parse("/_entities")).build()
+                                    )
+                                }
+                            } else {
+                                sequenceOf(
+                                    TypedGraphQLError.newInternalErrorBuilder()
+                                        .message("%s: %s", e::class.java.name, e.message)
+                                        .path(ResultPath.parse("/_entities"))
+                                        .build()
+                                )
+                            }
+                        }
+                        .toList()
+                )
                 .build()
         }
     }
@@ -142,11 +169,17 @@ open class DefaultDgsFederationResolver() :
             val src: Any = env.getObject()
 
             val typeName =
-                if (typeMapping().containsKey(src::class.java)) typeMapping()[src::class.java] else src::class.java.simpleName
+                if (typeMapping().containsKey(src::class.java))
+                    typeMapping()[src::class.java]
+                else
+                    src::class.java.simpleName
+
             val type = env.schema.getObjectType(typeName)
             if (type == null) {
                 logger.warn(
-                    "No type definition found for {}. You probably need to provide either a type mapping, or override DefaultDgsFederationResolver.typeResolver(). Alternatively make sure the type name in the schema and your Java model match",
+                    "No type definition found for {}. You probably need to provide either a type mapping," +
+                        "or override DefaultDgsFederationResolver.typeResolver()." +
+                        "Alternatively make sure the type name in the schema and your Java model match",
                     src::class.java.name
                 )
             }

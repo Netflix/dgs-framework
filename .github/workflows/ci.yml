@@ -1,22 +1,21 @@
-name: CI Check
+name: CI
 
 on: [push, pull_request]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
       - name: Setup Java ${{ matrix.jdk-version }}
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: 8
 
       - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.8
 
@@ -25,7 +24,7 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f scripts/requirements.txt ]; then pip install -r scripts/requirements.txt; fi
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3.0.4
         id: gradle-wrapper-cache
         with:
           path: ~/.gradle/wrapper
@@ -33,14 +32,14 @@ jobs:
           restore-keys: ${{ runner.os }}-gradlewrapper-
 
       - name: Cache Gradle packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3.0.4
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
       - name: Maven cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3.0.4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -49,15 +48,13 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build and publish Locally
+      - name: Check
         run: |
-          ./gradlew --info check publishToMavenLocal --warning-mode all
+          ./gradlew --info check
 
-      # - name: Publish Test Report
-      #   if: ${{ always() }}
-      #   uses: scacap/action-surefire-report@v1
-      #   with:
-      #     report_paths: '**/build/test-results/test/TEST-*.xml'
+      - name: Publish Locally
+        run: |
+          ./gradlew --info publishToMavenLocal --warning-mode all
 
       - name: Clone dgs-examples-java
         uses: actions/checkout@master
@@ -76,10 +73,9 @@ jobs:
           find /home/runner/.m2/repository/ -type f -name "*graphql-dgs-codegen-gradle*"
           ./scripts/test-examples.py -v -k --path=./build/examples
 
-      # - name: Publish Examples Test Report
-      #   if: ${{ always() }}
-      #   uses: scacap/action-surefire-report@v1
-      #   with:
-      #     check_name: Examples Test Reports
-      #     report_paths: 'build/examples/**/build/test-results/test/TEST-*.xml'
-
+      - name: Upload JUnit Tests
+        uses: actions/upload-artifact@v3  # upload test results
+        if: success() || failure()        # run this step even if previous step failed
+        with:
+          name: test-results
+          path: '**/test-results/**/*.xml'

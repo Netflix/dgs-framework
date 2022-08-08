@@ -17,11 +17,11 @@
 package com.netflix.graphql.dgs.reactive.internal
 
 import com.netflix.graphql.dgs.context.DgsContext
+import com.netflix.graphql.dgs.context.ReactiveDgsContext
 import com.netflix.graphql.dgs.internal.DgsRequestData
 import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithRequest
 import org.springframework.http.HttpHeaders
 import org.springframework.http.server.reactive.ServerHttpRequest
-import org.springframework.web.context.request.WebRequest
 import org.springframework.web.reactive.function.server.ServerRequest
 import reactor.core.publisher.Mono
 import java.util.*
@@ -42,26 +42,27 @@ open class DefaultDgsReactiveGraphQLContextBuilder(
             )
         } else Mono.empty()
 
-        return customContext.flatMap {
-            Mono.just(
-                DgsContext(
+        return Mono.deferContextual { context ->
+            customContext.map {
+                ReactiveDgsContext(
                     it,
-                    dgsRequestData
+                    dgsRequestData,
+                    context
+                )
+            }.defaultIfEmpty(
+                ReactiveDgsContext(
+                    requestData = dgsRequestData,
+                    reactorContext = context
                 )
             )
-        }.defaultIfEmpty(
-            DgsContext(
-                requestData = dgsRequestData
-            )
-        )
+        }
     }
 }
 
 /**
  * @param extensions Optional map of extensions - useful for customized GraphQL interactions between for example a gateway and dgs.
  * @param headers Http Headers
- * @param webRequest Spring [WebRequest]. This will only be available when deployed in a WebMVC (Servlet based) environment. See [serverRequest] for the WebFlux version.
- * @param serverRequest Spring reactive [ServerHttpRequest]. This will only be available when deployed in a WebFlux (non-Servlet) environment. See [webRequest] for the WebMVC version.
+ * @param serverRequest Spring reactive [ServerHttpRequest]. This will only be available when deployed in a WebFlux (non-Servlet) environment.
  */
 data class DgsReactiveRequestData(
     override val extensions: Map<String, Any>? = emptyMap(),

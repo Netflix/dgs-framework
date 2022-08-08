@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,23 +20,34 @@ import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
+import com.netflix.graphql.dgs.context.GraphQLContextContributor
+import com.netflix.graphql.dgs.context.GraphQLContextContributorInstrumentation
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
 import com.netflix.graphql.dgs.internal.*
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
+import com.netflix.graphql.dgs.internal.method.ArgumentResolver
+import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import com.netflix.graphql.mocking.MockProvider
-import graphql.execution.*
+import graphql.execution.AsyncExecutionStrategy
+import graphql.execution.AsyncSerialExecutionStrategy
+import graphql.execution.DataFetcherExceptionHandler
+import graphql.execution.ExecutionIdProvider
+import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.preparsed.PreparsedDocumentProvider
+import graphql.schema.DataFetcherFactory
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.GraphQLSchema
 import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.visibility.DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
 import graphql.schema.visibility.GraphqlFieldVisibility
 import graphql.schema.visibility.NoIntrospectionGraphqlFieldVisibility.NO_INTROSPECTION_FIELD_VISIBILITY
+import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
@@ -44,8 +55,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.PriorityOrdered
+import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 import java.util.*
+import kotlin.streams.toList
 
 /**
  * Framework auto configuration based on open source Spring only, without Netflix integrations.
@@ -53,14 +67,22 @@ import java.util.*
  */
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @Configuration
-@EnableConfigurationProperties(value = [DgsConfigurationProperties::class, DgsIntrospectionConfigurationProperties::class])
-@ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class])
+@EnableConfigurationProperties(DgsConfigurationProperties::class)
+@ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class, DgsInputArgumentConfiguration::class])
 open class DgsAutoConfiguration(
     private val configProps: DgsConfigurationProperties
 ) {
 
     companion object {
         const val AUTO_CONF_PREFIX = "dgs.graphql"
+    }
+
+    @Bean
+    @Order(PriorityOrdered.HIGHEST_PRECEDENCE)
+    open fun graphQLContextContributionInstrumentation(
+        graphQLContextContributors: ObjectProvider<GraphQLContextContributor>
+    ): Instrumentation {
+        return GraphQLContextContributorInstrumentation(graphQLContextContributors.orderedStream().toList())
     }
 
     @Bean
@@ -71,45 +93,51 @@ open class DgsAutoConfiguration(
         dgsDataLoaderProvider: DgsDataLoaderProvider,
         dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
         dataFetcherExceptionHandler: DataFetcherExceptionHandler,
-        chainedInstrumentation: ChainedInstrumentation,
+        instrumentations: ObjectProvider<Instrumentation>,
         environment: Environment,
         @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
         @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
         idProvider: Optional<ExecutionIdProvider>,
         reloadSchemaIndicator: ReloadSchemaIndicator,
-        preparsedDocumentProvider: PreparsedDocumentProvider
+        preparsedDocumentProvider: ObjectProvider<PreparsedDocumentProvider>,
+        queryValueCustomizer: QueryValueCustomizer
     ): DgsQueryExecutor {
-        val queryExecutionStrategy = providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
-        val mutationExecutionStrategy = providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
+        val queryExecutionStrategy =
+            providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
+        val mutationExecutionStrategy =
+            providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
+
+        val instrumentationImpls = instrumentations.orderedStream().toList()
+        val instrumentation: Instrumentation? = when {
+            instrumentationImpls.size == 1 -> instrumentationImpls.single()
+            instrumentationImpls.isNotEmpty() -> ChainedInstrumentation(instrumentationImpls)
+            else -> null
+        }
+
         return DefaultDgsQueryExecutor(
-            schema,
-            schemaProvider,
-            dgsDataLoaderProvider,
-            dgsContextBuilder,
-            chainedInstrumentation,
-            queryExecutionStrategy,
-            mutationExecutionStrategy,
-            idProvider,
-            reloadSchemaIndicator,
-            preparsedDocumentProvider
+            defaultSchema = schema,
+            schemaProvider = schemaProvider,
+            dataLoaderProvider = dgsDataLoaderProvider,
+            contextBuilder = dgsContextBuilder,
+            instrumentation = instrumentation,
+            queryExecutionStrategy = queryExecutionStrategy,
+            mutationExecutionStrategy = mutationExecutionStrategy,
+            idProvider = idProvider,
+            reloadIndicator = reloadSchemaIndicator,
+            preparsedDocumentProvider = preparsedDocumentProvider.ifAvailable,
+            queryValueCustomizer = queryValueCustomizer
         )
     }
 
     @Bean
     @ConditionalOnMissingBean
-    open fun preparsedDocumentProvider(): PreparsedDocumentProvider {
-        return DgsNoOpPreparsedDocumentProvider
+    open fun defaultQueryValueCustomizer(): QueryValueCustomizer {
+        return QueryValueCustomizer { a -> a }
     }
 
     @Bean
     open fun dgsDataLoaderProvider(applicationContext: ApplicationContext): DgsDataLoaderProvider {
         return DgsDataLoaderProvider(applicationContext)
-    }
-
-    @Bean
-    open fun dgsInstrumentation(instrumentation: Optional<List<Instrumentation>>): ChainedInstrumentation {
-        val listOfInstrumentations = instrumentation.orElse(emptyList())
-        return ChainedInstrumentation(listOfInstrumentations)
     }
 
     /**
@@ -140,21 +168,30 @@ open class DgsAutoConfiguration(
         federationResolver: Optional<DgsFederationResolver>,
         existingTypeDefinitionFactory: Optional<TypeDefinitionRegistry>,
         existingCodeRegistry: Optional<GraphQLCodeRegistry>,
-        mockProviders: Optional<Set<MockProvider>>,
+        mockProviders: ObjectProvider<MockProvider>,
         dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
         dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
-        cookieValueResolver: Optional<CookieValueResolver> = Optional.empty()
+        entityFetcherRegistry: EntityFetcherRegistry,
+        defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty(),
+        methodDataFetcherFactory: MethodDataFetcherFactory
     ): DgsSchemaProvider {
         return DgsSchemaProvider(
-            applicationContext,
-            federationResolver,
-            existingTypeDefinitionFactory,
-            mockProviders,
-            configProps.schemaLocations,
-            dataFetcherResultProcessors,
-            dataFetcherExceptionHandler,
-            cookieValueResolver
+            applicationContext = applicationContext,
+            federationResolver = federationResolver,
+            existingTypeDefinitionRegistry = existingTypeDefinitionFactory,
+            mockProviders = mockProviders.toSet(),
+            schemaLocations = configProps.schemaLocations,
+            dataFetcherResultProcessors = dataFetcherResultProcessors,
+            dataFetcherExceptionHandler = dataFetcherExceptionHandler,
+            entityFetcherRegistry = entityFetcherRegistry,
+            defaultDataFetcherFactory = defaultDataFetcherFactory,
+            methodDataFetcherFactory = methodDataFetcherFactory
         )
+    }
+
+    @Bean
+    open fun entityFetcherRegistry(): EntityFetcherRegistry {
+        return EntityFetcherRegistry()
     }
 
     @Bean
@@ -196,5 +233,24 @@ open class DgsAutoConfiguration(
     @Bean
     open fun uploadScalar(): UploadScalar {
         return UploadScalar()
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnClass(name = ["reactor.core.publisher.Mono"])
+    open fun monoReactiveDataFetcherResultProcessor(): MonoDataFetcherResultProcessor {
+        return MonoDataFetcherResultProcessor()
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnClass(name = ["reactor.core.publisher.Flux"])
+    open fun fluxReactiveDataFetcherResultProcessor(): FluxDataFetcherResultProcessor {
+        return FluxDataFetcherResultProcessor()
+    }
+
+    @Bean
+    open fun methodDataFetcherFactory(argumentResolvers: ObjectProvider<ArgumentResolver>): MethodDataFetcherFactory {
+        return MethodDataFetcherFactory(argumentResolvers.orderedStream().toList())
     }
 }

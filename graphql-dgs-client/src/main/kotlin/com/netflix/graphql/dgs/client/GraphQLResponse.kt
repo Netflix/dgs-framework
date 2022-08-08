@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory
 data class GraphQLResponse(val json: String, val headers: Map<String, List<String>>) {
 
     /**
-     * A JsonPath DocumentContext. Typically only used internally.
+     * A JsonPath DocumentContext. Typically, only used internally.
      */
     val parsed: DocumentContext = JsonPath.using(jsonPathConfig).parse(json)
 
@@ -49,7 +49,7 @@ data class GraphQLResponse(val json: String, val headers: Map<String, List<Strin
      */
 
     val data: Map<String, Any> = parsed.read("data") ?: emptyMap()
-    val errors: List<GraphQLError> = parsed.read("errors", object : TypeRef<List<GraphQLError>>() {}) ?: emptyList()
+    val errors: List<GraphQLError> = parsed.read("errors", jsonTypeRef<List<GraphQLError>>()) ?: emptyList()
 
     constructor(json: String) : this(json, emptyMap())
 
@@ -72,7 +72,7 @@ data class GraphQLResponse(val json: String, val headers: Map<String, List<Strin
         try {
             return parsed.read(dataPath)
         } catch (ex: Exception) {
-            logger.error("Error extracting path '$path' from data: '$data'")
+            logger.warn("Error extracting path '$path' from data: '$data'")
             throw ex
         }
     }
@@ -86,7 +86,7 @@ data class GraphQLResponse(val json: String, val headers: Map<String, List<Strin
         try {
             return parsed.read(dataPath, clazz)
         } catch (ex: Exception) {
-            logger.error("Error extracting path '$path' from data: '$data'")
+            logger.warn("Error extracting path '$path' from data: '$data'")
             throw ex
         }
     }
@@ -101,7 +101,7 @@ data class GraphQLResponse(val json: String, val headers: Map<String, List<Strin
         try {
             return parsed.read(dataPath, typeRef)
         } catch (ex: Exception) {
-            logger.error("Error extracting path '$path' from data: '$data'")
+            logger.warn("Error extracting path '$path' from data: '$data'")
             throw ex
         }
     }
@@ -136,3 +136,5 @@ data class GraphQLResponse(val json: String, val headers: Map<String, List<Strin
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class RequestDetails(val requestId: String?, val edgarLink: String?)
+
+inline fun <reified T> jsonTypeRef(): TypeRef<T> = object : TypeRef<T>() {}

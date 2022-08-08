@@ -31,6 +31,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.toEntity
 import reactor.test.StepVerifier
 
 @SpringBootTest(
@@ -40,20 +41,25 @@ import reactor.test.StepVerifier
 class CustomReactiveGraphQLClientTest {
 
     @LocalServerPort
-    lateinit var port: Integer
+    var port: Int? = null
     lateinit var client: CustomMonoGraphQLClient
 
     @BeforeEach
     fun setup() {
+        requireNotNull(port) { "port not set" }
         client = MonoGraphQLClient.createCustomReactive("http://localhost:$port/graphql") { url, _, body ->
             WebClient.create(url)
                 .post()
                 .bodyValue(body)
-                .headers { consumer -> GraphQLClients.defaultHeaders.forEach(consumer::addAll) }
-                .exchange()
-                .flatMap { r ->
-                    r.bodyToMono(String::class.java)
-                        .map { respBody -> HttpResponse(r.rawStatusCode(), respBody, r.headers().asHttpHeaders()) }
+                .headers { headers -> headers.addAll(GraphQLClients.defaultHeaders) }
+                .retrieve()
+                .toEntity<String>()
+                .map { response ->
+                    HttpResponse(
+                        statusCode = response.statusCodeValue,
+                        body = response.body,
+                        headers = response.headers
+                    )
                 }
         }
     }

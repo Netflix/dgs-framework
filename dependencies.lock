@@ -1,317 +1,443 @@
 {
     "annotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.12.3"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "Hoxton.SR10"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.3.9.RELEASE"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.13.RELEASE"
+            "locked": "5.3.18"
         }
     },
     "apiDependenciesMetadata": {
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         }
     },
     "compileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.12.3"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "Hoxton.SR10"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.3.9.RELEASE"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.13.RELEASE"
+            "locked": "5.3.18"
         }
     },
     "implementationDependenciesMetadata": {
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
+        }
+    },
+    "jmh": {
+        "org.openjdk.jmh:jmh-core": {
+            "locked": "1.29"
+        },
+        "org.openjdk.jmh:jmh-generator-bytecode": {
+            "locked": "1.29"
+        }
+    },
+    "jmhAnnotationProcessor": {
+        "com.fasterxml.jackson:jackson-bom": {
+            "locked": "2.13.2"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.6.21"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.6.7"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "2021.0.2"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.6.5"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.3.18"
+        }
+    },
+    "jmhApiDependenciesMetadata": {
+        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
+            "locked": "1.6.21"
+        }
+    },
+    "jmhCompileClasspath": {
+        "com.fasterxml.jackson:jackson-bom": {
+            "locked": "2.13.2"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.6.21"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
+            "locked": "1.6.21"
+        },
+        "org.openjdk.jmh:jmh-core": {
+            "locked": "1.29"
+        },
+        "org.openjdk.jmh:jmh-generator-bytecode": {
+            "locked": "1.29"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.6.7"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "2021.0.2"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.6.5"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.3.18"
+        }
+    },
+    "jmhImplementationDependenciesMetadata": {
+        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
+            "locked": "1.6.21"
+        },
+        "org.openjdk.jmh:jmh-core": {
+            "locked": "1.29"
+        },
+        "org.openjdk.jmh:jmh-generator-bytecode": {
+            "locked": "1.29"
+        }
+    },
+    "jmhRuntimeClasspath": {
+        "com.fasterxml.jackson:jackson-bom": {
+            "locked": "2.13.2"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.6.21"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
+            "locked": "1.6.21"
+        },
+        "org.openjdk.jmh:jmh-core": {
+            "locked": "1.29"
+        },
+        "org.openjdk.jmh:jmh-generator-bytecode": {
+            "locked": "1.29"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.6.7"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "2021.0.2"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.6.5"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.3.18"
         }
     },
     "kotlinCompilerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.12.3"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "Hoxton.SR10"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.3.9.RELEASE"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.13.RELEASE"
+            "locked": "5.3.18"
         }
     },
     "kotlinCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.12.3"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "Hoxton.SR10"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.3.9.RELEASE"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.13.RELEASE"
+            "locked": "5.3.18"
+        }
+    },
+    "kotlinCompilerPluginClasspathJmh": {
+        "com.fasterxml.jackson:jackson-bom": {
+            "locked": "2.13.2"
+        },
+        "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
+            "locked": "1.6.21"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.6.21"
+        },
+        "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
+            "locked": "1.6.21"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "2.6.7"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "2021.0.2"
+        },
+        "org.springframework.security:spring-security-bom": {
+            "locked": "5.6.5"
+        },
+        "org.springframework:spring-framework-bom": {
+            "locked": "5.3.18"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.12.3"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "Hoxton.SR10"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.3.9.RELEASE"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.13.RELEASE"
+            "locked": "5.3.18"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.12.3"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "Hoxton.SR10"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.3.9.RELEASE"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.13.RELEASE"
+            "locked": "5.3.18"
         }
     },
     "kotlinKaptWorkerDependencies": {
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.6.21"
         }
     },
     "kotlinKlibCommonizerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.12.3"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "Hoxton.SR10"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.3.9.RELEASE"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.13.RELEASE"
+            "locked": "5.3.18"
         }
     },
     "kotlinNativeCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.12.3"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "Hoxton.SR10"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.3.9.RELEASE"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.13.RELEASE"
-        }
-    },
-    "ktlint": {
-        "com.pinterest:ktlint": {
-            "locked": "0.40.0"
+            "locked": "5.3.18"
         }
     },
     "nebulaRecommenderBom": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.12.3"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "Hoxton.SR10"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.3.9.RELEASE"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.13.RELEASE"
+            "locked": "5.3.18"
         }
     },
     "runtimeClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.12.3"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "Hoxton.SR10"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.3.9.RELEASE"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.13.RELEASE"
+            "locked": "5.3.18"
         }
     },
     "testAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.12.3"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "Hoxton.SR10"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.3.9.RELEASE"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.13.RELEASE"
+            "locked": "5.3.18"
         }
     },
     "testCompileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.12.3"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "Hoxton.SR10"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.3.9.RELEASE"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.13.RELEASE"
+            "locked": "5.3.18"
         }
     },
     "testImplementationDependenciesMetadata": {
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         }
     },
     "testRuntimeClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.12.3"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.5.21"
+            "locked": "1.6.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.3.9.RELEASE"
+            "locked": "2.6.7"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "Hoxton.SR10"
+            "locked": "2021.0.2"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.3.9.RELEASE"
+            "locked": "5.6.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.2.13.RELEASE"
+            "locked": "5.3.18"
         }
     }
 }

@@ -21,6 +21,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.util.ClassUtils
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.server.ResponseStatusException
@@ -56,10 +57,10 @@ interface GraphQLClient {
      */
     fun executeQuery(query: String, variables: Map<String, Any>, operationName: String?): GraphQLResponse
 
-    @Deprecated("The RequestExecutor should be provided while creating the implementation.", ReplaceWith("Example: new DefaultGraphQLClient(url, requestExecutor);"))
+    @Deprecated("The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.", ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);"))
     fun executeQuery(query: String, variables: Map<String, Any>, requestExecutor: RequestExecutor): GraphQLResponse = throw UnsupportedOperationException()
 
-    @Deprecated("The RequestExecutor should be provided while creating the implementation.", ReplaceWith("Example: new DefaultGraphQLClient(url, requestExecutor);"))
+    @Deprecated("The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.", ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);"))
     fun executeQuery(
         query: String,
         variables: Map<String, Any>,
@@ -113,14 +114,14 @@ interface MonoGraphQLClient {
         operationName: String?,
     ): Mono<GraphQLResponse>
 
-    @Deprecated("The RequestExecutor should be provided while creating the implementation.", ReplaceWith("Example: new DefaultGraphQLClient(url, requestExecutor);"))
+    @Deprecated("The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.", ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);"))
     fun reactiveExecuteQuery(
         query: String,
         variables: Map<String, Any>,
         requestExecutor: MonoRequestExecutor
     ): Mono<GraphQLResponse> = throw UnsupportedOperationException()
 
-    @Deprecated("The RequestExecutor should be provided while creating the implementation.", ReplaceWith("Example: new DefaultGraphQLClient(url, requestExecutor);"))
+    @Deprecated("The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.", ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);"))
     fun reactiveExecuteQuery(
         query: String,
         variables: Map<String, Any>,
@@ -207,9 +208,11 @@ internal object GraphQLClients {
             ObjectMapper().registerModule(KotlinModule.Builder().nullIsSameAsDefault(true).build())
         else ObjectMapper().registerKotlinModule()
 
-    internal val defaultHeaders = mapOf(
-        "Accept" to listOf("application/json"),
-        "Content-type" to listOf("application/json")
+    internal val defaultHeaders: HttpHeaders = HttpHeaders.readOnlyHttpHeaders(
+        HttpHeaders().apply {
+            accept = listOf(MediaType.APPLICATION_JSON)
+            contentType = MediaType.APPLICATION_JSON
+        }
     )
 
     fun handleResponse(response: HttpResponse, requestBody: String, url: String): GraphQLResponse {

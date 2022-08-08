@@ -51,7 +51,7 @@ internal class DgsExtendedScalarsSmokeTest {
             mapOf(
                 "aDate" to "1963-01-01",
                 "aTime" to "18:00:30Z",
-                "aDateTime" to "1963-01-01T18:00:30Z"
+                "aDateTime" to "1963-01-01T18:00:30.000Z"
             )
         )
     }

@@ -16,126 +16,158 @@
 
 package com.netflix.graphql.dgs.subscriptions.sse
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import graphql.ExecutionResult
+import com.netflix.graphql.types.subscription.QueryPayload
+import com.netflix.graphql.types.subscription.SSEDataPayload
+import graphql.ExecutionResultImpl
 import graphql.GraphqlErrorBuilder
 import graphql.validation.ValidationError
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
-import io.mockk.junit5.MockKExtension
-import io.mockk.mockk
-import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.reactivestreams.Publisher
+import org.mockito.ArgumentMatchers.eq
+import org.mockito.Mockito.any
+import org.mockito.Mockito.`when`
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import reactor.core.publisher.Flux
-import java.util.*
+import java.util.Base64
 
-@ExtendWith(MockKExtension::class)
+@WebMvcTest(DgsSSESubscriptionHandler::class, DgsSSESubscriptionHandlerTest.App::class)
 internal class DgsSSESubscriptionHandlerTest {
 
-    @MockK
+    @SpringBootApplication
+    open class App
+
+    @Autowired
+    lateinit var mockMvc: MockMvc
+
+    @MockBean
     lateinit var dgsQueryExecutor: DgsQueryExecutor
 
-    @MockK
-    lateinit var executionResultMock: ExecutionResult
+    private val mapper: ObjectMapper = jacksonObjectMapper()
 
     @Test
     fun queryError() {
-
         val query = "subscription { stocks { name, price }}"
-        val queryPayload = DgsSSESubscriptionHandler.QueryPayload(operationName = "MySubscription", query = query)
-        val base64 = Base64.getEncoder().encodeToString(jacksonObjectMapper().writeValueAsBytes(queryPayload))
+        val queryPayload = QueryPayload(operationName = "MySubscription", query = query)
+        val encodedQuery = Base64.getEncoder().encodeToString(mapper.writeValueAsBytes(queryPayload))
+        val executionResult = ExecutionResultImpl.newExecutionResult()
+            .errors(listOf(GraphqlErrorBuilder.newError().message("broken").build()))
+            .build()
 
-        every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
-        every { executionResultMock.errors } returns listOf(GraphqlErrorBuilder.newError().message("broken").build())
+        `when`(dgsQueryExecutor.execute(eq(query), any())).thenReturn(executionResult)
 
-        val responseEntity = DgsSSESubscriptionHandler(dgsQueryExecutor).subscriptionWithId(base64)
-        assertThat(responseEntity.statusCode.is5xxServerError).isTrue
+        mockMvc.perform(get("/subscriptions").param("query", encodedQuery))
+            .andExpect(status().is4xxClientError)
     }
 
     @Test
     fun base64Error() {
-
-        val query = "subscription { stocks { name, price }}"
-        val base64 = "notbase64"
-
-        every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
-
-        val responseEntity = DgsSSESubscriptionHandler(dgsQueryExecutor).subscriptionWithId(base64)
-        assertThat(responseEntity.statusCode.is4xxClientError).isTrue
+        mockMvc.perform(get("/subscriptions").param("query", "notbase64"))
+            .andExpect(status().is4xxClientError)
     }
 
     @Test
     fun queryValidationError() {
-
         val query = "subscription { stocks { name, price }}"
-        val queryPayload = DgsSSESubscriptionHandler.QueryPayload(operationName = "MySubscription", query = query)
-        val base64 = Base64.getEncoder().encodeToString(jacksonObjectMapper().writeValueAsBytes(queryPayload))
+        val queryPayload = QueryPayload(operationName = "MySubscription", query = query)
+        val encodedQuery = Base64.getEncoder().encodeToString(mapper.writeValueAsBytes(queryPayload))
 
-        every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
-        every { executionResultMock.errors } returns listOf(ValidationError.newValidationError().build())
+        val executionResult = ExecutionResultImpl.newExecutionResult()
+            .errors(listOf(ValidationError.newValidationError().build()))
+            .build()
 
-        val responseEntity = DgsSSESubscriptionHandler(dgsQueryExecutor).subscriptionWithId(base64)
-        assertThat(responseEntity.statusCode.is4xxClientError).isTrue
+        `when`(dgsQueryExecutor.execute(eq(query), any())).thenReturn(executionResult)
+
+        mockMvc.perform(get("/subscriptions").param("query", encodedQuery))
+            .andExpect(status().is4xxClientError)
     }
 
     @Test
     fun invalidJson() {
+        val encodedQuery = Base64.getEncoder().encodeToString("not json".toByteArray())
 
-        val query = "subscription { stocks { name, price }}"
-        val base64 = Base64.getEncoder().encodeToString("not json".toByteArray())
-        every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
-        val responseEntity = DgsSSESubscriptionHandler(dgsQueryExecutor).subscriptionWithId(base64)
-        assertThat(responseEntity.statusCode.is4xxClientError).isTrue
+        mockMvc.perform(get("/subscriptions").param("query", encodedQuery))
+            .andExpect(status().is4xxClientError)
     }
 
     @Test
     fun notAPublisherServerError() {
-
         val query = "subscription { stocks { name, price }}"
-        val queryPayload = DgsSSESubscriptionHandler.QueryPayload(operationName = "MySubscription", query = query)
-        val base64 = Base64.getEncoder().encodeToString(jacksonObjectMapper().writeValueAsBytes(queryPayload))
+        val queryPayload = QueryPayload(operationName = "MySubscription", query = query)
+        val encodedQuery = Base64.getEncoder().encodeToString(mapper.writeValueAsBytes(queryPayload))
 
-        every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
-        every { executionResultMock.errors } returns emptyList()
-        every { executionResultMock.getData<Publisher<ExecutionResult>>() } throws ClassCastException()
+        val executionResult = ExecutionResultImpl.newExecutionResult()
+            .data("not a publisher")
+            .build()
 
-        val responseEntity = DgsSSESubscriptionHandler(dgsQueryExecutor).subscriptionWithId(base64)
-        assertThat(responseEntity.statusCode.is5xxServerError).isTrue
+        `when`(dgsQueryExecutor.execute(eq(query), any())).thenReturn(executionResult)
+
+        mockMvc.perform(get("/subscriptions").param("query", encodedQuery))
+            .andExpect(status().is5xxServerError)
     }
 
     @Test
     fun notAPublisherClientError() {
         // Not a subscription query
         val query = "query { stocks { name, price }}"
-        val queryPayload = DgsSSESubscriptionHandler.QueryPayload(operationName = "MySubscription", query = query)
-        val base64 = Base64.getEncoder().encodeToString(jacksonObjectMapper().writeValueAsBytes(queryPayload))
+        val queryPayload = QueryPayload(operationName = "MySubscription", query = query)
+        val encodedQuery = Base64.getEncoder().encodeToString(mapper.writeValueAsBytes(queryPayload))
 
-        every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
-        every { executionResultMock.errors } returns emptyList()
-        every { executionResultMock.getData<Publisher<ExecutionResult>>() } throws ClassCastException()
+        val executionResult = ExecutionResultImpl.newExecutionResult()
+            .data(mapOf("stocks" to listOf(mapOf("name" to "VTI", "price" to 200))))
+            .build()
 
-        val responseEntity = DgsSSESubscriptionHandler(dgsQueryExecutor).subscriptionWithId(base64)
-        assertThat(responseEntity.statusCode.is4xxClientError).isTrue
+        `when`(dgsQueryExecutor.execute(eq(query), any())).thenReturn(executionResult)
+
+        mockMvc.perform(get("/subscriptions").param("query", encodedQuery))
+            .andExpect(status().is4xxClientError)
     }
 
     @Test
-    @Suppress("ReactiveStreamsUnusedPublisher")
     fun success() {
-        val query = "query { stocks { name, price }}"
-        val queryPayload = DgsSSESubscriptionHandler.QueryPayload(operationName = "MySubscription", query = query)
-        val base64 = Base64.getEncoder().encodeToString(jacksonObjectMapper().writeValueAsBytes(queryPayload))
+        val query = "subscription { stocks { name, price }}"
+        val queryPayload = QueryPayload(operationName = "MySubscription", query = query)
+        val encodedQuery = Base64.getEncoder().encodeToString(mapper.writeValueAsBytes(queryPayload))
 
-        val nestedExecutionResult = mockk<ExecutionResult>()
+        val publisher = Flux.just(
+            ExecutionResultImpl.newExecutionResult().data("message 1").build(),
+            ExecutionResultImpl.newExecutionResult().data("message 2").build()
+        )
+        val executionResult = ExecutionResultImpl.newExecutionResult()
+            .data(publisher).build()
 
-        every { dgsQueryExecutor.execute(query, any()) } returns executionResultMock
-        every { executionResultMock.errors } returns emptyList()
-        every { executionResultMock.getData<Publisher<ExecutionResult>>() } returns Flux.just(nestedExecutionResult)
-        every { nestedExecutionResult.getData<String>() } returns "message 1"
+        `when`(dgsQueryExecutor.execute(eq(query), any())).thenReturn(executionResult)
 
-        val responseEntity = DgsSSESubscriptionHandler(dgsQueryExecutor).subscriptionWithId(base64)
-        assertThat(responseEntity.statusCode.is2xxSuccessful).isTrue
+        val result = mockMvc.perform(get("/subscriptions").param("query", encodedQuery))
+            .andExpect(request().asyncStarted())
+            .andExpect(status().is2xxSuccessful)
+            .andReturn()
+
+        mockMvc.perform(asyncDispatch(result))
+            .andExpect(content().contentType(MediaType.TEXT_EVENT_STREAM))
+            .andReturn()
+
+        val messages = result.response.contentAsString.lineSequence()
+            .filter { line -> line.startsWith("data:") }
+            .map { line -> line.substring("data:".length) }
+            .map { line -> mapper.readValue<SSEDataPayload>(line) }
+            .toList()
+
+        assertEquals(2, messages.size)
+        assertEquals("message 1", messages[0].data)
+        assertEquals("message 2", messages[1].data)
     }
 }

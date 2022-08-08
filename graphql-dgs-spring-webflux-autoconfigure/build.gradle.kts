@@ -17,10 +17,14 @@
 dependencies {
     api(project(":graphql-dgs"))
     api(project(":graphql-dgs-reactive"))
+
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework:spring-webflux")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("io.projectreactor.netty:reactor-netty")
+
     testImplementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
     testImplementation("io.projectreactor:reactor-test")
+    testImplementation("com.github.ben-manes.caffeine:caffeine")
 }

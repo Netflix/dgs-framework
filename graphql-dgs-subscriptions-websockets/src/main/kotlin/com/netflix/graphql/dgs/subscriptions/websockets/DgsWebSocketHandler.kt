@@ -24,6 +24,10 @@ import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
 import org.slf4j.LoggerFactory
+import org.springframework.security.core.context.SecurityContext
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.util.ClassUtils
+import org.springframework.web.socket.SubProtocolCapable
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 import org.springframework.web.socket.handler.TextWebSocketHandler
@@ -32,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import javax.annotation.PostConstruct
 
-class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : TextWebSocketHandler() {
+class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : TextWebSocketHandler(), SubProtocolCapable {
 
     internal val subscriptions = ConcurrentHashMap<String, MutableMap<String, Subscription>>()
     internal val sessions = CopyOnWriteArrayList<WebSocketSession>()
@@ -51,6 +55,7 @@ class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : Text
 
     public override fun handleTextMessage(session: WebSocketSession, message: TextMessage) {
         val (type, payload, id) = objectMapper.readValue(message.payload, OperationMessage::class.java)
+        loadSecurityContextFromSession(session)
         when (type) {
             GQL_CONNECTION_INIT -> {
                 logger.info("Initialized connection for {}", session.id)
@@ -83,6 +88,15 @@ class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : Text
         }
     }
 
+    private fun loadSecurityContextFromSession(session: WebSocketSession) {
+        if (springSecurityAvailable) {
+            val securityContext = session.attributes["SPRING_SECURITY_CONTEXT"] as? SecurityContext
+            if (securityContext != null) {
+                SecurityContextHolder.setContext(securityContext)
+            }
+        }
+    }
+
     private fun cleanupSubscriptionsForSession(session: WebSocketSession) {
         logger.info("Cleaning up for session {}", session.id)
         subscriptions[session.id]?.values?.forEach { it.cancel() }
@@ -104,7 +118,7 @@ class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : Text
             }
 
             override fun onNext(er: ExecutionResult) {
-                val message = OperationMessage(GQL_DATA, DataPayload(er.getData()), id)
+                val message = OperationMessage(GQL_DATA, DataPayload(er.getData(), er.errors), id)
                 val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
                 logger.debug("Sending subscription data: {}", jsonMessage)
 
@@ -142,5 +156,14 @@ class DgsWebSocketHandler(private val dgsQueryExecutor: DgsQueryExecutor) : Text
     private companion object {
         val logger = LoggerFactory.getLogger(DgsWebSocketHandler::class.java)
         val objectMapper = jacksonObjectMapper()
+
+        private val springSecurityAvailable: Boolean by lazy {
+            ClassUtils.isPresent(
+                "org.springframework.security.core.context.SecurityContextHolder",
+                DgsWebSocketHandler::class.java.classLoader
+            )
+        }
     }
+
+    override fun getSubProtocols(): List<String> = listOf(GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL)
 }

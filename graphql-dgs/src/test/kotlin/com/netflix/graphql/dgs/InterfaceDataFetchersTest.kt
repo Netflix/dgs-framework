@@ -17,6 +17,8 @@
 package com.netflix.graphql.dgs
 
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.method.DataFetchingEnvironmentArgumentResolver
+import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import graphql.GraphQL
 import graphql.schema.DataFetchingEnvironment
 import io.mockk.every
@@ -96,7 +98,12 @@ class InterfaceDataFetchersTest {
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
-        val provider = DgsSchemaProvider(applicationContextMock, Optional.empty(), Optional.empty(), Optional.empty())
+        val provider = DgsSchemaProvider(
+            applicationContext = applicationContextMock,
+            federationResolver = Optional.empty(),
+            existingTypeDefinitionRegistry = Optional.empty(),
+            methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver()))
+        )
         val schema = provider.schema(
             """
             type Query {
