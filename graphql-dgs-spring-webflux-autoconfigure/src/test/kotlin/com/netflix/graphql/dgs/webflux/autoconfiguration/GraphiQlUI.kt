@@ -59,8 +59,8 @@ class GraphiQlUI {
             .isOk
             .expectBody<String>()
             .consumeWith {
-                 Assertions.assertThat(it.responseBody.orEmpty())
-                     .contains("Simple GraphiQL Example")
+                Assertions.assertThat(it.responseBody.orEmpty())
+                    .contains("Simple GraphiQL Example")
             }
     }
 }
