@@ -85,13 +85,13 @@ open class DgsRestController(
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     fun graphql(
-        @RequestBody body: String?,
+        @RequestBody body: ByteArray?,
         @RequestParam fileParams: Map<String, MultipartFile>?,
         @RequestParam(name = "operations") operation: String?,
         @RequestParam(name = "map") mapParam: String?,
         @RequestHeader headers: HttpHeaders,
         webRequest: WebRequest
-    ): ResponseEntity<String> {
+    ): ResponseEntity<Any> {
 
         logger.debug("Validate HTTP Headers for the GraphQL endpoint...")
         try {
@@ -116,13 +116,14 @@ open class DgsRestController(
         val queryVariables: Map<String, Any>
         val extensions: Map<String, Any>
         if (body != null) {
-            logger.debug("Reading input value: '{}'", body)
+            if (logger.isDebugEnabled) {
+                logger.debug("Reading input value: '{}'", body.decodeToString())
+            }
             if (GraphQLMediaTypes.includesApplicationGraphQL(headers)) {
-                inputQuery = mapOf("query" to body)
+                inputQuery = mapOf("query" to body.decodeToString())
                 queryVariables = emptyMap()
                 extensions = emptyMap()
             } else {
-
                 try {
                     inputQuery = mapper.readValue(body)
                 } catch (ex: Exception) {
@@ -226,7 +227,7 @@ open class DgsRestController(
 
         val result = try {
             TimeTracer.logTime(
-                { mapper.writeValueAsString(executionResult.toSpecification()) },
+                { mapper.writeValueAsBytes(executionResult.toSpecification()) },
                 logger,
                 "Serialized JSON result in {}ms"
             )
@@ -234,7 +235,7 @@ open class DgsRestController(
             val errorMessage = "Error serializing response: ${ex.message}"
             val errorResponse = ExecutionResultImpl(GraphqlErrorBuilder.newError().message(errorMessage).build())
             logger.error(errorMessage, ex)
-            mapper.writeValueAsString(errorResponse.toSpecification())
+            mapper.writeValueAsBytes(errorResponse.toSpecification())
         }
 
         return ResponseEntity.ok(result)
