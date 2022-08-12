@@ -113,7 +113,7 @@ class DefaultDgsQueryExecutor(
     override fun <T : Any?> executeAndExtractJsonPath(query: String, jsonPath: String, servletWebRequest: ServletWebRequest): T {
         val httpHeaders = HttpHeaders()
         servletWebRequest.headerNames.forEach { name ->
-            httpHeaders[name] = servletWebRequest.getHeaderValues(name).asList()
+            httpHeaders.addAll(name, servletWebRequest.getHeaderValues(name).orEmpty().toList())
         }
         return JsonPath.read(getJsonResult(query, emptyMap(), httpHeaders, servletWebRequest), jsonPath)
     }
