@@ -28,7 +28,6 @@ import org.assertj.core.util.Lists
 import org.assertj.core.util.Maps
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.HttpHeaders
@@ -41,20 +40,16 @@ import org.springframework.web.multipart.MultipartFile
 @ExtendWith(MockKExtension::class)
 class DgsMultipartPostControllerTest {
 
-    private val httpHeaders = HttpHeaders()
+    private val httpHeaders = HttpHeaders().apply {
+        contentType = MediaType.MULTIPART_FORM_DATA
+        add(GraphQLCSRFRequestHeaderValidationRule.HEADER_GRAPHQL_REQUIRE_PREFLIGHT, null)
+    }
 
     @MockK
     lateinit var dgsQueryExecutor: DgsQueryExecutor
 
     @MockK
     lateinit var webRequest: WebRequest
-
-    @BeforeEach
-    fun setHeaders() {
-        httpHeaders.clear()
-        httpHeaders.contentType = MediaType.MULTIPART_FORM_DATA
-        httpHeaders.add(GraphQLCSRFRequestHeaderValidationRule.HEADER_GRAPHQL_REQUIRE_PREFLIGHT, null)
-    }
 
     @Test
     fun `Multipart form request should require a preflight header`() {
@@ -93,9 +88,10 @@ class DgsMultipartPostControllerTest {
         )
 
         assertThat(result.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
-        assertThat(result.body)
-            .isNotEmpty
-            .contains("Expecting a CSRF Prevention Header but none was found, supported headers are [apollo-require-preflight, x-apollo-operation-name, graphql-require-preflight].")
+        assertThat(result.body).isInstanceOfSatisfying(String::class.java) { body ->
+            assertThat(body).isNotEmpty()
+            assertThat(body).contains("Expecting a CSRF Prevention Header but none was found, supported headers are [apollo-require-preflight, x-apollo-operation-name, graphql-require-preflight].")
+        }
     }
 
     @Test
@@ -135,10 +131,12 @@ class DgsMultipartPostControllerTest {
             webRequest
         )
 
-        val mapper = jacksonObjectMapper()
-        val (data, errors) = mapper.readValue(result.body, GraphQLResponse::class.java)
-        assertThat(errors.size).isEqualTo(0)
-        assertThat(data["Response"]).isEqualTo("success")
+        assertThat(result.body).isInstanceOfSatisfying(ByteArray::class.java) { body ->
+            val mapper = jacksonObjectMapper()
+            val (data, errors) = mapper.readValue(body, GraphQLResponse::class.java)
+            assertThat(errors.size).isEqualTo(0)
+            assertThat(data["Response"]).isEqualTo("success")
+        }
     }
 
     @Test
@@ -184,10 +182,12 @@ class DgsMultipartPostControllerTest {
             webRequest
         )
 
-        val mapper = jacksonObjectMapper()
-        val (data, errors) = mapper.readValue(result.body, GraphQLResponse::class.java)
-        assertThat(errors.size).isEqualTo(0)
-        assertThat(data["Response"]).isEqualTo("success")
+        assertThat(result.body).isInstanceOfSatisfying(ByteArray::class.java) { body ->
+            val mapper = jacksonObjectMapper()
+            val (data, errors) = mapper.readValue(body, GraphQLResponse::class.java)
+            assertThat(errors.size).isEqualTo(0)
+            assertThat(data["Response"]).isEqualTo("success")
+        }
     }
 
     @Test
@@ -229,10 +229,12 @@ class DgsMultipartPostControllerTest {
             webRequest
         )
 
-        val mapper = jacksonObjectMapper()
-        val (data, errors) = mapper.readValue(result.body, GraphQLResponse::class.java)
-        assertThat(errors.size).isEqualTo(0)
-        assertThat(data["Response"]).isEqualTo("success")
+        assertThat(result.body).isInstanceOfSatisfying(ByteArray::class.java) { body ->
+            val mapper = jacksonObjectMapper()
+            val (data, errors) = mapper.readValue(body, GraphQLResponse::class.java)
+            assertThat(errors.size).isEqualTo(0)
+            assertThat(data["Response"]).isEqualTo("success")
+        }
     }
 
     @Test
