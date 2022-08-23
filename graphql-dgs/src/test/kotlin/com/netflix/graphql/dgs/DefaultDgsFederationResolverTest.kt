@@ -24,6 +24,8 @@ import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.EntityFetcherRegistry
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import graphql.execution.DataFetcherExceptionHandler
+import graphql.execution.DataFetcherExceptionHandlerParameters
+import graphql.execution.DataFetcherExceptionHandlerResult
 import graphql.execution.DataFetcherResult
 import graphql.execution.ExecutionStepInfo
 import graphql.execution.ResultPath
@@ -164,8 +166,7 @@ class DefaultDgsFederationResolverTest {
         @Test
         fun `Will throw a MissingDgsEntityFetcherException, if unable to find the DGSEntityFetcher for the given __typename`() {
             val arguments = mapOf<String, Any>(_Entity.argumentName to listOf(mapOf("__typename" to "Movie")))
-            val dataFetchingEnvironment =
-                DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build()
+            val dataFetchingEnvironment = constructDFE(arguments)
             val result =
                 (
                     DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
@@ -182,8 +183,7 @@ class DefaultDgsFederationResolverTest {
         @Test
         fun `Will throw a MissingFederatedQueryArgument, if they query is missing the __typename`() {
             val arguments = mapOf<String, Any>(_Entity.argumentName to listOf(mapOf("something" to "Else")))
-            val dataFetchingEnvironment =
-                DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build()
+            val dataFetchingEnvironment = constructDFE(arguments)
             val result =
                 (
                     DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
@@ -286,10 +286,7 @@ class DefaultDgsFederationResolverTest {
             val arguments = mapOf<String, Any>(
                 _Entity.argumentName to listOf(mapOf("__typename" to "Movie", "movieId" to "1"))
             )
-            val dataFetchingEnvironment =
-                DgsDataFetchingEnvironment(
-                    DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build()
-                )
+            val dataFetchingEnvironment = constructDFE(arguments)
 
             val result =
                 (
@@ -326,10 +323,7 @@ class DefaultDgsFederationResolverTest {
                 _Entity.argumentName to
                     listOf(mapOf("__typename" to "Movie", "movieId" to "1"))
             )
-            val dataFetchingEnvironment =
-                DgsDataFetchingEnvironment(
-                    DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build()
-                )
+            val dataFetchingEnvironment = constructDFE(arguments)
 
             val result =
                 (
@@ -397,19 +391,19 @@ class DefaultDgsFederationResolverTest {
                 _Entity.argumentName to listOf(mapOf("__typename" to "Movie", "movieId" to "invalid"))
             )
 
-            val executionStepInfo = ExecutionStepInfo.newExecutionStepInfo().path(ResultPath.parse("/_entities")).type(
-                GraphQLList.list(
-                    GraphQLUnionType.newUnionType().name("Entity")
-                        .possibleTypes(GraphQLObjectType.newObject().name("Movie").build()).build()
-                )
-            ).build()
-            val dataFetchingEnvironment = DgsDataFetchingEnvironment(
-                DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments)
-                    .executionStepInfo(executionStepInfo).build()
-            )
+            val dataFetchingEnvironment = constructDFE(arguments)
+
+            val customExceptionHandler = object : DataFetcherExceptionHandler {
+                var invocationCounter = 0
+                override fun handleException(handlerParameters: DataFetcherExceptionHandlerParameters?): CompletableFuture<DataFetcherExceptionHandlerResult> {
+                    invocationCounter++
+                    return dgsExceptionHandler.handleException(handlerParameters)
+                }
+            }
+
             val result =
                 (
-                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler)).entitiesFetcher()
+                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(customExceptionHandler)).entitiesFetcher()
                         .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
                     )
 
@@ -423,6 +417,7 @@ class DefaultDgsFederationResolverTest {
                             .contains("com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException: Invalid input argument exception")
                     }
                 )
+            assertThat(customExceptionHandler.invocationCounter).isEqualTo(1)
         }
 
         @Test
@@ -452,8 +447,7 @@ class DefaultDgsFederationResolverTest {
                     )
 
             )
-            val dataFetchingEnvironment =
-                DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build()
+            val dataFetchingEnvironment = constructDFE(arguments)
 
             val result =
                 DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
@@ -468,8 +462,7 @@ class DefaultDgsFederationResolverTest {
         @Test
         fun `Invoking an Entity Fetcher missing an argument`() {
             val arguments = mapOf<String, Any>(_Entity.argumentName to listOf(mapOf("__typename" to "Movie")))
-            val dataFetchingEnvironment =
-                DataFetchingEnvironmentImpl.newDataFetchingEnvironment().arguments(arguments).build()
+            val dataFetchingEnvironment = constructDFE(arguments)
 
             val result =
                 (
@@ -490,6 +483,29 @@ class DefaultDgsFederationResolverTest {
         val schemaGenerator = SchemaGenerator()
 
         return schemaGenerator.makeExecutableSchema(registry, RuntimeWiring.newRuntimeWiring().build())
+    }
+
+    private fun constructDFE(arguments: Map<String, Any>): DgsDataFetchingEnvironment {
+        val executionStepInfo = ExecutionStepInfo
+            .newExecutionStepInfo()
+            .path(ResultPath.parse("/_entities"))
+            .type(
+                GraphQLList.list(
+                    GraphQLUnionType
+                        .newUnionType()
+                        .name("Entity")
+                        .possibleTypes(GraphQLObjectType.newObject().name("Movie").build())
+                        .build()
+                )
+            )
+            .build()
+        return DgsDataFetchingEnvironment(
+            DataFetchingEnvironmentImpl
+                .newDataFetchingEnvironment()
+                .arguments(arguments)
+                .executionStepInfo(executionStepInfo)
+                .build()
+        )
     }
 
     data class Movie(val movieId: String = "", val title: String = "")
