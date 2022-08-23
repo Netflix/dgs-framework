@@ -40,6 +40,7 @@ import reactor.core.publisher.Mono
 import java.lang.reflect.InvocationTargetException
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionException
 import java.util.concurrent.CompletionStage
 
 @DgsComponent
@@ -124,31 +125,26 @@ open class DefaultDgsFederationResolver() :
                         .filter { tryResult -> tryResult.isFailure }
                         .map { tryResult -> tryResult.throwable }
                         .flatMap { e ->
-                            if (e is InvocationTargetException && e.targetException != null) {
-                                if (dgsExceptionHandler.isPresent) {
-                                    val res = dgsExceptionHandler.get().handleException(
-                                        DataFetcherExceptionHandlerParameters
-                                            .newExceptionParameters()
-                                            .dataFetchingEnvironment(env)
-                                            .exception(e.targetException)
-                                            .build()
-                                    )
-                                    res.join().errors.asSequence()
-                                } else {
-                                    sequenceOf(
-                                        TypedGraphQLError.newInternalErrorBuilder()
-                                            .message(
-                                                "%s: %s",
-                                                e.targetException::class.java.name,
-                                                e.targetException.message
-                                            )
-                                            .path(ResultPath.parse("/_entities")).build()
-                                    )
-                                }
+                            // extract exception from known wrapper types
+                            val exception = when {
+                                e is InvocationTargetException && e.targetException != null -> e.targetException
+                                e is CompletionException && e.cause != null -> e.cause!!
+                                else -> e
+                            }
+                            // handle the exception (using the custom handler if present)
+                            if (dgsExceptionHandler.isPresent) {
+                                val res = dgsExceptionHandler.get().handleException(
+                                    DataFetcherExceptionHandlerParameters
+                                        .newExceptionParameters()
+                                        .dataFetchingEnvironment(env)
+                                        .exception(exception)
+                                        .build()
+                                )
+                                res.join().errors.asSequence()
                             } else {
                                 sequenceOf(
                                     TypedGraphQLError.newInternalErrorBuilder()
-                                        .message("%s: %s", e::class.java.name, e.message)
+                                        .message("%s: %s", exception::class.java.name, exception.message)
                                         .path(ResultPath.parse("/_entities"))
                                         .build()
                                 )
