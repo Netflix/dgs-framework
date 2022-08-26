@@ -289,6 +289,11 @@ class DgsSchemaProvider(
         val field = dgsDataAnnotation.getString("field").ifEmpty { method.name }
         val parentType = dgsDataAnnotation.getString("parentType")
 
+        if (dataFetchers.any { it.parentType == parentType && it.field == field }) {
+            logger.error("Duplicate data fetchers registered for $parentType.$field")
+            throw InvalidDgsConfigurationException("Duplicate data fetchers registered for $parentType.$field")
+        }
+
         dataFetchers.add(DataFetcherReference(dgsComponent, method, mergedAnnotations, parentType, field))
 
         val enableInstrumentation =
