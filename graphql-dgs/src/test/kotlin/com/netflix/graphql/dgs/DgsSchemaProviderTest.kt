@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs
 
+import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
 import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
 import com.netflix.graphql.dgs.internal.DefaultInputObjectMapper
@@ -227,6 +228,27 @@ internal class DgsSchemaProviderTest {
         assertHello(build)
 
         verifyComponents()
+    }
+
+    @Test
+    fun withDuplicateFetchers() {
+        val fetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "hello")
+            fun fetcher1(): String {
+                return "fetcher1"
+            }
+            @DgsData(parentType = "Query", field = "hello")
+            fun fetcher2(): String {
+                return "fetcher2"
+            }
+        }
+
+        withComponents("helloFetcher" to fetcher)
+
+        val error: InvalidDgsConfigurationException = assertThrows {
+            GraphQL.newGraphQL(schemaProvider().schema()).build()
+        }
+        assertThat(error.message).isEqualTo("Duplicate data fetchers registered for Query.hello")
     }
 
     open class BaseClassFetcher {
