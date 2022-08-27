@@ -51,6 +51,6 @@ class GraphiQlCustomEndpoint {
             .expectStatus()
             .is2xxSuccessful
             .expectBody<String>()
-            .consumeWith { it -> Assert.assertTrue(it.responseBody!!.contains("fetch('/graphql")) }
+            .consumeWith { it -> Assert.assertTrue(it.responseBody!!.contains("fetch('./graphql")) }
     }
 }
