@@ -204,9 +204,9 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     }
 
     @Bean
-    open fun websocketSubscriptionHandler(dgsReactiveQueryExecutor: DgsReactiveQueryExecutor): SimpleUrlHandlerMapping {
+    open fun websocketSubscriptionHandler(dgsReactiveQueryExecutor: DgsReactiveQueryExecutor, webfluxConfigurationProperties: DgsWebfluxConfigurationProperties): SimpleUrlHandlerMapping {
         val simpleUrlHandlerMapping =
-            SimpleUrlHandlerMapping(mapOf("/subscriptions" to DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor)))
+            SimpleUrlHandlerMapping(mapOf("/subscriptions" to DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor, webfluxConfigurationProperties.websocket.connectionInitTimeout)))
         simpleUrlHandlerMapping.order = 1
         return simpleUrlHandlerMapping
     }

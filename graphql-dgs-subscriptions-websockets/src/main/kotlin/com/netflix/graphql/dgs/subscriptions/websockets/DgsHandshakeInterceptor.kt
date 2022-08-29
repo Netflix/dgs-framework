@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.subscriptions.websockets
 
+import com.netflix.graphql.types.subscription.GRAPHQL_SUBSCRIPTIONS_TRANSPORT_WS_PROTOCOL
 import com.netflix.graphql.types.subscription.GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL
 import org.slf4j.LoggerFactory
 import org.springframework.http.server.ServerHttpRequest
@@ -35,6 +36,7 @@ class DgsHandshakeInterceptor : HttpSessionHandshakeInterceptor() {
     ): Boolean {
         if (request.headers[WebSocketHttpHeaders.SEC_WEBSOCKET_PROTOCOL].isNullOrEmpty()) {
             request.headers.set(WebSocketHttpHeaders.SEC_WEBSOCKET_PROTOCOL, GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL)
+            request.headers.set(WebSocketHttpHeaders.SEC_WEBSOCKET_PROTOCOL, GRAPHQL_SUBSCRIPTIONS_TRANSPORT_WS_PROTOCOL)
         }
         return super.beforeHandshake(request, response, wsHandler, attributes)
     }

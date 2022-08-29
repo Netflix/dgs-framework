@@ -17,6 +17,7 @@
 dependencies {
     api(project(":graphql-dgs"))
     api(project(":graphql-dgs-reactive"))
+    api(project(":graphql-dgs-subscription-types"))
 
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework:spring-webflux")

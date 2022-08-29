@@ -19,13 +19,16 @@ package com.netflix.graphql.dgs.subscriptions.websockets
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
+import java.time.Duration
 import javax.annotation.PostConstruct
 
 @ConstructorBinding
 @ConfigurationProperties(prefix = "dgs.graphql.websocket")
 @Suppress("ConfigurationProperties")
 data class DgsWebSocketConfigurationProperties(
-    @DefaultValue("/subscriptions") var path: String = "/subscriptions"
+    @DefaultValue("/subscriptions") var path: String = "/subscriptions",
+    /** Connection Initialization timeout. */
+    @DefaultValue(CONNECTION_INIT_TIMEOUT) var connectionInitTimeout: Duration
 ) {
 
     @PostConstruct
@@ -37,5 +40,9 @@ data class DgsWebSocketConfigurationProperties(
         if (path != "/" && (!path.startsWith("/") || path.endsWith("/"))) {
             throw IllegalArgumentException("$pathProperty must start with '/' and not end with '/' but was '$path'")
         }
+    }
+
+    companion object {
+        const val CONNECTION_INIT_TIMEOUT = "10s"
     }
 }

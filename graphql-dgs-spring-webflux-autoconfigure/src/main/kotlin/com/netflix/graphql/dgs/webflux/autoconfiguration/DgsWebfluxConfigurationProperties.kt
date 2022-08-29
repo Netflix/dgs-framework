@@ -20,17 +20,30 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
+import java.time.Duration
 import javax.annotation.PostConstruct
 
 @ConstructorBinding
 @ConfigurationProperties(prefix = "dgs.graphql")
 @Suppress("ConfigurationProperties")
 class DgsWebfluxConfigurationProperties(
+    /** Websocket configuration. */
+    @NestedConfigurationProperty var websocket: DgsWebsocketConfigurationProperties = DgsWebsocketConfigurationProperties(
+        DEFAULT_CONNECTION_INIT_TIMEOUT_DURATION
+    ),
     /** Path to the endpoint that will serve GraphQL requests. */
     @DefaultValue("/graphql") var path: String = "/graphql",
     @NestedConfigurationProperty var graphiql: DgsGraphiQLConfigurationProperties = DgsGraphiQLConfigurationProperties(),
     @NestedConfigurationProperty var schemaJson: DgsSchemaJsonConfigurationProperties = DgsSchemaJsonConfigurationProperties()
 ) {
+    /**
+     *  Configuration properties for websockets.
+     */
+    data class DgsWebsocketConfigurationProperties(
+        /** Connection Initialization timeout for graphql-transport-ws. */
+        @DefaultValue(DEFAULT_CONNECTION_INIT_TIMEOUT) var connectionInitTimeout: Duration
+    )
+
     /**
      * Configuration properties for the GraphiQL endpoint.
      */
@@ -59,5 +72,10 @@ class DgsWebfluxConfigurationProperties(
         if (path != "/" && (!path.startsWith("/") || path.endsWith("/"))) {
             throw IllegalArgumentException("$pathProperty must start with '/' and not end with '/' but was '$path'")
         }
+    }
+
+    companion object {
+        const val DEFAULT_CONNECTION_INIT_TIMEOUT = "10s"
+        val DEFAULT_CONNECTION_INIT_TIMEOUT_DURATION: Duration = Duration.ofSeconds(10)
     }
 }
