@@ -83,6 +83,6 @@ class GraphiQLPathConfigWithCustomGraphQLPathAndServletContextTest(
             String::class.java
         )
         assertTrue(graphiqlResponse.statusCode.is2xxSuccessful)
-        assertThat(graphiqlResponse.body).isNotNull.contains("fetch('/foo/zuzu'")
+        assertThat(graphiqlResponse.body).isNotNull.contains("fetch('./foo/zuzu'")
     }
 }

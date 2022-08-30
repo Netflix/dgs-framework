@@ -35,6 +35,6 @@ class GraphiQLPathConfigWithDefaultPathsTest(@Autowired val restTemplate: TestRe
             String::class.java
         )
         assertTrue(entity.statusCode.is2xxSuccessful)
-        Assertions.assertThat(entity.body).isNotNull.contains("fetch('/graphql'")
+        Assertions.assertThat(entity.body).isNotNull.contains("fetch('./graphql'")
     }
 }
