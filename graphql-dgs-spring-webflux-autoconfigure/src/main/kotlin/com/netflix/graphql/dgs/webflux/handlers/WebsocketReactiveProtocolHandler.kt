@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-dependencies {
-    api("com.graphql-java:graphql-java")
-    api("com.fasterxml.jackson.core:jackson-annotations")
+package com.netflix.graphql.dgs.webflux.handlers
 
-    implementation("org.springframework:spring-websocket")
+import org.springframework.web.reactive.socket.WebSocketSession
+import reactor.core.publisher.Mono
 
-    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+interface WebsocketReactiveProtocolHandler {
+    fun handle(webSocketSession: WebSocketSession): Mono<Void>
 }

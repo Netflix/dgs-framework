@@ -18,3 +18,5 @@ package com.netflix.graphql.types.subscription
 
 // [subscriptions-transport-ws subprotocol](https://github.com/apollographql/subscriptions-transport-ws/blob/master/src/protocol.ts)
 const val GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL = "graphql-ws"
+// https://github.com/enisdenjo/graphql-ws/blob/master/PROTOCOL.md
+const val GRAPHQL_SUBSCRIPTIONS_TRANSPORT_WS_PROTOCOL = "graphql-transport-ws"

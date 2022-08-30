@@ -51,13 +51,13 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @ExtendWith(MockKExtension::class)
-class DgsWebsocketHandlerTest {
+class WebsocketGraphQLWSProtocolHandlerTest {
 
-    private lateinit var dgsWebsocketHandler: DgsWebSocketHandler
+    private lateinit var dgsWebsocketHandler: WebsocketGraphQLWSProtocolHandler
 
     @BeforeEach
     fun setup() {
-        dgsWebsocketHandler = DgsWebSocketHandler(dgsQueryExecutor)
+        dgsWebsocketHandler = WebsocketGraphQLWSProtocolHandler(dgsQueryExecutor)
 
         every { session1.id } returns "1"
         every { session2.id } returns "2"

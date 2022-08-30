@@ -33,8 +33,8 @@ import org.springframework.web.socket.server.support.DefaultHandshakeHandler
 @EnableConfigurationProperties(DgsWebSocketConfigurationProperties::class)
 open class DgsWebSocketAutoConfig {
     @Bean
-    open fun webSocketHandler(@Suppress("SpringJavaInjectionPointsAutowiringInspection") dgsQueryExecutor: DgsQueryExecutor): WebSocketHandler {
-        return DgsWebSocketHandler(dgsQueryExecutor)
+    open fun webSocketHandler(@Suppress("SpringJavaInjectionPointsAutowiringInspection") dgsQueryExecutor: DgsQueryExecutor, configProps: DgsWebSocketConfigurationProperties): WebSocketHandler {
+        return DgsWebSocketHandler(dgsQueryExecutor, configProps.connectionInitTimeout)
     }
 
     @Configuration

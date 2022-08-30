@@ -20,12 +20,12 @@ import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsSubscription
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
-import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Companion.GQL_COMPLETE
-import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Companion.GQL_CONNECTION_ACK
-import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Companion.GQL_CONNECTION_INIT
-import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Companion.GQL_ERROR
-import com.netflix.graphql.dgs.webflux.handlers.DgsReactiveWebsocketHandler.Companion.GQL_START
-import com.netflix.graphql.dgs.webflux.handlers.OperationMessage
+import com.netflix.graphql.types.subscription.GQL_COMPLETE
+import com.netflix.graphql.types.subscription.GQL_CONNECTION_ACK
+import com.netflix.graphql.types.subscription.GQL_CONNECTION_INIT
+import com.netflix.graphql.types.subscription.GQL_ERROR
+import com.netflix.graphql.types.subscription.GQL_START
+import com.netflix.graphql.types.subscription.OperationMessage
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.junit.jupiter.api.Test
@@ -56,10 +56,10 @@ import java.time.Duration
 
 @EnableWebFlux
 @SpringBootTest(
-    classes = [HttpHandlerAutoConfiguration::class, ReactiveWebServerFactoryAutoConfiguration::class, WebFluxAutoConfiguration::class, DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, WebsocketSubscriptionsTest.ExampleSubscriptionImplementation::class],
+    classes = [HttpHandlerAutoConfiguration::class, ReactiveWebServerFactoryAutoConfiguration::class, WebFluxAutoConfiguration::class, DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, WebsocketSubscriptionsGraphQLWSTest.ExampleSubscriptionImplementation::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-open class WebsocketSubscriptionsTest(@param:LocalServerPort val port: Int) {
+open class WebsocketSubscriptionsGraphQLWSTest(@param:LocalServerPort val port: Int) {
 
     @Test
     fun `Basic subscription flow`() {
@@ -73,9 +73,9 @@ open class WebsocketSubscriptionsTest(@param:LocalServerPort val port: Int) {
         StepVerifier.create(execute).expectComplete().verify()
 
         StepVerifier.create(output.asFlux().map { it.payload.toString() })
-            .expectNext("{data={ticker=1}, errors=[]}")
-            .expectNext("{data={ticker=2}, errors=[]}")
-            .expectNext("{data={ticker=3}, errors=[]}")
+            .expectNext("DataPayload(data={ticker=1}, errors=[])")
+            .expectNext("DataPayload(data={ticker=2}, errors=[])")
+            .expectNext("DataPayload(data={ticker=3}, errors=[])")
             .verifyComplete()
     }
 
@@ -92,10 +92,10 @@ open class WebsocketSubscriptionsTest(@param:LocalServerPort val port: Int) {
         StepVerifier.create(execute).expectComplete().verify()
 
         StepVerifier.create(output.asFlux().map { it.payload.toString() })
-            .expectNext("{data={withError=1}, errors=[]}")
-            .expectNext("{data={withError=2}, errors=[]}")
-            .expectNext("{data={withError=3}, errors=[]}")
-            .expectNext("{data=null, errors=[Broken producer]}")
+            .expectNext("DataPayload(data={withError=1}, errors=[])")
+            .expectNext("DataPayload(data={withError=2}, errors=[])")
+            .expectNext("DataPayload(data={withError=3}, errors=[])")
+            .expectNext("DataPayload(data=null, errors=[Broken producer])")
             .verifyError()
     }
 
@@ -112,8 +112,8 @@ open class WebsocketSubscriptionsTest(@param:LocalServerPort val port: Int) {
         StepVerifier.create(execute).expectComplete().verify()
 
         StepVerifier.create(output.asFlux().map { it.payload.toString() })
-            .expectNext("{data={withDelay=1}, errors=[]}")
-            .expectNext("{data={withDelay=2}, errors=[]}")
+            .expectNext("DataPayload(data={withDelay=1}, errors=[])")
+            .expectNext("DataPayload(data={withDelay=2}, errors=[])")
             .verifyComplete()
     }
 
