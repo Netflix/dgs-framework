@@ -36,6 +36,6 @@ class GraphiQLPathConfigWithCustomPathsTest(@Autowired val restTemplate: TestRes
             String::class.java
         )
         assertTrue(entity.statusCode.is2xxSuccessful)
-        Assertions.assertThat(entity.body).isNotNull.contains("fetch('/zuzu'")
+        Assertions.assertThat(entity.body).isNotNull.contains("fetch('./zuzu'")
     }
 }
