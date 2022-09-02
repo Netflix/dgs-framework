@@ -45,11 +45,6 @@ public class HelloDataFetcher {
         return "hello, " + name + "!";
     }
 
-    @DgsQuery
-    public String helloWithHeaders(@InputArgument String name, @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
-        return "hello, " + authorization + "!";
-    }
-
     @DgsData(parentType = "Query", field = "messageFromBatchLoader")
     public CompletableFuture<String> getMessage(DataFetchingEnvironment env) {
         DataLoader<String, String> dataLoader = env.getDataLoader("messages");
