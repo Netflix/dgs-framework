@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.subscriptions.websockets
 
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.types.subscription.*
+import org.slf4j.LoggerFactory
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.SubProtocolCapable
 import org.springframework.web.socket.TextMessage
@@ -25,20 +26,53 @@ import org.springframework.web.socket.WebSocketSession
 import org.springframework.web.socket.handler.TextWebSocketHandler
 import java.time.Duration
 import java.util.*
+import javax.annotation.PostConstruct
 
 class DgsWebSocketHandler(dgsQueryExecutor: DgsQueryExecutor, connectionInitTimeout: Duration) : TextWebSocketHandler(), SubProtocolCapable {
 
     private val graphqlWSHandler = WebsocketGraphQLWSProtocolHandler(dgsQueryExecutor)
     private val graphqlTransportWSHandler = WebsocketGraphQLTransportWSProtocolHandler(dgsQueryExecutor, connectionInitTimeout)
 
+    @PostConstruct
+    fun setupCleanup() {
+        try {
+            graphqlWSHandler.setupCleanup()
+        } catch (e: Exception) {
+            logger.error("Error setting up cleanup subscriptions tasks")
+        }
+        try {
+            graphqlTransportWSHandler.setupCleanup()
+        } catch (e: Exception) {
+            logger.error("Error setting up cleanup subscriptions tasks")
+        }
+    }
+
     override fun afterConnectionEstablished(session: WebSocketSession) {
-        graphqlWSHandler.afterConnectionEstablished(session)
-        graphqlTransportWSHandler.afterConnectionEstablished(session)
+        try {
+            graphqlWSHandler.afterConnectionEstablished(session)
+        } catch (e: Exception) {
+            logger.error("Unable to handle connection established for ${session.id}")
+        }
+
+        try {
+            graphqlTransportWSHandler.afterConnectionEstablished(session)
+        } catch (e: Exception) {
+            logger.error("Unable to handle connection established for ${session.id}")
+        }
     }
 
     override fun afterConnectionClosed(session: WebSocketSession, status: CloseStatus) {
-        graphqlWSHandler.afterConnectionEstablished(session)
-        graphqlTransportWSHandler.afterConnectionEstablished(session)
+        try {
+            graphqlWSHandler.afterConnectionClosed(session, status)
+        } catch (e: Exception) {
+            logger.error("Error closing connection for session ${session.id}")
+        }
+
+        try {
+            graphqlTransportWSHandler.afterConnectionClosed(session, status)
+        } catch (e: Exception) {
+            logger.error("Error closing connection for session ${session.id}")
+        }
     }
 
     public override fun handleTextMessage(session: WebSocketSession, message: TextMessage) {
@@ -50,4 +84,8 @@ class DgsWebSocketHandler(dgsQueryExecutor: DgsQueryExecutor, connectionInitTime
     }
 
     override fun getSubProtocols(): List<String> = listOf(GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL, GRAPHQL_SUBSCRIPTIONS_TRANSPORT_WS_PROTOCOL)
+
+    private companion object {
+        val logger = LoggerFactory.getLogger(DgsWebSocketHandler::class.java)
+    }
 }
