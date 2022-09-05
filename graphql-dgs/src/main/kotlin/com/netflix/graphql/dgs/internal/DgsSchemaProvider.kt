@@ -62,6 +62,7 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.locks.ReentrantReadWriteLock
+import java.util.stream.Collectors
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
@@ -264,7 +265,12 @@ class DgsSchemaProvider(
                 .forEach { method ->
                     val mergedAnnotations =
                         MergedAnnotations.from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY)
-                    mergedAnnotations.stream(DgsData::class.java).forEach { dgsDataAnnotation ->
+                    val filteredMergedAnnotations =
+                        mergedAnnotations
+                            .stream(DgsData::class.java)
+                            .filter { (it.source as Method).declaringClass == method.declaringClass }
+                            .collect(Collectors.toList())
+                    filteredMergedAnnotations.forEach { dgsDataAnnotation ->
                         registerDataFetcher(
                             typeDefinitionRegistry,
                             codeRegistryBuilder,
