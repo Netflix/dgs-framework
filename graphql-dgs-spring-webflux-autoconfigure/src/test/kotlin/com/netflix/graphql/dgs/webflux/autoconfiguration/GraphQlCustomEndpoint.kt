@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,13 +30,13 @@ import org.springframework.web.reactive.config.EnableWebFlux
 @EnableWebFlux
 @SpringBootTest(
     classes = [DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, WebRequestTestWithCustomEndpoint.ExampleImplementation::class],
-    properties = ["dgs.graphql.graphiql.path=/customEndpoint"]
+    properties = ["dgs.graphql.path=/api/graphql"]
 )
-class GraphiQlCustomEndpoint(@Autowired private val webTestClient: WebTestClient) {
+class GraphQlCustomEndpoint(@Autowired private val webTestClient: WebTestClient) {
 
     @Test
     fun customGraphiQlPathRedirect() {
-        webTestClient.get().uri("/customEndpoint")
+        webTestClient.get().uri("/graphiql")
             .exchange()
             .expectStatus()
             .is3xxRedirection
@@ -44,11 +44,11 @@ class GraphiQlCustomEndpoint(@Autowired private val webTestClient: WebTestClient
 
     @Test
     fun customGraphiQlPath() {
-        webTestClient.get().uri("/customEndpoint/index.html")
+        webTestClient.get().uri("/graphiql/index.html")
             .exchange()
             .expectStatus()
             .is2xxSuccessful
             .expectBody<String>()
-            .consumeWith { Assertions.assertThat(it.responseBody).contains("fetch(origin + '/graphql"); }
+            .consumeWith { Assertions.assertThat(it.responseBody).contains("fetch(origin + '/api/graphql"); }
     }
 }

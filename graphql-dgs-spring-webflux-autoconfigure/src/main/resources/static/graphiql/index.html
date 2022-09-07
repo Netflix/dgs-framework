@@ -101,7 +101,8 @@
             }
           }
         }
-        return fetch('.<DGS_GRAPHQL_PATH>', {
+        var origin = location.origin;
+        return fetch(origin + '<DGS_GRAPHQL_PATH>', {
           method: 'post',
           headers: headers,
           body: JSON.stringify(graphQLParams),
