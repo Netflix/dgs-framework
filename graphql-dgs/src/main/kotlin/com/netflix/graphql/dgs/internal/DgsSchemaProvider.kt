@@ -62,6 +62,7 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.locks.ReentrantReadWriteLock
+import java.util.stream.Collectors
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
@@ -256,15 +257,19 @@ class DgsSchemaProvider(
         dgsComponents.forEach { dgsComponent ->
             val javaClass = AopUtils.getTargetClass(dgsComponent)
             ReflectionUtils.getUniqueDeclaredMethods(javaClass, ReflectionUtils.USER_DECLARED_METHODS).asSequence()
-                .filter { method ->
-                    MergedAnnotations
+                .map { method ->
+                    val mergedAnnotations = MergedAnnotations
                         .from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY)
-                        .isPresent(DgsData::class.java)
+                    Pair(method, mergedAnnotations)
                 }
-                .forEach { method ->
-                    val mergedAnnotations =
-                        MergedAnnotations.from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY)
-                    mergedAnnotations.stream(DgsData::class.java).forEach { dgsDataAnnotation ->
+                .filter { (_, mergedAnnotations) -> mergedAnnotations.isPresent(DgsData::class.java) }
+                .forEach { (method, mergedAnnotations) ->
+                    val filteredMergedAnnotations =
+                        mergedAnnotations
+                            .stream(DgsData::class.java)
+                            .filter { (it.source as Method).declaringClass == method.declaringClass }
+                            .collect(Collectors.toList())
+                    filteredMergedAnnotations.forEach { dgsDataAnnotation ->
                         registerDataFetcher(
                             typeDefinitionRegistry,
                             codeRegistryBuilder,
