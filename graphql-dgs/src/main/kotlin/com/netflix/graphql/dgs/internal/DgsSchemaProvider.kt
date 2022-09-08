@@ -257,14 +257,13 @@ class DgsSchemaProvider(
         dgsComponents.forEach { dgsComponent ->
             val javaClass = AopUtils.getTargetClass(dgsComponent)
             ReflectionUtils.getUniqueDeclaredMethods(javaClass, ReflectionUtils.USER_DECLARED_METHODS).asSequence()
-                .filter { method ->
-                    MergedAnnotations
+                .map { method ->
+                    val mergedAnnotations = MergedAnnotations
                         .from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY)
-                        .isPresent(DgsData::class.java)
+                    Pair(method, mergedAnnotations)
                 }
-                .forEach { method ->
-                    val mergedAnnotations =
-                        MergedAnnotations.from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY)
+                .filter { (_, mergedAnnotations) -> mergedAnnotations.isPresent(DgsData::class.java) }
+                .forEach { (method, mergedAnnotations) ->
                     val filteredMergedAnnotations =
                         mergedAnnotations
                             .stream(DgsData::class.java)
