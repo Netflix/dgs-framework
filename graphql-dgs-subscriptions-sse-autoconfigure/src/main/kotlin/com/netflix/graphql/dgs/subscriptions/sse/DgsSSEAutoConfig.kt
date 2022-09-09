@@ -17,13 +17,13 @@
 package com.netflix.graphql.dgs.subscriptions.sse
 
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import org.springframework.web.servlet.DispatcherServlet
 
-@Configuration
+@AutoConfiguration
 @ConditionalOnWebApplication
 @ConditionalOnClass(DispatcherServlet::class)
 open class DgsSSEAutoConfig {

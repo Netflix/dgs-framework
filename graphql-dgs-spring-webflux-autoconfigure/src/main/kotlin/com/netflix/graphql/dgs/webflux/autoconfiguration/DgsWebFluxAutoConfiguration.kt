@@ -50,6 +50,7 @@ import graphql.schema.GraphQLSchema
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
+import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
@@ -84,7 +85,7 @@ import java.util.*
 import kotlin.streams.toList
 
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
-@Configuration
+@AutoConfiguration
 @EnableConfigurationProperties(DgsWebfluxConfigurationProperties::class)
 open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfigurationProperties) {
 

@@ -48,12 +48,16 @@ dependencies {
     constraints {
         // GraphQL Platform
         api("com.graphql-java:graphql-java") {
+<<<<<<< HEAD
             version {
                 strictly("[19.2, 20[")
                 prefer("19.2")
                 reject("18.2")
             }
 
+=======
+            version { require("19.2") }
+>>>>>>> f142d2d6 (feat: upgrades graphql-java to fix conflicting antlr dependency with spring-boot v3.)
         }
         api("com.graphql-java:graphql-java-extended-scalars") {
             version {

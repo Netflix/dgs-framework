@@ -61,9 +61,9 @@ class HelloDataFetcherTest {
             queryExecutor.executeAndExtractJsonPath("{greeting}", "data.greeting");
             fail("Exception should have been thrown");
         } catch (QueryException ex) {
-            assertThat(ex.getMessage())
-                    .contains("Validation error (FieldUndefined@[greeting]) : Field 'greeting' in type 'Query' is undefined");
-            assertThat(ex.getErrors()).hasSize(1);
+
+            assertThat(ex.getMessage()).contains("Validation error (FieldUndefined@[greeting]) : Field 'greeting' in type 'Query' is undefined");
+            assertThat(ex.getErrors().size()).isEqualTo(1);
         }
     }
 

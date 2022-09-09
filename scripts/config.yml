@@ -19,5 +19,5 @@
 # the Python scripts instead it will fail. Because of this, the list of examples
 # is duplicated in the ./github/workflows/ci-beta.yml file.
 repositories:
-    - "git@github.com:Netflix/dgs-examples-java-2.7.git"
-    - "git@github.com:Netflix/dgs-examples-kotlin-2.7.git"
+    - "git@github.com:Netflix/dgs-examples-java.git"
+    - "git@github.com:Netflix/dgs-examples-kotlin.git"

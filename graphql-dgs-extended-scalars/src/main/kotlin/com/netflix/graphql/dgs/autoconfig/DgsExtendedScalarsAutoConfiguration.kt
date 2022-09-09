@@ -21,6 +21,7 @@ import com.netflix.graphql.dgs.DgsRuntimeWiring
 import graphql.scalars.ExtendedScalars
 import graphql.schema.GraphQLScalarType
 import graphql.schema.idl.RuntimeWiring
+import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.AllNestedConditions
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -36,7 +37,7 @@ import org.springframework.context.annotation.ConfigurationCondition
     havingValue = "true",
     matchIfMissing = true
 )
-@Configuration(proxyBeanMethods = false)
+@AutoConfiguration
 open class DgsExtendedScalarsAutoConfiguration {
 
     @ConditionalOnProperty(
