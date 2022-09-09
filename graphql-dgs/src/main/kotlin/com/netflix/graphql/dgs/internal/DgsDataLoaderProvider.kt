@@ -24,6 +24,7 @@ import com.netflix.graphql.dgs.exceptions.DgsUnnamedDataLoaderOnFieldException
 import com.netflix.graphql.dgs.exceptions.InvalidDataLoaderTypeException
 import com.netflix.graphql.dgs.exceptions.UnsupportedSecuredDataLoaderException
 import com.netflix.graphql.dgs.internal.utils.DataLoaderNameUtil
+import jakarta.annotation.PostConstruct
 import org.dataloader.BatchLoader
 import org.dataloader.BatchLoaderWithContext
 import org.dataloader.DataLoader
@@ -39,7 +40,6 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException
 import org.springframework.context.ApplicationContext
 import org.springframework.util.ReflectionUtils
 import java.util.function.Supplier
-import javax.annotation.PostConstruct
 
 /**
  * Framework implementation class responsible for finding and configuring data loaders.

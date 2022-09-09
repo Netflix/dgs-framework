@@ -1,22 +1,22 @@
 {
     "nebulaRecommenderBom": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.2"
+            "locked": "2.13.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.6.21"
+            "locked": "1.7.10"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.6.7"
+            "locked": "3.0.0-M4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.2"
+            "locked": "2022.0.0-M4"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.6.5"
+            "locked": "6.0.0-M6"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.3.18"
+            "locked": "6.0.0-M5"
         }
     }
 }

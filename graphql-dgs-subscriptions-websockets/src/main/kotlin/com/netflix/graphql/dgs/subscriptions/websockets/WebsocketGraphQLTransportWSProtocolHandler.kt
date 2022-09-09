@@ -22,6 +22,7 @@ import com.netflix.graphql.types.subscription.websockets.CloseCode
 import com.netflix.graphql.types.subscription.websockets.Message
 import graphql.ExecutionResult
 import graphql.GraphqlErrorBuilder
+import jakarta.annotation.PostConstruct
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
@@ -34,7 +35,6 @@ import java.time.Duration
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
-import javax.annotation.PostConstruct
 
 /**
  * WebSocketHandler for GraphQL based on

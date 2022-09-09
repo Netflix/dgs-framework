@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.subscriptions.websockets
 
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.types.subscription.*
+import jakarta.annotation.PostConstruct
 import org.slf4j.LoggerFactory
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.SubProtocolCapable
@@ -25,8 +26,6 @@ import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 import org.springframework.web.socket.handler.TextWebSocketHandler
 import java.time.Duration
-import java.util.*
-import javax.annotation.PostConstruct
 
 class DgsWebSocketHandler(dgsQueryExecutor: DgsQueryExecutor, connectionInitTimeout: Duration) : TextWebSocketHandler(), SubProtocolCapable {
 

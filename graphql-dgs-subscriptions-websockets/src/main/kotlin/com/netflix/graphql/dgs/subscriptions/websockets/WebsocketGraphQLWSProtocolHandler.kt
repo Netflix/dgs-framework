@@ -20,6 +20,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.types.subscription.*
 import graphql.ExecutionResult
+import jakarta.annotation.PostConstruct
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
@@ -33,7 +34,6 @@ import org.springframework.web.socket.handler.TextWebSocketHandler
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
-import javax.annotation.PostConstruct
 
 class WebsocketGraphQLWSProtocolHandler(private val dgsQueryExecutor: DgsQueryExecutor) : TextWebSocketHandler() {
 

@@ -17,6 +17,8 @@
 package com.netflix.graphql.dgs.webmvc.autoconfigure
 
 import com.netflix.graphql.dgs.webmvc.autoconfigure.GraphiQLConfigurer.Constants.PATH_TO_GRAPHIQL_INDEX_HTML
+import jakarta.servlet.ServletContext
+import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -32,8 +34,6 @@ import org.springframework.web.servlet.resource.TransformedResource
 import java.io.BufferedReader
 import java.io.IOException
 import java.nio.charset.StandardCharsets
-import javax.servlet.ServletContext
-import javax.servlet.http.HttpServletRequest
 
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(DgsWebMvcConfigurationProperties::class)

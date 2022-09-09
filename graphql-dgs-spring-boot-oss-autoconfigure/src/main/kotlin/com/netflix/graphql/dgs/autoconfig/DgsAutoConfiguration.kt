@@ -59,7 +59,6 @@ import org.springframework.core.PriorityOrdered
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 import java.util.*
-import kotlin.streams.toList
 
 /**
  * Framework auto configuration based on open source Spring only, without Netflix integrations.
