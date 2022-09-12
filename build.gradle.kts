@@ -29,7 +29,7 @@ plugins {
     id("nebula.dependency-recommender") version "11.0.0"
     id("nebula.netflixoss") version "10.6.0"
     id("org.jmailen.kotlinter") version "3.10.0"
-    id("me.champeau.jmh") version "0.6.7"
+    id("me.champeau.jmh") version "0.6.6"
     kotlin("jvm") version Versions.KOTLIN_VERSION
     kotlin("kapt") version Versions.KOTLIN_VERSION
     idea
@@ -60,7 +60,7 @@ allprojects {
         mavenBom(mapOf("module" to "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
         mavenBom(mapOf("module" to "org.springframework.security:spring-security-bom:6.0.0-M6"))
         mavenBom(mapOf("module" to "org.springframework.cloud:spring-cloud-dependencies:2022.0.0-M4"))
-        mavenBom(mapOf("module" to "com.fasterxml.jackson:jackson-bom:2.13.4"))
+        mavenBom(mapOf("module" to "com.fasterxml.jackson:jackson-bom:2.13.2"))
     }
 }
 
@@ -119,7 +119,9 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         testImplementation("org.springframework.boot:spring-boot-starter-test") {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         }
-        testImplementation("io.mockk:mockk:1.12.5")
+        // Combined with Kotlin 1.7.10 mockk 1.12.5 fails to 'every' some classes
+        // * https://github.com/mockk/mockk/issues/868
+        testImplementation("io.mockk:mockk:1.12.4")
     }
 
     java {

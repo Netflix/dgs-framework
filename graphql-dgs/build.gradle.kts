@@ -29,8 +29,8 @@ dependencies {
 
     compileOnly("org.springframework.security:spring-security-core")
     compileOnly("io.projectreactor:reactor-core")
+    compileOnly("jakarta.annotation:jakarta.annotation-api")
 
-    implementation("jakarta.annotation:jakarta.annotation-api")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.apollographql.federation:federation-graphql-java-support")

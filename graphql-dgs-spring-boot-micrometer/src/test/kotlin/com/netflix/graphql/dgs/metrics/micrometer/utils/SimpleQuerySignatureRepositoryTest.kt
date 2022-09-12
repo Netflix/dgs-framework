@@ -118,13 +118,13 @@ internal class SimpleQuerySignatureRepositoryTest {
         const val expectedFooSigHash = "ab279c4a18bcffc1a5d646dd0295d4cd08f11ff0aaec76db2cc4dab7e7fefb07"
 
         val expectedAnonDoc = """
-            query {
+            {
                 fieldA
                 fieldB
             }  
         """.trimIndent()
 
-        const val expectedAnonSigHash = "0f2648dd1c00c3526e72341d2a5da4593c04f3b8c32ceeacea0238c3850dfb08"
+        const val expectedAnonSigHash = "967715990c3c9157c58070a3a7911c7827e9d30ea60b55e3bd0a10f6c5bf480c"
 
         fun parseQuery(query: String): Document {
             return Parser().parseDocument(query)

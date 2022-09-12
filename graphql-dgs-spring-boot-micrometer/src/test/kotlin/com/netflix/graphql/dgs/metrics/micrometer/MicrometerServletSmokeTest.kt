@@ -419,7 +419,7 @@ class MicrometerServletSmokeTest {
                     """
                     |   { "errors": [
                     |       { 
-                    |           "message": "Validation error of type MissingFieldArgument: Missing field argument name @ 'hello'",
+                    |           "message": "Validation error (MissingFieldArgument@[hello]) : Missing field argument 'name'",
                     |           "locations": [ 
                     |               {
                     |                   "line":1,

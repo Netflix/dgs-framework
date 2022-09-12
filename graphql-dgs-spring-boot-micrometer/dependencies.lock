@@ -1,7 +1,7 @@
 {
     "annotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.10"
@@ -31,10 +31,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.github.ben-manes.caffeine:caffeine": {
             "locked": "3.1.1"
@@ -46,7 +46,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "19.2"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -138,12 +138,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
             "locked": "3.5.0-M4"
-        },
-        "jakarta.annotation:jakarta.annotation-api": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
-            "locked": "2.0.0"
         },
         "net.bytebuddy:byte-buddy": {
             "locked": "1.12.12"
@@ -195,12 +189,12 @@
             "locked": "1.35"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
-            "locked": "1.35"
+            "locked": "1.29"
         }
     },
     "jmhAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.10"
@@ -224,10 +218,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.github.ben-manes.caffeine:caffeine": {
             "locked": "3.1.1"
@@ -239,7 +233,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "19.2"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -332,12 +326,6 @@
             ],
             "locked": "3.5.0-M4"
         },
-        "jakarta.annotation:jakarta.annotation-api": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
-            "locked": "2.0.0"
-        },
         "net.bytebuddy:byte-buddy": {
             "locked": "1.12.12"
         },
@@ -365,7 +353,7 @@
             "locked": "1.35"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
-            "locked": "1.35"
+            "locked": "1.29"
         },
         "org.springframework.boot:spring-boot-actuator-autoconfigure": {
             "locked": "3.0.0-M4"
@@ -401,20 +389,20 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "firstLevelTransitive": [
@@ -423,16 +411,16 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson.module:jackson-module-parameter-names": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.github.ben-manes.caffeine:caffeine": {
             "locked": "3.1.1"
@@ -445,7 +433,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "19.2"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -533,7 +521,7 @@
             "locked": "1.10.0-M3"
         },
         "io.mockk:mockk": {
-            "locked": "1.12.5"
+            "locked": "1.12.4"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -541,14 +529,9 @@
             ],
             "locked": "3.5.0-M4"
         },
-        "jakarta.annotation:jakarta.annotation-api": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
-            "locked": "2.0.0"
-        },
         "jakarta.servlet:jakarta.servlet-api": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
             "locked": "5.0.0"
@@ -617,7 +600,7 @@
             "locked": "1.35"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
-            "locked": "1.35"
+            "locked": "1.29"
         },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
@@ -733,7 +716,7 @@
     },
     "kotlinCompilerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.10"
@@ -756,7 +739,7 @@
     },
     "kotlinCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.10"
@@ -776,7 +759,7 @@
     },
     "kotlinCompilerPluginClasspathJmh": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
             "locked": "1.7.10"
@@ -802,7 +785,7 @@
     },
     "kotlinCompilerPluginClasspathMain": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
             "locked": "1.7.10"
@@ -828,7 +811,7 @@
     },
     "kotlinCompilerPluginClasspathTest": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
             "locked": "1.7.10"
@@ -862,7 +845,7 @@
     },
     "kotlinKlibCommonizerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.10"
@@ -885,7 +868,7 @@
     },
     "kotlinNativeCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.10"
@@ -905,7 +888,7 @@
     },
     "nebulaRecommenderBom": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.10"
@@ -934,16 +917,16 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.github.ben-manes.caffeine:caffeine": {
             "locked": "3.1.1"
@@ -954,7 +937,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "19.2"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -993,12 +976,6 @@
         },
         "io.micrometer:micrometer-core": {
             "locked": "1.10.0-M3"
-        },
-        "jakarta.annotation:jakarta.annotation-api": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
-            "locked": "2.0.0"
         },
         "net.bytebuddy:byte-buddy": {
             "locked": "1.12.12"
@@ -1080,7 +1057,7 @@
     },
     "testAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.10"
@@ -1104,10 +1081,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.github.ben-manes.caffeine:caffeine": {
             "locked": "3.1.1"
@@ -1119,7 +1096,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "19.2"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -1207,19 +1184,13 @@
             "locked": "1.10.0-M3"
         },
         "io.mockk:mockk": {
-            "locked": "1.12.5"
+            "locked": "1.12.4"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
             "locked": "3.5.0-M4"
-        },
-        "jakarta.annotation:jakarta.annotation-api": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
-            "locked": "2.0.0"
         },
         "net.bytebuddy:byte-buddy": {
             "locked": "1.12.12"
@@ -1278,20 +1249,20 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "firstLevelTransitive": [
@@ -1300,16 +1271,16 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson.module:jackson-module-parameter-names": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.github.ben-manes.caffeine:caffeine": {
             "locked": "3.1.1"
@@ -1322,7 +1293,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "19.2"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -1410,7 +1381,7 @@
             "locked": "1.10.0-M3"
         },
         "io.mockk:mockk": {
-            "locked": "1.12.5"
+            "locked": "1.12.4"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -1418,14 +1389,9 @@
             ],
             "locked": "3.5.0-M4"
         },
-        "jakarta.annotation:jakarta.annotation-api": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
-            ],
-            "locked": "2.0.0"
-        },
         "jakarta.servlet:jakarta.servlet-api": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
             "locked": "5.0.0"

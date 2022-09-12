@@ -47,7 +47,7 @@ dependencies {
     constraints {
         // GraphQL Platform
         api("com.graphql-java:graphql-java") {
-            version { require("18.1") }
+            version { require("19.2") }
         }
         api("com.graphql-java:graphql-java-extended-scalars") {
             version { require("18.1") }

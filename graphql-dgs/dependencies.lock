@@ -1,7 +1,7 @@
 {
     "annotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.10"
@@ -30,20 +30,20 @@
             "locked": "2.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "19.2"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -119,12 +119,12 @@
             "locked": "1.35"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
-            "locked": "1.35"
+            "locked": "1.29"
         }
     },
     "jmhAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.10"
@@ -147,20 +147,20 @@
             "locked": "2.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "19.2"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -213,7 +213,7 @@
             "locked": "1.35"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
-            "locked": "1.35"
+            "locked": "1.29"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.0-M4"
@@ -242,20 +242,20 @@
             "locked": "2.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "19.2"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "18.1"
@@ -277,16 +277,13 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.5"
+            "locked": "1.12.4"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.5.0-M4"
         },
         "io.projectreactor:reactor-test": {
             "locked": "3.5.0-M4"
-        },
-        "jakarta.annotation:jakarta.annotation-api": {
-            "locked": "2.0.0"
         },
         "net.datafaker:datafaker": {
             "firstLevelTransitive": [
@@ -326,7 +323,7 @@
             "locked": "1.35"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
-            "locked": "1.35"
+            "locked": "1.29"
         },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
@@ -393,7 +390,7 @@
     },
     "kotlinCompilerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.10"
@@ -416,7 +413,7 @@
     },
     "kotlinCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.10"
@@ -436,7 +433,7 @@
     },
     "kotlinCompilerPluginClasspathJmh": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
             "locked": "1.7.10"
@@ -462,7 +459,7 @@
     },
     "kotlinCompilerPluginClasspathMain": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
             "locked": "1.7.10"
@@ -488,7 +485,7 @@
     },
     "kotlinCompilerPluginClasspathTest": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
             "locked": "1.7.10"
@@ -522,7 +519,7 @@
     },
     "kotlinKlibCommonizerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.10"
@@ -545,7 +542,7 @@
     },
     "kotlinNativeCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.10"
@@ -565,7 +562,7 @@
     },
     "nebulaRecommenderBom": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.10"
@@ -588,20 +585,20 @@
             "locked": "2.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "19.2"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -618,9 +615,6 @@
         },
         "com.netflix.graphql.dgs:graphql-error-types": {
             "project": true
-        },
-        "jakarta.annotation:jakarta.annotation-api": {
-            "locked": "2.0.0"
         },
         "net.datafaker:datafaker": {
             "firstLevelTransitive": [
@@ -677,7 +671,7 @@
     },
     "testAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.2"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.10"
@@ -700,20 +694,20 @@
             "locked": "2.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "19.2"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "18.1"
@@ -735,16 +729,13 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.5"
+            "locked": "1.12.4"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.5.0-M4"
         },
         "io.projectreactor:reactor-test": {
             "locked": "3.5.0-M4"
-        },
-        "jakarta.annotation:jakarta.annotation-api": {
-            "locked": "2.0.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.10"
@@ -801,20 +792,20 @@
             "locked": "2.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.4"
+            "locked": "2.13.3"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "19.2"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "18.1"
@@ -836,16 +827,13 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.5"
+            "locked": "1.12.4"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.5.0-M4"
         },
         "io.projectreactor:reactor-test": {
             "locked": "3.5.0-M4"
-        },
-        "jakarta.annotation:jakarta.annotation-api": {
-            "locked": "2.0.0"
         },
         "net.datafaker:datafaker": {
             "firstLevelTransitive": [
