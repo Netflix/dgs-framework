@@ -22,5 +22,4 @@ dependencies {
     implementation("org.springframework:spring-websocket")
 
     compileOnly("jakarta.annotation:jakarta.annotation-api")
-
 }

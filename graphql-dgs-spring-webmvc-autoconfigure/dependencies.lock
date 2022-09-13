@@ -320,9 +320,6 @@
             "locked": "1.12.4"
         },
         "jakarta.servlet:jakarta.servlet-api": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
-            ],
             "locked": "5.0.0"
         },
         "net.datafaker:datafaker": {
@@ -725,9 +722,6 @@
             "project": true
         },
         "jakarta.servlet:jakarta.servlet-api": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
-            ],
             "locked": "5.0.0"
         },
         "net.datafaker:datafaker": {
@@ -1021,9 +1015,6 @@
             "locked": "1.12.4"
         },
         "jakarta.servlet:jakarta.servlet-api": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
-            ],
             "locked": "5.0.0"
         },
         "net.datafaker:datafaker": {

@@ -566,12 +566,6 @@
             ],
             "locked": "3.5.0-M4"
         },
-        "jakarta.servlet:jakarta.servlet-api": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
-            ],
-            "locked": "5.0.0"
-        },
         "net.datafaker:datafaker": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -1116,12 +1110,6 @@
             ],
             "locked": "3.5.0-M4"
         },
-        "jakarta.servlet:jakarta.servlet-api": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
-            ],
-            "locked": "5.0.0"
-        },
         "net.datafaker:datafaker": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -1617,12 +1605,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared"
             ],
             "locked": "3.5.0-M4"
-        },
-        "jakarta.servlet:jakarta.servlet-api": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
-            ],
-            "locked": "5.0.0"
         },
         "net.datafaker:datafaker": {
             "firstLevelTransitive": [
