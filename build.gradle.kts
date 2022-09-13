@@ -131,7 +131,6 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     }
 
     kapt {
-        correctErrorTypes = true
         arguments {
             arg(
                 "org.springframework.boot.configurationprocessor.additionalMetadataLocations",
