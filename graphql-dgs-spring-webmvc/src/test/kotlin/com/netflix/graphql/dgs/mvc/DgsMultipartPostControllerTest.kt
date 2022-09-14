@@ -16,14 +16,13 @@
 
 package com.netflix.graphql.dgs.mvc
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import graphql.ExecutionResultImpl
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.InstanceOfAssertFactories.map
 import org.assertj.core.util.Lists
 import org.assertj.core.util.Maps
 import org.intellij.lang.annotations.Language
@@ -131,12 +130,10 @@ class DgsMultipartPostControllerTest {
             webRequest
         )
 
-        assertThat(result.body).isInstanceOfSatisfying(ByteArray::class.java) { body ->
-            val mapper = jacksonObjectMapper()
-            val (data, errors) = mapper.readValue(body, GraphQLResponse::class.java)
-            assertThat(errors.size).isEqualTo(0)
-            assertThat(data["Response"]).isEqualTo("success")
-        }
+        assertThat(result.body).asInstanceOf(map(String::class.java, Any::class.java))
+            .doesNotContainKey("errors")
+            .extracting("data").asInstanceOf(map(String::class.java, Any::class.java))
+            .extracting("Response").isEqualTo("success")
     }
 
     @Test
@@ -182,12 +179,10 @@ class DgsMultipartPostControllerTest {
             webRequest
         )
 
-        assertThat(result.body).isInstanceOfSatisfying(ByteArray::class.java) { body ->
-            val mapper = jacksonObjectMapper()
-            val (data, errors) = mapper.readValue(body, GraphQLResponse::class.java)
-            assertThat(errors.size).isEqualTo(0)
-            assertThat(data["Response"]).isEqualTo("success")
-        }
+        assertThat(result.body).asInstanceOf(map(String::class.java, Any::class.java))
+            .doesNotContainKey("errors")
+            .extracting("data").asInstanceOf(map(String::class.java, Any::class.java))
+            .extracting("Response").isEqualTo("success")
     }
 
     @Test
@@ -229,12 +224,10 @@ class DgsMultipartPostControllerTest {
             webRequest
         )
 
-        assertThat(result.body).isInstanceOfSatisfying(ByteArray::class.java) { body ->
-            val mapper = jacksonObjectMapper()
-            val (data, errors) = mapper.readValue(body, GraphQLResponse::class.java)
-            assertThat(errors.size).isEqualTo(0)
-            assertThat(data["Response"]).isEqualTo("success")
-        }
+        assertThat(result.body).asInstanceOf(map(String::class.java, Any::class.java))
+            .doesNotContainKey("errors")
+            .extracting("data").asInstanceOf(map(String::class.java, Any::class.java))
+            .extracting("Response").isEqualTo("success")
     }
 
     @Test
@@ -312,9 +305,4 @@ class DgsMultipartPostControllerTest {
             )
         }
     }
-
-    data class GraphQLResponse(val data: Map<String, Any> = emptyMap(), val errors: List<GraphQLError> = emptyList())
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    data class GraphQLError(val message: String)
 }

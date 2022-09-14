@@ -16,8 +16,6 @@
 
 package com.netflix.graphql.dgs.mvc
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import graphql.ExecutionResultImpl
 import graphql.execution.reactive.SubscriptionPublisher
@@ -26,6 +24,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.slot
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.InstanceOfAssertFactories
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.HttpHeaders
@@ -69,12 +68,10 @@ class DgsRestControllerTest {
 
         val result = DgsRestController(dgsQueryExecutor).graphql(requestBody.toByteArray(), null, null, null, httpHeaders, webRequest)
 
-        assertThat(result.body).isInstanceOfSatisfying(ByteArray::class.java) { body ->
-            val mapper = jacksonObjectMapper()
-            val (data, errors) = mapper.readValue(body, GraphQLResponse::class.java)
-            assertThat(errors.size).isEqualTo(0)
-            assertThat(data["hello"]).isEqualTo("hello")
-        }
+        assertThat(result.body).asInstanceOf(InstanceOfAssertFactories.map(String::class.java, Any::class.java))
+            .doesNotContainKey("errors")
+            .extracting("data").asInstanceOf(InstanceOfAssertFactories.map(String::class.java, Any::class.java))
+            .extracting("hello").isEqualTo("hello")
     }
 
     @Test
@@ -101,13 +98,12 @@ class DgsRestControllerTest {
 
         val result = DgsRestController(dgsQueryExecutor).graphql(requestBody.toByteArray(), null, null, null, httpHeaders, webRequest)
 
-        assertThat(result.body).isInstanceOfSatisfying(ByteArray::class.java) { body ->
-            val mapper = jacksonObjectMapper()
-            val (data, errors) = mapper.readValue(body, GraphQLResponse::class.java)
-            assertThat(errors.size).isEqualTo(0)
-            assertThat(data["hi"]).isEqualTo("there")
-            assertThat(capturedOperationName.captured).isEqualTo("operationB")
-        }
+        assertThat(result.body).asInstanceOf(InstanceOfAssertFactories.map(String::class.java, Any::class.java))
+            .doesNotContainKey("errors")
+            .extracting("data").asInstanceOf(InstanceOfAssertFactories.map(String::class.java, Any::class.java))
+            .extracting("hi").isEqualTo("there")
+
+        assertThat(capturedOperationName.captured).isEqualTo("operationB")
     }
 
     @Test
@@ -133,12 +129,10 @@ class DgsRestControllerTest {
         headers.contentType = MediaType("application", "graphql")
         val result = DgsRestController(dgsQueryExecutor).graphql(requestBody.toByteArray(), null, null, null, headers, webRequest)
 
-        assertThat(result.body).isInstanceOfSatisfying(ByteArray::class.java) { body ->
-            val mapper = jacksonObjectMapper()
-            val (data, errors) = mapper.readValue(body, GraphQLResponse::class.java)
-            assertThat(errors.size).isEqualTo(0)
-            assertThat(data["hello"]).isEqualTo("hello")
-        }
+        assertThat(result.body).asInstanceOf(InstanceOfAssertFactories.map(String::class.java, Any::class.java))
+            .doesNotContainKey("errors")
+            .extracting("data").asInstanceOf(InstanceOfAssertFactories.map(String::class.java, Any::class.java))
+            .extracting("hello").isEqualTo("hello")
     }
 
     @Test
@@ -201,28 +195,45 @@ class DgsRestControllerTest {
             )
         } returns ExecutionResultImpl.newExecutionResult()
             .data(mapOf("hello" to "hello"))
-            .extensions(mutableMapOf(DgsRestController.DGS_RESPONSE_HEADERS_KEY to mapOf("myHeader" to "hello")) as Map<Any, Any>?)
+            .extensions(mapOf(DgsRestController.DGS_RESPONSE_HEADERS_KEY to mapOf("myHeader" to "hello")))
             .build()
 
         val result = DgsRestController(dgsQueryExecutor).graphql(requestBody.toByteArray(), null, null, null, httpHeaders, webRequest)
         assertThat(result.headers["myHeader"]).contains("hello")
 
-        assertThat(result.body).isInstanceOfSatisfying(ByteArray::class.java) { body ->
-            val mapper = jacksonObjectMapper()
-            val (_, _, extensions) = mapper.readValue(body, GraphQLResponse::class.java)
-            assertThat(extensions).isNull()
-        }
+        assertThat(result.body).asInstanceOf(InstanceOfAssertFactories.map(String::class.java, Any::class.java))
+            .doesNotContainKey("extensions")
     }
 
-    data class GraphQLResponse(
-        val data: Map<String, Any> = emptyMap(),
-        val errors: List<GraphQLError> = emptyList(),
+    @Test
+    fun `Writes response headers when dgs-response-headers are set in extensions object with additional extensions`() {
+        val queryString = "query { hello }"
+        val requestBody = """
+            {
+                "query": "$queryString"
+            }
+        """.trimIndent()
 
-        // should not be on the response; only here so we can
-        // test that it does not exist.
-        val extensions: Map<String, Any>?
-    )
+        every {
+            dgsQueryExecutor.execute(
+                queryString,
+                emptyMap(),
+                any(),
+                any(),
+                any(),
+                any()
+            )
+        } returns ExecutionResultImpl.newExecutionResult()
+            .data(mapOf("hello" to "hello"))
+            .extensions(mapOf(DgsRestController.DGS_RESPONSE_HEADERS_KEY to mapOf("myHeader" to "hello"), "foo" to "bar"))
+            .build()
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    data class GraphQLError(val message: String)
+        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody.toByteArray(), null, null, null, httpHeaders, webRequest)
+        assertThat(result.headers["myHeader"]).contains("hello")
+
+        assertThat(result.body).asInstanceOf(InstanceOfAssertFactories.map(String::class.java, Any::class.java))
+            .containsKey("extensions")
+            .extracting("extensions").asInstanceOf(InstanceOfAssertFactories.map(String::class.java, Any::class.java))
+            .containsEntry("foo", "bar")
+    }
 }
