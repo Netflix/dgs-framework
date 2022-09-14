@@ -16,13 +16,8 @@
 
 package com.netflix.graphql.dgs
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.netflix.graphql.dgs.internal.utils.TimeTracer
 import graphql.ExecutionResult
 import graphql.ExecutionResultImpl
-import graphql.GraphqlErrorBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
@@ -44,24 +39,9 @@ class DgsExecutionResult constructor(
         return HttpHeaders.readOnlyHttpHeaders(headers)
     }
 
-    fun toSpringResponse(
-        mapper: ObjectMapper = jacksonObjectMapper()
-    ): ResponseEntity<Any> {
-        val result = try {
-            TimeTracer.logTime(
-                { mapper.writeValueAsBytes(this.toSpecification()) },
-                logger,
-                "Serialized JSON result in {}ms"
-            )
-        } catch (ex: InvalidDefinitionException) {
-            val errorMessage = "Error serializing response: ${ex.message}"
-            val errorResponse = ExecutionResultImpl(GraphqlErrorBuilder.newError().message(errorMessage).build())
-            logger.error(errorMessage, ex)
-            mapper.writeValueAsBytes(errorResponse.toSpecification())
-        }
-
+    fun toSpringResponse(): ResponseEntity<Any> {
         return ResponseEntity(
-            result,
+            toSpecification(),
             headers,
             status
         )
@@ -71,13 +51,14 @@ class DgsExecutionResult constructor(
     override fun toSpecification(): MutableMap<String, Any> {
         val spec = executionResult.toSpecification()
 
-        if (spec["extensions"] != null && extensions.containsKey(DGS_RESPONSE_HEADERS_KEY)) {
-            val extensions = spec["extensions"] as Map<*, *>
+        val extensions = spec["extensions"] as Map<*, *>?
+            ?: return spec
 
-            if (extensions.size != 1) {
-                spec["extensions"] = extensions.minus(DGS_RESPONSE_HEADERS_KEY)
+        if (DGS_RESPONSE_HEADERS_KEY in extensions) {
+            if (extensions.size == 1) {
+                spec -= "extensions"
             } else {
-                spec.remove("extensions")
+                spec["extensions"] = extensions - DGS_RESPONSE_HEADERS_KEY
             }
         }
 
@@ -86,27 +67,30 @@ class DgsExecutionResult constructor(
 
     // Refer to https://github.com/Netflix/dgs-framework/pull/1261 for further details.
     private fun addExtensionsHeaderKeyToHeader() {
-        if (executionResult.extensions?.containsKey(DGS_RESPONSE_HEADERS_KEY) == true) {
-            val dgsResponseHeaders = executionResult.extensions[DGS_RESPONSE_HEADERS_KEY]
-            if (dgsResponseHeaders is Map<*, *> && dgsResponseHeaders.isNotEmpty()) {
-                // If the HttpHeaders are empty/read-only we need to switch to a new instance that allows us
-                // to store the headers that are part of the GraphQL response _extensions_.
-                if (headers == HttpHeaders.EMPTY) {
-                    headers = HttpHeaders()
-                }
+        val extensions = executionResult.extensions
+            ?: return
 
-                dgsResponseHeaders.forEach {
-                    if (it.key != null) {
-                        headers.add(it.key.toString(), it.value?.toString())
-                    }
+        val dgsResponseHeaders = extensions[DGS_RESPONSE_HEADERS_KEY]
+            ?: return
+
+        if (dgsResponseHeaders is Map<*, *> && dgsResponseHeaders.isNotEmpty()) {
+            // If the HttpHeaders are empty/read-only we need to switch to a new instance that allows us
+            // to store the headers that are part of the GraphQL response _extensions_.
+
+            val updatedHeaders = HttpHeaders.writableHttpHeaders(headers)
+
+            dgsResponseHeaders.forEach { (key, value) ->
+                if (key != null) {
+                    updatedHeaders.add(key.toString(), value?.toString())
                 }
-            } else {
-                logger.warn(
-                    "{} must be of type java.util.Map, but was {}",
-                    DGS_RESPONSE_HEADERS_KEY,
-                    dgsResponseHeaders?.javaClass?.name
-                )
             }
+            headers = HttpHeaders.readOnlyHttpHeaders(updatedHeaders)
+        } else {
+            logger.warn(
+                "{} must be of type java.util.Map, but was {}",
+                DGS_RESPONSE_HEADERS_KEY,
+                dgsResponseHeaders.javaClass.name
+            )
         }
     }
 
@@ -134,7 +118,7 @@ class DgsExecutionResult constructor(
         fun status(status: HttpStatus) = apply { this.status = status }
 
         fun build() = DgsExecutionResult(
-            executionResult = checkNotNull(executionResult),
+            executionResult = executionResult,
             headers = headers,
             status = status
         )
