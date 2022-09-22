@@ -46,7 +46,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "18.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -125,7 +125,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.3.5"
+            "locked": "1.3.8"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -233,7 +233,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "18.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -312,7 +312,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.3.5"
+            "locked": "1.3.8"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -433,7 +433,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "18.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -512,7 +512,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.3.5"
+            "locked": "1.3.8"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -671,6 +671,12 @@
         "org.springframework:spring-webmvc": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
+            ],
+            "locked": "5.3.19"
+        },
+        "org.springframework:spring-websocket": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
             "locked": "5.3.19"
         }
@@ -930,7 +936,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "18.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -962,7 +968,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.3.5"
+            "locked": "1.3.8"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -1089,7 +1095,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "18.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -1168,7 +1174,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.3.5"
+            "locked": "1.3.8"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -1286,7 +1292,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "18.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -1365,7 +1371,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.3.5"
+            "locked": "1.3.8"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -1515,6 +1521,12 @@
         "org.springframework:spring-webmvc": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
+            ],
+            "locked": "5.3.19"
+        },
+        "org.springframework:spring-websocket": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
             "locked": "5.3.19"
         }

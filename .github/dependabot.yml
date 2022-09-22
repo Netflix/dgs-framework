@@ -1,10 +1,16 @@
-version: 2
-updates:
-  - package-ecosystem: "gradle"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
+# -----------------------------------------------------------------------------
+# Disabling dependabot since the builds don't update the Lock Files and therefore
+# do not reflect the changes on dependencies. The risk is that we can update
+# a dependency without realising it breaks the build.
+# -----------------------------------------------------------------------------
+#
+# version: 2
+# updates:
+#   - package-ecosystem: "gradle"
+#     directory: "/"
+#     schedule:
+#       interval: "weekly"
+#   - package-ecosystem: "github-actions"
+#     directory: "/"
+#     schedule:
+#       interval: "weekly"
