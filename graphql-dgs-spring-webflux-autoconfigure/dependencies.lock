@@ -26,6 +26,12 @@
         }
     },
     "compileClasspath": {
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
+            ],
+            "locked": "2.13.2"
+        },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "locked": "2.13.2"
         },
@@ -36,9 +42,10 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "18.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -63,11 +70,15 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-reactive": {
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-subscription-types": {
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-error-types": {
@@ -87,6 +98,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "1.6.21"
@@ -142,6 +154,12 @@
         }
     },
     "jmhCompileClasspath": {
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
+            ],
+            "locked": "2.13.2"
+        },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "locked": "2.13.2"
         },
@@ -152,9 +170,10 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "18.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -179,11 +198,15 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-reactive": {
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-subscription-types": {
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-error-types": {
@@ -203,6 +226,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "1.6.21"
@@ -242,6 +266,12 @@
             ],
             "locked": "2.0.0"
         },
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
+            ],
+            "locked": "2.13.2"
+        },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
@@ -266,9 +296,10 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "18.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -297,6 +328,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
@@ -311,6 +343,9 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure"
             ],
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-subscription-types": {
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-error-types": {
@@ -364,6 +399,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "1.6.21"
@@ -444,6 +480,12 @@
         "org.springframework:spring-webflux": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-reactive"
+            ],
+            "locked": "5.3.19"
+        },
+        "org.springframework:spring-websocket": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
             "locked": "5.3.19"
         }
@@ -679,6 +721,12 @@
             ],
             "locked": "2.0.0"
         },
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
+            ],
+            "locked": "2.13.2"
+        },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
@@ -699,9 +747,10 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "18.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -726,11 +775,15 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-reactive": {
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-subscription-types": {
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-error-types": {
@@ -768,6 +821,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "1.6.21"
@@ -832,6 +886,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-reactive"
             ],
             "locked": "5.3.19"
+        },
+        "org.springframework:spring-websocket": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
+            ],
+            "locked": "5.3.19"
         }
     },
     "testAnnotationProcessor": {
@@ -855,6 +915,12 @@
         }
     },
     "testCompileClasspath": {
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
+            ],
+            "locked": "2.13.2"
+        },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "locked": "2.13.2"
         },
@@ -868,9 +934,10 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "18.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -899,6 +966,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
@@ -913,6 +981,9 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure"
             ],
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-subscription-types": {
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-error-types": {
@@ -941,6 +1012,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "1.6.21"
@@ -977,6 +1049,12 @@
             ],
             "locked": "2.0.0"
         },
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
+            ],
+            "locked": "2.13.2"
+        },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
@@ -1001,9 +1079,10 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "18.1"
+            "locked": "18.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -1032,6 +1111,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
@@ -1046,6 +1126,9 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure"
             ],
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-subscription-types": {
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-error-types": {
@@ -1099,6 +1182,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "1.6.21"
@@ -1170,6 +1254,12 @@
         "org.springframework:spring-webflux": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-reactive"
+            ],
+            "locked": "5.3.19"
+        },
+        "org.springframework:spring-websocket": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
             "locked": "5.3.19"
         }
