@@ -41,7 +41,9 @@ class DgsWebfluxConfigurationProperties(
      */
     data class DgsWebsocketConfigurationProperties(
         /** Connection Initialization timeout for graphql-transport-ws. */
-        @DefaultValue(DEFAULT_CONNECTION_INIT_TIMEOUT) var connectionInitTimeout: Duration
+        @DefaultValue(DEFAULT_CONNECTION_INIT_TIMEOUT) var connectionInitTimeout: Duration,
+        /** Path to the Subscriptions endpoint without trailing slash. */
+        @DefaultValue("/subscriptions") var path: String = "/subscriptions"
     )
 
     /**
@@ -66,6 +68,7 @@ class DgsWebfluxConfigurationProperties(
         validatePath(this.path, "dgs.graphql.path")
         validatePath(this.graphiql.path, "dgs.graphql.graphiql.path")
         validatePath(this.schemaJson.path, "dgs.graphql.schema-json.path")
+        validatePath(this.websocket.path, "dgs.graphql.websocket.path")
     }
 
     private fun validatePath(path: String, pathProperty: String) {
