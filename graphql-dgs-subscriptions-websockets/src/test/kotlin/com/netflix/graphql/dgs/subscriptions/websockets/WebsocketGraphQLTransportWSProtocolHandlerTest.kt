@@ -36,6 +36,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.reactivestreams.Publisher
+import org.slf4j.event.Level
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
@@ -50,7 +51,7 @@ class WebsocketGraphQLTransportWSProtocolHandlerTest {
 
     @BeforeEach
     fun setup() {
-        dgsWebsocketHandler = WebsocketGraphQLTransportWSProtocolHandler(dgsQueryExecutor, Duration.ofMillis(1000))
+        dgsWebsocketHandler = WebsocketGraphQLTransportWSProtocolHandler(dgsQueryExecutor, Duration.ofMillis(1000), Level.ERROR)
 
         every { session1.id } returns "1"
         every { session2.id } returns "2"

@@ -24,6 +24,7 @@ import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
 import org.slf4j.LoggerFactory
+import org.slf4j.event.Level
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.util.ClassUtils
@@ -35,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import javax.annotation.PostConstruct
 
-class WebsocketGraphQLWSProtocolHandler(private val dgsQueryExecutor: DgsQueryExecutor) : TextWebSocketHandler() {
+class WebsocketGraphQLWSProtocolHandler(private val dgsQueryExecutor: DgsQueryExecutor, private val subscriptionErrorLogLevel: Level) : TextWebSocketHandler() {
 
     internal val subscriptions = ConcurrentHashMap<String, MutableMap<String, Subscription>>()
     internal val sessions = CopyOnWriteArrayList<WebSocketSession>()
@@ -128,7 +129,13 @@ class WebsocketGraphQLWSProtocolHandler(private val dgsQueryExecutor: DgsQueryEx
             }
 
             override fun onError(t: Throwable) {
-                logger.error("Error on subscription {}", id, t)
+                when (subscriptionErrorLogLevel) {
+                    Level.ERROR -> logger.error("Error on subscription {}", id, t)
+                    Level.WARN -> logger.warn("Error on subscription {}", id, t)
+                    Level.INFO -> logger.info("Error on subscription {}: {}", id, t.message)
+                    Level.DEBUG -> logger.debug("Error on subscription {}", id, t)
+                    Level.TRACE -> logger.trace("Error on subscription {}", id, t)
+                }
                 val message = OperationMessage(GQL_ERROR, DataPayload(null, listOf(t.message!!)), id)
                 val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
                 logger.debug("Sending subscription error: {}", jsonMessage)
