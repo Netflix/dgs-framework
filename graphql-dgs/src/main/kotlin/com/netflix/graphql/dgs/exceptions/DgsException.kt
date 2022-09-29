@@ -17,6 +17,20 @@
 package com.netflix.graphql.dgs.exceptions
 
 import com.netflix.graphql.types.errors.ErrorType
+import com.netflix.graphql.types.errors.TypedGraphQLError
+import graphql.execution.ResultPath
 
-open class DgsBadRequestException(override val message: String = "Malformed or incorrect request") :
-    DgsException(message = message, errorType = ErrorType.BAD_REQUEST)
+abstract class DgsException(
+    override val message: String,
+    override val cause: Exception? = null,
+    val errorType: ErrorType = ErrorType.UNKNOWN
+) : RuntimeException(message, cause) {
+    fun toGraphQlException(path: ResultPath): TypedGraphQLError {
+        return TypedGraphQLError
+            .newBuilder()
+            .errorType(errorType)
+            .path(path)
+            .message("%s: %s", this::class.java.name, message)
+            .build()
+    }
+}
