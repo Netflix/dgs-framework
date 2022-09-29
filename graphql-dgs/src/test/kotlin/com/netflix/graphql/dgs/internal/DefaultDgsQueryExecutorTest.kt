@@ -23,7 +23,8 @@ import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionExcepti
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.method.InputArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
-import com.netflix.graphql.types.errors.ErrorType
+import com.netflix.graphql.types.errors.TypedGraphQLError
+import graphql.InvalidSyntaxError
 import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
 import graphql.execution.instrumentation.SimpleInstrumentation
@@ -42,6 +43,7 @@ import java.time.LocalDateTime
 import java.util.*
 import java.util.function.Supplier
 
+@Suppress("GraphQLUnresolvedReference")
 @ExtendWith(MockKExtension::class)
 internal class DefaultDgsQueryExecutorTest {
 
@@ -152,12 +154,21 @@ internal class DefaultDgsQueryExecutorTest {
     }
 
     @Test
-    fun `Returns a GraphQL Error wth BAD_REQUEST described in the extensions`() {
+    fun `Empty query returns a GraphQL Error wth type SyntaxError`() {
         val result = dgsQueryExecutor.execute(" ")
         assertThat(result)
             .isNotNull
-            .extracting { it.errors.first().extensions["errorType"] }
-            .isEqualTo(ErrorType.BAD_REQUEST.name)
+            .extracting { it.errors.first() }
+            .isInstanceOf(TypedGraphQLError::class.java)
+    }
+
+    @Test
+    fun `Invalid Syntax query returns a GraphQL Error wth type SyntaxError`() {
+        val result = dgsQueryExecutor.execute("a")
+        assertThat(result)
+            .isNotNull
+            .extracting { it.errors.first() }
+            .isInstanceOf(InvalidSyntaxError::class.java)
     }
 
     @Test

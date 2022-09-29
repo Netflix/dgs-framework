@@ -17,6 +17,21 @@
 package com.netflix.graphql.dgs.exceptions
 
 import com.netflix.graphql.types.errors.ErrorType
+import com.netflix.graphql.types.errors.TypedGraphQLError
+import graphql.execution.ResultPath
 
-class DgsInvalidInputArgumentException(override val message: String, override val cause: Exception? = null) :
-    DgsException(message = message, cause = cause, errorType = ErrorType.BAD_REQUEST)
+abstract class DgsException(
+    override val message: String,
+    override val cause: Exception? = null,
+    val errorType: ErrorType = ErrorType.UNKNOWN
+) : RuntimeException(message, cause) {
+    fun toGraphQlError(path: ResultPath = ResultPath.rootPath()): TypedGraphQLError {
+        return TypedGraphQLError
+            .newBuilder()
+            .errorType(errorType)
+            .path(path)
+            .message(message)
+            .extensions(mapOf("class" to this::class.java.name))
+            .build()
+    }
+}

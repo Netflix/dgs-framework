@@ -46,23 +46,17 @@ class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
             "Exception while executing data fetcher for ${handlerParameters.path}: ${exception.message}",
             exception
         )
-        val graphqlError = if (springSecurityAvailable && isSpringSecurityAccessException(exception)) {
-            TypedGraphQLError.newPermissionDeniedBuilder()
-                .message("%s: %s", exception::class.java.name, exception.message)
-                .path(handlerParameters.path).build()
-        } else if (exception is DgsEntityNotFoundException) {
-            TypedGraphQLError.newNotFoundBuilder()
-                .message("%s: %s", exception::class.java.name, exception.message)
-                .path(handlerParameters.path).build()
-        } else if (exception is DgsBadRequestException) {
-            TypedGraphQLError.newBadRequestBuilder()
-                .message("%s: %s", exception::class.java.name, exception.message)
-                .path(handlerParameters.path).build()
-        } else {
-            TypedGraphQLError.newInternalErrorBuilder()
-                .message("%s: %s", exception::class.java.name, exception.message)
-                .path(handlerParameters.path).build()
+
+        val graphqlError = when (exception) {
+            is DgsException -> exception.toGraphQlError(handlerParameters.path)
+            else -> when {
+                springSecurityAvailable && isSpringSecurityAccessException(exception) -> TypedGraphQLError.newPermissionDeniedBuilder()
+                else -> TypedGraphQLError.newInternalErrorBuilder()
+            }.message("%s: %s", exception::class.java.name, exception.message)
+                .path(handlerParameters.path)
+                .build()
         }
+
         return DataFetcherExceptionHandlerResult.newResult()
             .error(graphqlError)
             .build()

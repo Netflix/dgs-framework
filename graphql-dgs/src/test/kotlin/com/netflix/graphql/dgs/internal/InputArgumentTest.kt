@@ -73,7 +73,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-@Suppress("unused")
+@Suppress("unused", "GraphQLUnresolvedReference")
 @ExtendWith(MockKExtension::class)
 internal class InputArgumentTest {
     @MockK

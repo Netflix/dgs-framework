@@ -95,12 +95,16 @@ class MalformedQueryContentTest {
                     """
                     {
                       "errors":[
-                        {
-                          "message": "The query is null or empty.",
-                          "locations": [],
-                          "extensions": {"errorType":"BAD_REQUEST"}
-                        }
-                     ]
+                          {
+                            "message":"GraphQL operations must contain a non-empty `query`.",
+                            "locations":[],
+                            "path":[],
+                            "extensions":{
+                              "class":"com.netflix.graphql.dgs.exceptions.DgsBadRequestException",
+                              "errorType":"BAD_REQUEST"
+                            }
+                          }
+                       ]
                     }
                     """.trimIndent()
                 )

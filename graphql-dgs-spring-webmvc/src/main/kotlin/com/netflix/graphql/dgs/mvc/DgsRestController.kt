@@ -259,7 +259,6 @@ open class DgsRestController(
             logger.error(errorMessage, ex)
             mapper.writeValueAsBytes(errorResponse.toSpecification())
         }
-
         return ResponseEntity(result, responseHeaders, HttpStatus.OK)
     }
 }
