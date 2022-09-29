@@ -6,6 +6,7 @@ import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlMetric
 import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlTag
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsGraphQLMetricsTagsProvider
 import com.netflix.graphql.dgs.metrics.micrometer.utils.QuerySignatureRepository
+import com.netflix.graphql.types.errors.ErrorType
 import graphql.ExecutionInput
 import graphql.ExecutionResult
 import graphql.GraphQLError
@@ -344,11 +345,11 @@ class DgsGraphQLMetricsInstrumentation(
                 when (error) {
                     is ValidationError -> {
                         errorPath = error.queryPath ?: emptyList()
-                        errorType = errorType(error)
+                        errorType = ErrorType.BAD_REQUEST.name
                     }
                     is InvalidSyntaxError -> {
                         errorPath = emptyList()
-                        errorType = errorType(error)
+                        errorType = ErrorType.BAD_REQUEST.name
                     }
                     else -> {
                         errorPath = error.path ?: emptyList()
@@ -366,10 +367,6 @@ class DgsGraphQLMetricsInstrumentation(
                 }
             }
             return dedupeErrorPaths.values
-        }
-
-        private fun <T : GraphQLError> errorType(error: T): String {
-            return error.errorType?.toString() ?: TagUtils.TAG_VALUE_UNKNOWN
         }
 
         private fun <T : GraphQLError> errorTypeExtension(error: T): String {
