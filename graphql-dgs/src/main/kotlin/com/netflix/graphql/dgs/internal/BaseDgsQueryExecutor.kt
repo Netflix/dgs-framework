@@ -27,8 +27,6 @@ import com.jayway.jsonpath.ParseContext
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
 import com.netflix.graphql.dgs.context.DgsContext
-import com.netflix.graphql.types.errors.ErrorType
-import com.netflix.graphql.types.errors.TypedGraphQLError
 import graphql.*
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
@@ -37,7 +35,6 @@ import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLSchema
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.util.StringUtils
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -73,21 +70,7 @@ object BaseDgsQueryExecutor {
         preparsedDocumentProvider: PreparsedDocumentProvider?,
     ): CompletableFuture<ExecutionResult> {
 
-        var inputVariables = variables ?: Collections.emptyMap()
-
-        if (!StringUtils.hasText(query)) {
-            return CompletableFuture.completedFuture(
-                ExecutionResultImpl
-                    .newExecutionResult()
-                    .addError(
-                        TypedGraphQLError
-                            .newBadRequestBuilder()
-                            .message("The query is null or empty.")
-                            .errorType(ErrorType.BAD_REQUEST)
-                            .build()
-                    ).build()
-            )
-        }
+        val inputVariables = variables ?: Collections.emptyMap()
 
         val graphQLBuilder =
             GraphQL.newGraphQL(graphQLSchema)
