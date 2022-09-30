@@ -23,7 +23,6 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 
 @ConfigurationProperties(prefix = DgsAPQSupportProperties.PREFIX)
 @ConstructorBinding
-@Suppress("ConfigurationProperties")
 data class DgsAPQSupportProperties(
     /** Enables/Disables support for Automated Persisted Queries (APQ). */
     @DefaultValue("$DEFAULT_ENABLED")

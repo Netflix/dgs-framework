@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.webmvc.autoconfigure
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.cacheControl.DgsCacheControlSupportProperties
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.method.ArgumentResolver
 import com.netflix.graphql.dgs.mvc.DefaultDgsGraphQLRequestHeaderValidator
@@ -52,7 +53,7 @@ import kotlin.streams.toList
 
 @Configuration
 @ConditionalOnWebApplication
-@EnableConfigurationProperties(DgsWebMvcConfigurationProperties::class)
+@EnableConfigurationProperties(value = [DgsWebMvcConfigurationProperties::class, DgsCacheControlSupportProperties::class])
 open class DgsWebMvcAutoConfiguration {
     @Bean
     @Qualifier("dgsObjectMapper")
@@ -62,8 +63,12 @@ open class DgsWebMvcAutoConfiguration {
     }
 
     @Bean
-    open fun dgsRestController(dgsQueryExecutor: DgsQueryExecutor, @Qualifier("dgsObjectMapper") objectMapper: ObjectMapper): DgsRestController {
-        return DgsRestController(dgsQueryExecutor, objectMapper)
+    open fun dgsRestController(
+        dgsQueryExecutor: DgsQueryExecutor,
+        @Qualifier("dgsObjectMapper") objectMapper: ObjectMapper,
+        cacheControlProperties: DgsCacheControlSupportProperties
+    ): DgsRestController {
+        return DgsRestController(dgsQueryExecutor, objectMapper, DefaultDgsGraphQLRequestHeaderValidator(), cacheControlProperties.enabled)
     }
 
     @Configuration
