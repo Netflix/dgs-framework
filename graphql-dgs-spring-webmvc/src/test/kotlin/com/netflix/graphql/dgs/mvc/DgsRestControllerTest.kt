@@ -181,6 +181,30 @@ class DgsRestControllerTest {
             .isEqualTo(HttpStatus.BAD_REQUEST)
     }
 
+    @Test
+    fun `Writes response headers when dgs-response-headers are set in extensions object`() {
+        val queryString = "query { hello }"
+        val requestBody = """
+            {
+                "query": "$queryString"
+            }
+        """.trimIndent()
+
+        every {
+            dgsQueryExecutor.execute(
+                queryString,
+                emptyMap(),
+                any(),
+                any(),
+                any(),
+                any()
+            )
+        } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).extensions(mutableMapOf(Pair(DgsRestController.DGS_RESPONSE_HEADERS_KEY, mapOf(Pair("myHeader", "hello")))) as Map<Any, Any>?).build()
+
+        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody.toByteArray(), null, null, null, httpHeaders, webRequest)
+        assertThat(result.headers["myHeader"]).contains("hello")
+    }
+
     data class GraphQLResponse(val data: Map<String, Any> = emptyMap(), val errors: List<GraphQLError> = emptyList())
 
     @JsonIgnoreProperties(ignoreUnknown = true)
