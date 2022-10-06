@@ -75,6 +75,7 @@ open class DgsRestController(
 ) {
 
     companion object {
+        const val DGS_RESPONSE_HEADERS_KEY = "dgs-response-headers"
         private val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
     }
 
@@ -225,6 +226,27 @@ open class DgsRestController(
                 .body("Trying to execute subscription on /graphql. Use /subscriptions instead!")
         }
 
+        val responseHeaders = if (executionResult.extensions?.containsKey(DGS_RESPONSE_HEADERS_KEY) == true) {
+            val dgsResponseHeaders = executionResult.extensions[DGS_RESPONSE_HEADERS_KEY]
+            val responseHeaders = HttpHeaders()
+            if (dgsResponseHeaders is Map<*, *>) {
+                dgsResponseHeaders.forEach {
+                    if (it.key != null) {
+                        responseHeaders.add(it.key.toString(), it.value?.toString())
+                    }
+                }
+            } else {
+                logger.warn(
+                    "{} must be of type java.util.Map, but was {}",
+                    DGS_RESPONSE_HEADERS_KEY,
+                    dgsResponseHeaders?.javaClass?.name
+                )
+            }
+
+            executionResult.extensions.remove(DGS_RESPONSE_HEADERS_KEY)
+            responseHeaders
+        } else HttpHeaders()
+
         val result = try {
             TimeTracer.logTime(
                 { mapper.writeValueAsBytes(executionResult.toSpecification()) },
@@ -238,6 +260,6 @@ open class DgsRestController(
             mapper.writeValueAsBytes(errorResponse.toSpecification())
         }
 
-        return ResponseEntity.ok(result)
+        return ResponseEntity(result, responseHeaders, HttpStatus.OK)
     }
 }
