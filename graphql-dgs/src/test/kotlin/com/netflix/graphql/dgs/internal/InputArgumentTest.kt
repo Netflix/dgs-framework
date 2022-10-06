@@ -62,7 +62,6 @@ import org.assertj.core.api.InstanceOfAssertFactories
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
@@ -477,7 +476,6 @@ internal class InputArgumentTest {
     }
 
     @Test
-    @Disabled("Reproduces Issue #1083")
     fun `@InputArgument on an optional list of input types, with input argument name`() {
         val schema = """
             type Query {
@@ -492,12 +490,15 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument("person") person: Optional<List<Person>>): String {
-                assertThat(person)
-                    .isNotEmpty
+                val peopleNames = person
                     .get()
-                    .extracting { ls -> ls.map { it.name } }.asList()
+                    .map { it.name }
+
+                assertThat(peopleNames)
+                    .isNotEmpty
                     .containsOnly("tester 1", "tester 2")
-                return "Hello, ${person.get().joinToString(", ")}"
+
+                return "Hello, ${peopleNames.joinToString(", ")}"
             }
         }
 
@@ -515,7 +516,6 @@ internal class InputArgumentTest {
     }
 
     @Test
-    @Disabled("Reproduces Issue #1083")
     fun `@InputArgument on an optional list of input types, with no input argument name`() {
         val schema = """
             type Query {
@@ -530,12 +530,15 @@ internal class InputArgumentTest {
         val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument person: Optional<List<Person>>): String {
-                assertThat(person)
-                    .isNotEmpty
+                val peopleNames = person
                     .get()
-                    .extracting { ls -> ls.map { it.name } }.asList()
+                    .map { it.name }
+
+                assertThat(peopleNames)
+                    .isNotEmpty
                     .containsOnly("tester 1", "tester 2")
-                return "Hello, ${person.get().joinToString(", ")}"
+
+                return "Hello, ${peopleNames.joinToString(", ")}"
             }
         }
 
