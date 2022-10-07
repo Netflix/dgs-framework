@@ -23,7 +23,6 @@ import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionExcepti
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.method.InputArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
-import com.netflix.graphql.types.errors.ErrorType
 import graphql.InvalidSyntaxError
 import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
@@ -158,7 +157,7 @@ internal class DefaultDgsQueryExecutorTest {
         val result = dgsQueryExecutor.execute(" ")
         assertThat(result)
             .isNotNull
-            .extracting { it.errors.first()  }
+            .extracting { it.errors.first() }
             .isInstanceOf(InvalidSyntaxError::class.java)
     }
 
@@ -167,7 +166,7 @@ internal class DefaultDgsQueryExecutorTest {
         val result = dgsQueryExecutor.execute("a")
         assertThat(result)
             .isNotNull
-            .extracting { it.errors.first()  }
+            .extracting { it.errors.first() }
             .isInstanceOf(InvalidSyntaxError::class.java)
     }
 
