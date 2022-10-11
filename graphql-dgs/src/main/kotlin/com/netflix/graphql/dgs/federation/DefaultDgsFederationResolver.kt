@@ -165,10 +165,11 @@ open class DefaultDgsFederationResolver() :
             val src: Any = env.getObject()
 
             val typeName =
-                if (typeMapping().containsKey(src::class.java))
+                if (typeMapping().containsKey(src::class.java)) {
                     typeMapping()[src::class.java]
-                else
+                } else {
                     src::class.java.simpleName
+                }
 
             val type = env.schema.getObjectType(typeName)
             if (type == null) {

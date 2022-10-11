@@ -105,7 +105,6 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
         preparsedDocumentProvider: ObjectProvider<PreparsedDocumentProvider>,
         queryValueCustomizer: QueryValueCustomizer
     ): DgsReactiveQueryExecutor {
-
         val queryExecutionStrategy =
             providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
         val mutationExecutionStrategy =

@@ -63,7 +63,6 @@ open class WebsocketSubscriptionsGraphQLWSTest(@param:LocalServerPort val port: 
 
     @Test
     fun `Basic subscription flow`() {
-
         val client: WebSocketClient = ReactorNettyWebSocketClient()
         val url = URI("ws://localhost:$port/subscriptions")
         val output: Sinks.Many<OperationMessage> = Sinks.many().replay().all()
@@ -81,7 +80,6 @@ open class WebsocketSubscriptionsGraphQLWSTest(@param:LocalServerPort val port: 
 
     @Test
     fun `Subscription with error flow`() {
-
         val client: WebSocketClient = ReactorNettyWebSocketClient()
         val url = URI("ws://localhost:$port/subscriptions")
         val output: Sinks.Many<OperationMessage> = Sinks.many().replay().all()
@@ -101,7 +99,6 @@ open class WebsocketSubscriptionsGraphQLWSTest(@param:LocalServerPort val port: 
 
     @Test
     fun `Client stops subscription`() {
-
         val client: WebSocketClient = ReactorNettyWebSocketClient()
         val url = URI("ws://localhost:$port/subscriptions")
         val output: Sinks.Many<OperationMessage> = Sinks.many().replay().all()
@@ -147,13 +144,13 @@ open class WebsocketSubscriptionsGraphQLWSTest(@param:LocalServerPort val port: 
 
                                 when (operationMessage.type) {
                                     GQL_CONNECTION_ACK -> {
-
                                         session.send(
                                             Mono.just(
                                                 toWebsocketMessage(
                                                     OperationMessage(
                                                         GQL_START,
-                                                        mapOf("query" to query), "1"
+                                                        mapOf("query" to query),
+                                                        "1"
                                                     ),
                                                     session
                                                 )
@@ -185,7 +182,7 @@ open class WebsocketSubscriptionsGraphQLWSTest(@param:LocalServerPort val port: 
                             }
                         ).log().then()
                 }
-            },
+            }
         )
 
     private val resolvableType = ResolvableType.forType(OperationMessage::class.java)

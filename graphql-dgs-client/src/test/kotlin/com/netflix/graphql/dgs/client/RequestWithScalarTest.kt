@@ -26,7 +26,6 @@ class RequestWithScalarTest {
 
     @Test
     fun `Creating a request with a date-time scalar as a variable should serialize correctly`() {
-
         val variables = mapOf(
             "currentDateTime" to DateRangeScalar().serialize(
                 DateRange(

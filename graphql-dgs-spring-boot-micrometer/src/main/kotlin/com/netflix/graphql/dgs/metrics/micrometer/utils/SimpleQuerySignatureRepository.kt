@@ -39,7 +39,7 @@ import java.util.*
 @Internal
 open class SimpleQuerySignatureRepository(
     private val properties: DgsGraphQLMetricsProperties,
-    private val meterRegistrySupplier: DgsMeterRegistrySupplier,
+    private val meterRegistrySupplier: DgsMeterRegistrySupplier
 ) : QuerySignatureRepository, InitializingBean {
 
     companion object {
@@ -69,7 +69,8 @@ open class SimpleQuerySignatureRepository(
             tags = tags.and(CommonTags.FAILURE.tags(error))
             log.error(
                 "Failed to fetch query signature from cache, query [hash:{}, name:{}].",
-                queryHash, parameters.operation
+                queryHash,
+                parameters.operation
             )
             Optional.empty()
         } finally {

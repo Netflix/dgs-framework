@@ -251,7 +251,6 @@ class WebsocketGraphQLWSProtocolHandlerTest {
     }
 
     private fun start(webSocketSession: WebSocketSession, nrOfResults: Int) {
-
         every { webSocketSession.isOpen } returns true
 
         val results = (1..nrOfResults).map {
@@ -270,7 +269,6 @@ class WebsocketGraphQLWSProtocolHandlerTest {
     }
 
     private fun startWithVariable(webSocketSession: WebSocketSession, nrOfResults: Int) {
-
         every { webSocketSession.isOpen } returns true
 
         val results = (1..nrOfResults).map {
@@ -288,7 +286,6 @@ class WebsocketGraphQLWSProtocolHandlerTest {
     }
 
     private fun startWithNullVariable(webSocketSession: WebSocketSession, nrOfResults: Int) {
-
         every { webSocketSession.isOpen } returns true
 
         val results = (1..nrOfResults).map {

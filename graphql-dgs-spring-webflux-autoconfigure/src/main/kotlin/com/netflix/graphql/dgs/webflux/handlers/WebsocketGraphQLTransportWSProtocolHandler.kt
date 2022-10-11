@@ -49,7 +49,6 @@ class WebsocketGraphQLTransportWSProtocolHandler(private val dgsReactiveQueryExe
     private val encoder = Jackson2JsonEncoder(decoder.objectMapper)
 
     override fun handle(webSocketSession: WebSocketSession): Mono<Void> {
-
         connections[webSocketSession.id] = false
 
         Mono.delay(connectionInitTimeout).then(
@@ -81,7 +80,8 @@ class WebsocketGraphQLTransportWSProtocolHandler(private val dgsReactiveQueryExe
                             connections[webSocketSession.id] = true
                             Flux.just(
                                 toWebsocketMessage(
-                                    Message.ConnectionAckMessage(), webSocketSession
+                                    Message.ConnectionAckMessage(),
+                                    webSocketSession
                                 )
                             )
                         }
@@ -121,7 +121,8 @@ class WebsocketGraphQLTransportWSProtocolHandler(private val dgsReactiveQueryExe
                                         sessions[webSocketSession.id]?.remove(operationMessage.id)
                                         logger.debug(
                                             "Completing subscription {} for connection {}",
-                                            operationMessage.id, webSocketSession.id
+                                            operationMessage.id,
+                                            webSocketSession.id
                                         )
                                     }.doOnError {
                                         webSocketSession.send(
@@ -136,7 +137,10 @@ class WebsocketGraphQLTransportWSProtocolHandler(private val dgsReactiveQueryExe
                                         sessions[webSocketSession.id]?.remove(operationMessage.id)
                                         logger.debug(
                                             "Subscription publisher error for input {} for subscription {} for connection {}",
-                                            queryPayload, operationMessage.id, webSocketSession.id, it
+                                            queryPayload,
+                                            operationMessage.id,
+                                            webSocketSession.id,
+                                            it
                                         )
                                     }
                                 }
@@ -153,7 +157,8 @@ class WebsocketGraphQLTransportWSProtocolHandler(private val dgsReactiveQueryExe
                             sessions[webSocketSession.id]?.remove(operationMessage.id)?.cancel()
                             logger.debug(
                                 "Client stopped subscription {} for connection {}",
-                                operationMessage.id, webSocketSession.id
+                                operationMessage.id,
+                                webSocketSession.id
                             )
                             Flux.empty()
                         }

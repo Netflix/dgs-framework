@@ -213,7 +213,7 @@ class OperationMessageTest {
                  "id": "3"}
                 """.trimIndent(),
                 OperationMessage(GQL_DATA, DataPayload(mapOf(Pair("a", 1), Pair("b", "hello"), Pair("c", false)), listOf("an-error")), "3")
-            ),
+            )
         )
     }
 }

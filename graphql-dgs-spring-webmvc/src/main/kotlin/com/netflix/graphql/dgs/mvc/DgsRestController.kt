@@ -93,7 +93,6 @@ open class DgsRestController(
         @RequestHeader headers: HttpHeaders,
         webRequest: WebRequest
     ): ResponseEntity<Any> {
-
         logger.debug("Validate HTTP Headers for the GraphQL endpoint...")
         try {
             dgsGraphQLRequestHeaderValidator.assert(headers)
@@ -213,7 +212,8 @@ open class DgsRestController(
                     webRequest
                 )
             },
-            logger, "Executed query in {}ms"
+            logger,
+            "Executed query in {}ms"
         )
         logger.debug(
             "Execution result - Contains data: '{}' - Number of errors: {}",

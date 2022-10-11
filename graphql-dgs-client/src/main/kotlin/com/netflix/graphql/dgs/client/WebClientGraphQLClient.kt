@@ -43,12 +43,13 @@ class WebClientGraphQLClient(
 ) : MonoGraphQLClient {
 
     constructor(webclient: WebClient) : this(webclient, Consumer {})
+
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
      * @return A [Mono] of [GraphQLResponse]. [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
     override fun reactiveExecuteQuery(
-        query: String,
+        query: String
     ): Mono<GraphQLResponse> {
         return reactiveExecuteQuery(query, emptyMap(), null)
     }
@@ -60,7 +61,7 @@ class WebClientGraphQLClient(
      */
     override fun reactiveExecuteQuery(
         query: String,
-        variables: Map<String, Any>,
+        variables: Map<String, Any>
     ): Mono<GraphQLResponse> {
         return reactiveExecuteQuery(query, variables, null)
     }
@@ -74,10 +75,10 @@ class WebClientGraphQLClient(
     override fun reactiveExecuteQuery(
         query: String,
         variables: Map<String, Any>,
-        operationName: String?,
+        operationName: String?
     ): Mono<GraphQLResponse> {
-
-        @Suppress("BlockingMethodInNonBlockingContext") val serializedRequest = GraphQLClients.objectMapper.writeValueAsString(
+        @Suppress("BlockingMethodInNonBlockingContext")
+        val serializedRequest = GraphQLClients.objectMapper.writeValueAsString(
             Request(
                 query,
                 variables,

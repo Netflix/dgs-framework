@@ -58,7 +58,6 @@ internal class DefaultDgsReactiveQueryExecutorTest {
 
     @BeforeEach
     fun createExecutor() {
-
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
             fun hello(): String {
@@ -222,7 +221,8 @@ internal class DefaultDgsReactiveQueryExecutorTest {
                 movies { title releaseDate }
             }
             """.trimIndent(),
-            "data.movies[0]", Movie::class.java
+            "data.movies[0]",
+            Movie::class.java
         )
 
         StepVerifier.create(movie).assertNext {
@@ -239,7 +239,8 @@ internal class DefaultDgsReactiveQueryExecutorTest {
                 movies { title releaseDate }
             }
             """.trimIndent(),
-            "data.movies", object : TypeRef<List<Movie>>() {}
+            "data.movies",
+            object : TypeRef<List<Movie>>() {}
         )
 
         StepVerifier.create(person).assertNext {
@@ -264,14 +265,14 @@ internal class DefaultDgsReactiveQueryExecutorTest {
 
     @Test
     fun extractJsonAsObjectError() {
-
         val withError = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
             """
             {
                 movies { title }
             }
             """.trimIndent(),
-            "data.movies[0]", String::class.java
+            "data.movies[0]",
+            String::class.java
         )
 
         StepVerifier.create(withError).consumeErrorWith {
@@ -295,7 +296,8 @@ internal class DefaultDgsReactiveQueryExecutorTest {
                 movies { title }
             }
             """.trimIndent(),
-            "data.movies[0]", object : TypeRef<List<String>>() {}
+            "data.movies[0]",
+            object : TypeRef<List<String>>() {}
         )
 
         StepVerifier.create(withError).consumeErrorWith {

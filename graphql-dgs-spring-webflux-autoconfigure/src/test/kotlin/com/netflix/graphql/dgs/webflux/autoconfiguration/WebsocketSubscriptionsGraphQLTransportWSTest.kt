@@ -61,7 +61,6 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
 
     @Test
     fun `Basic subscription flow`() {
-
         val client: WebSocketClient = ReactorNettyWebSocketClient()
         val url = URI("ws://localhost:$port/subscriptions")
         val output: Sinks.Many<Message> = Sinks.many().replay().all()
@@ -79,7 +78,6 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
 
     @Test
     fun `Subscription with error flow`() {
-
         val client: WebSocketClient = ReactorNettyWebSocketClient()
         val url = URI("ws://localhost:$port/subscriptions")
         val output: Sinks.Many<Message> = Sinks.many().replay().all()
@@ -103,7 +101,6 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
 
     @Test
     fun `Client stops subscription`() {
-
         val client: WebSocketClient = ReactorNettyWebSocketClient()
         val url = URI("ws://localhost:$port/subscriptions")
         val output: Sinks.Many<Message> = Sinks.many().replay().all()
@@ -121,7 +118,6 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
 
     @Test
     fun `Multiple connection init error`() {
-
         val client: WebSocketClient = ReactorNettyWebSocketClient()
         val url = URI("ws://localhost:$port/subscriptions")
         val output: Sinks.Many<Message> = Sinks.many().replay().all()
@@ -137,7 +133,6 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
 
     @Test
     fun `Delayed connection init error`() {
-
         val client: WebSocketClient = ReactorNettyWebSocketClient()
         val url = URI("ws://localhost:$port/subscriptions")
         val output: Sinks.Many<Message> = Sinks.many().replay().all()
@@ -155,7 +150,6 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
 
     @Test
     fun `Multiple subscriptions error`() {
-
         val client: WebSocketClient = ReactorNettyWebSocketClient()
         val url = URI("ws://localhost:$port/subscriptions")
         val output: Sinks.Many<Message> = Sinks.many().replay().all()
@@ -173,7 +167,7 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
         session.closeStatus()
             .defaultIfEmpty(CloseStatus.NO_STATUS_CODE)
             .doOnNext { closeStatus ->
-                if (! closeStatus.code.equals(CloseStatus.NORMAL)) {
+                if (!closeStatus.code.equals(CloseStatus.NORMAL)) {
                     output.emitError(
                         CustomCloseException(closeStatus.code),
                         Sinks.EmitFailureHandler.FAIL_FAST
@@ -307,7 +301,7 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
                         }
                     ).log().then()
                 }
-            },
+            }
         )
 
     private val resolvableType = ResolvableType.forType(Message::class.java)

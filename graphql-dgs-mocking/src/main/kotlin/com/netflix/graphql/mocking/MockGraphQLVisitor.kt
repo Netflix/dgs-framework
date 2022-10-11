@@ -77,7 +77,6 @@ class MockGraphQLVisitor(private val mockConfig: Map<String, Any?>, private val 
     }
 
     private fun getProvidedMockData(pathForNode: String?): DataFetcher<*> {
-
         return when (val provided = mockConfig[pathForNode]) {
             is DataFetcher<*> -> provided
             else -> DataFetcher { provided }

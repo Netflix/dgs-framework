@@ -102,7 +102,8 @@ open class DgsWebMvcAutoConfiguration {
         @Bean
         open fun requestHeaderResolver(beanFactory: ConfigurableBeanFactory, @Dgs dataBinderFactory: WebDataBinderFactory): ArgumentResolver {
             return HandlerMethodArgumentResolverAdapter(
-                RequestHeaderMethodArgumentResolver(beanFactory), dataBinderFactory
+                RequestHeaderMethodArgumentResolver(beanFactory),
+                dataBinderFactory
             )
         }
 
@@ -130,7 +131,7 @@ open class DgsWebMvcAutoConfiguration {
         @ConditionalOnMissingBean
         open fun defaultOSSDgsGraphQLRequestHeadersValidator(
             validationRulesProvider: ObjectProvider<GraphQLRequestHeaderValidationRule>,
-            contentTypePredicatesProviders: ObjectProvider<GraphQLRequestContentTypePredicate>,
+            contentTypePredicatesProviders: ObjectProvider<GraphQLRequestContentTypePredicate>
         ): DgsGraphQLRequestHeaderValidator {
             return DefaultDgsGraphQLRequestHeaderValidator(
                 validationRules = validationRulesProvider.orderedStream().toList(),

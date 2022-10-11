@@ -48,7 +48,6 @@ class GraphQLResponseTest {
 
     @Test
     fun dateParse() {
-
         val jsonResponse = """
             {
               "data": {
@@ -131,7 +130,6 @@ class GraphQLResponseTest {
 
     @Test
     fun listAsObject() {
-
         val jsonResponse = """
             {
               "data": {
@@ -185,7 +183,6 @@ class GraphQLResponseTest {
 
     @Test
     fun useOperationName() {
-
         val jsonResponse = """
             {
               "data": {
@@ -206,7 +203,8 @@ class GraphQLResponseTest {
             """mutation SubmitUserReview {
               submitReview(review:{movieId:1, starRating:5, description:""}) {}
             }""",
-            emptyMap(), "SubmitUserReview"
+            emptyMap(),
+            "SubmitUserReview"
         )
         assertThat(graphQLResponse.hasErrors()).isFalse
 

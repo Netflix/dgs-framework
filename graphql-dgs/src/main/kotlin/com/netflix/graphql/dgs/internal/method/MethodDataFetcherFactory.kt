@@ -30,7 +30,7 @@ import java.lang.reflect.Method
  */
 class MethodDataFetcherFactory(
     argumentResolvers: List<ArgumentResolver>,
-    private val parameterNameDiscoverer: ParameterNameDiscoverer = DefaultParameterNameDiscoverer(),
+    private val parameterNameDiscoverer: ParameterNameDiscoverer = DefaultParameterNameDiscoverer()
 ) {
 
     private val resolvers = ArgumentResolverComposite(argumentResolvers)
