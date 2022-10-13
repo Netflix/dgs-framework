@@ -20,7 +20,7 @@ import org.springframework.http.HttpHeaders
 
 class DefaultDgsGraphQLRequestHeaderValidator(
     private val contentTypePredicates: List<GraphQLRequestContentTypePredicate> = listOf(GraphQLRequestContentTypePredicate.STRICT_GRAPHQL_CONTENT_TYPES_PREDICATE),
-    private val validationRules: List<GraphQLRequestHeaderValidationRule> = DgsGraphQLRequestHeaderValidator.RECOMMENDED_GRAPHQL_REQUEST_HEADERS_VALIDATOR,
+    private val validationRules: List<GraphQLRequestHeaderValidationRule> = DgsGraphQLRequestHeaderValidator.RECOMMENDED_GRAPHQL_REQUEST_HEADERS_VALIDATOR
 ) : DgsGraphQLRequestHeaderValidator {
 
     override fun assert(headers: HttpHeaders) {

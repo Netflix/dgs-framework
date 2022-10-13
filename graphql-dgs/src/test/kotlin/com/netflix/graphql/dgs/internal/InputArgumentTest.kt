@@ -100,6 +100,7 @@ internal class InputArgumentTest {
         withNoScalars()
         withNoDirectives()
     }
+
     @AfterEach
     fun verifyApplicationMockedContext() {
         verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
@@ -1337,6 +1338,7 @@ internal class InputArgumentTest {
                 assertThat(input).isNotEmpty.hasOnlyElementsOfType(KGreetingType::class.java)
                 return "Hello, this is a $input greeting"
             }
+
             @DgsQuery
             fun jhello(@InputArgument input: List<JGreetingType>): String {
                 assertThat(input).isNotEmpty.hasOnlyElementsOfType(JGreetingType::class.java)
@@ -1672,7 +1674,6 @@ internal class InputArgumentTest {
 
     @Test
     fun `The Object scalar should be converted using the extended scalar`() {
-
         val schema = """
             type Query {
                 hello(objects: [BarInput]): String
@@ -1712,7 +1713,6 @@ internal class InputArgumentTest {
 
     @Test
     fun `The Object scalar as top level input argument should be passed into a Map of String to Any`() {
-
         val schema = """
             type Query {
                 hello(json: Object): String
@@ -1727,6 +1727,7 @@ internal class InputArgumentTest {
                 assertThat(json).isNotEmpty.containsKeys("keyA", "keyB").containsValues("value A", "value B")
                 return json.map { a -> "${a.key}: ${a.value}" }.joinToString()
             }
+
             @DgsRuntimeWiring
             fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
                 return builder.scalar(ExtendedScalars.Object)
@@ -1746,7 +1747,6 @@ internal class InputArgumentTest {
 
     @Test
     fun `A field of an input type of type Any should be assigned the actual value and skip converting`() {
-
         val schema = """
             type Query {
                 hello(filter: Filter): String
@@ -1765,6 +1765,7 @@ internal class InputArgumentTest {
                 assertThat(filter).isNotNull.extracting { it.query }.isNotNull()
                 return filter.toString()
             }
+
             @DgsRuntimeWiring
             fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
                 return builder.scalar(ExtendedScalars.Object)

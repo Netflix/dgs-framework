@@ -48,7 +48,6 @@ class ErrorsTest {
 
     @Test
     fun unknownErrorType() {
-
         val jsonResponse = """
             {
               "errors": [

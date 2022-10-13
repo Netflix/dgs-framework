@@ -60,10 +60,11 @@ class DefaultInputObjectMapper(val customInputObjectMapper: InputObjectMapper? =
                     targetClass = targetClass.java,
                     nestedClass = parameter.type.arguments[0].type!!.jvmErasure,
                     nestedType =
-                    if (parameter.type.arguments[0].type!!.arguments.isNotEmpty())
+                    if (parameter.type.arguments[0].type!!.arguments.isNotEmpty()) {
                         ((parameter.type.arguments[0].type!!.arguments[0].type) as KType).javaType
-                    else
+                    } else {
                         null
+                    }
                 )
 
                 if (parameter.type.jvmErasure == Set::class) {

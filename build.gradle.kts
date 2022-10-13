@@ -28,7 +28,7 @@ plugins {
     `java-library`
     id("nebula.dependency-recommender") version "11.0.0"
     id("nebula.netflixoss") version "10.6.0"
-    id("org.jmailen.kotlinter") version "3.10.0"
+    id("org.jmailen.kotlinter") version "3.11.1"
     id("me.champeau.jmh") version "0.6.6"
     kotlin("jvm") version Versions.KOTLIN_VERSION
     kotlin("kapt") version Versions.KOTLIN_VERSION
@@ -50,16 +50,16 @@ allprojects {
     // and suggest an upgrade. The only exception currently are those defined
     // in buildSrc, most likley because the variables are used in plugins as well
     // as dependencies. e.g. KOTLIN_VERSION
-    extra["sb.version"] = "2.6.7"
+    extra["sb.version"] = "2.6.12"
     val springBootVersion = extra["sb.version"] as String
 
     dependencyRecommendations {
         mavenBom(mapOf("module" to "org.jetbrains.kotlin:kotlin-bom:${Versions.KOTLIN_VERSION}"))
-        mavenBom(mapOf("module" to "org.springframework:spring-framework-bom:5.3.18"))
+        mavenBom(mapOf("module" to "org.springframework:spring-framework-bom:5.3.23"))
         mavenBom(mapOf("module" to "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
-        mavenBom(mapOf("module" to "org.springframework.security:spring-security-bom:5.6.5"))
+        mavenBom(mapOf("module" to "org.springframework.security:spring-security-bom:5.7.3"))
         mavenBom(mapOf("module" to "org.springframework.cloud:spring-cloud-dependencies:2021.0.2"))
-        mavenBom(mapOf("module" to "com.fasterxml.jackson:jackson-bom:2.13.2"))
+        mavenBom(mapOf("module" to "com.fasterxml.jackson:jackson-bom:2.13.4"))
     }
 }
 

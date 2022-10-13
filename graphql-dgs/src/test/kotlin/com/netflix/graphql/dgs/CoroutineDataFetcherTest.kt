@@ -130,7 +130,7 @@ class CoroutineDataFetcherTest {
                         "first" to 10,
                         "second" to 9,
                         "third" to 8,
-                        "fourth" to 7,
+                        "fourth" to 7
                     )
                 )
         }
@@ -183,7 +183,7 @@ class CoroutineDataFetcherTest {
 
         val context = DgsContext(
             null,
-            null,
+            null
         )
 
         val executionResult = build.execute(
@@ -222,7 +222,7 @@ class CoroutineDataFetcherTest {
 
         val context = DgsContext(
             null,
-            null,
+            null
         )
 
         val executionResult = build.execute(

@@ -97,6 +97,7 @@ class WebsocketGraphQLTransportWSProtocolHandlerTest {
         connect(session1)
         subscribe(session1, 3)
     }
+
     @Test
     fun testMultipleClients() {
         connect(session1)
@@ -166,7 +167,6 @@ class WebsocketGraphQLTransportWSProtocolHandlerTest {
     }
 
     private fun subscribe(webSocketSession: WebSocketSession, nrOfResults: Int) {
-
         every { webSocketSession.isOpen } returns true
 
         val results = (1..nrOfResults).map {

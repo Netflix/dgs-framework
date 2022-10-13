@@ -70,9 +70,8 @@ object BaseDgsQueryExecutor {
         queryExecutionStrategy: ExecutionStrategy,
         mutationExecutionStrategy: ExecutionStrategy,
         idProvider: Optional<ExecutionIdProvider>,
-        preparsedDocumentProvider: PreparsedDocumentProvider?,
+        preparsedDocumentProvider: PreparsedDocumentProvider?
     ): CompletableFuture<ExecutionResult> {
-
         var inputVariables = variables ?: Collections.emptyMap()
 
         if (!StringUtils.hasText(query)) {

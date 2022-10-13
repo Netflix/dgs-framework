@@ -34,7 +34,8 @@ class DefaultDgsWebfluxHttpHandler(
 ) : DgsWebfluxHttpHandler {
 
     override fun graphql(request: ServerRequest): Mono<ServerResponse> {
-        @Suppress("UNCHECKED_CAST") val executionResult: Mono<ExecutionResult> =
+        @Suppress("UNCHECKED_CAST")
+        val executionResult: Mono<ExecutionResult> =
 
             request.bodyToMono(String::class.java)
                 .flatMap { body ->
@@ -55,7 +56,7 @@ class DefaultDgsWebfluxHttpHandler(
                                 query,
                                 (readValue["variables"] ?: emptyMap<String, Any>()) as Map<String, Any>,
                                 (readValue["extensions"] ?: emptyMap<String, Any>()) as Map<String, Any>,
-                                operationName,
+                                operationName
                             )
                         }
                     }

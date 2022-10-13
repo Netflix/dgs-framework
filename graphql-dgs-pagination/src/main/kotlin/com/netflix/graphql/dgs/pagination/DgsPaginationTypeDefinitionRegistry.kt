@@ -52,7 +52,7 @@ class DgsPaginationTypeDefinitionRegistry {
                 definitions.add(createEdge(it.name))
             }
 
-        if (types.any { it.hasDirective("connection") } && ! types.any { it.name == "PageInfo" }) {
+        if (types.any { it.hasDirective("connection") } && !types.any { it.name == "PageInfo" }) {
             definitions.add(createPageInfo())
         }
 

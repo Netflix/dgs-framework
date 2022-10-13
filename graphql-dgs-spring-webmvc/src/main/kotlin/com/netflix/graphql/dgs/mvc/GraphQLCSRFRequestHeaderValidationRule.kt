@@ -51,7 +51,9 @@ class GraphQLCSRFRequestHeaderValidationRule : GraphQLRequestHeaderValidationRul
          * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
          */
         val NON_PREFLIGHTED_CONTENT_TYPES = setOf(
-            MediaType.APPLICATION_FORM_URLENCODED, MediaType.MULTIPART_FORM_DATA, MediaType.TEXT_PLAIN
+            MediaType.APPLICATION_FORM_URLENCODED,
+            MediaType.MULTIPART_FORM_DATA,
+            MediaType.TEXT_PLAIN
         )
 
         /**
@@ -65,7 +67,9 @@ class GraphQLCSRFRequestHeaderValidationRule : GraphQLRequestHeaderValidationRul
          * @see https://github.com/apollographql/apollo-server/blob/version-4/packages/server/src/preventCsrf.ts
          */
         val GRAPHQL_PREFLIGHT_REQUESTS_HEADERS = listOf(
-            HEADER_APOLLO_REQUIRE_PREFLIGHT, HEADER_X_APOLLO_OPERATION_NAME, HEADER_GRAPHQL_REQUIRE_PREFLIGHT
+            HEADER_APOLLO_REQUIRE_PREFLIGHT,
+            HEADER_X_APOLLO_OPERATION_NAME,
+            HEADER_GRAPHQL_REQUIRE_PREFLIGHT
         ).map { it.lowercase() }.toSet()
 
         /**

@@ -95,7 +95,6 @@ class WebsocketGraphQLTransportWSProtocolHandler(private val dgsQueryExecutor: D
 
                 context.connectionParams = message.payload
                 try {
-
                     session.sendMessage(
                         TextMessage(
                             objectMapper.writeValueAsBytes(
