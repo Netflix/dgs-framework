@@ -31,7 +31,7 @@ plugins {
     id("org.jmailen.kotlinter") version "3.11.1"
     id("me.champeau.jmh") version "0.6.6"
     kotlin("jvm") version Versions.KOTLIN_VERSION
-    kotlin("kapt") version Versions.KOTLIN_VERSION
+    kotlin("kapt") version 1.7.20
     idea
     eclipse
 }
