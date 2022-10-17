@@ -40,7 +40,7 @@ import reactor.core.publisher.Mono
 @AutoConfigureWebTestClient
 @EnableWebFlux
 @SpringBootTest(
-    classes = [CustomDgsWebfluxHttpHandler.TestConfig::class, DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, CustomDgsWebfluxHttpHandler.ExampleImplementation::class],
+    classes = [CustomDgsWebfluxHttpHandler.TestConfig::class, DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, CustomDgsWebfluxHttpHandler.ExampleImplementation::class]
 )
 class CustomDgsWebfluxHttpHandler {
 

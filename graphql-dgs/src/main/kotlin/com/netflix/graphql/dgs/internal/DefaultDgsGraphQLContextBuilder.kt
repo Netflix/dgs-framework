@@ -53,7 +53,7 @@ open class DefaultDgsGraphQLContextBuilder(
 
         return DgsContext(
             customContext,
-            dgsRequestData,
+            dgsRequestData
         )
     }
 
@@ -81,5 +81,5 @@ interface DgsRequestData {
 data class DgsWebMvcRequestData(
     override val extensions: Map<String, Any>? = null,
     override val headers: HttpHeaders? = null,
-    val webRequest: WebRequest? = null,
+    val webRequest: WebRequest? = null
 ) : DgsRequestData

@@ -75,7 +75,7 @@ open class DgsExtendedScalarsAutoConfiguration {
                         ExtendedScalars.Object,
                         ExtendedScalars.Json,
                         ExtendedScalars.Url,
-                        ExtendedScalars.Locale,
+                        ExtendedScalars.Locale
                     )
                 }
             }

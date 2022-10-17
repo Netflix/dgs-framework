@@ -39,7 +39,6 @@ class DataFetcherWithDirectivesTest {
 
     @Test
     fun addFetchersWithConvertedArguments() {
-
         val queryFetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
             fun hellOFetcher(dataFetchingEnvironment: DataFetchingEnvironment): String {

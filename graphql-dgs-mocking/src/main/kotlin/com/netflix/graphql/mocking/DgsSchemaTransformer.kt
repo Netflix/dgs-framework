@@ -22,7 +22,6 @@ import java.util.*
 class DgsSchemaTransformer {
 
     fun transformSchemaWithMockProviders(schema: GraphQLSchema, mockProviders: Set<MockProvider>): GraphQLSchema {
-
         val mockConfig = HashMap<String, Any>()
 
         mockProviders.forEach { p -> mockConfig.putAll(p.provide()) }

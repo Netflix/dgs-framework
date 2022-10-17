@@ -40,7 +40,12 @@ class HelloDataFetcherTest {
 
     @Test
     void helloShouldIncludeNameWithVariables() {
-        String message = queryExecutor.executeAndExtractJsonPath("query Hello($name: String) { hello(name: $name)}", "data.hello", Maps.newHashMap("name", "DGS"));
+        String message = queryExecutor
+                .executeAndExtractJsonPath(
+                        "query Hello($name: String) { hello(name: $name)}",
+                        "data.hello",
+                        Maps.newHashMap("name", "DGS")
+                );
         assertThat(message).isEqualTo("hello, DGS!");
     }
 
@@ -56,8 +61,9 @@ class HelloDataFetcherTest {
             queryExecutor.executeAndExtractJsonPath("{greeting}", "data.greeting");
             fail("Exception should have been thrown");
         } catch (QueryException ex) {
-            assertThat(ex.getMessage()).contains("Validation error of type FieldUndefined: Field 'greeting' in type 'Query' is undefined @ 'greeting'");
-            assertThat(ex.getErrors().size()).isEqualTo(1);
+            assertThat(ex.getMessage())
+                    .contains("Validation error (FieldUndefined@[greeting]) : Field 'greeting' in type 'Query' is undefined");
+            assertThat(ex.getErrors()).hasSize(1);
         }
     }
 

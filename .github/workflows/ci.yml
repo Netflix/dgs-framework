@@ -6,7 +6,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
 
       - name: Setup Java ${{ matrix.jdk-version }}
         uses: actions/setup-java@v3
@@ -24,7 +24,7 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f scripts/requirements.txt ]; then pip install -r scripts/requirements.txt; fi
 
-      - uses: actions/cache@v3.0.4
+      - uses: actions/cache@v3.0.10
         id: gradle-wrapper-cache
         with:
           path: ~/.gradle/wrapper
@@ -32,14 +32,14 @@ jobs:
           restore-keys: ${{ runner.os }}-gradlewrapper-
 
       - name: Cache Gradle packages
-        uses: actions/cache@v3.0.4
+        uses: actions/cache@v3.0.10
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
       - name: Maven cache
-        uses: actions/cache@v3.0.4
+        uses: actions/cache@v3.0.10
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -57,13 +57,13 @@ jobs:
           ./gradlew --info publishToMavenLocal --warning-mode all
 
       - name: Clone dgs-examples-java
-        uses: actions/checkout@master
+        uses: actions/checkout@v3.1.0
         with:
           repository: Netflix/dgs-examples-java
           path: build/examples/dgs-examples-java
 
       - name: Clone dgs-examples-kotlin
-        uses: actions/checkout@master
+        uses: actions/checkout@v3.1.0
         with:
           repository: Netflix/dgs-examples-kotlin
           path: build/examples/dgs-examples-kotlin

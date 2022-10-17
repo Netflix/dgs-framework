@@ -237,6 +237,7 @@ internal class DgsSchemaProviderTest {
             fun fetcher1(): String {
                 return "fetcher1"
             }
+
             @DgsData(parentType = "Query", field = "hello")
             fun fetcher2(): String {
                 return "fetcher2"
@@ -494,7 +495,6 @@ internal class DgsSchemaProviderTest {
 
     @Test
     fun disableInstrumentationForDataFetchersWithAnnotation() {
-
         val noTracingDataFetcher = object : Any() {
             @DgsEnableDataFetcherInstrumentation(false)
             @DgsData(parentType = "Query", field = "hello")
@@ -550,7 +550,6 @@ internal class DgsSchemaProviderTest {
 
     @Test
     fun enableInstrumentationForInterfaceDataFetcher() {
-
         val schema = """
               type Query {
                 video: Video
@@ -582,7 +581,6 @@ internal class DgsSchemaProviderTest {
 
     @Test
     fun disableInstrumentationForInterfaceDataFetcherWithAnnotation() {
-
         val schema = """
               type Query {
                 video: Video
@@ -615,7 +613,6 @@ internal class DgsSchemaProviderTest {
 
     @Test
     fun disableInstrumentationForAsyncInterfaceDataFetcher() {
-
         val schema = """
               type Query {
                 video: Video

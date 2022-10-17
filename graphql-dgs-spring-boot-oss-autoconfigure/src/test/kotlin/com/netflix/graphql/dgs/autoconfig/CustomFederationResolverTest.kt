@@ -48,7 +48,9 @@ class CustomFederationResolverTest {
                                     } 
                                 }
                             }""",
-                    "data['_entities'][0].title", variables, String::class.java
+                    "data['_entities'][0].title",
+                    variables,
+                    String::class.java
                 )
 
                 assertThat(title).isEqualTo("some title")

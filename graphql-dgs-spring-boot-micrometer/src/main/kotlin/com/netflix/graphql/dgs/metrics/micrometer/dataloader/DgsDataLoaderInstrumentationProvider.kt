@@ -12,7 +12,7 @@ import org.dataloader.MappedBatchLoader
 import org.dataloader.MappedBatchLoaderWithContext
 
 class DgsDataLoaderInstrumentationProvider(
-    private val meterRegistrySupplier: DgsMeterRegistrySupplier,
+    private val meterRegistrySupplier: DgsMeterRegistrySupplier
 ) : DataLoaderInstrumentationExtensionProvider {
 
     private val batchLoaderClasses = mutableMapOf<String, Class<out BatchLoader<*, *>>>()

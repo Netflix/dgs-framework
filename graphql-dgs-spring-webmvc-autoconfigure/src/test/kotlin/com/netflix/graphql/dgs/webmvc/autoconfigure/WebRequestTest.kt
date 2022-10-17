@@ -508,42 +508,42 @@ class WebRequestTest {
 
         @DgsData(parentType = "Query", field = "withCookie")
         fun usingCookie(
-            @CookieValue myCookie: String,
+            @CookieValue myCookie: String
         ): String {
             return myCookie
         }
 
         @DgsData(parentType = "Query", field = "withOptionalCookie")
         fun usingOptionalCookie(
-            @CookieValue myCookie: Optional<String>,
+            @CookieValue myCookie: Optional<String>
         ): String {
             return myCookie.get()
         }
 
         @DgsData(parentType = "Query", field = "withEmptyOptionalCookie")
         fun usingEmptyOptionalCookie(
-            @CookieValue(required = false) myCookie: Optional<String>,
+            @CookieValue(required = false) myCookie: Optional<String>
         ): String {
             return myCookie.orElse("emptycookie")
         }
 
         @DgsData(parentType = "Query", field = "withEmptyCookie")
         fun usingEmptyOptionalCookie(
-            @CookieValue(required = false) myCookie: String?,
+            @CookieValue(required = false) myCookie: String?
         ): String {
             return myCookie ?: "emptycookie"
         }
 
         @DgsData(parentType = "Query", field = "withRequiredCookie")
         fun usingRequiredCookie(
-            @CookieValue(required = true) myCookie: String,
+            @CookieValue(required = true) myCookie: String
         ): String {
             return myCookie
         }
 
         @DgsData(parentType = "Query", field = "withDefaultCookie")
         fun usingCookieWithDefault(
-            @CookieValue(defaultValue = "defaultvalue") myCookie: String,
+            @CookieValue(defaultValue = "defaultvalue") myCookie: String
         ): String {
             return myCookie
         }

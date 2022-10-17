@@ -127,7 +127,7 @@ internal class InputObjectMapperTest {
     fun `An unknown property should be ignored on a Java object`() {
         val input = mapOf(
             "simpleString" to "hello",
-            "unknown" to "The String",
+            "unknown" to "The String"
         )
 
         val mapToObject = inputObjectMapper.mapToJavaObject(input, JInputObject::class.java)
@@ -138,7 +138,7 @@ internal class InputObjectMapperTest {
     @Test
     fun `If none of the properties match the fields in a Java object, an exception should be thrown`() {
         val input = mapOf(
-            "unknown" to "The String",
+            "unknown" to "The String"
         )
 
         assertThatThrownBy { inputObjectMapper.mapToJavaObject(input, JInputObject::class.java) }.isInstanceOf(
@@ -210,7 +210,6 @@ internal class InputObjectMapperTest {
 
     @Test
     fun `A custom object mapper should be used if available`() {
-
         val customInputObjectMapper = object : InputObjectMapper {
             override fun <T : Any> mapToKotlinObject(inputMap: Map<String, *>, targetClass: KClass<T>): T {
                 val filtered = inputMap.filterKeys { !it.startsWith("simple") }
@@ -230,7 +229,6 @@ internal class InputObjectMapperTest {
 
     @Test
     fun `A custom object mapper should work recursively`() {
-
         val customInputObjectMapper = object : InputObjectMapper {
             override fun <T : Any> mapToKotlinObject(inputMap: Map<String, *>, targetClass: KClass<T>): T {
                 val filtered = inputMap.filterKeys { !it.startsWith("simple") }

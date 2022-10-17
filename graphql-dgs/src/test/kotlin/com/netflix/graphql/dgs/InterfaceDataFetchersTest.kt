@@ -54,7 +54,6 @@ class InterfaceDataFetchersTest {
 
     @Test
     fun testDataFetchersOnInterface() {
-
         val movieTypeResolver = object : Any() {
             @DgsTypeResolver(name = "Movie")
             fun movieTypes(movie: Movie): String {
