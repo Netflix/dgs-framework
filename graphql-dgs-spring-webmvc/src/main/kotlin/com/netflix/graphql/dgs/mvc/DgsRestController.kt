@@ -18,15 +18,13 @@ package com.netflix.graphql.dgs.mvc
 
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.internal.DgsExecutionResult
 import com.netflix.graphql.dgs.internal.utils.MultipartVariableMapper
 import com.netflix.graphql.dgs.internal.utils.TimeTracer
-import graphql.ExecutionResultImpl
-import graphql.GraphqlErrorBuilder
 import graphql.execution.reactive.SubscriptionPublisher
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -75,7 +73,9 @@ open class DgsRestController(
 ) {
 
     companion object {
-        const val DGS_RESPONSE_HEADERS_KEY = "dgs-response-headers"
+        // defined in here and DgsExecutionResult, for backwards compatibility.
+        // keep these two variables synced.
+        const val DGS_RESPONSE_HEADERS_KEY = DgsExecutionResult.DGS_RESPONSE_HEADERS_KEY
         private val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
     }
 
@@ -226,39 +226,9 @@ open class DgsRestController(
                 .body("Trying to execute subscription on /graphql. Use /subscriptions instead!")
         }
 
-        val responseHeaders = if (executionResult.extensions?.containsKey(DGS_RESPONSE_HEADERS_KEY) == true) {
-            val dgsResponseHeaders = executionResult.extensions[DGS_RESPONSE_HEADERS_KEY]
-            val responseHeaders = HttpHeaders()
-            if (dgsResponseHeaders is Map<*, *>) {
-                dgsResponseHeaders.forEach {
-                    if (it.key != null) {
-                        responseHeaders.add(it.key.toString(), it.value?.toString())
-                    }
-                }
-            } else {
-                logger.warn(
-                    "{} must be of type java.util.Map, but was {}",
-                    DGS_RESPONSE_HEADERS_KEY,
-                    dgsResponseHeaders?.javaClass?.name
-                )
-            }
-
-            executionResult.extensions.remove(DGS_RESPONSE_HEADERS_KEY)
-            responseHeaders
-        } else HttpHeaders()
-
-        val result = try {
-            TimeTracer.logTime(
-                { mapper.writeValueAsBytes(executionResult.toSpecification()) },
-                logger,
-                "Serialized JSON result in {}ms"
-            )
-        } catch (ex: InvalidDefinitionException) {
-            val errorMessage = "Error serializing response: ${ex.message}"
-            val errorResponse = ExecutionResultImpl(GraphqlErrorBuilder.newError().message(errorMessage).build())
-            logger.error(errorMessage, ex)
-            mapper.writeValueAsBytes(errorResponse.toSpecification())
+        return when (executionResult) {
+            is DgsExecutionResult -> executionResult.toSpringResponse()
+            else -> DgsExecutionResult(executionResult).toSpringResponse()
         }
-        return ResponseEntity(result, responseHeaders, HttpStatus.OK)
     }
 }
