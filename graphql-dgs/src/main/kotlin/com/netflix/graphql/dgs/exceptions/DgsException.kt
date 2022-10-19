@@ -25,13 +25,21 @@ abstract class DgsException(
     override val cause: Exception? = null,
     val errorType: ErrorType = ErrorType.UNKNOWN
 ) : RuntimeException(message, cause) {
-    fun toGraphQlError(path: ResultPath = ResultPath.rootPath()): TypedGraphQLError {
+    companion object {
+        const val EXTENSION_CLASS_KEY = "class"
+    }
+
+    fun toGraphQlError(path: ResultPath? = null): TypedGraphQLError {
         return TypedGraphQLError
             .newBuilder()
+            .apply {
+                if (path != null) {
+                    path(path)
+                }
+            }
             .errorType(errorType)
-            .path(path)
             .message(message)
-            .extensions(mapOf("class" to this::class.java.name))
+            .extensions(mapOf(EXTENSION_CLASS_KEY to this::class.java.name))
             .build()
     }
 }
