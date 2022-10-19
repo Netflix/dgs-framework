@@ -77,7 +77,7 @@ class MalformedQueryContentTest {
             .bodyValue("{ }")
             .exchange()
             .expectStatus()
-            .isOk
+            .isBadRequest
             .expectBody()
             .json(
                 """
