@@ -267,7 +267,7 @@ class DgsSchemaProvider(
                     val filteredMergedAnnotations =
                         mergedAnnotations
                             .stream(DgsData::class.java)
-                            .filter { (it.source as Method).declaringClass == method.declaringClass }
+                            .filter { AopUtils.getTargetClass((it.source as Method).declaringClass) == AopUtils.getTargetClass(method.declaringClass) }
                             .collect(Collectors.toList())
                     filteredMergedAnnotations.forEach { dgsDataAnnotation ->
                         registerDataFetcher(
