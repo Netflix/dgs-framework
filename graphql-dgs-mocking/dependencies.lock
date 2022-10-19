@@ -146,7 +146,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.4"
+            "locked": "1.13.2"
         },
         "net.datafaker:datafaker": {
             "locked": "1.4.0"
@@ -475,7 +475,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.4"
+            "locked": "1.13.2"
         },
         "net.datafaker:datafaker": {
             "locked": "1.4.0"
@@ -516,7 +516,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.4"
+            "locked": "1.13.2"
         },
         "net.datafaker:datafaker": {
             "locked": "1.4.0"
