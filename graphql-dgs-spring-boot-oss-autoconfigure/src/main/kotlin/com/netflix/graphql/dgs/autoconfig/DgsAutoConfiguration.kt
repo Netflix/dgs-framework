@@ -208,7 +208,9 @@ open class DgsAutoConfiguration(
     @Bean
     @ConditionalOnProperty(
         prefix = "$AUTO_CONF_PREFIX.introspection",
-        name = ["enabled"], havingValue = "false", matchIfMissing = false
+        name = ["enabled"],
+        havingValue = "false",
+        matchIfMissing = false
     )
     open fun noIntrospectionFieldVisibility(): GraphqlFieldVisibility {
         return NO_INTROSPECTION_FIELD_VISIBILITY

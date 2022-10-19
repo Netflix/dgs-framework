@@ -45,6 +45,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.reactivestreams.Publisher
+import org.slf4j.event.Level
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 import reactor.core.publisher.Flux
@@ -57,7 +58,7 @@ class WebsocketGraphQLWSProtocolHandlerTest {
 
     @BeforeEach
     fun setup() {
-        dgsWebsocketHandler = WebsocketGraphQLWSProtocolHandler(dgsQueryExecutor)
+        dgsWebsocketHandler = WebsocketGraphQLWSProtocolHandler(dgsQueryExecutor, Level.ERROR)
 
         every { session1.id } returns "1"
         every { session2.id } returns "2"
@@ -250,7 +251,6 @@ class WebsocketGraphQLWSProtocolHandlerTest {
     }
 
     private fun start(webSocketSession: WebSocketSession, nrOfResults: Int) {
-
         every { webSocketSession.isOpen } returns true
 
         val results = (1..nrOfResults).map {
@@ -269,7 +269,6 @@ class WebsocketGraphQLWSProtocolHandlerTest {
     }
 
     private fun startWithVariable(webSocketSession: WebSocketSession, nrOfResults: Int) {
-
         every { webSocketSession.isOpen } returns true
 
         val results = (1..nrOfResults).map {
@@ -287,7 +286,6 @@ class WebsocketGraphQLWSProtocolHandlerTest {
     }
 
     private fun startWithNullVariable(webSocketSession: WebSocketSession, nrOfResults: Int) {
-
         every { webSocketSession.isOpen } returns true
 
         val results = (1..nrOfResults).map {

@@ -51,6 +51,7 @@ class DgsWebfluxConfigurationProperties(
         /** GraphiQL title */
         @DefaultValue("Simple GraphiQL Example") var title: String = "Simple GraphiQL Example"
     )
+
     /**
      * Configuration properties for the schema-json endpoint.
      */

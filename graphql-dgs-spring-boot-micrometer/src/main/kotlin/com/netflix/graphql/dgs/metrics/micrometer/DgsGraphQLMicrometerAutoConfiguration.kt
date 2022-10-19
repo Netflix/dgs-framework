@@ -41,7 +41,9 @@ open class DgsGraphQLMicrometerAutoConfiguration {
     @Bean
     @ConditionalOnProperty(
         prefix = "$AUTO_CONF_PREFIX.instrumentation",
-        name = ["enabled"], havingValue = "true", matchIfMissing = true
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = true
     )
     open fun metricsInstrumentation(
         dgsSchemaProvider: DgsSchemaProvider,
@@ -64,7 +66,9 @@ open class DgsGraphQLMicrometerAutoConfiguration {
     @Bean
     @ConditionalOnProperty(
         prefix = "$AUTO_CONF_PREFIX.data-loader-instrumentation",
-        name = ["enabled"], havingValue = "true", matchIfMissing = true
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = true
     )
     open fun dataLoaderInstrumentationProvider(
         meterRegistrySupplier: DgsMeterRegistrySupplier

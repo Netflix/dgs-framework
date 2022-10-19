@@ -34,7 +34,7 @@ import java.util.function.Consumer
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(
     properties = [
-        "management.metrics.dgs-graphql.caching.enabled:false",
+        "management.metrics.dgs-graphql.caching.enabled: false"
     ],
     classes = [
         DgsGraphQLMicrometerAutoConfiguration.MetricsPropertiesConfiguration::class,

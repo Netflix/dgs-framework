@@ -747,7 +747,7 @@ class MicrometerServletSmokeTest {
                 .and("gql.operation.name", "anonymous")
                 .and("gql.query.complexity", "5")
                 .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
-                .toList(),
+                .toList()
         )
     }
 

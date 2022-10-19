@@ -91,7 +91,6 @@ class DgsGraphQLMetricsInstrumentation(
         executionResult: ExecutionResult,
         parameters: InstrumentationExecutionParameters
     ): CompletableFuture<ExecutionResult> {
-
         val state = parameters.getInstrumentationState<MetricsInstrumentationState>()
         val tags =
             Tags.empty()
@@ -243,7 +242,8 @@ class DgsGraphQLMetricsInstrumentation(
                 )
                 .and(
                     limitedTagMetricResolver.tags(
-                        GqlTag.OPERATION_NAME.key, operationName.orElse(TagUtils.TAG_VALUE_ANONYMOUS)
+                        GqlTag.OPERATION_NAME.key,
+                        operationName.orElse(TagUtils.TAG_VALUE_ANONYMOUS)
                     )
                 )
                 .and(

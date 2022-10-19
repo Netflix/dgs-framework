@@ -27,6 +27,7 @@ import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
 import org.slf4j.LoggerFactory
+import org.slf4j.event.Level
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
@@ -41,7 +42,7 @@ import java.util.concurrent.CopyOnWriteArrayList
  * <a href="https://github.com/enisdenjo/graphql-ws/blob/master/PROTOCOL.md">GraphQL Over WebSocket Protocol</a> and
  * for use in DGS framework.
  */
-class WebsocketGraphQLTransportWSProtocolHandler(private val dgsQueryExecutor: DgsQueryExecutor, private val connectionInitTimeout: Duration) : TextWebSocketHandler() {
+class WebsocketGraphQLTransportWSProtocolHandler(private val dgsQueryExecutor: DgsQueryExecutor, private val connectionInitTimeout: Duration, private val subscriptionErrorLogLevel: Level) : TextWebSocketHandler() {
 
     internal val sessions = CopyOnWriteArrayList<WebSocketSession>()
     internal val contexts = ConcurrentHashMap<String, Context<Any>>()
@@ -94,7 +95,6 @@ class WebsocketGraphQLTransportWSProtocolHandler(private val dgsQueryExecutor: D
 
                 context.connectionParams = message.payload
                 try {
-
                     session.sendMessage(
                         TextMessage(
                             objectMapper.writeValueAsBytes(
@@ -187,8 +187,13 @@ class WebsocketGraphQLTransportWSProtocolHandler(private val dgsQueryExecutor: D
             }
 
             override fun onError(t: Throwable) {
-                logger.error("Error on subscription {}", id, t)
-
+                when (subscriptionErrorLogLevel) {
+                    Level.ERROR -> logger.error("Error on subscription {}", id, t)
+                    Level.WARN -> logger.warn("Error on subscription {}", id, t)
+                    Level.INFO -> logger.info("Error on subscription {}: {}", id, t.message)
+                    Level.DEBUG -> logger.debug("Error on subscription {}", id, t)
+                    Level.TRACE -> logger.trace("Error on subscription {}", id, t)
+                }
                 val message =
                     Message.ErrorMessage(
                         id = id,

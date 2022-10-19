@@ -83,7 +83,8 @@ abstract class AbstractInputArgumentResolver(inputObjectMapper: InputObjectMappe
         }
 
         if (target.type == Optional::class.java) {
-            val elementType = TypeDescriptor.valueOf(target.resolvableType.getGeneric(0).toClass())
+            val generic = target.resolvableType.getGeneric(0)
+            val elementType = TypeDescriptor(generic, null, null)
             return Optional.ofNullable(convertValue(source, elementType))
         }
 

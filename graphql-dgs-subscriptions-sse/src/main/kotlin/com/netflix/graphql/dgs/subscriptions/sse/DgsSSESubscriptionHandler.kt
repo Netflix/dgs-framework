@@ -95,7 +95,8 @@ open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor
         } catch (exc: ClassCastException) {
             logger.error(
                 "Invalid return type for subscription datafetcher. A subscription datafetcher must return a Publisher<ExecutionResult>. The query was {}",
-                query, exc
+                query,
+                exc
             )
             throw ServerErrorException("Invalid return type for subscription datafetcher. Was a non-subscription query send to the subscription endpoint?", exc)
         }

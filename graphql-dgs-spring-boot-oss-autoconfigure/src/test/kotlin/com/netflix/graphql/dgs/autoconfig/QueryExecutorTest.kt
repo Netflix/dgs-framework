@@ -110,17 +110,17 @@ class QueryExecutorTest {
 
     @Test
     fun queryDocumentWithError() {
-
         val error: QueryException = assertThrows {
             context.withUserConfiguration(HelloDataFetcherConfig::class.java).run { ctx ->
                 assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                    it.executeAndGetDocumentContext("{unknown }")
+                    it.executeAndGetDocumentContext("{ unknown }")
                 }
             }
         }
 
         assertThat(error.errors.size).isEqualTo(1)
-        assertThat(error.errors[0].message).isEqualTo("Validation error (FieldUndefined@[unknown]) : Field 'unknown' in type 'Query' is undefined")
+        assertThat(error.errors[0].message)
+            .isEqualTo("Validation error (FieldUndefined@[unknown]) : Field 'unknown' in type 'Query' is undefined")
     }
 
     @Test

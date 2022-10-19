@@ -60,7 +60,6 @@ These are rough mappings intended to provide a quick explanation of the semantic
 @See https://docs.google.com/document/d/1FX5K0C1pyySayFmRt53FptUQ8vCf__y_WduaKT8HsbM
  */
 enum class ErrorType {
-    @JsonEnumDefaultValue
     /**
      Unknown error.
 
@@ -78,6 +77,7 @@ enum class ErrorType {
 
      HTTP Mapping: 520 Unknown Error
      */
+    @JsonEnumDefaultValue
     UNKNOWN,
 
     /**

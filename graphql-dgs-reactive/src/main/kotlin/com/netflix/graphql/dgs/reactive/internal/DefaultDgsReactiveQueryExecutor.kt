@@ -67,13 +67,13 @@ class DefaultDgsReactiveQueryExecutor(
         operationName: String?,
         serverHttpRequest: ServerRequest?
     ): Mono<ExecutionResult> {
-
         return Mono
             .fromCallable {
-                if (reloadIndicator.reloadSchema())
+                if (reloadIndicator.reloadSchema()) {
                     schema.updateAndGet { schemaProvider.schema() }
-                else
+                } else {
                     schema.get()
+                }
             }
             .zipWith(contextBuilder.build(DgsReactiveRequestData(extensions, headers, serverHttpRequest)))
             .flatMap { (gqlSchema, dgsContext) ->

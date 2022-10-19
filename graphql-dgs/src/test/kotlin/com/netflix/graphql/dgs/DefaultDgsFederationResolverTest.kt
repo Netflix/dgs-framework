@@ -422,7 +422,6 @@ class DefaultDgsFederationResolverTest {
 
         @Test
         fun `Entity Fetcher called with wong number of arguments`() {
-
             val movieEntityFetcher = object {
                 @DgsEntityFetcher(name = "Movie")
                 @Suppress("unused_parameter")

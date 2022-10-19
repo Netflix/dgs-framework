@@ -79,15 +79,16 @@ class WebSocketGraphQLClient(
     //       next release of reactors (v3.4.8: https://github.com/reactor/reactor-core/releases/tag/v3.4.8)
     private val connection = AtomicReference<Disposable?>(null)
     private val handshake = Mono.defer {
-        if (connectionIsStale())
+        if (connectionIsStale()) {
             doHandshake()
-        else
+        } else {
             Mono.empty()
+        }
     }
 
     override fun reactiveExecuteQuery(
         query: String,
-        variables: Map<String, Any>,
+        variables: Map<String, Any>
     ): Flux<GraphQLResponse> {
         return reactiveExecuteQuery(query, variables, null)
     }
@@ -95,7 +96,7 @@ class WebSocketGraphQLClient(
     override fun reactiveExecuteQuery(
         query: String,
         variables: Map<String, Any>,
-        operationName: String?,
+        operationName: String?
     ): Flux<GraphQLResponse> {
         // Generate a unique number for each subscription in the same session.
         val subscriptionId = subscriptionCount
@@ -131,10 +132,11 @@ class WebSocketGraphQLClient(
             client.receive()
                 .take(1)
                 .map { message ->
-                    if (message.type == GQL_CONNECTION_ACK)
+                    if (message.type == GQL_CONNECTION_ACK) {
                         message
-                    else
+                    } else {
                         throw GraphQLException("Acknowledgement expected from server, received $message")
+                    }
                 }
                 .timeout(acknowledgementTimeout)
                 .then()
@@ -271,7 +273,6 @@ class OperationMessageWebSocketClient(
         session: WebSocketSession,
         message: OperationMessage
     ): WebSocketMessage {
-
         return session.textMessage(MAPPER.writeValueAsString(message))
     }
 

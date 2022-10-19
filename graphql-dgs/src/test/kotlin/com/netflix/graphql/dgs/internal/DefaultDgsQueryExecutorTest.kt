@@ -55,7 +55,6 @@ internal class DefaultDgsQueryExecutorTest {
 
     @BeforeEach
     fun createExecutor() {
-
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
             fun hello(): String {
@@ -227,7 +226,8 @@ internal class DefaultDgsQueryExecutorTest {
                 movies { title releaseDate }
             }
             """.trimIndent(),
-            "data.movies[0]", Movie::class.java
+            "data.movies[0]",
+            Movie::class.java
         )
 
         assertThat(movie.title).isEqualTo("Extraction")
@@ -242,7 +242,8 @@ internal class DefaultDgsQueryExecutorTest {
                 movies { title releaseDate }
             }
             """.trimIndent(),
-            "data.movies", object : TypeRef<List<Movie>>() {}
+            "data.movies",
+            object : TypeRef<List<Movie>>() {}
         )
 
         assertThat(person).isInstanceOf(List::class.java)
@@ -334,7 +335,8 @@ internal class DefaultDgsQueryExecutorTest {
                 movies { title } 
             }
                 """.trimIndent(),
-                "data.movies[0]", String::class.java
+                "data.movies[0]",
+                String::class.java
             )
         }
 
@@ -354,7 +356,8 @@ internal class DefaultDgsQueryExecutorTest {
                 movies { title } 
             }
                 """.trimIndent(),
-                "data.movies[0]", object : TypeRef<List<String>>() {}
+                "data.movies[0]",
+                object : TypeRef<List<String>>() {}
             )
         }
 
@@ -397,7 +400,6 @@ internal class DefaultDgsQueryExecutorTest {
 
     @Test
     fun withFieldNamedErrors() {
-
         val context = dgsQueryExecutor.executeAndGetDocumentContext(
             """
             {
