@@ -40,6 +40,7 @@ import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLSchema
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.util.StringUtils
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -79,10 +80,14 @@ object BaseDgsQueryExecutor {
 
         if (!StringUtils.hasText(query)) {
             return CompletableFuture.completedFuture(
-                ExecutionResultImpl
-                    .newExecutionResult()
-                    .addError(DgsBadRequestException.NULL_OR_EMPTY_QUERY_EXCEPTION.toGraphQlError())
-                    .build()
+                DgsExecutionResult(
+                    status = HttpStatus.BAD_REQUEST,
+                    errors = listOf(
+                        DgsBadRequestException
+                            .NULL_OR_EMPTY_QUERY_EXCEPTION
+                            .toGraphQlError()
+                    )
+                )
             )
         }
 

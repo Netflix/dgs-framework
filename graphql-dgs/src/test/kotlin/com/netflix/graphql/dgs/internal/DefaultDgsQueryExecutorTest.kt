@@ -19,11 +19,11 @@ package com.netflix.graphql.dgs.internal
 import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.*
+import com.netflix.graphql.dgs.exceptions.DgsBadRequestException
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.method.InputArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
-import com.netflix.graphql.types.errors.TypedGraphQLError
 import graphql.InvalidSyntaxError
 import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
@@ -154,12 +154,39 @@ internal class DefaultDgsQueryExecutorTest {
     }
 
     @Test
-    fun `Empty query returns a GraphQL Error wth type SyntaxError`() {
+    fun `Empty query returns DgsExecutionResult with NULL_OR_EMPTY_QUERY_EXCEPTION`() {
         val result = dgsQueryExecutor.execute(" ")
+
         assertThat(result)
             .isNotNull
-            .extracting { it.errors.first() }
-            .isInstanceOf(TypedGraphQLError::class.java)
+            .isInstanceOf(DgsExecutionResult::class.java)
+
+        assertThat(
+            result
+                .errors
+                .first()
+                .extensions["errorType"]
+            // default bad request error type
+        ).isEqualTo(
+            DgsBadRequestException()
+                .errorType
+                .name
+        )
+
+        assertThat(
+            result
+                .errors
+                .first()
+                .message
+        ).isEqualTo(DgsBadRequestException.NULL_OR_EMPTY_QUERY_EXCEPTION.message)
+
+        val springResponse = (result as DgsExecutionResult).toSpringResponse()
+
+        assertThat(
+            springResponse
+                .statusCode
+                .value()
+        ).isEqualTo(400)
     }
 
     @Test
