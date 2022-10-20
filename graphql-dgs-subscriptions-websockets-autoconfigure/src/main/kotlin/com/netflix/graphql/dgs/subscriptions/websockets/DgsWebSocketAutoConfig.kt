@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.subscriptions.websockets
 
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -28,7 +29,7 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 import org.springframework.web.socket.server.HandshakeInterceptor
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler
 
-@Configuration
+@AutoConfiguration
 @ConditionalOnWebApplication
 @EnableConfigurationProperties(DgsWebSocketConfigurationProperties::class)
 open class DgsWebSocketAutoConfig {

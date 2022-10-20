@@ -22,10 +22,10 @@ import graphql.schema.idl.RuntimeWiring
 import graphql.validation.rules.ValidationRules
 import graphql.validation.schemawiring.ValidationSchemaWiring
 import org.springframework.beans.factory.ObjectProvider
+import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 
 @ConditionalOnClass(graphql.validation.rules.ValidationRules::class)
 @ConditionalOnProperty(
@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration
     havingValue = "true",
     matchIfMissing = true
 )
-@Configuration(proxyBeanMethods = false)
+@AutoConfiguration
 open class DgsExtendedValidationAutoConfiguration {
 
     @Bean

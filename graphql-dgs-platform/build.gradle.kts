@@ -40,6 +40,7 @@ rootProject.subprojects
         evaluationDependsOn(it.path)
     }
 
+
 dependencies {
     // The following constraints leverage the _rich versioning_ exposed by Gradle,
     // this will be published as Maven Metadata.

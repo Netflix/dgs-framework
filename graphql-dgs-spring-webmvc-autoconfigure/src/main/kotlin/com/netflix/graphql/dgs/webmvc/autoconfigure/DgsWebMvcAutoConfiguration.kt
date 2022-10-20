@@ -31,6 +31,7 @@ import com.netflix.graphql.dgs.mvc.internal.method.HandlerMethodArgumentResolver
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
+import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -50,7 +51,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ServletCookieValueM
 import org.springframework.web.servlet.mvc.method.annotation.ServletRequestDataBinderFactory
 import kotlin.streams.toList
 
-@Configuration
+@AutoConfiguration
 @ConditionalOnWebApplication
 @EnableConfigurationProperties(DgsWebMvcConfigurationProperties::class)
 open class DgsWebMvcAutoConfiguration {
