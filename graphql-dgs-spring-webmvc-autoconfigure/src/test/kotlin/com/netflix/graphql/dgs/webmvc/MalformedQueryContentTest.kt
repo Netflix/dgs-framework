@@ -89,7 +89,7 @@ class MalformedQueryContentTest {
                 .content("{  }")
 
         mvc.perform(uriBuilder)
-            .andExpect(status().isOk)
+            .andExpect(status().isBadRequest)
             .andExpect(
                 content().json(
                     """
@@ -98,7 +98,6 @@ class MalformedQueryContentTest {
                           {
                             "message":"GraphQL operations must contain a non-empty `query`.",
                             "locations":[],
-                            "path":[],
                             "extensions":{
                               "class":"com.netflix.graphql.dgs.exceptions.DgsBadRequestException",
                               "errorType":"BAD_REQUEST"
