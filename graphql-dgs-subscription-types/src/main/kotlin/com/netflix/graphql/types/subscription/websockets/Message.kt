@@ -36,7 +36,7 @@ data class ExecutionResult(
     JsonSubTypes.Type(Message.SubscribeMessage::class, name = MessageType.SUBSCRIBE),
     JsonSubTypes.Type(Message.NextMessage::class, name = MessageType.NEXT),
     JsonSubTypes.Type(Message.ErrorMessage::class, name = MessageType.ERROR),
-    JsonSubTypes.Type(Message.CompleteMessage::class, name = MessageType.COMPLETE),
+    JsonSubTypes.Type(Message.CompleteMessage::class, name = MessageType.COMPLETE)
 )
 sealed class Message(
     @JsonProperty("type")
@@ -54,19 +54,19 @@ sealed class Message(
 
     data class SubscribeMessage(
         val id: String,
-        val payload: Payload,
+        val payload: Payload
     ) : Message(MessageType.SUBSCRIBE) {
         data class Payload(
             val operationName: String? = null,
             val query: String,
             val variables: Map<String, Any>? = null,
-            val extensions: Map<String, Any>? = null,
+            val extensions: Map<String, Any>? = null
         )
     }
 
     data class NextMessage(
         val id: String,
-        val payload: com.netflix.graphql.types.subscription.websockets.ExecutionResult,
+        val payload: com.netflix.graphql.types.subscription.websockets.ExecutionResult
     ) : Message(MessageType.NEXT)
 
     data class ErrorMessage(

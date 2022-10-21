@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.subscriptions.websockets
 
+import org.slf4j.event.Level
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
@@ -28,7 +29,8 @@ import javax.annotation.PostConstruct
 data class DgsWebSocketConfigurationProperties(
     @DefaultValue("/subscriptions") var path: String = "/subscriptions",
     /** Connection Initialization timeout. */
-    @DefaultValue(CONNECTION_INIT_TIMEOUT) var connectionInitTimeout: Duration
+    @DefaultValue(CONNECTION_INIT_TIMEOUT) var connectionInitTimeout: Duration,
+    @DefaultValue("ERROR") var subscriptionErrorLogLevel: Level = Level.ERROR
 ) {
 
     @PostConstruct

@@ -54,6 +54,7 @@ open class DgsContext(val customContext: Any? = null, val requestData: DgsReques
         fun from(ei: ExecutionInput): DgsContext {
             return from(ei.graphQLContext)
         }
+
         @JvmStatic
         fun from(p: InstrumentationCreateStateParameters): DgsContext {
             return from(p.executionInput.graphQLContext)

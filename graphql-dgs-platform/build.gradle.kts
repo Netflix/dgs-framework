@@ -48,33 +48,45 @@ dependencies {
     constraints {
         // GraphQL Platform
         api("com.graphql-java:graphql-java") {
-            version { require("18.3") }
+            version {
+                strictly("[19.2, 20[")
+                prefer("19.2")
+                reject("18.2")
+            }
+
         }
         api("com.graphql-java:graphql-java-extended-scalars") {
-            version { require("18.1") }
+            version {
+                 strictly("[19.0, 20[")
+                 prefer("19.0")
+                 reject("18.2")
+            }
         }
         api("com.graphql-java:graphql-java-extended-validation") {
             // The version below will work with Jakarta EE 8 and use Hibernate Validator 6.2.
-            version { require("18.1-hibernate-validator-6.2.0.Final") }
+            version { strictly("19.1-hibernate-validator-6.2.0.Final") }
         }
         api("com.apollographql.federation:federation-graphql-java-support") {
-            version { require("2.0.0") }
+            version {
+                strictly("[2.0, 2.2[")
+                prefer("2.1.0")
+            }
         }
         // ---
         api("com.jayway.jsonpath:json-path") {
-            version { require("2.6.0") }
+            version { require("2.7.0") }
         }
         api("io.projectreactor:reactor-core") {
-            version { require("3.4.10") }
+            version { require("3.4.22") }
         }
         api("io.projectreactor:reactor-test"){
-            version { require("3.4.10") }
+            version { require("3.4.22") }
         }
         // CVEs
-        api("org.apache.logging.log4j:log4j-to-slf4j:2.18.0") {
+        api("org.apache.logging.log4j:log4j-to-slf4j:2.19.0") {
             because("Refer to CVE-2021-44228; https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228")
          }
-         api("org.apache.logging.log4j:log4j-api:2.18.0") {
+         api("org.apache.logging.log4j:log4j-api:2.19.0") {
             because("Refer to CVE-2021-44228; https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228")
          }
     }

@@ -55,7 +55,7 @@ import java.util.*
 open class CacheableQuerySignatureRepository(
     properties: DgsGraphQLMetricsProperties,
     meterRegistrySupplier: DgsMeterRegistrySupplier,
-    private val optionalCacheManager: Optional<CacheManager>,
+    private val optionalCacheManager: Optional<CacheManager>
 ) : SimpleQuerySignatureRepository(properties, meterRegistrySupplier) {
 
     private lateinit var cache: Cache

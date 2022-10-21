@@ -24,7 +24,6 @@ import org.springframework.util.MultiValueMap
 
 class WebFluxCookieValueResolver : CookieValueResolver {
     override fun getCookieValue(name: String, requestData: DgsRequestData?): String? {
-
         return if (requestData is DgsReactiveRequestData) {
             val cookies: MultiValueMap<String, HttpCookie>? = requestData.serverRequest?.cookies()
             cookies?.getFirst(name)?.value

@@ -48,11 +48,13 @@ class DgsWebfluxConfigurationProperties(
      * Configuration properties for the GraphiQL endpoint.
      */
     data class DgsGraphiQLConfigurationProperties(
+        @DefaultValue("true") var enabled: Boolean = true,
         /** Path to the GraphiQL endpoint without trailing slash. */
         @DefaultValue("/graphiql") var path: String = "/graphiql",
         /** GraphiQL title */
         @DefaultValue("Simple GraphiQL Example") var title: String = "Simple GraphiQL Example"
     )
+
     /**
      * Configuration properties for the schema-json endpoint.
      */

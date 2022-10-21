@@ -69,7 +69,6 @@ internal class ReactiveReturnTypesTest {
 
     @BeforeEach
     fun createExecutor() {
-
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
             fun hello(): Mono<String> {

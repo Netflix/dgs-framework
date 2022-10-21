@@ -68,10 +68,11 @@ class DefaultDgsQueryExecutor(
         webRequest: WebRequest?
     ): ExecutionResult {
         val graphQLSchema: GraphQLSchema =
-            if (reloadIndicator.reloadSchema())
+            if (reloadIndicator.reloadSchema()) {
                 schema.updateAndGet { schemaProvider.schema() }
-            else
+            } else {
                 schema.get()
+            }
         val dgsContext = contextBuilder.build(DgsWebMvcRequestData(extensions, headers, webRequest))
 
         val executionResult =
@@ -87,7 +88,7 @@ class DefaultDgsQueryExecutor(
                 queryExecutionStrategy = queryExecutionStrategy,
                 mutationExecutionStrategy = mutationExecutionStrategy,
                 idProvider = idProvider,
-                preparsedDocumentProvider = preparsedDocumentProvider,
+                preparsedDocumentProvider = preparsedDocumentProvider
             )
 
         // Check for NonNullableFieldWasNull errors, and log them explicitly because they don't run through the exception handlers.

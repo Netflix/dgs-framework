@@ -85,7 +85,7 @@ interface MonoGraphQLClient {
      * @return A [Mono] of [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
     fun reactiveExecuteQuery(
-        query: String,
+        query: String
     ): Mono<GraphQLResponse>
 
     /**
@@ -97,7 +97,7 @@ interface MonoGraphQLClient {
      */
     fun reactiveExecuteQuery(
         query: String,
-        variables: Map<String, Any>,
+        variables: Map<String, Any>
     ): Mono<GraphQLResponse>
 
     /**
@@ -111,7 +111,7 @@ interface MonoGraphQLClient {
     fun reactiveExecuteQuery(
         query: String,
         variables: Map<String, Any>,
-        operationName: String?,
+        operationName: String?
     ): Mono<GraphQLResponse>
 
     @Deprecated("The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.", ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);"))
@@ -132,8 +132,10 @@ interface MonoGraphQLClient {
     companion object {
         @JvmStatic
         fun createCustomReactive(url: String, requestExecutor: MonoRequestExecutor) = CustomMonoGraphQLClient(url, requestExecutor)
+
         @JvmStatic
         fun createWithWebClient(webClient: WebClient) = WebClientGraphQLClient(webClient)
+
         @JvmStatic
         fun createWithWebClient(webClient: WebClient, headersConsumer: Consumer<HttpHeaders>) = WebClientGraphQLClient(webClient, headersConsumer)
     }
@@ -150,7 +152,7 @@ interface ReactiveGraphQLClient {
      */
     fun reactiveExecuteQuery(
         query: String,
-        variables: Map<String, Any>,
+        variables: Map<String, Any>
     ): Flux<GraphQLResponse>
 
     /**
@@ -162,7 +164,7 @@ interface ReactiveGraphQLClient {
     fun reactiveExecuteQuery(
         query: String,
         variables: Map<String, Any>,
-        operationName: String?,
+        operationName: String?
     ): Flux<GraphQLResponse>
 }
 
@@ -204,9 +206,9 @@ class GraphQLClientException(statusCode: Int, url: String, response: String, req
 
 internal object GraphQLClients {
     internal val objectMapper: ObjectMapper =
-        if (ClassUtils.isPresent("com.fasterxml.jackson.module.kotlin.KotlinModule\$Builder", this::class.java.classLoader))
+        if (ClassUtils.isPresent("com.fasterxml.jackson.module.kotlin.KotlinModule\$Builder", this::class.java.classLoader)) {
             ObjectMapper().registerModule(KotlinModule.Builder().nullIsSameAsDefault(true).build())
-        else ObjectMapper().registerKotlinModule()
+        } else ObjectMapper().registerKotlinModule()
 
     internal val defaultHeaders: HttpHeaders = HttpHeaders.readOnlyHttpHeaders(
         HttpHeaders().apply {

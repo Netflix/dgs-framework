@@ -419,7 +419,7 @@ class MicrometerServletSmokeTest {
                     """
                     |   { "errors": [
                     |       { 
-                    |           "message": "Validation error of type MissingFieldArgument: Missing field argument name @ 'hello'",
+                    |           "message": "Validation error (MissingFieldArgument@[hello]) : Missing field argument 'name'",
                     |           "locations": [ 
                     |               {
                     |                   "line":1,
@@ -747,7 +747,7 @@ class MicrometerServletSmokeTest {
                 .and("gql.operation.name", "anonymous")
                 .and("gql.query.complexity", "5")
                 .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
-                .toList(),
+                .toList()
         )
     }
 

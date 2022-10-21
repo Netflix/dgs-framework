@@ -61,7 +61,6 @@ class TypeResolverTest {
 
     @Test
     fun testFallbackTypeResolver() {
-
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
@@ -118,7 +117,6 @@ class TypeResolverTest {
      */
     @Test
     fun testFallbackTypeResolverError() {
-
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("queryResolver", queryFetcher))
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()

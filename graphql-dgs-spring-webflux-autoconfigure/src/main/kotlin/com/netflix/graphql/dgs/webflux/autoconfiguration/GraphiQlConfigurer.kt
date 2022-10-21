@@ -35,7 +35,7 @@ class GraphiQlConfigurer(private val configProps: DgsWebfluxConfigurationPropert
         val graphiQLTitle = configProps.graphiql.title
         registry
             .addResourceHandler(configProps.graphiql.path + "/**")
-            .addResourceLocations("classpath:/static/graphiql/")
+            .addResourceLocations("classpath:/graphiql/")
             .resourceChain(true)
             .addResolver(PathResourceResolver())
             .addTransformer(TokenReplacingTransformer(mapOf("<DGS_GRAPHQL_PATH>" to graphqlPath, "<DGS_GRAPHIQL_TITLE>" to graphiQLTitle), configProps))

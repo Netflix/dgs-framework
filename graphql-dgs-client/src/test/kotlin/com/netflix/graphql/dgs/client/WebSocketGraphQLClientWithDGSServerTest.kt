@@ -46,7 +46,7 @@ import reactor.test.StepVerifier
 
 @SpringBootTest(
     classes = [DgsWebSocketAutoConfig::class, TestApp::class],
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @EnableAutoConfiguration(exclude = [DgsSSEAutoConfig::class])
 internal class WebSocketGraphQLClientWithDGSServerTest {
@@ -76,7 +76,6 @@ internal class WebSocketGraphQLClientWithDGSServerTest {
 
     @Test
     fun `A connection error should result in a WebClientException`() {
-
         Assertions.assertThrows(GraphQLException::class.java) {
             client.reactiveExecuteQuery("subscription {withError}", emptyMap()).blockLast()
         }
@@ -84,7 +83,6 @@ internal class WebSocketGraphQLClientWithDGSServerTest {
 
     @Test
     fun `A badly formatted query should result in a GraphQLException`() {
-
         Assertions.assertThrows(GraphQLException::class.java) {
             client.reactiveExecuteQuery("invalid query", emptyMap()).blockLast()
         }
@@ -92,7 +90,6 @@ internal class WebSocketGraphQLClientWithDGSServerTest {
 
     @Test
     fun `An invalid query should result in a UnknownOperationException`() {
-
         Assertions.assertThrows(GraphQLException::class.java) {
             client.reactiveExecuteQuery("subscriptions { unkownField }", emptyMap()).blockLast()
         }

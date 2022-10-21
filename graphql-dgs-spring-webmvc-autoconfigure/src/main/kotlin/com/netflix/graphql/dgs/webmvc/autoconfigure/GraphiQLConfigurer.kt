@@ -53,7 +53,7 @@ open class GraphiQLConfigurer(
         logger.info("Configuring GraphiQL to use GraphQL endpoint at '{}'", graphqlPath)
         registry
             .addResourceHandler("/graphiql/**")
-            .addResourceLocations("classpath:/static/graphiql/")
+            .addResourceLocations("classpath:/graphiql/")
             .setCachePeriod(3600)
             .resourceChain(true)
             .addResolver(PathResourceResolver())
