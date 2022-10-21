@@ -36,7 +36,7 @@
             "project": true
         },
         "net.datafaker:datafaker": {
-            "locked": "1.4.0"
+            "locked": "1.6.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -102,7 +102,7 @@
             "project": true
         },
         "net.datafaker:datafaker": {
-            "locked": "1.4.0"
+            "locked": "1.6.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -149,7 +149,7 @@
             "locked": "1.13.2"
         },
         "net.datafaker:datafaker": {
-            "locked": "1.4.0"
+            "locked": "1.6.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -420,7 +420,7 @@
             "project": true
         },
         "net.datafaker:datafaker": {
-            "locked": "1.4.0"
+            "locked": "1.6.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -478,7 +478,7 @@
             "locked": "1.13.2"
         },
         "net.datafaker:datafaker": {
-            "locked": "1.4.0"
+            "locked": "1.6.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -519,7 +519,7 @@
             "locked": "1.13.2"
         },
         "net.datafaker:datafaker": {
-            "locked": "1.4.0"
+            "locked": "1.6.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
