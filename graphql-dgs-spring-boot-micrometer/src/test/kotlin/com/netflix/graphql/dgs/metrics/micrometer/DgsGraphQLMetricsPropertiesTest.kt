@@ -36,8 +36,8 @@ internal class DgsGraphQLMetricsPropertiesTest {
 
             assertThat(props).isNotNull
             assertThat(props.autotime.isEnabled).isTrue
-            assertThat(props.autotime.percentiles).isNull()
-            assertThat(props.autotime.isPercentilesHistogram).isFalse
+            assertThat(props.autotimeProperties.percentiles).isNull()
+            assertThat(props.autotimeProperties.isPercentilesHistogram).isFalse
 
             assertThat(props.tags).isNotNull
             assertThat(props.tags.limiter.kind).isEqualTo(DgsGraphQLMetricsProperties.CardinalityLimiterKind.FIRST)
