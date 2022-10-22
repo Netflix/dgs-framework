@@ -937,7 +937,7 @@ class MicrometerServletSmokeTest {
             val executor = ThreadPoolTaskExecutor()
             executor.corePoolSize = 1
             executor.maxPoolSize = 1
-            executor.threadNamePrefix = "${MicrometerServletSmokeTest::class.java.simpleName}-test-"
+            executor.setThreadNamePrefix("${MicrometerServletSmokeTest::class.java.simpleName}-test-")
             executor.setQueueCapacity(10)
             executor.initialize()
             return executor

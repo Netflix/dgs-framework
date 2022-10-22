@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.client
 
+import org.intellij.lang.annotations.Language
 import reactor.core.publisher.Mono
 
 /**
@@ -23,17 +24,20 @@ import reactor.core.publisher.Mono
  * The user is responsible for doing the actual HTTP request, making this pluggable with any HTTP client.
  * For a more convenient option, use [WebClientGraphQLClient] instead.
  */
-class CustomMonoGraphQLClient(private val url: String, private val monoRequestExecutor: MonoRequestExecutor) : MonoGraphQLClient {
-    override fun reactiveExecuteQuery(query: String): Mono<GraphQLResponse> {
+class CustomMonoGraphQLClient(
+    private val url: String,
+    private val monoRequestExecutor: MonoRequestExecutor
+) : MonoGraphQLClient {
+    override fun reactiveExecuteQuery(@Language("graphql") query: String): Mono<GraphQLResponse> {
         return reactiveExecuteQuery(query, emptyMap(), null)
     }
 
-    override fun reactiveExecuteQuery(query: String, variables: Map<String, Any>): Mono<GraphQLResponse> {
+    override fun reactiveExecuteQuery(@Language("graphql") query: String, variables: Map<String, Any>): Mono<GraphQLResponse> {
         return reactiveExecuteQuery(query, variables, null)
     }
 
     override fun reactiveExecuteQuery(
-        query: String,
+        @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?
     ): Mono<GraphQLResponse> {
