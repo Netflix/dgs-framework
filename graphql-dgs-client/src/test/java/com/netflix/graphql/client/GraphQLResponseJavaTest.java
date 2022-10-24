@@ -21,9 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.*;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
 
 import static java.util.Collections.emptyMap;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
