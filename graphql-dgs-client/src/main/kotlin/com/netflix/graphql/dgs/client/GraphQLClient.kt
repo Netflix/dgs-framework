@@ -16,19 +16,6 @@
 
 package com.netflix.graphql.dgs.client
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
-import org.springframework.util.ClassUtils
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.server.ResponseStatusException
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
-import java.util.function.Consumer
-
 /**
  * GraphQL client interface for blocking clients.
  */
@@ -57,10 +44,16 @@ interface GraphQLClient {
      */
     fun executeQuery(query: String, variables: Map<String, Any>, operationName: String?): GraphQLResponse
 
-    @Deprecated("The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.", ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);"))
+    @Deprecated(
+        "The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.",
+        ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);")
+    )
     fun executeQuery(query: String, variables: Map<String, Any>, requestExecutor: RequestExecutor): GraphQLResponse = throw UnsupportedOperationException()
 
-    @Deprecated("The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.", ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);"))
+    @Deprecated(
+        "The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.",
+        ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);")
+    )
     fun executeQuery(
         query: String,
         variables: Map<String, Any>,
@@ -73,159 +66,3 @@ interface GraphQLClient {
         fun createCustom(url: String, requestExecutor: RequestExecutor) = CustomGraphQLClient(url, requestExecutor)
     }
 }
-
-/**
- * GraphQL client interface for reactive clients.
- */
-interface MonoGraphQLClient {
-    /**
-     * A reactive call to execute a query and parse its result.
-     * Don't forget to subscribe() to actually send the query!
-     * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
-     * @return A [Mono] of [GraphQLResponse] parses the response and gives easy access to data and errors.
-     */
-    fun reactiveExecuteQuery(
-        query: String
-    ): Mono<GraphQLResponse>
-
-    /**
-     * A reactive call to execute a query and parse its result.
-     * Don't forget to subscribe() to actually send the query!
-     * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
-     * @param variables A map of input variables
-     * @return A [Mono] of [GraphQLResponse] parses the response and gives easy access to data and errors.
-     */
-    fun reactiveExecuteQuery(
-        query: String,
-        variables: Map<String, Any>
-    ): Mono<GraphQLResponse>
-
-    /**
-     * A reactive call to execute a query and parse its result.
-     * Don't forget to subscribe() to actually send the query!
-     * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
-     * @param variables A map of input variables
-     * @param operationName Name of the operation
-     * @return A [Mono] of [GraphQLResponse] parses the response and gives easy access to data and errors.
-     */
-    fun reactiveExecuteQuery(
-        query: String,
-        variables: Map<String, Any>,
-        operationName: String?
-    ): Mono<GraphQLResponse>
-
-    @Deprecated("The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.", ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);"))
-    fun reactiveExecuteQuery(
-        query: String,
-        variables: Map<String, Any>,
-        requestExecutor: MonoRequestExecutor
-    ): Mono<GraphQLResponse> = throw UnsupportedOperationException()
-
-    @Deprecated("The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.", ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);"))
-    fun reactiveExecuteQuery(
-        query: String,
-        variables: Map<String, Any>,
-        operationName: String?,
-        requestExecutor: MonoRequestExecutor
-    ): Mono<GraphQLResponse> = throw UnsupportedOperationException()
-
-    companion object {
-        @JvmStatic
-        fun createCustomReactive(url: String, requestExecutor: MonoRequestExecutor) = CustomMonoGraphQLClient(url, requestExecutor)
-
-        @JvmStatic
-        fun createWithWebClient(webClient: WebClient) = WebClientGraphQLClient(webClient)
-
-        @JvmStatic
-        fun createWithWebClient(webClient: WebClient, headersConsumer: Consumer<HttpHeaders>) = WebClientGraphQLClient(webClient, headersConsumer)
-    }
-}
-
-/**
- * GraphQL client interface for reactive clients that support multiple results such as subscriptions.
- */
-interface ReactiveGraphQLClient {
-    /**
-     * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
-     * @param variables A map of input variables
-     * @return A [Flux] of [GraphQLResponse]. [GraphQLResponse] parses the response and gives easy access to data and errors.
-     */
-    fun reactiveExecuteQuery(
-        query: String,
-        variables: Map<String, Any>
-    ): Flux<GraphQLResponse>
-
-    /**
-     * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
-     * @param variables A map of input variables
-     * @param operationName Operation name
-     * @return A [Flux] of [GraphQLResponse]. [GraphQLResponse] parses the response and gives easy access to data and errors.
-     */
-    fun reactiveExecuteQuery(
-        query: String,
-        variables: Map<String, Any>,
-        operationName: String?
-    ): Flux<GraphQLResponse>
-}
-
-@FunctionalInterface
-/**
- * Code responsible for executing the HTTP request for a GraphQL query.
- * Typically provided as a lambda.
- * @param url The URL the client was configured with
- * @param headers A map of headers. The client sets some default headers such as Accept and Content-Type.
- * @param body The request body
- * @returns HttpResponse which is a representation of the HTTP status code and the response body as a String.
- */
-fun interface RequestExecutor {
-    fun execute(url: String, headers: Map<String, List<String>>, body: String): HttpResponse
-}
-
-data class HttpResponse(val statusCode: Int, val body: String?, val headers: Map<String, List<String>>) {
-    constructor(statusCode: Int, body: String?) : this(statusCode, body, emptyMap())
-}
-
-@FunctionalInterface
-/**
- * Code responsible for executing the HTTP request for a GraphQL query.
- * Typically provided as a lambda.  Reactive version (Mono)
- * @param url The URL the client was configured with
- * @param headers A map of headers. The client sets some default headers such as Accept and Content-Type.
- * @param body The request body
- * @returns Mono<HttpResponse> which is a representation of the HTTP status code and the response body as a String.
- */
-fun interface MonoRequestExecutor {
-    fun execute(url: String, headers: Map<String, List<String>>, body: String): Mono<HttpResponse>
-}
-
-/**
- * A transport level exception (e.g. a failed connection). This does *not* represent successful GraphQL responses that contain errors.
- */
-class GraphQLClientException(statusCode: Int, url: String, response: String, request: String) :
-    ResponseStatusException(HttpStatus.valueOf(statusCode), "GraphQL server $url responded with status code $statusCode: '$response'. The request sent to the server was \n$request")
-
-internal object GraphQLClients {
-    internal val objectMapper: ObjectMapper =
-        if (ClassUtils.isPresent("com.fasterxml.jackson.module.kotlin.KotlinModule\$Builder", this::class.java.classLoader)) {
-            ObjectMapper().registerModule(KotlinModule.Builder().nullIsSameAsDefault(true).build())
-        } else ObjectMapper().registerKotlinModule()
-
-    internal val defaultHeaders: HttpHeaders = HttpHeaders.readOnlyHttpHeaders(
-        HttpHeaders().apply {
-            accept = listOf(MediaType.APPLICATION_JSON)
-            contentType = MediaType.APPLICATION_JSON
-        }
-    )
-
-    fun handleResponse(response: HttpResponse, requestBody: String, url: String): GraphQLResponse {
-        val (statusCode, body) = response
-        val headers = response.headers
-        if (statusCode !in 200..299) {
-            throw GraphQLClientException(statusCode, url, body ?: "", requestBody)
-        }
-
-        return GraphQLResponse(body ?: "", headers)
-    }
-}
-
-internal data class Request(val query: String, val variables: Map<String, Any>, val operationName: String?)
