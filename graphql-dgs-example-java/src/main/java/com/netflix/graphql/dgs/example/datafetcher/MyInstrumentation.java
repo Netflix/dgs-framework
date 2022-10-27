@@ -16,30 +16,25 @@
 
 package com.netflix.graphql.dgs.example.datafetcher;
 
-import com.netflix.graphql.dgs.mvc.DgsRestController;
+import com.netflix.graphql.dgs.internal.DgsExecutionResult;
 import graphql.ExecutionResult;
-import graphql.ExecutionResultImpl;
 import graphql.execution.instrumentation.SimpleInstrumentation;
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Component
 public class MyInstrumentation extends SimpleInstrumentation {
     @Override
     public CompletableFuture<ExecutionResult> instrumentExecutionResult(ExecutionResult executionResult, InstrumentationExecutionParameters parameters) {
-        HashMap<Object, Object> extensions = new HashMap<>();
-        if(executionResult.getExtensions() != null) {
-            extensions.putAll(executionResult.getExtensions());
-        }
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.add("myHeader", "hello");
 
-        Map<String, String> responseHeaders = new HashMap<>();
-        responseHeaders.put("myHeader", "hello");
-        extensions.put(DgsRestController.DGS_RESPONSE_HEADERS_KEY, responseHeaders);
-
-        return super.instrumentExecutionResult(new ExecutionResultImpl(executionResult.getData(), executionResult.getErrors(), extensions), parameters);
+        return super.instrumentExecutionResult(new DgsExecutionResult(
+                executionResult,
+                responseHeaders
+        ), parameters);
     }
 }
