@@ -199,7 +199,10 @@ class DgsRestControllerTest {
                 any(),
                 any()
             )
-        } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).extensions(mutableMapOf(Pair(DgsRestController.DGS_RESPONSE_HEADERS_KEY, mapOf(Pair("myHeader", "hello")))) as Map<Any, Any>?).build()
+        } returns ExecutionResultImpl.newExecutionResult()
+            .data(mapOf("hello" to "hello"))
+            .extensions(mutableMapOf(DgsRestController.DGS_RESPONSE_HEADERS_KEY to mapOf("myHeader" to "hello")) as Map<Any, Any>?)
+            .build()
 
         val result = DgsRestController(dgsQueryExecutor).graphql(requestBody.toByteArray(), null, null, null, httpHeaders, webRequest)
         assertThat(result.headers["myHeader"]).contains("hello")
