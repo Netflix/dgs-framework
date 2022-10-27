@@ -16,9 +16,11 @@
 
 package com.netflix.graphql.dgs.client
 
+import org.intellij.lang.annotations.Language
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClient.RequestBodySpec
 import org.springframework.web.reactive.function.client.toEntity
 import reactor.core.publisher.Mono
 import java.util.function.Consumer
@@ -49,7 +51,7 @@ class WebClientGraphQLClient(
      * @return A [Mono] of [GraphQLResponse]. [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
     override fun reactiveExecuteQuery(
-        query: String
+        @Language("graphql") query: String
     ): Mono<GraphQLResponse> {
         return reactiveExecuteQuery(query, emptyMap(), null)
     }
@@ -60,7 +62,7 @@ class WebClientGraphQLClient(
      * @return A [Mono] of [GraphQLResponse]. [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
     override fun reactiveExecuteQuery(
-        query: String,
+        @Language("graphql") query: String,
         variables: Map<String, Any>
     ): Mono<GraphQLResponse> {
         return reactiveExecuteQuery(query, variables, null)
@@ -73,9 +75,41 @@ class WebClientGraphQLClient(
      * @return A [Mono] of [GraphQLResponse]. [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
     override fun reactiveExecuteQuery(
-        query: String,
+        @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?
+    ): Mono<GraphQLResponse> {
+        return reactiveExecuteQuery(query, variables, operationName, REQUEST_BODY_URI_CUSTOMIZER_IDENTITY)
+    }
+
+    /**
+     * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
+     * @param requestBodyUriCustomizer Allows customization of the URI and headers.
+     *                                 This occurs before both, the [headersConsumer] and serialization of the GraphQL request to the body occurs.
+     *                                 In other words, the [headersConsumer] will take precedence.
+     * @return A [Mono] of [GraphQLResponse]. [GraphQLResponse] parses the response and gives easy access to data and errors.
+     */
+    fun reactiveExecuteQuery(
+        @Language("graphql") query: String,
+        requestBodyUriCustomizer: RequestBodyUriCustomizer
+    ): Mono<GraphQLResponse> {
+        return reactiveExecuteQuery(query, emptyMap(), null, requestBodyUriCustomizer)
+    }
+
+    /**
+     * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
+     * @param variables A map of input variables
+     * @param operationName GraphQL Operation name
+     * @param requestBodyUriCustomizer Allows customization of the URI and headers.
+     *                                 This occurs before both, the [headersConsumer] and serialization of the GraphQL request to the body occurs.
+     *                                 In other words, the [headersConsumer] will take precedence.
+     * @return A [Mono] of [GraphQLResponse]. [GraphQLResponse] parses the response and gives easy access to data and errors.
+     */
+    fun reactiveExecuteQuery(
+        @Language("graphql") query: String,
+        variables: Map<String, Any>,
+        operationName: String?,
+        requestBodyUriCustomizer: RequestBodyUriCustomizer
     ): Mono<GraphQLResponse> {
         @Suppress("BlockingMethodInNonBlockingContext")
         val serializedRequest = GraphQLClients.objectMapper.writeValueAsString(
@@ -86,10 +120,10 @@ class WebClientGraphQLClient(
             )
         )
 
-        return webclient.post()
-            .bodyValue(serializedRequest)
+        return requestBodyUriCustomizer.apply(webclient.post())
             .headers { headers -> headers.addAll(GraphQLClients.defaultHeaders) }
             .headers(this.headersConsumer)
+            .bodyValue(serializedRequest)
             .retrieve()
             .toEntity<String>()
             .map { response ->
@@ -110,5 +144,29 @@ class WebClientGraphQLClient(
         }
 
         return GraphQLResponse(body ?: "", headers)
+    }
+
+    companion object {
+        private val REQUEST_BODY_URI_CUSTOMIZER_IDENTITY = RequestBodyUriCustomizer { it }
+    }
+
+    @FunctionalInterface
+    /**
+     * Allows customization of the request URI and headers [WebClientGraphQLClient], returning the
+     * modified [RequestBodySpec]. This could be used to set URI query parameters, for example:
+     *
+     * _Note the example uses Kotlin syntax_
+     * ```
+     * {  request ->
+     *      request.uri{ uriBuilder ->
+     *          uriBuilder
+     *          .queryParam("q1", "foo")
+     *          .build()
+     *      }
+     * }
+     * ```
+     */
+    fun interface RequestBodyUriCustomizer {
+        fun apply(spec: WebClient.RequestBodyUriSpec): RequestBodySpec
     }
 }

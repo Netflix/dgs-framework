@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,5 +15,11 @@
  */
 
 package com.netflix.graphql.dgs.exceptions
+import com.netflix.graphql.types.errors.ErrorType
 
-open class DgsBadRequestException(override val message: String = "Malformed or incorrect request") : RuntimeException(message)
+open class DgsBadRequestException(override val message: String = "Malformed or incorrect request") :
+    DgsException(message = message, errorType = ErrorType.BAD_REQUEST) {
+    companion object {
+        val NULL_OR_EMPTY_QUERY_EXCEPTION = DgsBadRequestException("GraphQL operations must contain a non-empty `query`.")
+    }
+}

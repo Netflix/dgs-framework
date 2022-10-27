@@ -77,16 +77,19 @@ class MalformedQueryContentTest {
             .bodyValue("{ }")
             .exchange()
             .expectStatus()
-            .isOk
+            .isBadRequest
             .expectBody()
             .json(
                 """
                 {
                   "errors":[
                     {
-                      "message": "The query is null or empty.",
+                      "message": "GraphQL operations must contain a non-empty `query`.",
                       "locations":[],
-                      "extensions":{"errorType":"BAD_REQUEST"}
+                      "extensions": {
+                        "errorType":"BAD_REQUEST",
+                        "class":"com.netflix.graphql.dgs.exceptions.DgsBadRequestException"
+                      }
                     }
                   ]
                 }    

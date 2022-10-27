@@ -27,11 +27,13 @@ import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import com.netflix.graphql.dgs.InputArgument
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
 import com.netflix.graphql.dgs.exceptions.DgsBadRequestException
+import com.netflix.graphql.dgs.exceptions.DgsException
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsContextualTagCustomizer
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsExecutionTagCustomizer
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsFieldFetchTagCustomizer
 import com.netflix.graphql.dgs.metrics.micrometer.utils.QuerySignatureRepository
 import com.netflix.graphql.types.errors.ErrorDetail
+import com.netflix.graphql.types.errors.ErrorType
 import com.netflix.graphql.types.errors.TypedGraphQLError
 import graphql.GraphQLError
 import graphql.execution.DataFetcherExceptionHandler
@@ -388,7 +390,7 @@ class MicrometerServletSmokeTest {
                     .and("gql.query.complexity", "none")
                     .and("gql.query.sig.hash", "none")
                     .and("gql.errorDetail", "none")
-                    .and("gql.errorCode", "InvalidSyntax")
+                    .and("gql.errorCode", "BAD_REQUEST")
                     .and("gql.path", "[]")
                     .and("outcome", "failure")
             )
@@ -448,7 +450,7 @@ class MicrometerServletSmokeTest {
                     .and("gql.query.complexity", "none")
                     .and("gql.query.sig.hash", "none")
                     .and("gql.errorDetail", "none")
-                    .and("gql.errorCode", "ValidationError")
+                    .and("gql.errorCode", "BAD_REQUEST")
                     .and("gql.path", "[hello]")
                     .and("outcome", "failure")
             )
@@ -479,8 +481,12 @@ class MicrometerServletSmokeTest {
                     """
                        |{
                        |    "errors":[
-                       |       {"message":"java.lang.IllegalStateException: Exception triggered.","locations":[],
-                       |           "path":["triggerInternalFailure"],"extensions":{"errorType":"INTERNAL"}}
+                       |      {
+                       |       "message":"java.lang.IllegalStateException: Exception triggered.",
+                       |       "locations": [],
+                       |       "path": ["triggerInternalFailure"],
+                       |       "extensions": {"errorType":"INTERNAL"}
+                        |     }
                        |    ],
                        |    "data":{"triggerInternalFailure":null}
                        |}
@@ -550,7 +556,7 @@ class MicrometerServletSmokeTest {
                     """
                         |{
                         |   "errors":[
-                        |      {"message":"com.netflix.graphql.dgs.exceptions.DgsBadRequestException: Exception triggered.",
+                        |      {"message":"Exception triggered.",
                         |          "locations":[],"path":["triggerBadRequestFailure"],
                         |          "extensions":{"errorType":"BAD_REQUEST"}}
                         |   ],
@@ -688,18 +694,12 @@ class MicrometerServletSmokeTest {
             .andExpect(
                 content().json(
                     """
-                    |{
-                    |    "errors":[
-                    |        {"message":"java.lang.IllegalStateException: Exception triggered.","locations":[],
-                    |            "path":["triggerInternalFailure"],"extensions":{"errorType":"INTERNAL"}},
-                    |        {"message":"com.netflix.graphql.dgs.exceptions.DgsBadRequestException: Exception triggered.","locations":[],
-                    |            "path":["triggerBadRequestFailure"],"extensions":{"errorType":"BAD_REQUEST"}},
-                    |        {"message":"Exception triggered.","locations":[],
-                    |            "path":["triggerCustomFailure"],
-                    |            "extensions":{"errorType":"UNAVAILABLE","errorDetail":"ENHANCE_YOUR_CALM"}}
-                    |    ],
-                    |    "data":{"triggerInternalFailure":null,"triggerBadRequestFailure":null,"triggerCustomFailure":null}
-                    |}
+                    | {"errors":[
+                    |    {"message":"java.lang.IllegalStateException: Exception triggered.","locations":[],"path":["triggerInternalFailure"],"extensions":{"errorType":"INTERNAL"}},
+                    |    {"message":"Exception triggered.","locations":[],"path":["triggerBadRequestFailure"],"extensions":{"class":"com.netflix.graphql.dgs.exceptions.DgsBadRequestException","errorType":"BAD_REQUEST"}},
+                    |    {"message":"Exception triggered.","locations":[],"path":["triggerCustomFailure"],"extensions":{"errorType":"UNAVAILABLE","errorDetail":"ENHANCE_YOUR_CALM"}}
+                    |  ],
+                    |  "data":{"triggerInternalFailure":null,"triggerBadRequestFailure":null,"triggerCustomFailure":null}}
                     """.trimMargin(),
                     false
                 )
@@ -937,7 +937,7 @@ class MicrometerServletSmokeTest {
             val executor = ThreadPoolTaskExecutor()
             executor.corePoolSize = 1
             executor.maxPoolSize = 1
-            executor.threadNamePrefix = "${MicrometerServletSmokeTest::class.java.simpleName}-test-"
+            executor.setThreadNamePrefix("${MicrometerServletSmokeTest::class.java.simpleName}-test-")
             executor.setQueueCapacity(10)
             executor.initialize()
             return executor
@@ -969,5 +969,5 @@ class MicrometerServletSmokeTest {
         }
     }
 
-    class CustomException(message: String?) : java.lang.IllegalStateException(message)
+    class CustomException(message: String) : DgsException(message = message, errorType = ErrorType.INTERNAL)
 }

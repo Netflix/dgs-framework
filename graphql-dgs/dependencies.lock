@@ -271,7 +271,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.4"
+            "locked": "1.13.2"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.4.23"
@@ -283,7 +283,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.4.0"
+            "locked": "1.6.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -299,16 +299,16 @@
             "locked": "1.7.20"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
-            "locked": "1.5.2"
+            "locked": "1.6.4"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8": {
-            "locked": "1.5.2"
+            "locked": "1.6.4"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-reactor": {
-            "locked": "1.5.2"
+            "locked": "1.6.4"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-test": {
-            "locked": "1.5.2"
+            "locked": "1.6.4"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.35"
@@ -614,7 +614,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.4.0"
+            "locked": "1.6.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -723,7 +723,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.4"
+            "locked": "1.13.2"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.4.23"
@@ -821,7 +821,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.12.4"
+            "locked": "1.13.2"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.4.23"
@@ -833,7 +833,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.4.0"
+            "locked": "1.6.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -849,16 +849,16 @@
             "locked": "1.7.20"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
-            "locked": "1.5.2"
+            "locked": "1.6.4"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8": {
-            "locked": "1.5.2"
+            "locked": "1.6.4"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-reactor": {
-            "locked": "1.5.2"
+            "locked": "1.6.4"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-test": {
-            "locked": "1.5.2"
+            "locked": "1.6.4"
         },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
