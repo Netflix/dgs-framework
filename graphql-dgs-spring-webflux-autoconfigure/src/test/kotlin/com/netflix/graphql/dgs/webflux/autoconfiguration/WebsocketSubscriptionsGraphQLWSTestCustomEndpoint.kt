@@ -64,7 +64,6 @@ open class WebsocketSubscriptionsGraphQLWSTestCustomEndpoint(@param:LocalServerP
 
     @Test
     fun `Basic subscription flow using a custom endpoint`() {
-
         val client: WebSocketClient = ReactorNettyWebSocketClient()
         val url = URI("ws://localhost:$port/custom/subscriptions")
         val output: Sinks.Many<OperationMessage> = Sinks.many().replay().all()
@@ -82,7 +81,6 @@ open class WebsocketSubscriptionsGraphQLWSTestCustomEndpoint(@param:LocalServerP
 
     @Test
     fun `Subscription with error flow using a custom endpoint`() {
-
         val client: WebSocketClient = ReactorNettyWebSocketClient()
         val url = URI("ws://localhost:$port/custom/subscriptions")
         val output: Sinks.Many<OperationMessage> = Sinks.many().replay().all()
@@ -130,13 +128,13 @@ open class WebsocketSubscriptionsGraphQLWSTestCustomEndpoint(@param:LocalServerP
 
                                 when (operationMessage.type) {
                                     GQL_CONNECTION_ACK -> {
-
                                         session.send(
                                             Mono.just(
                                                 toWebsocketMessage(
                                                     OperationMessage(
                                                         GQL_START,
-                                                        mapOf("query" to query), "1"
+                                                        mapOf("query" to query),
+                                                        "1"
                                                     ),
                                                     session
                                                 )
@@ -168,7 +166,7 @@ open class WebsocketSubscriptionsGraphQLWSTestCustomEndpoint(@param:LocalServerP
                             }
                         ).log().then()
                 }
-            },
+            }
         )
 
     private val resolvableType = ResolvableType.forType(OperationMessage::class.java)
