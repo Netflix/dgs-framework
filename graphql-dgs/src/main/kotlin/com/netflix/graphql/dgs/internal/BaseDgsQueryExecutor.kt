@@ -26,6 +26,7 @@ import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.ParseContext
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
+import com.netflix.graphql.dgs.DgsExecutionResult
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsBadRequestException
 import graphql.ExecutionInput
@@ -80,14 +81,20 @@ object BaseDgsQueryExecutor {
 
         if (!StringUtils.hasText(query)) {
             return CompletableFuture.completedFuture(
-                DgsExecutionResult(
-                    status = HttpStatus.BAD_REQUEST,
-                    errors = listOf(
-                        DgsBadRequestException
-                            .NULL_OR_EMPTY_QUERY_EXCEPTION
-                            .toGraphQlError()
-                    )
-                )
+                DgsExecutionResult
+                    .builder()
+                    .status(HttpStatus.BAD_REQUEST)
+                    .executionResult(
+                        ExecutionResultImpl
+                            .newExecutionResult()
+                            .errors(
+                                listOf(
+                                    DgsBadRequestException
+                                        .NULL_OR_EMPTY_QUERY_EXCEPTION
+                                        .toGraphQlError()
+                                )
+                            )
+                    ).build()
             )
         }
 
