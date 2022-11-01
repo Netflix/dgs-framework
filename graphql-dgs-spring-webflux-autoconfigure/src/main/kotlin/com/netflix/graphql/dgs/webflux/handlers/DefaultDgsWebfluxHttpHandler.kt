@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.netflix.graphql.dgs.DgsExecutionResult
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import graphql.ExecutionResult
 import org.slf4j.Logger
@@ -74,9 +75,15 @@ class DefaultDgsWebfluxHttpHandler(
                 }
 
         return executionResult.flatMap { result ->
+            val dgsExecutionResult = when (result) {
+                is DgsExecutionResult -> result
+                else -> DgsExecutionResult.builder().executionResult(result).build()
+            }
+
             ServerResponse
-                .ok()
-                .bodyValue(result.toSpecification())
+                .status(dgsExecutionResult.status)
+                .headers { it.addAll(dgsExecutionResult.headers()) }
+                .bodyValue(dgsExecutionResult.toSpecification())
         }.onErrorResume { ex ->
             when (ex) {
                 is JsonParseException ->

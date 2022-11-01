@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.exceptions
+package com.netflix.graphql.dgs.client
 
-import com.netflix.graphql.types.errors.ErrorType
-
-class DgsInvalidInputArgumentException(override val message: String, override val cause: Exception? = null) :
-    DgsException(message = message, cause = cause, errorType = ErrorType.BAD_REQUEST)
+internal data class Request(val query: String, val variables: Map<String, Any>, val operationName: String?)

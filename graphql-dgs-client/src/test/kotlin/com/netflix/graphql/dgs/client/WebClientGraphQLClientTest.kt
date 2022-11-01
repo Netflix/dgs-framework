@@ -21,21 +21,29 @@ import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
 import com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcAutoConfiguration
-import graphql.language.FieldDefinition
-import graphql.language.ObjectTypeDefinition
-import graphql.language.TypeName
+import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
-import org.junit.jupiter.api.BeforeEach
+import io.netty.handler.logging.LogLevel
+import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.reactive.function.client.WebClient
+import reactor.netty.http.client.HttpClient
+import reactor.netty.transport.logging.AdvancedByteBufFormat
 import reactor.test.StepVerifier
 
+@Suppress("GraphQLUnresolvedReference")
 @SpringBootTest(
-    classes = [DgsAutoConfiguration::class, DgsWebMvcAutoConfiguration::class, WebClientGraphQLClientTest.TestApp::class],
+    classes = [
+        DgsAutoConfiguration::class,
+        DgsWebMvcAutoConfiguration::class,
+        WebClientGraphQLClientTest.TestApp::class
+    ],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 class WebClientGraphQLClientTest {
@@ -43,15 +51,10 @@ class WebClientGraphQLClientTest {
     @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
     @LocalServerPort
     lateinit var port: Integer
-    lateinit var client: WebClientGraphQLClient
-
-    @BeforeEach
-    fun setup() {
-        client = MonoGraphQLClient.createWithWebClient(WebClient.create("http://localhost:$port/graphql"))
-    }
 
     @Test
     fun `Successful graphql response`() {
+        val client = MonoGraphQLClient.createWithWebClient(WebClient.create("http://localhost:$port/graphql"))
         val result = client.reactiveExecuteQuery("{hello}").map { r -> r.extractValue<String>("hello") }
 
         StepVerifier.create(result)
@@ -61,9 +64,10 @@ class WebClientGraphQLClientTest {
 
     @Test
     fun `Extra header can be provided`() {
-        client = MonoGraphQLClient.createWithWebClient(WebClient.create("http://localhost:$port/graphql")) { headers ->
-            headers.add("myheader", "test")
-        }
+        val client =
+            MonoGraphQLClient.createWithWebClient(WebClient.create("http://localhost:$port/graphql")) { headers ->
+                headers.add("myheader", "test")
+            }
         val result = client.reactiveExecuteQuery("{withHeader}").map { r -> r.extractValue<String>("withHeader") }
 
         StepVerifier.create(result)
@@ -72,7 +76,41 @@ class WebClientGraphQLClientTest {
     }
 
     @Test
+    fun `Request parameters can be added, per request`() {
+        val httpClient: HttpClient = HttpClient
+            .create()
+            .wiretap(
+                "reactor.netty.http.client.HttpClient",
+                LogLevel.INFO,
+                AdvancedByteBufFormat.TEXTUAL
+            )
+
+        val webClient =
+            WebClient.builder()
+                .clientConnector(ReactorClientHttpConnector(httpClient))
+                .baseUrl("http://localhost:$port/graphql")
+                .build()
+
+        val client = MonoGraphQLClient.createWithWebClient(webClient)
+        val result = client.reactiveExecuteQuery(
+            query = "{ withUriParam }",
+            requestBodyUriCustomizer = {
+                it.uri { uriBuilder ->
+                    uriBuilder
+                        .queryParam("q1", "one")
+                        .build()
+                }
+            }
+        ).map { r -> r.extractValue<String>("withUriParam") }
+
+        StepVerifier.create(result)
+            .expectNext("Parameter q1: one")
+            .verifyComplete()
+    }
+
+    @Test
     fun `Graphql errors should be handled`() {
+        val client = MonoGraphQLClient.createWithWebClient(WebClient.create("http://localhost:$port/graphql"))
         val errors = client.reactiveExecuteQuery("{error}").map { r -> r.errors }
 
         StepVerifier.create(errors)
@@ -100,27 +138,25 @@ class WebClientGraphQLClientTest {
                 return "Header value: $myheader"
             }
 
+            @DgsQuery
+            fun withUriParam(@RequestParam("q1") param: String): String {
+                return "Parameter q1: $param"
+            }
+
             @DgsTypeDefinitionRegistry
             fun typeDefinitionRegistry(): TypeDefinitionRegistry {
-                val newRegistry = TypeDefinitionRegistry()
-                newRegistry.add(
-                    ObjectTypeDefinition.newObjectTypeDefinition().name("Query")
-                        .fieldDefinition(
-                            FieldDefinition.newFieldDefinition()
-                                .name("hello")
-                                .type(TypeName("String")).build()
-                        ).fieldDefinition(
-                            FieldDefinition.newFieldDefinition()
-                                .name("withHeader")
-                                .type(TypeName("String")).build()
-                        ).fieldDefinition(
-                            FieldDefinition.newFieldDefinition()
-                                .name("error")
-                                .type(TypeName("String")).build()
-                        )
-                        .build()
-                )
-                return newRegistry
+                val schemaParser = SchemaParser()
+
+                @Language("graphql")
+                val gqlSchema = """
+                type Query{
+                    hello: String 
+                    withHeader: String
+                    withUriParam: String
+                    error: String
+                }
+                """.trimMargin()
+                return schemaParser.parse(gqlSchema)
             }
         }
     }

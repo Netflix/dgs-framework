@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.exceptions
 
+import com.netflix.graphql.types.errors.ErrorType
 import graphql.execution.DataFetcherExceptionHandlerParameters
 import graphql.execution.ResultPath
 import io.mockk.MockKAnnotations
@@ -102,6 +103,25 @@ internal class DefaultDataFetcherExceptionHandlerTest {
 
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo("BAD_REQUEST")
+
+        // We return null here because we don't want graphql-java to write classification field
+        assertThat(result.errors[0].errorType).isNull()
+    }
+
+    @Test
+    fun `custom DGS exception should return custom error`() {
+        val customDgsExceptionMessage = "Studio Search Who"
+        val customDgsExceptionType = ErrorType.FAILED_PRECONDITION
+        class CustomDgsException() :
+            DgsException(message = customDgsExceptionMessage, errorType = customDgsExceptionType)
+
+        every { dataFetcherExceptionHandlerParameters.exception }.returns(CustomDgsException())
+
+        val result = DefaultDataFetcherExceptionHandler().handleException(dataFetcherExceptionHandlerParameters).get()
+        assertThat(result.errors.size).isEqualTo(1)
+
+        val extensions = result.errors[0].extensions
+        assertThat(extensions["errorType"]).isEqualTo(customDgsExceptionType.name)
 
         // We return null here because we don't want graphql-java to write classification field
         assertThat(result.errors[0].errorType).isNull()

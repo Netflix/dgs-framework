@@ -199,13 +199,29 @@ class DgsRestControllerTest {
                 any(),
                 any()
             )
-        } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).extensions(mutableMapOf(Pair(DgsRestController.DGS_RESPONSE_HEADERS_KEY, mapOf(Pair("myHeader", "hello")))) as Map<Any, Any>?).build()
+        } returns ExecutionResultImpl.newExecutionResult()
+            .data(mapOf("hello" to "hello"))
+            .extensions(mutableMapOf(DgsRestController.DGS_RESPONSE_HEADERS_KEY to mapOf("myHeader" to "hello")) as Map<Any, Any>?)
+            .build()
 
         val result = DgsRestController(dgsQueryExecutor).graphql(requestBody.toByteArray(), null, null, null, httpHeaders, webRequest)
         assertThat(result.headers["myHeader"]).contains("hello")
+
+        assertThat(result.body).isInstanceOfSatisfying(ByteArray::class.java) { body ->
+            val mapper = jacksonObjectMapper()
+            val (_, _, extensions) = mapper.readValue(body, GraphQLResponse::class.java)
+            assertThat(extensions).isNull()
+        }
     }
 
-    data class GraphQLResponse(val data: Map<String, Any> = emptyMap(), val errors: List<GraphQLError> = emptyList())
+    data class GraphQLResponse(
+        val data: Map<String, Any> = emptyMap(),
+        val errors: List<GraphQLError> = emptyList(),
+
+        // should not be on the response; only here so we can
+        // test that it does not exist.
+        val extensions: Map<String, Any>?
+    )
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class GraphQLError(val message: String)

@@ -26,10 +26,14 @@ import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.ParseContext
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
+import com.netflix.graphql.dgs.DgsExecutionResult
 import com.netflix.graphql.dgs.context.DgsContext
-import com.netflix.graphql.types.errors.ErrorType
-import com.netflix.graphql.types.errors.TypedGraphQLError
-import graphql.*
+import com.netflix.graphql.dgs.exceptions.DgsBadRequestException
+import graphql.ExecutionInput
+import graphql.ExecutionResult
+import graphql.ExecutionResultImpl
+import graphql.GraphQL
+import graphql.GraphQLError
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.Instrumentation
@@ -37,6 +41,7 @@ import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLSchema
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.util.StringUtils
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -72,18 +77,23 @@ object BaseDgsQueryExecutor {
         idProvider: Optional<ExecutionIdProvider>,
         preparsedDocumentProvider: PreparsedDocumentProvider?
     ): CompletableFuture<ExecutionResult> {
-        var inputVariables = variables ?: Collections.emptyMap()
+        val inputVariables = variables ?: Collections.emptyMap()
 
         if (!StringUtils.hasText(query)) {
             return CompletableFuture.completedFuture(
-                ExecutionResultImpl
-                    .newExecutionResult()
-                    .addError(
-                        TypedGraphQLError
-                            .newBadRequestBuilder()
-                            .message("The query is null or empty.")
-                            .errorType(ErrorType.BAD_REQUEST)
-                            .build()
+                DgsExecutionResult
+                    .builder()
+                    .status(HttpStatus.BAD_REQUEST)
+                    .executionResult(
+                        ExecutionResultImpl
+                            .newExecutionResult()
+                            .errors(
+                                listOf(
+                                    DgsBadRequestException
+                                        .NULL_OR_EMPTY_QUERY_EXCEPTION
+                                        .toGraphQlError()
+                                )
+                            )
                     ).build()
             )
         }
@@ -101,19 +111,19 @@ object BaseDgsQueryExecutor {
 
         val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier { dgsContext }
 
-        @Suppress("DEPRECATION")
-        val executionInputBuilder: ExecutionInput.Builder =
-            ExecutionInput
-                .newExecutionInput()
-                .query(query)
-                .operationName(operationName)
-                .variables(inputVariables)
-                .dataLoaderRegistry(dataLoaderRegistry)
-                .context(dgsContext)
-                .graphQLContext(dgsContext)
-                .extensions(extensions.orEmpty())
-
         return try {
+            @Suppress("DEPRECATION")
+            val executionInputBuilder: ExecutionInput.Builder =
+                ExecutionInput
+                    .newExecutionInput()
+                    .query(query)
+                    .operationName(operationName)
+                    .variables(inputVariables)
+                    .dataLoaderRegistry(dataLoaderRegistry)
+                    .context(dgsContext)
+                    .graphQLContext(dgsContext)
+                    .extensions(extensions.orEmpty())
+
             graphQL.executeAsync(executionInputBuilder.build())
         } catch (e: Exception) {
             logger.error("Encountered an exception while handling query $query", e)

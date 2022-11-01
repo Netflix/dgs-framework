@@ -198,7 +198,7 @@ class DefaultDgsFederationResolverTest {
                 .satisfies(
                     Consumer {
                         assertThat(it)
-                            .endsWith("MissingFederatedQueryArgument: The federated query is missing field(s) __typename")
+                            .endsWith("The federated query is missing field(s) __typename")
                     }
                 )
         }
@@ -414,7 +414,7 @@ class DefaultDgsFederationResolverTest {
                 .satisfies(
                     Consumer {
                         assertThat(it)
-                            .contains("com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException: Invalid input argument exception")
+                            .contains("Invalid input argument exception")
                     }
                 )
             assertThat(customExceptionHandler.invocationCounter).isEqualTo(1)
