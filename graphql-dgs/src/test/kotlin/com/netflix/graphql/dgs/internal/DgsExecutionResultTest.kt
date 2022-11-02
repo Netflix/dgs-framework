@@ -16,6 +16,8 @@
 
 package com.netflix.graphql.dgs.internal
 
+import com.netflix.graphql.dgs.DgsExecutionResult
+import graphql.ExecutionResultImpl
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
 import org.junit.jupiter.api.Nested
@@ -27,17 +29,18 @@ class DgsExecutionResultTest {
     @Test
     fun `should be able to pass null for data`() {
         assertThat(
-            DgsExecutionResult(
-                data = null
-            ).toSpecification()
+            DgsExecutionResult
+                .builder()
+                .executionResult(ExecutionResultImpl.newExecutionResult().data(null))
+                .build()
+                .toSpecification()
         ).contains(entry("data", null))
     }
 
     @Test
     fun `should default to not having data`() {
         assertThat(
-            DgsExecutionResult()
-                .toSpecification()
+            DgsExecutionResult.builder().build().toSpecification()
         ).doesNotContainKey("data")
     }
 
@@ -46,7 +49,10 @@ class DgsExecutionResultTest {
         val data = "Check under your chair"
 
         assertThat(
-            DgsExecutionResult(data = data)
+            DgsExecutionResult
+                .builder()
+                .executionResult(ExecutionResultImpl.newExecutionResult().data(data))
+                .build()
                 .toSpecification()
         ).contains(entry("data", data))
     }
@@ -59,11 +65,8 @@ class DgsExecutionResultTest {
             headers.add("We can add headers now??", "Yes we can")
 
             assertThat(
-                DgsExecutionResult(
-                    headers = headers
-                ).toSpringResponse()
-                    .headers
-                    .toMap()
+                DgsExecutionResult.builder().headers(headers).build().toSpringResponse()
+                    .headers.toMap()
             ).containsAllEntriesOf(headers.toMap())
         }
 
@@ -72,11 +75,8 @@ class DgsExecutionResultTest {
             val httpStatusCode = HttpStatus.ALREADY_REPORTED
 
             assertThat(
-                DgsExecutionResult(
-                    status = httpStatusCode
-                ).toSpringResponse()
-                    .statusCode
-                    .value()
+                DgsExecutionResult.builder().status(httpStatusCode).build().toSpringResponse()
+                    .statusCode.value()
             ).isEqualTo(httpStatusCode.value())
         }
     }

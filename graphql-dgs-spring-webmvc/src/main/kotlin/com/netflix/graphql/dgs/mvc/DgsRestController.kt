@@ -21,8 +21,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.netflix.graphql.dgs.DgsExecutionResult
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.dgs.internal.DgsExecutionResult
 import com.netflix.graphql.dgs.internal.utils.MultipartVariableMapper
 import com.netflix.graphql.dgs.internal.utils.TimeTracer
 import graphql.execution.reactive.SubscriptionPublisher
@@ -228,7 +228,7 @@ open class DgsRestController(
 
         return when (executionResult) {
             is DgsExecutionResult -> executionResult.toSpringResponse()
-            else -> DgsExecutionResult(executionResult).toSpringResponse()
+            else -> DgsExecutionResult.builder().executionResult(executionResult).build().toSpringResponse()
         }
     }
 }
