@@ -21,7 +21,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     }
 }

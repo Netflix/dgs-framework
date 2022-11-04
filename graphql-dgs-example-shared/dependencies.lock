@@ -22,7 +22,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "compileClasspath": {
@@ -116,13 +116,13 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-context": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         },
         "org.springframework:spring-web": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "jmh": {
@@ -153,7 +153,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "jmhCompileClasspath": {
@@ -256,13 +256,13 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-context": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         },
         "org.springframework:spring-web": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "jmhRuntimeClasspath": {
@@ -453,10 +453,10 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
@@ -464,7 +464,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "kapt": {
@@ -519,7 +519,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "kotlinCompilerPluginClasspath": {
@@ -539,7 +539,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "kotlinCompilerPluginClasspathJmh": {
@@ -565,7 +565,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
@@ -591,7 +591,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
@@ -617,7 +617,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "kotlinKaptWorkerDependencies": {
@@ -648,7 +648,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "kotlinNativeCompilerPluginClasspath": {
@@ -668,7 +668,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "nebulaRecommenderBom": {
@@ -688,7 +688,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "runtimeClasspath": {
@@ -861,10 +861,10 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
@@ -872,7 +872,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "testAnnotationProcessor": {
@@ -892,7 +892,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "testCompileClasspath": {
@@ -995,13 +995,13 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-context": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         },
         "org.springframework:spring-web": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "testRuntimeClasspath": {
@@ -1183,10 +1183,10 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
@@ -1194,7 +1194,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     }
 }

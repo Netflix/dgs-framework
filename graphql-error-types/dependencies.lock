@@ -22,7 +22,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "compileClasspath": {
@@ -54,7 +54,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "jmh": {
@@ -85,7 +85,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "jmhCompileClasspath": {
@@ -126,7 +126,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "jmhRuntimeClasspath": {
@@ -170,7 +170,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "kapt": {
@@ -225,7 +225,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "kotlinCompilerPluginClasspath": {
@@ -245,7 +245,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "kotlinCompilerPluginClasspathJmh": {
@@ -271,7 +271,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
@@ -297,7 +297,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
@@ -323,7 +323,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "kotlinKaptWorkerDependencies": {
@@ -354,7 +354,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "kotlinNativeCompilerPluginClasspath": {
@@ -374,7 +374,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "nebulaRecommenderBom": {
@@ -394,7 +394,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "runtimeClasspath": {
@@ -423,7 +423,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "testAnnotationProcessor": {
@@ -443,7 +443,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "testCompileClasspath": {
@@ -478,7 +478,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     },
     "testRuntimeClasspath": {
@@ -513,7 +513,7 @@
             "locked": "6.0.0-RC1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC2"
+            "locked": "6.0.0-RC3"
         }
     }
 }

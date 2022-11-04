@@ -56,7 +56,7 @@ allprojects {
 
     dependencyRecommendations {
         mavenBom(mapOf("module" to "org.jetbrains.kotlin:kotlin-bom:${Versions.KOTLIN_VERSION}"))
-        mavenBom(mapOf("module" to "org.springframework:spring-framework-bom:6.0.0-RC2"))
+        mavenBom(mapOf("module" to "org.springframework:spring-framework-bom:6.0.0-RC3"))
         mavenBom(mapOf("module" to "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
         mavenBom(mapOf("module" to "org.springframework.security:spring-security-bom:6.0.0-RC1"))
         mavenBom(mapOf("module" to "org.springframework.cloud:spring-cloud-dependencies:2022.0.0-RC1"))
