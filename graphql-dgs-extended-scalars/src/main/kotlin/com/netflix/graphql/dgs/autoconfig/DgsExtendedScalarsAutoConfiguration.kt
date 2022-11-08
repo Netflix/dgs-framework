@@ -21,10 +21,13 @@ import com.netflix.graphql.dgs.DgsRuntimeWiring
 import graphql.scalars.ExtendedScalars
 import graphql.schema.GraphQLScalarType
 import graphql.schema.idl.RuntimeWiring
+import org.springframework.boot.autoconfigure.condition.AllNestedConditions
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Conditional
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.ConfigurationCondition
 
 @ConditionalOnClass(graphql.scalars.ExtendedScalars::class)
 @ConditionalOnProperty(
@@ -108,12 +111,77 @@ open class DgsExtendedScalarsAutoConfiguration {
                         // Others
                         ExtendedScalars.GraphQLLong,
                         ExtendedScalars.GraphQLShort,
-                        ExtendedScalars.GraphQLByte,
-                        ExtendedScalars.GraphQLBigDecimal,
-                        ExtendedScalars.GraphQLBigInteger
+                        ExtendedScalars.GraphQLByte
                     )
                 }
             }
+        }
+
+        @Conditional(OnBigDecimalAndNumbers::class)
+        @Configuration(proxyBeanMethods = false)
+        open class BigDecimalAutoConfiguration {
+            @Bean
+            open fun bigDecimalExtendedScalarsRegistrar(): ExtendedScalarRegistrar {
+                return object : AbstractExtendedScalarRegistrar() {
+                    override fun getScalars(): List<GraphQLScalarType> {
+                        return listOf(
+                            // Others
+                            ExtendedScalars.GraphQLBigDecimal
+                        )
+                    }
+                }
+            }
+        }
+
+        open class OnBigDecimalAndNumbers :
+            AllNestedConditions(ConfigurationCondition.ConfigurationPhase.PARSE_CONFIGURATION) {
+            @ConditionalOnProperty(
+                prefix = "dgs.graphql.extensions.scalars.numbers.",
+                name = ["enabled"],
+                havingValue = "true",
+                matchIfMissing = true
+            )
+            open class OnNumbers
+
+            @ConditionalOnProperty(
+                prefix = "dgs.graphql.extensions.scalars.numbers.bigdecimal",
+                name = ["enabled"],
+                havingValue = "true",
+                matchIfMissing = true
+            )
+            open class OnBigDecimal
+        }
+
+        @Conditional(OnBigIntegerAndNumbers::class)
+        @Configuration(proxyBeanMethods = false)
+        open class BigIntegerAutoConfiguration {
+            @Bean
+            open fun bigIntegerExtendedScalarsRegistrar(): ExtendedScalarRegistrar {
+                return object : AbstractExtendedScalarRegistrar() {
+                    override fun getScalars(): List<GraphQLScalarType> {
+                        return listOf(ExtendedScalars.GraphQLBigInteger)
+                    }
+                }
+            }
+        }
+
+        open class OnBigIntegerAndNumbers :
+            AllNestedConditions(ConfigurationCondition.ConfigurationPhase.PARSE_CONFIGURATION) {
+            @ConditionalOnProperty(
+                prefix = "dgs.graphql.extensions.scalars.numbers.",
+                name = ["enabled"],
+                havingValue = "true",
+                matchIfMissing = true
+            )
+            open class OnNumbers
+
+            @ConditionalOnProperty(
+                prefix = "dgs.graphql.extensions.scalars.numbers.biginteger",
+                name = ["enabled"],
+                havingValue = "true",
+                matchIfMissing = true
+            )
+            open class OnBigInteger
         }
     }
 

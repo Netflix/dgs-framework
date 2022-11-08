@@ -19,7 +19,17 @@
     {
       "name": "dgs.graphql.extensions.scalars.numbers.enabled",
       "type": "java.lang.Boolean",
-      "description": "Enabled by default, if dgs.graphql.extensions.scalars.enabled is enabled, will register all numeric scalar extensions such as PositiveInt, NegativeInt, etc."
+      "description": "Enabled by default, will register all numeric scalar extensions such as PositiveInt, NegativeInt, etc."
+    },
+    {
+      "name": "dgs.graphql.extensions.scalars.numbers.bigdecimal.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enabled by default, can be used to disable the BigDecimal scalar; it requires dgs.graphql.extensions.scalars.numbers.enabled to be enabled as well."
+    },
+    {
+      "name": "dgs.graphql.extensions.scalars.numbers.biginteger.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enabled by default, can be used to disable the BigInteger scalar; it requires dgs.graphql.extensions.scalars.numbers.enabled to be enabled as well."
     },
     {
       "name": "dgs.graphql.extensions.scalars.chars.enabled",
