@@ -25,9 +25,6 @@ import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
-import org.springframework.security.core.context.SecurityContext
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.util.ClassUtils
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 import org.springframework.web.socket.handler.TextWebSocketHandler
@@ -55,7 +52,6 @@ class WebsocketGraphQLWSProtocolHandler(private val dgsQueryExecutor: DgsQueryEx
 
     public override fun handleTextMessage(session: WebSocketSession, message: TextMessage) {
         val (type, payload, id) = objectMapper.readValue(message.payload, OperationMessage::class.java)
-        loadSecurityContextFromSession(session)
         when (type) {
             GQL_CONNECTION_INIT -> {
                 logger.info("Initialized connection for {}", session.id)
@@ -85,15 +81,6 @@ class WebsocketGraphQLWSProtocolHandler(private val dgsQueryExecutor: DgsQueryEx
                 session.close()
             }
             else -> session.sendMessage(TextMessage(objectMapper.writeValueAsBytes(OperationMessage("error"))))
-        }
-    }
-
-    private fun loadSecurityContextFromSession(session: WebSocketSession) {
-        if (springSecurityAvailable) {
-            val securityContext = session.attributes["SPRING_SECURITY_CONTEXT"] as? SecurityContext
-            if (securityContext != null) {
-                SecurityContextHolder.setContext(securityContext)
-            }
         }
     }
 
@@ -162,12 +149,5 @@ class WebsocketGraphQLWSProtocolHandler(private val dgsQueryExecutor: DgsQueryEx
     private companion object {
         val logger = LoggerFactory.getLogger(WebsocketGraphQLWSProtocolHandler::class.java)
         val objectMapper = jacksonObjectMapper()
-
-        private val springSecurityAvailable: Boolean by lazy {
-            ClassUtils.isPresent(
-                "org.springframework.security.core.context.SecurityContextHolder",
-                WebsocketGraphQLWSProtocolHandler::class.java.classLoader
-            )
-        }
     }
 }
