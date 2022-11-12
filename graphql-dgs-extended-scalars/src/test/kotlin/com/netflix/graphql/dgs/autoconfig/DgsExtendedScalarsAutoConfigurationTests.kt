@@ -35,6 +35,8 @@ internal class DgsExtendedScalarsAutoConfigurationTests {
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration.CharsExtendedScalarsAutoConfiguration::class.java)
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration::class.java)
+                .hasSingleBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigDecimalAutoConfiguration::class.java)
+                .hasSingleBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigIntegerAutoConfiguration::class.java)
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration.ObjectsExtendedScalarsAutoConfiguration::class.java)
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration.TimeExtendedScalarsAutoConfiguration::class.java)
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration.IDsExtendedScalarsAutoConfiguration::class.java)
@@ -84,6 +86,36 @@ internal class DgsExtendedScalarsAutoConfigurationTests {
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
             assertThat(context)
                 .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration::class.java)
+                .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigDecimalAutoConfiguration::class.java)
+                .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigIntegerAutoConfiguration::class.java)
+        }
+    }
+
+    @Test
+    fun `The BigDecimal scalar can be disabled`() {
+        context.withPropertyValues(
+            "dgs.graphql.extensions.scalars.numbers.bigdecimal.enabled=false"
+        ).run { context ->
+            assertThat(context)
+                .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
+                .hasSingleBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration::class.java)
+                .hasSingleBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigIntegerAutoConfiguration::class.java)
+            assertThat(context)
+                .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigDecimalAutoConfiguration::class.java)
+        }
+    }
+
+    @Test
+    fun `The BigInteger scalar can be disabled`() {
+        context.withPropertyValues(
+            "dgs.graphql.extensions.scalars.numbers.biginteger.enabled=false"
+        ).run { context ->
+            assertThat(context)
+                .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
+                .hasSingleBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration::class.java)
+                .hasSingleBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigDecimalAutoConfiguration::class.java)
+            assertThat(context)
+                .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigIntegerAutoConfiguration::class.java)
         }
     }
 
