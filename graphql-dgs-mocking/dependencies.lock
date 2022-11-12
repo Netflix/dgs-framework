@@ -7,22 +7,22 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0-RC1"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "6.0.0-RC1"
+            "locked": "6.0.0-RC2"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC3"
+            "locked": "6.0.0-RC4"
         }
     },
     "compileClasspath": {
@@ -48,16 +48,16 @@
             "locked": "2.0.3"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0-RC1"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "6.0.0-RC1"
+            "locked": "6.0.0-RC2"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC3"
+            "locked": "6.0.0-RC4"
         }
     },
     "jmh": {
@@ -79,16 +79,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0-RC1"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "6.0.0-RC1"
+            "locked": "6.0.0-RC2"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC3"
+            "locked": "6.0.0-RC4"
         }
     },
     "jmhCompileClasspath": {
@@ -123,16 +123,16 @@
             "locked": "2.0.3"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0-RC1"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "6.0.0-RC1"
+            "locked": "6.0.0-RC2"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC3"
+            "locked": "6.0.0-RC4"
         }
     },
     "jmhRuntimeClasspath": {
@@ -170,51 +170,51 @@
             "locked": "2.0.3"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0-RC1"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "6.0.0-RC1"
+            "locked": "6.0.0-RC2"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC3"
+            "locked": "6.0.0-RC4"
         }
     },
     "kapt": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         }
     },
     "kaptClasspath_kaptKotlin": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         }
     },
     "kaptJmh": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         }
     },
     "kaptTest": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         }
     },
     "kotlinCompilerClasspath": {
@@ -228,16 +228,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0-RC1"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "6.0.0-RC1"
+            "locked": "6.0.0-RC2"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC3"
+            "locked": "6.0.0-RC4"
         }
     },
     "kotlinCompilerPluginClasspath": {
@@ -248,16 +248,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0-RC1"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "6.0.0-RC1"
+            "locked": "6.0.0-RC2"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC3"
+            "locked": "6.0.0-RC4"
         }
     },
     "kotlinCompilerPluginClasspathJmh": {
@@ -274,16 +274,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0-RC1"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "6.0.0-RC1"
+            "locked": "6.0.0-RC2"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC3"
+            "locked": "6.0.0-RC4"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
@@ -300,16 +300,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0-RC1"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "6.0.0-RC1"
+            "locked": "6.0.0-RC2"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC3"
+            "locked": "6.0.0-RC4"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
@@ -326,16 +326,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0-RC1"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "6.0.0-RC1"
+            "locked": "6.0.0-RC2"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC3"
+            "locked": "6.0.0-RC4"
         }
     },
     "kotlinKaptWorkerDependencies": {
@@ -357,16 +357,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0-RC1"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "6.0.0-RC1"
+            "locked": "6.0.0-RC2"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC3"
+            "locked": "6.0.0-RC4"
         }
     },
     "kotlinNativeCompilerPluginClasspath": {
@@ -377,16 +377,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0-RC1"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "6.0.0-RC1"
+            "locked": "6.0.0-RC2"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC3"
+            "locked": "6.0.0-RC4"
         }
     },
     "nebulaRecommenderBom": {
@@ -397,16 +397,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0-RC1"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "6.0.0-RC1"
+            "locked": "6.0.0-RC2"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC3"
+            "locked": "6.0.0-RC4"
         }
     },
     "runtimeClasspath": {
@@ -432,16 +432,16 @@
             "locked": "2.0.3"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0-RC1"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "6.0.0-RC1"
+            "locked": "6.0.0-RC2"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC3"
+            "locked": "6.0.0-RC4"
         }
     },
     "testAnnotationProcessor": {
@@ -452,16 +452,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0-RC1"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "6.0.0-RC1"
+            "locked": "6.0.0-RC2"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC3"
+            "locked": "6.0.0-RC4"
         }
     },
     "testCompileClasspath": {
@@ -490,19 +490,19 @@
             "locked": "2.0.3"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0-RC1"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "6.0.0-RC1"
+            "locked": "6.0.0-RC2"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC3"
+            "locked": "6.0.0-RC4"
         }
     },
     "testRuntimeClasspath": {
@@ -531,19 +531,19 @@
             "locked": "2.0.3"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "3.0.0-RC1"
+            "locked": "3.0.0-RC2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0-RC1"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "6.0.0-RC1"
+            "locked": "6.0.0-RC2"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.0-RC3"
+            "locked": "6.0.0-RC4"
         }
     }
 }
