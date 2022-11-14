@@ -16,44 +16,64 @@
 
 package com.netflix.graphql.dgs.internal
 
-import com.fasterxml.jackson.module.kotlin.isKotlinClass
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.core.KotlinDetector
+import org.springframework.util.CollectionUtils
 import org.springframework.util.ReflectionUtils
-import java.lang.reflect.*
+import java.lang.reflect.Field
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
+import java.lang.reflect.TypeVariable
+import java.lang.reflect.WildcardType
 import kotlin.reflect.KClass
+import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmErasure
 
 @Suppress("UNCHECKED_CAST")
-class DefaultInputObjectMapper(val customInputObjectMapper: InputObjectMapper? = null) : InputObjectMapper {
+class DefaultInputObjectMapper(private val customInputObjectMapper: InputObjectMapper? = null) : InputObjectMapper {
     private val logger: Logger = LoggerFactory.getLogger(InputObjectMapper::class.java)
 
     override fun <T : Any> mapToKotlinObject(inputMap: Map<String, *>, targetClass: KClass<T>): T {
-        val params = targetClass.primaryConstructor!!.parameters
-        val inputValues = mutableListOf<Any?>()
+        val constructor = targetClass.primaryConstructor
+            ?: throw DgsInvalidInputArgumentException("No primary constructor found for class $targetClass")
 
-        params.forEach { parameter ->
+        val parameters = constructor.parameters
+        val parametersByName = CollectionUtils.newLinkedHashMap<KParameter, Any?>(parameters.size)
+
+        for (parameter in parameters) {
+            if (parameter.name !in inputMap) {
+                if (parameter.isOptional) {
+                    continue
+                } else if (parameter.type.isMarkedNullable) {
+                    parametersByName[parameter] = null
+                    continue
+                }
+                throw DgsInvalidInputArgumentException("No value specified for required parameter ${parameter.name} of class $targetClass")
+            }
+
             val input = inputMap[parameter.name]
+
             if (input is Map<*, *>) {
                 val nestedTarget = parameter.type.jvmErasure
                 val subValue = if (isObjectOrAny(nestedTarget)) {
                     input
-                } else if (nestedTarget.java.isKotlinClass()) {
+                } else if (KotlinDetector.isKotlinType(nestedTarget.java)) {
                     customInputObjectMapper?.mapToKotlinObject(input as Map<String, *>, nestedTarget)
                         ?: mapToKotlinObject(input as Map<String, *>, nestedTarget)
                 } else {
                     customInputObjectMapper?.mapToJavaObject(input as Map<String, *>, nestedTarget.java)
                         ?: mapToJavaObject(input as Map<String, *>, nestedTarget.java)
                 }
-                inputValues.add(subValue)
+                parametersByName[parameter] = subValue
             } else if (parameter.type.jvmErasure.java.isEnum && input !== null) {
                 val enumValue =
                     (parameter.type.jvmErasure.java.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == input }
-                inputValues.add(enumValue)
+                parametersByName[parameter] = enumValue
             } else if (input is List<*>) {
                 val newList = convertList(
                     input = input,
@@ -68,19 +88,19 @@ class DefaultInputObjectMapper(val customInputObjectMapper: InputObjectMapper? =
                 )
 
                 if (parameter.type.jvmErasure == Set::class) {
-                    inputValues.add(newList.toSet())
+                    parametersByName[parameter] = newList.toSet()
                 } else {
-                    inputValues.add(newList)
+                    parametersByName[parameter] = newList
                 }
             } else {
-                inputValues.add(input)
+                parametersByName[parameter] = input
             }
         }
 
         return try {
-            targetClass.primaryConstructor!!.call(*inputValues.toTypedArray())
+            constructor.callBy(parametersByName)
         } catch (ex: Exception) {
-            throw DgsInvalidInputArgumentException("Provided input arguments `$inputValues` do not match arguments of data class `$targetClass`")
+            throw DgsInvalidInputArgumentException("Provided input arguments do not match arguments of data class `$targetClass`", ex)
         }
     }
 
@@ -106,7 +126,7 @@ class DefaultInputObjectMapper(val customInputObjectMapper: InputObjectMapper? =
                 }
 
                 if (it.value is Map<*, *>) {
-                    val mappedValue = if (fieldClass.isKotlinClass()) {
+                    val mappedValue = if (KotlinDetector.isKotlinType(fieldClass)) {
                         mapToKotlinObject(it.value as Map<String, *>, fieldClass.kotlin)
                     } else {
                         mapToJavaObject(it.value as Map<String, *>, fieldClass)
@@ -205,7 +225,7 @@ class DefaultInputObjectMapper(val customInputObjectMapper: InputObjectMapper? =
             } else if (listItem is Map<*, *>) {
                 if (isObjectOrAny(nestedClass)) {
                     listItem
-                } else if (nestedClass.java.isKotlinClass()) {
+                } else if (KotlinDetector.isKotlinType(nestedClass.java)) {
                     mapToKotlinObject(listItem as Map<String, *>, nestedClass)
                 } else {
                     mapToJavaObject(listItem as Map<String, *>, nestedClass.java)

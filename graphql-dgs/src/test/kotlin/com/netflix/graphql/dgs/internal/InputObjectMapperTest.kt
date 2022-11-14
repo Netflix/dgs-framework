@@ -246,6 +246,16 @@ internal class InputObjectMapperTest {
         assertThat(mapToObject.inputL1.input.simpleString).isNull()
     }
 
+    @Test
+    fun `mapping to a Kotlin class with default arguments works when not all arguments are specified`() {
+        data class KotlinInputObjectWithDefaults(val someDate: LocalDateTime, val string: String = "default")
+
+        val result = inputObjectMapper.mapToKotlinObject(mapOf("someDate" to currentDate), KotlinInputObjectWithDefaults::class)
+
+        assertThat(result.someDate).isEqualTo(currentDate)
+        assertThat(result.string).isEqualTo("default")
+    }
+
     data class KotlinInputObject(val simpleString: String?, val someDate: LocalDateTime, val someObject: KotlinSomeObject)
     data class KotlinNestedInputObject(val input: KotlinInputObject)
     data class KotlinDoubleNestedInputObject(val inputL1: KotlinNestedInputObject)

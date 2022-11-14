@@ -20,6 +20,9 @@ import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.types.subscription.*
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
+import org.springframework.security.core.context.SecurityContext
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.util.ClassUtils
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.SubProtocolCapable
 import org.springframework.web.socket.TextMessage
@@ -77,6 +80,7 @@ class DgsWebSocketHandler(dgsQueryExecutor: DgsQueryExecutor, connectionInitTime
     }
 
     public override fun handleTextMessage(session: WebSocketSession, message: TextMessage) {
+        loadSecurityContextFromSession(session)
         if (session.acceptedProtocol.equals(GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL, ignoreCase = true)) {
             return graphqlWSHandler.handleTextMessage(session, message)
         } else if (session.acceptedProtocol.equals(GRAPHQL_SUBSCRIPTIONS_TRANSPORT_WS_PROTOCOL, ignoreCase = true)) {
@@ -84,9 +88,25 @@ class DgsWebSocketHandler(dgsQueryExecutor: DgsQueryExecutor, connectionInitTime
         }
     }
 
+    private fun loadSecurityContextFromSession(session: WebSocketSession) {
+        if (springSecurityAvailable) {
+            val securityContext = session.attributes["SPRING_SECURITY_CONTEXT"] as? SecurityContext
+            if (securityContext != null) {
+                SecurityContextHolder.setContext(securityContext)
+            }
+        }
+    }
+
     override fun getSubProtocols(): List<String> = listOf(GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL, GRAPHQL_SUBSCRIPTIONS_TRANSPORT_WS_PROTOCOL)
 
     private companion object {
         val logger = LoggerFactory.getLogger(DgsWebSocketHandler::class.java)
+
+        private val springSecurityAvailable: Boolean by lazy {
+            ClassUtils.isPresent(
+                "org.springframework.security.core.context.SecurityContextHolder",
+                DgsWebSocketHandler::class.java.classLoader
+            )
+        }
     }
 }
