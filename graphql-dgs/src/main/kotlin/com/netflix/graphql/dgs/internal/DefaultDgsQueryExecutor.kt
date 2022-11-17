@@ -37,7 +37,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
+import java.time.Duration
 import java.util.*
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -65,7 +67,9 @@ class DefaultDgsQueryExecutor(
         extensions: Map<String, Any>?,
         headers: HttpHeaders?,
         operationName: String?,
-        webRequest: WebRequest?
+        webRequest: WebRequest?,
+        timeout: Long?,
+        timeoutUnit: TimeUnit?
     ): ExecutionResult {
         val graphQLSchema: GraphQLSchema =
             if (reloadIndicator.reloadSchema()) {
@@ -91,8 +95,10 @@ class DefaultDgsQueryExecutor(
                 preparsedDocumentProvider = preparsedDocumentProvider
             )
 
+        val result = timeout?.let {
+            executionResult.get(timeout, timeoutUnit!!)
+        } ?: executionResult.get()
         // Check for NonNullableFieldWasNull errors, and log them explicitly because they don't run through the exception handlers.
-        val result = executionResult.get()
         if (result.errors.size > 0) {
             val nullValueError = result.errors.find { it is NonNullableFieldWasNullError }
             if (nullValueError != null) {
@@ -103,20 +109,32 @@ class DefaultDgsQueryExecutor(
         return result
     }
 
-    override fun <T> executeAndExtractJsonPath(query: String, jsonPath: String, variables: Map<String, Any>): T {
-        return JsonPath.read(getJsonResult(query, variables), jsonPath)
+    override fun <T> executeAndExtractJsonPath(query: String,
+                                               jsonPath: String,
+                                               variables: Map<String, Any>,
+                                               timeout: Long?,
+                                               timeoutUnit: TimeUnit?): T {
+        return JsonPath.read(getJsonResult(query, variables, timeout = timeout, timeoutUnit = timeoutUnit), jsonPath)
     }
 
-    override fun <T : Any?> executeAndExtractJsonPath(query: String, jsonPath: String, headers: HttpHeaders): T {
-        return JsonPath.read(getJsonResult(query, emptyMap(), headers), jsonPath)
+    override fun <T : Any?> executeAndExtractJsonPath(query: String,
+                                                      jsonPath: String,
+                                                      headers: HttpHeaders,
+                                                      timeout: Long?,
+                                                      timeoutUnit: TimeUnit?): T {
+        return JsonPath.read(getJsonResult(query, emptyMap(), headers, timeout = timeout, timeoutUnit = timeoutUnit), jsonPath)
     }
 
-    override fun <T : Any?> executeAndExtractJsonPath(query: String, jsonPath: String, servletWebRequest: ServletWebRequest): T {
+    override fun <T : Any?> executeAndExtractJsonPath(query: String,
+                                                      jsonPath: String,
+                                                      servletWebRequest: ServletWebRequest,
+                                                      timeout: Long?,
+                                                      timeoutUnit: TimeUnit?): T {
         val httpHeaders = HttpHeaders()
         servletWebRequest.headerNames.forEach { name ->
             httpHeaders.addAll(name, servletWebRequest.getHeaderValues(name).orEmpty().toList())
         }
-        return JsonPath.read(getJsonResult(query, emptyMap(), httpHeaders, servletWebRequest), jsonPath)
+        return JsonPath.read(getJsonResult(query, emptyMap(), httpHeaders, servletWebRequest, timeout, timeoutUnit), jsonPath)
     }
 
     override fun <T> executeAndExtractJsonPathAsObject(
@@ -124,9 +142,11 @@ class DefaultDgsQueryExecutor(
         jsonPath: String,
         variables: Map<String, Any>,
         clazz: Class<T>,
-        headers: HttpHeaders?
+        headers: HttpHeaders?,
+        timeout: Long?,
+        timeoutUnit: TimeUnit?
     ): T {
-        val jsonResult = getJsonResult(query, variables, headers)
+        val jsonResult = getJsonResult(query, variables, headers, timeout = timeout, timeoutUnit = timeoutUnit)
         return try {
             parseContext.parse(jsonResult).read(jsonPath, clazz)
         } catch (ex: MappingException) {
@@ -139,9 +159,11 @@ class DefaultDgsQueryExecutor(
         jsonPath: String,
         variables: Map<String, Any>,
         typeRef: TypeRef<T>,
-        headers: HttpHeaders?
+        headers: HttpHeaders?,
+        timeout: Long?,
+        timeoutUnit: TimeUnit?
     ): T {
-        val jsonResult = getJsonResult(query, variables, headers)
+        val jsonResult = getJsonResult(query, variables, headers, timeout = timeout, timeoutUnit = timeoutUnit)
         return try {
             parseContext.parse(jsonResult).read(jsonPath, typeRef)
         } catch (ex: MappingException) {
@@ -149,26 +171,42 @@ class DefaultDgsQueryExecutor(
         }
     }
 
-    override fun executeAndGetDocumentContext(query: String, variables: Map<String, Any>): DocumentContext {
-        return parseContext.parse(getJsonResult(query, variables))
+    override fun executeAndGetDocumentContext(query: String,
+                                              variables: Map<String, Any>,
+                                              timeout: Long?,
+                                              timeoutUnit: TimeUnit?): DocumentContext {
+        return parseContext.parse(getJsonResult(query, variables, timeout = timeout, timeoutUnit = timeoutUnit))
     }
 
     override fun executeAndGetDocumentContext(
         query: String,
         variables: MutableMap<String, Any>,
-        headers: HttpHeaders?
+        headers: HttpHeaders?,
+        timeout: Long?,
+        timeoutUnit: TimeUnit?
     ): DocumentContext {
-        return parseContext.parse(getJsonResult(query, variables, headers))
+        return parseContext.parse(getJsonResult(query, variables, headers, timeout = timeout, timeoutUnit = timeoutUnit))
     }
 
-    private fun getJsonResult(query: String, variables: Map<String, Any>, headers: HttpHeaders? = null, servletWebRequest: ServletWebRequest? = null): String {
-        val executionResult = execute(query, variables, null, headers, null, servletWebRequest)
+    private fun getJsonResult(query: String, variables: Map<String, Any>,
+                              headers: HttpHeaders? = null,
+                              servletWebRequest: ServletWebRequest? = null,
+                              timeout: Long? = null,
+                              timeoutUnit: TimeUnit? = null): String {
+        checkTimeoutValue(timeout, timeoutUnit)
+        val executionResult = execute(query, variables, null, headers, null, servletWebRequest, timeout, timeoutUnit)
 
         if (executionResult.errors.size > 0) {
             throw QueryException(executionResult.errors)
         }
 
         return BaseDgsQueryExecutor.objectMapper.writeValueAsString(executionResult.toSpecification())
+    }
+
+    private fun checkTimeoutValue(timeout: Long?, timeoutUnit: TimeUnit?) {
+        check( (timeout != null && timeoutUnit != null) || (timeout == null && timeoutUnit == null)) {
+            "Both timeout value must be non-null or both must be null."
+        }
     }
 
     /**

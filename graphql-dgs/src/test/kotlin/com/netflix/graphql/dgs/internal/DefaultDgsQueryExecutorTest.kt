@@ -19,11 +19,13 @@ package com.netflix.graphql.dgs.internal
 import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.*
+import com.netflix.graphql.dgs.DgsExecutionResult
 import com.netflix.graphql.dgs.exceptions.DgsBadRequestException
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.method.InputArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
+import graphql.GraphQLError
 import graphql.InvalidSyntaxError
 import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
@@ -31,6 +33,7 @@ import graphql.execution.instrumentation.SimpleInstrumentation
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import kotlinx.coroutines.delay
 import org.assertj.core.api.Assertions.assertThat
 import org.dataloader.DataLoaderRegistry
 import org.junit.jupiter.api.BeforeEach
@@ -41,7 +44,11 @@ import org.springframework.context.ApplicationContext
 import org.springframework.http.HttpHeaders
 import java.time.LocalDateTime
 import java.util.*
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 import java.util.function.Supplier
+
 
 @Suppress("GraphQLUnresolvedReference")
 @ExtendWith(MockKExtension::class)
@@ -92,15 +99,23 @@ internal class DefaultDgsQueryExecutorTest {
             }
         }
 
+        val delayFetcher = object : Any() {
+            @DgsData(parentType = "Query", field = "delay")
+            fun delayF(@InputArgument("durationMs") duration: Int): CompletableFuture<String> {
+                return CompletableFuture.supplyAsync {
+                        Thread.sleep(duration.toLong())
+                        "done"
+                    }
+            }
+        }
+
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            ),
+            Pair("helloFetcher", fetcher),
             Pair("numbersFetcher", numbersFetcher),
             Pair("moviesFetcher", moviesFetcher),
             Pair("withErrorFetcher", fetcherWithError),
-            Pair("echoFetcher", echoFetcher)
+            Pair("echoFetcher", echoFetcher),
+            Pair("delayFetcher", delayFetcher),
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(
             Pair(
@@ -122,6 +137,7 @@ internal class DefaultDgsQueryExecutorTest {
             """
             type Query {
                 hello: String
+                delay(durationMs: Int): String
                 numbers: [Int]
                 movies: [Movie]
                 withError: String
@@ -448,6 +464,28 @@ internal class DefaultDgsQueryExecutorTest {
 
         val movie = context.read("data.movies[0]", Movie::class.java)
         assertThat(movie).isNotNull
+    }
+
+    @Test
+    fun `invalid timeout parameter throws`() {
+        assertThrows<IllegalStateException> {
+            dgsQueryExecutor.execute("{ hello }", null, TimeUnit.SECONDS)
+        }
+        assertThrows<IllegalStateException> {
+            dgsQueryExecutor.execute("{ hello }", 23L, null)
+        }
+    }
+
+    @Test
+    fun `execute with timeout is respected`() {
+        // delay value has no effect since the delay data fetcher will be immediately interrupted at the 10ms mark.
+        assertThrows<TimeoutException> {  dgsQueryExecutor.execute("{ delay(durationMs: 20000) }", 10, TimeUnit.MILLISECONDS) }
+
+        val result = dgsQueryExecutor.execute("{ hello }", Long.MAX_VALUE, TimeUnit.SECONDS)
+        assertThat(result)
+            .isNotNull
+            .extracting { it.errors }
+            .isEqualTo(emptyList<GraphQLError>())
     }
 }
 
