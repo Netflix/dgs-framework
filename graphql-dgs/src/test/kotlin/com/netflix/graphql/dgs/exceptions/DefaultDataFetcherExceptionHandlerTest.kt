@@ -130,8 +130,10 @@ internal class DefaultDataFetcherExceptionHandlerTest {
 
     @Test
     fun `CompletionException returns wrapped error code`() {
-        val completionException = CompletionException("com.netflix.graphql.dgs.exceptions.DgsEntityNotFoundException: Requested entity not found",
-            DgsEntityNotFoundException())
+        val completionException = CompletionException(
+            "com.netflix.graphql.dgs.exceptions.DgsEntityNotFoundException: Requested entity not found",
+            DgsEntityNotFoundException()
+        )
         every { dataFetcherExceptionHandlerParameters.exception }.returns(completionException)
 
         val result = DefaultDataFetcherExceptionHandler().handleException(dataFetcherExceptionHandlerParameters).get()
