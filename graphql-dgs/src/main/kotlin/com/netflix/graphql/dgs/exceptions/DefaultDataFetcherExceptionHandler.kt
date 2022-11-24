@@ -24,6 +24,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.util.ClassUtils
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionException
 
 /**
  * Default DataFetcherExceptionHandler used by the framework, can be replaced with a custom implementation.
@@ -41,7 +42,7 @@ class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
     }
 
     private fun doHandleException(handlerParameters: DataFetcherExceptionHandlerParameters): DataFetcherExceptionHandlerResult {
-        val exception = handlerParameters.exception
+        val exception = unwrapCompletionException(handlerParameters.exception)
         logger.error(
             "Exception while executing data fetcher for ${handlerParameters.path}: ${exception.message}",
             exception
@@ -60,6 +61,10 @@ class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
         return DataFetcherExceptionHandlerResult.newResult()
             .error(graphqlError)
             .build()
+    }
+
+    private fun unwrapCompletionException(e: Throwable): Throwable {
+        return if (e is CompletionException && e.cause != null) e.cause!! else e
     }
 
     companion object {
