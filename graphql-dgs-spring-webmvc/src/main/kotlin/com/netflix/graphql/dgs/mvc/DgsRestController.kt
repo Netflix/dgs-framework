@@ -227,8 +227,8 @@ open class DgsRestController(
         }
 
         return when (executionResult) {
-            is DgsExecutionResult -> executionResult.toSpringResponse()
-            else -> DgsExecutionResult.builder().executionResult(executionResult).build().toSpringResponse()
+            is DgsExecutionResult -> executionResult.toSpringResponse(mapper)
+            else -> DgsExecutionResult.builder().executionResult(executionResult).build().toSpringResponse(mapper)
         }
     }
 }
