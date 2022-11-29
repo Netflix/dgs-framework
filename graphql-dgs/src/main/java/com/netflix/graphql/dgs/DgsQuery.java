@@ -16,8 +16,6 @@
 
 package com.netflix.graphql.dgs;
 
-import org.springframework.core.annotation.AliasFor;
-
 import java.lang.annotation.*;
 
 @Target(ElementType.METHOD)
@@ -25,6 +23,5 @@ import java.lang.annotation.*;
 @DgsData(parentType = "Query")
 @Inherited
 public @interface DgsQuery {
-    @AliasFor("field")
     String field() default "";
 }
