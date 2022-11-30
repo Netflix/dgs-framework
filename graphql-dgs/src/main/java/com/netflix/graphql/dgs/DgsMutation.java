@@ -25,6 +25,6 @@ import java.lang.annotation.*;
 @DgsData(parentType = "Mutation")
 @Inherited
 public @interface DgsMutation {
-    @AliasFor(annotation = DgsData.class, attribute = "field")
+    @AliasFor(annotation = DgsData.class)
     String field() default "";
 }

@@ -29,6 +29,6 @@ import java.lang.annotation.Target;
 @DgsData(parentType = "Subscription")
 @Inherited
 public @interface DgsSubscription {
-    @AliasFor(annotation = DgsData.class, attribute = "field")
+    @AliasFor(annotation = DgsData.class)
     String field() default "";
 }
