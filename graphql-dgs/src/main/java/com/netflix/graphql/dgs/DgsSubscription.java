@@ -16,6 +16,8 @@
 
 package com.netflix.graphql.dgs;
 
+import org.springframework.core.annotation.AliasFor;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -27,5 +29,6 @@ import java.lang.annotation.Target;
 @DgsData(parentType = "Subscription")
 @Inherited
 public @interface DgsSubscription {
+    @AliasFor(annotation = DgsData.class, attribute = "field")
     String field() default "";
 }
