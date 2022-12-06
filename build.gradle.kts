@@ -50,15 +50,15 @@ allprojects {
     // and suggest an upgrade. The only exception currently are those defined
     // in buildSrc, most likley because the variables are used in plugins as well
     // as dependencies. e.g. KOTLIN_VERSION
-    extra["sb.version"] = "2.6.12"
+    extra["sb.version"] = "2.7.5"
     val springBootVersion = extra["sb.version"] as String
 
     dependencyRecommendations {
         mavenBom(mapOf("module" to "org.jetbrains.kotlin:kotlin-bom:${Versions.KOTLIN_VERSION}"))
         mavenBom(mapOf("module" to "org.springframework:spring-framework-bom:5.3.23"))
         mavenBom(mapOf("module" to "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
-        mavenBom(mapOf("module" to "org.springframework.security:spring-security-bom:5.7.3"))
-        mavenBom(mapOf("module" to "org.springframework.cloud:spring-cloud-dependencies:2021.0.2"))
+        mavenBom(mapOf("module" to "org.springframework.security:spring-security-bom:5.7.4"))
+        mavenBom(mapOf("module" to "org.springframework.cloud:spring-cloud-dependencies:2021.0.3"))
         mavenBom(mapOf("module" to "com.fasterxml.jackson:jackson-bom:2.13.4"))
     }
 }
