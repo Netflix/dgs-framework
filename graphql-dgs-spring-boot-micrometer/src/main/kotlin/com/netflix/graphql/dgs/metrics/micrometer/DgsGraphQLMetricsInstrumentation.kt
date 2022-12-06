@@ -77,7 +77,7 @@ class DgsGraphQLMetricsInstrumentation(
                     properties.autotime
                         .builder(GqlMetric.QUERY.key)
                         .tags(tagsProvider.getContextualTags())
-                        .tags(tagsProvider.getExecutionTags(parameters, result, exc))
+                        .tags(tagsProvider.getExecutionTags(miState, parameters, result, exc))
                         .tags(miState.tags())
                 )
             }
@@ -93,7 +93,7 @@ class DgsGraphQLMetricsInstrumentation(
         val tags =
             Tags.empty()
                 .and(tagsProvider.getContextualTags())
-                .and(tagsProvider.getExecutionTags(parameters, executionResult, null))
+                .and(tagsProvider.getExecutionTags(miState, parameters, executionResult, null))
                 .and(miState.tags())
 
         ErrorUtils
@@ -143,17 +143,18 @@ class DgsGraphQLMetricsInstrumentation(
                         recordDataFetcherMetrics(
                             registry,
                             sampler,
+                            miState,
                             parameters,
                             error,
                             baseTags
                         )
                     }
                 } else {
-                    recordDataFetcherMetrics(registry, sampler, parameters, null, baseTags)
+                    recordDataFetcherMetrics(registry, sampler, miState, parameters, null, baseTags)
                 }
                 result
             } catch (throwable: Throwable) {
-                recordDataFetcherMetrics(registry, sampler, parameters, throwable, baseTags)
+                recordDataFetcherMetrics(registry, sampler, miState, parameters, throwable, baseTags)
                 throw throwable
             }
         }
@@ -197,13 +198,14 @@ class DgsGraphQLMetricsInstrumentation(
     private fun recordDataFetcherMetrics(
         registry: MeterRegistry,
         timerSampler: Timer.Sample,
+        state: MetricsInstrumentationState,
         parameters: InstrumentationFieldFetchParameters,
         error: Throwable?,
         baseTags: Iterable<Tag>
     ) {
         val recordedTags = Tags
             .of(baseTags)
-            .and(tagsProvider.getFieldFetchTags(parameters, error))
+            .and(tagsProvider.getFieldFetchTags(state, parameters, error))
 
         timerSampler.stop(
             properties
