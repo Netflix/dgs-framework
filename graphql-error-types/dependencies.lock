@@ -16,7 +16,7 @@
             "locked": "3.0.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0-RC2"
+            "locked": "2022.0.0-RC3"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "6.0.0"
@@ -48,7 +48,7 @@
             "locked": "3.0.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0-RC2"
+            "locked": "2022.0.0-RC3"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "6.0.0"
@@ -79,7 +79,7 @@
             "locked": "3.0.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0-RC2"
+            "locked": "2022.0.0-RC3"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "6.0.0"
@@ -120,7 +120,7 @@
             "locked": "3.0.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0-RC2"
+            "locked": "2022.0.0-RC3"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "6.0.0"
@@ -164,7 +164,7 @@
             "locked": "3.0.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0-RC2"
+            "locked": "2022.0.0-RC3"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "6.0.0"
@@ -219,7 +219,7 @@
             "locked": "3.0.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0-RC2"
+            "locked": "2022.0.0-RC3"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "6.0.0"
@@ -239,7 +239,7 @@
             "locked": "3.0.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0-RC2"
+            "locked": "2022.0.0-RC3"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "6.0.0"
@@ -265,7 +265,7 @@
             "locked": "3.0.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0-RC2"
+            "locked": "2022.0.0-RC3"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "6.0.0"
@@ -291,7 +291,7 @@
             "locked": "3.0.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0-RC2"
+            "locked": "2022.0.0-RC3"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "6.0.0"
@@ -317,7 +317,7 @@
             "locked": "3.0.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0-RC2"
+            "locked": "2022.0.0-RC3"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "6.0.0"
@@ -348,7 +348,7 @@
             "locked": "3.0.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0-RC2"
+            "locked": "2022.0.0-RC3"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "6.0.0"
@@ -368,7 +368,7 @@
             "locked": "3.0.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0-RC2"
+            "locked": "2022.0.0-RC3"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "6.0.0"
@@ -388,7 +388,7 @@
             "locked": "3.0.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0-RC2"
+            "locked": "2022.0.0-RC3"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "6.0.0"
@@ -417,7 +417,7 @@
             "locked": "3.0.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0-RC2"
+            "locked": "2022.0.0-RC3"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "6.0.0"
@@ -437,7 +437,7 @@
             "locked": "3.0.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0-RC2"
+            "locked": "2022.0.0-RC3"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "6.0.0"
@@ -472,7 +472,7 @@
             "locked": "3.0.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0-RC2"
+            "locked": "2022.0.0-RC3"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "6.0.0"
@@ -507,7 +507,7 @@
             "locked": "3.0.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0-RC2"
+            "locked": "2022.0.0-RC3"
         },
         "org.springframework.security:spring-security-bom": {
             "locked": "6.0.0"
