@@ -792,12 +792,12 @@ class MicrometerServletSmokeTest {
 
         @Bean
         open fun executionTagCustomizer(): DgsExecutionTagCustomizer {
-            return DgsExecutionTagCustomizer { _, _, _ -> Tags.of("execution-tag", "foo") }
+            return DgsExecutionTagCustomizer { _, _, _, _ -> Tags.of("execution-tag", "foo") }
         }
 
         @Bean
         open fun fieldFetchTagCustomizer(): DgsFieldFetchTagCustomizer {
-            return DgsFieldFetchTagCustomizer { _, _ -> Tags.of("field-fetch-tag", "foo") }
+            return DgsFieldFetchTagCustomizer { _, _, _ -> Tags.of("field-fetch-tag", "foo") }
         }
     }
 

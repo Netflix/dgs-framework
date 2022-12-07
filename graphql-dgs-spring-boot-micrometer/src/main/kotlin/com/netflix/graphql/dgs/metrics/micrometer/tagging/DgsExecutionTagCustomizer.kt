@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.metrics.micrometer.tagging
 
+import com.netflix.graphql.dgs.metrics.micrometer.DgsGraphQLMetricsInstrumentation
 import graphql.ExecutionResult
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
 import io.micrometer.core.instrument.Tag
@@ -24,6 +25,7 @@ import io.micrometer.core.instrument.Tag
 fun interface DgsExecutionTagCustomizer {
 
     fun getExecutionTags(
+        state: DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState,
         parameters: InstrumentationExecutionParameters,
         result: ExecutionResult,
         exception: Throwable?
