@@ -7,22 +7,22 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.4"
+            "locked": "5.7.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         }
     },
     "compileClasspath": {
@@ -81,7 +81,7 @@
             "project": true
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.24"
+            "locked": "3.4.25"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -96,22 +96,22 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.4"
+            "locked": "5.7.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         },
         "org.springframework:spring-web": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         },
         "org.springframework:spring-webmvc": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         }
     },
     "jmh": {
@@ -133,16 +133,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.4"
+            "locked": "5.7.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         }
     },
     "jmhCompileClasspath": {
@@ -201,7 +201,7 @@
             "project": true
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.24"
+            "locked": "3.4.25"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -225,22 +225,22 @@
             "locked": "1.29"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.4"
+            "locked": "5.7.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         },
         "org.springframework:spring-web": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         },
         "org.springframework:spring-webmvc": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         }
     },
     "jmhRuntimeClasspath": {
@@ -317,16 +317,16 @@
             "locked": "1.13.2"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.24"
+            "locked": "3.4.25"
         },
         "io.projectreactor:reactor-test": {
-            "locked": "3.4.24"
+            "locked": "3.4.25"
         },
         "net.datafaker:datafaker": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.6.0"
+            "locked": "1.7.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -380,75 +380,75 @@
             "locked": "1.7.36"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.boot:spring-boot-starter-tomcat": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.4"
+            "locked": "5.7.5"
         },
         "org.springframework:spring-context": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         },
         "org.springframework:spring-webmvc": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         },
         "org.springframework:spring-websocket": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         }
     },
     "kapt": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         }
     },
     "kaptClasspath_kaptKotlin": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         }
     },
     "kaptJmh": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         }
     },
     "kaptTest": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         }
     },
     "kotlinCompilerClasspath": {
@@ -462,16 +462,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.4"
+            "locked": "5.7.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         }
     },
     "kotlinCompilerPluginClasspath": {
@@ -482,16 +482,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.4"
+            "locked": "5.7.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         }
     },
     "kotlinCompilerPluginClasspathJmh": {
@@ -508,16 +508,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.4"
+            "locked": "5.7.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
@@ -534,16 +534,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.4"
+            "locked": "5.7.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
@@ -560,16 +560,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.4"
+            "locked": "5.7.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         }
     },
     "kotlinKaptWorkerDependencies": {
@@ -591,16 +591,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.4"
+            "locked": "5.7.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         }
     },
     "kotlinNativeCompilerPluginClasspath": {
@@ -611,16 +611,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.4"
+            "locked": "5.7.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         }
     },
     "nebulaRecommenderBom": {
@@ -631,16 +631,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.4"
+            "locked": "5.7.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         }
     },
     "runtimeClasspath": {
@@ -714,13 +714,13 @@
             "project": true
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.24"
+            "locked": "3.4.25"
         },
         "net.datafaker:datafaker": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.6.0"
+            "locked": "1.7.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -765,37 +765,37 @@
             "locked": "1.7.36"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.4"
+            "locked": "5.7.5"
         },
         "org.springframework:spring-context": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         },
         "org.springframework:spring-webmvc": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         },
         "org.springframework:spring-websocket": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         }
     },
     "testAnnotationProcessor": {
@@ -806,16 +806,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.4"
+            "locked": "5.7.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         }
     },
     "testCompileClasspath": {
@@ -877,10 +877,10 @@
             "locked": "1.13.2"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.24"
+            "locked": "3.4.25"
         },
         "io.projectreactor:reactor-test": {
-            "locked": "3.4.24"
+            "locked": "3.4.25"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -895,28 +895,28 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.boot:spring-boot-starter-tomcat": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.4"
+            "locked": "5.7.5"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         },
         "org.springframework:spring-web": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         },
         "org.springframework:spring-webmvc": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         }
     },
     "testRuntimeClasspath": {
@@ -993,16 +993,16 @@
             "locked": "1.13.2"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.4.24"
+            "locked": "3.4.25"
         },
         "io.projectreactor:reactor-test": {
-            "locked": "3.4.24"
+            "locked": "3.4.25"
         },
         "net.datafaker:datafaker": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.6.0"
+            "locked": "1.7.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -1047,43 +1047,43 @@
             "locked": "1.7.36"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.boot:spring-boot-starter-tomcat": {
-            "locked": "2.7.5"
+            "locked": "2.7.6"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.4"
+            "locked": "5.7.5"
         },
         "org.springframework:spring-context": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         },
         "org.springframework:spring-webmvc": {
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         },
         "org.springframework:spring-websocket": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-            "locked": "5.3.23"
+            "locked": "5.3.24"
         }
     }
 }
