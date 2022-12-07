@@ -7,19 +7,19 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.2"
+            "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.3"
+            "locked": "5.7.4"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.23"
@@ -45,13 +45,13 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.2"
+            "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.3"
+            "locked": "5.7.4"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.23"
@@ -79,13 +79,13 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.2"
+            "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.3"
+            "locked": "5.7.4"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.23"
@@ -120,13 +120,13 @@
             "locked": "1.29"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.2"
+            "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.3"
+            "locked": "5.7.4"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.23"
@@ -170,16 +170,16 @@
             "locked": "1.29"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.2"
+            "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.3"
+            "locked": "5.7.4"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.23"
@@ -190,34 +190,34 @@
     },
     "kapt": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         }
     },
     "kaptClasspath_kaptKotlin": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         }
     },
     "kaptJmh": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         }
     },
     "kaptTest": {
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         }
     },
     "kotlinCompilerClasspath": {
@@ -231,13 +231,13 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.2"
+            "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.3"
+            "locked": "5.7.4"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.23"
@@ -251,13 +251,13 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.2"
+            "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.3"
+            "locked": "5.7.4"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.23"
@@ -277,13 +277,13 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.2"
+            "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.3"
+            "locked": "5.7.4"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.23"
@@ -303,13 +303,13 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.2"
+            "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.3"
+            "locked": "5.7.4"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.23"
@@ -329,13 +329,13 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.2"
+            "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.3"
+            "locked": "5.7.4"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.23"
@@ -360,13 +360,13 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.2"
+            "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.3"
+            "locked": "5.7.4"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.23"
@@ -380,13 +380,13 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.2"
+            "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.3"
+            "locked": "5.7.4"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.23"
@@ -400,13 +400,13 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.2"
+            "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.3"
+            "locked": "5.7.4"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.23"
@@ -432,13 +432,13 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.2"
+            "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.3"
+            "locked": "5.7.4"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.23"
@@ -455,13 +455,13 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.2"
+            "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.3"
+            "locked": "5.7.4"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.23"
@@ -493,16 +493,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.2"
+            "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.3"
+            "locked": "5.7.4"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.23"
@@ -537,16 +537,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "2.6.12"
+            "locked": "2.7.5"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.2"
+            "locked": "2021.0.3"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.3"
+            "locked": "5.7.4"
         },
         "org.springframework:spring-framework-bom": {
             "locked": "5.3.23"

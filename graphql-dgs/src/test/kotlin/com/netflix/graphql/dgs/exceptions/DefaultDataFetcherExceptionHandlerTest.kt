@@ -26,6 +26,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.security.access.AccessDeniedException
+import java.util.concurrent.CompletionException
 
 internal class DefaultDataFetcherExceptionHandlerTest {
 
@@ -122,6 +123,24 @@ internal class DefaultDataFetcherExceptionHandlerTest {
 
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo(customDgsExceptionType.name)
+
+        // We return null here because we don't want graphql-java to write classification field
+        assertThat(result.errors[0].errorType).isNull()
+    }
+
+    @Test
+    fun `CompletionException returns wrapped error code`() {
+        val completionException = CompletionException(
+            "com.netflix.graphql.dgs.exceptions.DgsEntityNotFoundException: Requested entity not found",
+            DgsEntityNotFoundException()
+        )
+        every { dataFetcherExceptionHandlerParameters.exception }.returns(completionException)
+
+        val result = DefaultDataFetcherExceptionHandler().handleException(dataFetcherExceptionHandlerParameters).get()
+        assertThat(result.errors.size).isEqualTo(1)
+
+        val extensions = result.errors[0].extensions
+        assertThat(extensions["errorType"]).isEqualTo("NOT_FOUND")
 
         // We return null here because we don't want graphql-java to write classification field
         assertThat(result.errors[0].errorType).isNull()

@@ -38,14 +38,19 @@ class DgsGraphQLCollatedMetricsTagsProvider(
     }
 
     override fun getExecutionTags(
+        state: DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState,
         parameters: InstrumentationExecutionParameters,
         result: ExecutionResult,
         exception: Throwable?
     ): Iterable<Tag> {
-        return Tags.of(executionTagCustomizer.flatMap { it.getExecutionTags(parameters, result, exception) })
+        return Tags.of(executionTagCustomizer.flatMap { it.getExecutionTags(state, parameters, result, exception) })
     }
 
-    override fun getFieldFetchTags(parameters: InstrumentationFieldFetchParameters, exception: Throwable?): Iterable<Tag> {
-        return Tags.of(fieldFetchTagCustomizer.flatMap { it.getFieldFetchTags(parameters, exception) })
+    override fun getFieldFetchTags(
+        state: DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState,
+        parameters: InstrumentationFieldFetchParameters,
+        exception: Throwable?
+    ): Iterable<Tag> {
+        return Tags.of(fieldFetchTagCustomizer.flatMap { it.getFieldFetchTags(state, parameters, exception) })
     }
 }
