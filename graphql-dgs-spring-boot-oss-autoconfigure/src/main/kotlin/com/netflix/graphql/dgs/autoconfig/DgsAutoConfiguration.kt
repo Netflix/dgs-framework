@@ -246,6 +246,13 @@ open class DgsAutoConfiguration(
 
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnClass(name = ["kotlinx.coroutines.flow.Flow"])
+    open fun flowReactiveDataFetcherResultProcessor(): FlowDataFetcherResultProcessor {
+        return FlowDataFetcherResultProcessor()
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
     @ConditionalOnClass(name = ["reactor.core.publisher.Flux"])
     open fun fluxReactiveDataFetcherResultProcessor(): FluxDataFetcherResultProcessor {
         return FluxDataFetcherResultProcessor()

@@ -23,6 +23,7 @@ import com.netflix.graphql.dgs.DgsScalar
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.FlowDataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.FluxDataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.MonoDataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
@@ -37,6 +38,8 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.verify
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.assertj.core.api.Assertions.assertThat
 import org.dataloader.DataLoaderRegistry
 import org.junit.jupiter.api.BeforeEach
@@ -103,16 +106,25 @@ internal class ReactiveReturnTypesTest {
             }
         }
 
+        val fetcherWithFlow = object : Any() {
+            @DgsData(parentType = "Query", field = "flow")
+            fun withFlow(): Flow<String> {
+                return flow {
+                    emit("one")
+                    emit("two")
+                    emit("three")
+                }
+            }
+        }
+
         every { stubContextConsumer.accept(any()) } just Runs
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            ),
+            Pair("helloFetcher", fetcher),
             Pair("numbersFetcher", numbersFetcher),
             Pair("moviesFetcher", moviesFetcher),
-            Pair("withErrorFetcher", fetcherWithError)
+            Pair("withErrorFetcher", fetcherWithError),
+            Pair("flowFetcher", fetcherWithFlow)
         )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(
             Pair(
@@ -128,7 +140,11 @@ internal class ReactiveReturnTypesTest {
             federationResolver = Optional.empty(),
             existingTypeDefinitionRegistry = Optional.empty(),
             schemaLocations = listOf(DgsSchemaProvider.DEFAULT_SCHEMA_LOCATION),
-            dataFetcherResultProcessors = listOf(MonoDataFetcherResultProcessor(), FluxDataFetcherResultProcessor()),
+            dataFetcherResultProcessors = listOf(
+                MonoDataFetcherResultProcessor(),
+                FluxDataFetcherResultProcessor(),
+                FlowDataFetcherResultProcessor()
+            ),
             methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
         )
 
@@ -139,6 +155,7 @@ internal class ReactiveReturnTypesTest {
                 numbers: [Int]
                 movies: [Movie]
                 withError: String
+                flow: [String]
             }
 
             type Movie {
@@ -181,6 +198,23 @@ internal class ReactiveReturnTypesTest {
             assertThat(it).isEqualTo("hi!")
         }.verifyComplete()
         verify { stubContextConsumer.accept(match(comparingDummyContext())) }
+    }
+
+    @Test
+    fun `extract json with flow`() {
+        val flowResult = dgsQueryExecutor.executeAndExtractJsonPath<List<String>>(
+            """
+            {
+                flow
+            }
+            """.trimIndent(),
+            "data.flow"
+        ).contextWrite(dummyContext())
+
+        val step = StepVerifier.create(flowResult)
+        step.assertNext {
+            assertThat(it).isEqualTo(listOf("one", "two", "three"))
+        }.verifyComplete()
     }
 
     @Test
