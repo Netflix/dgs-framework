@@ -18,6 +18,11 @@ package com.netflix.graphql.dgs.internal
 
 import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
 import com.netflix.graphql.dgs.context.ReactiveDgsContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.future.future
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.util.context.Context
@@ -32,6 +37,22 @@ class MonoDataFetcherResultProcessor : DataFetcherResultProcessor {
             return originalResult.contextWrite(reactorContextFrom(dfe)).toFuture()
         } else {
             throw IllegalArgumentException("Instance passed to ${this::class.qualifiedName} was not a Mono<*>. It was a ${originalResult::class.qualifiedName} instead")
+        }
+    }
+}
+
+class FlowDataFetcherResultProcessor : DataFetcherResultProcessor {
+    override fun supportsType(originalResult: Any): Boolean {
+        return originalResult is Flow<*>
+    }
+
+    override fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any {
+        return if (originalResult is Flow<*>) {
+            CoroutineScope(Dispatchers.Default).future {
+                originalResult.toList()
+            }
+        } else {
+            throw IllegalArgumentException("Instance passed to ${this::class.qualifiedName} was not a Flow<*>. It was a ${originalResult::class.qualifiedName} instead")
         }
     }
 }

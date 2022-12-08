@@ -14,6 +14,12 @@
       "defaultValue": true
     },
     {
+      "name": "management.metrics.dgs-graphql.autotime",
+      "type": "org.springframework.boot.actuate.autoconfigure.metrics.AutoTimeProperties",
+      "description": "Enables DGS' GraphQL metrics, via micrometer.",
+      "defaultValue": true
+    },
+    {
       "name": "management.metrics.dgs-graphql.tag-customizers.outcome.enabled",
       "type": "java.lang.Boolean",
       "description": "Enables DGS' GraphQL Outcome tag customizer. This adds an OUTCOME tag that is ether SUCCESS or ERROR.",
@@ -44,5 +50,27 @@
       "defaultValue": true
     }
   ],
-  "hints": []
+  "hints": [
+    {
+      "name": "management.metrics.dgs-graphql.autotime.percentiles",
+      "values": [
+        {
+          "value": ".50",
+          "description": "The 50% percentile, or median."
+        },
+        {
+          "value": ".90",
+          "description": "The 90% percentile."
+        },
+        {
+          "value": ".95",
+          "description": "The 95% percentile."
+        },
+        {
+          "value": ".99",
+          "description": "The 99% percentile."
+        }
+      ]
+    }
+  ]
 }
