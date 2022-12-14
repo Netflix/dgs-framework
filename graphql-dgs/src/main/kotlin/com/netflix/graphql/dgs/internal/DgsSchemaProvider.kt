@@ -434,9 +434,13 @@ class DgsSchemaProvider(
                         runtimeWiringBuilder.type(
                             TypeRuntimeWiring.newTypeWiring(annotation.name)
                                 .typeResolver { env: TypeResolutionEnvironment ->
-                                    val typeName =
-                                        ReflectionUtils.invokeMethod(method, dgsComponent, env.getObject()) as String
-                                    env.schema.getObjectType(typeName)
+                                    val typeName: String? =
+                                        ReflectionUtils.invokeMethod(method, dgsComponent, env.getObject()) as String?
+                                    if (typeName != null) {
+                                        env.schema.getObjectType(typeName)
+                                    } else {
+                                        null
+                                    }
                                 }
                         )
                     }
