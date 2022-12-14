@@ -16,16 +16,14 @@
 
 package com.netflix.graphql.dgs.webmvc.autoconfigure
 
+import jakarta.annotation.PostConstruct
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
-import javax.annotation.PostConstruct
 
 /**
  * Configuration properties for DGS web controllers.
  */
-@ConstructorBinding
 @ConfigurationProperties(prefix = "dgs.graphql")
 @Suppress("ConfigurationProperties")
 data class DgsWebMvcConfigurationProperties(

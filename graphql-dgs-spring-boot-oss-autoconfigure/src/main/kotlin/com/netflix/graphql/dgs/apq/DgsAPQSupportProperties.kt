@@ -17,12 +17,10 @@
 package com.netflix.graphql.dgs.apq
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
 
 @ConfigurationProperties(prefix = DgsAPQSupportProperties.PREFIX)
-@ConstructorBinding
 @Suppress("ConfigurationProperties")
 data class DgsAPQSupportProperties(
     /** Enables/Disables support for Automated Persisted Queries (APQ). */

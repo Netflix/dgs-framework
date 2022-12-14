@@ -23,6 +23,7 @@ dependencies {
     implementation("org.springframework:spring-webflux")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("io.projectreactor.netty:reactor-netty")
+    implementation("jakarta.annotation:jakarta.annotation-api")
 
     testImplementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
