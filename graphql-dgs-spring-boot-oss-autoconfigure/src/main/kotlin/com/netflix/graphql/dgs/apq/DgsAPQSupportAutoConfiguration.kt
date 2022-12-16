@@ -27,16 +27,16 @@ import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.binder.cache.CaffeineCacheMetrics
 import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import java.time.Duration
 
-@Configuration
+@AutoConfiguration
 @ConditionalOnProperty(
     prefix = DgsAPQSupportProperties.PREFIX,
     name = ["enabled"],
@@ -64,7 +64,7 @@ open class DgsAPQSupportAutoConfiguration {
         }
     }
 
-    @Configuration
+    @AutoConfiguration
     @ConditionalOnClass(name = ["com.github.benmanes.caffeine.cache.Cache"])
     @ConditionalOnProperty(
         prefix = DgsAPQSupportProperties.CACHE_PREFIX,
@@ -89,7 +89,7 @@ open class DgsAPQSupportAutoConfiguration {
         }
     }
 
-    @Configuration
+    @AutoConfiguration
     @ConditionalOnClass(
         name = ["io.micrometer.core.instrument.MeterRegistry", "com.github.benmanes.caffeine.cache.Cache"]
     )
@@ -108,7 +108,7 @@ open class DgsAPQSupportAutoConfiguration {
         }
     }
 
-    @Configuration
+    @AutoConfiguration
     @ConditionalOnMissingBean(APQMicrometerMeteredCaffeineCacheConfiguration::class)
     @ConditionalOnClass(name = ["com.github.benmanes.caffeine.cache.Cache"])
     open class APQBasicCaffeineCacheConfiguration {

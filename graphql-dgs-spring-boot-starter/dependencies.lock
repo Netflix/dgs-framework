@@ -448,6 +448,7 @@
         },
         "jakarta.servlet:jakarta.servlet-api": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
             "locked": "6.0.0"
@@ -945,6 +946,7 @@
         },
         "jakarta.servlet:jakarta.servlet-api": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
             "locked": "6.0.0"
@@ -1362,6 +1364,7 @@
         },
         "jakarta.servlet:jakarta.servlet-api": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
             "locked": "6.0.0"

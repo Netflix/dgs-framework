@@ -385,6 +385,12 @@
         "jakarta.annotation:jakarta.annotation-api": {
             "locked": "2.1.1"
         },
+        "jakarta.servlet:jakarta.servlet-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
+            ],
+            "locked": "6.0.0"
+        },
         "net.datafaker:datafaker": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -1201,6 +1207,12 @@
         },
         "jakarta.annotation:jakarta.annotation-api": {
             "locked": "2.1.1"
+        },
+        "jakarta.servlet:jakarta.servlet-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
+            ],
+            "locked": "6.0.0"
         },
         "net.datafaker:datafaker": {
             "firstLevelTransitive": [

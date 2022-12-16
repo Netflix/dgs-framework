@@ -365,6 +365,12 @@
         "io.projectreactor:reactor-test": {
             "locked": "3.5.0"
         },
+        "jakarta.servlet:jakarta.servlet-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
+            ],
+            "locked": "6.0.0"
+        },
         "net.datafaker:datafaker": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -796,6 +802,12 @@
         "io.projectreactor:reactor-core": {
             "locked": "3.5.0"
         },
+        "jakarta.servlet:jakarta.servlet-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
+            ],
+            "locked": "6.0.0"
+        },
         "net.datafaker:datafaker": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -1128,6 +1140,12 @@
         },
         "io.projectreactor:reactor-test": {
             "locked": "3.5.0"
+        },
+        "jakarta.servlet:jakarta.servlet-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
+            ],
+            "locked": "6.0.0"
         },
         "net.datafaker:datafaker": {
             "firstLevelTransitive": [

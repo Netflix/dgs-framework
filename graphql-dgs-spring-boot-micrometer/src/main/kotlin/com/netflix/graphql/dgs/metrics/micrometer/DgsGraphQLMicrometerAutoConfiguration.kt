@@ -12,7 +12,7 @@ import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration
-import org.springframework.boot.autoconfigure.AutoConfigureAfter
+import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -26,9 +26,8 @@ import java.util.*
  * [Auto-configuration][org.springframework.boot.autoconfigure.EnableAutoConfiguration] for instrumentation of Spring GraphQL
  * endpoints.
  */
-@AutoConfigureAfter(CompositeMeterRegistryAutoConfiguration::class)
 @ConditionalOnClass(MetricsAutoConfiguration::class, MeterRegistry::class)
-@Configuration(proxyBeanMethods = false)
+@AutoConfiguration(after = [CompositeMeterRegistryAutoConfiguration::class])
 @ConditionalOnProperty(prefix = AUTO_CONF_PREFIX, name = ["enabled"], havingValue = "true", matchIfMissing = true)
 open class DgsGraphQLMicrometerAutoConfiguration {
 

@@ -63,8 +63,7 @@ dependencies {
             }
         }
         api("com.graphql-java:graphql-java-extended-validation") {
-            // The version below will work with Jakarta EE 8 and use Hibernate Validator 6.2.
-            version { strictly("19.1-hibernate-validator-6.2.0.Final") }
+            version { strictly("19.1") }
         }
         api("com.apollographql.federation:federation-graphql-java-support") {
             version {

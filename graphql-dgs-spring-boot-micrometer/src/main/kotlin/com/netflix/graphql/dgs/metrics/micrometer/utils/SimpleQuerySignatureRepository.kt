@@ -75,7 +75,7 @@ open class SimpleQuerySignatureRepository(
             Optional.empty()
         } finally {
             timerSample.stop(
-                properties.autotime
+                properties.autoTimer
                     .builder(InternalMetric.TIMED_METHOD.key)
                     .tags(CommonTags.JAVA_CLASS.tags(this))
                     .tags(CommonTags.JAVA_CLASS_METHOD.tags("get"))

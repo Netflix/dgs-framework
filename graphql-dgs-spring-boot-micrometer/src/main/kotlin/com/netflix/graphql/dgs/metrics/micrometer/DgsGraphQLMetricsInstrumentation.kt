@@ -74,7 +74,7 @@ class DgsGraphQLMetricsInstrumentation(
 
             override fun onCompleted(result: ExecutionResult, exc: Throwable?) {
                 miState.stopTimer(
-                    properties.autotime
+                    properties.autoTimer
                         .builder(GqlMetric.QUERY.key)
                         .tags(tagsProvider.getContextualTags())
                         .tags(tagsProvider.getExecutionTags(miState, parameters, result, exc))
@@ -209,7 +209,7 @@ class DgsGraphQLMetricsInstrumentation(
 
         timerSampler.stop(
             properties
-                .autotime
+                .autoTimer
                 .builder(GqlMetric.RESOLVER.key)
                 .tags(recordedTags)
                 .register(registry)
