@@ -51,7 +51,7 @@ dependencies {
             version {
                 strictly("[19.2, 20[")
                 prefer("19.2")
-                reject("18.2")
+                reject("[18.2, 18.3]")
             }
 
         }
@@ -59,7 +59,7 @@ dependencies {
             version {
                  strictly("[19.0, 20[")
                  prefer("19.0")
-                 reject("18.2")
+                 reject("[18.2, 18.3]")
             }
         }
         api("com.graphql-java:graphql-java-extended-validation") {
