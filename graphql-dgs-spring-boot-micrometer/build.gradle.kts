@@ -4,7 +4,7 @@ dependencies {
     implementation("net.bytebuddy:byte-buddy")
     implementation("io.micrometer:micrometer-core")
     implementation("commons-codec:commons-codec")
-    implementation("com.netflix.spectator:spectator-api:1.3.+")
+    implementation("com.netflix.spectator:spectator-api:1.4.+")
     implementation("com.github.ben-manes.caffeine:caffeine")
     implementation("org.springframework:spring-context-support")
 
