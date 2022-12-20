@@ -15,13 +15,13 @@
             "locked": "3.0.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0-RC3"
+            "locked": "2022.0.0"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "6.0.0"
+            "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.2"
+            "locked": "6.0.3"
         }
     }
 }

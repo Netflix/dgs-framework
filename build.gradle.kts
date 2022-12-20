@@ -40,7 +40,6 @@ allprojects {
     group = "com.netflix.graphql.dgs"
     repositories {
         mavenCentral()
-        maven { url = uri("https://repo.spring.io/milestone") }
     }
 
     apply(plugin = "nebula.netflixoss")
@@ -56,10 +55,10 @@ allprojects {
 
     dependencyRecommendations {
         mavenBom(mapOf("module" to "org.jetbrains.kotlin:kotlin-bom:${Versions.KOTLIN_VERSION}"))
-        mavenBom(mapOf("module" to "org.springframework:spring-framework-bom:6.0.2"))
+        mavenBom(mapOf("module" to "org.springframework:spring-framework-bom:6.0.3"))
         mavenBom(mapOf("module" to "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
-        mavenBom(mapOf("module" to "org.springframework.security:spring-security-bom:6.0.0"))
-        mavenBom(mapOf("module" to "org.springframework.cloud:spring-cloud-dependencies:2022.0.0-RC3"))
+        mavenBom(mapOf("module" to "org.springframework.security:spring-security-bom:6.0.1"))
+        mavenBom(mapOf("module" to "org.springframework.cloud:spring-cloud-dependencies:2022.0.0"))
         mavenBom(mapOf("module" to "com.fasterxml.jackson:jackson-bom:2.13.4"))
     }
 }
