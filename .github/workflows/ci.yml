@@ -59,14 +59,14 @@ jobs:
       - name: Clone dgs-examples-java
         uses: actions/checkout@v3.1.0
         with:
-          repository: Netflix/dgs-examples-java
-          path: build/examples/dgs-examples-java
+          repository: Netflix/dgs-examples-java-2.7
+          path: build/examples/dgs-examples-java-2.7
 
       - name: Clone dgs-examples-kotlin
         uses: actions/checkout@v3.1.0
         with:
-          repository: Netflix/dgs-examples-kotlin
-          path: build/examples/dgs-examples-kotlin
+          repository: Netflix/dgs-examples-kotlin-2.7
+          path: build/examples/dgs-examples-kotlin-2.7
 
       - name: Build Examples
         run: |
