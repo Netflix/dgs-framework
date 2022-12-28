@@ -22,7 +22,6 @@ import graphql.execution.preparsed.persisted.PersistedQueryCache
 import graphql.execution.preparsed.persisted.PersistedQueryCacheMiss
 import graphql.execution.preparsed.persisted.PersistedQueryNotFound
 import graphql.execution.preparsed.persisted.PersistedQuerySupport
-import org.apache.commons.lang3.StringUtils
 import java.util.function.Supplier
 
 /**
@@ -45,7 +44,7 @@ abstract class AutomatedPersistedQueryCacheAdapter : PersistedQueryCache {
         return getFromCache(key) {
             // Get the query from the execution input. Make sure it's not null, empty or the APQ marker.
             val queryText = executionInput.query
-            if (StringUtils.isBlank(queryText) || queryText.equals(PersistedQuerySupport.PERSISTED_QUERY_MARKER)) {
+            if (queryText.isNullOrBlank() || queryText.equals(PersistedQuerySupport.PERSISTED_QUERY_MARKER)) {
                 throw PersistedQueryNotFound(persistedQueryId)
             }
             return@getFromCache onCacheMiss.apply(queryText)

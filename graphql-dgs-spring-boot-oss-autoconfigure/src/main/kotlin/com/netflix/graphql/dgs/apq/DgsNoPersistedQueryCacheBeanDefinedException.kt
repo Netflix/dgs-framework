@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-dependencies {
-    api(project(":graphql-dgs"))
-    api(project(":graphql-dgs-spring-webmvc"))
-    implementation("org.springframework:spring-web")
-    implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.apache.commons:commons-lang3")
+package com.netflix.graphql.dgs.apq
 
-    compileOnly("io.projectreactor:reactor-core")
-
-    testImplementation("org.springframework.boot:spring-boot-starter-web")
-    testImplementation("io.projectreactor:reactor-core")
-}
+class DgsNoPersistedQueryCacheBeanDefinedException :
+    RuntimeException("Configuration property `dgs.graphql.apq.enabled` was `true`, but no PersistedQueryCache bean was defined")

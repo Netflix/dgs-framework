@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-dependencies {
-    api(project(":graphql-dgs"))
-    api(project(":graphql-dgs-spring-webmvc"))
-    implementation("org.springframework:spring-web")
-    implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.apache.commons:commons-lang3")
+package com.netflix.graphql.dgs.apq.caffeine
 
-    compileOnly("io.projectreactor:reactor-core")
+object DgsCaffeineApqCache {
 
-    testImplementation("org.springframework.boot:spring-boot-starter-web")
-    testImplementation("io.projectreactor:reactor-core")
+    const val CAFFEINE_APQ_CACHE_BEAN_NAME = "dgs_apqCaffeineCache"
 }

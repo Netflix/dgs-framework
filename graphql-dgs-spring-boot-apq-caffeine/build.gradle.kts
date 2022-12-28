@@ -16,15 +16,9 @@
 
 dependencies {
     api(project(":graphql-dgs"))
-    api(project(":graphql-dgs-spring-webmvc"))
+    api(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
     implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.springframework:spring-webmvc")
-    implementation("jakarta.servlet:jakarta.servlet-api")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-
-
-    testImplementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
-    testImplementation("org.springframework.boot:spring-boot-starter-web")
-    testImplementation("com.github.ben-manes.caffeine:caffeine")
-    testImplementation(project(":graphql-dgs-spring-boot-apq-caffeine"))
+    implementation("com.github.ben-manes.caffeine:caffeine")
+    // compileOnly because we only wrap the Caffeine cache when Micrometer is present
+    compileOnly("io.micrometer:micrometer-core")
 }

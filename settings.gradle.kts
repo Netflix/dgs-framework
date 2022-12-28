@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2022 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ include("graphql-dgs")
 include("graphql-error-types")
 include("graphql-dgs-mocking")
 include("graphql-dgs-client")
+include("graphql-dgs-spring-boot-apq-caffeine")
 include("graphql-dgs-spring-boot-oss-autoconfigure")
 include("graphql-dgs-spring-webmvc")
 include("graphql-dgs-spring-webmvc-autoconfigure")

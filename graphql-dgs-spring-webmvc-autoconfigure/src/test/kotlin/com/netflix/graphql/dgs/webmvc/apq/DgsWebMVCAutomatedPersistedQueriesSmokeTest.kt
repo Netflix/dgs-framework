@@ -41,7 +41,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest(
     properties = [
-        "debug:true",
+//        "debug:true",
         "dgs.graphql.apq.enabled:true"
     ]
 )
@@ -183,6 +183,17 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
     )
     @SuppressWarnings("unused")
     open class LocalApp {
+        // === [ Important ] ===
+        //
+        // This smoke test also tests graphql-dgs-spring-boot-apq-caffeine
+        //  See build.gradle.kts for this project
+        // === [ Important ] ===
+        //
+
+//        @Bean
+//        open fun myApqCache(): PersistedQueryCache {
+//            return InMemoryPersistedQueryCache(ConcurrentHashMap())
+//        }
 
         @DgsComponent
         class ExampleImplementation {
