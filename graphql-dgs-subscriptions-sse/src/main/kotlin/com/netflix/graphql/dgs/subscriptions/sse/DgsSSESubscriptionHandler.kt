@@ -68,7 +68,7 @@ open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor
         return handleSubscription(body)
     }
 
-    private fun handleSubscription(query: String): Flux<ServerSentEvent<String>> {
+    open fun handleSubscription(query: String): Flux<ServerSentEvent<String>> {
         val queryPayload = try {
             mapper.readValue(query, QueryPayload::class.java)
         } catch (ex: Exception) {
