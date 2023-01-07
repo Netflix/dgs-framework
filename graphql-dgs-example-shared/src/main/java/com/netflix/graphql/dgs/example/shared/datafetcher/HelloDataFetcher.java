@@ -33,6 +33,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import static com.netflix.graphql.dgs.example.shared.context.ExampleGraphQLContextContributor.CONTRIBUTOR_ENABLED_CONTEXT_KEY;
+
 @DgsComponent
 public class HelloDataFetcher {
     @DgsQuery
@@ -78,6 +80,13 @@ public class HelloDataFetcher {
     public CompletableFuture<String> withDataLoaderContext(DataFetchingEnvironment dfe) {
         DataLoader<String, String> exampleLoaderWithContext = dfe.getDataLoader("exampleLoaderWithContext");
         return exampleLoaderWithContext.load("A");
+    }
+
+    @DgsData(parentType = "Query", field = "withDataLoaderGraphQLContext")
+    @DgsEnableDataFetcherInstrumentation
+    public CompletableFuture<String> withDataLoaderGraphQLContext(DataFetchingEnvironment dfe) {
+        DataLoader<String, String> exampleLoaderWithContext = dfe.getDataLoader("exampleLoaderWithGraphQLContext");
+        return exampleLoaderWithContext.load(CONTRIBUTOR_ENABLED_CONTEXT_KEY);
     }
 
     @DgsData(parentType = "Query", field = "withGraphqlException")

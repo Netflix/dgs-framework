@@ -33,6 +33,7 @@ import graphql.ExecutionInput
 import graphql.ExecutionResult
 import graphql.ExecutionResultImpl
 import graphql.GraphQL
+import graphql.GraphQLContext
 import graphql.GraphQLError
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
@@ -108,23 +109,22 @@ object BaseDgsQueryExecutor {
         idProvider.ifPresent { graphQLBuilder.executionIdProvider(it) }
 
         val graphQL: GraphQL = graphQLBuilder.build()
-
-        val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier { dgsContext }
+        val graphQLContextFuture = CompletableFuture<GraphQLContext>()
+        val dataLoaderRegistry = dataLoaderProvider.buildRegistryWithContextSupplier { graphQLContextFuture.get() }
 
         return try {
             @Suppress("DEPRECATION")
-            val executionInputBuilder: ExecutionInput.Builder =
-                ExecutionInput
-                    .newExecutionInput()
-                    .query(query)
-                    .operationName(operationName)
-                    .variables(inputVariables)
-                    .dataLoaderRegistry(dataLoaderRegistry)
-                    .context(dgsContext)
-                    .graphQLContext(dgsContext)
-                    .extensions(extensions.orEmpty())
-
-            graphQL.executeAsync(executionInputBuilder.build())
+            val executionInput = ExecutionInput.newExecutionInput()
+                .query(query)
+                .operationName(operationName)
+                .variables(inputVariables)
+                .dataLoaderRegistry(dataLoaderRegistry)
+                .context(dgsContext)
+                .graphQLContext(dgsContext)
+                .extensions(extensions.orEmpty())
+                .build()
+            graphQLContextFuture.complete(executionInput.graphQLContext)
+            graphQL.executeAsync(executionInput)
         } catch (e: Exception) {
             logger.error("Encountered an exception while handling query $query", e)
             val errors: List<GraphQLError> = if (e is GraphQLError) listOf<GraphQLError>(e) else emptyList()

@@ -3,6 +3,7 @@ type Query {
     hello(name: String): String
     withContext: String
     withDataLoaderContext: String
+    withDataLoaderGraphQLContext: String
     movies: [Movie]
     messageFromBatchLoader: String
     messagesWithExceptionFromBatchLoader: [Message]

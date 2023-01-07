@@ -16,7 +16,11 @@
 
 import com.netflix.graphql.dgs.DgsQueryExecutor;
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration;
+import com.netflix.graphql.dgs.example.context.MyContextBuilder;
+import com.netflix.graphql.dgs.example.datafetcher.HelloDataFetcher;
 import com.netflix.graphql.dgs.example.shared.context.ExampleGraphQLContextContributor;
+import com.netflix.graphql.dgs.example.shared.dataLoader.ExampleLoaderWithContext;
+import com.netflix.graphql.dgs.example.shared.dataLoader.ExampleLoaderWithGraphQLContext;
 import com.netflix.graphql.dgs.example.shared.instrumentation.ExampleInstrumentationDependingOnContextContributor;
 import com.netflix.graphql.dgs.example.shared.datafetcher.MovieDataFetcher;
 import com.netflix.graphql.dgs.pagination.DgsPaginationAutoConfiguration;
@@ -30,7 +34,7 @@ import static com.netflix.graphql.dgs.example.shared.context.ExampleGraphQLConte
 import static com.netflix.graphql.dgs.example.shared.context.ExampleGraphQLContextContributor.CONTEXT_CONTRIBUTOR_HEADER_VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {MovieDataFetcher.class, ExampleGraphQLContextContributor.class, ExampleInstrumentationDependingOnContextContributor.class, DgsAutoConfiguration.class, DgsPaginationAutoConfiguration.class})
+@SpringBootTest(classes = {HelloDataFetcher.class, MovieDataFetcher.class, MyContextBuilder.class, ExampleGraphQLContextContributor.class, ExampleInstrumentationDependingOnContextContributor.class, DgsAutoConfiguration.class, DgsPaginationAutoConfiguration.class, ExampleLoaderWithContext.class, ExampleLoaderWithGraphQLContext.class})
 public class GraphQLContextContributorTest {
 
     @Autowired
@@ -42,6 +46,21 @@ public class GraphQLContextContributorTest {
         mockServletRequest.addHeader(CONTEXT_CONTRIBUTOR_HEADER_NAME, CONTEXT_CONTRIBUTOR_HEADER_VALUE);
         ServletWebRequest servletWebRequest = new ServletWebRequest(mockServletRequest);
         String contributorEnabled = queryExecutor.executeAndExtractJsonPath("{ movies { director } }", "extensions.contributorEnabled", servletWebRequest);
+        assertThat(contributorEnabled).isEqualTo("true");
+    }
+
+    @Test
+    void withDataloaderContext() {
+        String message = queryExecutor.executeAndExtractJsonPath("{withDataLoaderContext}", "data.withDataLoaderContext");
+        assertThat(message).isEqualTo("Custom state! A");
+    }
+
+    @Test
+    void withDataloaderGraphQLContext() {
+        final MockHttpServletRequest mockServletRequest = new MockHttpServletRequest();
+        mockServletRequest.addHeader(CONTEXT_CONTRIBUTOR_HEADER_NAME, CONTEXT_CONTRIBUTOR_HEADER_VALUE);
+        ServletWebRequest servletWebRequest = new ServletWebRequest(mockServletRequest);
+        String contributorEnabled = queryExecutor.executeAndExtractJsonPath("{ withDataLoaderGraphQLContext }", "data.withDataLoaderGraphQLContext", servletWebRequest);
         assertThat(contributorEnabled).isEqualTo("true");
     }
 }
