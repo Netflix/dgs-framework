@@ -17,25 +17,21 @@
 package com.netflix.graphql.dgs.example.shared.dataLoader;
 
 import com.netflix.graphql.dgs.DgsDataLoader;
-import com.netflix.graphql.dgs.context.DgsContext;
-import com.netflix.graphql.dgs.example.shared.context.MyContext;
 import graphql.GraphQLContext;
 import org.dataloader.BatchLoaderEnvironment;
 import org.dataloader.BatchLoaderWithContext;
-import org.dataloader.Try;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@DgsDataLoader(name = "exampleLoaderWithContext")
-public class ExampleLoaderWithContext implements BatchLoaderWithContext<String, String> {
+@DgsDataLoader(name = "exampleLoaderWithGraphQLContext")
+public class ExampleLoaderWithGraphQLContext implements BatchLoaderWithContext<String, String> {
     @Override
     public CompletionStage<List<String>> load(List<String> keys, BatchLoaderEnvironment environment) {
-
-        MyContext context = DgsContext.getCustomContext(environment);
-        return CompletableFuture.supplyAsync(() -> keys.stream().map(key -> context.getCustomState() + " " + key).collect(Collectors.toList()));
+        GraphQLContext graphQLContext = environment.getContext();
+        return CompletableFuture.supplyAsync(() -> keys.stream().map((Function<String, String>) graphQLContext::get).collect(Collectors.toList()));
     }
 }

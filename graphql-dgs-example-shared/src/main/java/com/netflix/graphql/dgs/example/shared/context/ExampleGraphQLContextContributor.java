@@ -36,6 +36,7 @@ public class ExampleGraphQLContextContributor implements GraphQLContextContribut
     public static final String CONTEXT_CONTRIBUTOR_HEADER_VALUE = "enabled";
     @Override
     public void contribute(@NotNull GraphQLContext.Builder builder, @Nullable Map<String, ?> extensions, @Nullable DgsRequestData dgsRequestData) {
+        builder.put("exampleGraphQLContextEnabled", "true");
         if (dgsRequestData != null && dgsRequestData.getHeaders() != null) {
             String contributedContextHeader = dgsRequestData.getHeaders().getFirst(CONTEXT_CONTRIBUTOR_HEADER_NAME);
             if (CONTEXT_CONTRIBUTOR_HEADER_VALUE.equals(contributedContextHeader)) {
