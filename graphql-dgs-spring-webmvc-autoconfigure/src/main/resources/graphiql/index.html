@@ -18,6 +18,7 @@
 <head>
     <title><DGS_GRAPHIQL_TITLE></title>
     <link href="https://unpkg.com/graphiql@1.5.12/graphiql.min.css" rel="stylesheet" />
+    <link href="https://unpkg.com/graphiql-with-extensions@0.14.3/graphiqlWithExtensions.css" rel="stylesheet" />
 </head>
 <body style="margin: 0;">
 <div id="graphiql" style="height: 100vh;"></div>
@@ -33,6 +34,11 @@
 <script
         crossorigin
         src="https://unpkg.com/graphiql@1.5.12/graphiql.min.js"
+></script>
+
+<script
+        crossorigin
+        src="https://unpkg.com/graphiql-with-extensions@0.14.3/graphiqlWithExtensions.min.js"
 ></script>
 
 <script>
@@ -117,7 +123,7 @@
         });
       }
       ReactDOM.render(
-        React.createElement(GraphiQL, {
+        React.createElement(GraphiQLWithExtensions.GraphiQLWithExtensions, {
           fetcher: graphQLFetcher,
           query: parameters.query,
           variables: parameters.variables,
