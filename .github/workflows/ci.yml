@@ -12,7 +12,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: 8
+          java-version: 17
 
       - name: Set up Python 3.8
         uses: actions/setup-python@v4
@@ -59,14 +59,14 @@ jobs:
       - name: Clone dgs-examples-java
         uses: actions/checkout@v3.1.0
         with:
-          repository: Netflix/dgs-examples-java-2.7
-          path: build/examples/dgs-examples-java-2.7
+          repository: Netflix/dgs-examples-java
+          path: build/examples/dgs-examples-java
 
       - name: Clone dgs-examples-kotlin
         uses: actions/checkout@v3.1.0
         with:
-          repository: Netflix/dgs-examples-kotlin-2.7
-          path: build/examples/dgs-examples-kotlin-2.7
+          repository: Netflix/dgs-examples-kotlin
+          path: build/examples/dgs-examples-kotlin
 
       - name: Build Examples
         run: |

@@ -18,13 +18,11 @@ package com.netflix.graphql.dgs.autoconfig
 
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider.Companion.DEFAULT_SCHEMA_LOCATION
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
 
 /**
  * Configuration properties for DGS framework.
  */
-@ConstructorBinding
 @ConfigurationProperties(prefix = DgsConfigurationProperties.PREFIX)
 @Suppress("ConfigurationProperties")
 data class DgsConfigurationProperties(

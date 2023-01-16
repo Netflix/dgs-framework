@@ -12,16 +12,16 @@
             "locked": "1.7.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "2.7.5"
+            "locked": "3.0.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2021.0.3"
+            "locked": "2022.0.0"
         },
         "org.springframework.security:spring-security-bom": {
-            "locked": "5.7.4"
+            "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "5.3.23"
+            "locked": "6.0.3"
         }
     }
 }

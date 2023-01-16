@@ -16,10 +16,10 @@
 
 package com.netflix.graphql.dgs.pagination
 
+import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 
-@Configuration
+@AutoConfiguration
 open class DgsPaginationAutoConfiguration {
     @Bean
     open fun dgsPaginationTypeDefinitionRegistry(): DgsPaginationTypeDefinitionRegistry {

@@ -1,6 +1,7 @@
 package com.netflix.graphql.dgs.metrics.micrometer
 
 import org.springframework.boot.actuate.autoconfigure.metrics.AutoTimeProperties
+import org.springframework.boot.actuate.autoconfigure.metrics.PropertiesAutoTimer
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
@@ -8,8 +9,10 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 @ConfigurationProperties("management.metrics.dgs-graphql")
 data class DgsGraphQLMetricsProperties(
     /** Auto-timed queries settings. */
+    var autotimeProperties: AutoTimeProperties = AutoTimeProperties(),
+    /** Auto-timer. */
     @NestedConfigurationProperty
-    var autotime: AutoTimeProperties = AutoTimeProperties(),
+    var autotime: PropertiesAutoTimer = PropertiesAutoTimer(autotimeProperties),
     /** Settings that can be used to limit some of the tag metrics used by DGS. */
     @NestedConfigurationProperty
     var tags: TagsProperties = TagsProperties()

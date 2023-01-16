@@ -119,8 +119,7 @@ class QueryExecutorTest {
         }
 
         assertThat(error.errors.size).isEqualTo(1)
-        assertThat(error.errors[0].message)
-            .isEqualTo("Validation error (FieldUndefined@[unknown]) : Field 'unknown' in type 'Query' is undefined")
+        assertThat(error.errors[0].message).isEqualTo("Validation error (FieldUndefined@[unknown]) : Field 'unknown' in type 'Query' is undefined")
     }
 
     @Test

@@ -28,6 +28,7 @@ import graphql.language.FieldDefinition
 import graphql.language.ObjectTypeDefinition
 import graphql.language.TypeName
 import graphql.schema.idl.TypeDefinitionRegistry
+import jakarta.servlet.http.Cookie
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.hasItem
@@ -49,7 +50,6 @@ import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration
 import java.util.*
-import javax.servlet.http.Cookie
 
 @SpringBootTest(
     classes = [
