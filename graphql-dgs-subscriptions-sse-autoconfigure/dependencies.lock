@@ -1,7 +1,7 @@
 {
     "annotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.2"
+            "locked": "2.13.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -27,7 +27,7 @@
     },
     "compileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.2"
+            "locked": "2.13.4"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -117,7 +117,7 @@
     },
     "jmhAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.2"
+            "locked": "2.13.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -137,7 +137,7 @@
     },
     "jmhCompileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.2"
+            "locked": "2.13.4"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -234,68 +234,23 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-            "locked": "2.13.3"
-=======
-            "locked": "2.14.0-rc2"
->>>>>>> 761ac952 (feat: upgrades spring boot to first release candidate and fixes metrics.)
-=======
-            "locked": "2.14.0-rc3"
->>>>>>> 5f9e9c8b (feat: bumps sprint boot to latest RC.)
-=======
             "locked": "2.14.1"
->>>>>>> 03ede8c3 (feat: bumps spring boot dependencies to GA versions, except for spring cloud.)
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-            "locked": "2.13.3"
-=======
-            "locked": "2.14.0-rc2"
->>>>>>> 761ac952 (feat: upgrades spring boot to first release candidate and fixes metrics.)
-=======
-            "locked": "2.14.0-rc3"
->>>>>>> 5f9e9c8b (feat: bumps sprint boot to latest RC.)
-=======
             "locked": "2.14.1"
->>>>>>> 03ede8c3 (feat: bumps spring boot dependencies to GA versions, except for spring cloud.)
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
             ],
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-            "locked": "2.13.3"
-        },
-        "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.3"
-=======
-            "locked": "2.14.0-rc2"
-        },
-        "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.14.0-rc2"
->>>>>>> 761ac952 (feat: upgrades spring boot to first release candidate and fixes metrics.)
-=======
-            "locked": "2.14.0-rc3"
-        },
-        "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.14.0-rc3"
->>>>>>> 5f9e9c8b (feat: bumps sprint boot to latest RC.)
-=======
             "locked": "2.14.1"
         },
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.14.1"
->>>>>>> 03ede8c3 (feat: bumps spring boot dependencies to GA versions, except for spring cloud.)
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -350,11 +305,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-<<<<<<< HEAD
             "locked": "1.13.2"
-=======
-            "locked": "1.12.4"
->>>>>>> f142d2d6 (feat: upgrades graphql-java to fix conflicting antlr dependency with spring-boot v3.)
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -498,7 +449,7 @@
     },
     "kotlinCompilerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.2"
+            "locked": "2.13.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -521,7 +472,7 @@
     },
     "kotlinCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.2"
+            "locked": "2.13.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -541,7 +492,7 @@
     },
     "kotlinCompilerPluginClasspathJmh": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.2"
+            "locked": "2.13.4"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
             "locked": "1.7.20"
@@ -567,7 +518,7 @@
     },
     "kotlinCompilerPluginClasspathMain": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.2"
+            "locked": "2.13.4"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
             "locked": "1.7.20"
@@ -593,7 +544,7 @@
     },
     "kotlinCompilerPluginClasspathTest": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.2"
+            "locked": "2.13.4"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
             "locked": "1.7.20"
@@ -627,7 +578,7 @@
     },
     "kotlinKlibCommonizerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.2"
+            "locked": "2.13.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -650,7 +601,7 @@
     },
     "kotlinNativeCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.2"
+            "locked": "2.13.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -670,7 +621,7 @@
     },
     "nebulaRecommenderBom": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.2"
+            "locked": "2.13.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -699,68 +650,23 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-            "locked": "2.13.3"
-=======
-            "locked": "2.14.0-rc2"
->>>>>>> 761ac952 (feat: upgrades spring boot to first release candidate and fixes metrics.)
-=======
-            "locked": "2.14.0-rc3"
->>>>>>> 5f9e9c8b (feat: bumps sprint boot to latest RC.)
-=======
             "locked": "2.14.1"
->>>>>>> 03ede8c3 (feat: bumps spring boot dependencies to GA versions, except for spring cloud.)
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-            "locked": "2.13.3"
-=======
-            "locked": "2.14.0-rc2"
->>>>>>> 761ac952 (feat: upgrades spring boot to first release candidate and fixes metrics.)
-=======
-            "locked": "2.14.0-rc3"
->>>>>>> 5f9e9c8b (feat: bumps sprint boot to latest RC.)
-=======
             "locked": "2.14.1"
->>>>>>> 03ede8c3 (feat: bumps spring boot dependencies to GA versions, except for spring cloud.)
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
             ],
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-            "locked": "2.13.3"
-        },
-        "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.3"
-=======
-            "locked": "2.14.0-rc2"
-        },
-        "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.14.0-rc2"
->>>>>>> 761ac952 (feat: upgrades spring boot to first release candidate and fixes metrics.)
-=======
-            "locked": "2.14.0-rc3"
-        },
-        "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.14.0-rc3"
->>>>>>> 5f9e9c8b (feat: bumps sprint boot to latest RC.)
-=======
             "locked": "2.14.1"
         },
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.14.1"
->>>>>>> 03ede8c3 (feat: bumps spring boot dependencies to GA versions, except for spring cloud.)
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -912,7 +818,7 @@
     },
     "testAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.2"
+            "locked": "2.13.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -932,7 +838,7 @@
     },
     "testCompileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.2"
+            "locked": "2.13.4"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -976,11 +882,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-<<<<<<< HEAD
             "locked": "1.13.2"
-=======
-            "locked": "1.12.4"
->>>>>>> f142d2d6 (feat: upgrades graphql-java to fix conflicting antlr dependency with spring-boot v3.)
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -1030,68 +932,23 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-            "locked": "2.13.3"
-=======
-            "locked": "2.14.0-rc2"
->>>>>>> 761ac952 (feat: upgrades spring boot to first release candidate and fixes metrics.)
-=======
-            "locked": "2.14.0-rc3"
->>>>>>> 5f9e9c8b (feat: bumps sprint boot to latest RC.)
-=======
             "locked": "2.14.1"
->>>>>>> 03ede8c3 (feat: bumps spring boot dependencies to GA versions, except for spring cloud.)
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-            "locked": "2.13.3"
-=======
-            "locked": "2.14.0-rc2"
->>>>>>> 761ac952 (feat: upgrades spring boot to first release candidate and fixes metrics.)
-=======
-            "locked": "2.14.0-rc3"
->>>>>>> 5f9e9c8b (feat: bumps sprint boot to latest RC.)
-=======
             "locked": "2.14.1"
->>>>>>> 03ede8c3 (feat: bumps spring boot dependencies to GA versions, except for spring cloud.)
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
             ],
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-            "locked": "2.13.3"
-        },
-        "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.13.3"
-=======
-            "locked": "2.14.0-rc2"
-        },
-        "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.14.0-rc2"
->>>>>>> 761ac952 (feat: upgrades spring boot to first release candidate and fixes metrics.)
-=======
-            "locked": "2.14.0-rc3"
-        },
-        "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.14.0-rc3"
->>>>>>> 5f9e9c8b (feat: bumps sprint boot to latest RC.)
-=======
             "locked": "2.14.1"
         },
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.14.1"
->>>>>>> 03ede8c3 (feat: bumps spring boot dependencies to GA versions, except for spring cloud.)
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -1146,11 +1003,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-<<<<<<< HEAD
             "locked": "1.13.2"
-=======
-            "locked": "1.12.4"
->>>>>>> f142d2d6 (feat: upgrades graphql-java to fix conflicting antlr dependency with spring-boot v3.)
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [

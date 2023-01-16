@@ -48,16 +48,12 @@ dependencies {
     constraints {
         // GraphQL Platform
         api("com.graphql-java:graphql-java") {
-<<<<<<< HEAD
             version {
                 strictly("[19.2, 20[")
                 prefer("19.2")
                 reject("18.2")
             }
 
-=======
-            version { require("19.2") }
->>>>>>> f142d2d6 (feat: upgrades graphql-java to fix conflicting antlr dependency with spring-boot v3.)
         }
         api("com.graphql-java:graphql-java-extended-scalars") {
             version {
@@ -67,8 +63,7 @@ dependencies {
             }
         }
         api("com.graphql-java:graphql-java-extended-validation") {
-            // The version below will work with Jakarta EE 8 and use Hibernate Validator 6.2.
-            version { strictly("19.1-hibernate-validator-6.2.0.Final") }
+            version { strictly("19.1") }
         }
         api("com.apollographql.federation:federation-graphql-java-support") {
             version {
