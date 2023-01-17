@@ -126,7 +126,7 @@ def run_example_build(project_dir, build_file="", settings_file=""):
         Out.error(f"The project {project_dir} is missing a Gradle settings file!")
         sys.exit(2)
 
-    command.extend(["clean", "check"])
+    command.extend(["clean", 'dependencies', "check"])
     str_cmd = " ".join(command)
     try:
         Out.info(f"Running {str_cmd}")
