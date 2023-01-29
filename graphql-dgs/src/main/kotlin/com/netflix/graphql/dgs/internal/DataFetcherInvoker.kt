@@ -19,14 +19,20 @@ package com.netflix.graphql.dgs.internal
 import com.netflix.graphql.dgs.internal.method.ArgumentResolverComposite
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.reactor.mono
 import org.springframework.core.BridgeMethodResolver
-import org.springframework.core.CoroutinesUtils
-import org.springframework.core.KotlinDetector
 import org.springframework.core.MethodParameter
 import org.springframework.core.ParameterNameDiscoverer
 import org.springframework.core.annotation.SynthesizingMethodParameter
+import org.springframework.util.CollectionUtils
 import org.springframework.util.ReflectionUtils
+import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
+import kotlin.reflect.KFunction
+import kotlin.reflect.KParameter
+import kotlin.reflect.full.callSuspendBy
+import kotlin.reflect.jvm.kotlinFunction
 
 class DataFetcherInvoker internal constructor(
     private val dgsComponent: Any,
@@ -36,7 +42,7 @@ class DataFetcherInvoker internal constructor(
 ) : DataFetcher<Any?> {
 
     private val bridgedMethod: Method = BridgeMethodResolver.findBridgedMethod(method)
-    private val isSuspending: Boolean = KotlinDetector.isSuspendingFunction(bridgedMethod)
+    private val kotlinFunction: KFunction<*>? = bridgedMethod.kotlinFunction
 
     private val methodParameters: List<MethodParameter> = bridgedMethod.parameters.map { parameter ->
         val methodParameter = SynthesizingMethodParameter.forParameter(parameter)
@@ -53,6 +59,10 @@ class DataFetcherInvoker internal constructor(
             return ReflectionUtils.invokeMethod(bridgedMethod, dgsComponent)
         }
 
+        if (kotlinFunction != null) {
+            return invokeKotlinMethod(kotlinFunction, environment)
+        }
+
         val args = arrayOfNulls<Any?>(methodParameters.size)
 
         for ((idx, parameter) in methodParameters.withIndex()) {
@@ -62,10 +72,40 @@ class DataFetcherInvoker internal constructor(
             args[idx] = resolvers.resolveArgument(parameter, environment)
         }
 
-        return if (isSuspending) {
-            CoroutinesUtils.invokeSuspendingFunction(bridgedMethod, dgsComponent, *args)
+        return ReflectionUtils.invokeMethod(bridgedMethod, dgsComponent, *args)
+    }
+
+    private fun invokeKotlinMethod(kFunc: KFunction<*>, dfe: DataFetchingEnvironment): Any? {
+        val parameters = kFunc.parameters
+        val argsByName = CollectionUtils.newLinkedHashMap<KParameter, Any?>(parameters.size)
+
+        val paramSeq = if (parameters[0].kind == KParameter.Kind.INSTANCE) {
+            argsByName[parameters[0]] = dgsComponent
+            parameters.asSequence().drop(1)
         } else {
-            ReflectionUtils.invokeMethod(bridgedMethod, dgsComponent, *args)
+            parameters.asSequence()
+        }
+
+        for ((kParameter, parameter) in paramSeq.zip(methodParameters.asSequence())) {
+            if (!resolvers.supportsParameter(parameter)) {
+                throw IllegalStateException(formatArgumentError(parameter, "No suitable resolver"))
+            }
+            val value = resolvers.resolveArgument(parameter, dfe)
+            if (value == null && kParameter.isOptional && !kParameter.type.isMarkedNullable) {
+                continue
+            }
+            argsByName[kParameter] = value
+        }
+
+        if (kFunc.isSuspend) {
+            return mono(Dispatchers.Unconfined) {
+                kFunc.callSuspendBy(argsByName)
+            }.onErrorMap(InvocationTargetException::class.java) { it.targetException }
+        }
+        return try {
+            kFunc.callBy(argsByName)
+        } catch (ex: Exception) {
+            ReflectionUtils.handleReflectionException(ex)
         }
     }
 
