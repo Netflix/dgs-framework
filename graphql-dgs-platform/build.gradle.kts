@@ -57,8 +57,8 @@ dependencies {
         }
         api("com.graphql-java:graphql-java-extended-scalars") {
             version {
-                 strictly("[19.0, 20[")
-                 prefer("19.0")
+                 strictly("[19.0, 21[")
+                 prefer("20.0")
                  reject("18.2")
             }
         }
