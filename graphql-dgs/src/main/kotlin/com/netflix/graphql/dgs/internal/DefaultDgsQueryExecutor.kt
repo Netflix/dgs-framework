@@ -35,6 +35,7 @@ import graphql.schema.GraphQLSchema
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
+import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
 import java.util.*
@@ -54,7 +55,8 @@ class DefaultDgsQueryExecutor(
     private val idProvider: Optional<ExecutionIdProvider>,
     private val reloadIndicator: ReloadSchemaIndicator = ReloadSchemaIndicator { false },
     private val preparsedDocumentProvider: PreparsedDocumentProvider? = null,
-    private val queryValueCustomizer: QueryValueCustomizer = QueryValueCustomizer { query -> query }
+    private val queryValueCustomizer: QueryValueCustomizer = QueryValueCustomizer { query -> query },
+    private val requestCustomizer: DgsQueryExecutorRequestCustomizer = DgsQueryExecutorRequestCustomizer.DEFAULT_REQUEST_CUSTOMIZER
 ) : DgsQueryExecutor {
 
     val schema = AtomicReference(defaultSchema)
@@ -73,7 +75,9 @@ class DefaultDgsQueryExecutor(
             } else {
                 schema.get()
             }
-        val dgsContext = contextBuilder.build(DgsWebMvcRequestData(extensions, headers, webRequest))
+
+        val request = requestCustomizer.apply(webRequest ?: RequestContextHolder.getRequestAttributes() as? WebRequest, headers)
+        val dgsContext = contextBuilder.build(DgsWebMvcRequestData(extensions, headers, request))
 
         val executionResult =
             BaseDgsQueryExecutor.baseExecute(
