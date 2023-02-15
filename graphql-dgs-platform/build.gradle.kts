@@ -67,8 +67,8 @@ dependencies {
         }
         api("com.apollographql.federation:federation-graphql-java-support") {
             version {
-                strictly("[2.0, 2.2[")
-                prefer("2.1.0")
+                strictly("[2.0, 2.3[")
+                prefer("2.3.1")
             }
         }
         // ---
