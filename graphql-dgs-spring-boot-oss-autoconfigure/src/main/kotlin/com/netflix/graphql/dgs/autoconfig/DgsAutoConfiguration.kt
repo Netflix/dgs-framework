@@ -58,6 +58,10 @@ import org.springframework.context.annotation.Bean
 import org.springframework.core.PriorityOrdered
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
+import org.springframework.http.HttpHeaders
+import org.springframework.mock.web.MockHttpServletRequest
+import org.springframework.web.context.request.NativeWebRequest
+import org.springframework.web.context.request.WebRequest
 import java.util.*
 
 /**
@@ -99,7 +103,8 @@ open class DgsAutoConfiguration(
         idProvider: Optional<ExecutionIdProvider>,
         reloadSchemaIndicator: ReloadSchemaIndicator,
         preparsedDocumentProvider: ObjectProvider<PreparsedDocumentProvider>,
-        queryValueCustomizer: QueryValueCustomizer
+        queryValueCustomizer: QueryValueCustomizer,
+        requestCustomizer: ObjectProvider<DgsQueryExecutorRequestCustomizer>
     ): DgsQueryExecutor {
         val queryExecutionStrategy =
             providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
@@ -124,7 +129,8 @@ open class DgsAutoConfiguration(
             idProvider = idProvider,
             reloadIndicator = reloadSchemaIndicator,
             preparsedDocumentProvider = preparsedDocumentProvider.ifAvailable,
-            queryValueCustomizer = queryValueCustomizer
+            queryValueCustomizer = queryValueCustomizer,
+            requestCustomizer = requestCustomizer.getIfAvailable(DgsQueryExecutorRequestCustomizer::DEFAULT_REQUEST_CUSTOMIZER)
         )
     }
 
@@ -260,5 +266,34 @@ open class DgsAutoConfiguration(
     @Bean
     open fun methodDataFetcherFactory(argumentResolvers: ObjectProvider<ArgumentResolver>): MethodDataFetcherFactory {
         return MethodDataFetcherFactory(argumentResolvers.orderedStream().toList())
+    }
+
+    @Bean
+    @ConditionalOnClass(name = ["org.springframework.mock.web.MockHttpServletRequest"])
+    open fun mockRequestHeaderCustomizer(): DgsQueryExecutorRequestCustomizer {
+        /**
+         * [DgsQueryExecutorRequestCustomizer] implementation which copies headers into
+         * the request if the request is [MockHttpServletRequest]; intendeded to support
+         * test use cases.
+         */
+        return object : DgsQueryExecutorRequestCustomizer {
+            override fun apply(request: WebRequest?, headers: HttpHeaders?): WebRequest? {
+                if (headers.isNullOrEmpty() || request !is NativeWebRequest) {
+                    return request
+                }
+                val mockRequest = request.nativeRequest as? MockHttpServletRequest
+                    ?: return request
+                headers.forEach { key, value ->
+                    if (mockRequest.getHeader(key) == null) {
+                        mockRequest.addHeader(key, value)
+                    }
+                }
+                return request
+            }
+
+            override fun toString(): String {
+                return "{MockRequestHeaderCustomizer}"
+            }
+        }
     }
 }

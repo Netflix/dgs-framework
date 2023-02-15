@@ -83,6 +83,9 @@
         "io.projectreactor:reactor-core": {
             "locked": "3.5.0"
         },
+        "jakarta.servlet:jakarta.servlet-api": {
+            "locked": "6.0.0"
+        },
         "org.apache.commons:commons-lang3": {
             "locked": "3.12.0"
         },
@@ -111,6 +114,9 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
+            "locked": "6.0.3"
+        },
+        "org.springframework:spring-test": {
             "locked": "6.0.3"
         },
         "org.springframework:spring-web": {
@@ -206,6 +212,9 @@
         "io.projectreactor:reactor-core": {
             "locked": "3.5.0"
         },
+        "jakarta.servlet:jakarta.servlet-api": {
+            "locked": "6.0.0"
+        },
         "org.apache.commons:commons-lang3": {
             "locked": "3.12.0"
         },
@@ -243,6 +252,9 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
+            "locked": "6.0.3"
+        },
+        "org.springframework:spring-test": {
             "locked": "6.0.3"
         },
         "org.springframework:spring-web": {
