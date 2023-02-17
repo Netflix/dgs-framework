@@ -24,6 +24,8 @@ dependencies {
     compileOnly("com.github.ben-manes.caffeine:caffeine")
     compileOnly("io.micrometer:micrometer-core")
     compileOnly("io.projectreactor:reactor-core")
+    compileOnly("org.springframework:spring-test")
+    compileOnly("jakarta.servlet:jakarta.servlet-api")
 
     testImplementation("org.springframework.boot:spring-boot-starter-web")
     testImplementation("com.github.ben-manes.caffeine:caffeine")

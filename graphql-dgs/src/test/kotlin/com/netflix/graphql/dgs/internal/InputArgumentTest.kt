@@ -1361,7 +1361,6 @@ internal class InputArgumentTest {
         assertThat(executionResult).isNotNull
         assertThat(executionResult.errors).isEmpty()
         assertThat(executionResult.isDataPresent).isTrue
-        val data = executionResult.getData<Map<String, *>>()
     }
 
     @Test
@@ -2051,6 +2050,36 @@ internal class InputArgumentTest {
         assertThat(data).hasEntrySatisfying("lists") { assertThat(it).isEqualTo("Ok") }
         assertThat(data).hasEntrySatisfying("enums") { assertThat(it).isEqualTo("Ok") }
         assertThat(data).hasEntrySatisfying("strings") { assertThat(it).isEqualTo("Ok") }
+    }
+
+    @Test
+    fun `@InputArgument on a list of input types with Kotlin default argument`() {
+        val schema = """
+            type Query {
+                hello(person:[Person]): String
+            }
+
+            input Person {
+                name:String
+            }
+        """.trimIndent()
+
+        val fetcher = object {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument("person") person: List<Person> = emptyList()): String {
+                assertThat(person).isEmpty()
+                return "Hello, Nobody"
+            }
+        }
+
+        withComponents("helloFetcher" to fetcher)
+
+        val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+        val executionResult = build.execute("""{ hello }""")
+        assertThat(executionResult.errors).isEmpty()
+        assertThat(executionResult.isDataPresent).isTrue
+        val data = executionResult.getData<Map<String, *>>()
+        assertThat(data["hello"]).isEqualTo("Hello, Nobody")
     }
 
     private fun withComponents(vararg components: Pair<String, Any>) {
