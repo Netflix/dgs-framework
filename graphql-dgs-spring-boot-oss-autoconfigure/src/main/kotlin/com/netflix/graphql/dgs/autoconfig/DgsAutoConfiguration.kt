@@ -30,7 +30,6 @@ import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import com.netflix.graphql.mocking.MockProvider
 import graphql.execution.AsyncExecutionStrategy
-import graphql.execution.AsyncSerialExecutionStrategy
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.ExecutionIdProvider
 import graphql.execution.ExecutionStrategy
@@ -109,7 +108,7 @@ open class DgsAutoConfiguration(
         val queryExecutionStrategy =
             providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
         val mutationExecutionStrategy =
-            providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
+            providedMutationExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
 
         val instrumentationImpls = instrumentations.orderedStream().toList()
         val instrumentation: Instrumentation? = when {
