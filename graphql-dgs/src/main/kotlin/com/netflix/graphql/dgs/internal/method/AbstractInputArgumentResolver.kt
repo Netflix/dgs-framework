@@ -71,21 +71,8 @@ abstract class AbstractInputArgumentResolver(inputObjectMapper: InputObjectMappe
     }
 
     private fun convertValue(source: Any?, target: TypeDescriptor): Any? {
-        if (source == null) {
-            return when (target.type) {
-                Optional::class.java -> Optional.empty<Any?>()
-                else -> null
-            }
-        }
-
         if (target.resolvableType.isInstance(source)) {
             return source
-        }
-
-        if (target.type == Optional::class.java) {
-            val generic = target.resolvableType.getGeneric(0)
-            val elementType = TypeDescriptor(generic, null, null)
-            return Optional.ofNullable(convertValue(source, elementType))
         }
 
         val sourceType = TypeDescriptor.forObject(source)
@@ -93,6 +80,6 @@ abstract class AbstractInputArgumentResolver(inputObjectMapper: InputObjectMappe
             return conversionService.convert(source, sourceType, target)
         }
 
-        throw DgsInvalidInputArgumentException("Unable to convert from ${source.javaClass} to ${target.type}")
+        throw DgsInvalidInputArgumentException("Unable to convert from ${source?.javaClass} to ${target.type}")
     }
 }

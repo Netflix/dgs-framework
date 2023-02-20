@@ -21,6 +21,7 @@ import org.springframework.core.KotlinDetector
 import org.springframework.core.convert.TypeDescriptor
 import org.springframework.core.convert.converter.ConditionalGenericConverter
 import org.springframework.core.convert.converter.GenericConverter
+import java.util.Optional
 
 internal class InputObjectMapperConverter(private val inputObjectMapper: InputObjectMapper) : ConditionalGenericConverter {
     override fun getConvertibleTypes(): Set<GenericConverter.ConvertiblePair> {
@@ -28,7 +29,9 @@ internal class InputObjectMapperConverter(private val inputObjectMapper: InputOb
     }
 
     override fun matches(sourceType: TypeDescriptor, targetType: TypeDescriptor): Boolean {
-        return sourceType.isMap && !targetType.isMap
+        return sourceType.isMap &&
+            !targetType.isMap &&
+            !targetType.type.isAssignableFrom(Optional::class.java)
     }
 
     override fun convert(source: Any?, sourceType: TypeDescriptor, targetType: TypeDescriptor): Any {
