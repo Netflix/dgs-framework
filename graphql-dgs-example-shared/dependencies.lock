@@ -363,7 +363,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.6.0"
+            "locked": "1.7.0"
         },
         "org.apache.commons:commons-lang3": {
             "firstLevelTransitive": [
@@ -783,7 +783,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.6.0"
+            "locked": "1.7.0"
         },
         "org.apache.commons:commons-lang3": {
             "firstLevelTransitive": [
@@ -1102,7 +1102,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.6.0"
+            "locked": "1.7.0"
         },
         "org.apache.commons:commons-lang3": {
             "firstLevelTransitive": [
