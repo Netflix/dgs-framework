@@ -33,7 +33,7 @@ internal class MappedBatchLoaderInterceptor(
                 )
             }
         } catch (exception: Exception) {
-            logger.warn("Error creating timer interceptor '{}' for {}", ID, javaClass.simpleName)
+            logger.warn("Error creating timer interceptor '{}' for {} with exception {}", ID, javaClass.simpleName, exception.message)
             pipe.to(batchLoader)
         }
     }
