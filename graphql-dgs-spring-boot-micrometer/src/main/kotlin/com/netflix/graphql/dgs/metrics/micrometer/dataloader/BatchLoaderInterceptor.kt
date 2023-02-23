@@ -34,7 +34,7 @@ internal class BatchLoaderInterceptor(
                 )
             }
         } catch (exception: Exception) {
-            logger.warn("Error creating BatchLoader metric interceptor '{}'", ID)
+            logger.warn("Error creating timer interceptor '{}' for {} with exception {}", ID, javaClass.simpleName, exception.message)
             pipe.to(batchLoader)
         }
     }
