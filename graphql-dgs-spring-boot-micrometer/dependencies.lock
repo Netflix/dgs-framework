@@ -662,12 +662,6 @@
             ],
             "locked": "5.3.23"
         },
-        "org.springframework:spring-webflux": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-client"
-            ],
-            "locked": "5.3.23"
-        },
         "org.springframework:spring-webmvc": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
@@ -1509,12 +1503,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
-            ],
-            "locked": "5.3.23"
-        },
-        "org.springframework:spring-webflux": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-client"
             ],
             "locked": "5.3.23"
         },

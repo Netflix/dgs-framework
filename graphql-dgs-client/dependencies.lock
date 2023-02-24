@@ -485,9 +485,6 @@
             ],
             "locked": "5.3.23"
         },
-        "org.springframework:spring-webflux": {
-            "locked": "5.3.23"
-        },
         "org.springframework:spring-webmvc": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
@@ -796,9 +793,6 @@
         "org.springframework:spring-web": {
             "locked": "5.3.23"
         },
-        "org.springframework:spring-webflux": {
-            "locked": "5.3.23"
-        },
         "org.springframework:spring-websocket": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
@@ -972,9 +966,6 @@
             "locked": "5.3.23"
         },
         "org.springframework:spring-web": {
-            "locked": "5.3.23"
-        },
-        "org.springframework:spring-webflux": {
             "locked": "5.3.23"
         }
     },
@@ -1245,9 +1236,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets"
             ],
-            "locked": "5.3.23"
-        },
-        "org.springframework:spring-webflux": {
             "locked": "5.3.23"
         },
         "org.springframework:spring-webmvc": {
