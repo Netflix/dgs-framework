@@ -586,7 +586,6 @@
         },
         "org.springframework:spring-webflux": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure"
             ],
@@ -1069,7 +1068,6 @@
         },
         "org.springframework:spring-webflux": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure"
             ],
@@ -1490,7 +1488,6 @@
         },
         "org.springframework:spring-webflux": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure"
             ],
