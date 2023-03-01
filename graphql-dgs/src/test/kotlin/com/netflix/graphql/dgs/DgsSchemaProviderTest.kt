@@ -42,6 +42,7 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatNoException
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -155,6 +156,21 @@ internal class DgsSchemaProviderTest {
         assertEquals("location1-schema2.graphqls", schemaFiles[1].filename)
         assertEquals("location2-schema1.graphqls", schemaFiles[2].filename)
         assertEquals("location2-schema2.graphqls", schemaFiles[3].filename)
+    }
+
+    @Test
+    fun `Should specify sourceName on SourceLocation`() {
+        val schemaProvider = schemaProvider(
+            schemaLocations = listOf("classpath*:schema/**/*.graphql*")
+        )
+
+        val schema = schemaProvider.schema()
+
+        for (type in schema.allTypesAsList) {
+            if (type.definition?.sourceLocation != null) {
+                assertNotNull(type.definition?.sourceLocation?.sourceName)
+            }
+        }
     }
 
     @Test

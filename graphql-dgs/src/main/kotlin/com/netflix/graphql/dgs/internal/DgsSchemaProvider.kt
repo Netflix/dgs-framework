@@ -30,6 +30,7 @@ import graphql.execution.DataFetcherExceptionHandler
 import graphql.language.InterfaceTypeDefinition
 import graphql.language.TypeName
 import graphql.language.UnionTypeDefinition
+import graphql.parser.MultiSourceReader
 import graphql.schema.Coercing
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetcherFactories
@@ -132,7 +133,12 @@ class DgsSchemaProvider(
 
         var mergedRegistry = if (schema == null) {
             findSchemaFiles(hasDynamicTypeRegistry = hasDynamicTypeRegistry).asSequence().map {
-                InputStreamReader(it.inputStream, StandardCharsets.UTF_8).use { reader -> SchemaParser().parse(reader) }
+                InputStreamReader(it.inputStream, StandardCharsets.UTF_8).use { reader ->
+                    // Convert reader kind for GraphQL Java to specify source name in a type definition's source location
+                    val multiSourceReader = MultiSourceReader.newMultiSourceReader()
+                        .reader(reader, it.filename).build()
+                    SchemaParser().parse(multiSourceReader)
+                }
             }.fold(TypeDefinitionRegistry()) { a, b -> a.merge(b) }
         } else {
             SchemaParser().parse(schema)
