@@ -19,12 +19,9 @@ package com.netflix.graphql.dgs.example.shared.dataLoader;
 import com.netflix.graphql.dgs.DgsDataLoader;
 import com.netflix.graphql.dgs.context.DgsContext;
 import com.netflix.graphql.dgs.example.shared.context.MyContext;
-import graphql.GraphQLContext;
 import org.dataloader.BatchLoaderEnvironment;
 import org.dataloader.BatchLoaderWithContext;
-import org.dataloader.Try;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;

@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs;
 
 import com.netflix.graphql.dgs.internal.utils.DataLoaderNameUtil;
+import org.dataloader.registries.DispatchPredicate;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.ElementType;
