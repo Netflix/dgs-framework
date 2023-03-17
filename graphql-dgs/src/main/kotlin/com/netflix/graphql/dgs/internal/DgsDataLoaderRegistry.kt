@@ -45,7 +45,7 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      * @return this registry
      */
     override fun register(key: String, dataLoader: DataLoader<*, *>): DataLoaderRegistry {
-        dataLoaderRegistry.register(key, dataLoader);
+        dataLoaderRegistry.register(key, dataLoader)
         return this
     }
 
@@ -64,8 +64,8 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
     ): DataLoaderRegistry {
         val registry = ScheduledDataLoaderRegistry.newScheduledRegistry().register(key, dataLoader)
             .dispatchPredicate(dispatchPredicate)
-            .build();
-        scheduledDataLoaderRegistries.putIfAbsent(key, registry);
+            .build()
+        scheduledDataLoaderRegistries.putIfAbsent(key, registry)
         return this
     }
 
@@ -83,13 +83,13 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      * @param <V>             the type of values
      *
      * @return a data loader
-    </V></K> */
+     </V></K> */
     override fun <K, V> computeIfAbsent(
         key: String,
         mappingFunction: Function<String, DataLoader<*, *>>?
     ): DataLoader<K, V> {
         // we do not support this method for registering with dispatch predicates
-        return dataLoaderRegistry.computeIfAbsent<K, V>(key, mappingFunction!!) as DataLoader<K, V>;
+        return dataLoaderRegistry.computeIfAbsent<K, V>(key, mappingFunction!!) as DataLoader<K, V>
     }
 
     /**
@@ -138,7 +138,7 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      * @param <V> the type of values
      *
      * @return a data loader or null if its not present
-    </V></K> */
+     </V></K> */
     override fun <K, V> getDataLoader(key: String): DataLoader<K, V>? {
         if (dataLoaderRegistry.keys.contains(key)) {
             return dataLoaderRegistry.getDataLoader(key)
@@ -158,7 +158,7 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      */
     override fun dispatchAll() {
         scheduledDataLoaderRegistries.forEach {
-           it.value.dispatchAll()
+            it.value.dispatchAll()
         }
         dataLoaderRegistry.dispatchAll()
     }
@@ -172,9 +172,9 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
     override fun dispatchAllWithCount(): Int {
         var sum = 0
         scheduledDataLoaderRegistries.forEach {
-            sum+= it.value.dispatchAllWithCount()
+            sum += it.value.dispatchAllWithCount()
         }
-        sum+= dataLoaderRegistry.dispatchAllWithCount()
+        sum += dataLoaderRegistry.dispatchAllWithCount()
         return sum
     }
 
@@ -185,17 +185,17 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
     override fun dispatchDepth(): Int {
         var totalDispatchDepth = 0
         scheduledDataLoaderRegistries.forEach {
-                totalDispatchDepth += it.value.dispatchDepth()
+            totalDispatchDepth += it.value.dispatchDepth()
         }
-        totalDispatchDepth+= dataLoaderRegistry.dispatchDepth()
+        totalDispatchDepth += dataLoaderRegistry.dispatchDepth()
 
         return totalDispatchDepth
     }
 
-    override fun getStatistics() : Statistics {
+    override fun getStatistics(): Statistics {
         var stats = Statistics()
         scheduledDataLoaderRegistries.forEach {
-                stats = stats.combine(it.value.statistics)
+            stats = stats.combine(it.value.statistics)
         }
         stats = stats.combine(dataLoaderRegistry.statistics)
         return stats

@@ -35,14 +35,12 @@ import org.dataloader.DataLoaderRegistry
 import org.dataloader.MappedBatchLoader
 import org.dataloader.MappedBatchLoaderWithContext
 import org.dataloader.registries.DispatchPredicate
-import org.dataloader.registries.ScheduledDataLoaderRegistry
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.aop.support.AopUtils
 import org.springframework.beans.factory.NoSuchBeanDefinitionException
 import org.springframework.context.ApplicationContext
 import org.springframework.util.ReflectionUtils
-import java.lang.reflect.Modifier
 import java.util.function.Supplier
 
 /**
@@ -63,7 +61,7 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
 
     fun <T> buildRegistryWithContextSupplier(contextSupplier: Supplier<T>): DataLoaderRegistry {
         val startTime = System.currentTimeMillis()
-        //val dataLoaderRegistry = DataLoaderRegistry()
+        // val dataLoaderRegistry = DataLoaderRegistry()
         val dgsDataLoaderRegistry = DgsDataLoaderRegistry()
 
         batchLoaders.forEach {
@@ -167,19 +165,19 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
             val javaClass = AopUtils.getTargetClass(dgsComponent)
             val annotation = javaClass.getAnnotation(DgsDataLoader::class.java)
             val predicateField = javaClass.declaredFields.asSequence().find { it.isAnnotationPresent(DgsDispatchPredicate::class.java) }
-            if (predicateField != null ) {
-                    ReflectionUtils.makeAccessible(predicateField)
-                    val dispatchPredicate =  predicateField.get(dgsComponent)
-                    if (dispatchPredicate is DispatchPredicate) {
-                       addDataLoaders(dgsComponent, javaClass, annotation, dispatchPredicate)
-                    }
+            if (predicateField != null) {
+                ReflectionUtils.makeAccessible(predicateField)
+                val dispatchPredicate = predicateField.get(dgsComponent)
+                if (dispatchPredicate is DispatchPredicate) {
+                    addDataLoaders(dgsComponent, javaClass, annotation, dispatchPredicate)
+                }
             } else {
                 addDataLoaders(dgsComponent, javaClass, annotation, null)
             }
         }
     }
 
-    private fun <T: Any>addDataLoaders(dgsComponent: T, targetClass: Class<*>, annotation: DgsDataLoader, dispatchPredicate: DispatchPredicate?) {
+    private fun <T : Any>addDataLoaders(dgsComponent: T, targetClass: Class<*>, annotation: DgsDataLoader, dispatchPredicate: DispatchPredicate?) {
         fun <T : Any> createHolder(t: T): LoaderHolder<T> =
             LoaderHolder(t, annotation, DataLoaderNameUtil.getDataLoaderName(targetClass, annotation), dispatchPredicate)
         when (dgsComponent) {
