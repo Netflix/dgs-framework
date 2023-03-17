@@ -171,17 +171,17 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
                     ReflectionUtils.makeAccessible(predicateField)
                     val dispatchPredicate =  predicateField.get(dgsComponent)
                     if (dispatchPredicate is DispatchPredicate) {
-                       addDataLoaders(dgsComponent, annotation, dispatchPredicate)
+                       addDataLoaders(dgsComponent, javaClass, annotation, dispatchPredicate)
                     }
             } else {
-                addDataLoaders(dgsComponent, annotation, null)
+                addDataLoaders(dgsComponent, javaClass, annotation, null)
             }
         }
     }
 
-    private fun <T: Any>addDataLoaders(dgsComponent: T, annotation: DgsDataLoader, dispatchPredicate: DispatchPredicate?) {
+    private fun <T: Any>addDataLoaders(dgsComponent: T, targetClass: Class<*>, annotation: DgsDataLoader, dispatchPredicate: DispatchPredicate?) {
         fun <T : Any> createHolder(t: T): LoaderHolder<T> =
-            LoaderHolder(t, annotation, DataLoaderNameUtil.getDataLoaderName(javaClass, annotation), dispatchPredicate)
+            LoaderHolder(t, annotation, DataLoaderNameUtil.getDataLoaderName(targetClass, annotation), dispatchPredicate)
         when (dgsComponent) {
             is BatchLoader<*, *> -> batchLoaders.add(createHolder(dgsComponent))
             is BatchLoaderWithContext<*, *> -> batchLoadersWithContext.add(createHolder(dgsComponent))

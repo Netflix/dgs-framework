@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 @DgsDataLoader(name = "exampleLoaderWithContext")
 public class ExampleLoaderWithContext implements BatchLoaderWithContext<String, String> {
-    @Override
+    @Override                                                                                                                             
     public CompletionStage<List<String>> load(List<String> keys, BatchLoaderEnvironment environment) {
 
         MyContext context = DgsContext.getCustomContext(environment);

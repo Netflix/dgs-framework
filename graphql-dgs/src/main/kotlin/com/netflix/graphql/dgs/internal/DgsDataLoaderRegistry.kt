@@ -22,7 +22,6 @@ import org.dataloader.registries.DispatchPredicate
 import org.dataloader.registries.ScheduledDataLoaderRegistry
 import org.dataloader.stats.Statistics
 import java.util.concurrent.ConcurrentHashMap
-import java.util.function.Consumer
 import java.util.function.Function
 
 /**
@@ -34,7 +33,8 @@ import java.util.function.Function
  * https://github.com/graphql-java/java-dataloader#scheduled-dispatching
  */
 open class DgsDataLoaderRegistry : DataLoaderRegistry() {
-    private val dataLoaderRegistries: MutableMap<String, DataLoaderRegistry> = ConcurrentHashMap()
+    private val scheduledDataLoaderRegistries: MutableMap<String, DataLoaderRegistry> = ConcurrentHashMap()
+    private val dataLoaderRegistry = DataLoaderRegistry()
 
     /**
      * This will register a new dataloader
@@ -45,8 +45,7 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      * @return this registry
      */
     override fun register(key: String, dataLoader: DataLoader<*, *>): DataLoaderRegistry {
-        val registry = ScheduledDataLoaderRegistry.newScheduledRegistry().register(key, dataLoader).build();
-        dataLoaderRegistries.putIfAbsent(key, registry);
+        dataLoaderRegistry.register(key, dataLoader);
         return this
     }
 
@@ -66,7 +65,7 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
         val registry = ScheduledDataLoaderRegistry.newScheduledRegistry().register(key, dataLoader)
             .dispatchPredicate(dispatchPredicate)
             .build();
-        dataLoaderRegistries.putIfAbsent(key, registry);
+        scheduledDataLoaderRegistries.putIfAbsent(key, registry);
         return this
     }
 
@@ -89,14 +88,8 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
         key: String,
         mappingFunction: Function<String, DataLoader<*, *>>?
     ): DataLoader<K, V> {
-        val dataLoadersForKey = dataLoaderRegistries[key]
-        return if (dataLoadersForKey == null) {
-            val newRegistry = ScheduledDataLoaderRegistry.newScheduledRegistry().build();
-            dataLoaderRegistries[key] = newRegistry
-            newRegistry.computeIfAbsent<K, V>(key, mappingFunction) as DataLoader<K, V>
-        } else {
-            dataLoadersForKey.computeIfAbsent<K, V>(key, mappingFunction!!) as DataLoader<K, V>;
-        }
+        // we do not support this method for registering with dispatch predicates
+        return dataLoaderRegistry.computeIfAbsent<K, V>(key, mappingFunction!!) as DataLoader<K, V>;
     }
 
     /**
@@ -110,7 +103,7 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      * @return the currently registered data loaders
      */
     override fun getDataLoaders(): List<DataLoader<*, *>> {
-        return dataLoaderRegistries.flatMap { it.value.dataLoaders }
+        return scheduledDataLoaderRegistries.flatMap { it.value.dataLoaders }.plus(dataLoaderRegistry.dataLoaders)
     }
 
     /**
@@ -118,10 +111,10 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      */
     override fun getDataLoadersMap(): Map<String, DataLoader<*, *>> {
         var dataLoadersMap: Map<String, DataLoader<*, *>> = emptyMap()
-        dataLoaderRegistries.forEach {
+        scheduledDataLoaderRegistries.forEach {
             dataLoadersMap = dataLoadersMap.plus(it.value.dataLoadersMap)
         }
-        return LinkedHashMap(dataLoadersMap)
+        return LinkedHashMap(dataLoadersMap.plus(dataLoaderRegistry.dataLoadersMap))
     }
 
     /**
@@ -132,7 +125,8 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      * @return this registry
      */
     override fun unregister(key: String): DataLoaderRegistry {
-        dataLoaderRegistries.remove(key)
+        scheduledDataLoaderRegistries.remove(key)
+        dataLoaderRegistry.unregister(key)
         return this
     }
 
@@ -145,12 +139,17 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      *
      * @return a data loader or null if its not present
     </V></K> */
-    override fun <K, V> getDataLoader(key: String): DataLoader<K, V> {
-        return dataLoaderRegistries[key]!!.dataLoadersMap[key] as DataLoader<K, V>
+    override fun <K, V> getDataLoader(key: String): DataLoader<K, V>? {
+        if (dataLoaderRegistry.keys.contains(key)) {
+            return dataLoaderRegistry.getDataLoader(key)
+        } else if (scheduledDataLoaderRegistries.contains(key)) {
+            return scheduledDataLoaderRegistries[key]?.getDataLoader(key)
+        }
+        return null
     }
 
     override fun getKeys(): Set<String> {
-        return HashSet(dataLoaderRegistries.keys)
+        return HashSet(scheduledDataLoaderRegistries.keys).plus(dataLoaderRegistry.keys)
     }
 
     /**
@@ -158,9 +157,10 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      * [org.dataloader.DataLoader]s
      */
     override fun dispatchAll() {
-        dataLoaderRegistries.forEach {
+        scheduledDataLoaderRegistries.forEach {
            it.value.dispatchAll()
         }
+        dataLoaderRegistry.dispatchAll()
     }
 
     /**
@@ -171,9 +171,10 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      */
     override fun dispatchAllWithCount(): Int {
         var sum = 0
-        dataLoaderRegistries.forEach {
+        scheduledDataLoaderRegistries.forEach {
             sum+= it.value.dispatchAllWithCount()
         }
+        sum+= dataLoaderRegistry.dispatchAllWithCount()
         return sum
     }
 
@@ -183,17 +184,20 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      */
     override fun dispatchDepth(): Int {
         var totalDispatchDepth = 0
-        dataLoaderRegistries.forEach {
+        scheduledDataLoaderRegistries.forEach {
                 totalDispatchDepth += it.value.dispatchDepth()
         }
+        totalDispatchDepth+= dataLoaderRegistry.dispatchDepth()
+
         return totalDispatchDepth
     }
 
     override fun getStatistics() : Statistics {
         var stats = Statistics()
-        dataLoaderRegistries.forEach {
+        scheduledDataLoaderRegistries.forEach {
                 stats = stats.combine(it.value.statistics)
         }
+        stats = stats.combine(dataLoaderRegistry.statistics)
         return stats
     }
 }
