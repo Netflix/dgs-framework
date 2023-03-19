@@ -61,7 +61,6 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
 
     fun <T> buildRegistryWithContextSupplier(contextSupplier: Supplier<T>): DataLoaderRegistry {
         val startTime = System.currentTimeMillis()
-        // val dataLoaderRegistry = DataLoaderRegistry()
         val dgsDataLoaderRegistry = DgsDataLoaderRegistry()
 
         batchLoaders.forEach {

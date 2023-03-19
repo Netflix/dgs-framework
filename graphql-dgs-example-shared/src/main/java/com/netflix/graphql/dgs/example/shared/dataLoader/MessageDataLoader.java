@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class MessageDataLoader implements BatchLoader<String, String> {
 
     @DgsDispatchPredicate
-    DispatchPredicate pred = DispatchPredicate.dispatchIfLongerThan(Duration.ofMinutes(1));
+    DispatchPredicate pred = DispatchPredicate.dispatchIfLongerThan(Duration.ofSeconds(10));
     @Override
     public CompletionStage<List<String>> load(List<String> keys) {
         return CompletableFuture.supplyAsync(() -> keys.stream().map(key -> "hello, " + key + "!").collect(Collectors.toList()));
