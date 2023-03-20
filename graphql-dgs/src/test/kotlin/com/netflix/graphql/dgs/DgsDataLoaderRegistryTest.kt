@@ -32,7 +32,6 @@ import org.junit.jupiter.api.assertThrows
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
-
 class DgsDataLoaderRegistryTest {
 
     private val dgsDataLoaderRegistry = DgsDataLoaderRegistry()
@@ -56,10 +55,10 @@ class DgsDataLoaderRegistryTest {
 
     @Test
     fun registerWithScheduledDispatch() {
-
         val newLoader = DataLoaderFactory.newDataLoader(dataLoaderB)
         dgsDataLoaderRegistry.registerWithDispatchPredicate(
-            "exampleLoaderB", newLoader,
+            "exampleLoaderB",
+            newLoader,
             DispatchPredicate.dispatchIfDepthGreaterThan(1)
         )
         assertThat(dgsDataLoaderRegistry.dataLoaders.size).isEqualTo(1)
@@ -72,7 +71,8 @@ class DgsDataLoaderRegistryTest {
         val newLoader = DataLoaderFactory.newDataLoader(dataLoaderA)
         dgsDataLoaderRegistry.register("exampleLoaderA", DataLoaderFactory.newDataLoader(dataLoaderA))
         dgsDataLoaderRegistry.registerWithDispatchPredicate(
-            "exampleLoaderB", DataLoaderFactory.newDataLoader(dataLoaderB),
+            "exampleLoaderB",
+            DataLoaderFactory.newDataLoader(dataLoaderB),
             DispatchPredicate.dispatchIfDepthGreaterThan(1)
         )
         assertThat(dgsDataLoaderRegistry.dataLoaders.size).isEqualTo(2)
@@ -92,7 +92,7 @@ class DgsDataLoaderRegistryTest {
     @Test
     fun computeIfAbsent() {
         val dataLoader = DataLoaderFactory.newDataLoader(dataLoaderA) as DataLoader<*, *>
-        dgsDataLoaderRegistry.computeIfAbsent<String, String>("exampleLoader" ){ dataLoader }
+        dgsDataLoaderRegistry.computeIfAbsent<String, String>("exampleLoader") { dataLoader }
 
         val loader = dgsDataLoaderRegistry.getDataLoader<String, String>("exampleLoader")
         assertThat(loader).isNotNull
@@ -105,7 +105,8 @@ class DgsDataLoaderRegistryTest {
 
         val newLoaderB = DataLoaderFactory.newDataLoader(dataLoaderB)
         dgsDataLoaderRegistry.registerWithDispatchPredicate(
-            "exampleLoaderB", newLoaderB,
+            "exampleLoaderB",
+            newLoaderB,
             DispatchPredicate.dispatchIfDepthGreaterThan(1)
         )
         assertThat(dgsDataLoaderRegistry.dataLoaders.size).isEqualTo(2)
@@ -122,7 +123,8 @@ class DgsDataLoaderRegistryTest {
 
         val newLoaderB = DataLoaderFactory.newDataLoader(dataLoaderB)
         dgsDataLoaderRegistry.registerWithDispatchPredicate(
-            "exampleLoaderB", newLoaderB,
+            "exampleLoaderB",
+            newLoaderB,
             DispatchPredicate.dispatchIfDepthGreaterThan(1)
         )
 
@@ -141,7 +143,8 @@ class DgsDataLoaderRegistryTest {
 
         dgsDataLoaderRegistry.register("exampleLoaderA", mockDataLoaderA)
         dgsDataLoaderRegistry.registerWithDispatchPredicate(
-            "exampleLoaderB", mockDataLoaderB,
+            "exampleLoaderB",
+            mockDataLoaderB,
             DispatchPredicate.dispatchIfDepthGreaterThan(1)
         )
         dgsDataLoaderRegistry.dispatchAll()
@@ -154,7 +157,8 @@ class DgsDataLoaderRegistryTest {
 
         dgsDataLoaderRegistry.register("exampleLoaderA", mockDataLoaderA)
         dgsDataLoaderRegistry.registerWithDispatchPredicate(
-            "exampleLoaderB", mockDataLoaderB,
+            "exampleLoaderB",
+            mockDataLoaderB,
             DispatchPredicate.dispatchIfDepthGreaterThan(1)
         )
         assertThat(dgsDataLoaderRegistry.dispatchDepth()).isEqualTo(3)
@@ -168,7 +172,8 @@ class DgsDataLoaderRegistryTest {
 
         dgsDataLoaderRegistry.register("exampleLoaderA", mockDataLoaderA)
         dgsDataLoaderRegistry.registerWithDispatchPredicate(
-            "exampleLoaderB", mockDataLoaderB,
+            "exampleLoaderB",
+            mockDataLoaderB,
             DispatchPredicate.dispatchIfDepthGreaterThan(1)
         )
         assertThat(dgsDataLoaderRegistry.dispatchAllWithCount()).isEqualTo(7)
@@ -181,7 +186,8 @@ class DgsDataLoaderRegistryTest {
 
         dgsDataLoaderRegistry.register("exampleLoaderA", mockDataLoaderA)
         dgsDataLoaderRegistry.registerWithDispatchPredicate(
-            "exampleLoaderB", mockDataLoaderB,
+            "exampleLoaderB",
+            mockDataLoaderB,
             DispatchPredicate.dispatchIfDepthGreaterThan(1)
         )
         assertThat(dgsDataLoaderRegistry.statistics).isNotNull

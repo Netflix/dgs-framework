@@ -24,7 +24,7 @@ import java.util.concurrent.CompletionStage
 @DgsDataLoader(name = "exampleMappedLoaderWithDispatch")
 class ExampleMappedBatchLoaderWithDispatchPredicate : MappedBatchLoader<String, String> {
     @DgsDispatchPredicate
-    val dgsPredicate : DispatchPredicate = DispatchPredicate.dispatchIfDepthGreaterThan(1)
+    val dgsPredicate: DispatchPredicate = DispatchPredicate.dispatchIfDepthGreaterThan(1)
     override fun load(keys: Set<String>): CompletionStage<Map<String, String>> {
         return CompletableFuture.supplyAsync {
             keys.associateWith { it.uppercase() }

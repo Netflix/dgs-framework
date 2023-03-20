@@ -24,7 +24,7 @@ import java.util.concurrent.CompletionStage
 @DgsDataLoader(name = "exampleLoaderWithDispatch")
 class ExampleBatchLoaderWithDispatchPredicate : BatchLoader<String, String> {
     @DgsDispatchPredicate
-    val dgsPredicate : DispatchPredicate = DispatchPredicate.dispatchIfDepthGreaterThan(1)
+    val dgsPredicate: DispatchPredicate = DispatchPredicate.dispatchIfDepthGreaterThan(1)
 
     override fun load(keys: MutableList<String>?): CompletionStage<MutableList<String>> {
         return CompletableFuture.supplyAsync { mutableListOf("a", "b", "c") }

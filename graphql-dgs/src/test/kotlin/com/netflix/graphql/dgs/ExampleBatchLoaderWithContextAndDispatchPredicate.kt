@@ -25,7 +25,7 @@ import java.util.concurrent.CompletionStage
 @DgsDataLoader(name = "exampleLoaderWithContextAndDispatch")
 class ExampleBatchLoaderWithContextAndDispatchPredicate : BatchLoaderWithContext<String, String> {
     @DgsDispatchPredicate
-    val dgsPredicate : DispatchPredicate = DispatchPredicate.dispatchIfDepthGreaterThan(1)
+    val dgsPredicate: DispatchPredicate = DispatchPredicate.dispatchIfDepthGreaterThan(1)
     override fun load(keys: List<String>, env: BatchLoaderEnvironment): CompletionStage<List<String>> {
         return CompletableFuture.supplyAsync { keys.map { it.uppercase() } }
     }
