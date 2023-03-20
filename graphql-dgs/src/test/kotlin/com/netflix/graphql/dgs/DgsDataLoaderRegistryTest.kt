@@ -24,10 +24,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.dataloader.BatchLoader
 import org.dataloader.DataLoader
 import org.dataloader.DataLoaderFactory
+import org.dataloader.DataLoaderRegistry
 import org.dataloader.registries.DispatchPredicate
+import org.dataloader.stats.Statistics
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
+
 
 class DgsDataLoaderRegistryTest {
 
@@ -61,6 +65,37 @@ class DgsDataLoaderRegistryTest {
         assertThat(dgsDataLoaderRegistry.dataLoaders.size).isEqualTo(1)
         val registeredLoader = dgsDataLoaderRegistry.getDataLoader<String, String>("exampleLoaderB")
         assertThat(registeredLoader).isNotNull
+    }
+
+    @Test
+    fun unregister() {
+        val newLoader = DataLoaderFactory.newDataLoader(dataLoaderA)
+        dgsDataLoaderRegistry.register("exampleLoaderA", DataLoaderFactory.newDataLoader(dataLoaderA))
+        dgsDataLoaderRegistry.registerWithDispatchPredicate(
+            "exampleLoaderB", DataLoaderFactory.newDataLoader(dataLoaderB),
+            DispatchPredicate.dispatchIfDepthGreaterThan(1)
+        )
+        assertThat(dgsDataLoaderRegistry.dataLoaders.size).isEqualTo(2)
+        dgsDataLoaderRegistry.unregister("exampleLoaderA")
+        assertThat(dgsDataLoaderRegistry.dataLoaders.size).isEqualTo(1)
+        dgsDataLoaderRegistry.unregister("exampleLoaderB")
+        assertThat(dgsDataLoaderRegistry.dataLoaders.size).isEqualTo(0)
+    }
+
+    @Test
+    fun combine() {
+        val error: UnsupportedOperationException = assertThrows {
+            dgsDataLoaderRegistry.combine(DataLoaderRegistry())
+        }
+    }
+
+    @Test
+    fun computeIfAbsent() {
+        val dataLoader = DataLoaderFactory.newDataLoader(dataLoaderA) as DataLoader<*, *>
+        dgsDataLoaderRegistry.computeIfAbsent<String, String>("exampleLoader" ){ dataLoader }
+
+        val loader = dgsDataLoaderRegistry.getDataLoader<String, String>("exampleLoader")
+        assertThat(loader).isNotNull
     }
 
     @Test
@@ -123,6 +158,39 @@ class DgsDataLoaderRegistryTest {
             DispatchPredicate.dispatchIfDepthGreaterThan(1)
         )
         assertThat(dgsDataLoaderRegistry.dispatchDepth()).isEqualTo(3)
+    }
+
+    @Test
+    fun dispatchAllWithCount() {
+        every { mockDataLoaderB.dispatchDepth() } returns 3
+        every { mockDataLoaderA.dispatchWithCounts().keysCount } returns 4
+        every { mockDataLoaderB.dispatchWithCounts().keysCount } returns 3
+
+        dgsDataLoaderRegistry.register("exampleLoaderA", mockDataLoaderA)
+        dgsDataLoaderRegistry.registerWithDispatchPredicate(
+            "exampleLoaderB", mockDataLoaderB,
+            DispatchPredicate.dispatchIfDepthGreaterThan(1)
+        )
+        assertThat(dgsDataLoaderRegistry.dispatchAllWithCount()).isEqualTo(7)
+    }
+
+    @Test
+    fun getStatistics() {
+        every { mockDataLoaderA.statistics } returns Statistics(1, 1, 1, 1, 1, 1)
+        every { mockDataLoaderB.statistics } returns Statistics(2, 2, 2, 2, 2, 2)
+
+        dgsDataLoaderRegistry.register("exampleLoaderA", mockDataLoaderA)
+        dgsDataLoaderRegistry.registerWithDispatchPredicate(
+            "exampleLoaderB", mockDataLoaderB,
+            DispatchPredicate.dispatchIfDepthGreaterThan(1)
+        )
+        assertThat(dgsDataLoaderRegistry.statistics).isNotNull
+        assertThat(dgsDataLoaderRegistry.statistics.loadCount).isEqualTo(3)
+        assertThat(dgsDataLoaderRegistry.statistics.loadErrorCount).isEqualTo(3)
+        assertThat(dgsDataLoaderRegistry.statistics.batchInvokeCount).isEqualTo(3)
+        assertThat(dgsDataLoaderRegistry.statistics.batchLoadCount).isEqualTo(3)
+        assertThat(dgsDataLoaderRegistry.statistics.batchLoadExceptionCount).isEqualTo(3)
+        assertThat(dgsDataLoaderRegistry.statistics.cacheHitCount).isEqualTo(3)
     }
 
     @DgsDataLoader(name = "exampleLoaderA")
