@@ -68,7 +68,7 @@ class DgsDataLoaderRegistryTest {
 
     @Test
     fun unregister() {
-        val newLoader = DataLoaderFactory.newDataLoader(dataLoaderA)
+        DataLoaderFactory.newDataLoader(dataLoaderA)
         dgsDataLoaderRegistry.register("exampleLoaderA", DataLoaderFactory.newDataLoader(dataLoaderA))
         dgsDataLoaderRegistry.registerWithDispatchPredicate(
             "exampleLoaderB",
