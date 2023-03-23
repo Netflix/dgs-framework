@@ -17,22 +17,23 @@
 package com.netflix.graphql.dgs.example.shared.dataLoader;
 
 import com.netflix.graphql.dgs.DgsDataLoader;
-import com.netflix.graphql.dgs.context.DgsContext;
-import com.netflix.graphql.dgs.example.shared.context.MyContext;
-import org.dataloader.BatchLoaderEnvironment;
-import org.dataloader.BatchLoaderWithContext;
+import com.netflix.graphql.dgs.DgsDispatchPredicate;
+import org.dataloader.BatchLoader;
+import org.dataloader.registries.DispatchPredicate;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
-@DgsDataLoader(name = "exampleLoaderWithContext")
-public class ExampleLoaderWithContext implements BatchLoaderWithContext<String, String> {
-    @Override                                                                                                                             
-    public CompletionStage<List<String>> load(List<String> keys, BatchLoaderEnvironment environment) {
-
-        MyContext context = DgsContext.getCustomContext(environment);
-        return CompletableFuture.supplyAsync(() -> keys.stream().map(key -> context.getCustomState() + " " + key).collect(Collectors.toList()));
+@DgsDataLoader(name = "messagesWithScheduledDispatch")
+public class MessageDataLoaderWithDispatchPredicate implements BatchLoader<String, String> {
+    @DgsDispatchPredicate
+    DispatchPredicate pred = DispatchPredicate.dispatchIfLongerThan(Duration.ofSeconds(2));
+    @Override
+    public CompletionStage<List<String>> load(List<String> keys) {
+        return CompletableFuture.supplyAsync(() -> keys.stream().map(key -> "hello, " + key + "!").collect(Collectors.toList()));
     }
 }
+
