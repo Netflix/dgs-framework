@@ -16,3 +16,4 @@ jobs:
         exempt-issue-labels: 'blocked-external'
         days-before-stale: 365
         days-before-close: 7
+        days-before-issue-close: -1
