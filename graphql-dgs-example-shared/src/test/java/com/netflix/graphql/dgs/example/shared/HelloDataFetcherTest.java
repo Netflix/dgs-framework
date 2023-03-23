@@ -22,6 +22,10 @@ import org.assertj.core.util.Maps;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -53,6 +57,16 @@ class HelloDataFetcherTest {
     void helloShouldWorkWithoutName() {
         String message = queryExecutor.executeAndExtractJsonPath("{hello}", "data.hello");
         assertThat(message).isEqualTo("hello, Stranger!");
+    }
+
+    @Test
+    void messageLoaderWithScheduledDispatch() {
+        LocalDateTime now = LocalDateTime.now();
+        String message = queryExecutor.executeAndExtractJsonPath("{ messageFromBatchLoaderWithScheduledDispatch }", "data.messageFromBatchLoaderWithScheduledDispatch");
+        LocalDateTime after = LocalDateTime.now();
+        assertThat( now.until(after, ChronoUnit.SECONDS)).isGreaterThanOrEqualTo(2);
+        assertThat( now.until(after, ChronoUnit.SECONDS)).isLessThanOrEqualTo(4);
+        assertThat(message).isEqualTo("hello, a!");
     }
 
     @Test

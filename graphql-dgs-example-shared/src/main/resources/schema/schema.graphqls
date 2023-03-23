@@ -6,6 +6,7 @@ type Query {
     movies: [Movie]
     messageFromBatchLoader: String
     messagesWithExceptionFromBatchLoader: [Message]
+    messageFromBatchLoaderWithScheduledDispatch: String
 
 #    #Custom scalar example
 #    now: LocalTime
