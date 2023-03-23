@@ -64,7 +64,7 @@ class DgsPaginationTypeDefinitionRegistry {
             .name(type + "Connection")
             .description(createDescription(type + " Connection"))
             .fieldDefinition(createFieldDefinition("edges", ListType(TypeName(type + "Edge"))))
-            .fieldDefinition(createFieldDefinition("pageInfo", TypeName("PageInfo")))
+            .fieldDefinition(createFieldDefinition("pageInfo", NonNullType(TypeName("PageInfo"))))
             .build()
     }
 
