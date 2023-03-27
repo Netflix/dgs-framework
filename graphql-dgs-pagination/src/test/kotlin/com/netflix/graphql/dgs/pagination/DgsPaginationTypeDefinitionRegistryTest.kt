@@ -66,7 +66,7 @@ class DgsPaginationTypeDefinitionRegistryTest {
         val edgesField = movieConnection.fieldDefinitions.find { it.name == "edges" } as FieldDefinition
         assertThat(edgesField.type.toString()).isEqualTo(ListType(TypeName("MovieEdge")).toString())
         val pageInfoField = movieConnection.fieldDefinitions.find { it.name == "pageInfo" } as FieldDefinition
-        assertThat(pageInfoField.type.toString()).isEqualTo(TypeName("PageInfo").toString())
+        assertThat(pageInfoField.type.toString()).isEqualTo(NonNullType(TypeName("PageInfo")).toString())
 
         val movieEdge = (paginatedTypeRegistry.types()["MovieEdge"] as ObjectTypeDefinition)
         val cursorField = movieEdge.fieldDefinitions.find { it.name == "cursor" } as FieldDefinition
