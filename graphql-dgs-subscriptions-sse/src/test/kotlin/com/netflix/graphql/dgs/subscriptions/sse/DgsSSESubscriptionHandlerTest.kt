@@ -166,8 +166,54 @@ internal class DgsSSESubscriptionHandlerTest {
             .map { line -> mapper.readValue<SSEDataPayload>(line) }
             .toList()
 
-        assertEquals(2, messages.size)
+        assertEquals(3, messages.size)
         assertEquals("message 1", messages[0].data)
         assertEquals("message 2", messages[1].data)
+        val events = result.response.contentAsString.lineSequence()
+            .filter { line -> line.startsWith("event:") }
+            .map { line -> line.substring("event:".length) }
+            .toList()
+        assertEquals(3, events.size)
+        assertEquals("next", events[0])
+        assertEquals("next", events[1])
+        assertEquals("complete", events[2])
+    }
+
+    @Test
+    fun failure() {
+        val query = "subscription { stocks { name, price }}"
+        val queryPayload = QueryPayload(operationName = "MySubscription", query = query)
+        val encodedQuery = Base64.getEncoder().encodeToString(mapper.writeValueAsBytes(queryPayload))
+
+        val publisher = Flux.just(1).map { throw RuntimeException("test") }
+        val executionResult = ExecutionResultImpl.newExecutionResult()
+            .data(publisher).build()
+
+        `when`(dgsQueryExecutor.execute(eq(query), any())).thenReturn(executionResult)
+
+        val result = mockMvc.perform(get("/subscriptions").param("query", encodedQuery))
+            .andExpect(request().asyncStarted())
+            .andExpect(status().is2xxSuccessful)
+            .andReturn()
+
+        mockMvc.perform(asyncDispatch(result))
+            .andExpect(content().contentType(MediaType.TEXT_EVENT_STREAM))
+            .andReturn()
+
+        val messages = result.response.contentAsString.lineSequence()
+            .filter { line -> line.startsWith("data:") }
+            .map { line -> line.substring("data:".length) }
+            .map { line -> mapper.readValue<SSEDataPayload>(line) }
+            .toList()
+
+        assertEquals(2, messages.size)
+        assertEquals("{message=test}", messages[0].errors?.get(0).toString())
+        val events = result.response.contentAsString.lineSequence()
+            .filter { line -> line.startsWith("event:") }
+            .map { line -> line.substring("event:".length) }
+            .toList()
+        assertEquals(2, events.size)
+        assertEquals("next", events[0])
+        assertEquals("complete", events[1])
     }
 }

@@ -39,10 +39,16 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ServerErrorException
 import org.springframework.web.server.ServerWebInputException
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Sinks
+import reactor.core.scheduler.Schedulers
 import java.nio.charset.StandardCharsets
 import java.util.Base64
 import java.util.UUID
 import com.netflix.graphql.types.subscription.Error as SseError
+
+private const val COMPLETE_EVENT = "complete"
+
+private const val NEXT_EVENT = "next"
 
 /**
  * This class is defined as "open" only for proxy/aop use cases. It is not considered part of the API, and backwards compatibility is not guaranteed.
@@ -106,12 +112,12 @@ open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor
         } else {
             queryPayload.key
         }
-        return Flux.from(publisher)
+        val resultPublisher = Flux.from(publisher)
             .map {
                 val payload = SSEDataPayload(data = it.getData(), errors = it.errors, subId = subscriptionId)
                 ServerSentEvent.builder(mapper.writeValueAsString(payload))
                     .id(UUID.randomUUID().toString())
-                    .event("next")
+                    .event(NEXT_EVENT)
                     .build()
             }.onErrorResume { exc ->
                 logger.warn("An exception occurred on subscription {}", subscriptionId, exc)
@@ -120,10 +126,26 @@ open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor
                 Flux.just(
                     ServerSentEvent.builder(mapper.writeValueAsString(payload))
                         .id(UUID.randomUUID().toString())
-                        .event("error")
+                        .event(NEXT_EVENT)
                         .build()
                 )
             }
+        val sink = Sinks.many().unicast().onBackpressureBuffer<ServerSentEvent<String>>()
+        val dis = resultPublisher.map {
+            sink.tryEmitNext(it)
+        }.doFinally {
+            val finalPayload = SSEDataPayload(data = null, errors = null, subId = subscriptionId)
+            sink.tryEmitNext(
+                ServerSentEvent.builder(mapper.writeValueAsString(finalPayload))
+                    .id(UUID.randomUUID().toString())
+                    .event(COMPLETE_EVENT)
+                    .build()
+            )
+            sink.tryEmitComplete()
+        }.subscribeOn(Schedulers.boundedElastic()).subscribe()
+        return sink.asFlux().doFinally {
+            dis.dispose()
+        }
     }
 
     private fun isSubscriptionQuery(query: String): Boolean {
