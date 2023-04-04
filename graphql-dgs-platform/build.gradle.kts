@@ -49,16 +49,16 @@ dependencies {
         // GraphQL Platform
         api("com.graphql-java:graphql-java") {
             version {
-                strictly("[19.2, 20[")
-                prefer("19.2")
+                strictly("[19.5, 20[")
+                prefer("19.5")
                 reject("18.2")
             }
 
         }
         api("com.graphql-java:graphql-java-extended-scalars") {
             version {
-                 strictly("[19.0, 20[")
-                 prefer("19.0")
+                 strictly("[19.1, 20[")
+                 prefer("19.1")
                  reject("18.2")
             }
         }

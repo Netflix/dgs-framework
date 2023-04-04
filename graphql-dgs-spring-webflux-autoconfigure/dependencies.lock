@@ -45,7 +45,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -173,7 +173,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -299,7 +299,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -750,7 +750,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -937,7 +937,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -1082,7 +1082,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [

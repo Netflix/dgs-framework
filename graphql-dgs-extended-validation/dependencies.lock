@@ -35,7 +35,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.graphql-java:graphql-java-extended-validation": {
             "locked": "19.1-hibernate-validator-6.2.0.Final"
@@ -137,7 +137,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.graphql-java:graphql-java-extended-validation": {
             "locked": "19.1-hibernate-validator-6.2.0.Final"
@@ -260,7 +260,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.graphql-java:graphql-java-extended-validation": {
             "locked": "19.1-hibernate-validator-6.2.0.Final"
@@ -742,7 +742,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.graphql-java:graphql-java-extended-validation": {
             "locked": "19.1-hibernate-validator-6.2.0.Final"
@@ -889,7 +889,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.graphql-java:graphql-java-extended-validation": {
             "locked": "19.1-hibernate-validator-6.2.0.Final"
@@ -1068,7 +1068,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.graphql-java:graphql-java-extended-validation": {
             "locked": "19.1-hibernate-validator-6.2.0.Final"
