@@ -46,7 +46,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -125,7 +125,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.5.3"
+            "locked": "1.5.4"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -233,7 +233,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -312,7 +312,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.5.3"
+            "locked": "1.5.4"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -433,7 +433,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -512,7 +512,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.5.3"
+            "locked": "1.5.4"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -930,7 +930,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -962,7 +962,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.5.3"
+            "locked": "1.5.4"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -1089,7 +1089,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -1168,7 +1168,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.5.3"
+            "locked": "1.5.4"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -1286,7 +1286,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -1365,7 +1365,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.5.3"
+            "locked": "1.5.4"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"

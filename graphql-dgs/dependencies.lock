@@ -43,7 +43,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -160,7 +160,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -255,10 +255,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
-            "locked": "19.0"
+            "locked": "19.1"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -598,7 +598,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -707,10 +707,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
-            "locked": "19.0"
+            "locked": "19.1"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -805,10 +805,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.2"
+            "locked": "19.5"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
-            "locked": "19.0"
+            "locked": "19.1"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
