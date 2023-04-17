@@ -20,12 +20,14 @@ import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
+import com.netflix.graphql.dgs.subscriptions.graphql.sse.DgsGraphQLSSEAutoConfig
 import com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcAutoConfiguration
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import io.netty.handler.logging.LogLevel
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
@@ -46,6 +48,7 @@ import reactor.test.StepVerifier
     ],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
+@EnableAutoConfiguration(exclude = [DgsGraphQLSSEAutoConfig::class])
 class WebClientGraphQLClientTest {
 
     @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")

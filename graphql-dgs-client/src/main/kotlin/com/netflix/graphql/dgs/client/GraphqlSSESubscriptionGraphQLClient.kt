@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2023 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,15 +22,14 @@ import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.toEntityFlux
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Sinks
 import reactor.core.scheduler.Schedulers
-import java.nio.charset.StandardCharsets
-import java.util.*
 
 /*
- * This client can be used for servers which are following the subscriptions-transport-sse specification, which can be found here:
- * https://github.com/CodeCommission/subscriptions-transport-sse
+ * This client can be used for servers which are following the graphql-sse specification, which can be found here:
+ * https://github.com/graphql/graphql-over-http/blob/d51ae80d62b5fd8802a3383793f01bdf306e8290/rfcs/GraphQLOverSSE.md
  */
-class SSESubscriptionGraphQLClient(private val url: String, private val webClient: WebClient) : ReactiveGraphQLClient {
+class GraphqlSSESubscriptionGraphQLClient(private val url: String, private val webClient: WebClient) : ReactiveGraphQLClient {
 
     private val mapper = jacksonObjectMapper()
 
@@ -46,21 +45,27 @@ class SSESubscriptionGraphQLClient(private val url: String, private val webClien
         val queryPayload = QueryPayload(variables, emptyMap(), operationName, query)
 
         val jsonPayload = mapper.writeValueAsString(queryPayload)
+        val sink = Sinks.many().unicast().onBackpressureBuffer<GraphQLResponse>()
 
-        return webClient.get()
-            .uri("$url?query={query}", mapOf("query" to encodeQuery(jsonPayload)))
+        val dis = webClient.post()
+            .uri("$url")
+            .bodyValue(jsonPayload)
             .accept(MediaType.TEXT_EVENT_STREAM)
             .retrieve()
             .toEntityFlux<String>()
-            .flatMapMany { response ->
-                val headers = response.headers
-                response.body?.map { body -> GraphQLResponse(json = body, headers = headers) }
-                    ?: Flux.empty()
+            .flatMapMany {
+                val headers = it.headers
+                it.body?.map { serverSentEvent ->
+                    sink.tryEmitNext(GraphQLResponse(json = serverSentEvent, headers = headers))
+                } ?: Flux.empty()
+            }.onErrorResume {
+                Flux.just(sink.tryEmitError(it))
             }
-            .publishOn(Schedulers.single())
-    }
-
-    private fun encodeQuery(query: String): String? {
-        return Base64.getEncoder().encodeToString(query.toByteArray(StandardCharsets.UTF_8))
+            .doFinally {
+                sink.tryEmitComplete()
+            }.subscribeOn(Schedulers.boundedElastic()).subscribe()
+        return sink.asFlux().publishOn(Schedulers.single()).doFinally {
+            dis.dispose()
+        }
     }
 }
