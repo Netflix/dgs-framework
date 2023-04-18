@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.autoconfig
 
+import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder

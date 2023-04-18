@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.internal
 
 import com.netflix.graphql.dgs.DgsDataLoader
+import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
 import org.dataloader.DataLoaderOptions
 
 class DefaultDataLoaderOptionsProvider : DgsDataLoaderOptionsProvider {
