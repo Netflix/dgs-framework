@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.internal
 import com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsDataLoader
+import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
 import com.netflix.graphql.dgs.DgsDataLoaderRegistryConsumer
 import com.netflix.graphql.dgs.DgsDispatchPredicate
 import com.netflix.graphql.dgs.exceptions.DgsUnnamedDataLoaderOnFieldException
