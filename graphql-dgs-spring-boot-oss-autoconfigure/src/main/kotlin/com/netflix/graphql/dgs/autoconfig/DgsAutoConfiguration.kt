@@ -141,6 +141,12 @@ open class DgsAutoConfiguration(
     }
 
     @Bean
+    @ConditionalOnMissingBean
+    open fun dgsDataLoaderOptionsProvider(): DgsDataLoaderOptionsProvider {
+        return DefaultDataLoaderOptionsProvider()
+    }
+
+    @Bean
     open fun dgsDataLoaderProvider(applicationContext: ApplicationContext): DgsDataLoaderProvider {
         return DgsDataLoaderProvider(applicationContext)
     }
