@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.internal
 import com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsDataLoader
+import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
 import com.netflix.graphql.dgs.DgsDataLoaderRegistryConsumer
 import com.netflix.graphql.dgs.DgsDispatchPredicate
 import com.netflix.graphql.dgs.exceptions.DgsUnnamedDataLoaderOnFieldException
@@ -29,7 +30,6 @@ import org.dataloader.BatchLoader
 import org.dataloader.BatchLoaderWithContext
 import org.dataloader.DataLoader
 import org.dataloader.DataLoaderFactory
-import org.dataloader.DataLoaderOptions
 import org.dataloader.DataLoaderRegistry
 import org.dataloader.MappedBatchLoader
 import org.dataloader.MappedBatchLoaderWithContext
@@ -46,7 +46,10 @@ import javax.annotation.PostConstruct
 /**
  * Framework implementation class responsible for finding and configuring data loaders.
  */
-class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) {
+class DgsDataLoaderProvider(
+    private val applicationContext: ApplicationContext,
+    private val dataLoaderOptionsProvider: DgsDataLoaderOptionsProvider = DefaultDataLoaderOptionsProvider()
+) {
 
     private data class LoaderHolder<T>(val theLoader: T, val annotation: DgsDataLoader, val name: String, val dispatchPredicate: DispatchPredicate? = null)
 
@@ -194,7 +197,7 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         dataLoaderName: String,
         dataLoaderRegistry: DataLoaderRegistry
     ): DataLoader<*, *> {
-        val options = dataLoaderOptions(dgsDataLoader)
+        val options = dataLoaderOptionsProvider.getOptions(dataLoaderName, dgsDataLoader)
 
         if (batchLoader is DgsDataLoaderRegistryConsumer) {
             batchLoader.setDataLoaderRegistry(dataLoaderRegistry)
@@ -210,7 +213,7 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         dataLoaderName: String,
         dataLoaderRegistry: DataLoaderRegistry
     ): DataLoader<*, *> {
-        val options = dataLoaderOptions(dgsDataLoader)
+        val options = dataLoaderOptionsProvider.getOptions(dataLoaderName, dgsDataLoader)
 
         if (batchLoader is DgsDataLoaderRegistryConsumer) {
             batchLoader.setDataLoaderRegistry(dataLoaderRegistry)
@@ -227,7 +230,7 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         supplier: Supplier<T>,
         dataLoaderRegistry: DataLoaderRegistry
     ): DataLoader<*, *> {
-        val options = dataLoaderOptions(dgsDataLoader)
+        val options = dataLoaderOptionsProvider.getOptions(dataLoaderName, dgsDataLoader)
             .setBatchLoaderContextProvider(supplier::get)
 
         if (batchLoader is DgsDataLoaderRegistryConsumer) {
@@ -245,7 +248,7 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
         supplier: Supplier<T>,
         dataLoaderRegistry: DataLoaderRegistry
     ): DataLoader<*, *> {
-        val options = dataLoaderOptions(dgsDataLoader)
+        val options = dataLoaderOptionsProvider.getOptions(dataLoaderName, dgsDataLoader)
             .setBatchLoaderContextProvider(supplier::get)
 
         if (batchLoader is DgsDataLoaderRegistryConsumer) {
@@ -254,16 +257,6 @@ class DgsDataLoaderProvider(private val applicationContext: ApplicationContext) 
 
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dataLoaderName)
         return DataLoaderFactory.newMappedDataLoader(extendedBatchLoader, options)
-    }
-
-    private fun dataLoaderOptions(annotation: DgsDataLoader): DataLoaderOptions {
-        val options = DataLoaderOptions()
-            .setBatchingEnabled(annotation.batching)
-            .setCachingEnabled(annotation.caching)
-        if (annotation.maxBatchSize > 0) {
-            options.setMaxBatchSize(annotation.maxBatchSize)
-        }
-        return options
     }
 
     private inline fun <reified T> wrappedDataLoader(loader: T, name: String): T {

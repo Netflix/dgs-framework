@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.autoconfig
 
+import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
@@ -133,6 +134,12 @@ open class DgsAutoConfiguration(
     @ConditionalOnMissingBean
     open fun defaultQueryValueCustomizer(): QueryValueCustomizer {
         return QueryValueCustomizer { a -> a }
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun dgsDataLoaderOptionsProvider(): DgsDataLoaderOptionsProvider {
+        return DefaultDataLoaderOptionsProvider()
     }
 
     @Bean
