@@ -22,7 +22,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "compileClasspath": {
@@ -36,7 +36,7 @@
             "project": true
         },
         "net.datafaker:datafaker": {
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -57,7 +57,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "jmh": {
@@ -88,7 +88,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "jmhCompileClasspath": {
@@ -102,7 +102,7 @@
             "project": true
         },
         "net.datafaker:datafaker": {
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -132,7 +132,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "jmhRuntimeClasspath": {
@@ -149,7 +149,7 @@
             "locked": "1.13.2"
         },
         "net.datafaker:datafaker": {
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -182,7 +182,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kapt": {
@@ -237,7 +237,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kotlinCompilerPluginClasspath": {
@@ -257,7 +257,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kotlinCompilerPluginClasspathJmh": {
@@ -283,7 +283,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
@@ -309,7 +309,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
@@ -335,7 +335,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kotlinKaptWorkerDependencies": {
@@ -366,7 +366,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kotlinNativeCompilerPluginClasspath": {
@@ -386,7 +386,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "nebulaRecommenderBom": {
@@ -406,7 +406,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "runtimeClasspath": {
@@ -420,7 +420,7 @@
             "project": true
         },
         "net.datafaker:datafaker": {
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -441,7 +441,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "testAnnotationProcessor": {
@@ -461,7 +461,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "testCompileClasspath": {
@@ -478,7 +478,7 @@
             "locked": "1.13.2"
         },
         "net.datafaker:datafaker": {
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -502,7 +502,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "testRuntimeClasspath": {
@@ -519,7 +519,7 @@
             "locked": "1.13.2"
         },
         "net.datafaker:datafaker": {
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -543,7 +543,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     }
 }
