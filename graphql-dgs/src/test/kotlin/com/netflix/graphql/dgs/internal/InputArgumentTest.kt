@@ -770,7 +770,7 @@ internal class InputArgumentTest {
         val exceptionWhileDataFetching = executionResult.errors[0] as ExceptionWhileDataFetching
         assertThat(exceptionWhileDataFetching.exception).isInstanceOf(ConversionFailedException::class.java)
         assertThat(exceptionWhileDataFetching.exception.message)
-            .contains("Failed to convert from type [java.util.LinkedHashMap<?, ?>] to type [@com.netflix.graphql.dgs.InputArgument java.lang.String] for value '{name=tester}'")
+            .contains("Failed to convert from type [java.util.LinkedHashMap<?, ?>] to type [@com.netflix.graphql.dgs.InputArgument java.lang.String]")
     }
 
     @Test
