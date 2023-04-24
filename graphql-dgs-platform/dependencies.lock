@@ -16,7 +16,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     }
 }

@@ -22,7 +22,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "compileClasspath": {
@@ -105,10 +105,10 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         },
         "org.springframework:spring-webmvc": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "jmh": {
@@ -139,7 +139,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "jmhCompileClasspath": {
@@ -231,10 +231,10 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         },
         "org.springframework:spring-webmvc": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "jmhRuntimeClasspath": {
@@ -412,10 +412,10 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
@@ -423,10 +423,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         },
         "org.springframework:spring-webmvc": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kapt": {
@@ -481,7 +481,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kotlinCompilerPluginClasspath": {
@@ -501,7 +501,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kotlinCompilerPluginClasspathJmh": {
@@ -527,7 +527,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
@@ -553,7 +553,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
@@ -579,7 +579,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kotlinKaptWorkerDependencies": {
@@ -610,7 +610,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kotlinNativeCompilerPluginClasspath": {
@@ -630,7 +630,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "nebulaRecommenderBom": {
@@ -650,7 +650,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "runtimeClasspath": {
@@ -789,20 +789,20 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         },
         "org.springframework:spring-webmvc": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "testAnnotationProcessor": {
@@ -822,7 +822,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "testCompileClasspath": {
@@ -926,10 +926,10 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         },
         "org.springframework:spring-webmvc": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "testRuntimeClasspath": {
@@ -1098,10 +1098,10 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
@@ -1109,10 +1109,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         },
         "org.springframework:spring-webmvc": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     }
 }

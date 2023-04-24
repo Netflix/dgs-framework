@@ -16,7 +16,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "apiDependenciesMetadata": {
@@ -44,7 +44,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "implementationDependenciesMetadata": {
@@ -77,7 +77,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "jmhApiDependenciesMetadata": {
@@ -111,7 +111,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "jmhImplementationDependenciesMetadata": {
@@ -151,7 +151,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kotlinCompilerClasspath": {
@@ -174,7 +174,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kotlinCompilerPluginClasspath": {
@@ -194,7 +194,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kotlinCompilerPluginClasspathJmh": {
@@ -220,7 +220,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
@@ -246,7 +246,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
@@ -272,7 +272,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kotlinKaptWorkerDependencies": {
@@ -303,7 +303,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "kotlinNativeCompilerPluginClasspath": {
@@ -323,7 +323,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "nebulaRecommenderBom": {
@@ -343,7 +343,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "runtimeClasspath": {
@@ -366,7 +366,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "testAnnotationProcessor": {
@@ -386,7 +386,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "testCompileClasspath": {
@@ -409,7 +409,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -437,7 +437,7 @@
             "locked": "6.0.1"
         },
         "org.springframework:spring-framework-bom": {
-            "locked": "6.0.3"
+            "locked": "6.0.8"
         }
     }
 }
