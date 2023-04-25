@@ -34,6 +34,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
     testImplementation("com.graphql-java:graphql-java-extended-scalars")
     testImplementation("io.projectreactor:reactor-test")
+    testImplementation(project(":graphql-dgs-subscriptions-graphql-sse-autoconfigure"))
     testImplementation(project(":graphql-dgs-subscriptions-sse-autoconfigure"))
     testImplementation(project(":graphql-dgs-subscriptions-websockets-autoconfigure"))
     testImplementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
