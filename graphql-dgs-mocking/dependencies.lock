@@ -30,13 +30,13 @@
             "locked": "2.14.2"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "19.5"
+            "locked": "20.2"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
         },
         "net.datafaker:datafaker": {
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -96,13 +96,13 @@
             "locked": "2.14.2"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "19.5"
+            "locked": "20.2"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
         },
         "net.datafaker:datafaker": {
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -140,7 +140,7 @@
             "locked": "2.14.2"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "19.5"
+            "locked": "20.2"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -149,7 +149,7 @@
             "locked": "1.13.2"
         },
         "net.datafaker:datafaker": {
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -414,13 +414,13 @@
             "locked": "2.14.2"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "19.5"
+            "locked": "20.2"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
         },
         "net.datafaker:datafaker": {
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -469,7 +469,7 @@
             "locked": "2.14.2"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "19.5"
+            "locked": "20.2"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -478,7 +478,7 @@
             "locked": "1.13.2"
         },
         "net.datafaker:datafaker": {
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -510,7 +510,7 @@
             "locked": "2.14.2"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "19.5"
+            "locked": "20.2"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -519,7 +519,7 @@
             "locked": "1.13.2"
         },
         "net.datafaker:datafaker": {
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"

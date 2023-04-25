@@ -27,7 +27,7 @@
     },
     "compileClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "2.1.0"
+            "locked": "3.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.14.2"
@@ -43,7 +43,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.5"
+            "locked": "20.2"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -144,7 +144,7 @@
     },
     "jmhCompileClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "2.1.0"
+            "locked": "3.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.14.2"
@@ -160,7 +160,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.5"
+            "locked": "20.2"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -239,7 +239,7 @@
     },
     "jmhRuntimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "2.1.0"
+            "locked": "3.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.14.2"
@@ -255,10 +255,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.5"
+            "locked": "20.2"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
-            "locked": "19.1"
+            "locked": "20.2"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -289,7 +289,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -582,7 +582,7 @@
     },
     "runtimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "2.1.0"
+            "locked": "3.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.14.2"
@@ -598,7 +598,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.5"
+            "locked": "20.2"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -620,7 +620,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -691,7 +691,7 @@
     },
     "testCompileClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "2.1.0"
+            "locked": "3.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.14.2"
@@ -707,10 +707,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.5"
+            "locked": "20.2"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
-            "locked": "19.1"
+            "locked": "20.2"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -789,7 +789,7 @@
     },
     "testRuntimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "2.1.0"
+            "locked": "3.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "locked": "2.14.2"
@@ -805,10 +805,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.5"
+            "locked": "20.2"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
-            "locked": "19.1"
+            "locked": "20.2"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -839,7 +839,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
