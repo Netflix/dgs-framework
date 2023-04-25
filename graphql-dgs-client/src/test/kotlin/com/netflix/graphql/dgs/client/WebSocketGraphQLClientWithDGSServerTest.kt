@@ -31,6 +31,7 @@ package com.netflix.graphql.dgs.client
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import com.netflix.graphql.dgs.subscriptions.graphql.sse.DgsGraphQLSSEAutoConfig
 import com.netflix.graphql.dgs.subscriptions.sse.DgsSSEAutoConfig
 import com.netflix.graphql.dgs.subscriptions.websockets.DgsWebSocketAutoConfig
 import graphql.GraphQLException
@@ -48,7 +49,7 @@ import reactor.test.StepVerifier
     classes = [DgsWebSocketAutoConfig::class, TestApp::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-@EnableAutoConfiguration(exclude = [DgsSSEAutoConfig::class])
+@EnableAutoConfiguration(exclude = [DgsSSEAutoConfig::class, DgsGraphQLSSEAutoConfig::class])
 internal class WebSocketGraphQLClientWithDGSServerTest {
     private val logger = LoggerFactory.getLogger(WebSocketGraphQLClientWithDGSServerTest::class.java)
 
