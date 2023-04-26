@@ -246,6 +246,11 @@ public class TypedGraphQLError implements GraphQLError {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(message, locations, path, extensions);
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null) return false;
