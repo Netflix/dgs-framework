@@ -41,12 +41,27 @@ class DgsDataLoaderProviderTest {
 
     @Test
     fun findDataLoaders() {
-        applicationContextRunner.withBean(ExampleBatchLoader::class.java).run { context ->
+        applicationContextRunner.withBean(ExampleBatchLoader::class.java).withBean(ExampleBatchLoaderWithDispatchPredicate::class.java).run { context ->
             val provider = context.getBean(DgsDataLoaderProvider::class.java)
             val dataLoaderRegistry = provider.buildRegistry()
-            Assertions.assertEquals(1, dataLoaderRegistry.dataLoaders.size)
+            Assertions.assertEquals(2, dataLoaderRegistry.dataLoaders.size)
             val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleLoader")
             Assertions.assertNotNull(dataLoader)
+            val dataLoaderWithDispatch = dataLoaderRegistry.getDataLoader<Any, Any>("exampleLoaderWithDispatch")
+            Assertions.assertNotNull(dataLoaderWithDispatch)
+        }
+    }
+
+    @Test
+    fun findDataLoadersWithContext() {
+        applicationContextRunner.withBean(ExampleBatchLoaderWithContext::class.java).withBean(ExampleBatchLoaderWithContextAndDispatchPredicate::class.java).run { context ->
+            val provider = context.getBean(DgsDataLoaderProvider::class.java)
+            val dataLoaderRegistry = provider.buildRegistry()
+            Assertions.assertEquals(2, dataLoaderRegistry.dataLoaders.size)
+            val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleLoaderWithContext")
+            Assertions.assertNotNull(dataLoader)
+            val dataLoaderWithDispatch = dataLoaderRegistry.getDataLoader<Any, Any>("exampleLoaderWithContextAndDispatch")
+            Assertions.assertNotNull(dataLoaderWithDispatch)
         }
     }
 
@@ -82,12 +97,27 @@ class DgsDataLoaderProviderTest {
 
     @Test
     fun findMappedDataLoaders() {
-        applicationContextRunner.withBean(ExampleMappedBatchLoader::class.java).run { context ->
+        applicationContextRunner.withBean(ExampleMappedBatchLoader::class.java).withBean(ExampleMappedBatchLoaderWithDispatchPredicate::class.java).run { context ->
             val provider = context.getBean(DgsDataLoaderProvider::class.java)
             val dataLoaderRegistry = provider.buildRegistry()
-            Assertions.assertEquals(1, dataLoaderRegistry.dataLoaders.size)
+            Assertions.assertEquals(2, dataLoaderRegistry.dataLoaders.size)
             val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleMappedLoader")
             Assertions.assertNotNull(dataLoader)
+            val dataLoaderWithDispatch = dataLoaderRegistry.getDataLoader<Any, Any>("exampleMappedLoaderWithDispatch")
+            Assertions.assertNotNull(dataLoaderWithDispatch)
+        }
+    }
+
+    @Test
+    fun findMappedDataLoadersWithContext() {
+        applicationContextRunner.withBean(ExampleMappedBatchLoaderWithContext::class.java).withBean(ExampleMappedBatchLoaderWithContextAndDispatchPredicate::class.java).run { context ->
+            val provider = context.getBean(DgsDataLoaderProvider::class.java)
+            val dataLoaderRegistry = provider.buildRegistry()
+            Assertions.assertEquals(2, dataLoaderRegistry.dataLoaders.size)
+            val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleMappedLoaderWithContext")
+            Assertions.assertNotNull(dataLoader)
+            val dataLoaderWithDispatch = dataLoaderRegistry.getDataLoader<Any, Any>("exampleMappedLoaderWithContextAndDispatch")
+            Assertions.assertNotNull(dataLoaderWithDispatch)
         }
     }
 

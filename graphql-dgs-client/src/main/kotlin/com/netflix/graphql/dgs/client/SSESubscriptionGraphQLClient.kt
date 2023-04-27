@@ -26,6 +26,10 @@ import reactor.core.scheduler.Schedulers
 import java.nio.charset.StandardCharsets
 import java.util.*
 
+/*
+ * This client can be used for servers which are following the subscriptions-transport-sse specification, which can be found here:
+ * https://github.com/CodeCommission/subscriptions-transport-sse
+ */
 class SSESubscriptionGraphQLClient(private val url: String, private val webClient: WebClient) : ReactiveGraphQLClient {
 
     private val mapper = jacksonObjectMapper()

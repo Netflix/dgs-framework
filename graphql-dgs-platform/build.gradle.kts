@@ -49,16 +49,16 @@ dependencies {
         // GraphQL Platform
         api("com.graphql-java:graphql-java") {
             version {
-                strictly("[19.2, 20[")
-                prefer("19.2")
+                strictly("[19.5, 20[")
+                prefer("19.5")
                 reject("18.2")
             }
 
         }
         api("com.graphql-java:graphql-java-extended-scalars") {
             version {
-                 strictly("[19.0, 20[")
-                 prefer("19.0")
+                 strictly("[19.1, 20[")
+                 prefer("19.1")
                  reject("18.2")
             }
         }
@@ -85,7 +85,7 @@ dependencies {
         api("org.apache.logging.log4j:log4j-to-slf4j:2.19.0") {
             because("Refer to CVE-2021-44228; https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228")
          }
-         api("org.apache.logging.log4j:log4j-api:2.19.0") {
+         api("org.apache.logging.log4j:log4j-api:2.20.0") {
             because("Refer to CVE-2021-44228; https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228")
          }
     }
