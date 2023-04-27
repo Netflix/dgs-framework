@@ -97,7 +97,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     }
 
     val springBootVersion = extra["sb.version"] as String
-    val jmhVersion = "1.35"
+    val jmhVersion = "1.36"
 
     dependencies {
         // Apply the BOM to applicable subprojects.
