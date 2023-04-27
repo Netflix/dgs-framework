@@ -298,6 +298,11 @@ public class TypedGraphQLError implements GraphQLError {
             return extensionsMap;
         }
 
+        public Builder message(String message) {
+            this.message = assertNotNull(message);
+            return this;
+        }
+
         public Builder message(String message, Object... formatArgs) {
             this.message = String.format(assertNotNull(message), formatArgs);
             return this;
