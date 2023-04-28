@@ -98,10 +98,10 @@
     },
     "jmh": {
         "org.openjdk.jmh:jmh-core": {
-            "locked": "1.35"
+            "locked": "1.36"
         },
         "org.openjdk.jmh:jmh-generator-annprocess": {
-            "locked": "1.35"
+            "locked": "1.36"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.29"
@@ -183,10 +183,10 @@
             "locked": "1.7.22"
         },
         "org.openjdk.jmh:jmh-core": {
-            "locked": "1.35"
+            "locked": "1.36"
         },
         "org.openjdk.jmh:jmh-generator-annprocess": {
-            "locked": "1.35"
+            "locked": "1.36"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.29"
@@ -360,7 +360,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.apache.commons:commons-lang3": {
             "firstLevelTransitive": [
@@ -411,10 +411,10 @@
             "locked": "1.6.4"
         },
         "org.openjdk.jmh:jmh-core": {
-            "locked": "1.35"
+            "locked": "1.36"
         },
         "org.openjdk.jmh:jmh-generator-annprocess": {
-            "locked": "1.35"
+            "locked": "1.36"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.29"
@@ -780,7 +780,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
@@ -1168,7 +1168,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.apache.commons:commons-lang3": {
             "firstLevelTransitive": [

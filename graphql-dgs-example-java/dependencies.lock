@@ -190,10 +190,10 @@
     },
     "jmh": {
         "org.openjdk.jmh:jmh-core": {
-            "locked": "1.35"
+            "locked": "1.36"
         },
         "org.openjdk.jmh:jmh-generator-annprocess": {
-            "locked": "1.35"
+            "locked": "1.36"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.29"
@@ -364,10 +364,10 @@
             "locked": "1.7.22"
         },
         "org.openjdk.jmh:jmh-core": {
-            "locked": "1.35"
+            "locked": "1.36"
         },
         "org.openjdk.jmh:jmh-generator-annprocess": {
-            "locked": "1.35"
+            "locked": "1.36"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.29"
@@ -571,7 +571,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ],
-            "locked": "1.5.4"
+            "locked": "1.6.3"
         },
         "commons-codec:commons-codec": {
             "firstLevelTransitive": [
@@ -614,7 +614,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.apache.commons:commons-lang3": {
             "firstLevelTransitive": [
@@ -670,10 +670,10 @@
             "locked": "1.6.4"
         },
         "org.openjdk.jmh:jmh-core": {
-            "locked": "1.35"
+            "locked": "1.36"
         },
         "org.openjdk.jmh:jmh-generator-annprocess": {
-            "locked": "1.35"
+            "locked": "1.36"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.29"
@@ -1175,7 +1175,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ],
-            "locked": "1.5.4"
+            "locked": "1.6.3"
         },
         "commons-codec:commons-codec": {
             "firstLevelTransitive": [
@@ -1212,7 +1212,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.apache.commons:commons-lang3": {
             "firstLevelTransitive": [
@@ -1729,7 +1729,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ],
-            "locked": "1.5.4"
+            "locked": "1.6.3"
         },
         "commons-codec:commons-codec": {
             "firstLevelTransitive": [
@@ -1772,7 +1772,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.7.0"
+            "locked": "1.9.0"
         },
         "org.apache.commons:commons-lang3": {
             "firstLevelTransitive": [
