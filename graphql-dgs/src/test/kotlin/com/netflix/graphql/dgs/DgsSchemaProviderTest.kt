@@ -199,7 +199,7 @@ internal class DgsSchemaProviderTest {
         assertEquals("location3-schema2.graphqls", schemaFiles[1].filename)
 
         // Check that the .graphqlconfig file has been ignored
-        val schemaFilesNames: MutableList<String> = mutableListOf();
+        val schemaFilesNames: MutableList<String> = mutableListOf()
         for (schemaFile in schemaFiles) {
             schemaFilesNames.add(schemaFile.filename)
         }
