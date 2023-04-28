@@ -191,6 +191,22 @@ internal class DgsSchemaProviderTest {
     }
 
     @Test
+    fun findSchemaFilesIgnoreNonGraphQLFiles() {
+        val schemaFiles = schemaProvider(
+            schemaLocations = listOf("classpath*:location3/**/*.graphql*")
+        ).findSchemaFiles()
+        assertEquals("location3-schema1.graphql", schemaFiles[0].filename)
+        assertEquals("location3-schema2.graphqls", schemaFiles[1].filename)
+
+        // Check that the .graphqlconfig file has been ignored
+        val schemaFilesNames: MutableList<String> = mutableListOf();
+        for (schemaFile in schemaFiles) {
+            schemaFilesNames.add(schemaFile.filename)
+        }
+        assert(!schemaFilesNames.contains("location3-ignore.graphqlconfig"))
+    }
+
+    @Test
     fun addFetchers() {
         val fetcher = object : Any() {
             @DgsData(parentType = "Query", field = "hello")
