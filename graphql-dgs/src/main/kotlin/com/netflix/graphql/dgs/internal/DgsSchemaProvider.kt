@@ -548,8 +548,8 @@ class DgsSchemaProvider(
 
         schemas += metaInfSchemas
 
-        val schemasFiltered = schemas.filter { it.filename.endsWith(".graphql", true) || it.filename.endsWith(".graphqls", true) }
-        return schemasFiltered
+        val filteredSchemas = schemas.filter { it.filename.endsWith(".graphql", true) || it.filename.endsWith(".graphqls", true) }
+        return filteredSchemas
     }
 
     companion object {
