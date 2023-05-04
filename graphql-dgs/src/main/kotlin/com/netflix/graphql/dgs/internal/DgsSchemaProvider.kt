@@ -547,7 +547,8 @@ class DgsSchemaProvider(
         }
 
         schemas += metaInfSchemas
-        return schemas
+
+        return schemas.filter { it.filename.endsWith(".graphql", true) || it.filename.endsWith(".graphqls", true) }
     }
 
     companion object {
