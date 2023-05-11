@@ -366,12 +366,19 @@ class MicrometerServletSmokeTest {
             .andExpect(
                 content().json(
                     """
-                        |{
-                        |   "errors":[
-                        |       {"message":"Invalid Syntax : offending token 'fail' at line 1 column 1",
-                        |           "locations":[{"line":1,"column":1}],"extensions":{"classification":"InvalidSyntax"}}
-                        |   ]
-                        |}
+                    |   { "errors": [
+                    |       {
+                    |           "message": "Invalid syntax with offending token 'fail' at line 1 column 1",
+                    |           "locations": [
+                    |               {
+                    |                   "line":1,
+                    |                   "column":1
+                    |               }
+                    |           ],
+                    |           "extensions": { "classification":"InvalidSyntax" }
+                    |        }
+                    |     ]
+                    |   }
                     """.trimMargin(),
                     false
                 )
@@ -486,7 +493,7 @@ class MicrometerServletSmokeTest {
                        |       "locations": [],
                        |       "path": ["triggerInternalFailure"],
                        |       "extensions": {"errorType":"INTERNAL"}
-                        |     }
+                       |     }
                        |    ],
                        |    "data":{"triggerInternalFailure":null}
                        |}
