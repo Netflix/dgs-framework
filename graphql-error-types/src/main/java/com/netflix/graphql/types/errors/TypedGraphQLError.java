@@ -246,6 +246,11 @@ public class TypedGraphQLError implements GraphQLError {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(message, locations, path, extensions);
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null) return false;
@@ -291,6 +296,11 @@ public class TypedGraphQLError implements GraphQLError {
             if (debugUri != null) extensionsMap.put("debugUri", debugUri);
             if (debugInfo != null) extensionsMap.put("debugInfo", debugInfo);
             return extensionsMap;
+        }
+
+        public Builder message(String message) {
+            this.message = assertNotNull(message);
+            return this;
         }
 
         public Builder message(String message, Object... formatArgs) {

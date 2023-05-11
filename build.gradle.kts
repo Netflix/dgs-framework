@@ -28,9 +28,9 @@ plugins {
     `java-library`
     id("nebula.dependency-recommender") version "11.0.0"
 
-    id("nebula.netflixoss") version "11.1.1"
+    id("nebula.netflixoss") version "11.3.1"
     id("org.jmailen.kotlinter") version "3.11.1"
-    id("me.champeau.jmh") version "0.6.6"
+    id("me.champeau.jmh") version "0.7.1"
 
     kotlin("jvm") version Versions.KOTLIN_VERSION
     kotlin("kapt") version Versions.KOTLIN_VERSION
@@ -62,7 +62,7 @@ allprojects {
         mavenBom(mapOf("module" to "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
         mavenBom(mapOf("module" to "org.springframework.security:spring-security-bom:6.0.1"))
         mavenBom(mapOf("module" to "org.springframework.cloud:spring-cloud-dependencies:2022.0.0"))
-        mavenBom(mapOf("module" to "com.fasterxml.jackson:jackson-bom:2.14.2"))
+        mavenBom(mapOf("module" to "com.fasterxml.jackson:jackson-bom:2.15.0"))
     }
 }
 
@@ -97,7 +97,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     }
 
     val springBootVersion = extra["sb.version"] as String
-    val jmhVersion = "1.35"
+    val jmhVersion = "1.36"
 
     dependencies {
         // Apply the BOM to applicable subprojects.
@@ -121,7 +121,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         testImplementation("org.springframework.boot:spring-boot-starter-test") {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         }
-        testImplementation("io.mockk:mockk:1.13.2")
+        testImplementation("io.mockk:mockk:1.13.5")
     }
 
     java {
