@@ -18,8 +18,6 @@ package com.netflix.graphql.dgs.internal
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.Option
@@ -51,15 +49,14 @@ object BaseDgsQueryExecutor {
 
     private val logger: Logger = LoggerFactory.getLogger(BaseDgsQueryExecutor::class.java)
 
-    val objectMapper: ObjectMapper = jacksonObjectMapper()
-        .registerModule(JavaTimeModule())
+    val objectMapper: ObjectMapper = DgsObjectMapper.getInstance()
         .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
     val parseContext: ParseContext =
         JsonPath.using(
             Configuration.builder()
-                .jsonProvider(JacksonJsonProvider(jacksonObjectMapper()))
+                .jsonProvider(JacksonJsonProvider(DgsObjectMapper.getInstance()))
                 .mappingProvider(JacksonMappingProvider(objectMapper)).build()
                 .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)
         )

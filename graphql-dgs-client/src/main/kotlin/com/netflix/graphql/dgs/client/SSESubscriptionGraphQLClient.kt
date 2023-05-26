@@ -16,7 +16,7 @@
 
 package com.netflix.graphql.dgs.client
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.netflix.graphql.dgs.internal.DgsObjectMapper
 import com.netflix.graphql.types.subscription.QueryPayload
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
@@ -32,7 +32,7 @@ import java.util.*
  */
 class SSESubscriptionGraphQLClient(private val url: String, private val webClient: WebClient) : ReactiveGraphQLClient {
 
-    private val mapper = jacksonObjectMapper()
+    private val mapper = DgsObjectMapper.getInstance()
 
     override fun reactiveExecuteQuery(query: String, variables: Map<String, Any>): Flux<GraphQLResponse> {
         return reactiveExecuteQuery(query, variables, null)

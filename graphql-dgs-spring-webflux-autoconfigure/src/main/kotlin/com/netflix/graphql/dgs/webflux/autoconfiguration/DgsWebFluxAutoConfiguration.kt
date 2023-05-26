@@ -17,9 +17,9 @@
 package com.netflix.graphql.dgs.webflux.autoconfiguration
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
+import com.netflix.graphql.dgs.internal.DgsObjectMapper
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.FluxDataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.MonoDataFetcherResultProcessor
@@ -160,7 +160,7 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     @Qualifier("dgsObjectMapper")
     @ConditionalOnMissingBean(name = ["dgsObjectMapper"])
     open fun dgsObjectMapper(): ObjectMapper {
-        return jacksonObjectMapper()
+        return DgsObjectMapper.getInstance()
     }
 
     @Bean

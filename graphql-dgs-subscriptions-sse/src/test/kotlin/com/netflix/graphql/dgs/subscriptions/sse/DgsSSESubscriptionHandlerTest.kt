@@ -17,9 +17,9 @@
 package com.netflix.graphql.dgs.subscriptions.sse
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.internal.DgsObjectMapper
 import com.netflix.graphql.types.subscription.QueryPayload
 import com.netflix.graphql.types.subscription.SSEDataPayload
 import graphql.ExecutionResultImpl
@@ -56,7 +56,7 @@ internal class DgsSSESubscriptionHandlerTest {
     @MockBean
     lateinit var dgsQueryExecutor: DgsQueryExecutor
 
-    private val mapper: ObjectMapper = jacksonObjectMapper()
+    private val mapper: ObjectMapper = DgsObjectMapper.getInstance()
 
     @Test
     fun queryError() {

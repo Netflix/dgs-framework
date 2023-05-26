@@ -16,7 +16,7 @@
 
 package com.netflix.graphql.dgs.mvc
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.netflix.graphql.dgs.internal.DgsObjectMapper
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import graphql.ExecutionInput
 import graphql.ExecutionResult
@@ -53,6 +53,6 @@ open class DgsRestSchemaJsonController(open val schemaProvider: DgsSchemaProvide
     }
 
     companion object {
-        private val mapper = jacksonObjectMapper()
+        private val mapper = DgsObjectMapper.getInstance()
     }
 }

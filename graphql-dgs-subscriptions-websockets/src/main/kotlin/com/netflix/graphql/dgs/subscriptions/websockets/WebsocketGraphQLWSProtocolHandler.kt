@@ -16,8 +16,8 @@
 
 package com.netflix.graphql.dgs.subscriptions.websockets
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.internal.DgsObjectMapper
 import com.netflix.graphql.types.subscription.*
 import graphql.ExecutionResult
 import jakarta.annotation.PostConstruct
@@ -148,6 +148,6 @@ class WebsocketGraphQLWSProtocolHandler(private val dgsQueryExecutor: DgsQueryEx
 
     private companion object {
         val logger = LoggerFactory.getLogger(WebsocketGraphQLWSProtocolHandler::class.java)
-        val objectMapper = jacksonObjectMapper()
+        val objectMapper = DgsObjectMapper.getInstance()
     }
 }

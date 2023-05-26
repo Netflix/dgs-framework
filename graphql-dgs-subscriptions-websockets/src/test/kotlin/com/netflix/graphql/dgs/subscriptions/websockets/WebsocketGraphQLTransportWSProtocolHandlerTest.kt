@@ -16,9 +16,9 @@
 
 package com.netflix.graphql.dgs.subscriptions.websockets
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.internal.DgsObjectMapper
 import com.netflix.graphql.types.subscription.websockets.CloseCode
 import com.netflix.graphql.types.subscription.websockets.Message
 import com.netflix.graphql.types.subscription.websockets.MessageType
@@ -153,7 +153,7 @@ class WebsocketGraphQLTransportWSProtocolHandlerTest {
 
         Assertions.assertThat(dgsWebsocketHandler.sessions.size).isEqualTo(currentNrOfSessions + 1)
 
-        val returnMessage = jacksonObjectMapper().readValue<Message>(slot.captured.asBytes())
+        val returnMessage = DgsObjectMapper.getInstance().readValue<Message>(slot.captured.asBytes())
         Assertions.assertThat(returnMessage.type).isEqualTo(MessageType.CONNECTION_ACK)
     }
 

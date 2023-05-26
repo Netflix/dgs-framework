@@ -19,6 +19,7 @@ dependencies {
     api("io.projectreactor:reactor-core")
     api("com.fasterxml.jackson.core:jackson-annotations")
     api(project(":graphql-dgs-subscription-types"))
+    api(project(":graphql-dgs"))
 
     compileOnly("org.springframework:spring-webflux")
 
