@@ -16,8 +16,8 @@
 
 package com.netflix.graphql.dgs.subscriptions.sse
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.dgs.internal.DgsObjectMapper
 import com.netflix.graphql.types.subscription.QueryPayload
 import com.netflix.graphql.types.subscription.SSEDataPayload
 import graphql.ExecutionResult
@@ -138,7 +138,7 @@ open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor
     }
 
     companion object {
-        private val mapper = DgsObjectMapper.getInstance()
+        private val mapper = jacksonObjectMapper()
         private val logger: Logger = LoggerFactory.getLogger(DgsSSESubscriptionHandler::class.java)
     }
 }

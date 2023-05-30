@@ -19,10 +19,10 @@ package com.netflix.graphql.dgs.mvc
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.DgsExecutionResult
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.dgs.internal.DgsObjectMapper
 import com.netflix.graphql.dgs.internal.utils.MultipartVariableMapper
 import com.netflix.graphql.dgs.internal.utils.TimeTracer
 import graphql.execution.reactive.SubscriptionPublisher
@@ -68,7 +68,7 @@ import org.springframework.web.multipart.MultipartFile
 @RestController
 open class DgsRestController(
     open val dgsQueryExecutor: DgsQueryExecutor,
-    open val mapper: ObjectMapper = DgsObjectMapper.getInstance(),
+    open val mapper: ObjectMapper = jacksonObjectMapper(),
     open val dgsGraphQLRequestHeaderValidator: DgsGraphQLRequestHeaderValidator = DefaultDgsGraphQLRequestHeaderValidator()
 ) {
 

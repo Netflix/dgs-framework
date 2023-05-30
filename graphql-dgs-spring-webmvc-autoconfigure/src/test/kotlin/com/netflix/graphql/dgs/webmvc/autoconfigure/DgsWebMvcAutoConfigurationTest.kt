@@ -18,8 +18,8 @@ package com.netflix.graphql.dgs.webmvc.autoconfigure
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.dgs.internal.DgsObjectMapper
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.mvc.DgsRestController
 import com.netflix.graphql.dgs.mvc.DgsRestSchemaJsonController
@@ -257,7 +257,7 @@ class DgsWebMvcAutoConfigurationTest {
         @Bean
         @Qualifier("dgsObjectMapper")
         open fun dgsObjectMapper(): ObjectMapper {
-            return DgsObjectMapper.getInstance()
+            return jacksonObjectMapper().registerModule(jacksonJavaTimeModule)
         }
 
         companion object {

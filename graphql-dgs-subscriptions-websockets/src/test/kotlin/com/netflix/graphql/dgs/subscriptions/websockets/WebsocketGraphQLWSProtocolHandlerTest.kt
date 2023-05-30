@@ -16,9 +16,9 @@
 
 package com.netflix.graphql.dgs.subscriptions.websockets
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.dgs.internal.DgsObjectMapper
 import com.netflix.graphql.types.subscription.DataPayload
 import com.netflix.graphql.types.subscription.GQL_CONNECTION_ACK
 import com.netflix.graphql.types.subscription.GQL_CONNECTION_INIT
@@ -228,7 +228,7 @@ class WebsocketGraphQLWSProtocolHandlerTest {
 
         assertThat(dgsWebsocketHandler.sessions.size).isEqualTo(currentNrOfSessions + 1)
 
-        val returnMessage = DgsObjectMapper.getInstance().readValue<OperationMessage>(slot.captured.asBytes())
+        val returnMessage = jacksonObjectMapper().readValue<OperationMessage>(slot.captured.asBytes())
         assertThat(returnMessage.type).isEqualTo(GQL_CONNECTION_ACK)
     }
 
@@ -312,7 +312,7 @@ class WebsocketGraphQLWSProtocolHandlerTest {
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessage)
 
-        val returnMessage = DgsObjectMapper.getInstance().readValue<OperationMessage>(slot.captured.asBytes())
+        val returnMessage = jacksonObjectMapper().readValue<OperationMessage>(slot.captured.asBytes())
         assertThat(returnMessage.type).isEqualTo(GQL_ERROR)
         assertThat((returnMessage.payload as DataPayload).errors?.size).isEqualTo(1)
         assertThat((returnMessage.payload as DataPayload).errors?.get(0)).isEqualTo("That's wrong!")
@@ -334,7 +334,7 @@ class WebsocketGraphQLWSProtocolHandlerTest {
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessage)
 
-        val returnMessage = DgsObjectMapper.getInstance().readValue<OperationMessage>(slotList[0].asBytes())
+        val returnMessage = jacksonObjectMapper().readValue<OperationMessage>(slotList[0].asBytes())
         assertThat(returnMessage.type).isEqualTo(GQL_DATA)
 
         val payload = returnMessage.payload as DataPayload

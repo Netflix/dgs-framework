@@ -16,8 +16,8 @@
 
 package com.netflix.graphql.dgs.client
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
-import com.netflix.graphql.dgs.internal.DgsObjectMapper
 import com.netflix.graphql.types.subscription.*
 import graphql.GraphQLException
 import org.springframework.web.reactive.socket.WebSocketHandler
@@ -46,7 +46,7 @@ class WebSocketGraphQLClient(
     companion object {
         private val DEFAULT_ACKNOWLEDGEMENT_TIMEOUT = Duration.ofSeconds(30)
         private val CONNECTION_INIT_MESSAGE = OperationMessage(GQL_CONNECTION_INIT, null, null)
-        private val MAPPER = DgsObjectMapper.getInstance()
+        private val MAPPER = jacksonObjectMapper()
     }
 
     constructor(
@@ -185,7 +185,7 @@ class OperationMessageWebSocketClient(
 ) {
 
     companion object {
-        private val MAPPER = DgsObjectMapper.getInstance()
+        private val MAPPER = jacksonObjectMapper()
     }
 
     // Sinks are used as buffers, incoming messages from the server are
