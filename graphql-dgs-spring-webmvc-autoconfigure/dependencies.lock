@@ -26,6 +26,9 @@
         }
     },
     "compileClasspath": {
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "locked": "2.15.0"
+        },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "locked": "2.15.0"
         },
@@ -38,7 +41,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.2"
+            "locked": "20.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -143,6 +146,9 @@
         }
     },
     "jmhCompileClasspath": {
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "locked": "2.15.0"
+        },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "locked": "2.15.0"
         },
@@ -155,7 +161,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.2"
+            "locked": "20.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -269,7 +275,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.2"
+            "locked": "20.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -682,7 +688,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.2"
+            "locked": "20.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -826,6 +832,9 @@
         }
     },
     "testCompileClasspath": {
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "locked": "2.15.0"
+        },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
             "locked": "2.15.0"
         },
@@ -841,7 +850,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.2"
+            "locked": "20.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -964,7 +973,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.2"
+            "locked": "20.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
