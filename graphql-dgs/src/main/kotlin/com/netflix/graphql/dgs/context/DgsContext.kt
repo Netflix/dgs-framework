@@ -125,7 +125,7 @@ open class DgsContext(val customContext: Any? = null, val requestData: DgsReques
 
         @JvmStatic
         fun getRequestData(batchLoaderEnvironment: BatchLoaderEnvironment): DgsRequestData? {
-            val dgsContext = batchLoaderEnvironment.getContext<DgsContext>()
+            val dgsContext = from(batchLoaderEnvironment.getContext<GraphQLContext>())
             return dgsContext.requestData
         }
     }
