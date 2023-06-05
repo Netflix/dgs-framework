@@ -77,7 +77,6 @@ class WebsocketGraphQLWSProtocolHandler(private val dgsQueryExecutor: DgsQueryEx
             GQL_CONNECTION_TERMINATE -> {
                 logger.info("Terminated session " + session.id)
                 cleanupSubscriptionsForSession(session)
-                subscriptions.remove(session.id)
                 session.close()
             }
             else -> session.sendMessage(TextMessage(objectMapper.writeValueAsBytes(OperationMessage("error"))))
