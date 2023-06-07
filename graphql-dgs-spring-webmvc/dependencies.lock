@@ -361,10 +361,16 @@
         "org.springframework:spring-framework-bom": {
             "locked": "6.0.8"
         },
+        "org.springframework:spring-test": {
+            "locked": "6.0.8"
+        },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
+            "locked": "6.0.8"
+        },
+        "org.springframework:spring-webmvc": {
             "locked": "6.0.8"
         }
     },
@@ -822,7 +828,13 @@
         "org.springframework:spring-framework-bom": {
             "locked": "6.0.8"
         },
+        "org.springframework:spring-test": {
+            "locked": "6.0.8"
+        },
         "org.springframework:spring-web": {
+            "locked": "6.0.8"
+        },
+        "org.springframework:spring-webmvc": {
             "locked": "6.0.8"
         }
     },
@@ -959,10 +971,16 @@
         "org.springframework:spring-framework-bom": {
             "locked": "6.0.8"
         },
+        "org.springframework:spring-test": {
+            "locked": "6.0.8"
+        },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
+            "locked": "6.0.8"
+        },
+        "org.springframework:spring-webmvc": {
             "locked": "6.0.8"
         }
     }

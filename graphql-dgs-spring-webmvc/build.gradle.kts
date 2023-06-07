@@ -23,6 +23,8 @@ dependencies {
     implementation("org.springframework:spring-web")
     compileOnly("jakarta.servlet:jakarta.servlet-api")
 
+    testImplementation("org.springframework:spring-webmvc")
+    testImplementation("org.springframework:spring-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("jakarta.servlet:jakarta.servlet-api")
 }
