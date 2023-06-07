@@ -125,7 +125,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.6.4"
+            "locked": "1.6.5"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -312,7 +312,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.6.4"
+            "locked": "1.6.5"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -400,7 +400,8 @@
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
             "locked": "2.15.0"
         },
@@ -512,7 +513,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.6.4"
+            "locked": "1.6.5"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -962,7 +963,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.6.4"
+            "locked": "1.6.5"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -1168,7 +1169,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.6.4"
+            "locked": "1.6.5"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -1253,7 +1254,8 @@
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
             "locked": "2.15.0"
         },
@@ -1365,7 +1367,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.6.4"
+            "locked": "1.6.5"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"

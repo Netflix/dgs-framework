@@ -420,7 +420,8 @@
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
             "locked": "2.15.0"
         },
@@ -571,7 +572,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ],
-            "locked": "1.6.4"
+            "locked": "1.6.5"
         },
         "commons-codec:commons-codec": {
             "firstLevelTransitive": [
@@ -1024,7 +1025,8 @@
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
             "locked": "2.15.0"
         },
@@ -1175,7 +1177,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ],
-            "locked": "1.6.4"
+            "locked": "1.6.5"
         },
         "commons-codec:commons-codec": {
             "firstLevelTransitive": [
@@ -1578,7 +1580,8 @@
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
             "locked": "2.15.0"
         },
@@ -1729,7 +1732,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ],
-            "locked": "1.6.4"
+            "locked": "1.6.5"
         },
         "commons-codec:commons-codec": {
             "firstLevelTransitive": [
