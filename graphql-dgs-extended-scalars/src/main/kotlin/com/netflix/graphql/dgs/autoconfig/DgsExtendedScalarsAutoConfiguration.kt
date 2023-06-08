@@ -187,6 +187,42 @@ open class DgsExtendedScalarsAutoConfiguration {
     }
 
     @ConditionalOnProperty(
+        prefix = "dgs.graphql.extensions.scalars.currency",
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = true
+    )
+    @Configuration(proxyBeanMethods = false)
+    open class CurrencyExtendedScalarsRegistrar {
+        @Bean
+        open fun currencyExtendedScalarsRegistrar(): ExtendedScalarRegistrar {
+            return object : AbstractExtendedScalarRegistrar() {
+                override fun getScalars(): List<GraphQLScalarType> {
+                    return listOf(ExtendedScalars.Currency)
+                }
+            }
+        }
+    }
+
+    @ConditionalOnProperty(
+        prefix = "dgs.graphql.extensions.scalars.country",
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = true
+    )
+    @Configuration(proxyBeanMethods = false)
+    open class CountryExtendedScalarsRegistrar {
+        @Bean
+        open fun countryCodeExtendedScalarsRegistrar(): ExtendedScalarRegistrar {
+            return object : AbstractExtendedScalarRegistrar() {
+                override fun getScalars(): List<GraphQLScalarType> {
+                    return listOf(ExtendedScalars.CountryCode)
+                }
+            }
+        }
+    }
+
+    @ConditionalOnProperty(
         prefix = "dgs.graphql.extensions.scalars.chars",
         name = ["enabled"],
         havingValue = "true",
