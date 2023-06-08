@@ -46,7 +46,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.2"
+            "locked": "20.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -240,7 +240,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.2"
+            "locked": "20.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -420,7 +420,8 @@
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
             "locked": "2.15.0"
         },
@@ -458,7 +459,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.2"
+            "locked": "20.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -571,7 +572,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ],
-            "locked": "1.6.4"
+            "locked": "1.6.5"
         },
         "commons-codec:commons-codec": {
             "firstLevelTransitive": [
@@ -1024,7 +1025,8 @@
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
             "locked": "2.15.0"
         },
@@ -1062,7 +1064,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.2"
+            "locked": "20.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -1175,7 +1177,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ],
-            "locked": "1.6.4"
+            "locked": "1.6.5"
         },
         "commons-codec:commons-codec": {
             "firstLevelTransitive": [
@@ -1395,7 +1397,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.2"
+            "locked": "20.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -1578,7 +1580,8 @@
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
             ],
             "locked": "2.15.0"
         },
@@ -1616,7 +1619,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.2"
+            "locked": "20.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -1729,7 +1732,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ],
-            "locked": "1.6.4"
+            "locked": "1.6.5"
         },
         "commons-codec:commons-codec": {
             "firstLevelTransitive": [
