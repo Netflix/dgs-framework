@@ -23,6 +23,7 @@ import com.netflix.graphql.dgs.DgsDataLoaderRegistryConsumer
 import com.netflix.graphql.dgs.DgsEnableDataFetcherInstrumentation
 import com.netflix.graphql.dgs.DgsMutation
 import com.netflix.graphql.dgs.DgsQuery
+import com.netflix.graphql.dgs.DgsRuntimeWiring
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import com.netflix.graphql.dgs.InputArgument
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
@@ -39,7 +40,11 @@ import graphql.GraphQLError
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherExceptionHandlerParameters
 import graphql.execution.DataFetcherExceptionHandlerResult
+import graphql.language.StringValue
+import graphql.schema.Coercing
 import graphql.schema.DataFetchingEnvironment
+import graphql.schema.GraphQLScalarType
+import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import io.micrometer.core.instrument.Meter
@@ -263,6 +268,32 @@ class MicrometerServletSmokeTest {
                     .and("gql.operation.name", "my_q_1")
                     .and("gql.query.complexity", "5")
                     .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+            )
+    }
+
+    @Test
+    fun `Metrics for a request with a custom scalar as an input`() {
+        mvc.perform(
+            MockMvcRequestBuilders
+                .post("/graphql")
+                .contentType("application/json")
+                .content(
+                    """{"query": 
+                    |   "{customPing(input: \"foo\") }" }
+                    """.trimMargin()
+                )
+        ).andExpect(status().isOk)
+            .andExpect(
+                content().json(
+                    """
+                    |{
+                    |   "data":{
+                    |       "customPing": "foo"
+                    |   }
+                    |}
+                    """.trimMargin(),
+                    false
+                )
             )
     }
 
@@ -824,6 +855,8 @@ class MicrometerServletSmokeTest {
                 val schemaParser = SchemaParser()
 
                 val gqlSchema = """
+                |scalar ValueScalar
+                |
                 |type Query{
                 |    ping:String
                 |    someTrivialThings: String 
@@ -832,6 +865,7 @@ class MicrometerServletSmokeTest {
                 |    triggerInternalFailure: String
                 |    triggerBadRequestFailure:String
                 |    triggerCustomFailure: String
+                |    customPing(input: ValueScalar): ValueScalar
                 |}
                 |
                 |type Mutation{
@@ -848,9 +882,39 @@ class MicrometerServletSmokeTest {
                 return schemaParser.parse(gqlSchema)
             }
 
+            data class Value(val value: String)
+
+            @DgsRuntimeWiring
+            fun addCustomScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
+                return builder.scalar(
+                    GraphQLScalarType.newScalar()
+                        .name("ValueScalar")
+                        .description("Custom scalar for handling Value")
+                        .coercing(object : Coercing<Value, String> {
+                            override fun parseValue(input: Any): Value {
+                                return Value(input.toString())
+                            }
+
+                            override fun parseLiteral(input: Any): Value? {
+                                return if (input is StringValue) Value(input.value) else null
+                            }
+
+                            override fun serialize(dataFetcherResult: Any): String {
+                                return if (dataFetcherResult is Value) dataFetcherResult.value else ""
+                            }
+                        })
+                        .build()
+                )
+            }
+
             @DgsQuery()
             fun ping(): String {
                 return "pong"
+            }
+
+            @DgsQuery()
+            fun customPing(@InputArgument input: Value): Value {
+                return input
             }
 
             @DgsQuery()
