@@ -142,4 +142,28 @@ internal class DgsExtendedScalarsAutoConfigurationTests {
                 .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.IDsExtendedScalarsAutoConfiguration::class.java)
         }
     }
+
+    @Test
+    fun `Country scalars can be disabled`() {
+        context.withPropertyValues(
+            "dgs.graphql.extensions.scalars.country.enabled=false"
+        ).run { context ->
+            assertThat(context)
+                .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
+            assertThat(context)
+                .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.CountryExtendedScalarsRegistrar::class.java)
+        }
+    }
+
+    @Test
+    fun `Currency scalars can be disabled`() {
+        context.withPropertyValues(
+            "dgs.graphql.extensions.scalars.currency.enabled=false"
+        ).run { context ->
+            assertThat(context)
+                .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
+            assertThat(context)
+                .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.CurrencyExtendedScalarsRegistrar::class.java)
+        }
+    }
 }
