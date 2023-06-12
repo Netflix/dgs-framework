@@ -43,7 +43,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.2"
+            "locked": "20.3"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -160,7 +160,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.2"
+            "locked": "20.3"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -255,7 +255,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.2"
+            "locked": "20.3"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "20.2"
@@ -598,7 +598,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.2"
+            "locked": "20.3"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -707,7 +707,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.2"
+            "locked": "20.3"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "20.2"
@@ -805,7 +805,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.2"
+            "locked": "20.3"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "20.2"
