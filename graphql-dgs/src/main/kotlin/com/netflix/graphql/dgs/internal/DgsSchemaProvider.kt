@@ -50,16 +50,16 @@ import org.intellij.lang.annotations.Language
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.aop.support.AopUtils
+import org.springframework.beans.factory.getBeansWithAnnotation
 import org.springframework.context.ApplicationContext
 import org.springframework.core.annotation.MergedAnnotation
 import org.springframework.core.annotation.MergedAnnotations
 import org.springframework.core.io.Resource
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver
+import org.springframework.core.io.support.ResourcePatternUtils
 import org.springframework.util.ReflectionUtils
-import java.io.InputStreamReader
+import java.io.IOException
 import java.lang.reflect.Method
-import java.nio.charset.StandardCharsets
-import java.util.*
+import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -81,7 +81,7 @@ class DgsSchemaProvider(
     private val entityFetcherRegistry: EntityFetcherRegistry = EntityFetcherRegistry(),
     private val defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty(),
     private val methodDataFetcherFactory: MethodDataFetcherFactory,
-    private val componentFilter: (Any) -> Boolean = { true }
+    private val componentFilter: ((Any) -> Boolean)? = null
 ) {
 
     private val schemaReadWriteLock = ReentrantReadWriteLock()
@@ -126,20 +126,20 @@ class DgsSchemaProvider(
 
     private fun computeSchema(schema: String? = null, fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
         val startTime = System.currentTimeMillis()
-        val dgsComponents =
-            applicationContext.getBeansWithAnnotation(DgsComponent::class.java).values.filter(componentFilter)
-        val hasDynamicTypeRegistry =
-            dgsComponents.any { it.javaClass.methods.any { m -> m.isAnnotationPresent(DgsTypeDefinitionRegistry::class.java) } }
+        val dgsComponents = applicationContext.getBeansWithAnnotation<DgsComponent>().values.let { beans ->
+            if (componentFilter != null) beans.filter(componentFilter) else beans
+        }
 
         var mergedRegistry = if (schema == null) {
-            findSchemaFiles(hasDynamicTypeRegistry = hasDynamicTypeRegistry).asSequence().map {
-                InputStreamReader(it.inputStream, StandardCharsets.UTF_8).use { reader ->
-                    // Convert reader kind for GraphQL Java to specify source name in a type definition's source location
-                    val multiSourceReader = MultiSourceReader.newMultiSourceReader()
-                        .reader(reader, it.filename).build()
-                    SchemaParser().parse(multiSourceReader)
-                }
-            }.fold(TypeDefinitionRegistry()) { a, b -> a.merge(b) }
+            val hasDynamicTypeRegistry = dgsComponents.any {
+                it.javaClass.methods.any { m -> m.isAnnotationPresent(DgsTypeDefinitionRegistry::class.java) }
+            }
+            val readerBuilder = MultiSourceReader.newMultiSourceReader()
+                .trackData(false)
+            for (schemaFile in findSchemaFiles(hasDynamicTypeRegistry)) {
+                readerBuilder.reader(schemaFile.inputStream.reader(), schemaFile.filename)
+            }
+            SchemaParser().parse(readerBuilder.build())
         } else {
             SchemaParser().parse(schema)
         }
@@ -491,7 +491,7 @@ class DgsSchemaProvider(
     }
 
     private fun findScalars(applicationContext: ApplicationContext, runtimeWiringBuilder: RuntimeWiring.Builder) {
-        applicationContext.getBeansWithAnnotation(DgsScalar::class.java).forEach { (_, scalarComponent) ->
+        applicationContext.getBeansWithAnnotation<DgsScalar>().values.forEach { scalarComponent ->
             val annotation = scalarComponent::class.java.getAnnotation(DgsScalar::class.java)
             when (scalarComponent) {
                 is Coercing<*, *> -> runtimeWiringBuilder.scalar(
@@ -503,7 +503,7 @@ class DgsSchemaProvider(
     }
 
     private fun findDirectives(applicationContext: ApplicationContext, runtimeWiringBuilder: RuntimeWiring.Builder) {
-        applicationContext.getBeansWithAnnotation(DgsDirective::class.java).forEach { (_, directiveComponent) ->
+        applicationContext.getBeansWithAnnotation<DgsDirective>().values.forEach { directiveComponent ->
             val annotation = directiveComponent::class.java.getAnnotation(DgsDirective::class.java)
             when (directiveComponent) {
                 is SchemaDirectiveWiring ->
@@ -518,22 +518,14 @@ class DgsSchemaProvider(
     }
 
     internal fun findSchemaFiles(hasDynamicTypeRegistry: Boolean = false): List<Resource> {
-        val cl = Thread.currentThread().contextClassLoader
+        val resolver = ResourcePatternUtils.getResourcePatternResolver(applicationContext)
+        val schemas = schemaLocations.asSequence()
+            .flatMap { resolver.getResources(it).asSequence() }
+            .toMutableSet()
 
-        val resolver = PathMatchingResourcePatternResolver(cl)
-        val schemas = try {
-            val resources = schemaLocations.asSequence()
-                .flatMap { resolver.getResources(it).asSequence() }
-                .distinct()
-                .toMutableList()
-            if (resources.isEmpty()) {
-                throw NoSchemaFoundException()
-            }
-            resources
-        } catch (ex: Exception) {
+        if (schemas.isEmpty()) {
             if (existingTypeDefinitionRegistry.isPresent || hasDynamicTypeRegistry) {
                 logger.info("No schema files found, but a schema was provided as an TypeDefinitionRegistry")
-                mutableListOf()
             } else {
                 logger.error("No schema files found in $schemaLocations. Define schema locations with property dgs.graphql.schema-locations")
                 throw NoSchemaFoundException()
@@ -542,13 +534,16 @@ class DgsSchemaProvider(
 
         val metaInfSchemas = try {
             resolver.getResources("classpath*:META-INF/schema/**/*.graphql*")
-        } catch (ex: Exception) {
+        } catch (ex: IOException) {
             arrayOf<Resource>()
         }
 
         schemas += metaInfSchemas
 
-        return schemas.filter { it.filename.endsWith(".graphql", true) || it.filename.endsWith(".graphqls", true) }
+        return schemas.filter { resource ->
+            val filename = resource.filename ?: return@filter false
+            filename.endsWith(".graphql", ignoreCase = true) || filename.endsWith(".graphqls", ignoreCase = true)
+        }
     }
 
     companion object {
