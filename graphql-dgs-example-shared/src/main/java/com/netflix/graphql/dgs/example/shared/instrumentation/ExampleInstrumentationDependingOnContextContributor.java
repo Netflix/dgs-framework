@@ -21,7 +21,7 @@ import graphql.ExecutionResult;
 import graphql.ExecutionResultImpl;
 import graphql.GraphQLContext;
 import graphql.execution.instrumentation.InstrumentationState;
-import graphql.execution.instrumentation.SimpleInstrumentation;
+import graphql.execution.instrumentation.SimplePerformantInstrumentation;
 import graphql.execution.instrumentation.parameters.InstrumentationCreateStateParameters;
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +35,7 @@ import java.util.concurrent.CompletableFuture;
  * the CONTRIBUTOR_ENABLED_CONTEXT_KEY.
  */
 @Component
-public class ExampleInstrumentationDependingOnContextContributor extends SimpleInstrumentation {
+public class ExampleInstrumentationDependingOnContextContributor extends SimplePerformantInstrumentation {
 
     @Override
     public InstrumentationState createState(InstrumentationCreateStateParameters parameters) {
@@ -54,12 +54,10 @@ public class ExampleInstrumentationDependingOnContextContributor extends SimpleI
 
     @Override
     public CompletableFuture<ExecutionResult> instrumentExecutionResult(
-            ExecutionResult executionResult, InstrumentationExecutionParameters parameters) {
-        final @Nullable InstrumentationState state = parameters.getInstrumentationState();
-
+            ExecutionResult executionResult, InstrumentationExecutionParameters parameters, InstrumentationState state) {
         // skip if the expected property has not been set by context contributor
         if (state == null) {
-            return super.instrumentExecutionResult(executionResult, parameters);
+            return super.instrumentExecutionResult(executionResult, parameters, state);
         }
 
         // otherwise pass its value via extension to make this testable from a client perspective
