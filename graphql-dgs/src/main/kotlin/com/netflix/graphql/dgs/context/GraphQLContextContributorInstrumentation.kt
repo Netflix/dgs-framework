@@ -18,7 +18,7 @@ package com.netflix.graphql.dgs.context
 
 import graphql.GraphQLContext
 import graphql.execution.instrumentation.InstrumentationState
-import graphql.execution.instrumentation.SimpleInstrumentation
+import graphql.execution.instrumentation.SimplePerformantInstrumentation
 import graphql.execution.instrumentation.parameters.InstrumentationCreateStateParameters
 
 /**
@@ -28,23 +28,21 @@ import graphql.execution.instrumentation.parameters.InstrumentationCreateStatePa
  *
  * @see com.netflix.graphql.dgs.context.GraphQLContextContributor.contribute()
  */
-class GraphQLContextContributorInstrumentation(private val graphQLContextContributors: List<GraphQLContextContributor>) :
-    SimpleInstrumentation() {
+class GraphQLContextContributorInstrumentation(private val graphQLContextContributors: List<GraphQLContextContributor>) : SimplePerformantInstrumentation() {
 
     /**
      * createState is the very first method invoked in an Instrumentation, and thus is where this logic is placed to
      * contribute to the GraphQLContext as early as possible.
      */
-    override fun createState(parameters: InstrumentationCreateStateParameters?): InstrumentationState? {
-        var graphqlContext = parameters?.executionInput?.graphQLContext
-        if (graphqlContext != null && graphQLContextContributors.iterator().hasNext()) {
-            val extensions = parameters?.executionInput?.extensions
+    override fun createState(parameters: InstrumentationCreateStateParameters): InstrumentationState? {
+        val graphqlContext = parameters.executionInput.graphQLContext
+        if (graphqlContext != null && graphQLContextContributors.isNotEmpty()) {
+            val extensions = parameters.executionInput.extensions
             val requestData = DgsContext.from(graphqlContext).requestData
             val builderForContributors = GraphQLContext.newContext()
-            graphQLContextContributors.forEach() { it.contribute(builderForContributors, extensions, requestData) }
+            graphQLContextContributors.forEach { it.contribute(builderForContributors, extensions, requestData) }
             graphqlContext.putAll(builderForContributors)
         }
-
         return super.createState(parameters)
     }
 }
