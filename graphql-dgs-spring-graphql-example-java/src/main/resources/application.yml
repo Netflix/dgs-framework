@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: dgs-spring-graphql-example
+
+  graphql:
+    graphiql:
+      enabled: true
+    schema:
+      locations: "classpath*:schema/**/"
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - metrics

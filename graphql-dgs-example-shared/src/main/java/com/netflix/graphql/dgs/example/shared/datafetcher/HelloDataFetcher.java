@@ -20,13 +20,16 @@ import com.netflix.graphql.dgs.*;
 import com.netflix.graphql.dgs.context.DgsContext;
 import com.netflix.graphql.dgs.example.shared.context.MyContext;
 import com.netflix.graphql.dgs.example.shared.types.Message;
+import com.netflix.graphql.dgs.internal.DgsWebMvcRequestData;
 import graphql.GraphQLException;
 import graphql.relay.Connection;
 import graphql.relay.SimpleListConnection;
 import graphql.schema.DataFetchingEnvironment;
 import org.dataloader.DataLoader;
 import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import java.util.ArrayList;
 import java.util.Collections;

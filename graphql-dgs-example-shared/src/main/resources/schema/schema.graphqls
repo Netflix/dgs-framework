@@ -95,3 +95,9 @@ type Stock {
 scalar Upload
 scalar LocalTime
 
+directive @connection on OBJECT
+
+
+
+>>>>>>> bcff65a3 (Initial integration with spring-graphql with an example app.)
+

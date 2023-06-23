@@ -46,6 +46,7 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      */
     override fun register(key: String, dataLoader: DataLoader<*, *>): DataLoaderRegistry {
         dataLoaderRegistry.register(key, dataLoader)
+        dataLoaders[key] = dataLoader
         return this
     }
 
@@ -66,6 +67,7 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
             .dispatchPredicate(dispatchPredicate)
             .build()
         scheduledDataLoaderRegistries.putIfAbsent(key, registry)
+        dataLoaders[key] = dataLoader
         return this
     }
 
@@ -89,6 +91,9 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
         mappingFunction: Function<String, DataLoader<*, *>>?
     ): DataLoader<K, V> {
         // we do not support this method for registering with dispatch predicates
+        if (mappingFunction != null) {
+            dataLoaders.computeIfAbsent(key, mappingFunction)
+        }
         return dataLoaderRegistry.computeIfAbsent<K, V>(key, mappingFunction!!) as DataLoader<K, V>
     }
 
@@ -127,6 +132,7 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
     override fun unregister(key: String): DataLoaderRegistry {
         scheduledDataLoaderRegistries.remove(key)
         dataLoaderRegistry.unregister(key)
+        dataLoaders.remove(key)
         return this
     }
 
