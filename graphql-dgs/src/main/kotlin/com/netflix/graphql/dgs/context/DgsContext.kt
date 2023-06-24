@@ -96,6 +96,15 @@ open class DgsContext(val customContext: Any? = null, val requestData: DgsReques
         }
 
         @JvmStatic
+        fun from(batchLoaderEnvironment: BatchLoaderEnvironment): DgsContext {
+            return when (val context = batchLoaderEnvironment.getContext<Any>()) {
+                is GraphQLContext -> from(context)
+                is DgsContext -> context
+                else -> throw RuntimeException("Cannot resolve DgsContext from ${context::class.java.name}.")
+            }
+        }
+
+        @JvmStatic
         fun <T> getCustomContext(context: Any): T {
             @Suppress("UNCHECKED_CAST")
             return when (context) {
@@ -113,8 +122,8 @@ open class DgsContext(val customContext: Any? = null, val requestData: DgsReques
 
         @JvmStatic
         fun <T> getCustomContext(batchLoaderEnvironment: BatchLoaderEnvironment): T {
-            val dgsContext = batchLoaderEnvironment.getContext<GraphQLContext>()
-            return getCustomContext(dgsContext)
+            val context = batchLoaderEnvironment.getContext<Any>()
+            return getCustomContext(context)
         }
 
         @JvmStatic
@@ -125,7 +134,7 @@ open class DgsContext(val customContext: Any? = null, val requestData: DgsReques
 
         @JvmStatic
         fun getRequestData(batchLoaderEnvironment: BatchLoaderEnvironment): DgsRequestData? {
-            val dgsContext = from(batchLoaderEnvironment.getContext<GraphQLContext>())
+            val dgsContext = from(batchLoaderEnvironment)
             return dgsContext.requestData
         }
     }
