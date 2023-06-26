@@ -1,3 +1,28 @@
 type Query {
     hello(name:String): String
+    character: Character
 }
+
+interface Character {
+    name: String
+}
+
+extend interface Character {
+    age: Int
+}
+
+type Droid implements Character {
+    name: String
+    age: Int
+}
+
+type Human implements Character {
+    name: String
+    age: Int
+}
+
+extend type Query {
+    world(name: String): String
+}
+
+

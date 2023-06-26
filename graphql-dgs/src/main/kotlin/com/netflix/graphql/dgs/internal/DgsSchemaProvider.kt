@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.internal
 
 import com.apollographql.federation.graphqljava.Federation
 import com.netflix.graphql.dgs.*
+import com.netflix.graphql.dgs.exceptions.DataFetcherSchemaMismatchException
 import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
 import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
@@ -28,6 +29,7 @@ import com.netflix.graphql.mocking.MockProvider
 import graphql.TypeResolutionEnvironment
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.language.InterfaceTypeDefinition
+import graphql.language.ObjectTypeDefinition
 import graphql.language.TypeName
 import graphql.language.UnionTypeDefinition
 import graphql.parser.MultiSourceReader
@@ -325,6 +327,17 @@ class DgsSchemaProvider(
             }
             when (val type = typeDefinitionRegistry.getType(parentType).get()) {
                 is InterfaceTypeDefinition -> {
+                    val fields = type.fieldDefinitions.map { it.name }.toSet()
+                    if (!fields.contains(field)) {
+                        val extFields = typeDefinitionRegistry.interfaceTypeExtensions()
+                            .getOrDefault(parentType, emptyList()).flatMap { iFace -> iFace.fieldDefinitions.map { f -> f.name } }
+                            .toSet()
+                        if (!extFields.contains(field)) {
+                            throw DataFetcherSchemaMismatchException("@DgsData in ${javaClass.name} on field $field references " +
+                                "interface $parentType it has no field named $field. All data fetchers registered with @DgsData " +
+                                "must match a field in the schema.")
+                        }
+                    }
                     val implementationsOf = typeDefinitionRegistry.getImplementationsOf(type)
                     implementationsOf.forEach { implType ->
                         val dataFetcher =
@@ -347,12 +360,26 @@ class DgsSchemaProvider(
                         dataFetcherInstrumentationEnabled["${memberType.name}.$field"] = enableInstrumentation
                     }
                 }
-                else -> {
+                is ObjectTypeDefinition -> {
+                    val fields = type.fieldDefinitions.map { it.name }.toSet()
+                    if (!fields.contains(field)) {
+                        val extFields = typeDefinitionRegistry.objectTypeExtensions()
+                            .getOrDefault(parentType, emptyList()).flatMap { i -> i.fieldDefinitions.map { f -> f.name } }
+                            .toSet()
+                        if (!extFields.contains(field)) {
+                            throw DataFetcherSchemaMismatchException("@DgsData in ${javaClass.name} on field $field references object $parentType " +
+                                "but it has no field named $field. All data fetchers registered with @DgsData must match a field in the schema.")
+                        }
+                    }
                     val dataFetcher = createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
                     codeRegistryBuilder.dataFetcher(
                         FieldCoordinates.coordinates(parentType, field),
                         dataFetcher
                     )
+                }
+                else -> {
+                    throw InvalidDgsConfigurationException("Parent type $parentType referenced on ${javaClass.name} in " +
+                        "@DgsData annotation for field $field must be either an interface, a union, or an object.")
                 }
             }
         } catch (ex: Exception) {
