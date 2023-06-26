@@ -82,8 +82,8 @@ open class DgsRestController(
         private data class InputQuery(
             val query: String?,
             val operationName: String? = null,
-            val variables: Map<String, Any> = mapOf(),
-            val extensions: Map<String, Any> = mapOf()
+            val variables: Map<String, Any>? = mapOf(),
+            val extensions: Map<String, Any>? = mapOf()
         )
     }
 
@@ -152,7 +152,8 @@ open class DgsRestController(
         val inputQuery: InputQuery = mapper.readValue(operation)
 
         // parse the '-F map' of MultipartFile(s) containing object paths
-        val variables = inputQuery.variables.toMutableMap()
+        val variables = inputQuery.variables?.toMutableMap()
+            ?: return ResponseEntity.badRequest().body("No variables specified as part of multipart request")
         val fileMapInput: Map<String, List<String>> = mapper.readValue(mapParam)
         try {
             fileMapInput.forEach { (fileKey, objectPaths) ->
@@ -210,7 +211,7 @@ open class DgsRestController(
             {
                 dgsQueryExecutor.execute(
                     inputQuery.query,
-                    inputQuery.variables,
+                    inputQuery.variables.orEmpty(),
                     inputQuery.extensions,
                     headers,
                     inputQuery.operationName,
