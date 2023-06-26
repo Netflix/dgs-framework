@@ -60,7 +60,7 @@ allprojects {
 
         mavenBom(mapOf("module" to "org.springframework:spring-framework-bom:6.0.8"))
         mavenBom(mapOf("module" to "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
-        mavenBom(mapOf("module" to "org.springframework.security:spring-security-bom:6.0.1"))
+        mavenBom(mapOf("module" to "org.springframework.security:spring-security-bom:6.1.1"))
         mavenBom(mapOf("module" to "org.springframework.cloud:spring-cloud-dependencies:2022.0.0"))
         mavenBom(mapOf("module" to "com.fasterxml.jackson:jackson-bom:2.15.0"))
     }
