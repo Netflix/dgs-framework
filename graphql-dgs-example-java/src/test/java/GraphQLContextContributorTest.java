@@ -16,6 +16,7 @@
 
 import com.netflix.graphql.dgs.DgsQueryExecutor;
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration;
+import com.netflix.graphql.dgs.autoconfig.DgsExtendedScalarsAutoConfiguration;
 import com.netflix.graphql.dgs.example.context.MyContextBuilder;
 import com.netflix.graphql.dgs.example.datafetcher.HelloDataFetcher;
 import com.netflix.graphql.dgs.example.shared.context.ExampleGraphQLContextContributor;
@@ -34,7 +35,7 @@ import static com.netflix.graphql.dgs.example.shared.context.ExampleGraphQLConte
 import static com.netflix.graphql.dgs.example.shared.context.ExampleGraphQLContextContributor.CONTEXT_CONTRIBUTOR_HEADER_VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {HelloDataFetcher.class, MovieDataFetcher.class, MyContextBuilder.class, ExampleGraphQLContextContributor.class, ExampleInstrumentationDependingOnContextContributor.class, DgsAutoConfiguration.class, DgsPaginationAutoConfiguration.class, ExampleLoaderWithContext.class, ExampleLoaderWithGraphQLContext.class})
+@SpringBootTest(classes = {HelloDataFetcher.class, MovieDataFetcher.class, MyContextBuilder.class, ExampleGraphQLContextContributor.class, ExampleInstrumentationDependingOnContextContributor.class, DgsExtendedScalarsAutoConfiguration.class, DgsAutoConfiguration.class, DgsPaginationAutoConfiguration.class, ExampleLoaderWithContext.class, ExampleLoaderWithGraphQLContext.class})
 public class GraphQLContextContributorTest {
 
     @Autowired

@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":graphql-dgs-example-shared"))
     implementation(project(":graphql-dgs-pagination"))
     implementation(project(":graphql-dgs-webflux-starter"))
+    implementation(project(":graphql-dgs-extended-scalars"))
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("io.projectreactor:reactor-core")
 }
