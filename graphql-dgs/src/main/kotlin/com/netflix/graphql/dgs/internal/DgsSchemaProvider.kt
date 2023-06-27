@@ -362,8 +362,10 @@ class DgsSchemaProvider(
                     )
                 }
                 else -> {
-                    throw InvalidDgsConfigurationException("Parent type $parentType referenced on ${javaClass.name} in " +
-                        "@DgsData annotation for field $field must be either an interface, a union, or an object.")
+                    throw InvalidDgsConfigurationException(
+                        "Parent type $parentType referenced on ${javaClass.name} in " +
+                            "@DgsData annotation for field $field must be either an interface, a union, or an object."
+                    )
                 }
             }
         } catch (ex: Exception) {
