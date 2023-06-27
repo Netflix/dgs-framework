@@ -21,6 +21,8 @@ import com.jayway.jsonpath.TypeRef;
 import graphql.ExecutionResult;
 import org.intellij.lang.annotations.Language;
 import org.springframework.http.HttpHeaders;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
@@ -42,7 +44,7 @@ public interface DgsQueryExecutor {
      * @param query The query string
      * @return Returns a GraphQL {@link ExecutionResult}. This includes data and errors.
      */
-    default ExecutionResult execute(@Language("GraphQL") String query) {
+    default ExecutionResult execute(@Language("GraphQL") @Nullable String query) {
         return execute(query, Collections.emptyMap(), null, null, null, null);
     }
 
@@ -52,8 +54,8 @@ public interface DgsQueryExecutor {
      * @return Returns a GraphQL {@link ExecutionResult}. This includes data and errors.
      * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
      */
-    default ExecutionResult execute(@Language("GraphQL") String query,
-                                    Map<String, Object> variables) {
+    default ExecutionResult execute(@Language("GraphQL") @Nullable String query,
+                                    @NonNull Map<String, Object> variables) {
         return execute(query, variables, null, null, null, null);
     }
 
@@ -65,9 +67,9 @@ public interface DgsQueryExecutor {
      * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
      * @see <a href="https://graphql.org/learn/queries/#operation-name">Operation name</a>
      */
-    default ExecutionResult execute(@Language("GraphQL") String query,
-                                    Map<String, Object> variables,
-                                    String operationName) {
+    default ExecutionResult execute(@Language("GraphQL") @Nullable String query,
+                                    @NonNull Map<String, Object> variables,
+                                    @Nullable String operationName) {
         return execute(query, variables, null, null, operationName, null);
     }
 
@@ -80,9 +82,9 @@ public interface DgsQueryExecutor {
      * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
      */
     default ExecutionResult execute(@Language("GraphQL") String query,
-                                    Map<String, Object> variables,
-                                    Map<String, Object> extensions,
-                                    HttpHeaders headers) {
+                                    @NonNull Map<String, Object> variables,
+                                    @Nullable Map<String, Object> extensions,
+                                    @Nullable HttpHeaders headers) {
         return execute(query, variables, extensions, headers, null, null);
     }
 
@@ -100,11 +102,11 @@ public interface DgsQueryExecutor {
      * @see <a href="https://graphql.org/learn/queries/#operation-name">Operation name</a>
      */
     ExecutionResult execute(@Language("GraphQL") String query,
-                            Map<String, Object> variables,
-                            Map<String, Object> extensions,
-                            HttpHeaders headers,
-                            String operationName,
-                            WebRequest webRequest);
+                            @NonNull Map<String, Object> variables,
+                            @Nullable Map<String, Object> extensions,
+                            @Nullable HttpHeaders headers,
+                            @Nullable String operationName,
+                            @Nullable WebRequest webRequest);
 
     /**
      * Executes a GraphQL query, parses the returned data, and uses a Json Path to extract specific elements out of the data.
@@ -116,8 +118,8 @@ public interface DgsQueryExecutor {
      * @return The extracted value from the result, converted to type T
      * @see <a href="https://github.com/json-path/JsonPath">JsonPath syntax docs</a>
      */
-    default <T> T executeAndExtractJsonPath(@Language("GraphQL") String query,
-                                            @Language("JSONPath") String jsonPath) {
+    default <T> T executeAndExtractJsonPath(@Language("GraphQL") @NonNull String query,
+                                            @Language("JSONPath") @NonNull String jsonPath) {
         return executeAndExtractJsonPath(query, jsonPath, Collections.emptyMap());
     }
 
@@ -137,9 +139,9 @@ public interface DgsQueryExecutor {
      * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
      * @see <a href="https://github.com/json-path/JsonPath">JsonPath syntax docs</a>
      */
-    <T> T executeAndExtractJsonPath(@Language("GraphQL") String query,
-                                    @Language("JSONPath") String jsonPath,
-                                    Map<String, Object> variables);
+    <T> T executeAndExtractJsonPath(@Language("GraphQL") @NonNull String query,
+                                    @Language("JSONPath") @NonNull String jsonPath,
+                                    @NonNull Map<String, Object> variables);
 
     /**
      * Executes a GraphQL query, parses the returned data, and uses a Json Path to extract specific elements out of the data.
@@ -155,9 +157,9 @@ public interface DgsQueryExecutor {
      * @return The extracted value from the result, converted to type T
      * @see <a href="https://github.com/json-path/JsonPath">JsonPath syntax docs</a>
      */
-    <T> T executeAndExtractJsonPath(@Language("GraphQL") String query,
-                                    @Language("JSONPath") String jsonPath,
-                                    HttpHeaders headers);
+    <T> T executeAndExtractJsonPath(@Language("GraphQL") @NonNull String query,
+                                    @Language("JSONPath") @NonNull String jsonPath,
+                                    @NonNull HttpHeaders headers);
     /**
      * Executes a GraphQL query, parses the returned data, and uses a Json Path to extract specific elements out of the data.
      * The method is generic, and tries to cast the result into the type you specify. This does NOT work on Lists. Use {@link #executeAndExtractJsonPathAsObject(String, String, TypeRef)}instead.
@@ -172,9 +174,9 @@ public interface DgsQueryExecutor {
      * @return The extracted value from the result, converted to type T
      * @see <a href="https://github.com/json-path/JsonPath">JsonPath syntax docs</a>
      */
-    <T> T executeAndExtractJsonPath(@Language("GraphQL") String query,
-                                    @Language("JSONPath") String jsonPath,
-                                    ServletWebRequest servletWebRequest);
+    <T> T executeAndExtractJsonPath(@Language("GraphQL") @NonNull String query,
+                                    @Language("JSONPath") @NonNull String jsonPath,
+                                    @NonNull ServletWebRequest servletWebRequest);
 
     /**
      * Executes a GraphQL query, parses the returned data, and return a {@link DocumentContext}.
@@ -183,7 +185,7 @@ public interface DgsQueryExecutor {
      * @param query Query string
      * @return {@link DocumentContext} is a JsonPath type used to extract values from.
      */
-    default DocumentContext executeAndGetDocumentContext(@Language("GraphQL") String query) {
+    default DocumentContext executeAndGetDocumentContext(@Language("GraphQL") @NonNull String query) {
         return executeAndGetDocumentContext(query, Collections.emptyMap());
     }
 
@@ -196,7 +198,7 @@ public interface DgsQueryExecutor {
      * @return {@link DocumentContext} is a JsonPath type used to extract values from.
      * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
      */
-    DocumentContext executeAndGetDocumentContext(@Language("GraphQL") String query, Map<String, Object> variables);
+    DocumentContext executeAndGetDocumentContext(@Language("GraphQL") @NonNull String query, @NonNull Map<String, Object> variables);
 
     /**
      * Executes a GraphQL query, parses the returned data, and return a {@link DocumentContext}.
@@ -208,9 +210,9 @@ public interface DgsQueryExecutor {
      * @return {@link DocumentContext} is a JsonPath type used to extract values from.
      * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
      */
-    DocumentContext executeAndGetDocumentContext(@Language("GraphQL") String query,
-                                                 Map<String, Object> variables,
-                                                 HttpHeaders headers);
+    DocumentContext executeAndGetDocumentContext(@Language("GraphQL") @NonNull String query,
+                                                 @NonNull Map<String, Object> variables,
+                                                 @Nullable HttpHeaders headers);
 
     /**
      * Executes a GraphQL query, parses the returned data, extracts a value using JsonPath, and converts that value into the given type.
@@ -223,10 +225,10 @@ public interface DgsQueryExecutor {
      * @return The extracted value from the result, converted to type T
      * @see <a href="https://github.com/json-path/JsonPath">JsonPath syntax docs</a>
      */
-    default <T> T executeAndExtractJsonPathAsObject(@Language("GraphQL") String query,
-                                                    @Language("JSONPath") String jsonPath,
-                                                    Class<T> clazz) {
-        return executeAndExtractJsonPathAsObject(query, jsonPath, Collections.emptyMap(), clazz, null);
+    default <T> T executeAndExtractJsonPathAsObject(@Language("GraphQL") @NonNull String query,
+                                                    @Language("JSONPath") @NonNull String jsonPath,
+                                                    @NonNull Class<T> clazz) {
+        return executeAndExtractJsonPathAsObject(query, jsonPath, Collections.emptyMap(), clazz, HttpHeaders.EMPTY);
     }
 
     /**
@@ -242,11 +244,11 @@ public interface DgsQueryExecutor {
      * @see <a href="https://github.com/json-path/JsonPath">JsonPath syntax docs</a>
      * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
      */
-    default <T> T executeAndExtractJsonPathAsObject(@Language("GraphQL") String query,
-                                                    @Language("JSONPath") String jsonPath,
-                                                    Map<String, Object> variables,
-                                                    Class<T> clazz) {
-        return executeAndExtractJsonPathAsObject(query, jsonPath, variables, clazz, null);
+    default <T> T executeAndExtractJsonPathAsObject(@Language("GraphQL") @NonNull String query,
+                                                    @Language("JSONPath") @NonNull String jsonPath,
+                                                    @NonNull Map<String, Object> variables,
+                                                    @NonNull Class<T> clazz) {
+        return executeAndExtractJsonPathAsObject(query, jsonPath, variables, clazz, HttpHeaders.EMPTY);
     }
 
     /**
@@ -263,11 +265,11 @@ public interface DgsQueryExecutor {
      * @see <a href="https://github.com/json-path/JsonPath">JsonPath syntax docs</a>
      * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
      */
-    <T> T executeAndExtractJsonPathAsObject(@Language("GraphQL") String query,
-                                            @Language("JSONPath") String jsonPath,
-                                            Map<String, Object> variables,
-                                            Class<T> clazz,
-                                            HttpHeaders headers);
+    <T> T executeAndExtractJsonPathAsObject(@Language("GraphQL") @NonNull String query,
+                                            @Language("JSONPath") @NonNull String jsonPath,
+                                            @NonNull Map<String, Object> variables,
+                                            @NonNull Class<T> clazz,
+                                            @Nullable HttpHeaders headers);
 
     /**
      * Executes a GraphQL query, parses the returned data, extracts a value using JsonPath, and converts that value into the given type.
@@ -282,10 +284,10 @@ public interface DgsQueryExecutor {
      * @see <a href="https://github.com/json-path/JsonPath">JsonPath syntax docs</a>
      * @see <a href="https://github.com/json-path/JsonPath#what-is-returned-when">Using TypeRef</a>
      */
-    default <T> T executeAndExtractJsonPathAsObject(@Language("GraphQL") String query,
-                                                    @Language("JSONPath") String jsonPath,
-                                                    TypeRef<T> typeRef) {
-        return executeAndExtractJsonPathAsObject(query, jsonPath, Collections.emptyMap(), typeRef, null);
+    default <T> T executeAndExtractJsonPathAsObject(@Language("GraphQL") @NonNull String query,
+                                                    @Language("JSONPath") @NonNull String jsonPath,
+                                                    @NonNull TypeRef<T> typeRef) {
+        return executeAndExtractJsonPathAsObject(query, jsonPath, Collections.emptyMap(), typeRef, HttpHeaders.EMPTY);
     }
 
     /**
@@ -303,11 +305,11 @@ public interface DgsQueryExecutor {
      * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
      * @see <a href="https://github.com/json-path/JsonPath#what-is-returned-when">Using TypeRef</a>
      */
-    default <T> T executeAndExtractJsonPathAsObject(@Language("GraphQL") String query,
-                                                    @Language("JSONPath") String jsonPath,
-                                                    Map<String, Object> variables,
-                                                    TypeRef<T> typeRef) {
-        return executeAndExtractJsonPathAsObject(query, jsonPath, variables, typeRef, null);
+    default <T> T executeAndExtractJsonPathAsObject(@Language("GraphQL") @NonNull String query,
+                                                    @Language("JSONPath") @NonNull String jsonPath,
+                                                    @NonNull Map<String, Object> variables,
+                                                    @NonNull TypeRef<T> typeRef) {
+        return executeAndExtractJsonPathAsObject(query, jsonPath, variables, typeRef, HttpHeaders.EMPTY);
     }
 
     /**
@@ -326,10 +328,10 @@ public interface DgsQueryExecutor {
      * @see <a href="https://graphql.org/learn/queries/#variables">Query Variables</a>
      * @see <a href="https://github.com/json-path/JsonPath#what-is-returned-when">Using TypeRef</a>
      */
-    <T> T executeAndExtractJsonPathAsObject(@Language("GraphQL") String query,
-                                            @Language("JSONPath") String jsonPath,
-                                            Map<String, Object> variables,
-                                            TypeRef<T> typeRef,
-                                            HttpHeaders headers);
+    <T> T executeAndExtractJsonPathAsObject(@Language("GraphQL") @NonNull String query,
+                                            @Language("JSONPath") @NonNull String jsonPath,
+                                            @NonNull Map<String, Object> variables,
+                                            @NonNull TypeRef<T> typeRef,
+                                            @Nullable HttpHeaders headers);
 
 }

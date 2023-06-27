@@ -75,7 +75,7 @@ class WebsocketGraphQLWSProtocolHandler(private val dgsQueryExecutor: DgsQueryEx
                 subscriptions[session.id]?.remove(id)
             }
             GQL_CONNECTION_TERMINATE -> {
-                logger.info("Terminated session " + session.id)
+                logger.info("Terminated session {}", session.id)
                 cleanupSubscriptionsForSession(session)
                 session.close()
             }
@@ -91,7 +91,7 @@ class WebsocketGraphQLWSProtocolHandler(private val dgsQueryExecutor: DgsQueryEx
     }
 
     private fun handleSubscription(id: String, payload: QueryPayload, session: WebSocketSession) {
-        val executionResult: ExecutionResult = dgsQueryExecutor.execute(payload.query, payload.variables)
+        val executionResult: ExecutionResult = dgsQueryExecutor.execute(payload.query, payload.variables.orEmpty())
         val subscriptionStream: Publisher<ExecutionResult> = executionResult.getData()
 
         subscriptionStream.subscribe(object : Subscriber<ExecutionResult> {

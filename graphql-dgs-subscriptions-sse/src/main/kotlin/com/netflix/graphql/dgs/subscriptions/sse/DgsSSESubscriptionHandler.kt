@@ -79,7 +79,7 @@ open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor
             throw ServerWebInputException("Invalid query. operation type is not a subscription")
         }
 
-        val executionResult: ExecutionResult = dgsQueryExecutor.execute(queryPayload.query, queryPayload.variables)
+        val executionResult: ExecutionResult = dgsQueryExecutor.execute(queryPayload.query, queryPayload.variables.orEmpty())
         if (executionResult.errors.isNotEmpty()) {
             val errorMessage = if (executionResult.errors.any { error -> error is ValidationError || error is InvalidSyntaxError }) {
                 "Subscription query failed to validate: ${executionResult.errors.joinToString()}"
