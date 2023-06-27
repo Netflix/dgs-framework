@@ -84,7 +84,8 @@ class DgsSchemaProvider(
     private val entityFetcherRegistry: EntityFetcherRegistry = EntityFetcherRegistry(),
     private val defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty(),
     private val methodDataFetcherFactory: MethodDataFetcherFactory,
-    private val componentFilter: ((Any) -> Boolean)? = null
+    private val componentFilter: ((Any) -> Boolean)? = null,
+    private val schemaWiringValidationEnabled: Boolean = true,
 ) {
 
     private val schemaReadWriteLock = ReentrantReadWriteLock()
@@ -321,15 +322,22 @@ class DgsSchemaProvider(
 
         dataFetcherInstrumentationEnabled["$parentType.$field"] = enableInstrumentation
 
+        val methodClassName = method.declaringClass.name
         try {
             if (!typeDefinitionRegistry.getType(parentType).isPresent) {
-                logger.error("Parent type $parentType not found, but it was referenced in ${javaClass.name} in @DgsData annotation for field $field")
-                throw InvalidDgsConfigurationException("Parent type $parentType not found, but it was referenced on ${javaClass.name} in @DgsData annotation for field $field")
+                logger.error("Parent type $parentType not found, but it was referenced in $methodClassName in @DgsData annotation for field $field")
+                throw InvalidDgsConfigurationException("Parent type $parentType not found, but it was referenced on $methodClassName in @DgsData annotation for field $field")
             }
             when (val type = typeDefinitionRegistry.getType(parentType).get()) {
                 is InterfaceTypeDefinition -> {
-                    val matchingField = getMatchingFieldOnInterfaceOrExtensions(type, field, typeDefinitionRegistry, parentType)
-                    methodDataFetcherFactory.checkInputArgumentsAreValid(method, matchingField.inputValueDefinitions.map { it.name }.toSet())
+                    if (schemaWiringValidationEnabled) {
+                        val matchingField =
+                            getMatchingFieldOnInterfaceOrExtensions(methodClassName, type, field, typeDefinitionRegistry, parentType)
+                        methodDataFetcherFactory.checkInputArgumentsAreValid(
+                            method,
+                            matchingField.inputValueDefinitions.map { it.name }.toSet()
+                        )
+                    }
                     val implementationsOf = typeDefinitionRegistry.getImplementationsOf(type)
                     implementationsOf.forEach { implType ->
                         val dataFetcher =
@@ -353,8 +361,14 @@ class DgsSchemaProvider(
                     }
                 }
                 is ObjectTypeDefinition -> {
-                    val matchingField = getMatchingFieldOnObjectOrExtensions(type, field, typeDefinitionRegistry, parentType)
-                    methodDataFetcherFactory.checkInputArgumentsAreValid(method, matchingField.inputValueDefinitions.map { it.name }.toSet())
+                    if (schemaWiringValidationEnabled) {
+                        val matchingField =
+                            getMatchingFieldOnObjectOrExtensions(methodClassName, type, field, typeDefinitionRegistry, parentType)
+                        methodDataFetcherFactory.checkInputArgumentsAreValid(
+                            method,
+                            matchingField.inputValueDefinitions.map { it.name }.toSet()
+                        )
+                    }
                     val dataFetcher = createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
                     codeRegistryBuilder.dataFetcher(
                         FieldCoordinates.coordinates(parentType, field),
@@ -363,7 +377,7 @@ class DgsSchemaProvider(
                 }
                 else -> {
                     throw InvalidDgsConfigurationException(
-                        "Parent type $parentType referenced on ${javaClass.name} in " +
+                        "Parent type $parentType referenced on $methodClassName in " +
                             "@DgsData annotation for field $field must be either an interface, a union, or an object."
                     )
                 }
@@ -375,6 +389,7 @@ class DgsSchemaProvider(
     }
 
     private fun getMatchingFieldOnObjectOrExtensions(
+        methodClassName: String,
         type: ObjectTypeDefinition,
         field: String,
         typeDefinitionRegistry: TypeDefinitionRegistry,
@@ -385,13 +400,14 @@ class DgsSchemaProvider(
                 .flatMap { it.fieldDefinitions.filter { f -> f.name == field } }
                 .firstOrNull()
             ?: throw DataFetcherSchemaMismatchException(
-                "@DgsData in ${javaClass.name} on field $field references " +
+                "@DgsData in $methodClassName on field $field references " +
                     "object type $parentType it has no field named $field. All data fetchers registered with @DgsData " +
                     "must match a field in the schema."
             )
     }
 
     private fun getMatchingFieldOnInterfaceOrExtensions(
+        methodClassName: String,
         type: InterfaceTypeDefinition,
         field: String,
         typeDefinitionRegistry: TypeDefinitionRegistry,
@@ -402,7 +418,7 @@ class DgsSchemaProvider(
                 .flatMap { it.fieldDefinitions.filter { f -> f.name == field } }
                 .firstOrNull()
             ?: throw DataFetcherSchemaMismatchException(
-                "@DgsData in ${javaClass.name} on field $field references " +
+                "@DgsData in $methodClassName on field $field references " +
                     "interface $parentType it has no field named $field. All data fetchers registered with @DgsData " +
                     "must match a field in the schema."
             )
