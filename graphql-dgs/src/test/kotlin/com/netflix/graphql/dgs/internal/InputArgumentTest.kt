@@ -134,7 +134,7 @@ internal class InputArgumentTest {
     }
 
     @Test
-    fun `@InputArgument with no name specified and without matching argument, should fail`() {
+    fun `@InputArgument when name is not specified and method param name does not match any argument, it should fail`() {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
@@ -149,37 +149,17 @@ internal class InputArgumentTest {
             val exc = assertThrows<DataFetcherInputArgumentSchemaMismatchException> {
                 provider.schema()
             }
-            assertThat(exc).message().contains("there is no matching argument in the GraphQL schema that matches the possible names: [abc]")
+            assertThat(exc).message().contains("on parameter named `abc` has no matching argument with name `abc` in the GraphQL schema. " +
+                "Found the following argument(s) in the schema: [name]")
         }
     }
 
     @Test
-    fun `@InputArgument with a name specified and without matching argument, should fail`() {
+    fun `@InputArgument when name is not specified it falls back to param name`() {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument(name = "abc") name2: String?): String {
-                assertThat(name2).isNull()
-                return "Hello, ${name2 ?: "no name"}"
-            }
-        }
-
-        contextRunner.withBeans(Fetcher::class).run { context ->
-            val provider = schemaProvider(context)
-            val exc = assertThrows<DataFetcherInputArgumentSchemaMismatchException> {
-                provider.schema()
-            }
-            assertThat(exc).message().contains("there is no matching argument in the GraphQL schema that matches the possible names: [abc, name2]")
-        }
-    }
-
-    @Test
-    fun `@InputArgument with a name specified and with a matching argument the method name, should not fail`() {
-        @DgsComponent
-        class Fetcher {
-            @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument(name = "abc") name: String?): String {
-                assertThat(name).isNull()
+            fun someFetcher(@InputArgument name: String?): String {
                 return "Hello, ${name ?: "no name"}"
             }
         }
@@ -193,7 +173,27 @@ internal class InputArgumentTest {
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
             val data = executionResult.getData<Map<String, *>>()
-            assertThat(data).containsEntry("hello", "Hello, no name")
+            assertThat(data).containsEntry("hello", "Hello, tester")
+        }
+    }
+
+    @Test
+    fun `@InputArgument with a name specified and it does not match an argument on schema, it should fail`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument(name = "abc") name: String?): String {
+                assertThat(name).isNull()
+                return "Hello, ${name ?: "no name"}"
+            }
+        }
+
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val provider = schemaProvider(context)
+            val exc = assertThrows<DataFetcherInputArgumentSchemaMismatchException> {
+                provider.schema()
+            }
+            assertThat(exc).message().contains("on parameter named `name` has no matching argument with name `abc` in the GraphQL schema.")
         }
     }
 

@@ -52,19 +52,31 @@ class MethodDataFetcherFactory(
         }
         val annotatedMethodParams = methodParameters.filter { it.hasParameterAnnotation(InputArgument::class.java) }
         annotatedMethodParams.forEach { m ->
-            val paramName = m.parameterName ?: return@forEach
-            val possibleParamNames = inputArgumentResolvers.map { it.resolveArgumentName(m) }.toSet()
-            if (possibleParamNames.none { argumentNames.contains(it) }) {
-                val arguments = if (argumentNames.isNotEmpty()) {
-                    "Found the following argument(s) in the schema: " + argumentNames.joinToString(prefix = "[", postfix = "]")
-                } else {
-                    "No arguments on the field are defined in the schema."
+            val selectedArgResolver = resolvers.getArgumentResolver(m)
+                ?: throw DataFetcherInputArgumentSchemaMismatchException("No suitable argument resolver found for method `${m.parameterName} on ${m.declaringClass}`.")
+            if (selectedArgResolver is AbstractInputArgumentResolver) {
+                val argName = selectedArgResolver.resolveArgumentName(m) ?: return@forEach
+                if (!argumentNames.contains(argName)) {
+                    val paramName = m.parameterName ?: return@forEach
+                    val arguments = if (argumentNames.isNotEmpty()) {
+                        "Found the following argument(s) in the schema: " + argumentNames.joinToString(prefix = "[", postfix = "]")
+                    } else {
+                        "No arguments on the field are defined in the schema."
+                    }
+
+                    when (selectedArgResolver) {
+                        is InputArgumentResolver -> throw DataFetcherInputArgumentSchemaMismatchException(
+                            "@InputArgument(name = \"$argName\") defined in ${method.declaringClass} in method `${method.name}` " +
+                                "on parameter named `$paramName` has no matching argument with name `$argName` in the GraphQL schema. " +
+                                arguments
+                        )
+                        is FallbackEnvironmentArgumentResolver -> throw DataFetcherInputArgumentSchemaMismatchException(
+                            "@InputArgument defined in ${method.declaringClass} in method `${method.name}` " +
+                                "on parameter named `$paramName` has no matching argument with name `$argName` in the GraphQL schema. " +
+                                arguments
+                        )
+                    }
                 }
-                throw DataFetcherInputArgumentSchemaMismatchException(
-                    "@InputArgument is defined in ${method.declaringClass} in method `${method.name}` on parameter named `$paramName` but there is " +
-                        "no matching argument in the GraphQL schema that matches the possible names: ${possibleParamNames.joinToString(prefix = "[", postfix = "]")}. " +
-                        arguments
-                )
             }
         }
     }

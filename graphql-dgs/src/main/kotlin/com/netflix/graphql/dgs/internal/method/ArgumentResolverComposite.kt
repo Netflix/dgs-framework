@@ -39,7 +39,7 @@ class ArgumentResolverComposite(private val argumentResolvers: List<ArgumentReso
         return resolver.resolveArgument(parameter, dfe)
     }
 
-    private fun getArgumentResolver(parameter: MethodParameter): ArgumentResolver? {
+    internal fun getArgumentResolver(parameter: MethodParameter): ArgumentResolver? {
         val cachedResolver = this.argumentResolverCache[parameter]
         if (cachedResolver != null) {
             return cachedResolver
