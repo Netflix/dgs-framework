@@ -642,7 +642,7 @@ internal class DgsSchemaProviderTest {
             }
         }
 
-        contextRunner.withBeans(HelloFetcher::class, TitleFetcher::class).run { context ->
+        contextRunner.withBeans(TitleFetcher::class).run { context ->
             val schemaProvider = schemaProvider(applicationContext = context)
             schemaProvider.schema(schema)
             assertThat(schemaProvider.isFieldInstrumentationEnabled("Video.title")).isTrue

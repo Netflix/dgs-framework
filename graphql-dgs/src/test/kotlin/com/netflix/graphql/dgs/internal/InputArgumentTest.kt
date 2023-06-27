@@ -22,6 +22,7 @@ import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.DgsRuntimeWiring
 import com.netflix.graphql.dgs.InputArgument
 import com.netflix.graphql.dgs.LocalDateTimeScalar
+import com.netflix.graphql.dgs.exceptions.DataFetcherInputArgumentSchemaMismatchException
 import com.netflix.graphql.dgs.internal.java.test.enums.JGreetingType
 import com.netflix.graphql.dgs.internal.java.test.enums.JInputMessage
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JEnum
@@ -55,6 +56,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.InstanceOfAssertFactories
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import org.springframework.context.ApplicationContext
 import org.springframework.core.convert.ConversionFailedException
@@ -132,13 +134,53 @@ internal class InputArgumentTest {
     }
 
     @Test
-    fun `@InputArgument with no name specified and without matching argument, should be null`() {
+    fun `@InputArgument with no name specified and without matching argument, should fail`() {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(@InputArgument abc: String?): String {
                 assertThat(abc).isNull()
                 return "Hello, ${abc ?: "no name"}"
+            }
+        }
+
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val provider = schemaProvider(context)
+            val exc = assertThrows<DataFetcherInputArgumentSchemaMismatchException> {
+                provider.schema()
+            }
+            assertThat(exc).message().contains("there is no matching argument in the GraphQL schema that matches the possible names: [abc]")
+        }
+    }
+
+    @Test
+    fun `@InputArgument with a name specified and without matching argument, should fail`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument(name = "abc") name2: String?): String {
+                assertThat(name2).isNull()
+                return "Hello, ${name2 ?: "no name"}"
+            }
+        }
+
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val provider = schemaProvider(context)
+            val exc = assertThrows<DataFetcherInputArgumentSchemaMismatchException> {
+                provider.schema()
+            }
+            assertThat(exc).message().contains("there is no matching argument in the GraphQL schema that matches the possible names: [abc, name2]")
+        }
+    }
+
+    @Test
+    fun `@InputArgument with a name specified and with a matching argument the method name, should not fail`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(@InputArgument(name = "abc") name: String?): String {
+                assertThat(name).isNull()
+                return "Hello, ${name ?: "no name"}"
             }
         }
 
