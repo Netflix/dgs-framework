@@ -401,7 +401,7 @@ class DgsSchemaProvider(
                 .firstOrNull()
             ?: throw DataFetcherSchemaMismatchException(
                 "@DgsData in $methodClassName on field $field references " +
-                    "object type $parentType it has no field named $field. All data fetchers registered with @DgsData " +
+                    "object type `$parentType` it has no field named `$field`. All data fetchers registered with @DgsData " +
                     "must match a field in the schema."
             )
     }
@@ -418,8 +418,8 @@ class DgsSchemaProvider(
                 .flatMap { it.fieldDefinitions.filter { f -> f.name == field } }
                 .firstOrNull()
             ?: throw DataFetcherSchemaMismatchException(
-                "@DgsData in $methodClassName on field $field references " +
-                    "interface $parentType it has no field named $field. All data fetchers registered with @DgsData " +
+                "@DgsData in $methodClassName on field `$field` references " +
+                    "interface `$parentType` it has no field named `$field`. All data fetchers registered with @DgsData " +
                     "must match a field in the schema."
             )
     }
