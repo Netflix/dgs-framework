@@ -85,7 +85,7 @@ class DgsSchemaProvider(
     private val defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty(),
     private val methodDataFetcherFactory: MethodDataFetcherFactory,
     private val componentFilter: ((Any) -> Boolean)? = null,
-    private val schemaWiringValidationEnabled: Boolean = true,
+    private val schemaWiringValidationEnabled: Boolean = true
 ) {
 
     private val schemaReadWriteLock = ReentrantReadWriteLock()

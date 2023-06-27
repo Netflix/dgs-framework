@@ -149,8 +149,10 @@ internal class InputArgumentTest {
             val exc = assertThrows<DataFetcherInputArgumentSchemaMismatchException> {
                 provider.schema()
             }
-            assertThat(exc).message().contains("on parameter named `abc` has no matching argument with name `abc` in the GraphQL schema. " +
-                "Found the following argument(s) in the schema: [name]")
+            assertThat(exc).message().contains(
+                "on parameter named `abc` has no matching argument with name `abc` in the GraphQL schema. " +
+                    "Found the following argument(s) in the schema: [name]"
+            )
         }
     }
 
