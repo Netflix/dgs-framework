@@ -21,7 +21,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
-import com.netflix.graphql.dgs.*
+import com.netflix.graphql.dgs.DgsComponent
+import com.netflix.graphql.dgs.DgsData
+import com.netflix.graphql.dgs.DgsDirective
+import com.netflix.graphql.dgs.DgsExecutionResult
+import com.netflix.graphql.dgs.DgsScalar
+import com.netflix.graphql.dgs.InputArgument
+import com.netflix.graphql.dgs.LocalDateTimeScalar
 import com.netflix.graphql.dgs.exceptions.DgsBadRequestException
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
@@ -30,7 +36,7 @@ import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import graphql.InvalidSyntaxError
 import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
-import graphql.execution.instrumentation.SimpleInstrumentation
+import graphql.execution.instrumentation.SimplePerformantInstrumentation
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -43,7 +49,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
 import org.springframework.http.HttpHeaders
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Optional
 import java.util.function.Supplier
 
 @Suppress("GraphQLUnresolvedReference")
@@ -155,7 +161,7 @@ internal class DefaultDgsQueryExecutorTest {
             schemaProvider = provider,
             dataLoaderProvider = dgsDataLoaderProvider,
             contextBuilder = DefaultDgsGraphQLContextBuilder(Optional.empty()),
-            instrumentation = SimpleInstrumentation.INSTANCE,
+            instrumentation = SimplePerformantInstrumentation.INSTANCE,
             queryExecutionStrategy = AsyncExecutionStrategy(),
             mutationExecutionStrategy = AsyncSerialExecutionStrategy(),
             idProvider = Optional.empty()

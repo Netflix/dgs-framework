@@ -14,8 +14,10 @@ import graphql.InvalidSyntaxError
 import graphql.analysis.QueryTraverser
 import graphql.analysis.QueryVisitorFieldEnvironment
 import graphql.analysis.QueryVisitorStub
-import graphql.execution.instrumentation.*
-import graphql.execution.instrumentation.SimpleInstrumentationContext.whenCompleted
+import graphql.execution.instrumentation.InstrumentationContext
+import graphql.execution.instrumentation.InstrumentationState
+import graphql.execution.instrumentation.SimpleInstrumentationContext
+import graphql.execution.instrumentation.SimplePerformantInstrumentation
 import graphql.execution.instrumentation.parameters.InstrumentationCreateStateParameters
 import graphql.execution.instrumentation.parameters.InstrumentationExecuteOperationParameters
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
@@ -31,7 +33,6 @@ import io.micrometer.core.instrument.Tags
 import io.micrometer.core.instrument.Timer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.util.*
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
@@ -43,7 +44,7 @@ class DgsGraphQLMetricsInstrumentation(
     private val properties: DgsGraphQLMetricsProperties,
     private val limitedTagMetricResolver: LimitedTagMetricResolver,
     private val optQuerySignatureRepository: Optional<QuerySignatureRepository> = Optional.empty()
-) : SimpleInstrumentation() {
+) : SimplePerformantInstrumentation() {
 
     companion object {
         private val log: Logger = LoggerFactory.getLogger(DgsGraphQLMetricsInstrumentation::class.java)
@@ -66,21 +67,14 @@ class DgsGraphQLMetricsInstrumentation(
         miState.operationName = Optional.ofNullable(parameters.operation)
         miState.isIntrospectionQuery = QueryUtils.isIntrospectionQuery(parameters.executionInput)
 
-        return object : SimpleInstrumentationContext<ExecutionResult>() {
-
-            override fun onDispatched(result: CompletableFuture<ExecutionResult>?) {
-                super.onDispatched(result)
-            }
-
-            override fun onCompleted(result: ExecutionResult, exc: Throwable?) {
-                miState.stopTimer(
-                    properties.autotime
-                        .builder(GqlMetric.QUERY.key)
-                        .tags(tagsProvider.getContextualTags())
-                        .tags(tagsProvider.getExecutionTags(miState, parameters, result, exc))
-                        .tags(miState.tags())
-                )
-            }
+        return SimpleInstrumentationContext.whenCompleted { result, exc ->
+            miState.stopTimer(
+                properties.autotime
+                    .builder(GqlMetric.QUERY.key)
+                    .tags(tagsProvider.getContextualTags())
+                    .tags(tagsProvider.getExecutionTags(miState, parameters, result, exc))
+                    .tags(miState.tags())
+            )
         }
     }
 
@@ -153,9 +147,9 @@ class DgsGraphQLMetricsInstrumentation(
                     recordDataFetcherMetrics(registry, sampler, miState, parameters, null, baseTags)
                 }
                 result
-            } catch (throwable: Throwable) {
-                recordDataFetcherMetrics(registry, sampler, miState, parameters, throwable, baseTags)
-                throw throwable
+            } catch (exc: Exception) {
+                recordDataFetcherMetrics(registry, sampler, miState, parameters, exc, baseTags)
+                throw exc
             }
         }
     }
@@ -168,8 +162,8 @@ class DgsGraphQLMetricsInstrumentation(
         parameters: InstrumentationValidationParameters,
         state: InstrumentationState
     ): InstrumentationContext<List<ValidationError>> {
-        return whenCompleted { errors, throwable ->
-            if (errors != null && errors.isNotEmpty() || throwable != null) {
+        return SimpleInstrumentationContext.whenCompleted { errors, throwable ->
+            if (!errors.isNullOrEmpty() || throwable != null) {
                 return@whenCompleted
             }
             val miState: MetricsInstrumentationState = state as MetricsInstrumentationState
@@ -182,7 +176,7 @@ class DgsGraphQLMetricsInstrumentation(
     override fun beginExecuteOperation(
         parameters: InstrumentationExecuteOperationParameters,
         state: InstrumentationState
-    ): InstrumentationContext<ExecutionResult> {
+    ): InstrumentationContext<ExecutionResult>? {
         val miState: MetricsInstrumentationState = state as MetricsInstrumentationState
         if (parameters.executionContext.getRoot<Any>() == null) {
             miState.operation = Optional.of(parameters.executionContext.operationDefinition.operation.name.uppercase())
@@ -192,7 +186,7 @@ class DgsGraphQLMetricsInstrumentation(
         }
 
         miState.queryComplexity = ComplexityUtils.resolveComplexity(parameters)
-        return super.beginExecuteOperation(parameters)
+        return super.beginExecuteOperation(parameters, state)
     }
 
     private fun recordDataFetcherMetrics(
@@ -275,19 +269,18 @@ class DgsGraphQLMetricsInstrumentation(
         fun resolveComplexity(parameters: InstrumentationExecuteOperationParameters): Optional<Int> {
             try {
                 val queryTraverser: QueryTraverser = newQueryTraverser(parameters)
-                val valuesByParent: MutableMap<QueryVisitorFieldEnvironment?, Int?> =
-                    LinkedHashMap<QueryVisitorFieldEnvironment?, Int?>()
+                val valuesByParent = mutableMapOf<QueryVisitorFieldEnvironment?, Int?>()
                 queryTraverser.visitPostOrder(object : QueryVisitorStub() {
-                    override fun visitField(env: QueryVisitorFieldEnvironment?) {
-                        val childComplexity = valuesByParent.getOrDefault(env, 0)
-                        val value = calculateComplexity(env!!, childComplexity!!)
+                    override fun visitField(env: QueryVisitorFieldEnvironment) {
+                        val childComplexity = valuesByParent[env] ?: 0
+                        val value = calculateComplexity(env, childComplexity)
                         valuesByParent.compute(env.parentEnvironment) { _, oldValue -> Optional.ofNullable(oldValue).orElse(0) + value }
                     }
                 })
-                val totalComplexity = valuesByParent.getOrDefault(null, 0)
-                return Optional.ofNullable(queryComplexityBuckets.filter { totalComplexity!! < it }.minOrNull())
-            } catch (error: Throwable) {
-                log.error("Unable to compute the query complexity!", error)
+                val totalComplexity = valuesByParent[null] ?: 0
+                return Optional.ofNullable(queryComplexityBuckets.asSequence().filter { totalComplexity < it }.minOrNull())
+            } catch (exc: Exception) {
+                log.error("Unable to compute the query complexity!", exc)
                 return Optional.empty()
             }
         }
@@ -312,7 +305,7 @@ class DgsGraphQLMetricsInstrumentation(
                 .schema(parameters.executionContext.graphQLSchema)
                 .document(parameters.executionContext.document)
                 .operationName(parameters.executionContext.operationDefinition.name)
-                .variables(parameters.executionContext.variables)
+                .coercedVariables(parameters.executionContext.coercedVariables)
                 .build()
         }
     }
@@ -343,14 +336,14 @@ class DgsGraphQLMetricsInstrumentation(
     internal object ErrorUtils {
 
         fun sanitizeErrorPaths(executionResult: ExecutionResult): Collection<ErrorTagValues> {
-            var dedupeErrorPaths: Map<String, ErrorTagValues> = emptyMap()
+            val dedupeErrorPaths = mutableMapOf<List<String>, ErrorTagValues>()
             executionResult.errors.forEach { error ->
-                val errorPath: List<Any>
+                val errorPath: List<String>
                 val errorType: String
                 val errorDetail = errorDetailExtension(error)
                 when (error) {
                     is ValidationError -> {
-                        errorPath = error.queryPath ?: emptyList()
+                        errorPath = error.queryPath.filterIsInstance<String>()
                         errorType = ErrorType.BAD_REQUEST.name
                     }
                     is InvalidSyntaxError -> {
@@ -358,18 +351,13 @@ class DgsGraphQLMetricsInstrumentation(
                         errorType = ErrorType.BAD_REQUEST.name
                     }
                     else -> {
-                        errorPath = error.path ?: emptyList()
+                        errorPath = error.path.orEmpty().filterIsInstance<String>()
                         errorType = errorTypeExtension(error)
                     }
                 }
-                val sanitizedPath = errorPath.map { iter ->
-                    if (iter.toString().toIntOrNull() != null) "number"
-                    else iter.toString()
-                }.toString()
-                // in case of batch loaders, eliminate duplicate instances of the same error at different indices
-                if (!dedupeErrorPaths.contains(sanitizedPath)) {
-                    dedupeErrorPaths = dedupeErrorPaths
-                        .plus(Pair(sanitizedPath, ErrorTagValues(sanitizedPath, errorType, errorDetail)))
+
+                dedupeErrorPaths.computeIfAbsent(errorPath) {
+                    ErrorTagValues(errorPath.toString(), errorType, errorDetail)
                 }
             }
             return dedupeErrorPaths.values

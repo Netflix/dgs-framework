@@ -77,6 +77,42 @@ class DgsRestControllerTest {
     }
 
     @Test
+    fun `Is able to execute a a well formed query with null variables and extension`() {
+        val queryString = "query(\$stranger:String) {hello(name: \$stranger)}"
+
+        `when`(
+            dgsQueryExecutor.execute(
+                eq(queryString),
+                any(),
+                any(),
+                any(),
+                any(),
+                any()
+            )
+        ).thenReturn(
+            ExecutionResultImpl.newExecutionResult().data(mapOf("hello" to "hello")).build()
+        )
+
+        mvc.post("/graphql") {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(mapOf("query" to queryString, "variables" to null))
+        }.andExpect {
+            status { isOk() }
+            content {
+                jsonPath("errors") {
+                    doesNotExist()
+                }
+                jsonPath("data") {
+                    isMap()
+                }
+                jsonPath("data.hello") {
+                    value("hello")
+                }
+            }
+        }
+    }
+
+    @Test
     fun `Passing a query with an operationName should execute the matching named query`() {
         val queryString = "query operationA{ hello } query operationB{ hi }"
         val captor = ArgumentCaptor.forClass(String::class.java)
