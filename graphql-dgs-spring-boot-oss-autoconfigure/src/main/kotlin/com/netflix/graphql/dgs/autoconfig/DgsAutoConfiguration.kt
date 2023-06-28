@@ -97,7 +97,7 @@ open class DgsAutoConfiguration(
     open fun dgsQueryExecutor(
         applicationContext: ApplicationContext,
         schema: GraphQLSchema,
-        objectMapper: ObjectMapper,
+        @Qualifier("dgsQueryExecutorObjectMapper") objectMapper: ObjectMapper,
         schemaProvider: DgsSchemaProvider,
         dgsDataLoaderProvider: DgsDataLoaderProvider,
         dgsContextBuilder: DefaultDgsGraphQLContextBuilder,

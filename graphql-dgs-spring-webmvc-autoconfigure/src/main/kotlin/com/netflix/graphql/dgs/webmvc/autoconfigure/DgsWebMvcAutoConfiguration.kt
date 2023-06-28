@@ -41,6 +41,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
+import org.springframework.context.annotation.Primary
 import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.method.annotation.RequestHeaderMapMethodArgumentResolver
 import org.springframework.web.method.annotation.RequestHeaderMethodArgumentResolver
@@ -57,6 +58,7 @@ import kotlin.streams.toList
 @EnableConfigurationProperties(DgsWebMvcConfigurationProperties::class)
 open class DgsWebMvcAutoConfiguration {
     @Bean
+    @Primary
     @Qualifier("dgsObjectMapper")
     @ConditionalOnMissingBean(name = ["dgsObjectMapper"])
     open fun dgsObjectMapper(): ObjectMapper {

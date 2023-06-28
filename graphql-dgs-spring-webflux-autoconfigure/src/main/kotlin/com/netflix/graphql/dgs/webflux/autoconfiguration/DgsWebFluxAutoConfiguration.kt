@@ -93,7 +93,7 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     open fun dgsReactiveQueryExecutor(
         applicationContext: ApplicationContext,
         schema: GraphQLSchema,
-        objectMapper: ObjectMapper,
+        @Qualifier("dgsQueryExecutorObjectMapper") objectMapper: ObjectMapper,
         schemaProvider: DgsSchemaProvider,
         dgsDataLoaderProvider: DgsDataLoaderProvider,
         dgsContextBuilder: DefaultDgsReactiveGraphQLContextBuilder,

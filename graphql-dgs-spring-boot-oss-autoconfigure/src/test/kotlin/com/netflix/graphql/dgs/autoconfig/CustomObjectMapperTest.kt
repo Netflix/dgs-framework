@@ -25,6 +25,7 @@ import com.netflix.graphql.dgs.DgsQueryExecutor
 import graphql.schema.DataFetchingEnvironment
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.AutoConfigurations
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner
 import org.springframework.context.annotation.Bean
@@ -39,6 +40,7 @@ class CustomObjectMapperTest {
     @Configuration
     open class CustomObjectMapperConfig {
         @Bean
+        @Qualifier("dgsQueryExecutorObjectMapper")
         open fun objectMapper(): ObjectMapper {
             return jacksonObjectMapper()
                 .registerModule(JavaTimeModule())
