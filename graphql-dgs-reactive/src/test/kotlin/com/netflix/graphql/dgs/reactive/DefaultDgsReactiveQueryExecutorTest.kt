@@ -16,6 +16,9 @@
 
 package com.netflix.graphql.dgs.reactive
 
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.DgsComponent
@@ -48,6 +51,7 @@ import java.util.function.Supplier
 
 @ExtendWith(MockKExtension::class)
 internal class DefaultDgsReactiveQueryExecutorTest {
+
     @MockK
     lateinit var applicationContextMock: ApplicationContext
 
@@ -134,8 +138,14 @@ internal class DefaultDgsReactiveQueryExecutorTest {
             """.trimIndent()
         )
 
+        val objectMapper = jacksonObjectMapper()
+            .registerModule(JavaTimeModule())
+            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+
         dgsQueryExecutor = DefaultDgsReactiveQueryExecutor(
             defaultSchema = schema,
+            objectMapper = objectMapper,
             schemaProvider = provider,
             dataLoaderProvider = dgsDataLoaderProvider,
             contextBuilder = DefaultDgsReactiveGraphQLContextBuilder(Optional.empty()),

@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.reactive
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsData
 import com.netflix.graphql.dgs.DgsDirective
@@ -59,6 +60,7 @@ import java.util.function.Supplier
 
 @ExtendWith(MockKExtension::class)
 internal class ReactiveReturnTypesTest {
+
     @MockK
     lateinit var applicationContextMock: ApplicationContext
 
@@ -171,8 +173,10 @@ internal class ReactiveReturnTypesTest {
             """.trimIndent()
         )
 
+        val objectMapper = jacksonObjectMapper()
         dgsQueryExecutor = DefaultDgsReactiveQueryExecutor(
             defaultSchema = schema,
+            objectMapper = objectMapper,
             schemaProvider = provider,
             dataLoaderProvider = dgsDataLoaderProvider,
             contextBuilder = DefaultDgsReactiveGraphQLContextBuilder(Optional.empty()),
