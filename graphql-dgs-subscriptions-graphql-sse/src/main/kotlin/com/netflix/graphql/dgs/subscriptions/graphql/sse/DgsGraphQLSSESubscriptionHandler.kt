@@ -79,7 +79,7 @@ open class DgsGraphQLSSESubscriptionHandler(
             throw ServerWebInputException("Invalid query. operation type is not a subscription")
         }
 
-        val executionResult: ExecutionResult = dgsQueryExecutor.execute(queryPayload.query, queryPayload.variables)
+        val executionResult: ExecutionResult = dgsQueryExecutor.execute(queryPayload.query, queryPayload.variables.orEmpty())
         if (executionResult.errors.isNotEmpty()) {
             val errorMessage =
                 if (executionResult.errors.any { error -> error is ValidationError || error is InvalidSyntaxError }) {

@@ -66,8 +66,8 @@ class DefaultDgsReactiveQueryExecutor(
 
     override fun execute(
         query: String?,
-        variables: MutableMap<String, Any>?,
-        extensions: MutableMap<String, Any>?,
+        variables: Map<String, Any>?,
+        extensions: Map<String, Any>?,
         headers: HttpHeaders?,
         operationName: String?,
         serverHttpRequest: ServerRequest?
@@ -111,7 +111,7 @@ class DefaultDgsReactiveQueryExecutor(
     override fun <T : Any> executeAndExtractJsonPath(
         query: String,
         jsonPath: String,
-        variables: MutableMap<String, Any>?,
+        variables: Map<String, Any>?,
         serverRequest: ServerRequest?
     ): Mono<T> {
         return getJsonResult(query, variables, serverRequest).map { JsonPath.read(it, jsonPath) }
@@ -119,7 +119,7 @@ class DefaultDgsReactiveQueryExecutor(
 
     override fun executeAndGetDocumentContext(
         query: String,
-        variables: MutableMap<String, Any>
+        variables: Map<String, Any>
     ): Mono<DocumentContext> {
         return getJsonResult(query, variables, null).map(parseContext::parse)
     }
@@ -127,7 +127,7 @@ class DefaultDgsReactiveQueryExecutor(
     override fun <T : Any?> executeAndExtractJsonPathAsObject(
         query: String,
         jsonPath: String,
-        variables: MutableMap<String, Any>,
+        variables: Map<String, Any>,
         clazz: Class<T>
     ): Mono<T> {
         return getJsonResult(query, variables, null)
@@ -144,7 +144,7 @@ class DefaultDgsReactiveQueryExecutor(
     override fun <T : Any?> executeAndExtractJsonPathAsObject(
         query: String,
         jsonPath: String,
-        variables: MutableMap<String, Any>,
+        variables: Map<String, Any>,
         typeRef: TypeRef<T>
     ): Mono<T> {
         return getJsonResult(query, variables, null)
@@ -158,7 +158,7 @@ class DefaultDgsReactiveQueryExecutor(
             }
     }
 
-    private fun getJsonResult(query: String, variables: MutableMap<String, Any>?, serverRequest: ServerRequest?): Mono<String> {
+    private fun getJsonResult(query: String, variables: Map<String, Any>?, serverRequest: ServerRequest?): Mono<String> {
         val httpHeaders = serverRequest?.headers()?.asHttpHeaders()
         return execute(query, variables, null, httpHeaders, null, serverRequest).map { executionResult ->
             if (executionResult.errors.size > 0) {
