@@ -70,7 +70,7 @@ class DefaultDgsReactiveQueryExecutor(
         extensions: MutableMap<String, Any>?,
         headers: HttpHeaders?,
         operationName: String?,
-        serverHttpRequest: ServerRequest?,
+        serverHttpRequest: ServerRequest?
     ): Mono<ExecutionResult> {
         return Mono
             .fromCallable {
