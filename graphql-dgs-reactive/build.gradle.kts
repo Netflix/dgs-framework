@@ -23,4 +23,5 @@ dependencies {
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     testImplementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
     testImplementation("io.projectreactor:reactor-test")
+    testImplementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 }
