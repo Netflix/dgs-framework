@@ -57,7 +57,7 @@ class DefaultDgsQueryExecutor(
     private val reloadIndicator: ReloadSchemaIndicator = ReloadSchemaIndicator { false },
     private val preparsedDocumentProvider: PreparsedDocumentProvider? = null,
     private val queryValueCustomizer: QueryValueCustomizer = QueryValueCustomizer { query -> query },
-    private val requestCustomizer: DgsQueryExecutorRequestCustomizer = DgsQueryExecutorRequestCustomizer.DEFAULT_REQUEST_CUSTOMIZER,
+    private val requestCustomizer: DgsQueryExecutorRequestCustomizer = DgsQueryExecutorRequestCustomizer.DEFAULT_REQUEST_CUSTOMIZER
 ) : DgsQueryExecutor {
 
     private val schema = AtomicReference(defaultSchema)
