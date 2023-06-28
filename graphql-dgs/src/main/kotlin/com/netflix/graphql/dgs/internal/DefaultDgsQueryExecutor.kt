@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.internal
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.TypeRef
@@ -23,7 +24,6 @@ import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
-import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor.parseContext
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
 import graphql.ExecutionResult
 import graphql.execution.ExecutionIdProvider
@@ -46,6 +46,7 @@ import java.util.concurrent.atomic.AtomicReference
  */
 class DefaultDgsQueryExecutor(
     defaultSchema: GraphQLSchema,
+    objectMapper: ObjectMapper,
     private val schemaProvider: DgsSchemaProvider,
     private val dataLoaderProvider: DgsDataLoaderProvider,
     private val contextBuilder: DefaultDgsGraphQLContextBuilder,
@@ -56,10 +57,13 @@ class DefaultDgsQueryExecutor(
     private val reloadIndicator: ReloadSchemaIndicator = ReloadSchemaIndicator { false },
     private val preparsedDocumentProvider: PreparsedDocumentProvider? = null,
     private val queryValueCustomizer: QueryValueCustomizer = QueryValueCustomizer { query -> query },
-    private val requestCustomizer: DgsQueryExecutorRequestCustomizer = DgsQueryExecutorRequestCustomizer.DEFAULT_REQUEST_CUSTOMIZER
+    private val requestCustomizer: DgsQueryExecutorRequestCustomizer = DgsQueryExecutorRequestCustomizer.DEFAULT_REQUEST_CUSTOMIZER,
 ) : DgsQueryExecutor {
 
-    val schema = AtomicReference(defaultSchema)
+    private val schema = AtomicReference(defaultSchema)
+    private val parseContext = BaseDgsQueryExecutor
+        .registerObjectMapper(objectMapper)
+        .createParseContext()
 
     override fun execute(
         query: String?,
@@ -172,7 +176,7 @@ class DefaultDgsQueryExecutor(
             throw QueryException(executionResult.errors)
         }
 
-        return BaseDgsQueryExecutor.objectMapper.writeValueAsString(executionResult.toSpecification())
+        return BaseDgsQueryExecutor.getObjectMapper().writeValueAsString(executionResult.toSpecification())
     }
 
     /**

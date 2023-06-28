@@ -5,6 +5,8 @@ type Query {
 
     names: [String]
 
+    date: String
+
     namesFromMapped: [String]
 
     #Security examples

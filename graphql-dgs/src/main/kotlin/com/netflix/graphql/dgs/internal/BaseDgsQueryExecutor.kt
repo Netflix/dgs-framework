@@ -50,19 +50,30 @@ import java.util.concurrent.CompletableFuture
 object BaseDgsQueryExecutor {
 
     private val logger: Logger = LoggerFactory.getLogger(BaseDgsQueryExecutor::class.java)
+    private lateinit var objectMapper: ObjectMapper
 
-    val objectMapper: ObjectMapper = jacksonObjectMapper()
-        .registerModule(JavaTimeModule())
-        .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
-        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+    fun registerObjectMapper(objectMapper: ObjectMapper): BaseDgsQueryExecutor {
+        this.objectMapper = objectMapper
+        return this
+    }
 
-    val parseContext: ParseContext =
-        JsonPath.using(
+    fun getObjectMapper(): ObjectMapper {
+        if (!::objectMapper.isInitialized) {
+            registerObjectMapper(createDefaultObjectMapper())
+        }
+
+        return objectMapper
+    }
+
+    fun createParseContext(): ParseContext {
+        return JsonPath.using(
             Configuration.builder()
                 .jsonProvider(JacksonJsonProvider(jacksonObjectMapper()))
-                .mappingProvider(JacksonMappingProvider(objectMapper)).build()
+                .mappingProvider(JacksonMappingProvider(getObjectMapper()))
+                .build()
                 .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)
         )
+    }
 
     fun baseExecute(
         query: String?,
@@ -130,5 +141,12 @@ object BaseDgsQueryExecutor {
             val errors: List<GraphQLError> = if (e is GraphQLError) listOf<GraphQLError>(e) else emptyList()
             CompletableFuture.completedFuture(ExecutionResultImpl(null, errors))
         }
+    }
+
+    private fun createDefaultObjectMapper(): ObjectMapper {
+        return jacksonObjectMapper()
+            .registerModule(JavaTimeModule())
+            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
     }
 }

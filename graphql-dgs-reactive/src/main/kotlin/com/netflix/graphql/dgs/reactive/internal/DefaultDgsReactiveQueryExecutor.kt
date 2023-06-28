@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.reactive.internal
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.TypeRef
@@ -45,6 +46,7 @@ import java.util.concurrent.atomic.AtomicReference
 
 class DefaultDgsReactiveQueryExecutor(
     defaultSchema: GraphQLSchema,
+    objectMapper: ObjectMapper,
     private val schemaProvider: DgsSchemaProvider,
     private val dataLoaderProvider: DgsDataLoaderProvider,
     private val contextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
@@ -58,6 +60,9 @@ class DefaultDgsReactiveQueryExecutor(
 ) : com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor {
 
     private val schema = AtomicReference(defaultSchema)
+    private val parseContext = BaseDgsQueryExecutor
+        .registerObjectMapper(objectMapper)
+        .createParseContext()
 
     override fun execute(
         query: String?,
@@ -65,7 +70,7 @@ class DefaultDgsReactiveQueryExecutor(
         extensions: MutableMap<String, Any>?,
         headers: HttpHeaders?,
         operationName: String?,
-        serverHttpRequest: ServerRequest?
+        serverHttpRequest: ServerRequest?,
     ): Mono<ExecutionResult> {
         return Mono
             .fromCallable {
@@ -116,7 +121,7 @@ class DefaultDgsReactiveQueryExecutor(
         query: String,
         variables: MutableMap<String, Any>
     ): Mono<DocumentContext> {
-        return getJsonResult(query, variables, null).map(BaseDgsQueryExecutor.parseContext::parse)
+        return getJsonResult(query, variables, null).map(parseContext::parse)
     }
 
     override fun <T : Any?> executeAndExtractJsonPathAsObject(
@@ -126,7 +131,7 @@ class DefaultDgsReactiveQueryExecutor(
         clazz: Class<T>
     ): Mono<T> {
         return getJsonResult(query, variables, null)
-            .map(BaseDgsQueryExecutor.parseContext::parse)
+            .map(parseContext::parse)
             .map {
                 try {
                     it.read(jsonPath, clazz)
@@ -143,7 +148,7 @@ class DefaultDgsReactiveQueryExecutor(
         typeRef: TypeRef<T>
     ): Mono<T> {
         return getJsonResult(query, variables, null)
-            .map(BaseDgsQueryExecutor.parseContext::parse)
+            .map(parseContext::parse)
             .map {
                 try {
                     it.read(jsonPath, typeRef)
@@ -160,7 +165,7 @@ class DefaultDgsReactiveQueryExecutor(
                 throw QueryException(executionResult.errors)
             }
 
-            BaseDgsQueryExecutor.objectMapper.writeValueAsString(executionResult.toSpecification())
+            BaseDgsQueryExecutor.getObjectMapper().writeValueAsString(executionResult.toSpecification())
         }
     }
 

@@ -16,6 +16,10 @@
 
 package com.netflix.graphql.dgs.autoconfig
 
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.DgsQueryExecutor
@@ -93,6 +97,7 @@ open class DgsAutoConfiguration(
     open fun dgsQueryExecutor(
         applicationContext: ApplicationContext,
         schema: GraphQLSchema,
+        objectMapper: ObjectMapper,
         schemaProvider: DgsSchemaProvider,
         dgsDataLoaderProvider: DgsDataLoaderProvider,
         dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
@@ -121,6 +126,7 @@ open class DgsAutoConfiguration(
 
         return DefaultDgsQueryExecutor(
             defaultSchema = schema,
+            objectMapper = objectMapper,
             schemaProvider = schemaProvider,
             dataLoaderProvider = dgsDataLoaderProvider,
             contextBuilder = dgsContextBuilder,
@@ -133,6 +139,16 @@ open class DgsAutoConfiguration(
             queryValueCustomizer = queryValueCustomizer,
             requestCustomizer = requestCustomizer.getIfAvailable(DgsQueryExecutorRequestCustomizer::DEFAULT_REQUEST_CUSTOMIZER)
         )
+    }
+
+    @Bean
+    @Qualifier("dgsQueryExecutorObjectMapper")
+    @ConditionalOnMissingBean(name = ["dgsQueryExecutorObjectMapper"])
+    open fun dgsQueryExecutorObjectMapper(): ObjectMapper {
+        return jacksonObjectMapper()
+            .registerModule(JavaTimeModule())
+            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
     }
 
     @Bean
