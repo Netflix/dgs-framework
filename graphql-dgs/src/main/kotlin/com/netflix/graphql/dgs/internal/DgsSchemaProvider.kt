@@ -18,11 +18,13 @@ package com.netflix.graphql.dgs.internal
 
 import com.apollographql.federation.graphqljava.Federation
 import com.netflix.graphql.dgs.*
+import com.netflix.graphql.dgs.exceptions.DataFetcherInputArgumentSchemaMismatchException
 import com.netflix.graphql.dgs.exceptions.DataFetcherSchemaMismatchException
 import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
 import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
+import com.netflix.graphql.dgs.internal.method.InputArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import com.netflix.graphql.mocking.DgsSchemaTransformer
 import com.netflix.graphql.mocking.MockProvider
@@ -55,8 +57,11 @@ import org.slf4j.LoggerFactory
 import org.springframework.aop.support.AopUtils
 import org.springframework.beans.factory.getBeansWithAnnotation
 import org.springframework.context.ApplicationContext
+import org.springframework.core.BridgeMethodResolver
+import org.springframework.core.MethodParameter
 import org.springframework.core.annotation.MergedAnnotation
 import org.springframework.core.annotation.MergedAnnotations
+import org.springframework.core.annotation.SynthesizingMethodParameter
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.ResourcePatternUtils
 import org.springframework.util.ReflectionUtils
@@ -333,7 +338,7 @@ class DgsSchemaProvider(
                     if (schemaWiringValidationEnabled) {
                         val matchingField =
                             getMatchingFieldOnInterfaceOrExtensions(methodClassName, type, field, typeDefinitionRegistry, parentType)
-                        methodDataFetcherFactory.checkInputArgumentsAreValid(
+                        checkInputArgumentsAreValid(
                             method,
                             matchingField.inputValueDefinitions.map { it.name }.toSet()
                         )
@@ -364,7 +369,7 @@ class DgsSchemaProvider(
                     if (schemaWiringValidationEnabled) {
                         val matchingField =
                             getMatchingFieldOnObjectOrExtensions(methodClassName, type, field, typeDefinitionRegistry, parentType)
-                        methodDataFetcherFactory.checkInputArgumentsAreValid(
+                        checkInputArgumentsAreValid(
                             method,
                             matchingField.inputValueDefinitions.map { it.name }.toSet()
                         )
@@ -422,6 +427,36 @@ class DgsSchemaProvider(
                     "interface `$parentType` it has no field named `$field`. All data fetchers registered with @DgsData " +
                     "must match a field in the schema."
             )
+    }
+
+    fun checkInputArgumentsAreValid(method: Method, argumentNames: Set<String>) {
+        val bridgedMethod: Method = BridgeMethodResolver.findBridgedMethod(method)
+        val methodParameters: List<MethodParameter> = bridgedMethod.parameters.map { parameter ->
+            val methodParameter = SynthesizingMethodParameter.forParameter(parameter)
+            methodParameter.initParameterNameDiscovery(methodDataFetcherFactory.parameterNameDiscoverer)
+            methodParameter
+        }
+
+        methodParameters.forEach { m ->
+            val selectedArgResolver = methodDataFetcherFactory.getSelectedArgumentResolver(m) ?: return@forEach
+            if (selectedArgResolver is InputArgumentResolver) {
+                val argName = selectedArgResolver.resolveArgumentName(m)
+                if (!argumentNames.contains(argName)) {
+                    val paramName = m.parameterName ?: return@forEach
+                    val arguments = if (argumentNames.isNotEmpty()) {
+                        "Found the following argument(s) in the schema: " + argumentNames.joinToString(prefix = "[", postfix = "]")
+                    } else {
+                        "No arguments on the field are defined in the schema."
+                    }
+
+                    throw DataFetcherInputArgumentSchemaMismatchException(
+                        "@InputArgument(name = \"$argName\") defined in ${method.declaringClass} in method `${method.name}` " +
+                            "on parameter named `$paramName` has no matching argument with name `$argName` in the GraphQL schema. " +
+                            arguments
+                    )
+                }
+            }
+        }
     }
 
     private fun findEntityFetchers(dgsComponents: Collection<Any>) {

@@ -34,49 +34,10 @@ import java.lang.reflect.Method
  */
 class MethodDataFetcherFactory(
     argumentResolvers: List<ArgumentResolver>,
-    private val parameterNameDiscoverer: ParameterNameDiscoverer = DefaultParameterNameDiscoverer()
+    internal val parameterNameDiscoverer: ParameterNameDiscoverer = DefaultParameterNameDiscoverer()
 ) {
 
     private val resolvers = ArgumentResolverComposite(argumentResolvers)
-
-    fun checkInputArgumentsAreValid(method: Method, argumentNames: Set<String>) {
-        val bridgedMethod: Method = BridgeMethodResolver.findBridgedMethod(method)
-        val methodParameters: List<MethodParameter> = bridgedMethod.parameters.map { parameter ->
-            val methodParameter = SynthesizingMethodParameter.forParameter(parameter)
-            methodParameter.initParameterNameDiscovery(parameterNameDiscoverer)
-            methodParameter
-        }
-
-        methodParameters.forEach { m ->
-            val selectedArgResolver = resolvers.getArgumentResolver(m) ?: return@forEach
-            if (selectedArgResolver is AbstractInputArgumentResolver) {
-                val argName = selectedArgResolver.resolveArgumentName(m) ?: return@forEach
-                if (!argumentNames.contains(argName)) {
-                    val paramName = m.parameterName ?: return@forEach
-                    val arguments = if (argumentNames.isNotEmpty()) {
-                        "Found the following argument(s) in the schema: " + argumentNames.joinToString(prefix = "[", postfix = "]")
-                    } else {
-                        "No arguments on the field are defined in the schema."
-                    }
-
-                    when (selectedArgResolver) {
-                        is InputArgumentResolver -> throw DataFetcherInputArgumentSchemaMismatchException(
-                            "@InputArgument(name = \"$argName\") defined in ${method.declaringClass} in method `${method.name}` " +
-                                "on parameter named `$paramName` has no matching argument with name `$argName` in the GraphQL schema. " +
-                                arguments
-                        )
-                        is FallbackEnvironmentArgumentResolver -> throw DataFetcherInputArgumentSchemaMismatchException(
-                            "Parameter named `$paramName` in ${method.declaringClass} in method `${method.name}` " +
-                                "has no matching argument with name `$argName` in the GraphQL schema. " +
-                                "Consider annotating the method parameter with @InputArgument(name = ) or renaming the " +
-                                "method parameter name to match the corresponding field argument on the GraphQL schema. " +
-                                arguments
-                        )
-                    }
-                }
-            }
-        }
-    }
 
     fun createDataFetcher(bean: Any, method: Method): DataFetcher<Any?> {
         return DataFetcherInvoker(
@@ -85,5 +46,9 @@ class MethodDataFetcherFactory(
             resolvers = resolvers,
             parameterNameDiscoverer = parameterNameDiscoverer
         )
+    }
+
+    internal fun getSelectedArgumentResolver(methodParameter: MethodParameter): ArgumentResolver? {
+        return resolvers.getArgumentResolver(methodParameter)
     }
 }
