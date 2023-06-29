@@ -37,12 +37,12 @@ internal class InputObjectMapperTest {
         "someObject" to mapOf("key1" to "value1", "key2" to currentDate, "key3" to mapOf("subkey1" to "hi"))
     )
 
-    private val inputKotlinJavaMix = mutableMapOf<String, Any>(
+    private val inputKotlinJavaMix = mutableMapOf(
         "name" to "dgs",
         "objectProperty" to input
     )
 
-    private val inputWithNulls = mutableMapOf<String, Any?>(
+    private val inputWithNulls = mutableMapOf(
         "simpleString" to null,
         "someDate" to currentDate,
         "someObject" to mapOf("key1" to "value1", "key2" to currentDate, "key3" to null)

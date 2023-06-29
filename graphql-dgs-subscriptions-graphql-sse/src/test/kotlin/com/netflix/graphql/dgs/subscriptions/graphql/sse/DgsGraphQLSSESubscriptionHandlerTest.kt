@@ -147,7 +147,7 @@ internal class DgsGraphQLSSESubscriptionHandlerTest {
         mockMvc.perform(asyncDispatch(result))
             .andExpect(content().contentType(MediaType.TEXT_EVENT_STREAM))
             .andReturn()
-        val data = result.response.contentAsString.toString().split("\n\n")
+        val data = result.response.contentAsString.splitToSequence("\n\n")
             .filter { line -> line.contains("event:next") }
             .map { line -> line.substring("data:".length).substringAfter("data:") }
             .map { line -> mapper.readValue<SSEDataPayload>(line) }
@@ -156,7 +156,7 @@ internal class DgsGraphQLSSESubscriptionHandlerTest {
         assertEquals(2, data.size)
         assertEquals("message 1", data[0].data)
         assertEquals("message 2", data[1].data)
-        val events = result.response.contentAsString.toString().split("\n\n")
+        val events = result.response.contentAsString.splitToSequence("\n\n")
             .filter { line -> line.contains("event:") }
             .map { line -> line.substringAfter("event:").substringBefore("\n") }
             .toList()
@@ -165,7 +165,7 @@ internal class DgsGraphQLSSESubscriptionHandlerTest {
         assertEquals("next", events[1])
         assertEquals("complete", events[2])
         // Ensure ping message is sent
-        assertThat(result.response.contentAsString.toString(), containsString(":\n\n"))
+        assertThat(result.response.contentAsString, containsString(":\n\n"))
     }
 
     @Test
@@ -188,7 +188,7 @@ internal class DgsGraphQLSSESubscriptionHandlerTest {
             .andExpect(content().contentType(MediaType.TEXT_EVENT_STREAM))
             .andReturn()
 
-        val data = result.response.contentAsString.toString().split("\n\n")
+        val data = result.response.contentAsString.splitToSequence("\n\n")
             .filter { line -> line.contains("event:next") }
             .map { line -> line.substring("data:".length).substringAfter("data:") }
             .map { line -> mapper.readValue<SSEDataPayload>(line) }
@@ -196,7 +196,7 @@ internal class DgsGraphQLSSESubscriptionHandlerTest {
 
         assertEquals(1, data.size)
         assertEquals("{message=test}", data[0].errors?.get(0).toString())
-        val events = result.response.contentAsString.toString().split("\n\n")
+        val events = result.response.contentAsString.splitToSequence("\n\n")
             .filter { line -> line.contains("event:") }
             .map { line -> line.substringAfter("event:").substringBefore("\n") }
             .toList()

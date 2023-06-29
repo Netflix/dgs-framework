@@ -48,7 +48,7 @@ class GraphqlSSESubscriptionGraphQLClient(private val url: String, private val w
         val sink = Sinks.many().unicast().onBackpressureBuffer<GraphQLResponse>()
 
         val dis = webClient.post()
-            .uri("$url")
+            .uri(url)
             .bodyValue(jsonPayload)
             .accept(MediaType.TEXT_EVENT_STREAM)
             .retrieve()

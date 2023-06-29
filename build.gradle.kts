@@ -147,7 +147,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         duplicateClassesStrategy.set(DuplicatesStrategy.EXCLUDE)
     }
 
-    tasks.withType<Jar>() {
+    tasks.withType<Jar> {
         duplicatesStrategy = DuplicatesStrategy.WARN
     }
 

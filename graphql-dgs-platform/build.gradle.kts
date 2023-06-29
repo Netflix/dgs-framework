@@ -112,9 +112,8 @@ afterEvaluate {
     project.dependencies {
         constraints {
             subprojectRecommendations.forEach {
-                logger.info("Adding ${it} as constraint.")
+                logger.info("Adding {} as constraint.", it)
                 api(it)
-
             }
         }
     }
