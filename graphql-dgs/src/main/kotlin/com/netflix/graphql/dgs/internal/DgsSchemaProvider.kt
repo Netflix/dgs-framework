@@ -429,7 +429,7 @@ class DgsSchemaProvider(
             )
     }
 
-    fun checkInputArgumentsAreValid(method: Method, argumentNames: Set<String>) {
+    private fun checkInputArgumentsAreValid(method: Method, argumentNames: Set<String>) {
         val bridgedMethod: Method = BridgeMethodResolver.findBridgedMethod(method)
         val methodParameters: List<MethodParameter> = bridgedMethod.parameters.map { parameter ->
             val methodParameter = SynthesizingMethodParameter.forParameter(parameter)
