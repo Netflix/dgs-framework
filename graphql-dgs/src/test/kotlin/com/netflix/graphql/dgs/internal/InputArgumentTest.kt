@@ -57,6 +57,7 @@ import org.assertj.core.api.InstanceOfAssertFactories
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.fail
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import org.springframework.context.ApplicationContext
 import org.springframework.core.convert.ConversionFailedException
@@ -196,6 +197,47 @@ internal class InputArgumentTest {
                 provider.schema()
             }
             assertThat(exc).message().contains("on parameter named `name` has no matching argument with name `abc` in the GraphQL schema.")
+        }
+    }
+
+    @Test
+    fun `when no @InputArgument fallback to method param name to match argument on schema`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(name: String?): String {
+                return "Hello, ${name ?: "no name"}"
+            }
+        }
+
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val provider = schemaProvider(context)
+            val schema = provider.schema()
+            val build = GraphQL.newGraphQL(schema).build()
+            val executionResult = build.execute("""{hello(name: "tester")}""")
+            assertThat(executionResult.errors).isEmpty()
+            assertThat(executionResult.isDataPresent).isTrue
+            val data = executionResult.getData<Map<String, *>>()
+            assertThat(data).containsEntry("hello", "Hello, tester")
+        }
+    }
+
+    @Test
+    fun `no @InputArgument and method param name does not match an argument on schema, it should fail`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsData(parentType = "Query", field = "hello")
+            fun someFetcher(abc: String?): String {
+                fail("should not have been called")
+            }
+        }
+
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val provider = schemaProvider(context)
+            val exc = assertThrows<DataFetcherInputArgumentSchemaMismatchException> {
+                provider.schema()
+            }
+            assertThat(exc).message().contains("has no matching argument with name `abc` in the GraphQL schema.")
         }
     }
 

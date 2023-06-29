@@ -17,7 +17,6 @@
 package com.netflix.graphql.dgs.internal.method
 
 import com.netflix.graphql.dgs.DgsData
-import com.netflix.graphql.dgs.InputArgument
 import com.netflix.graphql.dgs.exceptions.DataFetcherInputArgumentSchemaMismatchException
 import com.netflix.graphql.dgs.internal.DataFetcherInvoker
 import graphql.schema.DataFetcher
@@ -34,26 +33,22 @@ import java.lang.reflect.Method
  * Resolving of method arguments is handled by the supplied [argument resolvers][ArgumentResolver].
  */
 class MethodDataFetcherFactory(
-    private val argumentResolvers: List<ArgumentResolver>,
+    argumentResolvers: List<ArgumentResolver>,
     private val parameterNameDiscoverer: ParameterNameDiscoverer = DefaultParameterNameDiscoverer()
 ) {
 
     private val resolvers = ArgumentResolverComposite(argumentResolvers)
 
     fun checkInputArgumentsAreValid(method: Method, argumentNames: Set<String>) {
-        val inputArgumentResolvers = argumentResolvers.filterIsInstance<AbstractInputArgumentResolver>()
-        if (inputArgumentResolvers.isEmpty()) return
-
         val bridgedMethod: Method = BridgeMethodResolver.findBridgedMethod(method)
         val methodParameters: List<MethodParameter> = bridgedMethod.parameters.map { parameter ->
             val methodParameter = SynthesizingMethodParameter.forParameter(parameter)
             methodParameter.initParameterNameDiscovery(parameterNameDiscoverer)
             methodParameter
         }
-        val annotatedMethodParams = methodParameters.filter { it.hasParameterAnnotation(InputArgument::class.java) }
-        annotatedMethodParams.forEach { m ->
-            val selectedArgResolver = resolvers.getArgumentResolver(m)
-                ?: throw DataFetcherInputArgumentSchemaMismatchException("No suitable argument resolver found for method `${m.parameterName} on ${m.declaringClass}`.")
+
+        methodParameters.forEach { m ->
+            val selectedArgResolver = resolvers.getArgumentResolver(m) ?: return@forEach
             if (selectedArgResolver is AbstractInputArgumentResolver) {
                 val argName = selectedArgResolver.resolveArgumentName(m) ?: return@forEach
                 if (!argumentNames.contains(argName)) {
@@ -71,8 +66,10 @@ class MethodDataFetcherFactory(
                                 arguments
                         )
                         is FallbackEnvironmentArgumentResolver -> throw DataFetcherInputArgumentSchemaMismatchException(
-                            "@InputArgument defined in ${method.declaringClass} in method `${method.name}` " +
-                                "on parameter named `$paramName` has no matching argument with name `$argName` in the GraphQL schema. " +
+                            "Parameter named `$paramName` in ${method.declaringClass} in method `${method.name}` " +
+                                "has no matching argument with name `$argName` in the GraphQL schema. " +
+                                "Consider annotating the method parameter with @InputArgument(name = ) or renaming the " +
+                                "method parameter name to match the corresponding field argument on the GraphQL schema. " +
                                 arguments
                         )
                     }
