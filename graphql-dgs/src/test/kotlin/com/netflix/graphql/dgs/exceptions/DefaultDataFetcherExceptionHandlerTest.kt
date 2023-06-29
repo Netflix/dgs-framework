@@ -113,7 +113,7 @@ internal class DefaultDataFetcherExceptionHandlerTest {
     fun `custom DGS exception should return custom error`() {
         val customDgsExceptionMessage = "Studio Search Who"
         val customDgsExceptionType = ErrorType.FAILED_PRECONDITION
-        class CustomDgsException() :
+        class CustomDgsException :
             DgsException(message = customDgsExceptionMessage, errorType = customDgsExceptionType)
 
         every { dataFetcherExceptionHandlerParameters.exception }.returns(CustomDgsException())

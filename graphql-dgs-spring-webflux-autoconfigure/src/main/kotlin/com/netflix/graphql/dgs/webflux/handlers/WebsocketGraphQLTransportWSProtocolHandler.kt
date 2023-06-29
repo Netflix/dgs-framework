@@ -24,6 +24,7 @@ import graphql.ExecutionResult
 import graphql.GraphqlErrorBuilder
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscription
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.core.ResolvableType
 import org.springframework.core.io.buffer.DataBuffer
@@ -37,7 +38,6 @@ import org.springframework.web.reactive.socket.WebSocketSession
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.Duration
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 class WebsocketGraphQLTransportWSProtocolHandler(private val dgsReactiveQueryExecutor: DgsReactiveQueryExecutor, private val connectionInitTimeout: Duration) : WebsocketReactiveProtocolHandler {
@@ -193,6 +193,6 @@ class WebsocketGraphQLTransportWSProtocolHandler(private val dgsReactiveQueryExe
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(DgsReactiveQueryExecutor::class.java)
+        private val logger: Logger = LoggerFactory.getLogger(DgsReactiveQueryExecutor::class.java)
     }
 }

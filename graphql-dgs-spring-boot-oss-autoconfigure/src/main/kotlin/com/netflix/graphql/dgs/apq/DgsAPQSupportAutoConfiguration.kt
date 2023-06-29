@@ -77,7 +77,6 @@ open class DgsAPQSupportAutoConfiguration {
 
         @Bean(name = [BEAN_APQ_CAFFEINE_CACHE_NAME])
         @ConditionalOnMissingBean(name = [BEAN_APQ_CAFFEINE_CACHE_NAME])
-        @Suppress("UNCHECKED_CAST")
         open fun apqCaffeineCache(properties: DgsAPQSupportProperties): Cache<String, PreparsedDocumentEntry> {
             return if (StringUtils.isNotBlank(properties.defaultCache.caffeineSpec)) {
                 Caffeine.from(CaffeineSpec.parse(properties.defaultCache.caffeineSpec)).build()

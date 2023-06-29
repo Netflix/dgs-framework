@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.subscriptions.websockets
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.types.subscription.*
 import jakarta.annotation.PostConstruct
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
 import org.springframework.security.core.context.SecurityContext
@@ -99,13 +100,11 @@ class DgsWebSocketHandler(dgsQueryExecutor: DgsQueryExecutor, connectionInitTime
     override fun getSubProtocols(): List<String> = listOf(GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL, GRAPHQL_SUBSCRIPTIONS_TRANSPORT_WS_PROTOCOL)
 
     private companion object {
-        val logger = LoggerFactory.getLogger(DgsWebSocketHandler::class.java)
+        val logger: Logger = LoggerFactory.getLogger(DgsWebSocketHandler::class.java)
 
-        private val springSecurityAvailable: Boolean by lazy {
-            ClassUtils.isPresent(
-                "org.springframework.security.core.context.SecurityContextHolder",
-                DgsWebSocketHandler::class.java.classLoader
-            )
-        }
+        private val springSecurityAvailable: Boolean = ClassUtils.isPresent(
+            "org.springframework.security.core.context.SecurityContextHolder",
+            DgsWebSocketHandler::class.java.classLoader
+        )
     }
 }
