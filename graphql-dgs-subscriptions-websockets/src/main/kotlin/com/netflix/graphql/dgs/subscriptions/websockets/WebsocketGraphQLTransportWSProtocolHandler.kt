@@ -26,6 +26,7 @@ import jakarta.annotation.PostConstruct
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
 import org.springframework.web.socket.CloseStatus
@@ -155,7 +156,7 @@ class WebsocketGraphQLTransportWSProtocolHandler(private val dgsQueryExecutor: D
         val executionResult: ExecutionResult =
             dgsQueryExecutor.execute(
                 payload.query,
-                payload.variables,
+                payload.variables.orEmpty(),
                 payload.extensions,
                 null,
                 payload.operationName,
@@ -221,7 +222,7 @@ class WebsocketGraphQLTransportWSProtocolHandler(private val dgsQueryExecutor: D
     }
 
     private companion object {
-        val logger = LoggerFactory.getLogger(WebsocketGraphQLTransportWSProtocolHandler::class.java)
+        val logger: Logger = LoggerFactory.getLogger(WebsocketGraphQLTransportWSProtocolHandler::class.java)
         val objectMapper = jacksonObjectMapper()
     }
 }

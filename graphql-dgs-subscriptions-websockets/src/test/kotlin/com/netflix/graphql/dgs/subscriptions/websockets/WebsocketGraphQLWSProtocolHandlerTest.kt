@@ -54,6 +54,7 @@ import reactor.core.publisher.Mono
 @ExtendWith(MockKExtension::class)
 class WebsocketGraphQLWSProtocolHandlerTest {
 
+    private val objectMapper = jacksonObjectMapper()
     private lateinit var dgsWebsocketHandler: WebsocketGraphQLWSProtocolHandler
 
     @BeforeEach
@@ -228,7 +229,7 @@ class WebsocketGraphQLWSProtocolHandlerTest {
 
         assertThat(dgsWebsocketHandler.sessions.size).isEqualTo(currentNrOfSessions + 1)
 
-        val returnMessage = jacksonObjectMapper().readValue<OperationMessage>(slot.captured.asBytes())
+        val returnMessage = objectMapper.readValue<OperationMessage>(slot.captured.asBytes())
         assertThat(returnMessage.type).isEqualTo(GQL_CONNECTION_ACK)
     }
 
@@ -297,7 +298,7 @@ class WebsocketGraphQLWSProtocolHandlerTest {
 
         every { executionResult.getData<Publisher<ExecutionResult>>() } returns Mono.just(results).flatMapMany { Flux.fromIterable(results) }
 
-        every { dgsQueryExecutor.execute("query HELLO(\$name: String){ hello(name:\$name) }", null) } returns executionResult
+        every { dgsQueryExecutor.execute("query HELLO(\$name: String){ hello(name:\$name) }", emptyMap()) } returns executionResult
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessageWithNullVariable)
     }
@@ -312,7 +313,7 @@ class WebsocketGraphQLWSProtocolHandlerTest {
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessage)
 
-        val returnMessage = jacksonObjectMapper().readValue<OperationMessage>(slot.captured.asBytes())
+        val returnMessage = objectMapper.readValue<OperationMessage>(slot.captured.asBytes())
         assertThat(returnMessage.type).isEqualTo(GQL_ERROR)
         assertThat((returnMessage.payload as DataPayload).errors?.size).isEqualTo(1)
         assertThat((returnMessage.payload as DataPayload).errors?.get(0)).isEqualTo("That's wrong!")
@@ -334,7 +335,7 @@ class WebsocketGraphQLWSProtocolHandlerTest {
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessage)
 
-        val returnMessage = jacksonObjectMapper().readValue<OperationMessage>(slotList[0].asBytes())
+        val returnMessage = objectMapper.readValue<OperationMessage>(slotList[0].asBytes())
         assertThat(returnMessage.type).isEqualTo(GQL_DATA)
 
         val payload = returnMessage.payload as DataPayload
