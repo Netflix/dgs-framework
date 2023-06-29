@@ -406,8 +406,8 @@ class DgsSchemaProvider(
                 .firstOrNull()
             ?: throw DataFetcherSchemaMismatchException(
                 "@DgsData in $methodClassName on field $field references " +
-                    "object type `$parentType` it has no field named `$field`. All data fetchers registered with @DgsData " +
-                    "must match a field in the schema."
+                    "object type `$parentType` it has no field named `$field`. All data fetchers registered with " +
+                    "@DgsData|@DgsQuery|@DgsMutation|@DgsSubscription must match a field in the schema."
             )
     }
 

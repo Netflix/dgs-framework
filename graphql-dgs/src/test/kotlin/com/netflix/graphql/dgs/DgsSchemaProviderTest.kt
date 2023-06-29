@@ -984,6 +984,46 @@ internal class DgsSchemaProviderTest {
         }
     }
 
+    @Test
+    fun `@DgsQuery annotation not matching any field on the schema should fail`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsQuery
+            fun hell(): String {
+                return "Hello"
+            }
+        }
+
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context)
+            val ex = assertThrows<DataFetcherSchemaMismatchException> {
+                schemaProvider.schema()
+            }
+            assertThat(ex).message().contains("a")
+        }
+    }
+
+    @Test
+    fun `@DgsQuery annotation not matching a field on extension should not fail`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsQuery
+            fun world(): String {
+                return "World"
+            }
+        }
+
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context)
+            val schema = schemaProvider.schema()
+            val build = GraphQL.newGraphQL(schema).build()
+            val executionResult = build.execute("{world}")
+            assertTrue(executionResult.isDataPresent)
+            val data = executionResult.getData<Map<String, *>>()
+            assertEquals("World", data["world"])
+        }
+    }
+
     private fun assertHello(build: GraphQL) {
         val executionResult = build.execute("{hello}")
         assertTrue(executionResult.isDataPresent)
