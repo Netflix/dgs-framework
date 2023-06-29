@@ -17,14 +17,11 @@
 package com.netflix.graphql.dgs.internal.method
 
 import com.netflix.graphql.dgs.DgsData
-import com.netflix.graphql.dgs.exceptions.DataFetcherInputArgumentSchemaMismatchException
 import com.netflix.graphql.dgs.internal.DataFetcherInvoker
 import graphql.schema.DataFetcher
-import org.springframework.core.BridgeMethodResolver
 import org.springframework.core.DefaultParameterNameDiscoverer
 import org.springframework.core.MethodParameter
 import org.springframework.core.ParameterNameDiscoverer
-import org.springframework.core.annotation.SynthesizingMethodParameter
 import java.lang.reflect.Method
 
 /**
