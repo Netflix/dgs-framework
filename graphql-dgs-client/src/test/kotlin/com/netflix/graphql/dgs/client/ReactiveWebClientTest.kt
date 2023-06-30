@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.client
 
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.ClientResponse
@@ -48,8 +49,7 @@ class ReactiveWebClientTest {
     @Test
     fun testMono() {
         val mono = DefaultGraphQLClient(url).reactiveExecuteQuery("{ hello }", emptyMap(), requestExecutor)
-        val graphQLResponse = mono.block()
-        @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-        assertThat(graphQLResponse!!.data["hello"]).isEqualTo("Hi!")
+        val graphQLResponse = mono.block() ?: fail("Expected non-null response")
+        assertThat(graphQLResponse.data["hello"]).isEqualTo("Hi!")
     }
 }

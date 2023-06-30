@@ -848,17 +848,17 @@ class MicrometerServletSmokeTest {
                 return schemaParser.parse(gqlSchema)
             }
 
-            @DgsQuery()
+            @DgsQuery
             fun ping(): String {
                 return "pong"
             }
 
-            @DgsQuery()
+            @DgsQuery
             fun hello(@InputArgument name: String): String {
                 return "Hello $name"
             }
 
-            @DgsQuery()
+            @DgsQuery
             @DgsEnableDataFetcherInstrumentation(false)
             fun someTrivialThings(): String {
                 return "some insignificance"
@@ -945,7 +945,7 @@ class MicrometerServletSmokeTest {
             executor.corePoolSize = 1
             executor.maxPoolSize = 1
             executor.setThreadNamePrefix("${MicrometerServletSmokeTest::class.java.simpleName}-test-")
-            executor.setQueueCapacity(10)
+            executor.queueCapacity = 10
             executor.initialize()
             return executor
         }
