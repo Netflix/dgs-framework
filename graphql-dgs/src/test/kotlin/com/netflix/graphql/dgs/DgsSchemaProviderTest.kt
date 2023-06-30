@@ -42,6 +42,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.fail
 import org.reactivestreams.Publisher
@@ -67,7 +68,8 @@ internal class DgsSchemaProviderTest {
         applicationContext: ApplicationContext,
         typeDefinitionRegistry: TypeDefinitionRegistry? = null,
         schemaLocations: List<String> = listOf(DgsSchemaProvider.DEFAULT_SCHEMA_LOCATION),
-        componentFilter: ((Any) -> Boolean)? = null
+        componentFilter: ((Any) -> Boolean)? = null,
+        schemaWiringValidationEnabled: Boolean = true
     ): DgsSchemaProvider {
         return DgsSchemaProvider(
             applicationContext = applicationContext,
@@ -80,7 +82,8 @@ internal class DgsSchemaProviderTest {
                     DataFetchingEnvironmentArgumentResolver()
                 )
             ),
-            componentFilter = componentFilter
+            componentFilter = componentFilter,
+            schemaWiringValidationEnabled = schemaWiringValidationEnabled
         )
     }
 
@@ -1021,6 +1024,26 @@ internal class DgsSchemaProviderTest {
             assertTrue(executionResult.isDataPresent)
             val data = executionResult.getData<Map<String, *>>()
             assertEquals("World", data["world"])
+        }
+    }
+
+    @Test
+    fun `When schemaWiringValidationEnabled is disabled declaring a data fetcher with no matching field should not fail`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsQuery
+            fun hell(): String {
+                return "Hello"
+            }
+        }
+
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val schemaWiringValidationEnabled = false
+            val schemaProvider = schemaProvider(
+                applicationContext = context,
+                schemaWiringValidationEnabled = schemaWiringValidationEnabled
+            )
+            assertDoesNotThrow { schemaProvider.schema() }
         }
     }
 
