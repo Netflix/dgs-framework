@@ -35,17 +35,17 @@ object MultipartVariableMapper {
     private val PERIOD = Pattern.compile("\\.")
 
     private val MAP_MAPPER = object : Mapper<MutableMap<String, Any>> {
-        override operator fun set(location: MutableMap<String, Any>, target: String, value: MultipartFile): Any? {
+        override fun set(location: MutableMap<String, Any>, target: String, value: MultipartFile): Any? {
             return location.put(target, value)
         }
 
         override fun recurse(location: MutableMap<String, Any>, target: String): Any {
-            return location[target] ?: error("")
+            return location[target] ?: throw VariableMappingException("Path not found: $target")
         }
     }
 
     private val LIST_MAPPER = object : Mapper<MutableList<Any>> {
-        override operator fun set(location: MutableList<Any>, target: String, value: MultipartFile): Any {
+        override fun set(location: MutableList<Any>, target: String, value: MultipartFile): Any? {
             return location.set(Integer.parseInt(target), value)
         }
 
@@ -55,18 +55,18 @@ object MultipartVariableMapper {
     }
 
     internal interface Mapper<T> {
-        operator fun set(location: T, target: String, value: MultipartFile): Any?
+        fun set(location: T, target: String, value: MultipartFile): Any?
         fun recurse(location: T, target: String): Any
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun mapVariable(objectPath: String, variables: Map<String, Any>, part: MultipartFile) {
+    fun mapVariable(objectPath: String, variables: MutableMap<String, Any>, part: MultipartFile) {
         val segments = PERIOD.split(objectPath)
 
         if (segments.size < 2) {
-            throw RuntimeException("object-path in map must have at least two segments")
+            throw VariableMappingException("object-path in map must have at least two segments")
         } else if ("variables" != segments[0]) {
-            throw RuntimeException("can only map into variables")
+            throw VariableMappingException("can only map into variables")
         }
 
         var currentLocation: Any = variables
@@ -75,23 +75,22 @@ object MultipartVariableMapper {
             if (i == segments.size - 1) {
                 if (currentLocation is Map<*, *>) {
                     if (null != MAP_MAPPER.set(currentLocation as MutableMap<String, Any>, segmentName, part)) {
-                        throw RuntimeException("expected null value when mapping $objectPath")
+                        throw VariableMappingException("expected null value when mapping $objectPath")
                     }
                 } else {
                     if (null != LIST_MAPPER.set(currentLocation as MutableList<Any>, segmentName, part)) {
-                        throw RuntimeException("expected null value when mapping $objectPath")
+                        throw VariableMappingException("expected null value when mapping $objectPath")
                     }
                 }
             } else {
-                if (currentLocation is Map<*, *>) {
-                    currentLocation = MAP_MAPPER.recurse(currentLocation as MutableMap<String, Any>, segmentName)
+                currentLocation = if (currentLocation is Map<*, *>) {
+                    MAP_MAPPER.recurse(currentLocation as MutableMap<String, Any>, segmentName)
                 } else {
-                    currentLocation = LIST_MAPPER.recurse(currentLocation as MutableList<Any>, segmentName)
-                }
-                if (null == currentLocation) {
-                    throw RuntimeException("found null intermediate value when trying to map $objectPath")
+                    LIST_MAPPER.recurse(currentLocation as MutableList<Any>, segmentName)
                 }
             }
         }
     }
 }
+
+class VariableMappingException(message: String) : RuntimeException(message)

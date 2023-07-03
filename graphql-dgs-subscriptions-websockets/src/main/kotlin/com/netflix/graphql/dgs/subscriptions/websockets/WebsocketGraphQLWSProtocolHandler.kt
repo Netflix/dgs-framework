@@ -24,6 +24,7 @@ import jakarta.annotation.PostConstruct
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
 import org.springframework.web.socket.TextMessage
@@ -75,7 +76,7 @@ class WebsocketGraphQLWSProtocolHandler(private val dgsQueryExecutor: DgsQueryEx
                 subscriptions[session.id]?.remove(id)
             }
             GQL_CONNECTION_TERMINATE -> {
-                logger.info("Terminated session " + session.id)
+                logger.info("Terminated session {}", session.id)
                 cleanupSubscriptionsForSession(session)
                 session.close()
             }
@@ -91,7 +92,7 @@ class WebsocketGraphQLWSProtocolHandler(private val dgsQueryExecutor: DgsQueryEx
     }
 
     private fun handleSubscription(id: String, payload: QueryPayload, session: WebSocketSession) {
-        val executionResult: ExecutionResult = dgsQueryExecutor.execute(payload.query, payload.variables)
+        val executionResult: ExecutionResult = dgsQueryExecutor.execute(payload.query, payload.variables.orEmpty())
         val subscriptionStream: Publisher<ExecutionResult> = executionResult.getData()
 
         subscriptionStream.subscribe(object : Subscriber<ExecutionResult> {
@@ -146,7 +147,7 @@ class WebsocketGraphQLWSProtocolHandler(private val dgsQueryExecutor: DgsQueryEx
     }
 
     private companion object {
-        val logger = LoggerFactory.getLogger(WebsocketGraphQLWSProtocolHandler::class.java)
+        val logger: Logger = LoggerFactory.getLogger(WebsocketGraphQLWSProtocolHandler::class.java)
         val objectMapper = jacksonObjectMapper()
     }
 }

@@ -16,224 +16,255 @@
 
 package com.netflix.graphql.dgs.mvc
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import graphql.ExecutionResultImpl
 import graphql.execution.reactive.SubscriptionPublisher
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
-import io.mockk.junit5.MockKExtension
-import io.mockk.slot
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.InstanceOfAssertFactories
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.eq
+import org.mockito.Mockito.`when`
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
-import org.springframework.web.context.request.WebRequest
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.post
 
-@ExtendWith(MockKExtension::class)
+@WebMvcTest(DgsRestController::class)
 class DgsRestControllerTest {
 
-    private val httpHeaders = HttpHeaders().apply {
-        contentType = MediaType.APPLICATION_JSON
-    }
+    @SpringBootApplication
+    open class App
 
-    @MockK
+    @MockBean
     lateinit var dgsQueryExecutor: DgsQueryExecutor
 
-    @MockK
-    lateinit var webRequest: WebRequest
+    @Autowired
+    lateinit var objectMapper: ObjectMapper
+
+    @Autowired
+    lateinit var mvc: MockMvc
 
     @Test
     fun `Is able to execute a a well formed query`() {
         val queryString = "query { hello }"
-        val requestBody = """
-            {
-                "query": "$queryString"
-            }
-        """.trimIndent()
 
-        every {
+        `when`(dgsQueryExecutor.execute(eq(queryString), eq(emptyMap()), any(), any(), any(), any())).thenReturn(
+            ExecutionResultImpl.newExecutionResult().data(mapOf("hello" to "hello")).build()
+        )
+
+        mvc.post("/graphql") {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(mapOf("query" to queryString))
+        }.andExpect {
+            status { isOk() }
+            content {
+                jsonPath("errors") {
+                    doesNotExist()
+                }
+                jsonPath("data") {
+                    isMap()
+                }
+                jsonPath("data.hello") {
+                    value("hello")
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `Is able to execute a a well formed query with null variables and extension`() {
+        val queryString = "query(\$stranger:String) {hello(name: \$stranger)}"
+
+        `when`(
             dgsQueryExecutor.execute(
-                queryString,
-                emptyMap(),
+                eq(queryString),
+                any(),
                 any(),
                 any(),
                 any(),
                 any()
             )
-        } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).build()
+        ).thenReturn(
+            ExecutionResultImpl.newExecutionResult().data(mapOf("hello" to "hello")).build()
+        )
 
-        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody.toByteArray(), null, null, null, httpHeaders, webRequest)
-
-        assertThat(result.body).asInstanceOf(InstanceOfAssertFactories.map(String::class.java, Any::class.java))
-            .doesNotContainKey("errors")
-            .extracting("data").asInstanceOf(InstanceOfAssertFactories.map(String::class.java, Any::class.java))
-            .extracting("hello").isEqualTo("hello")
+        mvc.post("/graphql") {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(mapOf("query" to queryString, "variables" to null))
+        }.andExpect {
+            status { isOk() }
+            content {
+                jsonPath("errors") {
+                    doesNotExist()
+                }
+                jsonPath("data") {
+                    isMap()
+                }
+                jsonPath("data.hello") {
+                    value("hello")
+                }
+            }
+        }
     }
 
     @Test
     fun `Passing a query with an operationName should execute the matching named query`() {
         val queryString = "query operationA{ hello } query operationB{ hi }"
-        val requestBody = """
-            {
-                "query": "$queryString",
-                "operationName": "operationB"
+        val captor = ArgumentCaptor.forClass(String::class.java)
+        `when`(dgsQueryExecutor.execute(eq(queryString), eq(emptyMap()), any(), any(), captor.capture(), any())).thenReturn(
+            ExecutionResultImpl.newExecutionResult().data(mapOf("hi" to "there")).build()
+        )
+
+        mvc.post("/graphql") {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(mapOf("query" to queryString, "operationName" to "operationB"))
+        }.andExpect {
+            status { isOk() }
+            content {
+                jsonPath("errors") {
+                    doesNotExist()
+                }
+                jsonPath("data") {
+                    isMap()
+                }
+                jsonPath("data.hi") {
+                    value("there")
+                }
             }
-        """.trimIndent()
-
-        val capturedOperationName = slot<String>()
-        every {
-            dgsQueryExecutor.execute(
-                queryString,
-                emptyMap(),
-                any(),
-                any(),
-                capture(capturedOperationName),
-                any()
-            )
-        } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hi", "there"))).build()
-
-        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody.toByteArray(), null, null, null, httpHeaders, webRequest)
-
-        assertThat(result.body).asInstanceOf(InstanceOfAssertFactories.map(String::class.java, Any::class.java))
-            .doesNotContainKey("errors")
-            .extracting("data").asInstanceOf(InstanceOfAssertFactories.map(String::class.java, Any::class.java))
-            .extracting("hi").isEqualTo("there")
-
-        assertThat(capturedOperationName.captured).isEqualTo("operationB")
+        }
+        assertEquals("operationB", captor.value)
     }
 
     @Test
     fun `Content-type application graphql should be handled correctly`() {
-        val requestBody = """
-            {
-               hello
+        val queryString = "{ hello }"
+
+        `when`(dgsQueryExecutor.execute(eq(queryString), eq(emptyMap()), any(), any(), any(), any())).thenReturn(
+            ExecutionResultImpl.newExecutionResult().data(mapOf("hello" to "hello")).build()
+        )
+
+        mvc.post("/graphql") {
+            contentType = MediaType.parseMediaType("application/graphql")
+            content = queryString
+        }.andExpect {
+            status { isOk() }
+            content {
+                jsonPath("errors") {
+                    doesNotExist()
+                }
+                jsonPath("data") {
+                    isMap()
+                }
+                jsonPath("data.hello") {
+                    value("hello")
+                }
             }
-        """.trimIndent()
-
-        every {
-            dgsQueryExecutor.execute(
-                requestBody,
-                emptyMap(),
-                any(),
-                any(),
-                any(),
-                any()
-            )
-        } returns ExecutionResultImpl.newExecutionResult().data(mapOf(Pair("hello", "hello"))).build()
-
-        val headers = HttpHeaders()
-        headers.contentType = MediaType("application", "graphql")
-        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody.toByteArray(), null, null, null, headers, webRequest)
-
-        assertThat(result.body).asInstanceOf(InstanceOfAssertFactories.map(String::class.java, Any::class.java))
-            .doesNotContainKey("errors")
-            .extracting("data").asInstanceOf(InstanceOfAssertFactories.map(String::class.java, Any::class.java))
-            .extracting("hello").isEqualTo("hello")
+        }
     }
 
     @Test
     fun `Return an error when a Subscription is attempted on the Graphql Endpoint`() {
         val queryString = "subscription { stocks { name } }"
-        val requestBody = """
-            {
-                "query": "$queryString"
+
+        `when`(dgsQueryExecutor.execute(eq(queryString), eq(emptyMap()), any(), any(), any(), any())).thenReturn(
+            ExecutionResultImpl.newExecutionResult().data(SubscriptionPublisher(null, null)).build()
+        )
+
+        mvc.post("/graphql") {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(mapOf("query" to queryString))
+        }.andExpect {
+            status { isBadRequest() }
+            content {
+                string("Trying to execute subscription on /graphql. Use /subscriptions instead!")
             }
-        """.trimIndent()
-
-        every {
-            dgsQueryExecutor.execute(
-                queryString,
-                emptyMap(),
-                any(),
-                any(),
-                any(),
-                any()
-            )
-        } returns ExecutionResultImpl.newExecutionResult()
-            .data(SubscriptionPublisher(null, null)).build()
-
-        val result =
-            DgsRestController(dgsQueryExecutor).graphql(requestBody.toByteArray(), null, null, null, httpHeaders, webRequest)
-        assertThat(result.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
-        assertThat(result.body).isEqualTo("Trying to execute subscription on /graphql. Use /subscriptions instead!")
+        }
     }
 
     @Test
     fun `Returns a request error if the no body is present`() {
-        val requestBody = ""
-        val result =
-            DgsRestController(dgsQueryExecutor)
-                .graphql(requestBody.toByteArray(), null, null, null, httpHeaders, webRequest)
-
-        assertThat(result)
-            .isInstanceOf(ResponseEntity::class.java)
-            .extracting { it.statusCode }
-            .isEqualTo(HttpStatus.BAD_REQUEST)
+        mvc.post("/graphql") {
+            contentType = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isBadRequest() }
+        }
     }
 
     @Test
     fun `Writes response headers when dgs-response-headers are set in extensions object`() {
         val queryString = "query { hello }"
-        val requestBody = """
-            {
-                "query": "$queryString"
+
+        `when`(dgsQueryExecutor.execute(eq(queryString), eq(emptyMap()), any(), any(), any(), any())).thenReturn(
+            ExecutionResultImpl.newExecutionResult().data(mapOf("hello" to "hello"))
+                .extensions(mapOf(DgsRestController.DGS_RESPONSE_HEADERS_KEY to mapOf("myHeader" to "hello")))
+                .build()
+        )
+
+        mvc.post("/graphql") {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(mapOf("query" to queryString))
+        }.andExpect {
+            status { isOk() }
+            header {
+                string("myHeader", "hello")
             }
-        """.trimIndent()
-
-        every {
-            dgsQueryExecutor.execute(
-                queryString,
-                emptyMap(),
-                any(),
-                any(),
-                any(),
-                any()
-            )
-        } returns ExecutionResultImpl.newExecutionResult()
-            .data(mapOf("hello" to "hello"))
-            .extensions(mapOf(DgsRestController.DGS_RESPONSE_HEADERS_KEY to mapOf("myHeader" to "hello")))
-            .build()
-
-        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody.toByteArray(), null, null, null, httpHeaders, webRequest)
-        assertThat(result.headers["myHeader"]).contains("hello")
-
-        assertThat(result.body).asInstanceOf(InstanceOfAssertFactories.map(String::class.java, Any::class.java))
-            .doesNotContainKey("extensions")
+            content {
+                jsonPath("errors") {
+                    doesNotExist()
+                }
+                jsonPath("extensions") {
+                    doesNotExist()
+                }
+                jsonPath("data") {
+                    isMap()
+                }
+                jsonPath("data.hello") {
+                    value("hello")
+                }
+            }
+        }
     }
 
     @Test
     fun `Writes response headers when dgs-response-headers are set in extensions object with additional extensions`() {
         val queryString = "query { hello }"
-        val requestBody = """
-            {
-                "query": "$queryString"
+
+        `when`(dgsQueryExecutor.execute(eq(queryString), eq(emptyMap()), any(), any(), any(), any())).thenReturn(
+            ExecutionResultImpl.newExecutionResult().data(mapOf("hello" to "hello"))
+                .extensions(mapOf("foo" to "bar", DgsRestController.DGS_RESPONSE_HEADERS_KEY to mapOf("myHeader" to "hello")))
+                .build()
+        )
+
+        mvc.post("/graphql") {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(mapOf("query" to queryString))
+        }.andExpect {
+            status { isOk() }
+            header {
+                string("myHeader", "hello")
             }
-        """.trimIndent()
-
-        every {
-            dgsQueryExecutor.execute(
-                queryString,
-                emptyMap(),
-                any(),
-                any(),
-                any(),
-                any()
-            )
-        } returns ExecutionResultImpl.newExecutionResult()
-            .data(mapOf("hello" to "hello"))
-            .extensions(mapOf(DgsRestController.DGS_RESPONSE_HEADERS_KEY to mapOf("myHeader" to "hello"), "foo" to "bar"))
-            .build()
-
-        val result = DgsRestController(dgsQueryExecutor).graphql(requestBody.toByteArray(), null, null, null, httpHeaders, webRequest)
-        assertThat(result.headers["myHeader"]).contains("hello")
-
-        assertThat(result.body).asInstanceOf(InstanceOfAssertFactories.map(String::class.java, Any::class.java))
-            .containsKey("extensions")
-            .extracting("extensions").asInstanceOf(InstanceOfAssertFactories.map(String::class.java, Any::class.java))
-            .containsEntry("foo", "bar")
+            content {
+                jsonPath("errors") {
+                    doesNotExist()
+                }
+                jsonPath("extensions") {
+                    isMap()
+                }
+                jsonPath("extensions.foo") {
+                    value("bar")
+                }
+                jsonPath("data") {
+                    isMap()
+                }
+                jsonPath("data.hello") {
+                    value("hello")
+                }
+            }
+        }
     }
 }

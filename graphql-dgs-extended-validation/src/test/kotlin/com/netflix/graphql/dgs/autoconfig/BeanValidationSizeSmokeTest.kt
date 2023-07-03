@@ -37,7 +37,7 @@ internal class BeanValidationSizeSmokeTest {
     @Test
     fun createPostWithInvalidInput() {
         val query = "mutation newPost(\$input: CreatePostInput!){ createPost(createPostInput: \$input) }"
-        var variables = mapOf(
+        val variables = mapOf(
             "input" to mapOf(
                 "title" to "test", // conflict with @Size directive
                 "content" to "test content"
@@ -52,7 +52,7 @@ internal class BeanValidationSizeSmokeTest {
     @Test
     fun createPostWithValidInput() {
         val query = "mutation newPost(\$input: CreatePostInput!){ createPost(createPostInput: \$input) }"
-        var variables = mapOf(
+        val variables = mapOf(
             "input" to mapOf(
                 "title" to "test title",
                 "content" to "test content"

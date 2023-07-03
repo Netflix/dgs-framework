@@ -35,47 +35,41 @@ import graphql.schema.DataFetcher
 import graphql.schema.FieldCoordinates
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.idl.TypeDefinitionRegistry
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
-import io.mockk.junit5.MockKExtension
-import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatNoException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.fail
 import org.reactivestreams.Publisher
+import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import org.springframework.context.ApplicationContext
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
-import java.util.*
+import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
-import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.KClass
+import kotlin.reflect.full.hasAnnotation
 
-@Suppress("unused")
-@ExtendWith(MockKExtension::class)
 internal class DgsSchemaProviderTest {
 
-    @MockK
-    lateinit var applicationContextMock: ApplicationContext
+    private val contextRunner = ApplicationContextRunner()
 
     data class MovieSearch(val title: String, val length: Int)
 
     data class SeriesSearch(val name: String, val episodes: Int)
 
     private fun schemaProvider(
+        applicationContext: ApplicationContext,
         typeDefinitionRegistry: TypeDefinitionRegistry? = null,
         schemaLocations: List<String> = listOf(DgsSchemaProvider.DEFAULT_SCHEMA_LOCATION),
-        componentFilter: (Any) -> Boolean = { true }
+        componentFilter: ((Any) -> Boolean)? = null
     ): DgsSchemaProvider {
         return DgsSchemaProvider(
-            applicationContext = applicationContextMock,
+            applicationContext = applicationContext,
             federationResolver = Optional.empty(),
             schemaLocations = schemaLocations,
             existingTypeDefinitionRegistry = Optional.ofNullable(typeDefinitionRegistry),
@@ -89,14 +83,16 @@ internal class DgsSchemaProviderTest {
         )
     }
 
-    private val defaultHelloFetcher = object : Any() {
+    @DgsComponent
+    class HelloFetcher {
         @DgsData(parentType = "Query", field = "hello")
         fun someFetcher(): String {
             return "Hello"
         }
     }
 
-    private val defaultVideoFetcher = object : Any() {
+    @DgsComponent
+    class VideoFetcher {
         @DgsData(parentType = "Query", field = "video")
         fun someFetcher(): Video {
             return Show("ShowA")
@@ -108,12 +104,14 @@ internal class DgsSchemaProviderTest {
         fun someFetcher(): String
     }
 
-    private val interfaceHelloFetcher = object : DefaultHelloFetcherInterface {
+    @DgsComponent
+    class FetcherImplementingInterface : DefaultHelloFetcherInterface {
         override fun someFetcher(): String =
             "Hello"
     }
 
-    private val searchFetcher = object : Any() {
+    @DgsComponent
+    class SearchFetcher {
         @DgsData(parentType = "Query", field = "search")
         fun someFetcher(): List<Any> {
             return listOf(
@@ -123,148 +121,159 @@ internal class DgsSchemaProviderTest {
         }
     }
 
-    @BeforeEach
-    fun setupApplicationMockedContext() {
-        withNoComponents()
-        withNoScalars()
-        withNoDirectives()
-    }
-
     @Test
     fun findSchemaFiles() {
-        val schemaFiles = schemaProvider().findSchemaFiles()
-        assertThat(schemaFiles.size).isGreaterThan(1)
-        assertEquals("schema1.graphqls", schemaFiles.first().filename)
+        contextRunner.run { context ->
+            val schemaFiles = schemaProvider(applicationContext = context).findSchemaFiles()
+            assertThat(schemaFiles.size).isGreaterThan(1)
+            assertEquals("schema1.graphqls", schemaFiles.first().filename)
+        }
     }
 
     @Test
     fun findMultipleSchemaFilesSingleLocation() {
-        val schemaFiles = schemaProvider(schemaLocations = listOf("classpath*:location1/**/*.graphql*"))
-            .findSchemaFiles()
-        assertThat(schemaFiles.size).isGreaterThan(2)
-        assertEquals("location1-schema1.graphqls", schemaFiles[0].filename)
-        assertEquals("location1-schema2.graphqls", schemaFiles[1].filename)
+        contextRunner.run { context ->
+            val schemaFiles = schemaProvider(applicationContext = context, schemaLocations = listOf("classpath*:location1/**/*.graphql*"))
+                .findSchemaFiles()
+            assertThat(schemaFiles.size).isGreaterThan(2)
+            assertEquals("location1-schema1.graphqls", schemaFiles[0].filename)
+            assertEquals("location1-schema2.graphqls", schemaFiles[1].filename)
+        }
     }
 
     @Test
     fun findMultipleSchemaFilesMultipleLocations() {
-        val schemaFiles = schemaProvider(
-            schemaLocations = listOf("classpath*:location1/**/*.graphql*", "classpath*:location2/**/*.graphql*")
-        ).findSchemaFiles()
-        assertThat(schemaFiles.size).isGreaterThan(4)
-        assertEquals("location1-schema1.graphqls", schemaFiles[0].filename)
-        assertEquals("location1-schema2.graphqls", schemaFiles[1].filename)
-        assertEquals("location2-schema1.graphqls", schemaFiles[2].filename)
-        assertEquals("location2-schema2.graphqls", schemaFiles[3].filename)
+        contextRunner.run { context ->
+            val schemaFiles = schemaProvider(
+                applicationContext = context,
+                schemaLocations = listOf("classpath*:location1/**/*.graphql*", "classpath*:location2/**/*.graphql*")
+            ).findSchemaFiles()
+            assertThat(schemaFiles.size).isGreaterThan(4)
+            assertEquals("location1-schema1.graphqls", schemaFiles[0].filename)
+            assertEquals("location1-schema2.graphqls", schemaFiles[1].filename)
+            assertEquals("location2-schema1.graphqls", schemaFiles[2].filename)
+            assertEquals("location2-schema2.graphqls", schemaFiles[3].filename)
+        }
     }
 
     @Test
     fun `Should specify sourceName on SourceLocation`() {
-        val schemaProvider = schemaProvider(
-            schemaLocations = listOf("classpath*:schema/**/*.graphql*")
-        )
+        contextRunner.run { context ->
+            val schemaProvider = schemaProvider(
+                applicationContext = context,
+                schemaLocations = listOf("classpath*:schema/**/*.graphql*")
+            )
 
-        val schema = schemaProvider.schema()
+            val schema = schemaProvider.schema()
 
-        for (type in schema.allTypesAsList) {
-            if (type.definition?.sourceLocation != null) {
-                assertNotNull(type.definition?.sourceLocation?.sourceName)
+            for (type in schema.allTypesAsList) {
+                if (type.definition?.sourceLocation != null) {
+                    assertNotNull(type.definition?.sourceLocation?.sourceName)
+                }
             }
         }
     }
 
     @Test
     fun findSchemaFilesEmptyDir() {
-        assertThrows<NoSchemaFoundException> {
+        contextRunner.run { context ->
+            assertThrows<NoSchemaFoundException> {
+                schemaProvider(
+                    applicationContext = context,
+                    schemaLocations = listOf("classpath*:notexists/**/*.graphql*")
+                ).findSchemaFiles()
+            }
+        }
+    }
+
+    @Test
+    fun allowNoSchemasWhenTypeRegistryProvided() {
+        contextRunner.run { context ->
             schemaProvider(
+                applicationContext = context,
+                typeDefinitionRegistry = TypeDefinitionRegistry(),
                 schemaLocations = listOf("classpath*:notexists/**/*.graphql*")
             ).findSchemaFiles()
         }
     }
 
     @Test
-    fun allowNoSchemasWhenTypeRegistryProvided() {
-        schemaProvider(
-            typeDefinitionRegistry = TypeDefinitionRegistry(),
-            schemaLocations = listOf("classpath*:notexists/**/*.graphql*")
-        ).findSchemaFiles()
-    }
-
-    @Test
     fun findSchemaFilesIgnoreNonGraphQLFiles() {
-        val schemaFiles = schemaProvider(
-            schemaLocations = listOf("classpath*:location3/**/*.graphql*")
-        ).findSchemaFiles()
-        assertEquals("location3-schema1.graphql", schemaFiles[0].filename)
-        assertEquals("location3-schema2.graphqls", schemaFiles[1].filename)
+        contextRunner.run { context ->
+            val schemaFiles = schemaProvider(
+                applicationContext = context,
+                schemaLocations = listOf("classpath*:location3/**/*.graphql*")
+            ).findSchemaFiles()
+            assertEquals("location3-schema1.graphql", schemaFiles[0].filename)
+            assertEquals("location3-schema2.graphqls", schemaFiles[1].filename)
 
-        // Check that the .graphqlconfig file has been ignored
-        val schemaFilesNames: MutableList<String> = mutableListOf()
-        for (schemaFile in schemaFiles) {
-            schemaFilesNames.add(schemaFile.filename)
+            // Check that the .graphqlconfig file has been ignored
+            val schemaFilesNames = mutableListOf<String>()
+            for (schemaFile in schemaFiles) {
+                schemaFilesNames.add(schemaFile.filename ?: error(""))
+            }
+            assertTrue(!schemaFilesNames.contains("location3-ignore.graphqlconfig"))
         }
-        assert(!schemaFilesNames.contains("location3-ignore.graphqlconfig"))
     }
 
     @Test
     fun addFetchers() {
-        val fetcher = object : Any() {
+        @DgsComponent
+        class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(): String {
                 return "Hello"
             }
         }
 
-        withComponents("helloFetcher" to fetcher)
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context)
+            assertThat(schemaProvider.resolvedDataFetchers()).isEmpty()
+            val schema = schemaProvider.schema()
+            assertThat(schemaProvider.resolvedDataFetchers())
+                .isNotEmpty.hasSize(1).first().satisfies(
+                    Consumer {
+                        assertThat(it.parentType).isEqualTo("Query")
+                        assertThat(it.field).isEqualTo("hello")
+                    }
+                )
 
-        val schemaProvider = schemaProvider()
-        assertThat(schemaProvider.resolvedDataFetchers()).isEmpty()
-        val schema = schemaProvider.schema()
-        assertThat(schemaProvider.resolvedDataFetchers())
-            .isNotEmpty.hasSize(1).first().satisfies(
-                Consumer {
-                    assertThat(it.parentType).isEqualTo("Query")
-                    assertThat(it.field).isEqualTo("hello")
-                }
-            )
-
-        val build = GraphQL.newGraphQL(schema).build()
-        assertHello(build)
-
-        verifyComponents()
+            val build = GraphQL.newGraphQL(schema).build()
+            assertHello(build)
+        }
     }
 
     @Test
     fun addPrivateFetchers() {
-        val fetcher = object : Any() {
+        @DgsComponent
+        class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
             private fun someFetcher(): String {
                 return "Hello"
             }
         }
 
-        withComponents("helloFetcher" to fetcher)
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context)
+            assertThat(schemaProvider.resolvedDataFetchers()).isEmpty()
+            val schema = schemaProvider.schema()
+            assertThat(schemaProvider.resolvedDataFetchers())
+                .isNotEmpty.hasSize(1).first().satisfies(
+                    Consumer {
+                        assertThat(it.parentType).isEqualTo("Query")
+                        assertThat(it.field).isEqualTo("hello")
+                    }
+                )
 
-        val schemaProvider = schemaProvider()
-        assertThat(schemaProvider.resolvedDataFetchers()).isEmpty()
-        val schema = schemaProvider.schema()
-        assertThat(schemaProvider.resolvedDataFetchers())
-            .isNotEmpty.hasSize(1).first().satisfies(
-                Consumer {
-                    assertThat(it.parentType).isEqualTo("Query")
-                    assertThat(it.field).isEqualTo("hello")
-                }
-            )
-
-        val build = GraphQL.newGraphQL(schema).build()
-        assertHello(build)
-
-        verifyComponents()
+            val build = GraphQL.newGraphQL(schema).build()
+            assertHello(build)
+        }
     }
 
     @Test
     fun withDuplicateFetchers() {
-        val fetcher = object : Any() {
+        @DgsComponent
+        class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
             fun fetcher1(): String {
                 return "fetcher1"
@@ -276,12 +285,12 @@ internal class DgsSchemaProviderTest {
             }
         }
 
-        withComponents("helloFetcher" to fetcher)
-
-        val error: InvalidDgsConfigurationException = assertThrows {
-            GraphQL.newGraphQL(schemaProvider().schema()).build()
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val exc = assertThrows<InvalidDgsConfigurationException> {
+                GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema()).build()
+            }
+            assertThat(exc.message).isEqualTo("Duplicate data fetchers registered for Query.hello")
         }
-        assertThat(error.message).isEqualTo("Duplicate data fetchers registered for Query.hello")
     }
 
     open class BaseClassFetcher {
@@ -293,17 +302,16 @@ internal class DgsSchemaProviderTest {
 
     @Test
     fun addSubClassFetchers() {
-        val fetcher = object : BaseClassFetcher() {
+        @DgsComponent
+        class Fetcher : BaseClassFetcher() {
             // We're only interested in the base class for this test
         }
 
-        withComponents("helloFetcher" to fetcher)
-
-        val schema = schemaProvider().schema()
-        val build = GraphQL.newGraphQL(schema).build()
-        assertHello(build)
-
-        verifyComponents()
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val schema = schemaProvider(applicationContext = context).schema()
+            val build = GraphQL.newGraphQL(schema).build()
+            assertHello(build)
+        }
     }
 
     @Test
@@ -318,12 +326,13 @@ internal class DgsSchemaProviderTest {
             }
         """.trimIndent()
 
-        withComponents("videoFetcher" to defaultVideoFetcher)
-        val error: InvalidTypeResolverException = assertThrows {
-            val build = GraphQL.newGraphQL(schemaProvider().schema(schema)).build()
-            build.execute("{video{title}}")
+        contextRunner.withBeans(VideoFetcher::class).run { context ->
+            val error = assertThrows<InvalidTypeResolverException> {
+                val build = GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema(schema)).build()
+                build.execute("{video{title}}")
+            }
+            assertThat(error.message).isEqualTo("The default type resolver could not find a suitable Java type for GraphQL interface type `Video`. Provide a @DgsTypeResolver for `Show`.")
         }
-        assertThat(error.message).isEqualTo("The default type resolver could not find a suitable Java type for GraphQL interface type `Video`. Provide a @DgsTypeResolver for `Show`.")
     }
 
     @Test
@@ -346,11 +355,11 @@ internal class DgsSchemaProviderTest {
             }
         """.trimIndent()
 
-        withComponents("searchResultTypeResolver" to searchFetcher)
-        val error: InvalidTypeResolverException = assertThrows {
-            val build = GraphQL.newGraphQL(schemaProvider().schema(schema)).build()
-            build.execute(
-                """
+        contextRunner.withBean(SearchFetcher::class.java).run { context ->
+            val error = assertThrows<InvalidTypeResolverException> {
+                val build = GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema(schema)).build()
+                build.execute(
+                    """
                      query {
                         search {
                             ...on MovieSearchResult {
@@ -363,10 +372,11 @@ internal class DgsSchemaProviderTest {
                             }
                         }
                     }
-                """.trimIndent()
-            )
+                    """.trimIndent()
+                )
+            }
+            assertThat(error.message).isEqualTo("The default type resolver could not find a suitable Java type for GraphQL union type `SearchResult`. Provide a @DgsTypeResolver for `MovieSearch`.")
         }
-        assertThat(error.message).isEqualTo("The default type resolver could not find a suitable Java type for GraphQL union type `SearchResult`. Provide a @DgsTypeResolver for `MovieSearch`.")
     }
 
     @Test
@@ -381,17 +391,20 @@ internal class DgsSchemaProviderTest {
             }
         """.trimIndent()
 
-        val resolverDefault = object : Any() {
+        @DgsComponent
+        class FetcherWithDefaultResolver {
             @DgsTypeResolver(name = "Video")
             @DgsDefaultTypeResolver
             fun resolveType(@Suppress("unused_parameter") type: Any): String? {
                 return null
             }
         }
-        withComponents("defaultResolver" to resolverDefault, "videoFetcher" to defaultVideoFetcher)
-        assertThatNoException().isThrownBy {
-            // verify that it should not trigger a build failure
-            GraphQL.newGraphQL(schemaProvider().schema(schema)).build()
+
+        contextRunner.withBean(FetcherWithDefaultResolver::class.java).withBean(VideoFetcher::class.java).run { context ->
+            assertThatNoException().isThrownBy {
+                // verify that it should not trigger a build failure
+                GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema(schema)).build()
+            }
         }
     }
 
@@ -411,7 +424,8 @@ internal class DgsSchemaProviderTest {
             }
         """.trimIndent()
 
-        val resolverDefault = object : Any() {
+        @DgsComponent
+        class FetcherWithDefaultResolver {
             @DgsTypeResolver(name = "Video")
             @DgsDefaultTypeResolver
             fun resolveType(@Suppress("unused_parameter") type: Any): String? {
@@ -419,37 +433,33 @@ internal class DgsSchemaProviderTest {
             }
         }
 
-        val resolverOverride = object : Any() {
+        @DgsComponent
+        class FetcherWithResolverOverride {
             @DgsTypeResolver(name = "Video")
             fun resolveType(@Suppress("unused_parameter") type: Any): String {
                 return "Show"
             }
         }
 
-        withComponents(
-            "defaultResolver" to resolverDefault,
-            "overrideResolver" to resolverOverride,
-            "videoFetcher" to defaultVideoFetcher
-        )
-
-        val build = GraphQL.newGraphQL(schemaProvider().schema(schema)).build()
-        assertVideo(build)
+        contextRunner.withBeans(FetcherWithDefaultResolver::class, FetcherWithResolverOverride::class, VideoFetcher::class).run { context ->
+            val build = GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema(schema)).build()
+            assertVideo(build)
+        }
     }
 
     @Test
     fun addFetchersWithoutDataFetchingEnvironment() {
-        withComponents("helloFetcher" to defaultHelloFetcher)
-
-        val schema = schemaProvider().schema()
-        val build = GraphQL.newGraphQL(schema).build()
-        assertHello(build)
-
-        verifyComponents()
+        contextRunner.withBeans(HelloFetcher::class).run { context ->
+            val schema = schemaProvider(applicationContext = context).schema()
+            val build = GraphQL.newGraphQL(schema).build()
+            assertHello(build)
+        }
     }
 
     @Test
     fun allowMergingStaticAndDynamicSchema() {
-        val codeRegistry = object {
+        @DgsComponent
+        class CodeRegistryComponent {
             @DgsCodeRegistry
             fun registry(
                 codeRegistryBuilder: GraphQLCodeRegistry.Builder,
@@ -461,28 +471,51 @@ internal class DgsSchemaProviderTest {
             }
         }
 
-        withComponents("helloFetcher" to defaultHelloFetcher, "codeRegistry" to codeRegistry)
+        contextRunner.withBeans(HelloFetcher::class, CodeRegistryComponent::class).run { context ->
+            val typeDefinitionRegistry = TypeDefinitionRegistry()
+            val objectTypeExtensionDefinition = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition()
+                .name("Query")
+                .fieldDefinition(
+                    FieldDefinition.newFieldDefinition()
+                        .name("myField")
+                        .type(TypeName("String")).build()
+                )
+                .build()
 
-        val typeDefinitionRegistry = TypeDefinitionRegistry()
-        val objectTypeExtensionDefinition = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition()
-            .name("Query")
-            .fieldDefinition(
-                FieldDefinition.newFieldDefinition()
-                    .name("myField")
-                    .type(TypeName("String")).build()
-            )
-            .build()
+            typeDefinitionRegistry.add(objectTypeExtensionDefinition)
+            val schema = schemaProvider(applicationContext = context, typeDefinitionRegistry = typeDefinitionRegistry).schema()
+            val build = GraphQL.newGraphQL(schema).build()
+            assertHello(build)
 
-        typeDefinitionRegistry.add(objectTypeExtensionDefinition)
-        val schema = schemaProvider(typeDefinitionRegistry = typeDefinitionRegistry).schema()
-        val build = GraphQL.newGraphQL(schema).build()
-        assertHello(build)
+            val executionResult2 = build.execute("{myField}")
+            assertTrue(executionResult2.isDataPresent)
 
-        val executionResult2 = build.execute("{myField}")
-        assertTrue(executionResult2.isDataPresent)
+            val data = executionResult2.getData<Map<String, *>>()
+            assertEquals("Runtime added field", data["myField"])
+        }
 
-        val data = executionResult2.getData<Map<String, *>>()
-        assertEquals("Runtime added field", data["myField"])
+        contextRunner.withBeans(HelloFetcher::class, CodeRegistryComponent::class).run { context ->
+            val typeDefinitionRegistry = TypeDefinitionRegistry()
+            val objectTypeExtensionDefinition = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition()
+                .name("Query")
+                .fieldDefinition(
+                    FieldDefinition.newFieldDefinition()
+                        .name("myField")
+                        .type(TypeName("String")).build()
+                )
+                .build()
+
+            typeDefinitionRegistry.add(objectTypeExtensionDefinition)
+            val schema = schemaProvider(applicationContext = context, typeDefinitionRegistry = typeDefinitionRegistry).schema()
+            val build = GraphQL.newGraphQL(schema).build()
+            assertHello(build)
+
+            val executionResult2 = build.execute("{myField}")
+            assertTrue(executionResult2.isDataPresent)
+
+            val data = executionResult2.getData<Map<String, *>>()
+            assertEquals("Runtime added field", data["myField"])
+        }
     }
 
     @Test
@@ -494,7 +527,9 @@ internal class DgsSchemaProviderTest {
         }
         """.trimIndent()
 
-        schemaProvider().schema(schema)
+        contextRunner.run { context ->
+            schemaProvider(applicationContext = context).schema(schema)
+        }
     }
 
     @Test
@@ -505,68 +540,69 @@ internal class DgsSchemaProviderTest {
             }
         """.trimIndent()
 
-        val dgsSchemaProvider = schemaProvider()
-        assertThat(dgsSchemaProvider.schema(schema)).isNotNull
+        contextRunner.run { context ->
+            val dgsSchemaProvider = schemaProvider(applicationContext = context)
+            assertThat(dgsSchemaProvider.schema(schema)).isNotNull
+        }
     }
 
     @Test
     fun enableInstrumentationForDataFetchers() {
-        withComponents("helloFetcher" to defaultHelloFetcher)
-        val provider = schemaProvider()
-        provider.schema()
-        assertThat(provider.isFieldInstrumentationEnabled("Query.hello")).isTrue
+        contextRunner.withBeans(HelloFetcher::class).run { context ->
+            val provider = schemaProvider(applicationContext = context)
+            provider.schema()
+            assertThat(provider.isFieldInstrumentationEnabled("Query.hello")).isTrue
+        }
     }
 
     @Test
     fun enableInstrumentationForDataFetchersFromInterfaces() {
-        withComponents("helloFetcher" to interfaceHelloFetcher)
-        val schemaProvider = schemaProvider()
-        schemaProvider.schema()
-        assertThat(schemaProvider.isFieldInstrumentationEnabled("Query.hello")).isTrue
+        contextRunner.withBeans(FetcherImplementingInterface::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context)
+            schemaProvider.schema()
+            assertThat(schemaProvider.isFieldInstrumentationEnabled("Query.hello")).isTrue
+        }
     }
 
     @Test
     fun disableInstrumentationForDataFetchersWithAnnotation() {
-        val noTracingDataFetcher = object : Any() {
+        @DgsComponent
+        class NoTracingFetcher {
             @DgsEnableDataFetcherInstrumentation(false)
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(): String {
                 return "Hello"
             }
         }
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                noTracingDataFetcher
-            )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
-        val schemaProvider = schemaProvider()
-        schemaProvider.schema()
-        assertThat(schemaProvider.isFieldInstrumentationEnabled("Query.hello")).isFalse
+        contextRunner.withBeans(NoTracingFetcher::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context)
+            schemaProvider.schema()
+            assertThat(schemaProvider.isFieldInstrumentationEnabled("Query.hello")).isFalse
+        }
     }
 
     @Test
     fun disableInstrumentationForAsyncDataFetchers() {
-        val noTracingDataFetcher = object : Any() {
+        @DgsComponent
+        class NoTracingDataFetcher {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(): CompletableFuture<String> {
                 return CompletableFuture.supplyAsync { "hello" }
             }
         }
 
-        withComponents("helloFetcher" to noTracingDataFetcher)
-
-        val schemaProvider = schemaProvider()
-        schemaProvider.schema()
-        assertThat(schemaProvider.isFieldInstrumentationEnabled("Query.hello")).isFalse
+        contextRunner.withBeans(NoTracingDataFetcher::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context)
+            schemaProvider.schema()
+            assertThat(schemaProvider.isFieldInstrumentationEnabled("Query.hello")).isFalse
+        }
     }
 
     @Test
     fun enableInstrumentationForAsyncDataFetchersWithAnnotation() {
-        val noTracingDataFetcher = object : Any() {
+        @DgsComponent
+        class NoTracingDataFetcher {
             @DgsEnableDataFetcherInstrumentation(true)
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(): CompletableFuture<String> {
@@ -574,10 +610,11 @@ internal class DgsSchemaProviderTest {
             }
         }
 
-        withComponents("helloFetcher" to noTracingDataFetcher)
-        val schemaProvider = schemaProvider()
-        schemaProvider.schema()
-        assertThat(schemaProvider.isFieldInstrumentationEnabled("Query.hello")).isTrue
+        contextRunner.withBeans(NoTracingDataFetcher::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context)
+            schemaProvider.schema()
+            assertThat(schemaProvider.isFieldInstrumentationEnabled("Query.hello")).isTrue
+        }
     }
 
     @Test
@@ -596,19 +633,20 @@ internal class DgsSchemaProviderTest {
             }                   
         """.trimIndent()
 
-        val titleFetcher = object : Any() {
+        @DgsComponent
+        class TitleFetcher {
             @DgsData(parentType = "Video", field = "title")
             fun someFetcher(): String {
                 return "Title on Interface"
             }
         }
 
-        withComponents("videoFetcher" to defaultVideoFetcher, "titleFetcher" to titleFetcher)
-
-        val schemaProvider = schemaProvider()
-        schemaProvider.schema(schema)
-        assertThat(schemaProvider.isFieldInstrumentationEnabled("Video.title")).isTrue
-        assertThat(schemaProvider.isFieldInstrumentationEnabled("Show.title")).isTrue
+        contextRunner.withBeans(HelloFetcher::class, TitleFetcher::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context)
+            schemaProvider.schema(schema)
+            assertThat(schemaProvider.isFieldInstrumentationEnabled("Video.title")).isTrue
+            assertThat(schemaProvider.isFieldInstrumentationEnabled("Show.title")).isTrue
+        }
     }
 
     @Test
@@ -627,7 +665,8 @@ internal class DgsSchemaProviderTest {
             }                   
         """.trimIndent()
 
-        val titleFetcher = object : Any() {
+        @DgsComponent
+        class TitleFetcher {
             @DgsEnableDataFetcherInstrumentation(false)
             @DgsData(parentType = "Video", field = "title")
             fun someFetcher(): String {
@@ -635,12 +674,12 @@ internal class DgsSchemaProviderTest {
             }
         }
 
-        withComponents("videoFetcher" to defaultVideoFetcher, "titleFetcher" to titleFetcher)
-
-        val schemaProvider = schemaProvider()
-        schemaProvider.schema(schema)
-        assertThat(schemaProvider.isFieldInstrumentationEnabled("Video.title")).isFalse
-        assertThat(schemaProvider.isFieldInstrumentationEnabled("Show.title")).isFalse
+        contextRunner.withBeans(VideoFetcher::class, TitleFetcher::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context)
+            schemaProvider.schema(schema)
+            assertThat(schemaProvider.isFieldInstrumentationEnabled("Video.title")).isFalse
+            assertThat(schemaProvider.isFieldInstrumentationEnabled("Show.title")).isFalse
+        }
     }
 
     @Test
@@ -659,202 +698,196 @@ internal class DgsSchemaProviderTest {
             }                   
         """.trimIndent()
 
-        val titleFetcher = object : Any() {
+        @DgsComponent
+        class TitleFetcher {
             @DgsData(parentType = "Video", field = "title")
             fun someFetcher(): CompletableFuture<String> {
                 return CompletableFuture.supplyAsync { "Title on Interface" }
             }
         }
 
-        withComponents("videoFetcher" to defaultVideoFetcher, "titleFetcher" to titleFetcher)
-
-        val schemaProvider = schemaProvider()
-        schemaProvider.schema(schema)
-        assertThat(schemaProvider.isFieldInstrumentationEnabled("Video.title")).isFalse
-        assertThat(schemaProvider.isFieldInstrumentationEnabled("Show.title")).isFalse
+        contextRunner.withBeans(VideoFetcher::class, TitleFetcher::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context)
+            schemaProvider.schema(schema)
+            assertThat(schemaProvider.isFieldInstrumentationEnabled("Video.title")).isFalse
+            assertThat(schemaProvider.isFieldInstrumentationEnabled("Show.title")).isFalse
+        }
     }
 
     @Test
     fun `DataFetcher with @DgsQuery annotation without field name`() {
-        val fetcher = object : Any() {
+        @DgsComponent
+        class Fetcher {
             @DgsQuery
             fun hello(): String {
                 return "Hello"
             }
         }
 
-        withComponents("helloFetcher" to fetcher)
-
-        val schemaProvider = schemaProvider()
-        val schema = schemaProvider.schema()
-        val build = GraphQL.newGraphQL(schema).build()
-        assertHello(build)
-
-        verifyComponents()
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context)
+            val schema = schemaProvider.schema()
+            val build = GraphQL.newGraphQL(schema).build()
+            assertHello(build)
+        }
     }
 
     @Test
     fun `DataFetcher with @DgsData annotation without field name`() {
-        val fetcher = object : Any() {
+        @DgsComponent
+        class Fetcher {
             @DgsData(parentType = "Query")
             fun hello(): String {
                 return "Hello"
             }
         }
 
-        withComponents("helloFetcher" to fetcher)
-
-        val schemaProvider = schemaProvider()
-        val schema = schemaProvider.schema()
-        val build = GraphQL.newGraphQL(schema).build()
-        assertHello(build)
-
-        verifyComponents()
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context)
+            val schema = schemaProvider.schema()
+            val build = GraphQL.newGraphQL(schema).build()
+            assertHello(build)
+        }
     }
 
     @Test
     fun `DataFetcher with @DgsQuery annotation with field name`() {
-        val fetcher = object : Any() {
+        @DgsComponent
+        class Fetcher {
             @DgsQuery(field = "hello")
             fun someName(): String {
                 return "Hello"
             }
         }
 
-        withComponents("helloFetcher" to fetcher)
-
-        val schema = schemaProvider().schema()
-        val build = GraphQL.newGraphQL(schema).build()
-        assertHello(build)
-
-        verifyComponents()
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val schema = schemaProvider(applicationContext = context).schema()
+            val build = GraphQL.newGraphQL(schema).build()
+            assertHello(build)
+        }
     }
 
     @Test
     fun `DataFetcher with @DgsMutation annotation without field name`() {
-        val fetcher = object : Any() {
+        @DgsComponent
+        class Fetcher {
             @DgsMutation
             fun addMessage(@InputArgument message: String): String {
                 return message
             }
         }
 
-        withComponents("helloFetcher" to fetcher)
-
-        val schema = schemaProvider().schema(
-            """
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val schema = schemaProvider(applicationContext = context).schema(
+                """
             type Mutation {
                 addMessage(message: String): String
             }
-            """.trimIndent()
-        )
-        val build = GraphQL.newGraphQL(schema).build()
-        assertInputMessage(build)
-
-        verifyComponents()
+                """.trimIndent()
+            )
+            val build = GraphQL.newGraphQL(schema).build()
+            assertInputMessage(build)
+        }
     }
 
     @Test
     fun `DataFetcher with @DgsMutation annotation with field name`() {
-        val fetcher = object : Any() {
+        @DgsComponent
+        class Fetcher {
             @DgsMutation(field = "addMessage")
             fun someName(@InputArgument message: String): String {
                 return message
             }
         }
 
-        withComponents("helloFetcher" to fetcher)
-
-        val schema = schemaProvider().schema(
-            """
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val schema = schemaProvider(applicationContext = context).schema(
+                """
             type Mutation {
                 addMessage(message: String): String
             }
-            """.trimIndent()
-        )
-        val build = GraphQL.newGraphQL(schema).build()
-        assertInputMessage(build)
-
-        verifyComponents()
+                """.trimIndent()
+            )
+            val build = GraphQL.newGraphQL(schema).build()
+            assertInputMessage(build)
+        }
     }
 
     @Test
     fun `Subscription dataFetcher with @DgsSubscription annotation without field name`() {
-        val fetcher = object : Any() {
+        @DgsComponent
+        class Fetcher {
             @DgsSubscription
             fun messages(): Publisher<String> {
                 return Flux.just("hello")
             }
         }
 
-        withComponents("helloFetcher" to fetcher)
-
-        val schema = schemaProvider().schema(
-            """
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val schema = schemaProvider(applicationContext = context).schema(
+                """
             type Subscription {
                 messages: String
             }
-            """.trimIndent()
-        )
-        val build = GraphQL.newGraphQL(schema).build()
-        assertSubscription(build)
-
-        verifyComponents()
+                """.trimIndent()
+            )
+            val build = GraphQL.newGraphQL(schema).build()
+            assertSubscription(build)
+        }
     }
 
     @Test
     fun `Subscription dataFetcher with @DgsSubscription annotation with field name`() {
-        val fetcher = object : Any() {
+        @DgsComponent
+        class Fetcher {
             @DgsSubscription(field = "messages")
             fun someMethod(): Publisher<String> {
                 return Flux.just("hello")
             }
         }
 
-        withComponents("helloFetcher" to fetcher)
-
-        val schema = schemaProvider().schema(
-            """
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val schema = schemaProvider(applicationContext = context).schema(
+                """
             type Subscription {
                 messages: String
             }
-            """.trimIndent()
-        )
-        val build = GraphQL.newGraphQL(schema).build()
-        assertSubscription(build)
-
-        verifyComponents()
+                """.trimIndent()
+            )
+            val build = GraphQL.newGraphQL(schema).build()
+            assertSubscription(build)
+        }
     }
 
     annotation class TestAnnotation
 
     @Test
     fun `SchemaProvider with component filter`() {
-        val fetcher1 = @TestAnnotation object : Any() {
+        @DgsComponent
+        @TestAnnotation
+        class Fetcher1 {
             @DgsQuery(field = "hello")
             fun someName(): String {
                 return "Goodbye"
             }
         }
-        val fetcher2 = object : Any() {
+
+        @DgsComponent
+        class Fetcher2 {
             @DgsQuery(field = "hello")
             fun someName(): String {
                 return "Hello"
             }
         }
 
-        withComponents(
-            "helloFetcher1" to fetcher1,
-            "helloFetcher2" to fetcher2
-        )
-
-        val schema = schemaProvider(componentFilter = {
-            it::class.findAnnotation<TestAnnotation>() == null
-        }).schema()
-        val build = GraphQL.newGraphQL(schema).build()
-        assertHello(build)
-
-        verifyComponents()
+        contextRunner.withBeans(Fetcher1::class, Fetcher2::class).run { context ->
+            val schema = schemaProvider(
+                applicationContext = context,
+                componentFilter = { !it::class.hasAnnotation<TestAnnotation>() }
+            ).schema()
+            val build = GraphQL.newGraphQL(schema).build()
+            assertHello(build)
+        }
     }
 
     private fun assertHello(build: GraphQL) {
@@ -894,23 +927,11 @@ internal class DgsSchemaProviderTest {
         assertEquals("hello", data["addMessage"])
     }
 
-    private fun withComponents(vararg components: Pair<String, Any>) {
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(*components)
-    }
-
-    private fun withNoComponents() = withComponents()
-    private fun withScalars(vararg scalars: Pair<String, Any>) {
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(*scalars)
-    }
-
-    private fun withNoScalars() = withScalars()
-    private fun withDirectives(vararg directives: Pair<String, Any>) {
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns mapOf(*directives)
-    }
-
-    private fun withNoDirectives() = withDirectives()
-
-    private fun verifyComponents() {
-        verify { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) }
+    private fun ApplicationContextRunner.withBeans(vararg beanClasses: KClass<*>): ApplicationContextRunner {
+        var context = this
+        for (klazz in beanClasses) {
+            context = context.withBean(klazz.java)
+        }
+        return context
     }
 }
