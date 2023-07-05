@@ -45,14 +45,18 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.fail
+import org.junit.jupiter.api.io.TempDir
 import org.reactivestreams.Publisher
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import org.springframework.context.ApplicationContext
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
+import kotlin.io.path.createTempFile
 import kotlin.reflect.KClass
 import kotlin.reflect.full.hasAnnotation
 
@@ -860,6 +864,21 @@ internal class DgsSchemaProviderTest {
             )
             val build = GraphQL.newGraphQL(schema).build()
             assertSubscription(build)
+        }
+    }
+
+    @Test
+    fun `Schema provider works when a schema file is not terminated by a newline`(@TempDir tempDir: Path) {
+        val path = createTempFile(directory = tempDir, prefix = "foo", suffix = ".graphql")
+        val anotherPath = createTempFile(directory = tempDir, prefix = "bar", suffix = ".graphql")
+
+        Files.writeString(path, """type Foo { name: String }""")
+        Files.writeString(anotherPath, """directive @bar on FIELD_DEFINITION""")
+
+        contextRunner.run { context ->
+            val schema = schemaProvider(context, schemaLocations = listOf("file:$tempDir/*.graphql")).schema()
+            assertThat(schema.getType("Foo")).isNotNull
+            assertThat(schema.getDirective("bar")).isNotNull
         }
     }
 
