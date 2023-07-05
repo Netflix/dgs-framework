@@ -138,6 +138,9 @@ class DgsSchemaProvider(
                 .trackData(false)
             for (schemaFile in findSchemaFiles(hasDynamicTypeRegistry)) {
                 readerBuilder.reader(schemaFile.inputStream.reader(), schemaFile.filename)
+                // Add a reader that inserts a newline between schema files to avoid issues when
+                // the source files aren't newline-terminated.
+                readerBuilder.reader("\n".reader(), "newline")
             }
             SchemaParser().parse(readerBuilder.build())
         } else {
