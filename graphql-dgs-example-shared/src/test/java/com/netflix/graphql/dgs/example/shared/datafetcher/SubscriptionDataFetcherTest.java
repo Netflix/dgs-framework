@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.example.shared.datafetcher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.graphql.dgs.DgsQueryExecutor;
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration;
+import com.netflix.graphql.dgs.autoconfig.DgsExtendedScalarsAutoConfiguration;
 import com.netflix.graphql.dgs.example.shared.types.Stock;
 import com.netflix.graphql.dgs.pagination.DgsPaginationAutoConfiguration;
 import graphql.ExecutionResult;
@@ -33,7 +34,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {DgsAutoConfiguration.class, SubscriptionDataFetcher.class, DgsPaginationAutoConfiguration.class})
+@SpringBootTest(classes = {DgsAutoConfiguration.class, SubscriptionDataFetcher.class, DgsExtendedScalarsAutoConfiguration.class, DgsPaginationAutoConfiguration.class})
 class SubscriptionDataFetcherTest {
 
     @Autowired
