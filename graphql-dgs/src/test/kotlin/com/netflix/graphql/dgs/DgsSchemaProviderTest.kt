@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs
 
+import com.netflix.graphql.dgs.exceptions.DataFetcherSchemaMismatchException
 import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
 import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
@@ -41,16 +42,21 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.fail
+import org.junit.jupiter.api.io.TempDir
 import org.reactivestreams.Publisher
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import org.springframework.context.ApplicationContext
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
+import kotlin.io.path.createTempFile
 import kotlin.reflect.KClass
 import kotlin.reflect.full.hasAnnotation
 
@@ -66,7 +72,8 @@ internal class DgsSchemaProviderTest {
         applicationContext: ApplicationContext,
         typeDefinitionRegistry: TypeDefinitionRegistry? = null,
         schemaLocations: List<String> = listOf(DgsSchemaProvider.DEFAULT_SCHEMA_LOCATION),
-        componentFilter: ((Any) -> Boolean)? = null
+        componentFilter: ((Any) -> Boolean)? = null,
+        schemaWiringValidationEnabled: Boolean = true
     ): DgsSchemaProvider {
         return DgsSchemaProvider(
             applicationContext = applicationContext,
@@ -79,7 +86,8 @@ internal class DgsSchemaProviderTest {
                     DataFetchingEnvironmentArgumentResolver()
                 )
             ),
-            componentFilter = componentFilter
+            componentFilter = componentFilter,
+            schemaWiringValidationEnabled = schemaWiringValidationEnabled
         )
     }
 
@@ -641,7 +649,7 @@ internal class DgsSchemaProviderTest {
             }
         }
 
-        contextRunner.withBeans(HelloFetcher::class, TitleFetcher::class).run { context ->
+        contextRunner.withBeans(TitleFetcher::class).run { context ->
             val schemaProvider = schemaProvider(applicationContext = context)
             schemaProvider.schema(schema)
             assertThat(schemaProvider.isFieldInstrumentationEnabled("Video.title")).isTrue
@@ -859,6 +867,21 @@ internal class DgsSchemaProviderTest {
         }
     }
 
+    @Test
+    fun `Schema provider works when a schema file is not terminated by a newline`(@TempDir tempDir: Path) {
+        val path = createTempFile(directory = tempDir, prefix = "foo", suffix = ".graphql")
+        val anotherPath = createTempFile(directory = tempDir, prefix = "bar", suffix = ".graphql")
+
+        Files.writeString(path, """type Foo { name: String }""")
+        Files.writeString(anotherPath, """directive @bar on FIELD_DEFINITION""")
+
+        contextRunner.run { context ->
+            val schema = schemaProvider(context, schemaLocations = listOf("file:$tempDir/*.graphql")).schema()
+            assertThat(schema.getType("Foo")).isNotNull
+            assertThat(schema.getDirective("bar")).isNotNull
+        }
+    }
+
     annotation class TestAnnotation
 
     @Test
@@ -887,6 +910,159 @@ internal class DgsSchemaProviderTest {
             ).schema()
             val build = GraphQL.newGraphQL(schema).build()
             assertHello(build)
+        }
+    }
+
+    @Test
+    fun `@DgsData annotation not matching any field on the schema should fail`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsData(parentType = "Query")
+            fun hell(): String {
+                return "Hello"
+            }
+        }
+
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context)
+            assertThrows<DataFetcherSchemaMismatchException> {
+                schemaProvider.schema()
+            }
+        }
+    }
+
+    @Test
+    fun `@DgsData annotation not matching a field on extension should not fail`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsData(parentType = "Query")
+            fun world(): String {
+                return "World"
+            }
+        }
+
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context)
+            val schema = schemaProvider.schema()
+            val build = GraphQL.newGraphQL(schema).build()
+            val executionResult = build.execute("{world}")
+            assertTrue(executionResult.isDataPresent)
+            val data = executionResult.getData<Map<String, *>>()
+            assertEquals("World", data["world"])
+        }
+    }
+
+    @Test
+    fun `@DgsData annotation not matching any field on the schema should fail - interface`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsData(parentType = "Character")
+            fun nam(): String {
+                return "Hello"
+            }
+        }
+
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context)
+            assertThrows<DataFetcherSchemaMismatchException> {
+                schemaProvider.schema()
+            }
+        }
+    }
+
+    @Test
+    fun `@DgsData annotation not matching a field on extension should not fail - interface`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsData(parentType = "Character")
+            fun age(): Int {
+                return 42
+            }
+
+            @DgsData(parentType = "Query")
+            fun character(): Map<String, Any> {
+                return mapOf()
+            }
+        }
+
+        @DgsComponent
+        class FetcherWithDefaultResolver {
+            @DgsTypeResolver(name = "Character")
+            @DgsDefaultTypeResolver
+            fun resolveType(@Suppress("unused_parameter") type: Any): String {
+                return "Human"
+            }
+        }
+
+        contextRunner.withBeans(Fetcher::class, FetcherWithDefaultResolver::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context)
+            val schema = schemaProvider.schema()
+            val build = GraphQL.newGraphQL(schema).build()
+            val executionResult = build.execute("{character { age }}")
+            assertTrue(executionResult.isDataPresent)
+            val data = executionResult.getData<Map<String, *>>()
+            assertNotNull(data["character"])
+            assertEquals(42, (data["character"] as Map<*, *>)["age"])
+        }
+    }
+
+    @Test
+    fun `@DgsQuery annotation not matching any field on the schema should fail`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsQuery
+            fun hell(): String {
+                return "Hello"
+            }
+        }
+
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context)
+            val ex = assertThrows<DataFetcherSchemaMismatchException> {
+                schemaProvider.schema()
+            }
+            assertThat(ex).message().contains("a")
+        }
+    }
+
+    @Test
+    fun `@DgsQuery annotation not matching a field on extension should not fail`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsQuery
+            fun world(): String {
+                return "World"
+            }
+        }
+
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context)
+            val schema = schemaProvider.schema()
+            val build = GraphQL.newGraphQL(schema).build()
+            val executionResult = build.execute("{world}")
+            assertTrue(executionResult.isDataPresent)
+            val data = executionResult.getData<Map<String, *>>()
+            assertEquals("World", data["world"])
+        }
+    }
+
+    @Test
+    fun `When schemaWiringValidationEnabled is disabled declaring a data fetcher with no matching field should not fail`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsQuery
+            fun hell(): String {
+                return "Hello"
+            }
+        }
+
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val schemaWiringValidationEnabled = false
+            val schemaProvider = schemaProvider(
+                applicationContext = context,
+                schemaWiringValidationEnabled = schemaWiringValidationEnabled
+            )
+            assertDoesNotThrow { schemaProvider.schema() }
         }
     }
 

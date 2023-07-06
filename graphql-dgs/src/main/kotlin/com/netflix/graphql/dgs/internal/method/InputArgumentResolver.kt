@@ -34,7 +34,7 @@ class InputArgumentResolver(
         return parameter.hasParameterAnnotation(InputArgument::class.java)
     }
 
-    override fun resolveArgumentName(parameter: MethodParameter): String? {
+    override fun resolveArgumentName(parameter: MethodParameter): String {
         val annotation = parameter.getParameterAnnotation(InputArgument::class.java)
             ?: throw IllegalArgumentException("Unsupported parameter type [${parameter.parameterType.name}]. supportsParameter should be called first.")
 

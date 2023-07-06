@@ -57,7 +57,7 @@ abstract class AbstractInputArgumentResolver(inputObjectMapper: InputObjectMappe
         return convertedValue
     }
 
-    protected abstract fun resolveArgumentName(parameter: MethodParameter): String?
+    internal abstract fun resolveArgumentName(parameter: MethodParameter): String?
 
     private fun getArgumentName(parameter: MethodParameter): String? {
         val cachedName = argumentNameCache[parameter]
