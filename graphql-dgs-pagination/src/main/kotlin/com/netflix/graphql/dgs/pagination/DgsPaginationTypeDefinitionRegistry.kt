@@ -62,7 +62,7 @@ class DgsPaginationTypeDefinitionRegistry {
     private fun createConnection(type: String): ObjectTypeDefinition {
         return ObjectTypeDefinition.newObjectTypeDefinition()
             .name(type + "Connection")
-            .description(createDescription(type + " Connection"))
+            .description(createDescription("$type Connection"))
             .fieldDefinition(createFieldDefinition("edges", ListType(TypeName(type + "Edge"))))
             .fieldDefinition(createFieldDefinition("pageInfo", NonNullType(TypeName("PageInfo"))))
             .build()
@@ -71,7 +71,7 @@ class DgsPaginationTypeDefinitionRegistry {
     private fun createEdge(type: String): ObjectTypeDefinition {
         return ObjectTypeDefinition.newObjectTypeDefinition()
             .name(type + "Edge")
-            .description(createDescription(type + " Edge"))
+            .description(createDescription("$type Edge"))
             .fieldDefinition(createFieldDefinition("cursor", TypeName("String")))
             .fieldDefinition(createFieldDefinition("node", TypeName(type)))
             .build()

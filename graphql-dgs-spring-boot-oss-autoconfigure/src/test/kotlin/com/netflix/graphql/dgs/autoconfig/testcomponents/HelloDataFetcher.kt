@@ -33,7 +33,6 @@ open class HelloDataFetcherConfig {
     }
 }
 
-@Suppress("UNUSED_PARAMETER")
 @DgsComponent
 class HelloDataFetcher {
     @DgsData(parentType = "Query", field = "hello")

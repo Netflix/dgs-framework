@@ -136,11 +136,12 @@ class CustomDirectivesTest {
             methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
         )
 
-        assertDoesNotThrow() {
+        assertDoesNotThrow {
             provider.schema(
                 """
                 type Query {
                     hello: String
+                    word: String
                 }
                 """.trimIndent()
             )

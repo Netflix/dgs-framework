@@ -17,6 +17,7 @@
 dependencies {
     implementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
     implementation(project(":graphql-dgs-pagination"))
+    implementation(project(":graphql-dgs-extended-scalars"))
     implementation("io.projectreactor:reactor-core")
     implementation("org.springframework:spring-context")
     implementation("org.springframework:spring-web")

@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.core.MethodParameter
 import org.springframework.core.convert.TypeDescriptor
 import org.springframework.core.convert.support.DefaultConversionService
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
@@ -58,7 +57,7 @@ abstract class AbstractInputArgumentResolver(inputObjectMapper: InputObjectMappe
         return convertedValue
     }
 
-    protected abstract fun resolveArgumentName(parameter: MethodParameter): String?
+    internal abstract fun resolveArgumentName(parameter: MethodParameter): String?
 
     private fun getArgumentName(parameter: MethodParameter): String? {
         val cachedName = argumentNameCache[parameter]

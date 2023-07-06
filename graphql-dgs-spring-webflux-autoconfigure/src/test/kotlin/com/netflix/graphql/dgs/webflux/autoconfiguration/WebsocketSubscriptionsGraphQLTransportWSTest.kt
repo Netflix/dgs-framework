@@ -195,7 +195,7 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
 
                 override fun handle(session: WebSocketSession): Mono<Void> {
                     registerCloseHandler(session, output)
-                    var pingMessage: Publisher<WebSocketMessage> = Mono.just(toWebsocketMessage(Message.PingMessage(), session))
+                    val pingMessage: Publisher<WebSocketMessage> = Mono.just(toWebsocketMessage(Message.PingMessage(), session))
                     return session.send(pingMessage).thenMany(
                         session.receive().flatMap {
                             Flux.just(toWebsocketMessage(Message.PingMessage(), session))
@@ -225,7 +225,7 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
                     registerCloseHandler(session, output)
 
                     var counter = 0
-                    var clientConnectionInitRequest: Publisher<WebSocketMessage> = if (sendMultipleConnectionInit) {
+                    val clientConnectionInitRequest: Publisher<WebSocketMessage> = if (sendMultipleConnectionInit) {
                         Flux.just(toWebsocketMessage(Message.ConnectionInitMessage(), session), toWebsocketMessage(Message.ConnectionInitMessage(), session))
                     } else {
                         Mono.just(toWebsocketMessage(Message.ConnectionInitMessage(), session))
@@ -242,7 +242,7 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
 
                             when (operationMessage) {
                                 is Message.ConnectionAckMessage -> {
-                                    var subscriptionRequest: Publisher<WebSocketMessage>
+                                    val subscriptionRequest: Publisher<WebSocketMessage>
                                     if (sendDuplicateSubscriptionRequest) {
                                         subscriptionRequest = Flux.just(
                                             toWebsocketMessage(

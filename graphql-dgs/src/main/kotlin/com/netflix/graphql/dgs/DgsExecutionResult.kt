@@ -24,7 +24,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 
-class DgsExecutionResult constructor(
+class DgsExecutionResult(
     private val executionResult: ExecutionResult,
     private var headers: HttpHeaders,
     val status: HttpStatus

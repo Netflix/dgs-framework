@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-dependencies {
-    implementation(project(":graphql-dgs-example-shared"))
-    implementation(project(":graphql-dgs-pagination"))
-    implementation(project(":graphql-dgs-webflux-starter"))
-    implementation(project(":graphql-dgs-extended-scalars"))
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("io.projectreactor:reactor-core")
-}
+package com.netflix.graphql.dgs.exceptions
+
+class DataFetcherInputArgumentSchemaMismatchException(message: String) : RuntimeException(message)

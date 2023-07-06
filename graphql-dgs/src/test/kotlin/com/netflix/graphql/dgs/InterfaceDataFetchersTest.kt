@@ -82,7 +82,7 @@ class InterfaceDataFetchersTest {
 
         val queryFetcher = object : Any() {
             // Since the field is not explicit the name of the method will be used.
-            @DgsQuery()
+            @DgsQuery
             fun movies(dfe: DataFetchingEnvironment): List<Movie> {
                 return listOf(ScaryMovie(), ActionMovie())
             }

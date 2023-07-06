@@ -82,7 +82,6 @@ import reactor.core.publisher.Mono
 import reactor.netty.http.server.WebsocketServerSpec
 import java.net.URI
 import java.util.*
-import kotlin.streams.toList
 
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @AutoConfiguration

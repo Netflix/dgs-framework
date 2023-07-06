@@ -15,6 +15,7 @@
  */
 
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration;
+import com.netflix.graphql.dgs.autoconfig.DgsExtendedScalarsAutoConfiguration;
 import com.netflix.graphql.dgs.example.shared.context.ExampleGraphQLContextContributor;
 import com.netflix.graphql.dgs.example.shared.datafetcher.MovieDataFetcher;
 import com.netflix.graphql.dgs.example.shared.instrumentation.ExampleInstrumentationDependingOnContextContributor;
@@ -33,7 +34,7 @@ import static com.netflix.graphql.dgs.example.shared.context.ExampleGraphQLConte
 import static com.netflix.graphql.dgs.example.shared.context.ExampleGraphQLContextContributor.CONTEXT_CONTRIBUTOR_HEADER_VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {WebFluxConfigurationSupport.class, DgsAutoConfiguration.class, MovieDataFetcher.class, ExampleGraphQLContextContributor.class, ExampleInstrumentationDependingOnContextContributor.class, DgsWebFluxAutoConfiguration.class, DgsPaginationAutoConfiguration.class})
+@SpringBootTest(classes = {WebFluxConfigurationSupport.class, DgsAutoConfiguration.class, MovieDataFetcher.class, ExampleGraphQLContextContributor.class, ExampleInstrumentationDependingOnContextContributor.class, DgsWebFluxAutoConfiguration.class, DgsPaginationAutoConfiguration.class, DgsExtendedScalarsAutoConfiguration.class})
 public class ReactiveGraphQLContextContributorTest {
 
     @Autowired

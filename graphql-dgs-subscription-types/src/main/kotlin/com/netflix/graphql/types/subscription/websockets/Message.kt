@@ -3,7 +3,6 @@ package com.netflix.graphql.types.subscription.websockets
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import graphql.ExecutionResult
 import graphql.GraphQLError
 
 object MessageType {

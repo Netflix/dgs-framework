@@ -197,7 +197,8 @@ open class DgsAutoConfiguration(
             dataFetcherExceptionHandler = dataFetcherExceptionHandler,
             entityFetcherRegistry = entityFetcherRegistry,
             defaultDataFetcherFactory = defaultDataFetcherFactory,
-            methodDataFetcherFactory = methodDataFetcherFactory
+            methodDataFetcherFactory = methodDataFetcherFactory,
+            schemaWiringValidationEnabled = configProps.schemaWiringValidationEnabled
         )
     }
 
