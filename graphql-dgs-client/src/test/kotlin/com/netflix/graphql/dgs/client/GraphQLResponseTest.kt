@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
+@file:Suppress("GraphQLUnresolvedReference")
+
 package com.netflix.graphql.dgs.client
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -46,8 +50,21 @@ class GraphQLResponseTest {
     private val url = "http://localhost:8080/graphql"
     private val client = CustomGraphQLClient(url = url, requestExecutor = requestExecutor)
 
+    @ParameterizedTest
+    @CsvSource(
+        value = [
+            "foo, data.foo",
+            "data.foo, data.foo",
+            "datafoo, data.datafoo"
+        ]
+    )
+    fun normalizeDataPath(path: String, expectedPath: String) {
+        assertThat(GraphQLResponse.getDataPath(path)).isEqualTo(expectedPath)
+    }
+
     @Test
     fun dateParse() {
+        // language=json
         val jsonResponse = """
             {
               "data": {
@@ -77,7 +94,9 @@ class GraphQLResponseTest {
             .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
 
         val graphQLResponse = client.executeQuery(
-            """mutation {
+            // language=graphql
+            """
+            mutation {
               submitReview(review:{movieId:1, starRating:5, description:""}) {
                 edges {
                   node {
@@ -86,7 +105,8 @@ class GraphQLResponseTest {
                   }
                 }
               }
-            }""",
+            }
+            """.trimIndent(),
             emptyMap()
         )
 
@@ -98,6 +118,7 @@ class GraphQLResponseTest {
 
     @Test
     fun populateResponseHeaders() {
+        // language=json
         val jsonResponse = """
             {
               "data": {
@@ -118,7 +139,8 @@ class GraphQLResponseTest {
               submitReview(review:{movieId:1, description:""}) {
                 submittedBy
               }
-            }""",
+            }
+            """.trimIndent(),
             emptyMap()
         )
 
@@ -130,6 +152,7 @@ class GraphQLResponseTest {
 
     @Test
     fun listAsObject() {
+        // language=json
         val jsonResponse = """
             {
               "data": {
@@ -168,7 +191,8 @@ class GraphQLResponseTest {
                   }
                 }
               }
-            }""",
+            }
+            """.trimIndent(),
             emptyMap()
         )
 
@@ -183,6 +207,7 @@ class GraphQLResponseTest {
 
     @Test
     fun useOperationName() {
+        // language=json
         val jsonResponse = """
             {
               "data": {
@@ -200,9 +225,12 @@ class GraphQLResponseTest {
             .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
 
         val graphQLResponse = client.executeQuery(
-            """mutation SubmitUserReview {
-              submitReview(review:{movieId:1, starRating:5, description:""}) {}
-            }""",
+            // language=graphql
+            """
+            mutation SubmitUserReview {
+                submitReview(review:{movieId:1, starRating:5, description:""}) {}
+            }
+            """.trimIndent(),
             emptyMap(),
             "SubmitUserReview"
         )
