@@ -131,7 +131,11 @@ data class GraphQLResponse(val json: String, val headers: Map<String, List<Strin
             .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)
 
         fun getDataPath(path: String): String {
-            return if (!path.startsWith("data.")) "data.$path" else path
+            return if (path == "data" || path.startsWith("data.")) {
+                path
+            } else {
+                "data.$path"
+            }
         }
     }
 }

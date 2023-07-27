@@ -19,6 +19,7 @@
 package com.netflix.graphql.dgs.client
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
@@ -53,6 +54,7 @@ class GraphQLResponseTest {
     @ParameterizedTest
     @CsvSource(
         value = [
+            "data, data",
             "foo, data.foo",
             "data.foo, data.foo",
             "datafoo, data.datafoo"
@@ -237,5 +239,22 @@ class GraphQLResponseTest {
         assertThat(graphQLResponse.hasErrors()).isFalse
 
         server.verify()
+    }
+
+    @Test
+    fun testExtractValue() {
+        val response = GraphQLResponse("""{"data": {"submitReview": {"submittedBy": "abc@netflix.com"}}}""")
+        val result = response.extractValue<Map<String, Any?>>("data")
+        assertEquals(mapOf("submitReview" to mapOf("submittedBy" to "abc@netflix.com")), result)
+        assertEquals("abc@netflix.com", response.extractValue("data.submitReview.submittedBy"))
+        assertEquals("abc@netflix.com", response.extractValue("submitReview.submittedBy"))
+    }
+
+    @Test
+    fun testDataAsObject() {
+        data class Response(val submitReview: Map<String, String>)
+        val response = GraphQLResponse("""{"data": {"submitReview": {"submittedBy": "abc@netflix.com"}}}""")
+        val result = response.dataAsObject(Response::class.java)
+        assertEquals(Response(submitReview = mapOf("submittedBy" to "abc@netflix.com")), result)
     }
 }
