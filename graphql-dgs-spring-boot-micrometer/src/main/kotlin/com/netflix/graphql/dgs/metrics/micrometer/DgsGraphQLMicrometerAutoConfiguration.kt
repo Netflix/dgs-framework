@@ -20,7 +20,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cache.CacheManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import java.util.*
+import java.util.Optional
 
 /**
  * [Auto-configuration][org.springframework.boot.autoconfigure.EnableAutoConfiguration] for instrumentation of Spring GraphQL
@@ -173,7 +173,7 @@ open class DgsGraphQLMicrometerAutoConfiguration {
             private val DEFAULT_METER_REGISTRY = SimpleMeterRegistry()
         }
 
-        private val registry: MeterRegistry by lazy {
+        private val registry: MeterRegistry by lazy(LazyThreadSafetyMode.PUBLICATION) {
             meterRegistryProvider.ifAvailable ?: DEFAULT_METER_REGISTRY
         }
 
