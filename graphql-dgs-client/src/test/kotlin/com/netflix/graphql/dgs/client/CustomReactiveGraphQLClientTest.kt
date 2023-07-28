@@ -59,7 +59,7 @@ class CustomReactiveGraphQLClientTest {
                 .toEntity<String>()
                 .map { response ->
                     HttpResponse(
-                        statusCode = response.statusCodeValue,
+                        statusCode = response.statusCode.value(),
                         body = response.body,
                         headers = response.headers
                     )
