@@ -25,8 +25,8 @@ import graphql.execution.instrumentation.parameters.InstrumentationExecutionPara
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import graphql.execution.instrumentation.parameters.InstrumentationValidationParameters
 import graphql.schema.DataFetcher
-import graphql.schema.GraphQLNonNull
-import graphql.schema.GraphQLObjectType
+import graphql.schema.GraphQLNamedType
+import graphql.schema.GraphQLTypeUtil
 import graphql.validation.ValidationError
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
@@ -64,21 +64,20 @@ class DgsGraphQLMetricsInstrumentation(
         if (!properties.query.enabled) {
             return noOp()
         }
+        require(state is MetricsInstrumentationState)
+        state.startTimer()
 
-        val miState: MetricsInstrumentationState = state as MetricsInstrumentationState
-        miState.startTimer()
-
-        miState.operationName = Optional.ofNullable(parameters.operation)
-        miState.isIntrospectionQuery = QueryUtils.isIntrospectionQuery(parameters.executionInput)
+        state.operationName = Optional.ofNullable(parameters.operation)
+        state.isIntrospectionQuery = QueryUtils.isIntrospectionQuery(parameters.executionInput)
 
         return SimpleInstrumentationContext.whenCompleted { result, exc ->
             val tags = buildList {
                 addAll(tagsProvider.getContextualTags())
-                addAll(tagsProvider.getExecutionTags(miState, parameters, result, exc))
-                addAll(miState.tags())
+                addAll(tagsProvider.getExecutionTags(state, parameters, result, exc))
+                addAll(state.tags())
             }
 
-            miState.stopTimer(
+            state.stopTimer(
                 properties.autotime
                     .builder(GqlMetric.QUERY.key)
                     .tags(tags)
@@ -91,14 +90,14 @@ class DgsGraphQLMetricsInstrumentation(
         parameters: InstrumentationExecutionParameters,
         state: InstrumentationState
     ): CompletableFuture<ExecutionResult> {
-        val miState: MetricsInstrumentationState = state as MetricsInstrumentationState
+        require(state is MetricsInstrumentationState)
 
         val errorTagValues = ErrorUtils.sanitizeErrorPaths(executionResult)
         if (errorTagValues.isNotEmpty()) {
             val baseTags = buildList {
                 addAll(tagsProvider.getContextualTags())
-                addAll(tagsProvider.getExecutionTags(miState, parameters, executionResult, null))
-                addAll(miState.tags())
+                addAll(tagsProvider.getExecutionTags(state, parameters, executionResult, null))
+                addAll(state.tags())
             }
 
             val registry = registrySupplier.get()
@@ -121,11 +120,11 @@ class DgsGraphQLMetricsInstrumentation(
         parameters: InstrumentationFieldFetchParameters,
         state: InstrumentationState
     ): DataFetcher<*> {
-        val miState: MetricsInstrumentationState = state as MetricsInstrumentationState
+        require(state is MetricsInstrumentationState)
         val gqlField = TagUtils.resolveDataFetcherTagValue(parameters)
 
         if (parameters.isTrivialDataFetcher ||
-            miState.isIntrospectionQuery ||
+            state.isIntrospectionQuery ||
             TagUtils.shouldIgnoreTag(gqlField) ||
             !schemaProvider.isFieldMetricsInstrumentationEnabled(gqlField) ||
             !properties.resolver.enabled
@@ -138,7 +137,7 @@ class DgsGraphQLMetricsInstrumentation(
             val baseTags = buildList {
                 add(Tag.of(GqlTag.FIELD.key, gqlField))
                 addAll(tagsProvider.getContextualTags())
-                addAll(miState.tags())
+                addAll(state.tags())
             }
 
             val sampler = Timer.start(registry)
@@ -149,18 +148,18 @@ class DgsGraphQLMetricsInstrumentation(
                         recordDataFetcherMetrics(
                             registry,
                             sampler,
-                            miState,
+                            state,
                             parameters,
                             error,
                             baseTags
                         )
                     }
                 } else {
-                    recordDataFetcherMetrics(registry, sampler, miState, parameters, null, baseTags)
+                    recordDataFetcherMetrics(registry, sampler, state, parameters, null, baseTags)
                 }
                 result
             } catch (exc: Exception) {
-                recordDataFetcherMetrics(registry, sampler, miState, parameters, exc, baseTags)
+                recordDataFetcherMetrics(registry, sampler, state, parameters, exc, baseTags)
                 throw exc
             }
         }
@@ -174,13 +173,15 @@ class DgsGraphQLMetricsInstrumentation(
         parameters: InstrumentationValidationParameters,
         state: InstrumentationState
     ): InstrumentationContext<List<ValidationError>> {
+        require(state is MetricsInstrumentationState)
+        val document = parameters.document
+            ?: return noOp()
+        val querySignatureRepository = optQuerySignatureRepository.orElse(null)
+            ?: return noOp()
+
         return SimpleInstrumentationContext.whenCompleted { errors, throwable ->
-            if (!errors.isNullOrEmpty() || throwable != null) {
-                return@whenCompleted
-            }
-            val miState: MetricsInstrumentationState = state as MetricsInstrumentationState
-            if (parameters.document != null) {
-                miState.querySignature = optQuerySignatureRepository.flatMap { it.get(parameters.document, parameters) }
+            if (errors.isNullOrEmpty() && throwable == null) {
+                state.querySignature = querySignatureRepository.get(document, parameters)
             }
         }
     }
@@ -189,16 +190,15 @@ class DgsGraphQLMetricsInstrumentation(
         parameters: InstrumentationExecuteOperationParameters,
         state: InstrumentationState
     ): InstrumentationContext<ExecutionResult>? {
-        val miState: MetricsInstrumentationState = state as MetricsInstrumentationState
+        require(state is MetricsInstrumentationState)
         if (parameters.executionContext.getRoot<Any>() == null) {
-            miState.operation =
-                Optional.of(parameters.executionContext.operationDefinition.operation.name.uppercase())
-            if (!miState.operationName.isPresent) {
-                miState.operationName = Optional.ofNullable(parameters.executionContext.operationDefinition?.name)
+            state.operation = Optional.of(parameters.executionContext.operationDefinition.operation.name.uppercase())
+            if (state.operationName.isEmpty) {
+                state.operationName = Optional.ofNullable(parameters.executionContext.operationDefinition?.name)
             }
         }
         if (properties.tags.complexity.enabled) {
-            miState.queryComplexity = ComplexityUtils.resolveComplexity(parameters)
+            state.queryComplexity = ComplexityUtils.resolveComplexity(parameters)
         }
         return super.beginExecuteOperation(parameters, state)
     }
@@ -327,21 +327,16 @@ class DgsGraphQLMetricsInstrumentation(
 
         const val TAG_VALUE_ANONYMOUS = "anonymous"
         const val TAG_VALUE_NONE = "none"
-        const val TAG_VALUE_UNKNOWN = "unknown"
+        val TAG_VALUE_UNKNOWN = ErrorType.UNKNOWN.name
 
         fun resolveDataFetcherTagValue(parameters: InstrumentationFieldFetchParameters): String {
             val type = parameters.executionStepInfo.parent.type
-            val parentType = if (type is GraphQLNonNull) {
-                type.wrappedType as GraphQLObjectType
-            } else {
-                type as GraphQLObjectType
-            }
-
+            val parentType = GraphQLTypeUtil.unwrapNonNullAs<GraphQLNamedType>(type)
             return "${parentType.name}.${parameters.executionStepInfo.field.singleField.name}"
         }
 
         fun shouldIgnoreTag(tag: String): Boolean {
-            return instrumentationIgnores.find { tag.contains(it) } != null
+            return instrumentationIgnores.any { tag.contains(it) }
         }
     }
 
