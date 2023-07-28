@@ -44,7 +44,9 @@ class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
     private fun doHandleException(handlerParameters: DataFetcherExceptionHandlerParameters): DataFetcherExceptionHandlerResult {
         val exception = unwrapCompletionException(handlerParameters.exception)
         logger.error(
-            "Exception while executing data fetcher for ${handlerParameters.path}: ${exception.message}",
+            "Exception while executing data fetcher for {}: {}",
+            handlerParameters.path,
+            exception.message,
             exception
         )
 
@@ -53,7 +55,7 @@ class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
             else -> when {
                 springSecurityAvailable && isSpringSecurityAccessException(exception) -> TypedGraphQLError.newPermissionDeniedBuilder()
                 else -> TypedGraphQLError.newInternalErrorBuilder()
-            }.message("%s: %s", exception::class.java.name, exception.message)
+            }.message("${exception::class.java.name}: ${exception.message}")
                 .path(handlerParameters.path)
                 .build()
         }
@@ -70,15 +72,12 @@ class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
     companion object {
 
         private val logger: Logger = LoggerFactory.getLogger(DefaultDataFetcherExceptionHandler::class.java)
+        private val springSecurityAvailable = ClassUtils.isPresent(
+            "org.springframework.security.access.AccessDeniedException",
+            DefaultDataFetcherExceptionHandler::class.java.classLoader
+        )
 
-        private val springSecurityAvailable: Boolean by lazy {
-            ClassUtils.isPresent(
-                "org.springframework.security.access.AccessDeniedException",
-                DefaultDataFetcherExceptionHandler::class.java.classLoader
-            )
-        }
-
-        private fun isSpringSecurityAccessException(exception: Throwable?): Boolean {
+        private fun isSpringSecurityAccessException(exception: Throwable): Boolean {
             try {
                 return exception is org.springframework.security.access.AccessDeniedException
             } catch (e: Throwable) {
