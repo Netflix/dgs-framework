@@ -45,7 +45,7 @@ class GraphQLResponseTest {
         headers.forEach { httpHeaders.addAll(it.key, it.value) }
 
         val response = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
-        HttpResponse(statusCode = response.statusCodeValue, body = response.body, headers = response.headers)
+        HttpResponse(statusCode = response.statusCode.value(), body = response.body, headers = response.headers)
     }
 
     private val url = "http://localhost:8080/graphql"
