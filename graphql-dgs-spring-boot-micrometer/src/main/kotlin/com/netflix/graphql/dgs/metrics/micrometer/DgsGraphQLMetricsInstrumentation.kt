@@ -336,14 +336,14 @@ class DgsGraphQLMetricsInstrumentation(
     internal object ErrorUtils {
 
         fun sanitizeErrorPaths(executionResult: ExecutionResult): Collection<ErrorTagValues> {
-            val dedupeErrorPaths = mutableMapOf<List<String>, ErrorTagValues>()
+            val dedupeErrorPaths = mutableMapOf<String, ErrorTagValues>()
             executionResult.errors.forEach { error ->
-                val errorPath: List<String>
+                val errorPath: List<Any>
                 val errorType: String
                 val errorDetail = errorDetailExtension(error)
                 when (error) {
                     is ValidationError -> {
-                        errorPath = error.queryPath.filterIsInstance<String>()
+                        errorPath = error.queryPath.orEmpty()
                         errorType = ErrorType.BAD_REQUEST.name
                     }
                     is InvalidSyntaxError -> {
@@ -351,13 +351,21 @@ class DgsGraphQLMetricsInstrumentation(
                         errorType = ErrorType.BAD_REQUEST.name
                     }
                     else -> {
-                        errorPath = error.path.orEmpty().filterIsInstance<String>()
+                        errorPath = error.path.orEmpty()
                         errorType = errorTypeExtension(error)
                     }
                 }
 
-                dedupeErrorPaths.computeIfAbsent(errorPath) {
-                    ErrorTagValues(errorPath.toString(), errorType, errorDetail)
+                val path = errorPath.joinToString(prefix = "[", postfix = "]") { segment ->
+                    when (segment) {
+                        is Number -> "number"
+                        is String -> segment
+                        else -> segment.toString()
+                    }
+                }
+
+                dedupeErrorPaths.computeIfAbsent(path) {
+                    ErrorTagValues(path, errorType, errorDetail)
                 }
             }
             return dedupeErrorPaths.values
