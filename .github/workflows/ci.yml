@@ -13,44 +13,25 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: 17
+          cache: 'gradle'
 
       - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
           python-version: 3.8
+          cache: 'pip'
 
       - name: Install Python modules
         run: |
           python -m pip install --upgrade pip
           if [ -f scripts/requirements.txt ]; then pip install -r scripts/requirements.txt; fi
 
-      - uses: actions/cache@v3.3.1
-        id: gradle-wrapper-cache
-        with:
-          path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradlewrapper-${{ hashFiles('gradle/wrapper/*') }}
-          restore-keys: ${{ runner.os }}-gradlewrapper-
-
-      - name: Cache Gradle packages
-        uses: actions/cache@v3.3.1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
-
-      - name: Maven cache
-        uses: actions/cache@v3.3.1
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
       - name: Check
         run: |
-          ./gradlew --info --no-watch-fs check
+          ./gradlew --info --no-daemon --no-watch-fs check
 
       - name: Publish Locally
         run: |
