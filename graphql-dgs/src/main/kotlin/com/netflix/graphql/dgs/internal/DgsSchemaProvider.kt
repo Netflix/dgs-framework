@@ -18,16 +18,21 @@ package com.netflix.graphql.dgs.internal
 
 import com.apollographql.federation.graphqljava.Federation
 import com.netflix.graphql.dgs.*
+import com.netflix.graphql.dgs.exceptions.DataFetcherInputArgumentSchemaMismatchException
+import com.netflix.graphql.dgs.exceptions.DataFetcherSchemaMismatchException
 import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
 import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
+import com.netflix.graphql.dgs.internal.method.InputArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import com.netflix.graphql.mocking.DgsSchemaTransformer
 import com.netflix.graphql.mocking.MockProvider
 import graphql.TypeResolutionEnvironment
 import graphql.execution.DataFetcherExceptionHandler
+import graphql.language.FieldDefinition
 import graphql.language.InterfaceTypeDefinition
+import graphql.language.ObjectTypeDefinition
 import graphql.language.TypeName
 import graphql.language.UnionTypeDefinition
 import graphql.parser.MultiSourceReader
@@ -52,8 +57,11 @@ import org.slf4j.LoggerFactory
 import org.springframework.aop.support.AopUtils
 import org.springframework.beans.factory.getBeansWithAnnotation
 import org.springframework.context.ApplicationContext
+import org.springframework.core.BridgeMethodResolver
+import org.springframework.core.MethodParameter
 import org.springframework.core.annotation.MergedAnnotation
 import org.springframework.core.annotation.MergedAnnotations
+import org.springframework.core.annotation.SynthesizingMethodParameter
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.ResourcePatternUtils
 import org.springframework.util.ReflectionUtils
@@ -81,7 +89,8 @@ class DgsSchemaProvider(
     private val entityFetcherRegistry: EntityFetcherRegistry = EntityFetcherRegistry(),
     private val defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty(),
     private val methodDataFetcherFactory: MethodDataFetcherFactory,
-    private val componentFilter: ((Any) -> Boolean)? = null
+    private val componentFilter: ((Any) -> Boolean)? = null,
+    private val schemaWiringValidationEnabled: Boolean = true
 ) {
 
     private val schemaReadWriteLock = ReentrantReadWriteLock()
@@ -138,6 +147,9 @@ class DgsSchemaProvider(
                 .trackData(false)
             for (schemaFile in findSchemaFiles(hasDynamicTypeRegistry)) {
                 readerBuilder.reader(schemaFile.inputStream.reader(), schemaFile.filename)
+                // Add a reader that inserts a newline between schema files to avoid issues when
+                // the source files aren't newline-terminated.
+                readerBuilder.reader("\n".reader(), "newline")
             }
             SchemaParser().parse(readerBuilder.build())
         } else {
@@ -318,13 +330,22 @@ class DgsSchemaProvider(
 
         dataFetcherInstrumentationEnabled["$parentType.$field"] = enableInstrumentation
 
+        val methodClassName = method.declaringClass.name
         try {
             if (!typeDefinitionRegistry.getType(parentType).isPresent) {
-                logger.error("Parent type $parentType not found, but it was referenced in ${javaClass.name} in @DgsData annotation for field $field")
-                throw InvalidDgsConfigurationException("Parent type $parentType not found, but it was referenced on ${javaClass.name} in @DgsData annotation for field $field")
+                logger.error("Parent type $parentType not found, but it was referenced in $methodClassName in @DgsData annotation for field $field")
+                throw InvalidDgsConfigurationException("Parent type $parentType not found, but it was referenced on $methodClassName in @DgsData annotation for field $field")
             }
             when (val type = typeDefinitionRegistry.getType(parentType).get()) {
                 is InterfaceTypeDefinition -> {
+                    if (schemaWiringValidationEnabled) {
+                        val matchingField =
+                            getMatchingFieldOnInterfaceOrExtensions(methodClassName, type, field, typeDefinitionRegistry, parentType)
+                        checkInputArgumentsAreValid(
+                            method,
+                            matchingField.inputValueDefinitions.map { it.name }.toSet()
+                        )
+                    }
                     val implementationsOf = typeDefinitionRegistry.getImplementationsOf(type)
                     implementationsOf.forEach { implType ->
                         val dataFetcher =
@@ -347,17 +368,97 @@ class DgsSchemaProvider(
                         dataFetcherInstrumentationEnabled["${memberType.name}.$field"] = enableInstrumentation
                     }
                 }
-                else -> {
+                is ObjectTypeDefinition -> {
+                    if (schemaWiringValidationEnabled) {
+                        val matchingField =
+                            getMatchingFieldOnObjectOrExtensions(methodClassName, type, field, typeDefinitionRegistry, parentType)
+                        checkInputArgumentsAreValid(
+                            method,
+                            matchingField.inputValueDefinitions.map { it.name }.toSet()
+                        )
+                    }
                     val dataFetcher = createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
                     codeRegistryBuilder.dataFetcher(
                         FieldCoordinates.coordinates(parentType, field),
                         dataFetcher
                     )
                 }
+                else -> {
+                    throw InvalidDgsConfigurationException(
+                        "Parent type $parentType referenced on $methodClassName in " +
+                            "@DgsData annotation for field $field must be either an interface, a union, or an object."
+                    )
+                }
             }
         } catch (ex: Exception) {
             logger.error("Invalid parent type $parentType")
             throw ex
+        }
+    }
+
+    private fun getMatchingFieldOnObjectOrExtensions(
+        methodClassName: String,
+        type: ObjectTypeDefinition,
+        field: String,
+        typeDefinitionRegistry: TypeDefinitionRegistry,
+        parentType: String
+    ): FieldDefinition {
+        return type.fieldDefinitions.firstOrNull { it.name == field }
+            ?: typeDefinitionRegistry.objectTypeExtensions().getOrDefault(parentType, emptyList())
+                .flatMap { it.fieldDefinitions.filter { f -> f.name == field } }
+                .firstOrNull()
+            ?: throw DataFetcherSchemaMismatchException(
+                "@DgsData in $methodClassName on field $field references " +
+                    "object type `$parentType` it has no field named `$field`. All data fetchers registered with " +
+                    "@DgsData|@DgsQuery|@DgsMutation|@DgsSubscription must match a field in the schema."
+            )
+    }
+
+    private fun getMatchingFieldOnInterfaceOrExtensions(
+        methodClassName: String,
+        type: InterfaceTypeDefinition,
+        field: String,
+        typeDefinitionRegistry: TypeDefinitionRegistry,
+        parentType: String
+    ): FieldDefinition {
+        return type.fieldDefinitions.firstOrNull { it.name == field }
+            ?: typeDefinitionRegistry.interfaceTypeExtensions().getOrDefault(parentType, emptyList())
+                .flatMap { it.fieldDefinitions.filter { f -> f.name == field } }
+                .firstOrNull()
+            ?: throw DataFetcherSchemaMismatchException(
+                "@DgsData in $methodClassName on field `$field` references " +
+                    "interface `$parentType` it has no field named `$field`. All data fetchers registered with @DgsData " +
+                    "must match a field in the schema."
+            )
+    }
+
+    private fun checkInputArgumentsAreValid(method: Method, argumentNames: Set<String>) {
+        val bridgedMethod: Method = BridgeMethodResolver.findBridgedMethod(method)
+        val methodParameters: List<MethodParameter> = bridgedMethod.parameters.map { parameter ->
+            val methodParameter = SynthesizingMethodParameter.forParameter(parameter)
+            methodParameter.initParameterNameDiscovery(methodDataFetcherFactory.parameterNameDiscoverer)
+            methodParameter
+        }
+
+        methodParameters.forEach { m ->
+            val selectedArgResolver = methodDataFetcherFactory.getSelectedArgumentResolver(m) ?: return@forEach
+            if (selectedArgResolver is InputArgumentResolver) {
+                val argName = selectedArgResolver.resolveArgumentName(m)
+                if (!argumentNames.contains(argName)) {
+                    val paramName = m.parameterName ?: return@forEach
+                    val arguments = if (argumentNames.isNotEmpty()) {
+                        "Found the following argument(s) in the schema: " + argumentNames.joinToString(prefix = "[", postfix = "]")
+                    } else {
+                        "No arguments on the field are defined in the schema."
+                    }
+
+                    throw DataFetcherInputArgumentSchemaMismatchException(
+                        "@InputArgument(name = \"$argName\") defined in ${method.declaringClass} in method `${method.name}` " +
+                            "on parameter named `$paramName` has no matching argument with name `$argName` in the GraphQL schema. " +
+                            arguments
+                    )
+                }
+            }
         }
     }
 

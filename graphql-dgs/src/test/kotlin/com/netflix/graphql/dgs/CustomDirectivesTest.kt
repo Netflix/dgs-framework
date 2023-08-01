@@ -141,6 +141,7 @@ class CustomDirectivesTest {
                 """
                 type Query {
                     hello: String
+                    word: String
                 }
                 """.trimIndent()
             )

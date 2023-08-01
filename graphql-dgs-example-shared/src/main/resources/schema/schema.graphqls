@@ -9,9 +9,9 @@ type Query {
     messagesWithExceptionFromBatchLoader: [Message]
     messageFromBatchLoaderWithScheduledDispatch: String
 
-#    #Custom scalar example
-#    now: LocalTime
-#    schedule(time: LocalTime): Boolean
+    #Custom scalar example
+    now: LocalTime
+    schedule(time: LocalTime): Boolean
 
     #To show how exceptions are handled
     withGraphqlException: String
@@ -92,5 +92,5 @@ type Stock {
 }
 
 scalar Upload
-
+scalar LocalTime
 
