@@ -18,7 +18,6 @@ package com.netflix.graphql.dgs.federation
 
 import com.apollographql.federation.graphqljava._Entity
 import com.netflix.graphql.dgs.DgsComponent
-import com.netflix.graphql.dgs.DgsData
 import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.exceptions.InvalidDgsEntityFetcher
@@ -126,9 +125,9 @@ open class DefaultDgsFederationResolver() :
                 )
                 .errors(
                     trySequence
-                        .mapIndexed { index, tryResult -> Pair(index, tryResult)}
-                        .filter {iter -> iter.second.isFailure }
-                        .map { iter -> Pair(iter.first, iter.second.throwable)}
+                        .mapIndexed { index, tryResult -> Pair(index, tryResult) }
+                        .filter { iter -> iter.second.isFailure }
+                        .map { iter -> Pair(iter.first, iter.second.throwable) }
                         .flatMap { iter: Pair<Int, Throwable> ->
                             // extract exception from known wrapper types
                             val exception = when {
@@ -162,26 +161,26 @@ open class DefaultDgsFederationResolver() :
         }
     }
 
-    open fun createDataFetchingEnvironmentWithPath(env: DataFetchingEnvironment, pathIndex: Int) : DgsDataFetchingEnvironment {
-        val pathWithIndex =  env.executionStepInfo.path.segment("$pathIndex")
+    open fun createDataFetchingEnvironmentWithPath(env: DataFetchingEnvironment, pathIndex: Int): DgsDataFetchingEnvironment {
+        val pathWithIndex = env.executionStepInfo.path.segment("$pathIndex")
         val executionStepInfoWithPath = ExecutionStepInfo.newExecutionStepInfo(env.executionStepInfo).path(pathWithIndex).build()
         return DgsDataFetchingEnvironment(
-                DataFetchingEnvironmentImpl
-                        .newDataFetchingEnvironment()
-                        .arguments(env.arguments)
-                        .dataLoaderRegistry(env.dataLoaderRegistry)
-                        .graphQLContext(env.graphQlContext)
-                        .root(env.getRoot())
-                        .graphQLSchema(env.graphQLSchema)
-                        .fragmentsByName(env.fragmentsByName)
-                        .dataLoaderRegistry(env.dataLoaderRegistry)
-                        .locale(env.locale)
-                        .document(env.document)
-                        .operationDefinition(env.operationDefinition)
-                        .variables(env.variables)
-                        .executionId(env.executionId)
-                        .executionStepInfo(executionStepInfoWithPath)
-                        .build()
+            DataFetchingEnvironmentImpl
+                .newDataFetchingEnvironment()
+                .arguments(env.arguments)
+                .dataLoaderRegistry(env.dataLoaderRegistry)
+                .graphQLContext(env.graphQlContext)
+                .root(env.getRoot())
+                .graphQLSchema(env.graphQLSchema)
+                .fragmentsByName(env.fragmentsByName)
+                .dataLoaderRegistry(env.dataLoaderRegistry)
+                .locale(env.locale)
+                .document(env.document)
+                .operationDefinition(env.operationDefinition)
+                .variables(env.variables)
+                .executionId(env.executionId)
+                .executionStepInfo(executionStepInfoWithPath)
+                .build()
         )
     }
 

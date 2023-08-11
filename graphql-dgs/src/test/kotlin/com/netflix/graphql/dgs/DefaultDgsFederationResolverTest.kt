@@ -495,7 +495,6 @@ class DefaultDgsFederationResolverTest {
                         throw DgsEntityNotFoundException("No entity found for movieId 2")
                     }
                     return Movie(values["movieId"].toString())
-
                 }
             }
             every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
@@ -505,18 +504,18 @@ class DefaultDgsFederationResolverTest {
             dgsSchemaProvider.schema("""type Query {}""")
 
             val arguments = mapOf<String, Any>(
-                    _Entity.argumentName to listOf(mapOf("__typename" to "Movie", "movieId" to "1"), mapOf("__typename" to "Movie", "movieId" to "2"))
+                _Entity.argumentName to listOf(mapOf("__typename" to "Movie", "movieId" to "1"), mapOf("__typename" to "Movie", "movieId" to "2"))
             )
             val dataFetchingEnvironment = constructDFE(arguments)
 
             val result =
-                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
-                            .entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
+                DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
+                    .entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
 
             assertThat(result).isNotNull
             assertThat(result.get().data).hasSize(2)
             assertThat(result.get().errors).hasSize(1).first().extracting { it.path }
-                    .satisfies(Consumer { assertThat(it.toString()).contains("_entities, 1") })
+                .satisfies(Consumer { assertThat(it.toString()).contains("_entities, 1") })
         }
 
         @Test
