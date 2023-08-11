@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs
 
 import com.apollographql.federation.graphqljava._Entity
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
+import com.netflix.graphql.dgs.exceptions.DgsEntityNotFoundException
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
@@ -299,6 +300,30 @@ class DefaultDgsFederationResolverTest {
             assertThat(result.get().data).hasSize(1).first().isInstanceOf(Movie::class.java)
             assertThat(result.get().data.first() as Movie).extracting { it.movieId }.isEqualTo("1")
         }
+
+        private fun testEntityFetcherWithoutExceptionHandler(movieEntityFetcher: Any) {
+            every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("MovieEntityFetcher" to movieEntityFetcher)
+
+            dgsSchemaProvider.schema("""type Query {}""")
+
+            val arguments = mapOf<String, Any>(
+                _Entity.argumentName to listOf(mapOf("__typename" to "Movie", "movieId" to "1"), mapOf("__typename" to "Movie", "movieId" to "2"))
+            )
+            val dataFetchingEnvironment = constructDFE(arguments)
+
+            val result =
+                (
+                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
+                        .entitiesFetcher()
+                        .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
+                    )
+
+            assertThat(result).isNotNull
+            assertThat(result.get().data).hasSize(1).first().isInstanceOf(Movie::class.java)
+            assertThat(result.get().data.first() as Movie).extracting { it.movieId }.isEqualTo("1")
+        }
     }
 
     @Nested
@@ -456,6 +481,42 @@ class DefaultDgsFederationResolverTest {
             assertThat(result.get().data).hasSize(1)
             assertThat(result.get().errors).hasSize(1).first().extracting { it.message }
                 .satisfies(Consumer { assertThat(it).contains("IllegalArgumentException") })
+        }
+
+        @Test
+        fun `Entity Fetcher throws DgsEntityNotFoundException contains path in error`() {
+            val movieEntityFetcher = object {
+                @DgsEntityFetcher(name = "Movie")
+                fun movieEntityFetcher(values: Map<String, Any>, dfe: DgsDataFetchingEnvironment?): Movie {
+                    if (dfe == null) {
+                        throw RuntimeException()
+                    }
+                    if (values["movieId"] == "2") {
+                        throw DgsEntityNotFoundException("No entity found for movieId 2")
+                    }
+                    return Movie(values["movieId"].toString())
+
+                }
+            }
+            every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("MovieEntityFetcher" to movieEntityFetcher)
+
+            dgsSchemaProvider.schema("""type Query {}""")
+
+            val arguments = mapOf<String, Any>(
+                    _Entity.argumentName to listOf(mapOf("__typename" to "Movie", "movieId" to "1"), mapOf("__typename" to "Movie", "movieId" to "2"))
+            )
+            val dataFetchingEnvironment = constructDFE(arguments)
+
+            val result =
+                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
+                            .entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
+
+            assertThat(result).isNotNull
+            assertThat(result.get().data).hasSize(2)
+            assertThat(result.get().errors).hasSize(1).first().extracting { it.path }
+                    .satisfies(Consumer { assertThat(it.toString()).contains("_entities, 1") })
         }
 
         @Test
