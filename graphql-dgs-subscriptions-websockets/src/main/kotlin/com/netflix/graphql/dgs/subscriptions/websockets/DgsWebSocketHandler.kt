@@ -16,6 +16,8 @@
 
 package com.netflix.graphql.dgs.subscriptions.websockets
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.types.subscription.*
 import jakarta.annotation.PostConstruct
@@ -32,10 +34,14 @@ import org.springframework.web.socket.WebSocketSession
 import org.springframework.web.socket.handler.TextWebSocketHandler
 import java.time.Duration
 
-class DgsWebSocketHandler(dgsQueryExecutor: DgsQueryExecutor, connectionInitTimeout: Duration, subscriptionErrorLogLevel: Level) : TextWebSocketHandler(), SubProtocolCapable {
+class DgsWebSocketHandler(
+    dgsQueryExecutor: DgsQueryExecutor,
+    connectionInitTimeout: Duration, subscriptionErrorLogLevel: Level,
+    objectMapper: ObjectMapper = jacksonObjectMapper(),
+) : TextWebSocketHandler(), SubProtocolCapable {
 
-    private val graphqlWSHandler = WebsocketGraphQLWSProtocolHandler(dgsQueryExecutor, subscriptionErrorLogLevel)
-    private val graphqlTransportWSHandler = WebsocketGraphQLTransportWSProtocolHandler(dgsQueryExecutor, connectionInitTimeout, subscriptionErrorLogLevel)
+    private val graphqlWSHandler = WebsocketGraphQLWSProtocolHandler(dgsQueryExecutor, subscriptionErrorLogLevel, objectMapper)
+    private val graphqlTransportWSHandler = WebsocketGraphQLTransportWSProtocolHandler(dgsQueryExecutor, connectionInitTimeout, subscriptionErrorLogLevel, objectMapper)
 
     @PostConstruct
     fun setupCleanup() {

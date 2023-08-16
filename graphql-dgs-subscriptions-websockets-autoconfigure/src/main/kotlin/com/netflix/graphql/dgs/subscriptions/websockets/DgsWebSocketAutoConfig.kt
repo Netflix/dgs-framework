@@ -16,8 +16,13 @@
 
 package com.netflix.graphql.dgs.subscriptions.websockets
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.AutoConfiguration
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -34,8 +39,15 @@ import org.springframework.web.socket.server.support.DefaultHandshakeHandler
 @EnableConfigurationProperties(DgsWebSocketConfigurationProperties::class)
 open class DgsWebSocketAutoConfig {
     @Bean
-    open fun webSocketHandler(@Suppress("SpringJavaInjectionPointsAutowiringInspection") dgsQueryExecutor: DgsQueryExecutor, configProps: DgsWebSocketConfigurationProperties): WebSocketHandler {
-        return DgsWebSocketHandler(dgsQueryExecutor, configProps.connectionInitTimeout, configProps.subscriptionErrorLogLevel)
+    @Qualifier("dgsObjectMapper")
+    @ConditionalOnMissingBean(name = ["dgsObjectMapper"])
+    open fun dgsObjectMapper(): ObjectMapper {
+        return jacksonObjectMapper().registerModule(JavaTimeModule())
+    }
+
+    @Bean
+    open fun webSocketHandler(@Suppress("SpringJavaInjectionPointsAutowiringInspection") dgsQueryExecutor: DgsQueryExecutor, configProps: DgsWebSocketConfigurationProperties, @Qualifier("dgsObjectMapper") objectMapper: ObjectMapper): WebSocketHandler {
+        return DgsWebSocketHandler(dgsQueryExecutor, configProps.connectionInitTimeout, configProps.subscriptionErrorLogLevel, objectMapper)
     }
 
     @Configuration
