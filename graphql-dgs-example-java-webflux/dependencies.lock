@@ -39,6 +39,12 @@
             ],
             "locked": "20.3"
         },
+        "com.graphql-java:graphql-java-extended-scalars": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars"
+            ],
+            "locked": "20.2"
+        },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -48,7 +54,7 @@
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-pagination",
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure",
@@ -65,6 +71,9 @@
         "com.netflix.graphql.dgs:graphql-dgs-example-shared": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-extended-scalars": {
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-mocking": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
@@ -79,6 +88,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
@@ -147,6 +157,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
@@ -217,6 +228,12 @@
             ],
             "locked": "20.3"
         },
+        "com.graphql-java:graphql-java-extended-scalars": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars"
+            ],
+            "locked": "20.2"
+        },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -226,7 +243,7 @@
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-pagination",
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure",
@@ -243,6 +260,9 @@
         "com.netflix.graphql.dgs:graphql-dgs-example-shared": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-extended-scalars": {
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-mocking": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
@@ -257,6 +277,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
@@ -325,6 +346,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
@@ -422,6 +444,12 @@
             ],
             "locked": "20.3"
         },
+        "com.graphql-java:graphql-java-extended-scalars": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars"
+            ],
+            "locked": "20.2"
+        },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -431,6 +459,7 @@
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
@@ -446,6 +475,12 @@
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-example-shared": {
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-extended-scalars": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-example-shared"
+            ],
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-mocking": {
@@ -465,6 +500,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
@@ -569,6 +605,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
@@ -600,6 +637,12 @@
             ],
             "locked": "1.6.4"
         },
+        "org.jetbrains:annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "locked": "13.0"
+        },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.36"
         },
@@ -617,6 +660,7 @@
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination"
             ],
             "locked": "3.0.8"
@@ -914,6 +958,12 @@
             ],
             "locked": "20.3"
         },
+        "com.graphql-java:graphql-java-extended-scalars": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars"
+            ],
+            "locked": "20.2"
+        },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -923,6 +973,7 @@
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
@@ -938,6 +989,12 @@
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-example-shared": {
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-extended-scalars": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-example-shared"
+            ],
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-mocking": {
@@ -957,6 +1014,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
@@ -1058,6 +1116,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
@@ -1089,6 +1148,12 @@
             ],
             "locked": "1.6.4"
         },
+        "org.jetbrains:annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "locked": "13.0"
+        },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -1097,6 +1162,7 @@
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination"
             ],
             "locked": "3.0.8"
@@ -1186,6 +1252,12 @@
             ],
             "locked": "20.3"
         },
+        "com.graphql-java:graphql-java-extended-scalars": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars"
+            ],
+            "locked": "20.2"
+        },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -1195,7 +1267,7 @@
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-pagination",
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure",
@@ -1212,6 +1284,9 @@
         "com.netflix.graphql.dgs:graphql-dgs-example-shared": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-extended-scalars": {
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-mocking": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
@@ -1226,6 +1301,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
@@ -1297,6 +1373,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
@@ -1388,6 +1465,12 @@
             ],
             "locked": "20.3"
         },
+        "com.graphql-java:graphql-java-extended-scalars": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars"
+            ],
+            "locked": "20.2"
+        },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -1397,6 +1480,7 @@
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
@@ -1412,6 +1496,12 @@
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-example-shared": {
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-extended-scalars": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-example-shared"
+            ],
             "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-mocking": {
@@ -1431,6 +1521,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
@@ -1535,6 +1626,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
@@ -1566,6 +1658,12 @@
             ],
             "locked": "1.6.4"
         },
+        "org.jetbrains:annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "locked": "13.0"
+        },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -1574,6 +1672,7 @@
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination"
             ],
             "locked": "3.0.8"

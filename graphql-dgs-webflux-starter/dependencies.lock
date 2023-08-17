@@ -504,6 +504,12 @@
             ],
             "locked": "1.6.4"
         },
+        "org.jetbrains:annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "locked": "13.0"
+        },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.36"
         },
@@ -944,6 +950,12 @@
             ],
             "locked": "1.6.4"
         },
+        "org.jetbrains:annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "locked": "13.0"
+        },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -1342,6 +1354,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
             "locked": "1.6.4"
+        },
+        "org.jetbrains:annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "locked": "13.0"
         },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
