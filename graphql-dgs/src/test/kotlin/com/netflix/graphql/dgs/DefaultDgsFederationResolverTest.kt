@@ -531,7 +531,7 @@ class DefaultDgsFederationResolverTest {
                 }
             }
 
-            // Define a mock show entity fetcher that throws an EntityNotFoundException for showId 1
+            // Define a mock show entity fetcher that throws an EntityNotFoundException for showId 2
             val showEntityFetcher = object {
                 @DgsEntityFetcher(name = "Show")
                 fun showEntityFetcher(values: Map<String, Any>, dfe: DgsDataFetchingEnvironment?): Show {
@@ -569,8 +569,8 @@ class DefaultDgsFederationResolverTest {
             assertThat(result.get().data).hasSize(2)
             assertThat(result.get().errors).hasSize(2)
             assertThat(result.get().errors[0].path.toString()).contains("_entities, 0")
-            assertThat(result.get().errors[1].path.toString()).contains("_entities, 1")
             assertThat(result.get().errors[0].message).contains("No entity found for movieId 1")
+            assertThat(result.get().errors[1].path.toString()).contains("_entities, 1")
             assertThat(result.get().errors[1].message).contains("No entity found for showId 2")
         }
 
@@ -626,5 +626,4 @@ class DefaultDgsFederationResolverTest {
     data class Movie(val movieId: String = "", val title: String = "")
 
     data class Show(val showId: String = "", val title: String = "")
-
 }
