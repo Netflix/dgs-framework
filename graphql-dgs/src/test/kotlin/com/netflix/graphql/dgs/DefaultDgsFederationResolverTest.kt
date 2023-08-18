@@ -519,6 +519,62 @@ class DefaultDgsFederationResolverTest {
         }
 
         @Test
+        fun `Entity Fetcher throws DgsEntityNotFoundException for different types`() {
+            // Define a mock movie entity fetcher that throws an EntityNotFoundException for movieId 1
+            val movieEntityFetcher = object {
+                @DgsEntityFetcher(name = "Movie")
+                fun movieEntityFetcher(values: Map<String, Any>, dfe: DgsDataFetchingEnvironment?): Movie {
+                    if (values["movieId"] == "1") {
+                        throw DgsEntityNotFoundException("No entity found for movieId 1")
+                    }
+                    return Movie(values["movieId"].toString(), "Some Movie Title")
+                }
+            }
+
+            // Define a mock show entity fetcher that throws an EntityNotFoundException for showId 1
+            val showEntityFetcher = object {
+                @DgsEntityFetcher(name = "Show")
+                fun showEntityFetcher(values: Map<String, Any>, dfe: DgsDataFetchingEnvironment?): Show {
+                    if (values["showId"] == "2") {
+                        throw DgsEntityNotFoundException("No entity found for showId 2")
+                    }
+                    return Show(values["showId"].toString(), "Some Show Title")
+                }
+            }
+
+            // Mock the ApplicationContext to return the mock entity fetchers
+            every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+                "MovieEntityFetcher" to movieEntityFetcher,
+                "ShowEntityFetcher" to showEntityFetcher
+            )
+
+            // Initialize the schema with a minimal query type
+            dgsSchemaProvider.schema("""type Query {}""")
+
+            // Construct arguments with _entities argument
+            val arguments = mapOf<String, Any>(
+                _Entity.argumentName to listOf(mapOf("__typename" to "Movie", "movieId" to "1"), mapOf("__typename" to "Show", "showId" to "2"))
+            )
+
+            val dataFetchingEnvironment = constructDFE(arguments)
+
+            // Invoke the entitiesFetcher to get the result
+            val result = DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
+                .entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
+
+            // Assertions to check the result and errors
+            assertThat(result).isNotNull
+            assertThat(result.get().data).hasSize(2)
+            assertThat(result.get().errors).hasSize(2)
+            assertThat(result.get().errors[0].path.toString()).contains("_entities, 0")
+            assertThat(result.get().errors[1].path.toString()).contains("_entities, 1")
+            assertThat(result.get().errors[0].message).contains("No entity found for movieId 1")
+            assertThat(result.get().errors[1].message).contains("No entity found for showId 2")
+        }
+
+        @Test
         fun `Invoking an Entity Fetcher missing an argument`() {
             val arguments = mapOf<String, Any>(_Entity.argumentName to listOf(mapOf("__typename" to "Movie")))
             val dataFetchingEnvironment = constructDFE(arguments)
@@ -568,4 +624,7 @@ class DefaultDgsFederationResolverTest {
     }
 
     data class Movie(val movieId: String = "", val title: String = "")
+
+    data class Show(val showId: String = "", val title: String = "")
+
 }
