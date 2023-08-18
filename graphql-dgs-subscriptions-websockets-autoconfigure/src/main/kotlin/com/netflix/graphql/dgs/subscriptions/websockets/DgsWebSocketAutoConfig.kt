@@ -39,13 +39,6 @@ import org.springframework.web.socket.server.support.DefaultHandshakeHandler
 @EnableConfigurationProperties(DgsWebSocketConfigurationProperties::class)
 open class DgsWebSocketAutoConfig {
     @Bean
-    @Qualifier("dgsObjectMapper")
-    @ConditionalOnMissingBean(name = ["dgsObjectMapper"])
-    open fun dgsObjectMapper(): ObjectMapper {
-        return jacksonObjectMapper().registerModule(JavaTimeModule())
-    }
-
-    @Bean
     open fun webSocketHandler(@Suppress("SpringJavaInjectionPointsAutowiringInspection") dgsQueryExecutor: DgsQueryExecutor, configProps: DgsWebSocketConfigurationProperties, @Qualifier("dgsObjectMapper") objectMapper: ObjectMapper): WebSocketHandler {
         return DgsWebSocketHandler(dgsQueryExecutor, configProps.connectionInitTimeout, configProps.subscriptionErrorLogLevel, objectMapper)
     }
