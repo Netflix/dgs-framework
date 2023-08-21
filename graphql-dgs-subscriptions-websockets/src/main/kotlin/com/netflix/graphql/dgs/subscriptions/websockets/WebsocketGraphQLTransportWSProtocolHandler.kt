@@ -47,7 +47,7 @@ class WebsocketGraphQLTransportWSProtocolHandler(
     private val dgsQueryExecutor: DgsQueryExecutor,
     private val connectionInitTimeout: Duration,
     private val subscriptionErrorLogLevel: Level,
-    private val objectMapper: ObjectMapper,
+    private val objectMapper: ObjectMapper
 ) : TextWebSocketHandler() {
 
     internal val sessions = CopyOnWriteArrayList<WebSocketSession>()

@@ -37,7 +37,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 class WebsocketGraphQLWSProtocolHandler(
     private val dgsQueryExecutor: DgsQueryExecutor,
     private val subscriptionErrorLogLevel: Level,
-    private val objectMapper: ObjectMapper,
+    private val objectMapper: ObjectMapper
 ) : TextWebSocketHandler() {
 
     internal val subscriptions = ConcurrentHashMap<String, MutableMap<String, Subscription>>()

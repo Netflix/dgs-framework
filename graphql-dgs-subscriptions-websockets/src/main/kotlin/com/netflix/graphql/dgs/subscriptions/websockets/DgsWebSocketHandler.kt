@@ -36,8 +36,9 @@ import java.time.Duration
 
 class DgsWebSocketHandler(
     dgsQueryExecutor: DgsQueryExecutor,
-    connectionInitTimeout: Duration, subscriptionErrorLogLevel: Level,
-    objectMapper: ObjectMapper = jacksonObjectMapper(),
+    connectionInitTimeout: Duration,
+    subscriptionErrorLogLevel: Level,
+    objectMapper: ObjectMapper = jacksonObjectMapper()
 ) : TextWebSocketHandler(), SubProtocolCapable {
 
     private val graphqlWSHandler = WebsocketGraphQLWSProtocolHandler(dgsQueryExecutor, subscriptionErrorLogLevel, objectMapper)
