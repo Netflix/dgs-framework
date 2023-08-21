@@ -20,6 +20,10 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("org.springframework:spring-websocket")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     compileOnly("jakarta.annotation:jakarta.annotation-api")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-web")
 }

@@ -59,7 +59,7 @@ class WebsocketGraphQLWSProtocolHandlerTest {
 
     @BeforeEach
     fun setup() {
-        dgsWebsocketHandler = WebsocketGraphQLWSProtocolHandler(dgsQueryExecutor, Level.ERROR)
+        dgsWebsocketHandler = WebsocketGraphQLWSProtocolHandler(dgsQueryExecutor, Level.ERROR, objectMapper)
 
         every { session1.id } returns "1"
         every { session2.id } returns "2"

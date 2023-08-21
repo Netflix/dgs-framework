@@ -16,7 +16,7 @@
 
 package com.netflix.graphql.dgs.subscriptions.websockets
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.types.subscription.websockets.CloseCode
 import com.netflix.graphql.types.subscription.websockets.Message
@@ -43,7 +43,12 @@ import java.util.concurrent.CopyOnWriteArrayList
  * <a href="https://github.com/enisdenjo/graphql-ws/blob/master/PROTOCOL.md">GraphQL Over WebSocket Protocol</a> and
  * for use in DGS framework.
  */
-class WebsocketGraphQLTransportWSProtocolHandler(private val dgsQueryExecutor: DgsQueryExecutor, private val connectionInitTimeout: Duration, private val subscriptionErrorLogLevel: Level) : TextWebSocketHandler() {
+class WebsocketGraphQLTransportWSProtocolHandler(
+    private val dgsQueryExecutor: DgsQueryExecutor,
+    private val connectionInitTimeout: Duration,
+    private val subscriptionErrorLogLevel: Level,
+    private val objectMapper: ObjectMapper
+) : TextWebSocketHandler() {
 
     internal val sessions = CopyOnWriteArrayList<WebSocketSession>()
     internal val contexts = ConcurrentHashMap<String, Context<Any>>()
@@ -223,6 +228,5 @@ class WebsocketGraphQLTransportWSProtocolHandler(private val dgsQueryExecutor: D
 
     private companion object {
         val logger: Logger = LoggerFactory.getLogger(WebsocketGraphQLTransportWSProtocolHandler::class.java)
-        val objectMapper = jacksonObjectMapper()
     }
 }
