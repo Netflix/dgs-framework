@@ -119,7 +119,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.6.6"
+            "locked": "1.6.9"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -294,7 +294,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.6.6"
+            "locked": "1.6.9"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -489,7 +489,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.6.6"
+            "locked": "1.6.9"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -568,6 +568,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
             "locked": "1.6.4"
+        },
+        "org.jetbrains:annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "locked": "13.0"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.36"
@@ -885,7 +891,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.6.6"
+            "locked": "1.6.9"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -1079,7 +1085,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.6.6"
+            "locked": "1.6.9"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -1271,7 +1277,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.6.6"
+            "locked": "1.6.9"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -1350,6 +1356,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
             "locked": "1.6.4"
+        },
+        "org.jetbrains:annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "locked": "13.0"
         },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [

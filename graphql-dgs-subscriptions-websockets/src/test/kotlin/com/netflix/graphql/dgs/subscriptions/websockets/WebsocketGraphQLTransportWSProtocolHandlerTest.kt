@@ -47,11 +47,12 @@ import java.time.Duration
 @ExtendWith(MockKExtension::class)
 class WebsocketGraphQLTransportWSProtocolHandlerTest {
 
+    private val objectMapper = jacksonObjectMapper()
     private lateinit var dgsWebsocketHandler: WebsocketGraphQLTransportWSProtocolHandler
 
     @BeforeEach
     fun setup() {
-        dgsWebsocketHandler = WebsocketGraphQLTransportWSProtocolHandler(dgsQueryExecutor, Duration.ofMillis(1000), Level.ERROR)
+        dgsWebsocketHandler = WebsocketGraphQLTransportWSProtocolHandler(dgsQueryExecutor, Duration.ofMillis(1000), Level.ERROR, objectMapper)
 
         every { session1.id } returns "1"
         every { session2.id } returns "2"
