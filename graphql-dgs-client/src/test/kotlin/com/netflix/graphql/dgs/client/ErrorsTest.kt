@@ -176,4 +176,49 @@ class ErrorsTest {
 
         server.verify()
     }
+
+    @Test
+    fun errorWithDebugInfo() {
+        val jsonResponse = """
+            {
+              "errors": [
+                {
+                  "message": "java.lang.RuntimeException: test",
+                  "locations": [],
+                  "path": [
+                    "hello"
+                  ],
+                  "extensions": {
+                    "debugInfo": {
+                      "subquery": "test sub-query",
+                      "variables": {
+                        "variableKey1": "variableValue1",
+                        "variableKey2": "variableValue2"
+                      },
+                      "customKey1": "customValue1",
+                      "customKey2": "customValue2"
+                    }
+                  }
+                }
+              ],
+              "data": {
+                "hello": null
+              }
+            }
+        """.trimIndent()
+
+        server.expect(requestTo(url))
+            .andExpect(method(HttpMethod.POST))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
+
+        val graphQLResponse = client.executeQuery("""{ hello }""", emptyMap(), requestExecutor)
+        assertThat(graphQLResponse.errors[0].extensions?.debugInfo?.subquery).isEqualTo("test sub-query")
+        assertThat(graphQLResponse.errors[0].extensions?.debugInfo?.variables?.get("variableKey1")).isEqualTo("variableValue1")
+        assertThat(graphQLResponse.errors[0].extensions?.debugInfo?.variables?.get("variableKey2")).isEqualTo("variableValue2")
+        assertThat(graphQLResponse.errors[0].extensions?.debugInfo?.additionalInformation?.get("customKey1")).isEqualTo("customValue1")
+        assertThat(graphQLResponse.errors[0].extensions?.debugInfo?.additionalInformation?.get("customKey2")).isEqualTo("customValue2")
+
+        server.verify()
+    }
 }
