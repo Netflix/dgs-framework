@@ -16,6 +16,8 @@
 
 package com.netflix.graphql.dgs.client
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -42,10 +44,11 @@ data class GraphQLErrorExtensions(
     @JsonProperty val classification: String = ""
 )
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class GraphQLErrorDebugInfo(
     @JsonProperty val subquery: String = "",
-    @JsonProperty val variables: Map<String, Any> = emptyMap()
+    @JsonProperty val variables: Map<String, Any> = emptyMap(),
+    @JsonAnySetter @get:JsonAnyGetter
+    val additionalInformation: Map<String, Any> = hashMapOf()
 )
 
 /**
