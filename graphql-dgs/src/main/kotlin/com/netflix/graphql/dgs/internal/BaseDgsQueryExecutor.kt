@@ -119,7 +119,7 @@ object BaseDgsQueryExecutor {
             graphQLContextFuture.complete(executionInput.graphQLContext)
             graphQL.executeAsync(executionInput)
         } catch (e: Exception) {
-            logger.error("Encountered an exception while handling query {}", query, e)
+            logger.error("Encountered an exception while handling query", e)
             val errors: List<GraphQLError> = if (e is GraphQLError) listOf<GraphQLError>(e) else emptyList()
             CompletableFuture.completedFuture(ExecutionResult.newExecutionResult().errors(errors).build())
         }
