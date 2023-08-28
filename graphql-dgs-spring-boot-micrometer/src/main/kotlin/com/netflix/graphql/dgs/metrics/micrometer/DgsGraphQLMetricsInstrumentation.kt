@@ -29,7 +29,6 @@ import graphql.schema.GraphQLObjectType
 import graphql.validation.ValidationError
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
-import io.micrometer.core.instrument.Tags
 import io.micrometer.core.instrument.Timer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -68,12 +67,13 @@ class DgsGraphQLMetricsInstrumentation(
         miState.isIntrospectionQuery = QueryUtils.isIntrospectionQuery(parameters.executionInput)
 
         return SimpleInstrumentationContext.whenCompleted { result, exc ->
+            val tags = tagsProvider.getContextualTags() +
+                tagsProvider.getExecutionTags(miState, parameters, result, exc) +
+                miState.tags()
             miState.stopTimer(
                 properties.autotime
                     .builder(GqlMetric.QUERY.key)
-                    .tags(tagsProvider.getContextualTags())
-                    .tags(tagsProvider.getExecutionTags(miState, parameters, result, exc))
-                    .tags(miState.tags())
+                    .tags(tags)
             )
         }
     }
@@ -84,23 +84,26 @@ class DgsGraphQLMetricsInstrumentation(
         state: InstrumentationState
     ): CompletableFuture<ExecutionResult> {
         val miState: MetricsInstrumentationState = state as MetricsInstrumentationState
-        val tags =
-            Tags.empty()
-                .and(tagsProvider.getContextualTags())
-                .and(tagsProvider.getExecutionTags(miState, parameters, executionResult, null))
-                .and(miState.tags())
+        val baseTags = tagsProvider.getContextualTags() +
+            tagsProvider.getExecutionTags(miState, parameters, executionResult, null) +
+            miState.tags()
+
+        fun errorTags(values: ErrorUtils.ErrorTagValues): Iterable<Tag> {
+            val errorTags = listOf(
+                Tag.of(GqlTag.PATH.key, values.path),
+                Tag.of(GqlTag.ERROR_CODE.key, values.type),
+                Tag.of(GqlTag.ERROR_DETAIL.key, values.detail)
+            )
+            return baseTags + errorTags
+        }
 
         ErrorUtils
             .sanitizeErrorPaths(executionResult)
             .forEach {
                 registrySupplier
                     .get()
-                    .counter(
-                        GqlMetric.ERROR.key,
-                        tags.and(GqlTag.PATH.key, it.path)
-                            .and(GqlTag.ERROR_CODE.key, it.type)
-                            .and(GqlTag.ERROR_DETAIL.key, it.detail)
-                    ).increment()
+                    .counter(GqlMetric.ERROR.key, errorTags(it))
+                    .increment()
             }
 
         return CompletableFuture.completedFuture(executionResult)
@@ -124,10 +127,9 @@ class DgsGraphQLMetricsInstrumentation(
 
         return DataFetcher { environment ->
             val registry = registrySupplier.get()
-            val baseTags =
-                Tags.of(GqlTag.FIELD.key, gqlField)
-                    .and(tagsProvider.getContextualTags())
-                    .and(miState.tags())
+            val baseTags = mutableListOf(Tag.of(GqlTag.FIELD.key, gqlField)) +
+                tagsProvider.getContextualTags() +
+                miState.tags()
 
             val sampler = Timer.start(registry)
             try {
@@ -197,9 +199,7 @@ class DgsGraphQLMetricsInstrumentation(
         error: Throwable?,
         baseTags: Iterable<Tag>
     ) {
-        val recordedTags = Tags
-            .of(baseTags)
-            .and(tagsProvider.getFieldFetchTags(state, parameters, error))
+        val recordedTags = baseTags + tagsProvider.getFieldFetchTags(state, parameters, error)
 
         timerSampler.stop(
             properties
@@ -231,28 +231,28 @@ class DgsGraphQLMetricsInstrumentation(
         }
 
         @Internal
-        fun tags(): Tags {
-            return Tags
-                .of(
-                    GqlTag.QUERY_COMPLEXITY.key,
-                    queryComplexity.map { it.toString() }.orElse(TagUtils.TAG_VALUE_NONE)
-                )
-                .and(
-                    GqlTag.OPERATION.key,
-                    operation.map { it.uppercase() }.orElse(TagUtils.TAG_VALUE_NONE)
-                )
-                .and(
-                    limitedTagMetricResolver.tags(
-                        GqlTag.OPERATION_NAME.key,
-                        operationName.orElse(TagUtils.TAG_VALUE_ANONYMOUS)
-                    )
-                )
-                .and(
-                    limitedTagMetricResolver.tags(
-                        GqlTag.QUERY_SIG_HASH.key,
-                        querySignature.map { it.hash }.orElse(TagUtils.TAG_VALUE_NONE)
-                    )
-                )
+        fun tags(): Iterable<Tag> {
+            val tags = mutableListOf<Tag>()
+            tags += Tag.of(
+                GqlTag.QUERY_COMPLEXITY.key,
+                queryComplexity.map { it.toString() }.orElse(TagUtils.TAG_VALUE_NONE)
+            )
+            tags += Tag.of(
+                GqlTag.OPERATION.key,
+                operation.map { it.uppercase() }.orElse(TagUtils.TAG_VALUE_NONE)
+            )
+
+            tags += limitedTagMetricResolver.tags(
+                GqlTag.OPERATION_NAME.key,
+                operationName.orElse(TagUtils.TAG_VALUE_ANONYMOUS)
+            )
+
+            tags += limitedTagMetricResolver.tags(
+                GqlTag.QUERY_SIG_HASH.key,
+                querySignature.map { it.hash }.orElse(TagUtils.TAG_VALUE_NONE)
+            )
+
+            return tags
         }
     }
 

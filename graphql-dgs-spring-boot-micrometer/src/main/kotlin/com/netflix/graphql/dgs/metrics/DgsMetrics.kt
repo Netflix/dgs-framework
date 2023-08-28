@@ -18,7 +18,6 @@ package com.netflix.graphql.dgs.metrics
 
 import com.netflix.graphql.dgs.Internal
 import io.micrometer.core.instrument.Tag
-import io.micrometer.core.instrument.Tags
 
 object DgsMetrics {
 
@@ -104,9 +103,8 @@ object DgsMetrics {
          */
         SUCCESS(GqlTag.OUTCOME.key, "success") {
             /** Returns the success [tag] along with the [JAVA_CLASS] of the value.*/
-            override fun <T : Any> tags(v: T): Tags {
-                return Tags.of(tag)
-                    .and(JAVA_CLASS.tags(v))
+            override fun <T : Any> tags(v: T): Iterable<Tag> {
+                return listOf(tag).plus(JAVA_CLASS.tags(v))
             }
         },
 
@@ -115,16 +113,15 @@ object DgsMetrics {
          */
         FAILURE(GqlTag.OUTCOME.key, "failure") {
             /** Returns failure [tag] along with the [JAVA_CLASS] of the value.*/
-            override fun <T : Any> tags(v: T): Tags {
-                return Tags.of(tag)
-                    .and(JAVA_CLASS.tags(v))
+            override fun <T : Any> tags(v: T): Iterable<Tag> {
+                return listOf(tag).plus(JAVA_CLASS.tags(v))
             }
         },
 
         /** Tag that reflects the class associated with the metric. */
         JAVA_CLASS("class", "unknown") {
-            override fun <T : Any> tags(v: T): Tags {
-                return Tags.of(key, v::class.java.name)
+            override fun <T : Any> tags(v: T): Iterable<Tag> {
+                return listOf(Tag.of(key, v::class.java.name))
             }
         },
 
@@ -133,13 +130,13 @@ object DgsMetrics {
          *The metric with this tag will normally be accompanied by the [JAVA_CLASS] tag as well.
          */
         JAVA_CLASS_METHOD("method", "unknown") {
-            override fun <T : Any> tags(v: T): Tags {
-                return Tags.of(key, "$v")
+            override fun <T : Any> tags(v: T): Iterable<Tag> {
+                return listOf(Tag.of(key, "$v"))
             }
         };
 
         val tag: Tag = Tag.of(key, defaultValue)
 
-        abstract fun <T : Any> tags(v: T): Tags
+        abstract fun <T : Any> tags(v: T): Iterable<Tag>
     }
 }

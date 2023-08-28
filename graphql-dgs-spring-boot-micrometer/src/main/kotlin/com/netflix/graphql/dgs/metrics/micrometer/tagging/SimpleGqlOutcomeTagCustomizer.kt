@@ -22,7 +22,6 @@ import graphql.ExecutionResult
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import io.micrometer.core.instrument.Tag
-import io.micrometer.core.instrument.Tags
 
 class SimpleGqlOutcomeTagCustomizer : DgsExecutionTagCustomizer, DgsFieldFetchTagCustomizer {
 
@@ -33,9 +32,9 @@ class SimpleGqlOutcomeTagCustomizer : DgsExecutionTagCustomizer, DgsFieldFetchTa
         exception: Throwable?
     ): Iterable<Tag> {
         return if (result.errors.isNotEmpty() || exception != null) {
-            Tags.of(FAILURE.tag)
+            listOf(FAILURE.tag)
         } else {
-            Tags.of(SUCCESS.tag)
+            listOf(SUCCESS.tag)
         }
     }
 
@@ -45,9 +44,9 @@ class SimpleGqlOutcomeTagCustomizer : DgsExecutionTagCustomizer, DgsFieldFetchTa
         error: Throwable?
     ): Iterable<Tag> {
         return if (error == null) {
-            Tags.of(SUCCESS.tag)
+            listOf(SUCCESS.tag)
         } else {
-            Tags.of(FAILURE.tag)
+            listOf(FAILURE.tag)
         }
     }
 }

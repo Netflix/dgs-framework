@@ -18,14 +18,13 @@ package com.netflix.graphql.dgs.metrics.micrometer
 
 import com.netflix.graphql.dgs.Internal
 import io.micrometer.core.instrument.Tag
-import io.micrometer.core.instrument.Tags
 import java.util.*
 
 @Internal
 interface LimitedTagMetricResolver {
 
-    fun tags(key: String, value: String): Tags {
-        return tag(key, value).map { Tags.of(it) }.orElse(Tags.empty())
+    fun tags(key: String, value: String): Iterable<Tag> {
+        return tag(key, value).map { listOf(it) }.orElse(emptyList())
     }
 
     fun tag(key: String, value: String): Optional<Tag>
