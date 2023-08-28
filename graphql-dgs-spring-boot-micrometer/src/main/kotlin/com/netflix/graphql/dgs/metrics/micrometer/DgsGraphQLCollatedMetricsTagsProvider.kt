@@ -24,7 +24,6 @@ import graphql.ExecutionResult
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import io.micrometer.core.instrument.Tag
-import io.micrometer.core.instrument.Tags
 import java.util.*
 
 class DgsGraphQLCollatedMetricsTagsProvider(
@@ -34,7 +33,7 @@ class DgsGraphQLCollatedMetricsTagsProvider(
 ) : DgsGraphQLMetricsTagsProvider {
 
     override fun getContextualTags(): Iterable<Tag> {
-        return Tags.of(contextualTagCustomizer.flatMap { it.getContextualTags() })
+        return contextualTagCustomizer.flatMap { it.getContextualTags() }
     }
 
     override fun getExecutionTags(
@@ -43,7 +42,7 @@ class DgsGraphQLCollatedMetricsTagsProvider(
         result: ExecutionResult,
         exception: Throwable?
     ): Iterable<Tag> {
-        return Tags.of(executionTagCustomizer.flatMap { it.getExecutionTags(state, parameters, result, exception) })
+        return executionTagCustomizer.flatMap { it.getExecutionTags(state, parameters, result, exception) }
     }
 
     override fun getFieldFetchTags(
@@ -51,6 +50,6 @@ class DgsGraphQLCollatedMetricsTagsProvider(
         parameters: InstrumentationFieldFetchParameters,
         exception: Throwable?
     ): Iterable<Tag> {
-        return Tags.of(fieldFetchTagCustomizer.flatMap { it.getFieldFetchTags(state, parameters, exception) })
+        return fieldFetchTagCustomizer.flatMap { it.getFieldFetchTags(state, parameters, exception) }
     }
 }
