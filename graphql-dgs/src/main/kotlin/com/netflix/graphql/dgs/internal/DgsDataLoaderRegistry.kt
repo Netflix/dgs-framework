@@ -140,16 +140,11 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      * @return a data loader or null if its not present
      </V></K> */
     override fun <K, V> getDataLoader(key: String): DataLoader<K, V>? {
-        if (dataLoaderRegistry.keys.contains(key)) {
-            return dataLoaderRegistry.getDataLoader(key)
-        } else if (scheduledDataLoaderRegistries.contains(key)) {
-            return scheduledDataLoaderRegistries[key]?.getDataLoader(key)
-        }
-        return null
+        return dataLoaderRegistry.getDataLoader(key) ?: scheduledDataLoaderRegistries[key]?.getDataLoader(key)
     }
 
     override fun getKeys(): Set<String> {
-        return HashSet(scheduledDataLoaderRegistries.keys).plus(dataLoaderRegistry.keys)
+        return scheduledDataLoaderRegistries.keys.plus(dataLoaderRegistry.keys)
     }
 
     /**
