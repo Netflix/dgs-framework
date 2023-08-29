@@ -42,6 +42,7 @@ internal class DgsGraphQLMetricsPropertiesTest {
             assertThat(props.tags).isNotNull
             assertThat(props.tags.limiter.kind).isEqualTo(DgsGraphQLMetricsProperties.CardinalityLimiterKind.FIRST)
             assertThat(props.tags.limiter.limit).isEqualTo(100)
+            assertThat(props.tags.complexity.enabled).isEqualTo(true)
         }
     }
 
@@ -57,6 +58,18 @@ internal class DgsGraphQLMetricsPropertiesTest {
                 assertThat(props.tags).isNotNull
                 assertThat(props.tags.limiter.kind).isEqualTo(DgsGraphQLMetricsProperties.CardinalityLimiterKind.FREQUENCY)
                 assertThat(props.tags.limiter.limit).isEqualTo(500)
+            }
+    }
+
+    @Test
+    fun `Can disable complexity tag`() {
+        contextRunner
+            .withPropertyValues(
+                "management.metrics.dgs-graphql.tags.complexity.enabled=false"
+            ).run { ctx ->
+                val props = ctx.getBean(DgsGraphQLMetricsProperties::class.java)
+
+                assertThat(props.tags.complexity.enabled).isEqualTo(false)
             }
     }
 

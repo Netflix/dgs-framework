@@ -181,13 +181,15 @@ class DgsGraphQLMetricsInstrumentation(
     ): InstrumentationContext<ExecutionResult>? {
         val miState: MetricsInstrumentationState = state as MetricsInstrumentationState
         if (parameters.executionContext.getRoot<Any>() == null) {
-            miState.operation = Optional.of(parameters.executionContext.operationDefinition.operation.name.uppercase())
+            miState.operation =
+                Optional.of(parameters.executionContext.operationDefinition.operation.name.uppercase())
             if (!miState.operationName.isPresent) {
                 miState.operationName = Optional.ofNullable(parameters.executionContext.operationDefinition?.name)
             }
         }
-
-        miState.queryComplexity = ComplexityUtils.resolveComplexity(parameters)
+        if (properties.tags.complexity.enabled) {
+            miState.queryComplexity = ComplexityUtils.resolveComplexity(parameters)
+        }
         return super.beginExecuteOperation(parameters, state)
     }
 
