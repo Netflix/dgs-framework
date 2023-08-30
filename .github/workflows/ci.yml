@@ -54,7 +54,7 @@ jobs:
 
       - name: Publish Locally
         run: |
-          ./gradlew --info publishToMavenLocal --warning-mode all
+          ./gradlew --info --no-watch-fs publishToMavenLocal --warning-mode all
 
       - name: Clone dgs-examples-java
         uses: actions/checkout@v3.5.3
