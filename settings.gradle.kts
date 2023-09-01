@@ -13,7 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+plugins {
+    id("com.gradle.enterprise") version("3.14.1")
+}
 
+gradleEnterprise {
+    buildScan {
+        termsOfServiceUrl = "https://gradle.com/terms-of-service"
+        termsOfServiceAgree = "yes"
+        publishAlways()
+    }
+}
 rootProject.name = "dgs-framework"
 include("graphql-dgs")
 include("graphql-error-types")

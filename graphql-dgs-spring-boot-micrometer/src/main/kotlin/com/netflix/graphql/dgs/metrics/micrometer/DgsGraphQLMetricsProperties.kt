@@ -21,7 +21,10 @@ data class DgsGraphQLMetricsProperties(
     data class TagsProperties(
         /** Cardinality limiter settings for this tag. */
         @NestedConfigurationProperty
-        var limiter: CardinalityLimiterProperties = CardinalityLimiterProperties()
+        var limiter: CardinalityLimiterProperties = CardinalityLimiterProperties(),
+
+        @NestedConfigurationProperty
+        var complexity: QueryComplexityProperties = QueryComplexityProperties()
     )
 
     data class CardinalityLimiterProperties(
@@ -32,6 +35,11 @@ data class DgsGraphQLMetricsProperties(
          * The interpretation of this limit depends on the cardinality limiter itself. */
         @DefaultValue("100")
         var limit: Int = 100
+    )
+
+    data class QueryComplexityProperties(
+        @DefaultValue("true")
+        var enabled: Boolean = true
     )
 
     enum class CardinalityLimiterKind {

@@ -31,7 +31,7 @@ jobs:
             - ${{ runner.os }}-gradlewrapper-
       - name: Publish candidate
         if: contains(github.ref, '-rc.')
-        run: ./gradlew --info --stacktrace -Prelease.useLastTag=true candidate
+        run: ./gradlew --info --stacktrace --no-watch-fs -Prelease.useLastTag=true candidate
         env:
           NETFLIX_OSS_SIGNING_KEY: ${{ secrets.ORG_SIGNING_KEY }}
           NETFLIX_OSS_SIGNING_PASSWORD: ${{ secrets.ORG_SIGNING_PASSWORD }}
@@ -39,7 +39,7 @@ jobs:
           NETFLIX_OSS_REPO_PASSWORD: ${{ secrets.ORG_NETFLIXOSS_PASSWORD }}
       - name: Publish release
         if: (!contains(github.ref, '-rc.'))
-        run: ./gradlew --info -Prelease.useLastTag=true final
+        run: ./gradlew --info --no-watch-fs -Prelease.useLastTag=true final
         env:
           NETFLIX_OSS_SONATYPE_USERNAME: ${{ secrets.ORG_SONATYPE_USERNAME }}
           NETFLIX_OSS_SONATYPE_PASSWORD: ${{ secrets.ORG_SONATYPE_PASSWORD }}
