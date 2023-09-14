@@ -26,6 +26,12 @@
             ],
             "locked": "2.15.2"
         },
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "locked": "2.15.2"
+        },
+        "com.fasterxml.jackson.module:jackson-module-kotlin": {
+            "locked": "2.15.2"
+        },
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.15.2"
         },
@@ -36,7 +42,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.3"
+            "locked": "20.6"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -139,6 +145,12 @@
             ],
             "locked": "2.15.2"
         },
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "locked": "2.15.2"
+        },
+        "com.fasterxml.jackson.module:jackson-module-kotlin": {
+            "locked": "2.15.2"
+        },
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.15.2"
         },
@@ -149,7 +161,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.3"
+            "locked": "20.6"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -265,7 +277,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.3"
+            "locked": "20.6"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -381,6 +393,9 @@
             "locked": "3.0.8"
         },
         "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "3.0.8"
+        },
+        "org.springframework.boot:spring-boot-starter-web": {
             "locked": "3.0.8"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
@@ -619,7 +634,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.3"
+            "locked": "20.6"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -767,6 +782,12 @@
             ],
             "locked": "2.15.2"
         },
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "locked": "2.15.2"
+        },
+        "com.fasterxml.jackson.module:jackson-module-kotlin": {
+            "locked": "2.15.2"
+        },
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.15.2"
         },
@@ -777,7 +798,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.3"
+            "locked": "20.6"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -844,6 +865,9 @@
         "org.springframework.boot:spring-boot-starter-test": {
             "locked": "3.0.8"
         },
+        "org.springframework.boot:spring-boot-starter-web": {
+            "locked": "3.0.8"
+        },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
         },
@@ -887,7 +911,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.3"
+            "locked": "20.6"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -994,6 +1018,9 @@
             "locked": "3.0.8"
         },
         "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "3.0.8"
+        },
+        "org.springframework.boot:spring-boot-starter-web": {
             "locked": "3.0.8"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
