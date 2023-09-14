@@ -1,9 +1,9 @@
 name: "Publish to NetflixOSS and Maven Central"
 on:
-  release:
-    types:
-      - released
-      - prereleased
+  push:
+    tags:
+      - v*.*.*
+      - v*.*.*-rc.*
 
 jobs:
   build:
