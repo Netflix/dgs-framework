@@ -153,7 +153,7 @@ open class DgsWebMvcAutoConfiguration {
         }
 
         @Bean
-        @ConditionalOnProperty("dgs.graphql.disallow-mutation-over-get.enabled", havingValue = "true", matchIfMissing = true)
+        @ConditionalOnProperty("dgs.graphql.prevent-mutation-over-get.enabled", havingValue = "true", matchIfMissing = true)
         open fun csrfCheckInstrumentation(): DgsGraphQLCSRFInstrumentation {
             return DgsGraphQLCSRFInstrumentation()
         }

@@ -15,5 +15,5 @@ logging:
 
 dgs:
   graphql:
-    disallow-mutation-over-get:
-      enabled: false
+    prevent-mutation-over-get:
+      enabled: true
