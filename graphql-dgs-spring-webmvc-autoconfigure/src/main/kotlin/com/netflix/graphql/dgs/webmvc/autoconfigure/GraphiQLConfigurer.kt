@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2023 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,73 +16,62 @@
 
 package com.netflix.graphql.dgs.webmvc.autoconfigure
 
-import com.netflix.graphql.dgs.webmvc.autoconfigure.GraphiQLConfigurer.Constants.PATH_TO_GRAPHIQL_INDEX_HTML
-import jakarta.servlet.ServletContext
-import jakarta.servlet.http.HttpServletRequest
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.io.Resource
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry
+import org.springframework.core.io.ClassPathResource
+import org.springframework.http.MediaType
+import org.springframework.web.HttpRequestHandler
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import org.springframework.web.servlet.resource.PathResourceResolver
-import org.springframework.web.servlet.resource.ResourceTransformer
-import org.springframework.web.servlet.resource.ResourceTransformerChain
-import org.springframework.web.servlet.resource.TransformedResource
-import java.io.BufferedReader
-import java.io.IOException
-import java.nio.charset.StandardCharsets
+import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping
+import org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter
+import org.springframework.web.servlet.view.RedirectView
+import org.springframework.web.util.UriComponentsBuilder
 
-@Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties(DgsWebMvcConfigurationProperties::class)
-@Suppress("SpringJavaInjectionPointsAutowiringInspection")
+@Configuration
 open class GraphiQLConfigurer(
-    private val configProps: DgsWebMvcConfigurationProperties,
-    private val servletContext: ServletContext
+    val configProps: DgsWebMvcConfigurationProperties
 ) : WebMvcConfigurer {
 
-    override fun addViewControllers(registry: ViewControllerRegistry) {
-        registry.addViewController(configProps.graphiql.path).setViewName("forward:$PATH_TO_GRAPHIQL_INDEX_HTML")
-        registry.addViewController("${configProps.graphiql.path}/").setViewName("forward:$PATH_TO_GRAPHIQL_INDEX_HTML")
+    private val modifiedHtml: String
+
+    init {
+        val html = ClassPathResource("graphiql/graphiql.html").inputStream.use { it.reader().readText() }
+        modifiedHtml = html.replace("<DGS_GRAPHIQL_TITLE>", configProps.graphiql.title)
     }
 
-    override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
-        val graphqlPath = servletContext.contextPath + configProps.path
-        logger.info("Configuring GraphiQL to use GraphQL endpoint at '{}'", graphqlPath)
-        registry
-            .addResourceHandler("/graphiql/**")
-            .addResourceLocations("classpath:/graphiql/")
-            .setCachePeriod(3600)
-            .resourceChain(true)
-            .addResolver(PathResourceResolver())
-            .addTransformer(TokenReplacingTransformer(mapOf("<DGS_GRAPHQL_PATH>" to graphqlPath, "<DGS_GRAPHIQL_TITLE>" to configProps.graphiql.title)))
+    @Bean
+    @ConditionalOnProperty(name = ["dgs.graphql.graphiql.enabled"], havingValue = "true", matchIfMissing = true)
+    open fun graphiQlHandlerMapping(): SimpleUrlHandlerMapping {
+        val mapping = SimpleUrlHandlerMapping()
+        mapping.order = 0  // set higher than the GraphQL handler mapping
+        mapping.urlMap = mapOf(configProps.graphiql.path to graphiQlHandler())
+        return mapping
     }
 
-    class TokenReplacingTransformer(private val replaceMap: Map<String, String>) :
-        ResourceTransformer {
+    @Bean
+    @ConditionalOnProperty(name = ["dgs.graphql.graphiql.enabled"], havingValue = "true", matchIfMissing = true)
+    open fun graphiQlHandlerAdapter(): HttpRequestHandlerAdapter {
+        return HttpRequestHandlerAdapter()
+    }
 
-        @Throws(IOException::class)
-        override fun transform(
-            request: HttpServletRequest,
-            resource: Resource,
-            transformerChain: ResourceTransformerChain
-        ): Resource {
-            if (request.requestURI.orEmpty().endsWith(PATH_TO_GRAPHIQL_INDEX_HTML)) {
-                var content = resource.inputStream.bufferedReader().use(BufferedReader::readText)
-                replaceMap.forEach { content = content.replace(it.key, it.value) }
-                return TransformedResource(resource, content.toByteArray(StandardCharsets.UTF_8))
+    @Bean
+    @ConditionalOnProperty(name = ["dgs.graphql.graphiql.enabled"], havingValue = "true", matchIfMissing = true)
+    open fun graphiQlHandler(): HttpRequestHandler {
+        return HttpRequestHandler { request, response ->
+            val path = request.getParameter("path") ?: configProps.path
+            val wsPath = request.getParameter("wsPath") ?: "/subscriptions"
+
+            if (request.getParameter("path") == null || request.getParameter("wsPath") == null) {
+                val redirectUri = UriComponentsBuilder.fromPath(configProps.graphiql.path).queryParam("path", path)
+                    .queryParam("wsPath", wsPath).build().toUriString()
+                val redirectView = RedirectView(redirectUri)
+                redirectView.render(null, request, response)
+                return@HttpRequestHandler
             }
-            return resource
+
+            response.contentType = MediaType.TEXT_HTML_VALUE
+            response.writer.write(modifiedHtml)
         }
-    }
-
-    companion object {
-        private val logger: Logger = LoggerFactory.getLogger(GraphiQLConfigurer::class.java)
-    }
-
-    object Constants {
-        const val PATH_TO_GRAPHIQL_INDEX_HTML = "/graphiql/index.html"
     }
 }

@@ -60,6 +60,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.ReactiveAdapterRegistry
 import org.springframework.core.env.Environment
+import org.springframework.core.io.ClassPathResource
+import org.springframework.http.MediaType
 import org.springframework.web.reactive.BindingContext
 import org.springframework.web.reactive.function.server.RequestPredicates.accept
 import org.springframework.web.reactive.function.server.RouterFunction
@@ -78,9 +80,9 @@ import org.springframework.web.reactive.result.method.annotation.RequestParamMet
 import org.springframework.web.reactive.socket.server.WebSocketService
 import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter
 import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyRequestUpgradeStrategy
+import org.springframework.web.util.UriComponentsBuilder
 import reactor.core.publisher.Mono
 import reactor.netty.http.server.WebsocketServerSpec
-import java.net.URI
 import java.util.*
 
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
@@ -141,16 +143,29 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
 
     @Bean
     @ConditionalOnProperty(name = ["dgs.graphql.graphiql.enabled"], havingValue = "true", matchIfMissing = true)
-    open fun graphiQlConfigurer(configProps: DgsWebfluxConfigurationProperties): GraphiQlConfigurer {
-        return GraphiQlConfigurer(configProps)
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = ["dgs.graphql.graphiql.enabled"], havingValue = "true", matchIfMissing = true)
     open fun graphiQlIndexRedirect(): RouterFunction<ServerResponse> {
+        val html = ClassPathResource("graphiql/graphiql.html").inputStream.use { it.reader().readText() }
+        val modifiedHtml = html.replace("<DGS_GRAPHIQL_TITLE>", configProps.graphiql.title);
+
         return RouterFunctions.route()
             .GET(configProps.graphiql.path) {
-                permanentRedirect(URI.create(configProps.graphiql.path + "/index.html")).build()
+                val path = it.queryParam("path").orElse(configProps.path)
+                val wsPath = it.queryParam("wsPath").orElse(configProps.websocket.path)
+
+                // if the request does not contain the path and wsPath query parameters, redirect to the same path with the query parameters
+                if (!it.queryParams().containsKey("path") ||
+                    !it.queryParams().containsKey("wsPath")) {
+                    val redirectUri = UriComponentsBuilder.fromPath(configProps.graphiql.path)
+                        .queryParams(it.queryParams())
+                        .queryParam("path", path)
+                        .queryParam("wsPath", wsPath)
+                        .build()
+                        .toUri()
+                    return@GET permanentRedirect(redirectUri).build()
+                }
+
+                return@GET ok().contentType(MediaType.TEXT_HTML)
+                    .bodyValue(modifiedHtml)
             }
             .build()
     }
