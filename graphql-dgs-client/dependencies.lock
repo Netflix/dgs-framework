@@ -45,7 +45,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-            "locked": "20.3"
+            "locked": "20.6"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -138,7 +138,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-            "locked": "20.3"
+            "locked": "20.6"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -208,7 +208,8 @@
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
             ],
             "locked": "2.15.2"
         },
@@ -219,7 +220,8 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-graphql-sse",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets"
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
             ],
             "locked": "2.15.2"
         },
@@ -236,7 +238,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.3"
+            "locked": "20.6"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "20.2"
@@ -707,7 +709,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-            "locked": "20.3"
+            "locked": "20.6"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -795,7 +797,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.3"
+            "locked": "20.6"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "20.2"
@@ -936,7 +938,8 @@
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
+                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
             ],
             "locked": "2.15.2"
         },
@@ -947,7 +950,8 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-graphql-sse",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse",
-                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets"
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
             ],
             "locked": "2.15.2"
         },
@@ -964,7 +968,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "20.3"
+            "locked": "20.6"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "20.2"
