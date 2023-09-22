@@ -21,22 +21,23 @@ import com.netflix.graphql.dgs.example.datafetcher.HelloDataFetcher;
 import com.netflix.graphql.dgs.example.shared.dataLoader.MessageDataLoaderWithDispatchPredicate;
 import com.netflix.graphql.dgs.example.shared.datafetcher.*;
 import com.netflix.graphql.dgs.pagination.DgsPaginationAutoConfiguration;
+import com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcAutoConfiguration;
 import org.assertj.core.util.Maps;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {HelloDataFetcher.class, MovieDataFetcher.class, ConcurrentDataFetcher.class, RequestHeadersDataFetcher.class, DgsExtendedScalarsAutoConfiguration.class, DgsAutoConfiguration.class, DgsPaginationAutoConfiguration.class})
-class HelloDataFetcherTest {
+@SpringBootTest(classes = {HelloDataFetcher.class, MovieDataFetcher.class, ConcurrentDataFetcher.class, RequestHeadersDataFetcher.class, DgsExtendedScalarsAutoConfiguration.class, DgsAutoConfiguration.class, DgsPaginationAutoConfiguration.class, DgsWebMvcAutoConfiguration.class})
+class RequestHeaderDataFetcherTest {
 
     @Autowired
     DgsQueryExecutor queryExecutor;
-
 
     @Test
     void withHeaders() {
@@ -44,6 +45,6 @@ class HelloDataFetcherTest {
         servletRequest.addHeader("demo-header", "demo-header-value");
 
         String message = queryExecutor.executeAndExtractJsonPath("{headers}", "data.headers", new ServletWebRequest(servletRequest));
-        assertThat(message).isEqualTo("[demo-header:\"demo-header-value\"]");
+        assertThat(message).isEqualTo("demo-header-value");
     }
 }

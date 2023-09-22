@@ -56,14 +56,6 @@ class HelloDataFetcherTest {
     }
 
     @Test
-    void withHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("testHeader", "testValue");
-        String message = queryExecutor.executeAndExtractJsonPath("{headers}", "data.headers", headers);
-        assertThat(message).isEqualTo("[testHeader:\"testValue\"]");
-    }
-
-    @Test
     void helloShouldWorkWithoutName() {
         String message = queryExecutor.executeAndExtractJsonPath("{hello}", "data.hello");
         assertThat(message).isEqualTo("hello, Stranger!");
