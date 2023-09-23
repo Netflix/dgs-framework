@@ -145,7 +145,7 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     @ConditionalOnProperty(name = ["dgs.graphql.graphiql.enabled"], havingValue = "true", matchIfMissing = true)
     open fun graphiQlIndexRedirect(): RouterFunction<ServerResponse> {
         val html = ClassPathResource("graphiql/graphiql.html").inputStream.use { it.reader().readText() }
-        val modifiedHtml = html.replace("<DGS_GRAPHIQL_TITLE>", configProps.graphiql.title);
+        val modifiedHtml = html.replace("<DGS_GRAPHIQL_TITLE>", configProps.graphiql.title)
 
         return RouterFunctions.route()
             .GET(configProps.graphiql.path) {
@@ -154,7 +154,8 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
 
                 // if the request does not contain the path and wsPath query parameters, redirect to the same path with the query parameters
                 if (!it.queryParams().containsKey("path") ||
-                    !it.queryParams().containsKey("wsPath")) {
+                    !it.queryParams().containsKey("wsPath")
+                ) {
                     val redirectUri = UriComponentsBuilder.fromPath(configProps.graphiql.path)
                         .queryParams(it.queryParams())
                         .queryParam("path", path)

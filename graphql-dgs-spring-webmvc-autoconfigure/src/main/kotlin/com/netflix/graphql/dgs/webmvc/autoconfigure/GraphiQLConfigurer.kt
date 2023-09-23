@@ -44,7 +44,7 @@ open class GraphiQLConfigurer(
     @ConditionalOnProperty(name = ["dgs.graphql.graphiql.enabled"], havingValue = "true", matchIfMissing = true)
     open fun graphiQlHandlerMapping(): SimpleUrlHandlerMapping {
         val mapping = SimpleUrlHandlerMapping()
-        mapping.order = 0  // set higher than the GraphQL handler mapping
+        mapping.order = 0 // set higher than the GraphQL handler mapping
         mapping.urlMap = mapOf(configProps.graphiql.path to graphiQlHandler())
         return mapping
     }
