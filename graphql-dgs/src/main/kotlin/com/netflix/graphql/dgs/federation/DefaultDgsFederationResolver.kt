@@ -164,24 +164,8 @@ open class DefaultDgsFederationResolver() :
     open fun createDataFetchingEnvironmentWithPath(env: DataFetchingEnvironment, pathIndex: Int): DgsDataFetchingEnvironment {
         val pathWithIndex = env.executionStepInfo.path.segment("$pathIndex")
         val executionStepInfoWithPath = ExecutionStepInfo.newExecutionStepInfo(env.executionStepInfo).path(pathWithIndex).build()
-        return DgsDataFetchingEnvironment(
-            DataFetchingEnvironmentImpl
-                .newDataFetchingEnvironment()
-                .arguments(env.arguments)
-                .dataLoaderRegistry(env.dataLoaderRegistry)
-                .graphQLContext(env.graphQlContext)
-                .root(env.getRoot())
-                .graphQLSchema(env.graphQLSchema)
-                .fragmentsByName(env.fragmentsByName)
-                .dataLoaderRegistry(env.dataLoaderRegistry)
-                .locale(env.locale)
-                .document(env.document)
-                .operationDefinition(env.operationDefinition)
-                .variables(env.variables)
-                .executionId(env.executionId)
-                .executionStepInfo(executionStepInfoWithPath)
-                .build()
-        )
+        val dfe = if (env is DgsDataFetchingEnvironment) env.getDfe() else env
+        return DgsDataFetchingEnvironment(DataFetchingEnvironmentImpl.newDataFetchingEnvironment(dfe).executionStepInfo(executionStepInfoWithPath).build())
     }
 
     open fun typeMapping(): Map<Class<*>, String> {

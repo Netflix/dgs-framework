@@ -24,13 +24,18 @@ import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.EntityFetcherRegistry
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
+import com.netflix.graphql.types.errors.ErrorDetail
+import com.netflix.graphql.types.errors.TypedGraphQLError
+import graphql.GraphQLError
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherExceptionHandlerParameters
 import graphql.execution.DataFetcherExceptionHandlerResult
 import graphql.execution.DataFetcherResult
 import graphql.execution.ExecutionStepInfo
+import graphql.execution.MergedField
 import graphql.execution.ResultPath
 import graphql.execution.TypeResolutionParameters
+import graphql.language.Field
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.DataFetchingEnvironmentImpl
 import graphql.schema.GraphQLList
@@ -519,7 +524,7 @@ class DefaultDgsFederationResolverTest {
         }
 
         @Test
-        fun `Entity Fetcher throws DgsEntityNotFoundException for different types`() {
+        fun `Entity Fetcher throws DgsEntityNotFoundException for different types with custom handling`() {
             // Define a mock movie entity fetcher that throws an EntityNotFoundException for movieId 1
             val movieEntityFetcher = object {
                 @DgsEntityFetcher(name = "Movie")
@@ -560,18 +565,48 @@ class DefaultDgsFederationResolverTest {
 
             val dataFetchingEnvironment = constructDFE(arguments)
 
+            // Create a custom exception handler which uses fields in DFE available when doing custom handling.
+            val customExceptionHandler = object : DataFetcherExceptionHandler {
+                override fun handleException(handlerParameters: DataFetcherExceptionHandlerParameters?): CompletableFuture<DataFetcherExceptionHandlerResult> {
+                    return if (handlerParameters?.exception is DgsEntityNotFoundException) {
+                        // Check DFE field
+                        val fieldName = handlerParameters.dataFetchingEnvironment.field.name
+
+                        val exception = handlerParameters.exception
+                        val graphqlError: GraphQLError =
+                            TypedGraphQLError
+                                .newBuilder()
+                                .errorDetail(ErrorDetail.Common.ENHANCE_YOUR_CALM)
+                                .message("$fieldName Error: " + exception.message)
+                                .path(handlerParameters.path)
+                                .build()
+                        CompletableFuture.completedFuture(
+                            DataFetcherExceptionHandlerResult.newResult()
+                                .error(graphqlError)
+                                .build()
+                        )
+                    } else {
+                        dgsExceptionHandler.handleException(handlerParameters)
+                    }
+                }
+            }
+
             // Invoke the entitiesFetcher to get the result
-            val result = DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
+            val result = DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(customExceptionHandler))
                 .entitiesFetcher().get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
 
             // Assertions to check the result and errors
             assertThat(result).isNotNull
             assertThat(result.get().data).hasSize(2)
-            assertThat(result.get().errors).hasSize(2)
-            assertThat(result.get().errors[0].path.toString()).contains("_entities, 0")
-            assertThat(result.get().errors[0].message).contains("No entity found for movieId 1")
-            assertThat(result.get().errors[1].path.toString()).contains("_entities, 1")
-            assertThat(result.get().errors[1].message).contains("No entity found for showId 2")
+            assertThat(result.get().errors).hasSize(2).satisfiesExactly(
+                { error -> assertThat(error.path.toString().contains("_entities, 0")) },
+                { error -> assertThat(error.path.toString().contains("_entities, 1")) }
+            )
+            assertThat(result.get().errors).hasSize(2).satisfiesExactly(
+                { error -> assertThat(error.message.contains("No entity found for movieId 1")) },
+                { error -> assertThat(error.message.contains("No entity found for movieId 2")) }
+            )
+            assertThat(result.get().errors[0].message).contains(dataFetchingEnvironment.getDfe().field.name)
         }
 
         @Test
@@ -668,6 +703,7 @@ class DefaultDgsFederationResolverTest {
                 .newDataFetchingEnvironment()
                 .arguments(arguments)
                 .executionStepInfo(executionStepInfo)
+                .mergedField(MergedField.newMergedField(Field("Movie")).build())
                 .build()
         )
     }
