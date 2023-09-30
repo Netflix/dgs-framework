@@ -16,14 +16,10 @@
 
 package com.netflix.graphql.dgs.internal
 
-import com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider
-import com.netflix.graphql.dgs.DgsComponent
-import com.netflix.graphql.dgs.DgsDataLoader
-import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
-import com.netflix.graphql.dgs.DgsDataLoaderRegistryConsumer
-import com.netflix.graphql.dgs.DgsDispatchPredicate
+import com.netflix.graphql.dgs.*
 import com.netflix.graphql.dgs.exceptions.DgsUnnamedDataLoaderOnFieldException
 import com.netflix.graphql.dgs.exceptions.InvalidDataLoaderTypeException
+import com.netflix.graphql.dgs.exceptions.MultipleDataLoadersDefinedException
 import com.netflix.graphql.dgs.exceptions.UnsupportedSecuredDataLoaderException
 import com.netflix.graphql.dgs.internal.utils.DataLoaderNameUtil
 import jakarta.annotation.PostConstruct
@@ -59,6 +55,8 @@ class DgsDataLoaderProvider(
     private val mappedBatchLoaders = mutableListOf<LoaderHolder<MappedBatchLoader<*, *>>>()
     private val mappedBatchLoadersWithContext = mutableListOf<LoaderHolder<MappedBatchLoaderWithContext<*, *>>>()
 
+    private val loaderMap = mutableMapOf<String, String>()
+
     fun buildRegistry(): DataLoaderRegistry {
         return buildRegistryWithContextSupplier { null }
     }
@@ -87,50 +85,53 @@ class DgsDataLoaderProvider(
     }
 
     private fun addDataLoaderFields() {
-        applicationContext.getBeansWithAnnotation(DgsComponent::class.java).values.forEach { dgsComponent ->
-            val javaClass = AopUtils.getTargetClass(dgsComponent)
+        val dataLoaders = applicationContext.getBeansWithAnnotation(DgsComponent::class.java)
+        dataLoaders.values.distinctBy { AopUtils.getTargetClass(it) }
+            .forEach { dgsComponent ->
+                val javaClass = AopUtils.getTargetClass(dgsComponent)
 
-            javaClass.declaredFields.asSequence().filter { it.isAnnotationPresent(DgsDataLoader::class.java) }
-                .forEach { field ->
-                    if (AopUtils.isAopProxy(dgsComponent)) {
-                        throw UnsupportedSecuredDataLoaderException(dgsComponent::class.java)
+                javaClass.declaredFields.asSequence().filter { it.isAnnotationPresent(DgsDataLoader::class.java) }
+                    .forEach { field ->
+                        if (AopUtils.isAopProxy(dgsComponent)) {
+                            throw UnsupportedSecuredDataLoaderException(dgsComponent::class.java)
+                        }
+
+                        val annotation = field.getAnnotation(DgsDataLoader::class.java)
+                        ReflectionUtils.makeAccessible(field)
+
+                        if (annotation.name == DgsDataLoader.GENERATE_DATA_LOADER_NAME) {
+                            throw DgsUnnamedDataLoaderOnFieldException(field)
+                        }
+
+                        fun <T : Any> createHolder(t: T): LoaderHolder<T> = LoaderHolder(t, annotation, annotation.name)
+                        when (val get = field.get(dgsComponent)) {
+                            is BatchLoader<*, *> -> batchLoaders.add(createHolder(get))
+                            is BatchLoaderWithContext<*, *> -> batchLoadersWithContext.add(createHolder(get))
+                            is MappedBatchLoader<*, *> -> mappedBatchLoaders.add(createHolder(get))
+                            is MappedBatchLoaderWithContext<*, *> -> mappedBatchLoadersWithContext.add(createHolder(get))
+                            else -> throw InvalidDataLoaderTypeException(dgsComponent::class.java)
+                        }
                     }
-
-                    val annotation = field.getAnnotation(DgsDataLoader::class.java)
-                    ReflectionUtils.makeAccessible(field)
-
-                    if (annotation.name == DgsDataLoader.GENERATE_DATA_LOADER_NAME) {
-                        throw DgsUnnamedDataLoaderOnFieldException(field)
-                    }
-
-                    fun <T : Any> createHolder(t: T): LoaderHolder<T> = LoaderHolder(t, annotation, annotation.name)
-                    when (val get = field.get(dgsComponent)) {
-                        is BatchLoader<*, *> -> batchLoaders.add(createHolder(get))
-                        is BatchLoaderWithContext<*, *> -> batchLoadersWithContext.add(createHolder(get))
-                        is MappedBatchLoader<*, *> -> mappedBatchLoaders.add(createHolder(get))
-                        is MappedBatchLoaderWithContext<*, *> -> mappedBatchLoadersWithContext.add(createHolder(get))
-                        else -> throw InvalidDataLoaderTypeException(dgsComponent::class.java)
-                    }
-                }
-        }
+            }
     }
 
     private fun addDataLoaderComponents() {
         val dataLoaders = applicationContext.getBeansWithAnnotation(DgsDataLoader::class.java)
-        dataLoaders.values.forEach { dgsComponent ->
-            val javaClass = AopUtils.getTargetClass(dgsComponent)
-            val annotation = javaClass.getAnnotation(DgsDataLoader::class.java)
-            val predicateField = javaClass.declaredFields.asSequence().find { it.isAnnotationPresent(DgsDispatchPredicate::class.java) }
-            if (predicateField != null) {
-                ReflectionUtils.makeAccessible(predicateField)
-                val dispatchPredicate = predicateField.get(dgsComponent)
-                if (dispatchPredicate is DispatchPredicate) {
-                    addDataLoaders(dgsComponent, javaClass, annotation, dispatchPredicate)
+        dataLoaders.values.distinctBy { AopUtils.getTargetClass(it) } // filter duplicate beans for the same class (tests)
+            .forEach { dgsComponent ->
+                val javaClass = AopUtils.getTargetClass(dgsComponent)
+                val annotation = javaClass.getAnnotation(DgsDataLoader::class.java)
+                val predicateField = javaClass.declaredFields.asSequence().find { it.isAnnotationPresent(DgsDispatchPredicate::class.java) }
+                if (predicateField != null) {
+                    ReflectionUtils.makeAccessible(predicateField)
+                    val dispatchPredicate = predicateField.get(dgsComponent)
+                    if (dispatchPredicate is DispatchPredicate) {
+                        addDataLoaders(dgsComponent, javaClass, annotation, dispatchPredicate)
+                    }
+                } else {
+                    addDataLoaders(dgsComponent, javaClass, annotation, null)
                 }
-            } else {
-                addDataLoaders(dgsComponent, javaClass, annotation, null)
             }
-        }
     }
 
     private fun <T : Any>addDataLoaders(dgsComponent: T, targetClass: Class<*>, annotation: DgsDataLoader, dispatchPredicate: DispatchPredicate?) {
@@ -230,6 +231,11 @@ class DgsDataLoaderProvider(
             is MappedBatchLoaderWithContext<*, *> -> createDataLoader(holder.theLoader, holder.annotation, holder.name, contextSupplier, registry, extensionProviders)
             else -> throw IllegalArgumentException("Data loader ${holder.name} has unknown type")
         }
+        // detect and throw an exception if multiple data loaders use the same name
+        if (registry.keys.contains(holder.name)) {
+            throw MultipleDataLoadersDefinedException(holder.theLoader.javaClass)
+        }
+
         if (holder.dispatchPredicate == null) {
             registry.register(holder.name, loader)
         } else {
