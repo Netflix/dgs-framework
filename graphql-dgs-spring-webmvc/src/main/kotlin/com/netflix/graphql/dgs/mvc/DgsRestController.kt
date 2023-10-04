@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.mvc
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
@@ -79,6 +80,7 @@ open class DgsRestController(
         const val DGS_RESPONSE_HEADERS_KEY = DgsExecutionResult.DGS_RESPONSE_HEADERS_KEY
         private val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
 
+        @JsonIgnoreProperties(ignoreUnknown = true)
         private data class InputQuery(
             val query: String?,
             val operationName: String? = null,
