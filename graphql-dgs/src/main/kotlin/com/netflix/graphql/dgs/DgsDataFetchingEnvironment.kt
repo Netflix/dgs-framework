@@ -24,6 +24,9 @@ import graphql.schema.DataFetchingEnvironment
 import org.dataloader.DataLoader
 
 class DgsDataFetchingEnvironment(private val dfe: DataFetchingEnvironment) : DataFetchingEnvironment by dfe {
+    fun getDfe(): DataFetchingEnvironment {
+        return this.dfe
+    }
 
     fun getDgsContext(): DgsContext {
         return DgsContext.from(this)
