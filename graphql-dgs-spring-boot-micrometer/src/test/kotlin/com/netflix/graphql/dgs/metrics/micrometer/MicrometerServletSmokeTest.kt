@@ -933,13 +933,6 @@ class MicrometerServletSmokeTest {
         }
 
         @Bean
-        open fun reverserDataLoader(
-            @Qualifier("dataLoaderTaskExecutor") executor: Executor
-        ): ExampleImplementation.ReverseStringDataLoader {
-            return ExampleImplementation.ReverseStringDataLoader(executor)
-        }
-
-        @Bean
         open fun dataLoaderTaskExecutor(): Executor {
             val executor = ThreadPoolTaskExecutor()
             executor.corePoolSize = 1
