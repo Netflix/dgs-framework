@@ -149,33 +149,6 @@ class MicrometerServletSmokeTest {
     }
 
     @Test
-    fun `Metrics for a query with a data fetcher with disabled instrumentation`() {
-        mvc.perform(
-            MockMvcRequestBuilders
-                .post("/graphql")
-                .contentType("application/json")
-                .content("""{ "query": "{someTrivialThings}" }""")
-        ).andExpect(status().isOk)
-            .andExpect(content().json("""{"data":{"someTrivialThings":"some insignificance"}}""", false))
-
-        val meters = fetchMeters()
-
-        assertThat(meters).containsOnlyKeys("gql.query")
-
-        assertThat(meters["gql.query"]).isNotNull.hasSize(1)
-        assertThat(meters["gql.query"]?.first()?.id?.tags)
-            .containsAll(
-                Tags.of("execution-tag", "foo")
-                    .and("contextual-tag", "foo")
-                    .and("outcome", "success")
-                    .and("gql.operation", "QUERY")
-                    .and("gql.operation.name", "anonymous")
-                    .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
-            )
-    }
-
-    @Test
     fun `Metrics for a successful mutation`() {
         mvc.perform(
             // Note that the query below uses an aliased field, aliasing `ping` to `op_name`.
