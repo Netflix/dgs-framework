@@ -119,7 +119,8 @@ class DgsGraphQLMetricsInstrumentation(
 
         if (parameters.isTrivialDataFetcher ||
             miState.isIntrospectionQuery ||
-            TagUtils.shouldIgnoreTag(gqlField)
+            TagUtils.shouldIgnoreTag(gqlField) ||
+            !schemaProvider.isFieldMetricsInstrumentationEnabled(gqlField)
         ) {
             return dataFetcher
         }
