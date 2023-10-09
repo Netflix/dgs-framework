@@ -16,11 +16,15 @@
 
 package com.netflix.graphql.dgs.internal.java.test.enums;
 
+import graphql.scalars.country.code.CountryCode;
+
 import java.util.List;
 
 public class JInputMessage {
     private JGreetingType type;
     private List<JGreetingType> typeList;
+
+    private CountryCode countryCode;
 
     public JGreetingType getType() {
         return type;
@@ -36,5 +40,13 @@ public class JInputMessage {
 
     public void setTypeList(List<JGreetingType> typeList) {
         this.typeList = typeList;
+    }
+
+    public CountryCode getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(CountryCode countryCode) {
+        this.countryCode = countryCode;
     }
 }
