@@ -16,14 +16,10 @@
 
 package com.netflix.graphql.dgs.internal
 
-import com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider
-import com.netflix.graphql.dgs.DgsComponent
-import com.netflix.graphql.dgs.DgsDataLoader
-import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
-import com.netflix.graphql.dgs.DgsDataLoaderRegistryConsumer
-import com.netflix.graphql.dgs.DgsDispatchPredicate
+import com.netflix.graphql.dgs.*
 import com.netflix.graphql.dgs.exceptions.DgsUnnamedDataLoaderOnFieldException
 import com.netflix.graphql.dgs.exceptions.InvalidDataLoaderTypeException
+import com.netflix.graphql.dgs.exceptions.MultipleDataLoadersDefinedException
 import com.netflix.graphql.dgs.exceptions.UnsupportedSecuredDataLoaderException
 import com.netflix.graphql.dgs.internal.utils.DataLoaderNameUtil
 import jakarta.annotation.PostConstruct
@@ -59,6 +55,8 @@ class DgsDataLoaderProvider(
     private val mappedBatchLoaders = mutableListOf<LoaderHolder<MappedBatchLoader<*, *>>>()
     private val mappedBatchLoadersWithContext = mutableListOf<LoaderHolder<MappedBatchLoaderWithContext<*, *>>>()
 
+    private val loaderMap = mutableMapOf<String, String>()
+
     fun buildRegistry(): DataLoaderRegistry {
         return buildRegistryWithContextSupplier { null }
     }
@@ -87,7 +85,8 @@ class DgsDataLoaderProvider(
     }
 
     private fun addDataLoaderFields() {
-        applicationContext.getBeansWithAnnotation(DgsComponent::class.java).values.forEach { dgsComponent ->
+        val dataLoaders = applicationContext.getBeansWithAnnotation(DgsComponent::class.java)
+        dataLoaders.values.forEach { dgsComponent ->
             val javaClass = AopUtils.getTargetClass(dgsComponent)
 
             javaClass.declaredFields.asSequence().filter { it.isAnnotationPresent(DgsDataLoader::class.java) }
@@ -230,6 +229,11 @@ class DgsDataLoaderProvider(
             is MappedBatchLoaderWithContext<*, *> -> createDataLoader(holder.theLoader, holder.annotation, holder.name, contextSupplier, registry, extensionProviders)
             else -> throw IllegalArgumentException("Data loader ${holder.name} has unknown type")
         }
+        // detect and throw an exception if multiple data loaders use the same name
+        if (registry.keys.contains(holder.name)) {
+            throw MultipleDataLoadersDefinedException(holder.theLoader.javaClass)
+        }
+
         if (holder.dispatchPredicate == null) {
             registry.register(holder.name, loader)
         } else {
