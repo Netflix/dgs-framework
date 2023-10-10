@@ -559,7 +559,8 @@ internal class DgsSchemaProviderTest {
         contextRunner.withBeans(HelloFetcher::class).run { context ->
             val provider = schemaProvider(applicationContext = context)
             provider.schema()
-            assertThat(provider.isFieldInstrumentationEnabled("Query.hello")).isTrue
+            assertThat(provider.isFieldTracingInstrumentationEnabled("Query.hello")).isTrue
+            assertThat(provider.isFieldMetricsInstrumentationEnabled("Query.hello")).isTrue
         }
     }
 
@@ -568,7 +569,8 @@ internal class DgsSchemaProviderTest {
         contextRunner.withBeans(FetcherImplementingInterface::class).run { context ->
             val schemaProvider = schemaProvider(applicationContext = context)
             schemaProvider.schema()
-            assertThat(schemaProvider.isFieldInstrumentationEnabled("Query.hello")).isTrue
+            assertThat(schemaProvider.isFieldTracingInstrumentationEnabled("Query.hello")).isTrue
+            assertThat(schemaProvider.isFieldMetricsInstrumentationEnabled("Query.hello")).isTrue
         }
     }
 
@@ -586,12 +588,13 @@ internal class DgsSchemaProviderTest {
         contextRunner.withBeans(NoTracingFetcher::class).run { context ->
             val schemaProvider = schemaProvider(applicationContext = context)
             schemaProvider.schema()
-            assertThat(schemaProvider.isFieldInstrumentationEnabled("Query.hello")).isFalse
+            assertThat(schemaProvider.isFieldTracingInstrumentationEnabled("Query.hello")).isFalse
+            assertThat(schemaProvider.isFieldMetricsInstrumentationEnabled("Query.hello")).isFalse
         }
     }
 
     @Test
-    fun disableInstrumentationForAsyncDataFetchers() {
+    fun disableTracingInstrumentationAndEnableMetricsForAsyncDataFetchers() {
         @DgsComponent
         class NoTracingDataFetcher {
             @DgsData(parentType = "Query", field = "hello")
@@ -603,7 +606,8 @@ internal class DgsSchemaProviderTest {
         contextRunner.withBeans(NoTracingDataFetcher::class).run { context ->
             val schemaProvider = schemaProvider(applicationContext = context)
             schemaProvider.schema()
-            assertThat(schemaProvider.isFieldInstrumentationEnabled("Query.hello")).isFalse
+            assertThat(schemaProvider.isFieldTracingInstrumentationEnabled("Query.hello")).isFalse
+            assertThat(schemaProvider.isFieldMetricsInstrumentationEnabled("Query.hello")).isTrue
         }
     }
 
@@ -621,7 +625,8 @@ internal class DgsSchemaProviderTest {
         contextRunner.withBeans(NoTracingDataFetcher::class).run { context ->
             val schemaProvider = schemaProvider(applicationContext = context)
             schemaProvider.schema()
-            assertThat(schemaProvider.isFieldInstrumentationEnabled("Query.hello")).isTrue
+            assertThat(schemaProvider.isFieldTracingInstrumentationEnabled("Query.hello")).isTrue
+            assertThat(schemaProvider.isFieldMetricsInstrumentationEnabled("Query.hello")).isTrue
         }
     }
 
@@ -652,8 +657,8 @@ internal class DgsSchemaProviderTest {
         contextRunner.withBeans(TitleFetcher::class).run { context ->
             val schemaProvider = schemaProvider(applicationContext = context)
             schemaProvider.schema(schema)
-            assertThat(schemaProvider.isFieldInstrumentationEnabled("Video.title")).isTrue
-            assertThat(schemaProvider.isFieldInstrumentationEnabled("Show.title")).isTrue
+            assertThat(schemaProvider.isFieldTracingInstrumentationEnabled("Video.title")).isTrue
+            assertThat(schemaProvider.isFieldMetricsInstrumentationEnabled("Show.title")).isTrue
         }
     }
 
@@ -685,13 +690,13 @@ internal class DgsSchemaProviderTest {
         contextRunner.withBeans(VideoFetcher::class, TitleFetcher::class).run { context ->
             val schemaProvider = schemaProvider(applicationContext = context)
             schemaProvider.schema(schema)
-            assertThat(schemaProvider.isFieldInstrumentationEnabled("Video.title")).isFalse
-            assertThat(schemaProvider.isFieldInstrumentationEnabled("Show.title")).isFalse
+            assertThat(schemaProvider.isFieldTracingInstrumentationEnabled("Video.title")).isFalse
+            assertThat(schemaProvider.isFieldMetricsInstrumentationEnabled("Show.title")).isFalse
         }
     }
 
     @Test
-    fun disableInstrumentationForAsyncInterfaceDataFetcher() {
+    fun disableTracingInstrumentationAndEnableMetricsForAsyncInterfaceDataFetcher() {
         val schema = """
               type Query {
                 video: Video
@@ -717,8 +722,8 @@ internal class DgsSchemaProviderTest {
         contextRunner.withBeans(VideoFetcher::class, TitleFetcher::class).run { context ->
             val schemaProvider = schemaProvider(applicationContext = context)
             schemaProvider.schema(schema)
-            assertThat(schemaProvider.isFieldInstrumentationEnabled("Video.title")).isFalse
-            assertThat(schemaProvider.isFieldInstrumentationEnabled("Show.title")).isFalse
+            assertThat(schemaProvider.isFieldTracingInstrumentationEnabled("Video.title")).isFalse
+            assertThat(schemaProvider.isFieldMetricsInstrumentationEnabled("Show.title")).isTrue
         }
     }
 
