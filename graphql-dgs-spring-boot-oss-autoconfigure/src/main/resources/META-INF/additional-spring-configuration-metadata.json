@@ -5,6 +5,11 @@
       "name": "dgs.graphql.introspection.enabled",
       "type": "java.lang.Boolean",
       "description": "Setting this value to false will prevent Introspection queries from being performed. Note that this is against GraphQL Specification, that said, some production systems want this lock down in place for security concerns."
+    },
+    {
+      "name": "dgs.graphql.virtualthreads.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Setting this value will enable virtual threads for data fetchers when running on JDK 21+. This enables parallel data fetcher behavior without explicitly using CompletableFuture."
     }
   ],
   "hints": []
