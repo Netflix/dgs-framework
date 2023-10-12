@@ -120,7 +120,7 @@ class DgsGraphQLMetricsInstrumentation(
         if (parameters.isTrivialDataFetcher ||
             miState.isIntrospectionQuery ||
             TagUtils.shouldIgnoreTag(gqlField) ||
-            !schemaProvider.isFieldInstrumentationEnabled(gqlField)
+            !schemaProvider.isFieldMetricsInstrumentationEnabled(gqlField)
         ) {
             return dataFetcher
         }

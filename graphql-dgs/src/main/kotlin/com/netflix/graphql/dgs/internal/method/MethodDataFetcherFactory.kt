@@ -22,6 +22,7 @@ import graphql.schema.DataFetcher
 import org.springframework.core.DefaultParameterNameDiscoverer
 import org.springframework.core.MethodParameter
 import org.springframework.core.ParameterNameDiscoverer
+import org.springframework.core.task.AsyncTaskExecutor
 import java.lang.reflect.Method
 
 /**
@@ -31,7 +32,8 @@ import java.lang.reflect.Method
  */
 class MethodDataFetcherFactory(
     argumentResolvers: List<ArgumentResolver>,
-    internal val parameterNameDiscoverer: ParameterNameDiscoverer = DefaultParameterNameDiscoverer()
+    internal val parameterNameDiscoverer: ParameterNameDiscoverer = DefaultParameterNameDiscoverer(),
+    private val asyncTaskExecutor: AsyncTaskExecutor? = null
 ) {
 
     private val resolvers = ArgumentResolverComposite(argumentResolvers)
@@ -41,7 +43,8 @@ class MethodDataFetcherFactory(
             dgsComponent = bean,
             method = method,
             resolvers = resolvers,
-            parameterNameDiscoverer = parameterNameDiscoverer
+            parameterNameDiscoverer = parameterNameDiscoverer,
+            asyncTaskExecutor
         )
     }
 

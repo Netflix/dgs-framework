@@ -119,7 +119,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.6.10"
+            "locked": "1.6.11"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -294,7 +294,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.6.10"
+            "locked": "1.6.11"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -489,7 +489,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.6.10"
+            "locked": "1.6.11"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -891,7 +891,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.6.10"
+            "locked": "1.6.11"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -1085,7 +1085,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.6.10"
+            "locked": "1.6.11"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"
@@ -1277,7 +1277,7 @@
             "project": true
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.6.10"
+            "locked": "1.6.11"
         },
         "commons-codec:commons-codec": {
             "locked": "1.15"

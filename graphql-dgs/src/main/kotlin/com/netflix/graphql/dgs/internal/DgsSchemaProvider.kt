@@ -95,7 +95,8 @@ class DgsSchemaProvider(
 
     private val schemaReadWriteLock = ReentrantReadWriteLock()
 
-    private val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
+    private val dataFetcherTracingInstrumentationEnabled = mutableMapOf<String, Boolean>()
+    private val dataFetcherMetricsInstrumentationEnabled = mutableMapOf<String, Boolean>()
 
     private val dataFetchers = mutableListOf<DataFetcherReference>()
 
@@ -116,9 +117,22 @@ class DgsSchemaProvider(
      *
      * The method should be considered unstable until the [schema] is fully loaded.
      */
-    fun isFieldInstrumentationEnabled(field: String): Boolean {
+    fun isFieldTracingInstrumentationEnabled(field: String): Boolean {
         return schemaReadWriteLock.read {
-            dataFetcherInstrumentationEnabled.getOrDefault(field, true)
+            dataFetcherTracingInstrumentationEnabled.getOrDefault(field, true)
+        }
+    }
+
+    /**
+     * Given a field, expressed as a GraphQL `<Type>.<field name>` tuple, return...
+     * 1. `true` if the given field has _instrumentation_ enabled, or is missing an explicit setting.
+     * 2. `false` if the given field has _instrumentation_ explicitly disabled.
+     *
+     * The method should be considered unstable until the [schema] is fully loaded.
+     */
+    fun isFieldMetricsInstrumentationEnabled(field: String): Boolean {
+        return schemaReadWriteLock.read {
+            dataFetcherMetricsInstrumentationEnabled.getOrDefault(field, true)
         }
     }
 
@@ -128,7 +142,8 @@ class DgsSchemaProvider(
     ): GraphQLSchema {
         schemaReadWriteLock.write {
             dataFetchers.clear()
-            dataFetcherInstrumentationEnabled.clear()
+            dataFetcherTracingInstrumentationEnabled.clear()
+            dataFetcherMetricsInstrumentationEnabled.clear()
             return computeSchema(schema, fieldVisibility)
         }
     }
@@ -319,16 +334,21 @@ class DgsSchemaProvider(
 
         dataFetchers.add(DataFetcherReference(dgsComponent, method, mergedAnnotations, parentType, field))
 
-        val enableInstrumentation =
-            if (method.isAnnotationPresent(DgsEnableDataFetcherInstrumentation::class.java)) {
-                val dgsEnableDataFetcherInstrumentation =
-                    method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)
-                dgsEnableDataFetcherInstrumentation.value
-            } else {
-                method.returnType != CompletionStage::class.java && method.returnType != CompletableFuture::class.java
-            }
+        val enableTracingInstrumentation = if (method.isAnnotationPresent(DgsEnableDataFetcherInstrumentation::class.java)) {
+            val dgsEnableDataFetcherInstrumentation =
+                method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)
+            dgsEnableDataFetcherInstrumentation.value
+        } else {
+            method.returnType != CompletionStage::class.java && method.returnType != CompletableFuture::class.java
+        }
+        dataFetcherTracingInstrumentationEnabled["$parentType.$field"] = enableTracingInstrumentation
 
-        dataFetcherInstrumentationEnabled["$parentType.$field"] = enableInstrumentation
+        val enableMetricsInstrumentation = if (method.isAnnotationPresent(DgsEnableDataFetcherInstrumentation::class.java)) {
+            val dgsEnableDataFetcherInstrumentation =
+                method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)
+            dgsEnableDataFetcherInstrumentation.value
+        } else true
+        dataFetcherMetricsInstrumentationEnabled["$parentType.$field"] = enableMetricsInstrumentation
 
         val methodClassName = method.declaringClass.name
         try {
@@ -354,7 +374,8 @@ class DgsSchemaProvider(
                             FieldCoordinates.coordinates(implType.name, field),
                             dataFetcher
                         )
-                        dataFetcherInstrumentationEnabled["${implType.name}.$field"] = enableInstrumentation
+                        dataFetcherTracingInstrumentationEnabled["${implType.name}.$field"] = enableTracingInstrumentation
+                        dataFetcherMetricsInstrumentationEnabled["${implType.name}.$field"] = enableMetricsInstrumentation
                     }
                 }
                 is UnionTypeDefinition -> {
@@ -365,7 +386,8 @@ class DgsSchemaProvider(
                             FieldCoordinates.coordinates(memberType.name, field),
                             dataFetcher
                         )
-                        dataFetcherInstrumentationEnabled["${memberType.name}.$field"] = enableInstrumentation
+                        dataFetcherTracingInstrumentationEnabled["${memberType.name}.$field"] = enableTracingInstrumentation
+                        dataFetcherMetricsInstrumentationEnabled["${memberType.name}.$field"] = enableMetricsInstrumentation
                     }
                 }
                 is ObjectTypeDefinition -> {
@@ -474,7 +496,9 @@ class DgsSchemaProvider(
                     val enableInstrumentation =
                         method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)?.value
                             ?: false
-                    dataFetcherInstrumentationEnabled["${"__entities"}.${dgsEntityFetcherAnnotation.name}"] =
+                    dataFetcherTracingInstrumentationEnabled["${"__entities"}.${dgsEntityFetcherAnnotation.name}"] =
+                        enableInstrumentation
+                    dataFetcherMetricsInstrumentationEnabled["${"__entities"}.${dgsEntityFetcherAnnotation.name}"] =
                         enableInstrumentation
 
                     entityFetcherRegistry.entityFetchers[dgsEntityFetcherAnnotation.name] = dgsComponent to method

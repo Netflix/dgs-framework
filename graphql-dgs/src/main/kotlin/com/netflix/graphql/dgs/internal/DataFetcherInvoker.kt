@@ -25,20 +25,26 @@ import org.springframework.core.BridgeMethodResolver
 import org.springframework.core.MethodParameter
 import org.springframework.core.ParameterNameDiscoverer
 import org.springframework.core.annotation.SynthesizingMethodParameter
+import org.springframework.core.task.AsyncTaskExecutor
 import org.springframework.util.CollectionUtils
 import org.springframework.util.ReflectionUtils
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionStage
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.callSuspendBy
+import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.jvm.kotlinFunction
+import kotlin.reflect.typeOf
 
 class DataFetcherInvoker internal constructor(
     private val dgsComponent: Any,
     method: Method,
     private val resolvers: ArgumentResolverComposite,
-    parameterNameDiscoverer: ParameterNameDiscoverer
+    parameterNameDiscoverer: ParameterNameDiscoverer,
+    private val taskExecutor: AsyncTaskExecutor?
 ) : DataFetcher<Any?> {
 
     private val bridgedMethod: Method = BridgeMethodResolver.findBridgedMethod(method)
@@ -56,6 +62,9 @@ class DataFetcherInvoker internal constructor(
 
     override fun get(environment: DataFetchingEnvironment): Any? {
         if (methodParameters.isEmpty()) {
+            if (shouldWrapInCompletableFuture(bridgedMethod)) {
+                return wrapInCompletableFuture { ReflectionUtils.invokeMethod(bridgedMethod, dgsComponent) }
+            }
             return ReflectionUtils.invokeMethod(bridgedMethod, dgsComponent)
         }
 
@@ -72,7 +81,11 @@ class DataFetcherInvoker internal constructor(
             args[idx] = resolvers.resolveArgument(parameter, environment)
         }
 
-        return ReflectionUtils.invokeMethod(bridgedMethod, dgsComponent, *args)
+        return if (shouldWrapInCompletableFuture(bridgedMethod)) {
+            wrapInCompletableFuture { ReflectionUtils.invokeMethod(bridgedMethod, dgsComponent, *args) }
+        } else {
+            ReflectionUtils.invokeMethod(bridgedMethod, dgsComponent, *args)
+        }
     }
 
     private fun invokeKotlinMethod(kFunc: KFunction<*>, dfe: DataFetchingEnvironment): Any? {
@@ -103,7 +116,11 @@ class DataFetcherInvoker internal constructor(
             }.onErrorMap(InvocationTargetException::class.java) { it.targetException }
         }
         return try {
-            kFunc.callBy(argsByName)
+            if (shouldWrapInCompletableFuture(kFunc)) {
+                wrapInCompletableFuture { kFunc.callBy(argsByName) }
+            } else {
+                kFunc.callBy(argsByName)
+            }
         } catch (ex: Exception) {
             ReflectionUtils.handleReflectionException(ex)
         }
@@ -112,5 +129,33 @@ class DataFetcherInvoker internal constructor(
     private fun formatArgumentError(param: MethodParameter, message: String): String {
         return "Could not resolve parameter [${param.parameterIndex}] in " +
             param.executable.toGenericString() + if (message.isNotEmpty()) ": $message" else ""
+    }
+
+    /**
+     * Wrap the call to a data fetcher in CompletableFuture to enable parallel behavior.
+     * Used when virtual threads are enabled.
+     */
+    private fun wrapInCompletableFuture(function: () -> Any?): Any? {
+        return CompletableFuture.supplyAsync({
+            return@supplyAsync function.invoke()
+        }, taskExecutor)
+    }
+
+    /**
+     * Decides if a data fetcher method should be wrapped in CompletableFuture automatically.
+     * This is only done when a taskExecutor is available, and if the data fetcher doesn't explicitly return CompletableFuture already.
+     * Used when virtual threads are enabled.
+     */
+    private fun shouldWrapInCompletableFuture(kFunc: KFunction<*>): Boolean {
+        return taskExecutor != null && !kFunc.returnType.isSubtypeOf(typeOf<CompletionStage<Any>>())
+    }
+
+    /**
+     * Decides if a data fetcher method should be wrapped in CompletableFuture automatically.
+     * This is only done when a taskExecutor is available, and if the data fetcher doesn't explicitly return CompletableFuture already.
+     * Used when virtual threads are enabled.
+     */
+    private fun shouldWrapInCompletableFuture(method: Method): Boolean {
+        return taskExecutor != null && !CompletionStage::class.java.isAssignableFrom(method.returnType)
     }
 }
