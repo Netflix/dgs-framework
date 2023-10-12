@@ -61,7 +61,7 @@ class DgsGraphQLMetricsInstrumentation(
         parameters: InstrumentationExecutionParameters,
         state: InstrumentationState
     ): InstrumentationContext<ExecutionResult> {
-        if (! properties.query.enabled) {
+        if (!properties.query.enabled) {
             return noOp()
         }
 
