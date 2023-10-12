@@ -15,7 +15,12 @@ data class DgsGraphQLMetricsProperties(
     var autotime: PropertiesAutoTimer = PropertiesAutoTimer(autotimeProperties),
     /** Settings that can be used to limit some of the tag metrics used by DGS. */
     @NestedConfigurationProperty
-    var tags: TagsProperties = TagsProperties()
+    var tags: TagsProperties = TagsProperties(),
+    /** Settings to selectively enable/disable gql timers.*/
+    @NestedConfigurationProperty
+    var resolver: ResolverMetricProperties = ResolverMetricProperties(),
+    var query: QueryMetricProperties = QueryMetricProperties()
+
 ) {
 
     data class TagsProperties(
@@ -38,6 +43,16 @@ data class DgsGraphQLMetricsProperties(
     )
 
     data class QueryComplexityProperties(
+        @DefaultValue("true")
+        var enabled: Boolean = true
+    )
+
+    data class ResolverMetricProperties(
+        @DefaultValue("true")
+        var enabled: Boolean = true
+    )
+
+    data class QueryMetricProperties(
         @DefaultValue("true")
         var enabled: Boolean = true
     )
