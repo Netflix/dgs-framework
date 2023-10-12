@@ -43,6 +43,9 @@ internal class DgsGraphQLMetricsPropertiesTest {
             assertThat(props.tags.limiter.kind).isEqualTo(DgsGraphQLMetricsProperties.CardinalityLimiterKind.FIRST)
             assertThat(props.tags.limiter.limit).isEqualTo(100)
             assertThat(props.tags.complexity.enabled).isEqualTo(true)
+
+            assertThat(props.resolver.enabled).isTrue()
+            assertThat(props.query.enabled).isTrue()
         }
     }
 
@@ -70,6 +73,30 @@ internal class DgsGraphQLMetricsPropertiesTest {
                 val props = ctx.getBean(DgsGraphQLMetricsProperties::class.java)
 
                 assertThat(props.tags.complexity.enabled).isEqualTo(false)
+            }
+    }
+
+    @Test
+    fun `Can disable resolver metric`() {
+        contextRunner
+            .withPropertyValues(
+                "management.metrics.dgs-graphql.resolver.enabled=false"
+            ).run { ctx ->
+                val props = ctx.getBean(DgsGraphQLMetricsProperties::class.java)
+
+                assertThat(props.resolver.enabled).isEqualTo(false)
+            }
+    }
+
+    @Test
+    fun `Can disable query metric`() {
+        contextRunner
+            .withPropertyValues(
+                "management.metrics.dgs-graphql.query.enabled=false"
+            ).run { ctx ->
+                val props = ctx.getBean(DgsGraphQLMetricsProperties::class.java)
+
+                assertThat(props.query.enabled).isEqualTo(false)
             }
     }
 
