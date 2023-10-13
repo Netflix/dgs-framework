@@ -1,7 +1,7 @@
 {
     "nebulaRecommenderBom": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.7.20"
