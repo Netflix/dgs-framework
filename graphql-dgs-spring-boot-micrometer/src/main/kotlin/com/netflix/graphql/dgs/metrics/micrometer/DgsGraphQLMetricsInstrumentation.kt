@@ -17,6 +17,7 @@ import graphql.analysis.QueryVisitorStub
 import graphql.execution.instrumentation.InstrumentationContext
 import graphql.execution.instrumentation.InstrumentationState
 import graphql.execution.instrumentation.SimpleInstrumentationContext
+import graphql.execution.instrumentation.SimpleInstrumentationContext.noOp
 import graphql.execution.instrumentation.SimplePerformantInstrumentation
 import graphql.execution.instrumentation.parameters.InstrumentationCreateStateParameters
 import graphql.execution.instrumentation.parameters.InstrumentationExecuteOperationParameters
@@ -60,6 +61,10 @@ class DgsGraphQLMetricsInstrumentation(
         parameters: InstrumentationExecutionParameters,
         state: InstrumentationState
     ): InstrumentationContext<ExecutionResult> {
+        if (!properties.query.enabled) {
+            return noOp()
+        }
+
         val miState: MetricsInstrumentationState = state as MetricsInstrumentationState
         miState.startTimer()
 
@@ -120,7 +125,8 @@ class DgsGraphQLMetricsInstrumentation(
         if (parameters.isTrivialDataFetcher ||
             miState.isIntrospectionQuery ||
             TagUtils.shouldIgnoreTag(gqlField) ||
-            !schemaProvider.isFieldMetricsInstrumentationEnabled(gqlField)
+            !schemaProvider.isFieldMetricsInstrumentationEnabled(gqlField) ||
+            !properties.resolver.enabled
         ) {
             return dataFetcher
         }

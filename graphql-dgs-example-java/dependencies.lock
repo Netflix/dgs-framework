@@ -588,7 +588,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ],
-            "locked": "1.6.10"
+            "locked": "1.6.11"
         },
         "commons-codec:commons-codec": {
             "firstLevelTransitive": [
@@ -1163,7 +1163,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ],
-            "locked": "1.6.10"
+            "locked": "1.6.11"
         },
         "commons-codec:commons-codec": {
             "firstLevelTransitive": [
@@ -1736,7 +1736,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ],
-            "locked": "1.6.10"
+            "locked": "1.6.11"
         },
         "commons-codec:commons-codec": {
             "firstLevelTransitive": [
