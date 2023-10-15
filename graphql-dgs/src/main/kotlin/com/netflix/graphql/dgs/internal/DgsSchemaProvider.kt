@@ -87,6 +87,7 @@ class DgsSchemaProvider(
     private val dataFetcherResultProcessors: List<DataFetcherResultProcessor> = emptyList(),
     private val dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
     private val entityFetcherRegistry: EntityFetcherRegistry = EntityFetcherRegistry(),
+    private val entityRepresentationMapperRegistry: EntityRepresentationMapperRegistry = EntityRepresentationMapperRegistry(),
     private val defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty(),
     private val methodDataFetcherFactory: MethodDataFetcherFactory,
     private val componentFilter: ((Any) -> Boolean)? = null,
@@ -179,7 +180,8 @@ class DgsSchemaProvider(
             federationResolver.orElseGet {
                 DefaultDgsFederationResolver(
                     entityFetcherRegistry,
-                    dataFetcherExceptionHandler
+                    dataFetcherExceptionHandler,
+                    entityRepresentationMapperRegistry
                 )
             }
 
@@ -201,6 +203,7 @@ class DgsSchemaProvider(
         findDataFetchers(dgsComponents, codeRegistryBuilder, mergedRegistry)
         findTypeResolvers(dgsComponents, runtimeWiringBuilder, mergedRegistry)
         findEntityFetchers(dgsComponents)
+        findEntityRepresentationMappers(dgsComponents)
 
         dgsComponents.forEach { dgsComponent ->
             invokeDgsCodeRegistry(
@@ -502,6 +505,20 @@ class DgsSchemaProvider(
                         enableInstrumentation
 
                     entityFetcherRegistry.entityFetchers[dgsEntityFetcherAnnotation.name] = dgsComponent to method
+                }
+        }
+    }
+
+    private fun findEntityRepresentationMappers(dgsComponents: Collection<Any>) {
+        dgsComponents.forEach { dgsComponent ->
+            val javaClass = AopUtils.getTargetClass(dgsComponent)
+
+            ReflectionUtils.getDeclaredMethods(javaClass).asSequence()
+                .filter { it.isAnnotationPresent(DgsEntityRepresentationMapper::class.java) }
+                .forEach { method ->
+                    val dgsEntityRepresentationMapperAnnotation = method.getAnnotation(DgsEntityRepresentationMapper::class.java)
+
+                    entityRepresentationMapperRegistry.mappers[dgsEntityRepresentationMapperAnnotation.name] = dgsComponent to method
                 }
         }
     }

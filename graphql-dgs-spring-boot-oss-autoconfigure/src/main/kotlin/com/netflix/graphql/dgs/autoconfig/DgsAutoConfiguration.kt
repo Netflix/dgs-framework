@@ -190,6 +190,7 @@ open class DgsAutoConfiguration(
         dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
         dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
         entityFetcherRegistry: EntityFetcherRegistry,
+        entityRepresentationMapperRegistry: EntityRepresentationMapperRegistry,
         defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty(),
         methodDataFetcherFactory: MethodDataFetcherFactory
     ): DgsSchemaProvider {
@@ -202,6 +203,7 @@ open class DgsAutoConfiguration(
             dataFetcherResultProcessors = dataFetcherResultProcessors,
             dataFetcherExceptionHandler = dataFetcherExceptionHandler,
             entityFetcherRegistry = entityFetcherRegistry,
+            entityRepresentationMapperRegistry = entityRepresentationMapperRegistry,
             defaultDataFetcherFactory = defaultDataFetcherFactory,
             methodDataFetcherFactory = methodDataFetcherFactory,
             schemaWiringValidationEnabled = configProps.schemaWiringValidationEnabled
@@ -211,6 +213,11 @@ open class DgsAutoConfiguration(
     @Bean
     open fun entityFetcherRegistry(): EntityFetcherRegistry {
         return EntityFetcherRegistry()
+    }
+
+    @Bean
+    open fun entityRepresentationMapperRegistry(): EntityRepresentationMapperRegistry {
+        return EntityRepresentationMapperRegistry()
     }
 
     @Bean

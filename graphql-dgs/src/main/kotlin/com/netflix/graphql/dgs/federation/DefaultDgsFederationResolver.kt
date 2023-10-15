@@ -20,9 +20,9 @@ import com.apollographql.federation.graphqljava._Entity
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
 import com.netflix.graphql.dgs.DgsFederationResolver
-import com.netflix.graphql.dgs.exceptions.InvalidDgsEntityFetcher
 import com.netflix.graphql.dgs.exceptions.MissingDgsEntityFetcherException
 import com.netflix.graphql.dgs.exceptions.MissingFederatedQueryArgument
+import com.netflix.graphql.dgs.internal.EntityRepresentationMapperRegistry
 import com.netflix.graphql.dgs.internal.EntityFetcherRegistry
 import com.netflix.graphql.types.errors.TypedGraphQLError
 import graphql.execution.DataFetcherExceptionHandler
@@ -56,10 +56,12 @@ open class DefaultDgsFederationResolver() :
      */
     constructor(
         entityFetcherRegistry: EntityFetcherRegistry,
-        dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler>
+        dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler>,
+        entityRepresentationMapperRegistry: EntityRepresentationMapperRegistry
     ) : this() {
         this.entityFetcherRegistry = entityFetcherRegistry
         dgsExceptionHandler = dataFetcherExceptionHandler
+        this.entityRepresentationMapperRegistry = entityRepresentationMapperRegistry
     }
 
     /**
@@ -68,6 +70,10 @@ open class DefaultDgsFederationResolver() :
     @Suppress("JoinDeclarationAndAssignment")
     @Autowired
     lateinit var entityFetcherRegistry: EntityFetcherRegistry
+
+    @Suppress("JoinDeclarationAndAssignment")
+    @Autowired
+    lateinit var entityRepresentationMapperRegistry: EntityRepresentationMapperRegistry
 
     @Autowired
     lateinit var dgsExceptionHandler: Optional<DataFetcherExceptionHandler>
@@ -87,15 +93,15 @@ open class DefaultDgsFederationResolver() :
                     val fetcher = entityFetcherRegistry.entityFetchers[typename]
                         ?: throw MissingDgsEntityFetcherException(typename.toString())
 
-                    if (!fetcher.second.parameterTypes.any { it.isAssignableFrom(Map::class.java) }) {
-                        throw InvalidDgsEntityFetcher("@DgsEntityFetcher ${fetcher.first::class.java.name}.${fetcher.second.name} is invalid. A DgsEntityFetcher must accept an argument of type Map<String, Object>")
-                    }
+                    val mapper = entityRepresentationMapperRegistry.mappers[typename];
+
+                    val mappedValues = if (mapper != null) mapper.second.invoke(mapper.first, values) else values;
 
                     val result =
                         if (fetcher.second.parameterTypes.any { it.isAssignableFrom(DgsDataFetchingEnvironment::class.java) }) {
-                            fetcher.second.invoke(fetcher.first, values, DgsDataFetchingEnvironment(env))
+                            fetcher.second.invoke(fetcher.first, mappedValues, DgsDataFetchingEnvironment(env))
                         } else {
-                            fetcher.second.invoke(fetcher.first, values)
+                            fetcher.second.invoke(fetcher.first, mappedValues)
                         }
 
                     if (result == null) {
