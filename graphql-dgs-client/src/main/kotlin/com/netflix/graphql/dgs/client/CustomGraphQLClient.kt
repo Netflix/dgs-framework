@@ -24,7 +24,7 @@ import org.intellij.lang.annotations.Language
  * For a more convenient option, use [WebClientGraphQLClient] instead.
  */
 class CustomGraphQLClient(private val url: String, private val requestExecutor: RequestExecutor) : GraphQLClient {
-    override fun executeQuery(query: String): GraphQLResponse {
+    override fun executeQuery(@Language("graphql") query: String): GraphQLResponse {
         return executeQuery(query, emptyMap(), null)
     }
 
