@@ -22,6 +22,7 @@ import graphql.language.AstPrinter
 import graphql.language.AstSignature
 import graphql.language.Document
 import org.apache.commons.codec.digest.DigestUtils
+import org.intellij.lang.annotations.Language
 import java.util.*
 
 /**
@@ -42,7 +43,7 @@ import java.util.*
 fun interface QuerySignatureRepository {
 
     companion object {
-        internal fun queryHash(query: String): String = DigestUtils.sha256Hex(query)
+        internal fun queryHash(@Language("graphql") query: String): String = DigestUtils.sha256Hex(query)
 
         internal fun computeSignature(
             document: Document,

@@ -28,6 +28,7 @@ import com.netflix.graphql.dgs.internal.utils.MultipartVariableMapper
 import com.netflix.graphql.dgs.internal.utils.TimeTracer
 import com.netflix.graphql.dgs.internal.utils.VariableMappingException
 import graphql.execution.reactive.SubscriptionPublisher
+import org.intellij.lang.annotations.Language
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
@@ -82,7 +83,7 @@ open class DgsRestController(
 
         @JsonIgnoreProperties(ignoreUnknown = true)
         private data class InputQuery(
-            val query: String?,
+            @Language("graphql") val query: String?,
             val operationName: String? = null,
             val variables: Map<String, Any>? = mapOf(),
             val extensions: Map<String, Any>? = mapOf()

@@ -23,6 +23,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.DgsExecutionResult
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import graphql.ExecutionResult
+import org.intellij.lang.annotations.Language
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.reactive.function.server.ServerRequest
@@ -105,7 +106,7 @@ class DefaultDgsWebfluxHttpHandler(
 }
 
 private data class QueryInput(
-    val query: String?,
+    @Language("graphql") val query: String?,
     val queryVariables: Map<String, Any> = emptyMap(),
     val extensions: Map<String, Any> = emptyMap(),
     val operationName: String = ""
