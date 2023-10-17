@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import graphql.GraphQLError
+import org.intellij.lang.annotations.Language
 
 object MessageType {
     // Message types
@@ -57,7 +58,7 @@ sealed class Message(
     ) : Message(MessageType.SUBSCRIBE) {
         data class Payload(
             val operationName: String? = null,
-            val query: String,
+            @Language("graphql") val query: String,
             val variables: Map<String, Any>? = null,
             val extensions: Map<String, Any>? = null
         )

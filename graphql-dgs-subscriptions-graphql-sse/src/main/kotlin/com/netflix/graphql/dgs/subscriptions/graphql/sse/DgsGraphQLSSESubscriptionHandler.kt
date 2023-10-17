@@ -26,6 +26,7 @@ import graphql.language.OperationDefinition
 import graphql.parser.InvalidSyntaxException
 import graphql.parser.Parser
 import graphql.validation.ValidationError
+import org.intellij.lang.annotations.Language
 import org.reactivestreams.Publisher
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -68,7 +69,7 @@ open class DgsGraphQLSSESubscriptionHandler(
         return handleSubscription(body)
     }
 
-    private fun handleSubscription(query: String): Flux<ServerSentEvent<String>> {
+    private fun handleSubscription(@Language("graphql") query: String): Flux<ServerSentEvent<String>> {
         val queryPayload = try {
             mapper.readValue(query, QueryPayload::class.java)
         } catch (ex: Exception) {
@@ -155,7 +156,7 @@ open class DgsGraphQLSSESubscriptionHandler(
         }
     }
 
-    private fun isSubscriptionQuery(query: String): Boolean {
+    private fun isSubscriptionQuery(@Language("graphql") query: String): Boolean {
         val document = try {
             Parser().parseDocument(query)
         } catch (exc: InvalidSyntaxException) {

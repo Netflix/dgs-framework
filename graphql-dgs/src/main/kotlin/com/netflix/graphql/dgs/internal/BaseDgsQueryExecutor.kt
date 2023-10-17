@@ -39,6 +39,7 @@ import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLSchema
+import org.intellij.lang.annotations.Language
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -64,7 +65,7 @@ object BaseDgsQueryExecutor {
         )
 
     fun baseExecute(
-        query: String?,
+        @Language("graphql") query: String?,
         variables: Map<String, Any>?,
         extensions: Map<String, Any>?,
         operationName: String?,

@@ -67,7 +67,7 @@ interface MonoGraphQLClient {
         ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);")
     )
     fun reactiveExecuteQuery(
-        query: String,
+        @Language("graphql") query: String,
         variables: Map<String, Any>,
         requestExecutor: MonoRequestExecutor
     ): Mono<GraphQLResponse> = throw UnsupportedOperationException()
@@ -77,7 +77,7 @@ interface MonoGraphQLClient {
         ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);")
     )
     fun reactiveExecuteQuery(
-        query: String,
+        @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?,
         requestExecutor: MonoRequestExecutor
