@@ -37,7 +37,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "21.1"
+            "locked": "21.2"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "firstLevelTransitive": [
@@ -226,7 +226,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "21.1"
+            "locked": "21.2"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "firstLevelTransitive": [
@@ -442,7 +442,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "21.1"
+            "locked": "21.2"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "firstLevelTransitive": [
@@ -956,7 +956,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "21.1"
+            "locked": "21.2"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "firstLevelTransitive": [
@@ -1250,7 +1250,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "21.1"
+            "locked": "21.2"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "firstLevelTransitive": [
@@ -1463,7 +1463,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "21.1"
+            "locked": "21.2"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "firstLevelTransitive": [
