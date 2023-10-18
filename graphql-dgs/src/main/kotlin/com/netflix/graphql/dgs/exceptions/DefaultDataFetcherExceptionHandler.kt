@@ -31,6 +31,13 @@ import java.util.concurrent.CompletionException
  * The default implementation uses the Common Errors library to return GraphQL errors.
  */
 class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
+
+    @Deprecated("Deprecated in GraphQL Java", replaceWith = ReplaceWith("handleException(handlerParameters)"))
+    fun onException(handlerParameters: DataFetcherExceptionHandlerParameters): DataFetcherExceptionHandlerResult {
+        logger.error("Usage of deprecated method detected - please use handleException instead")
+        return doHandleException(handlerParameters)
+    }
+
     override fun handleException(handlerParameters: DataFetcherExceptionHandlerParameters): CompletableFuture<DataFetcherExceptionHandlerResult> {
         return CompletableFuture.completedFuture(doHandleException(handlerParameters))
     }
