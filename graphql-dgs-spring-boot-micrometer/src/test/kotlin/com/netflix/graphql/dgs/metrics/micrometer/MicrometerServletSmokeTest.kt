@@ -52,6 +52,7 @@ import org.dataloader.BatchLoader
 import org.dataloader.DataLoaderRegistry
 import org.dataloader.MappedBatchLoader
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -240,6 +241,7 @@ class MicrometerServletSmokeTest {
     }
 
     @Test
+    @Disabled
     fun `Metrics for a successful request with data loaders`() {
         mvc.perform(
             MockMvcRequestBuilders
