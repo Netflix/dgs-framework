@@ -20,6 +20,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.netflix.graphql.types.subscription.*
 import graphql.GraphQLException
+import org.intellij.lang.annotations.Language
 import org.springframework.web.reactive.socket.WebSocketHandler
 import org.springframework.web.reactive.socket.WebSocketMessage
 import org.springframework.web.reactive.socket.WebSocketSession
@@ -87,14 +88,14 @@ class WebSocketGraphQLClient(
     }
 
     override fun reactiveExecuteQuery(
-        query: String,
+        @Language("graphql") query: String,
         variables: Map<String, Any>
     ): Flux<GraphQLResponse> {
         return reactiveExecuteQuery(query, variables, null)
     }
 
     override fun reactiveExecuteQuery(
-        query: String,
+        @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?
     ): Flux<GraphQLResponse> {

@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.client
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.types.subscription.QueryPayload
+import org.intellij.lang.annotations.Language
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.toEntityFlux
@@ -33,12 +34,12 @@ class GraphqlSSESubscriptionGraphQLClient(private val url: String, private val w
 
     private val mapper = jacksonObjectMapper()
 
-    override fun reactiveExecuteQuery(query: String, variables: Map<String, Any>): Flux<GraphQLResponse> {
+    override fun reactiveExecuteQuery(@Language("graphql") query: String, variables: Map<String, Any>): Flux<GraphQLResponse> {
         return reactiveExecuteQuery(query, variables, null)
     }
 
     override fun reactiveExecuteQuery(
-        query: String,
+        @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?
     ): Flux<GraphQLResponse> {

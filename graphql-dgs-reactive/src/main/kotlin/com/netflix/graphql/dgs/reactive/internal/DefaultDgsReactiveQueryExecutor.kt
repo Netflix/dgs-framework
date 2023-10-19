@@ -34,6 +34,7 @@ import graphql.execution.NonNullableFieldWasNullError
 import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLSchema
+import org.intellij.lang.annotations.Language
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
@@ -60,7 +61,7 @@ class DefaultDgsReactiveQueryExecutor(
     private val schema = AtomicReference(defaultSchema)
 
     override fun execute(
-        query: String?,
+        @Language("graphql") query: String?,
         variables: Map<String, Any>?,
         extensions: Map<String, Any>?,
         headers: HttpHeaders?,
@@ -104,7 +105,7 @@ class DefaultDgsReactiveQueryExecutor(
     }
 
     override fun <T : Any> executeAndExtractJsonPath(
-        query: String,
+        @Language("graphql") query: String,
         jsonPath: String,
         variables: Map<String, Any>?,
         serverRequest: ServerRequest?
@@ -113,14 +114,14 @@ class DefaultDgsReactiveQueryExecutor(
     }
 
     override fun executeAndGetDocumentContext(
-        query: String,
+        @Language("graphql") query: String,
         variables: Map<String, Any>
     ): Mono<DocumentContext> {
         return getJsonResult(query, variables, null).map(BaseDgsQueryExecutor.parseContext::parse)
     }
 
     override fun <T : Any?> executeAndExtractJsonPathAsObject(
-        query: String,
+        @Language("graphql") query: String,
         jsonPath: String,
         variables: Map<String, Any>,
         clazz: Class<T>
@@ -137,7 +138,7 @@ class DefaultDgsReactiveQueryExecutor(
     }
 
     override fun <T : Any?> executeAndExtractJsonPathAsObject(
-        query: String,
+        @Language("graphql") query: String,
         jsonPath: String,
         variables: Map<String, Any>,
         typeRef: TypeRef<T>
@@ -153,7 +154,7 @@ class DefaultDgsReactiveQueryExecutor(
             }
     }
 
-    private fun getJsonResult(query: String, variables: Map<String, Any>?, serverRequest: ServerRequest?): Mono<String> {
+    private fun getJsonResult(@Language("graphql") query: String, variables: Map<String, Any>?, serverRequest: ServerRequest?): Mono<String> {
         val httpHeaders = serverRequest?.headers()?.asHttpHeaders()
         return execute(query, variables, null, httpHeaders, null, serverRequest).map { executionResult ->
             if (executionResult.errors.size > 0) {

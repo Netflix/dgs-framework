@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import org.intellij.lang.annotations.Language
 
 // OperationMessage types
 const val GQL_CONNECTION_INIT = "connection_init"
@@ -91,6 +92,7 @@ data class QueryPayload(
     @JsonProperty("operationName")
     val operationName: String? = null,
     @JsonProperty("query")
+    @Language("graphql")
     val query: String,
     @JsonProperty("key")
     val key: String = ""
