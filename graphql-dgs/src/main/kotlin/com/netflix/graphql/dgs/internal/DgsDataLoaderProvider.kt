@@ -63,7 +63,7 @@ class DgsDataLoaderProvider(
     }
 
     fun <T> buildRegistryWithContextSupplier(contextSupplier: Supplier<T>): DataLoaderRegistry {
-        val registry = ScheduledDataLoaderRegistry.newScheduledRegistry().dispatchPredicate(DispatchPredicate.DISPATCH_NEVER).tickerMode(true).build()
+        val registry = ScheduledDataLoaderRegistry.newScheduledRegistry().dispatchPredicate(DispatchPredicate.DISPATCH_NEVER).build()
         val totalTime = measureTimeMillis {
             val extensionProviders = applicationContext
                 .getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java)
