@@ -140,8 +140,7 @@ class DefaultInputObjectMapper(private val customInputObjectMapper: InputObjectM
                         trySetField(declaredField, instance, newList)
                     }
                 } else if (fieldClass.isEnum) {
-                    val enumValue =
-                        (fieldClass.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == it.value }
+                    val enumValue = if (it.value == null) null else (fieldClass.enumConstants as Array<Enum<*>>).find { enumValue -> enumValue.name == it.value.toString() }
                     trySetField(declaredField, instance, enumValue)
                 } else {
                     trySetField(declaredField, instance, it.value)
