@@ -22,8 +22,8 @@ import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.exceptions.MissingDgsEntityFetcherException
 import com.netflix.graphql.dgs.exceptions.MissingFederatedQueryArgument
-import com.netflix.graphql.dgs.internal.EntityRepresentationMapperRegistry
 import com.netflix.graphql.dgs.internal.EntityFetcherRegistry
+import com.netflix.graphql.dgs.internal.EntityRepresentationMapperRegistry
 import com.netflix.graphql.types.errors.TypedGraphQLError
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherExceptionHandlerParameters
@@ -93,9 +93,9 @@ open class DefaultDgsFederationResolver() :
                     val fetcher = entityFetcherRegistry.entityFetchers[typename]
                         ?: throw MissingDgsEntityFetcherException(typename.toString())
 
-                    val mapper = entityRepresentationMapperRegistry.mappers[typename];
+                    val mapper = entityRepresentationMapperRegistry.mappers[typename]
 
-                    val mappedValues = if (mapper != null) mapper.second.invoke(mapper.first, values) else values;
+                    val mappedValues = if (mapper != null) mapper.second.invoke(mapper.first, values) else values
 
                     val result =
                         if (fetcher.second.parameterTypes.any { it.isAssignableFrom(DgsDataFetchingEnvironment::class.java) }) {
