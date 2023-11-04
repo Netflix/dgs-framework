@@ -371,14 +371,20 @@ class DgsSchemaProvider(
                     }
                     val implementationsOf = typeDefinitionRegistry.getImplementationsOf(type)
                     implementationsOf.forEach { implType ->
-                        val dataFetcher =
-                            createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
-                        codeRegistryBuilder.dataFetcher(
-                            FieldCoordinates.coordinates(implType.name, field),
-                            dataFetcher
-                        )
-                        dataFetcherTracingInstrumentationEnabled["${implType.name}.$field"] = enableTracingInstrumentation
-                        dataFetcherMetricsInstrumentationEnabled["${implType.name}.$field"] = enableMetricsInstrumentation
+                        // if we have a datafetcher explicitly defined for a parentType/field, use that and do not
+                        // register the base implementation for interfaces
+                        if (!codeRegistryBuilder.hasDataFetcher(FieldCoordinates.coordinates(implType.name, field))) {
+                            val dataFetcher =
+                                createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
+                            codeRegistryBuilder.dataFetcher(
+                                FieldCoordinates.coordinates(implType.name, field),
+                                dataFetcher
+                            )
+                            dataFetcherTracingInstrumentationEnabled["${implType.name}.$field"] =
+                                enableTracingInstrumentation
+                            dataFetcherMetricsInstrumentationEnabled["${implType.name}.$field"] =
+                                enableMetricsInstrumentation
+                        }
                     }
                 }
                 is UnionTypeDefinition -> {

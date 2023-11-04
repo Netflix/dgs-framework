@@ -154,8 +154,8 @@ open class DgsAutoConfiguration(
     }
 
     @Bean
-    open fun dgsDataLoaderProvider(applicationContext: ApplicationContext): DgsDataLoaderProvider {
-        return DgsDataLoaderProvider(applicationContext)
+    open fun dgsDataLoaderProvider(applicationContext: ApplicationContext, dataloaderOptionProvider: DgsDataLoaderOptionsProvider): DgsDataLoaderProvider {
+        return DgsDataLoaderProvider(applicationContext, dataloaderOptionProvider)
     }
 
     /**

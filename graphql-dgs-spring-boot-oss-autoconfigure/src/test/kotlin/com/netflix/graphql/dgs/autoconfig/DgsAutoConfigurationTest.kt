@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.autoconfig
 
+import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.autoconfig.testcomponents.CustomContextBuilderConfig
 import com.netflix.graphql.dgs.autoconfig.testcomponents.CustomDataFetcherFactoryFixtures
@@ -144,6 +145,22 @@ class DgsAutoConfigurationTest {
             assertThat(ctx).getBean("dataFetchingEnvironmentArgumentResolver", DataFetchingEnvironmentArgumentResolver::class.java).isNotNull
             assertThat(ctx).getBean("coroutineArgumentResolver", ContinuationArgumentResolver::class.java).isNotNull
             assertThat(ctx).getBean("fallbackEnvironmentArgumentResolver", FallbackEnvironmentArgumentResolver::class.java).isNotNull
+        }
+    }
+
+    @Test
+    fun `DGS custom data loader options beans is available and used`() {
+        context.withUserConfiguration(DataLoaderConfig::class.java).run { ctx ->
+            assertThat(ctx).getBean(DgsDataLoaderOptionsProvider::class.java).isNotNull()
+            assertThat(ctx).getBean(DgsDataLoaderOptionsProvider::class.java).javaClass.simpleName.equals("CustomDataLoaderOptionsProvider")
+        }
+    }
+
+    @Test
+    fun `DGS default data loader options bean is available`() {
+        context.run { ctx ->
+            assertThat(ctx).getBean(DgsDataLoaderOptionsProvider::class.java).isNotNull()
+            assertThat(ctx).getBean(DgsDataLoaderOptionsProvider::class.java).javaClass.simpleName.equals("DefaultDataLoaderOptionsProvider")
         }
     }
 
