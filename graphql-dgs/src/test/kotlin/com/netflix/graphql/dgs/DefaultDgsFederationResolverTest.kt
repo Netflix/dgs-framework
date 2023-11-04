@@ -21,9 +21,9 @@ import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
 import com.netflix.graphql.dgs.exceptions.DgsEntityNotFoundException
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
-import com.netflix.graphql.dgs.internal.EntityRepresentationMapperRegistry
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.EntityFetcherRegistry
+import com.netflix.graphql.dgs.internal.EntityRepresentationMapperRegistry
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import com.netflix.graphql.types.errors.ErrorDetail
 import com.netflix.graphql.types.errors.TypedGraphQLError
