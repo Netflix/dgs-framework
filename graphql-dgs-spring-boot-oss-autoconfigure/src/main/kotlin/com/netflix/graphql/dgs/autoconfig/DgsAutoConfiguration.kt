@@ -69,6 +69,8 @@ import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.context.request.WebRequest
 import java.util.*
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
 
 /**
  * Framework auto configuration based on open source Spring only, without Netflix integrations.
@@ -153,9 +155,16 @@ open class DgsAutoConfiguration(
         return DefaultDataLoaderOptionsProvider()
     }
 
+    @Bean(destroyMethod = "shutdown")
+    @ConditionalOnMissingBean
+    @Qualifier("dgsScheduledExecutorService")
+    open fun dgsScheduledExecutorService(): ScheduledExecutorService {
+        return Executors.newSingleThreadScheduledExecutor()
+    }
+
     @Bean
-    open fun dgsDataLoaderProvider(applicationContext: ApplicationContext, dataloaderOptionProvider: DgsDataLoaderOptionsProvider): DgsDataLoaderProvider {
-        return DgsDataLoaderProvider(applicationContext, dataloaderOptionProvider)
+    open fun dgsDataLoaderProvider(applicationContext: ApplicationContext, dataloaderOptionProvider: DgsDataLoaderOptionsProvider, @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService): DgsDataLoaderProvider {
+        return DgsDataLoaderProvider(applicationContext, dataloaderOptionProvider, dgsScheduledExecutorService, configProps.dataloaderTickerModeEnabled)
     }
 
     /**

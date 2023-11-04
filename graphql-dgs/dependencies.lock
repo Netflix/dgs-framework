@@ -39,6 +39,9 @@
             ],
             "locked": "21.2"
         },
+        "com.graphql-java:java-dataloader": {
+            "locked": "3.2.2"
+        },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
         },
@@ -190,6 +193,9 @@
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "21.0"
         },
+        "com.graphql-java:java-dataloader": {
+            "locked": "3.2.2"
+        },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
         },
@@ -281,6 +287,9 @@
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "21.0"
+        },
+        "com.graphql-java:java-dataloader": {
+            "locked": "3.2.2"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -408,6 +417,9 @@
             ],
             "locked": "21.2"
         },
+        "com.graphql-java:java-dataloader": {
+            "locked": "3.2.2"
+        },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
         },
@@ -499,6 +511,9 @@
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "21.0"
+        },
+        "com.graphql-java:java-dataloader": {
+            "locked": "3.2.2"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -788,6 +803,9 @@
             ],
             "locked": "21.2"
         },
+        "com.graphql-java:java-dataloader": {
+            "locked": "3.2.2"
+        },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
         },
@@ -888,6 +906,9 @@
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "21.0"
         },
+        "com.graphql-java:java-dataloader": {
+            "locked": "3.2.2"
+        },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
         },
@@ -979,6 +1000,9 @@
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "21.0"
+        },
+        "com.graphql-java:java-dataloader": {
+            "locked": "3.2.2"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"

@@ -55,6 +55,14 @@ dependencies {
             }
 
         }
+        api("com.graphql-java:java-dataloader") {
+            version {
+                strictly("[3.2.2]")
+                prefer("3.2.2")
+                reject("[3.2.1]")
+            }
+
+        }
         api("com.graphql-java:graphql-java-extended-scalars") {
             version {
                  strictly("[21.0]")

@@ -27,6 +27,7 @@ dependencies {
     api(project(":graphql-dgs-mocking"))
 
     api("com.graphql-java:graphql-java")
+    api("com.graphql-java:java-dataloader")
     api("com.jayway.jsonpath:json-path")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
