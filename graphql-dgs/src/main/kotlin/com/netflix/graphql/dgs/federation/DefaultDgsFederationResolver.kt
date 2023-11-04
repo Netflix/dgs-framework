@@ -20,6 +20,7 @@ import com.apollographql.federation.graphqljava._Entity
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
 import com.netflix.graphql.dgs.DgsFederationResolver
+import com.netflix.graphql.dgs.exceptions.InvalidDgsEntityRepresentationMapper
 import com.netflix.graphql.dgs.exceptions.MissingDgsEntityFetcherException
 import com.netflix.graphql.dgs.exceptions.MissingFederatedQueryArgument
 import com.netflix.graphql.dgs.internal.EntityFetcherRegistry
@@ -94,6 +95,10 @@ open class DefaultDgsFederationResolver() :
                         ?: throw MissingDgsEntityFetcherException(typename.toString())
 
                     val mapper = entityRepresentationMapperRegistry.mappers[typename]
+
+                    if (mapper != null && !mapper.second.parameterTypes.any { it.isAssignableFrom(Map::class.java) }) {
+                        throw InvalidDgsEntityRepresentationMapper("@DgsEntityRepresentationMapper ${mapper.first::class.java.name}.${mapper.second.name} is invalid. A DgsEntityRepresentationMapper must accept an argument of type Map<String, Object>")
+                    }
 
                     val mappedValues = if (mapper != null) mapper.second.invoke(mapper.first, values) else values
 

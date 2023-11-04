@@ -304,6 +304,59 @@ class DefaultDgsFederationResolverTest {
             assertInvocationCounts(movieRepresentationMapper, movieEntityFetcher)
         }
 
+        @Test
+        fun `Will throw an InvalidDgsEntityRepresentationMapper exception, if mapper parameters are of invalid type`() {
+            val movieRepresentationMapper = object {
+                @DgsEntityRepresentationMapper(name = "Movie")
+                fun invalidMovieRepresentationMapper(values: String): MovieRepresentation {
+                    return MovieRepresentation("Movie", "1")
+                }
+            }
+
+            val movieEntityFetcher = object {
+                @DgsEntityFetcher(name = "Movie")
+                fun movieEntityFetcher(values: MovieRepresentation): Movie {
+                    return Movie(values.movieId, "Some Movie Title")
+                }
+            }
+
+            every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
+                "MovieEntityFetcher" to movieEntityFetcher,
+                "MovieRepresentationMapper" to movieRepresentationMapper
+            )
+
+            dgsSchemaProvider.schema("""type Query {}""")
+
+            val arguments = mapOf<String, Any>(
+                _Entity.argumentName to listOf(mapOf("__typename" to "Movie", "movieId" to "1"))
+            )
+
+            val dataFetchingEnvironment = constructDFE(arguments)
+
+            val result = (
+                DefaultDgsFederationResolver(
+                    entityFetcherRegistry,
+                    Optional.of(dgsExceptionHandler),
+                    entityRepresentationMapperRegistry
+                )
+                    .entitiesFetcher()
+                    .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
+                )
+
+            assertThat(result).isNotNull
+            assertThat(result.get().data).hasSize(1)
+            assertThat(result.get().errors).hasSize(1)
+                .first().extracting { it.message }
+                .satisfies(
+                    Consumer {
+                        assertThat(it)
+                            .contains("A DgsEntityRepresentationMapper must accept an argument of type Map<String, Object>")
+                    }
+                )
+        }
+
         @Nested
         inner class EntityFetcherAsyncWithRepresentationMapperTests {
             @Test
