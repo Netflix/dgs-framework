@@ -4,7 +4,7 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
             "locked": "3.0.8"
@@ -70,15 +70,15 @@
             "project": true
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
+        "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "locked": "3.0.8"
@@ -106,7 +106,7 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -166,15 +166,15 @@
             "project": true
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
+        "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.36"
@@ -364,16 +364,16 @@
             "locked": "3.12.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
+        "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
@@ -385,7 +385,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
             "firstLevelTransitive": [
@@ -490,10 +490,10 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-build-tools-impl": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -507,10 +507,10 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -524,7 +524,7 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -538,10 +538,10 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -555,10 +555,10 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -572,10 +572,10 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -589,10 +589,10 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -606,7 +606,7 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -620,7 +620,7 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -704,21 +704,21 @@
             "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
+        "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
             "firstLevelTransitive": [
@@ -771,7 +771,7 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -895,9 +895,9 @@
             "locked": "3.5.7"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
+        "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
@@ -909,7 +909,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "locked": "3.0.8"
@@ -1093,16 +1093,16 @@
             "locked": "3.12.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
+        "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
@@ -1114,7 +1114,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.10"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
             "firstLevelTransitive": [
