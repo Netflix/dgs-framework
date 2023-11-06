@@ -65,7 +65,7 @@ class DataFetcherInvoker internal constructor(
             return ReflectionUtils.invokeMethod(bridgedMethod, dgsComponent)
         }
 
-        if (kotlinFunction != null) {
+        if (dgsComponent.javaClass.getDeclaredAnnotation(Metadata::class.java) != null && kotlinFunction != null) {
             return invokeKotlinMethod(kotlinFunction, environment)
         }
 
