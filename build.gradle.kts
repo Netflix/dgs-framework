@@ -55,6 +55,7 @@ allprojects {
     // in buildSrc, most likely because the variables are used in plugins as well
     // as dependencies. e.g. KOTLIN_VERSION
     extra["sb.version"] = "3.0.8"
+    extra["kotlin.version"] = Versions.KOTLIN_VERSION
     val springBootVersion = extra["sb.version"] as String
 
     dependencyRecommendations {
