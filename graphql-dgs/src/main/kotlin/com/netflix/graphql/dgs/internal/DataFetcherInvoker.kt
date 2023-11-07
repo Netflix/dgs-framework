@@ -22,6 +22,7 @@ import graphql.schema.DataFetchingEnvironment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.reactor.mono
 import org.springframework.core.BridgeMethodResolver
+import org.springframework.core.KotlinDetector
 import org.springframework.core.MethodParameter
 import org.springframework.core.ParameterNameDiscoverer
 import org.springframework.core.annotation.SynthesizingMethodParameter
@@ -44,7 +45,7 @@ class DataFetcherInvoker internal constructor(
 ) : DataFetcher<Any?> {
 
     private val bridgedMethod: Method = BridgeMethodResolver.findBridgedMethod(method)
-    private val kotlinFunction: KFunction<*>? = bridgedMethod.kotlinFunction
+    private val kotlinFunction: KFunction<*>? = if (KotlinDetector.isKotlinType(bridgedMethod.declaringClass)) bridgedMethod.kotlinFunction else null
     private val completableFutureWrapper = CompletableFutureWrapper(taskExecutor)
 
     private val methodParameters: List<MethodParameter> = bridgedMethod.parameters.map { parameter ->
