@@ -26,6 +26,7 @@ import com.netflix.graphql.dgs.internal.EntityFetcherRegistry
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import com.netflix.graphql.types.errors.ErrorDetail
 import com.netflix.graphql.types.errors.TypedGraphQLError
+import graphql.GraphQLContext
 import graphql.GraphQLError
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherExceptionHandlerParameters
@@ -55,6 +56,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
 import reactor.core.publisher.Mono
+import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -80,7 +82,8 @@ class DefaultDgsFederationResolverTest {
             existingTypeDefinitionRegistry = Optional.empty(),
             dataFetcherExceptionHandler = Optional.of(dgsExceptionHandler),
             entityFetcherRegistry = entityFetcherRegistry,
-            methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
+            methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
+            enableEntityFetcherCustomScalarParsing = true
         )
     }
 
@@ -238,6 +241,109 @@ class DefaultDgsFederationResolverTest {
             }
 
             testEntityFetcher(movieEntityFetcher)
+        }
+
+        @Test
+        fun `Custom scalars are properly coerced in entity representations`() {
+            val movieEntityFetcher = object {
+                @DgsEntityFetcher(name = "Movie")
+                fun movieEntityFetcher(values: Map<String, Any>): Movie {
+                    assertThat(values["createdAt"]).isInstanceOf(LocalDateTime::class.java)
+                    return Movie(createdAt = values["createdAt"] as? LocalDateTime)
+                }
+            }
+
+            every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(
+                Pair(
+                    "localDateTimeScalar",
+                    LocalDateTimeScalar()
+                )
+            )
+            every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("MovieEntityFetcher" to movieEntityFetcher)
+
+            dgsSchemaProvider.schema(
+                """
+                type Query {}
+                
+                interface Movie @key(fields: "createdAt"){
+                  createdAt: DateTime
+                }
+                
+                scalar DateTime
+                """.trimIndent()
+            )
+
+            val arguments = mapOf<String, Any>(
+                _Entity.argumentName to listOf(mapOf("__typename" to "Movie", "createdAt" to "2020-01-01T11:22:33"))
+            )
+            val dataFetchingEnvironment = constructDFE(arguments)
+
+            val result =
+                (
+                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
+                        .entitiesFetcher()
+                        .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
+                    )
+
+            assertThat(result).isNotNull
+            assertThat(result.get().data).hasSize(1).first().isInstanceOf(Movie::class.java)
+            assertThat(result.get().data.first() as Movie).extracting { it.createdAt.toString() }.isEqualTo("2020-01-01T11:22:33")
+        }
+
+        @Test
+        fun `Custom scalars are properly coerced in nested entity representations`() {
+            val movieEntityFetcher = object {
+                @DgsEntityFetcher(name = "Movie")
+                fun movieEntityFetcher(values: Map<String, Any>): Movie {
+                    val inner = values["inner"] as Map<String, Any>
+                    assertThat(inner["createdAt"]).isInstanceOf(LocalDateTime::class.java)
+                    assertThat(inner["id"]).isEqualTo("123abc")
+                    return Movie(createdAt = inner["createdAt"] as? LocalDateTime)
+                }
+            }
+
+            every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(
+                Pair(
+                    "localDateTimeScalar",
+                    LocalDateTimeScalar()
+                )
+            )
+            every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("MovieEntityFetcher" to movieEntityFetcher)
+
+            dgsSchemaProvider.schema(
+                """
+                type Query {}
+                
+                type Movie @key(fields: "inner { id createdAt }"){
+                  inner: InnerType
+                }
+                
+                type InnerType {
+                  id: ID
+                  createdAt: DateTime
+                }
+                
+                scalar DateTime
+                """.trimIndent()
+            )
+
+            val arguments = mapOf<String, Any>(
+                _Entity.argumentName to listOf(mapOf("__typename" to "Movie", "inner" to mapOf("id" to "123abc", "createdAt" to "2020-01-01T11:22:33")))
+            )
+            val dataFetchingEnvironment = constructDFE(arguments)
+
+            val result =
+                (
+                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
+                        .entitiesFetcher()
+                        .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
+                    )
+
+            assertThat(result).isNotNull
+            assertThat(result.get().data).hasSize(1).first().isInstanceOf(Movie::class.java)
+            assertThat(result.get().data.first() as Movie).extracting { it.createdAt.toString() }.isEqualTo("2020-01-01T11:22:33")
         }
 
         @Test
@@ -701,6 +807,7 @@ class DefaultDgsFederationResolverTest {
         return DgsDataFetchingEnvironment(
             DataFetchingEnvironmentImpl
                 .newDataFetchingEnvironment()
+                .graphQLContext(GraphQLContext.getDefault())
                 .arguments(arguments)
                 .executionStepInfo(executionStepInfo)
                 .mergedField(MergedField.newMergedField(Field("Movie")).build())
@@ -708,7 +815,7 @@ class DefaultDgsFederationResolverTest {
         )
     }
 
-    data class Movie(val movieId: String = "", val title: String = "")
+    data class Movie(val movieId: String = "", val title: String = "", val createdAt: LocalDateTime? = null)
 
     data class Show(val showId: String = "", val title: String = "")
 }
