@@ -31,7 +31,6 @@ import org.dataloader.DataLoaderRegistry
 import org.dataloader.MappedBatchLoader
 import org.dataloader.MappedBatchLoaderWithContext
 import org.dataloader.registries.DispatchPredicate
-import org.dataloader.registries.ScheduledDataLoaderRegistry
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.aop.support.AopUtils
@@ -63,7 +62,7 @@ class DgsDataLoaderProvider(
     }
 
     fun <T> buildRegistryWithContextSupplier(contextSupplier: Supplier<T>): DataLoaderRegistry {
-        val registry = ScheduledDataLoaderRegistry.newScheduledRegistry().dispatchPredicate(DispatchPredicate.DISPATCH_NEVER).build()
+        val registry = DgsDataLoaderRegistry()
         val totalTime = measureTimeMillis {
             val extensionProviders = applicationContext
                 .getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java)
@@ -219,7 +218,7 @@ class DgsDataLoaderProvider(
 
     private fun registerDataLoader(
         holder: LoaderHolder<*>,
-        registry: ScheduledDataLoaderRegistry,
+        registry: DgsDataLoaderRegistry,
         contextSupplier: Supplier<*>,
         extensionProviders: Iterable<DataLoaderInstrumentationExtensionProvider>
     ) {
@@ -236,9 +235,9 @@ class DgsDataLoaderProvider(
         }
 
         if (holder.dispatchPredicate == null) {
-            registry.register(holder.name, loader, DispatchPredicate.DISPATCH_ALWAYS)
+            registry.register(holder.name, loader)
         } else {
-            registry.register(holder.name, loader, holder.dispatchPredicate)
+            registry.registerWithDispatchPredicate(holder.name, loader, holder.dispatchPredicate)
         }
     }
 
