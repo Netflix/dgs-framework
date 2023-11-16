@@ -54,7 +54,7 @@ jobs:
 
       - name: Check
         run: |
-          ./gradlew --info --no-watch-fs check
+          ./gradlew --no-watch-fs check
 
       - name: Publish Locally
         run: |
