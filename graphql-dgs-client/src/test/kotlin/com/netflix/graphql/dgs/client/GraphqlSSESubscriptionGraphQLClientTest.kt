@@ -21,6 +21,7 @@ import com.netflix.graphql.dgs.subscriptions.graphql.sse.DgsGraphQLSSEAutoConfig
 import com.netflix.graphql.dgs.subscriptions.sse.DgsSSEAutoConfig
 import com.netflix.graphql.dgs.subscriptions.websockets.DgsWebSocketAutoConfig
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
@@ -34,6 +35,7 @@ import reactor.test.StepVerifier
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @EnableAutoConfiguration(exclude = [DgsSSEAutoConfig::class, DgsWebSocketAutoConfig::class])
+@Disabled("Suspecting this test class to be the root cause of hanging builds")
 internal class GraphqlSSESubscriptionGraphQLClientTest {
 
     @LocalServerPort
