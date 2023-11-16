@@ -33,7 +33,8 @@ import java.util.concurrent.CompletionException
 class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
 
     @Deprecated("Deprecated in GraphQL Java", replaceWith = ReplaceWith("handleException(handlerParameters)"))
-    override fun onException(handlerParameters: DataFetcherExceptionHandlerParameters): DataFetcherExceptionHandlerResult {
+    fun onException(handlerParameters: DataFetcherExceptionHandlerParameters): DataFetcherExceptionHandlerResult {
+        logger.error("Usage of deprecated method detected - please use handleException instead")
         return doHandleException(handlerParameters)
     }
 

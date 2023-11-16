@@ -26,13 +26,17 @@ import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
 import com.netflix.graphql.dgs.internal.method.InputArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
+import com.netflix.graphql.dgs.internal.utils.SelectionSetUtil
 import com.netflix.graphql.mocking.DgsSchemaTransformer
 import com.netflix.graphql.mocking.MockProvider
 import graphql.TypeResolutionEnvironment
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.language.FieldDefinition
+import graphql.language.ImplementingTypeDefinition
 import graphql.language.InterfaceTypeDefinition
 import graphql.language.ObjectTypeDefinition
+import graphql.language.ScalarTypeDefinition
+import graphql.language.StringValue
 import graphql.language.TypeName
 import graphql.language.UnionTypeDefinition
 import graphql.parser.MultiSourceReader
@@ -90,12 +94,14 @@ class DgsSchemaProvider(
     private val defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty(),
     private val methodDataFetcherFactory: MethodDataFetcherFactory,
     private val componentFilter: ((Any) -> Boolean)? = null,
-    private val schemaWiringValidationEnabled: Boolean = true
+    private val schemaWiringValidationEnabled: Boolean = true,
+    private val enableEntityFetcherCustomScalarParsing: Boolean = false
 ) {
 
     private val schemaReadWriteLock = ReentrantReadWriteLock()
 
-    private val dataFetcherInstrumentationEnabled = mutableMapOf<String, Boolean>()
+    private val dataFetcherTracingInstrumentationEnabled = mutableMapOf<String, Boolean>()
+    private val dataFetcherMetricsInstrumentationEnabled = mutableMapOf<String, Boolean>()
 
     private val dataFetchers = mutableListOf<DataFetcherReference>()
 
@@ -116,9 +122,22 @@ class DgsSchemaProvider(
      *
      * The method should be considered unstable until the [schema] is fully loaded.
      */
-    fun isFieldInstrumentationEnabled(field: String): Boolean {
+    fun isFieldTracingInstrumentationEnabled(field: String): Boolean {
         return schemaReadWriteLock.read {
-            dataFetcherInstrumentationEnabled.getOrDefault(field, true)
+            dataFetcherTracingInstrumentationEnabled.getOrDefault(field, true)
+        }
+    }
+
+    /**
+     * Given a field, expressed as a GraphQL `<Type>.<field name>` tuple, return...
+     * 1. `true` if the given field has _instrumentation_ enabled, or is missing an explicit setting.
+     * 2. `false` if the given field has _instrumentation_ explicitly disabled.
+     *
+     * The method should be considered unstable until the [schema] is fully loaded.
+     */
+    fun isFieldMetricsInstrumentationEnabled(field: String): Boolean {
+        return schemaReadWriteLock.read {
+            dataFetcherMetricsInstrumentationEnabled.getOrDefault(field, true)
         }
     }
 
@@ -128,7 +147,8 @@ class DgsSchemaProvider(
     ): GraphQLSchema {
         schemaReadWriteLock.write {
             dataFetchers.clear()
-            dataFetcherInstrumentationEnabled.clear()
+            dataFetcherTracingInstrumentationEnabled.clear()
+            dataFetcherMetricsInstrumentationEnabled.clear()
             return computeSchema(schema, fieldVisibility)
         }
     }
@@ -160,16 +180,6 @@ class DgsSchemaProvider(
             mergedRegistry = mergedRegistry.merge(existingTypeDefinitionRegistry.get())
         }
 
-        val federationResolverInstance =
-            federationResolver.orElseGet {
-                DefaultDgsFederationResolver(
-                    entityFetcherRegistry,
-                    dataFetcherExceptionHandler
-                )
-            }
-
-        val entityFetcher = federationResolverInstance.entitiesFetcher()
-        val typeResolver = federationResolverInstance.typeResolver()
         val codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry().fieldVisibility(fieldVisibility)
         if (defaultDataFetcherFactory.isPresent) {
             codeRegistryBuilder.defaultDataFetcher(defaultDataFetcherFactory.get())
@@ -185,7 +195,6 @@ class DgsSchemaProvider(
         findDirectives(applicationContext, runtimeWiringBuilder)
         findDataFetchers(dgsComponents, codeRegistryBuilder, mergedRegistry)
         findTypeResolvers(dgsComponents, runtimeWiringBuilder, mergedRegistry)
-        findEntityFetchers(dgsComponents)
 
         dgsComponents.forEach { dgsComponent ->
             invokeDgsCodeRegistry(
@@ -198,8 +207,24 @@ class DgsSchemaProvider(
         runtimeWiringBuilder.codeRegistry(codeRegistryBuilder.build())
 
         dgsComponents.forEach { dgsComponent -> invokeDgsRuntimeWiring(dgsComponent, runtimeWiringBuilder) }
+
+        val runtimeWiring = runtimeWiringBuilder.build()
+
+        findEntityFetchers(dgsComponents, mergedRegistry, runtimeWiring)
+
+        val federationResolverInstance =
+            federationResolver.orElseGet {
+                DefaultDgsFederationResolver(
+                    entityFetcherRegistry,
+                    dataFetcherExceptionHandler
+                )
+            }
+
+        val entityFetcher = federationResolverInstance.entitiesFetcher()
+        val typeResolver = federationResolverInstance.typeResolver()
+
         val graphQLSchema =
-            Federation.transform(mergedRegistry, runtimeWiringBuilder.build()).fetchEntities(entityFetcher)
+            Federation.transform(mergedRegistry, runtimeWiring).fetchEntities(entityFetcher)
                 .resolveEntityType(typeResolver).build()
 
         val endTime = System.currentTimeMillis()
@@ -319,16 +344,21 @@ class DgsSchemaProvider(
 
         dataFetchers.add(DataFetcherReference(dgsComponent, method, mergedAnnotations, parentType, field))
 
-        val enableInstrumentation =
-            if (method.isAnnotationPresent(DgsEnableDataFetcherInstrumentation::class.java)) {
-                val dgsEnableDataFetcherInstrumentation =
-                    method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)
-                dgsEnableDataFetcherInstrumentation.value
-            } else {
-                method.returnType != CompletionStage::class.java && method.returnType != CompletableFuture::class.java
-            }
+        val enableTracingInstrumentation = if (method.isAnnotationPresent(DgsEnableDataFetcherInstrumentation::class.java)) {
+            val dgsEnableDataFetcherInstrumentation =
+                method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)
+            dgsEnableDataFetcherInstrumentation.value
+        } else {
+            method.returnType != CompletionStage::class.java && method.returnType != CompletableFuture::class.java
+        }
+        dataFetcherTracingInstrumentationEnabled["$parentType.$field"] = enableTracingInstrumentation
 
-        dataFetcherInstrumentationEnabled["$parentType.$field"] = enableInstrumentation
+        val enableMetricsInstrumentation = if (method.isAnnotationPresent(DgsEnableDataFetcherInstrumentation::class.java)) {
+            val dgsEnableDataFetcherInstrumentation =
+                method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)
+            dgsEnableDataFetcherInstrumentation.value
+        } else true
+        dataFetcherMetricsInstrumentationEnabled["$parentType.$field"] = enableMetricsInstrumentation
 
         val methodClassName = method.declaringClass.name
         try {
@@ -348,13 +378,20 @@ class DgsSchemaProvider(
                     }
                     val implementationsOf = typeDefinitionRegistry.getImplementationsOf(type)
                     implementationsOf.forEach { implType ->
-                        val dataFetcher =
-                            createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
-                        codeRegistryBuilder.dataFetcher(
-                            FieldCoordinates.coordinates(implType.name, field),
-                            dataFetcher
-                        )
-                        dataFetcherInstrumentationEnabled["${implType.name}.$field"] = enableInstrumentation
+                        // if we have a datafetcher explicitly defined for a parentType/field, use that and do not
+                        // register the base implementation for interfaces
+                        if (!codeRegistryBuilder.hasDataFetcher(FieldCoordinates.coordinates(implType.name, field))) {
+                            val dataFetcher =
+                                createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
+                            codeRegistryBuilder.dataFetcher(
+                                FieldCoordinates.coordinates(implType.name, field),
+                                dataFetcher
+                            )
+                            dataFetcherTracingInstrumentationEnabled["${implType.name}.$field"] =
+                                enableTracingInstrumentation
+                            dataFetcherMetricsInstrumentationEnabled["${implType.name}.$field"] =
+                                enableMetricsInstrumentation
+                        }
                     }
                 }
                 is UnionTypeDefinition -> {
@@ -365,7 +402,8 @@ class DgsSchemaProvider(
                             FieldCoordinates.coordinates(memberType.name, field),
                             dataFetcher
                         )
-                        dataFetcherInstrumentationEnabled["${memberType.name}.$field"] = enableInstrumentation
+                        dataFetcherTracingInstrumentationEnabled["${memberType.name}.$field"] = enableTracingInstrumentation
+                        dataFetcherMetricsInstrumentationEnabled["${memberType.name}.$field"] = enableMetricsInstrumentation
                     }
                 }
                 is ObjectTypeDefinition -> {
@@ -462,7 +500,7 @@ class DgsSchemaProvider(
         }
     }
 
-    private fun findEntityFetchers(dgsComponents: Collection<Any>) {
+    private fun findEntityFetchers(dgsComponents: Collection<Any>, registry: TypeDefinitionRegistry, runtimeWiring: RuntimeWiring) {
         dgsComponents.forEach { dgsComponent ->
             val javaClass = AopUtils.getTargetClass(dgsComponent)
 
@@ -474,12 +512,69 @@ class DgsSchemaProvider(
                     val enableInstrumentation =
                         method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)?.value
                             ?: false
-                    dataFetcherInstrumentationEnabled["${"__entities"}.${dgsEntityFetcherAnnotation.name}"] =
+                    dataFetcherTracingInstrumentationEnabled["${"__entities"}.${dgsEntityFetcherAnnotation.name}"] =
+                        enableInstrumentation
+                    dataFetcherMetricsInstrumentationEnabled["${"__entities"}.${dgsEntityFetcherAnnotation.name}"] =
                         enableInstrumentation
 
                     entityFetcherRegistry.entityFetchers[dgsEntityFetcherAnnotation.name] = dgsComponent to method
+
+                    val type = registry.getType(dgsEntityFetcherAnnotation.name)
+
+                    if (enableEntityFetcherCustomScalarParsing) {
+                        type.ifPresent {
+                            val typeDefinition = it as? ImplementingTypeDefinition
+                            val keyDirective = it.directives.stream()
+                                .filter { it.name.equals("key") }
+                                .findAny()
+
+                            keyDirective.ifPresent {
+                                val fields = it.argumentsByName["fields"]
+
+                                if (fields != null && fields.value is StringValue) {
+                                    val fieldsSelection = (fields.value as StringValue).value
+                                    val paths = SelectionSetUtil.toPaths(fieldsSelection)
+
+                                    entityFetcherRegistry.entityFetcherInputMappings[dgsEntityFetcherAnnotation.name] =
+                                        paths.stream()
+                                            .map {
+                                                Pair(
+                                                    it,
+                                                    traverseType(it.iterator(), typeDefinition, registry, runtimeWiring)
+                                                )
+                                            }
+                                            .filter { it.second != null }
+                                            .collect(Collectors.toMap({ it.first }, { it.second!! }))
+                                }
+                            }
+                        }
+                    }
                 }
         }
+    }
+
+    private fun traverseType(path: Iterator<String>, type: ImplementingTypeDefinition<*>?, registry: TypeDefinitionRegistry, runtimeWiring: RuntimeWiring): Coercing<*, *>? {
+        if (type == null || !path.hasNext()) {
+            return null
+        }
+
+        val item = path.next()
+        val fieldDefinition = type.fieldDefinitions.firstOrNull { it.name.equals(item) }
+        val fieldDefinitionType = fieldDefinition?.type
+
+        if (fieldDefinitionType is TypeName) {
+            val fieldType = registry.getType(fieldDefinitionType.name)
+
+            if (fieldType.isPresent) {
+                return when (val unwrappedFieldType = fieldType.get()) {
+                    is ObjectTypeDefinition -> traverseType(path, unwrappedFieldType, registry, runtimeWiring)
+                    is ScalarTypeDefinition -> runtimeWiring.scalars.get(unwrappedFieldType.name)?.coercing
+                    else -> null
+                }
+            }
+        }
+
+        return null
     }
 
     private fun createBasicDataFetcher(method: Method, dgsComponent: Any, isSubscription: Boolean): DataFetcher<Any?> {

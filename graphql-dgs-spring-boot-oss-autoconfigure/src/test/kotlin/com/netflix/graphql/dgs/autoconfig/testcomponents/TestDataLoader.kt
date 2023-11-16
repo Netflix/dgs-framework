@@ -19,8 +19,10 @@ package com.netflix.graphql.dgs.autoconfig.testcomponents
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsData
 import com.netflix.graphql.dgs.DgsDataLoader
+import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
 import graphql.schema.DataFetchingEnvironment
 import org.dataloader.BatchLoader
+import org.dataloader.DataLoaderOptions
 import org.dataloader.MappedBatchLoader
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -79,5 +81,21 @@ open class DataLoaderConfig {
     @Bean
     open fun createFetcherUsingMappedLoader(): FetcherUsingMappedDataLoader {
         return FetcherUsingMappedDataLoader()
+    }
+
+    @Bean
+    open fun dgsDataLoaderOptionsProvider(): DgsDataLoaderOptionsProvider {
+        return CustomDataLoaderOptionsProvider()
+    }
+}
+
+class CustomDataLoaderOptionsProvider : DgsDataLoaderOptionsProvider {
+    override fun getOptions(dataLoaderName: String, annotation: DgsDataLoader): DataLoaderOptions {
+        val options = DataLoaderOptions()
+            .setBatchingEnabled(false)
+            .setCachingEnabled(false)
+
+        options.setMaxBatchSize(50)
+        return options
     }
 }

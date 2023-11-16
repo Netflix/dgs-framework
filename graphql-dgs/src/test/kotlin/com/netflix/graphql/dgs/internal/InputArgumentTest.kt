@@ -50,6 +50,7 @@ import graphql.ExceptionWhileDataFetching
 import graphql.ExecutionInput
 import graphql.GraphQL
 import graphql.scalars.ExtendedScalars
+import graphql.scalars.country.code.CountryCode
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.idl.RuntimeWiring
 import org.assertj.core.api.Assertions.assertThat
@@ -2214,6 +2215,84 @@ internal class InputArgumentTest {
             assertThat(executionResult.isDataPresent).isTrue
             val data = executionResult.getData<Map<String, *>>()
             assertThat(data["hello"]).isEqualTo("Hello, Nobody")
+        }
+    }
+
+    @Test
+    fun `The enum scalar in a nested input should be mapped`() {
+        val schema = """
+            type Query {
+                hello(input:InputMessage): String
+            }
+            
+            input InputMessage {
+                countryCode: CountryCode
+            }
+                  
+            scalar CountryCode
+        """.trimIndent()
+
+        @DgsComponent
+        class Fetcher {
+            @DgsData(parentType = "Query", field = "hello")
+            fun hello(@InputArgument input: JInputMessage): String {
+                assertThat(input.countryCode).isInstanceOf(CountryCode::class.java)
+                assertThat(input.countryCode).isEqualTo(CountryCode.US)
+                return "Hello, this is a ${input.countryCode} greeting"
+            }
+
+            @DgsRuntimeWiring
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
+                return builder.scalar(ExtendedScalars.CountryCode)
+            }
+        }
+
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val provider = schemaProvider(context)
+            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val executionResult = build.execute("""{hello(input: {countryCode: "US"})}""")
+            assertThat(executionResult).isNotNull
+            assertThat(executionResult.errors).isEmpty()
+            assertThat(executionResult.isDataPresent).isTrue
+            val data = executionResult.getData<Map<String, *>>()
+            assertThat(data).extracting("hello").isEqualTo("Hello, this is a US greeting")
+        }
+    }
+
+    @Test
+    fun `The enum scalar in a non-nested input should be mapped`() {
+        val schema = """
+            type Query {
+                hello(countryCode: CountryCode): String
+            }
+                  
+            scalar CountryCode
+        """.trimIndent()
+
+        @DgsComponent
+        class Fetcher {
+            @DgsData(parentType = "Query", field = "hello")
+            fun hello(@InputArgument countryCode: CountryCode): String {
+                assertThat(countryCode).isInstanceOf(CountryCode::class.java)
+                assertThat(countryCode).isEqualTo(CountryCode.ZW)
+                return "Hello, this is a $countryCode greeting"
+            }
+
+            @DgsRuntimeWiring
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
+                return builder.scalar(ExtendedScalars.CountryCode)
+            }
+        }
+
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val provider = schemaProvider(context)
+            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val executionResult = build.execute("""{hello(countryCode: "ZW")}""")
+            assertThat(executionResult).isNotNull
+            assertThat(executionResult.errors).isEmpty()
+            assertThat(executionResult.isDataPresent).isTrue
+            val data = executionResult.getData<Map<String, *>>()
+            assertThat(data).extracting("hello").isEqualTo("Hello, this is a ZW greeting")
         }
     }
 

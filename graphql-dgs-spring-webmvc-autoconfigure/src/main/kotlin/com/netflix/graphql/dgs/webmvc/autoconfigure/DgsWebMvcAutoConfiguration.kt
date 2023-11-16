@@ -92,7 +92,7 @@ open class DgsWebMvcAutoConfiguration {
 
         @Bean
         @Dgs
-        open fun dgsWebDataBinderFactory(adapter: ObjectProvider<RequestMappingHandlerAdapter>): WebDataBinderFactory {
+        open fun dgsWebDataBinderFactory(@Qualifier("requestMappingHandlerAdapter") adapter: ObjectProvider<RequestMappingHandlerAdapter>): WebDataBinderFactory {
             return ServletRequestDataBinderFactory(listOf(), adapter.ifAvailable?.webBindingInitializer)
         }
 

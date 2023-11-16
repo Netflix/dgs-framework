@@ -31,6 +31,8 @@ plugins {
     id("nebula.netflixoss") version "11.3.2"
     id("org.jmailen.kotlinter") version "3.11.1"
     id("me.champeau.jmh") version "0.7.1"
+    id("me.champeau.mrjar") version "0.1.1"
+
 
     kotlin("jvm") version Versions.KOTLIN_VERSION
     kotlin("kapt") version Versions.KOTLIN_VERSION
