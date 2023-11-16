@@ -29,7 +29,9 @@ data class DgsConfigurationProperties(
     /** Location of the GraphQL schema files. */
     @DefaultValue(DEFAULT_SCHEMA_LOCATION) val schemaLocations: List<String>,
     @DefaultValue("true") val schemaWiringValidationEnabled: Boolean,
-    @DefaultValue("false") val enableEntityFetcherCustomScalarParsing: Boolean
+    @DefaultValue("false") val enableEntityFetcherCustomScalarParsing: Boolean,
+    /** Data loader properties.*/
+    @DefaultValue("false") val dataloaderTickerModeEnabled: Boolean
 ) {
     companion object {
         const val PREFIX: String = "dgs.graphql"
