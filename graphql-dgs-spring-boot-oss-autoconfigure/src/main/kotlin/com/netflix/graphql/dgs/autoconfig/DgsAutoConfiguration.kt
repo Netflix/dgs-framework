@@ -317,7 +317,7 @@ open class DgsAutoConfiguration(
     open fun mockRequestHeaderCustomizer(): DgsQueryExecutorRequestCustomizer {
         /**
          * [DgsQueryExecutorRequestCustomizer] implementation which copies headers into
-         * the request if the request is [MockHttpServletRequest]; intendeded to support
+         * the request if the request is [MockHttpServletRequest]; intended to support
          * test use cases.
          */
         return object : DgsQueryExecutorRequestCustomizer {
