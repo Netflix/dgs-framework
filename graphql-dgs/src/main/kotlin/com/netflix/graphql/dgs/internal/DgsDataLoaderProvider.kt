@@ -38,6 +38,8 @@ import org.springframework.aop.support.AopUtils
 import org.springframework.beans.factory.NoSuchBeanDefinitionException
 import org.springframework.context.ApplicationContext
 import org.springframework.util.ReflectionUtils
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
 import java.util.function.Supplier
 import kotlin.system.measureTimeMillis
 
@@ -46,7 +48,9 @@ import kotlin.system.measureTimeMillis
  */
 class DgsDataLoaderProvider(
     private val applicationContext: ApplicationContext,
-    private val dataLoaderOptionsProvider: DgsDataLoaderOptionsProvider = DefaultDataLoaderOptionsProvider()
+    private val dataLoaderOptionsProvider: DgsDataLoaderOptionsProvider = DefaultDataLoaderOptionsProvider(),
+    private val scheduledExecutorService: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
+    private val enableTickerMode: Boolean = false
 ) {
 
     private data class LoaderHolder<T>(val theLoader: T, val annotation: DgsDataLoader, val name: String, val dispatchPredicate: DispatchPredicate? = null)
@@ -63,7 +67,12 @@ class DgsDataLoaderProvider(
     }
 
     fun <T> buildRegistryWithContextSupplier(contextSupplier: Supplier<T>): DataLoaderRegistry {
-        val registry = ScheduledDataLoaderRegistry.newScheduledRegistry().dispatchPredicate(DispatchPredicate.DISPATCH_NEVER).build()
+        // We need to set the default predicate to 20ms and individually override with DISPATCH_ALWAYS or the custom dispatch predicate, if specified
+        // The data loader ends up applying the overall dispatch predicate when the custom dispatch predicate is not true otherwise.
+        val registry = ScheduledDataLoaderRegistry.newScheduledRegistry().scheduledExecutorService(scheduledExecutorService).tickerMode(enableTickerMode).dispatchPredicate(
+            DispatchPredicate.DISPATCH_NEVER
+        ).build()
+
         val totalTime = measureTimeMillis {
             val extensionProviders = applicationContext
                 .getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java)

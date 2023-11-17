@@ -55,6 +55,7 @@ allprojects {
     // in buildSrc, most likely because the variables are used in plugins as well
     // as dependencies. e.g. KOTLIN_VERSION
     extra["sb.version"] = "3.0.8"
+    extra["kotlin.version"] = Versions.KOTLIN_VERSION
     val springBootVersion = extra["sb.version"] as String
 
     dependencyRecommendations {
@@ -78,7 +79,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     apply {
         plugin("java-library")
         plugin("kotlin")
-        plugin("kotlin-kapt")
+//        plugin("kotlin-kapt")
         plugin("org.jmailen.kotlinter")
         plugin("me.champeau.jmh")
     }
@@ -107,9 +108,9 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         // Produce Config Metadata for properties used in Spring Boot
         annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
         // Speed up processing of AutoConfig's produced by Spring Boot for Kotlin
-        kapt("org.springframework.boot:spring-boot-autoconfigure-processor:${springBootVersion}")
+//        kapt("org.springframework.boot:spring-boot-autoconfigure-processor:${springBootVersion}")
         // Produce Config Metadata for properties used in Spring Boot for Kotlin
-        kapt("org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}")
+//        kapt("org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}")
 
         // Sets the JMH version to use across modules.
         // Please refer to the following links for further reference.
@@ -130,14 +131,14 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         }
     }
 
-    kapt {
-        arguments {
-            arg(
-                "org.springframework.boot.configurationprocessor.additionalMetadataLocations",
-                "$projectDir/src/main/resources"
-            )
-        }
-    }
+//    kapt {
+//        arguments {
+//            arg(
+//                "org.springframework.boot.configurationprocessor.additionalMetadataLocations",
+//                "$projectDir/src/main/resources"
+//            )
+//        }
+//    }
 
     jmh {
         includeTests.set(true)
