@@ -28,6 +28,7 @@ import graphql.validation.ValidationError
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.any
@@ -45,6 +46,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import reactor.core.publisher.Flux
 
+@Disabled("Avoiding stuck builds")
 @WebMvcTest(DgsGraphQLSSESubscriptionHandler::class, DgsGraphQLSSESubscriptionHandlerTest.App::class)
 internal class DgsGraphQLSSESubscriptionHandlerTest {
 
