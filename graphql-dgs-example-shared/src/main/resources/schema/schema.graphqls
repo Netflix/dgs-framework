@@ -6,6 +6,7 @@ type Query {
     withDataLoaderGraphQLContext: String
     movies: [Movie]
     messageFromBatchLoader: String
+    messageFromBatchLoaderWithGreetings: String
     messagesWithExceptionFromBatchLoader: [Message]
     messageFromBatchLoaderWithScheduledDispatch: String
 
