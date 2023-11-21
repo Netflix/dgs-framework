@@ -38,6 +38,7 @@ import org.springframework.aop.support.AopUtils
 import org.springframework.beans.factory.NoSuchBeanDefinitionException
 import org.springframework.context.ApplicationContext
 import org.springframework.util.ReflectionUtils
+import java.time.Duration
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.function.Supplier
@@ -50,6 +51,7 @@ class DgsDataLoaderProvider(
     private val applicationContext: ApplicationContext,
     private val dataLoaderOptionsProvider: DgsDataLoaderOptionsProvider = DefaultDataLoaderOptionsProvider(),
     private val scheduledExecutorService: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
+    private val scheduleDuration: Duration = Duration.ofMillis(10),
     private val enableTickerMode: Boolean = false
 ) {
 
@@ -69,9 +71,7 @@ class DgsDataLoaderProvider(
     fun <T> buildRegistryWithContextSupplier(contextSupplier: Supplier<T>): DataLoaderRegistry {
         // We need to set the default predicate to 20ms and individually override with DISPATCH_ALWAYS or the custom dispatch predicate, if specified
         // The data loader ends up applying the overall dispatch predicate when the custom dispatch predicate is not true otherwise.
-        val registry = ScheduledDataLoaderRegistry.newScheduledRegistry().scheduledExecutorService(scheduledExecutorService).tickerMode(enableTickerMode).dispatchPredicate(
-            DispatchPredicate.DISPATCH_NEVER
-        ).build()
+        val registry = ScheduledDataLoaderRegistry.newScheduledRegistry().scheduledExecutorService(scheduledExecutorService).tickerMode(enableTickerMode).schedule(scheduleDuration).dispatchPredicate(DispatchPredicate.DISPATCH_NEVER).build()
 
         val totalTime = measureTimeMillis {
             val extensionProviders = applicationContext

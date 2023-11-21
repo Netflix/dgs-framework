@@ -164,7 +164,7 @@ open class DgsAutoConfiguration(
 
     @Bean
     open fun dgsDataLoaderProvider(applicationContext: ApplicationContext, dataloaderOptionProvider: DgsDataLoaderOptionsProvider, @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService): DgsDataLoaderProvider {
-        return DgsDataLoaderProvider(applicationContext, dataloaderOptionProvider, dgsScheduledExecutorService, configProps.dataloaderTickerModeEnabled)
+        return DgsDataLoaderProvider(applicationContext, dataloaderOptionProvider, dgsScheduledExecutorService, configProps.dataloaderScheduleDuration, configProps.dataloaderTickerModeEnabled)
     }
 
     /**
