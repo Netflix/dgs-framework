@@ -77,7 +77,7 @@ import java.util.concurrent.ScheduledExecutorService
  * This does NOT have logging, tracing, metrics and security integration.
  */
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
-@AutoConfiguration
+@AutoConfiguration(afterName = ["org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration"])
 @EnableConfigurationProperties(DgsConfigurationProperties::class, DgsDataloaderConfigurationProperties::class)
 @ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class, DgsInputArgumentConfiguration::class])
 open class DgsAutoConfiguration(
