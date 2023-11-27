@@ -16,23 +16,21 @@
 
 package com.netflix.graphql.dgs.autoconfig
 
-import com.netflix.graphql.dgs.internal.DgsSchemaProvider.Companion.DEFAULT_SCHEMA_LOCATION
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.bind.DefaultValue
+import java.time.Duration
 
 /**
  * Configuration properties for DGS framework.
  */
-@ConfigurationProperties(prefix = DgsConfigurationProperties.PREFIX)
+@ConfigurationProperties(prefix = DgsDataloaderConfigurationProperties.DATALOADER_PREFIX)
 @Suppress("ConfigurationProperties")
-data class DgsConfigurationProperties(
-    /** Location of the GraphQL schema files. */
-    @DefaultValue(DEFAULT_SCHEMA_LOCATION) val schemaLocations: List<String>,
-    @DefaultValue("true") val schemaWiringValidationEnabled: Boolean,
-    @DefaultValue("false") val enableEntityFetcherCustomScalarParsing: Boolean
+data class DgsDataloaderConfigurationProperties(
+    @DefaultValue("false") val tickerModeEnabled: Boolean,
+    @DefaultValue(DATALOADER_DEFAULT_SCHEDULE_DURATION) val scheduleDuration: Duration
 ) {
-
     companion object {
-        const val PREFIX: String = "dgs.graphql"
+        const val DATALOADER_PREFIX: String = "dgs.graphql.dataloader"
+        const val DATALOADER_DEFAULT_SCHEDULE_DURATION = "10ms"
     }
 }
