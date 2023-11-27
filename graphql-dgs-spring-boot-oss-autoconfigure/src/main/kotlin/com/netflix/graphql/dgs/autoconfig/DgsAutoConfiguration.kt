@@ -78,10 +78,11 @@ import java.util.concurrent.ScheduledExecutorService
  */
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @AutoConfiguration
-@EnableConfigurationProperties(DgsConfigurationProperties::class)
+@EnableConfigurationProperties(DgsConfigurationProperties::class, DgsDataloaderConfigurationProperties::class)
 @ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class, DgsInputArgumentConfiguration::class])
 open class DgsAutoConfiguration(
-    private val configProps: DgsConfigurationProperties
+    private val configProps: DgsConfigurationProperties,
+    private val dataloaderConfigProps: DgsDataloaderConfigurationProperties
 ) {
 
     companion object {
@@ -164,7 +165,7 @@ open class DgsAutoConfiguration(
 
     @Bean
     open fun dgsDataLoaderProvider(applicationContext: ApplicationContext, dataloaderOptionProvider: DgsDataLoaderOptionsProvider, @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService): DgsDataLoaderProvider {
-        return DgsDataLoaderProvider(applicationContext, dataloaderOptionProvider, dgsScheduledExecutorService, configProps.dataloaderTickerModeEnabled)
+        return DgsDataLoaderProvider(applicationContext, dataloaderOptionProvider, dgsScheduledExecutorService, dataloaderConfigProps.scheduleDuration, dataloaderConfigProps.tickerModeEnabled)
     }
 
     /**
