@@ -39,11 +39,13 @@ import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.GraphQLSchema
+import org.dataloader.registries.ScheduledDataLoaderRegistry
+import org.intellij.lang.annotations.Language
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.util.StringUtils
-import java.util.Optional
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
 object BaseDgsQueryExecutor {
@@ -64,7 +66,7 @@ object BaseDgsQueryExecutor {
         )
 
     fun baseExecute(
-        query: String?,
+        @Language("graphql") query: String?,
         variables: Map<String, Any>?,
         extensions: Map<String, Any>?,
         operationName: String?,
@@ -117,7 +119,11 @@ object BaseDgsQueryExecutor {
                 .extensions(extensions.orEmpty())
                 .build()
             graphQLContextFuture.complete(executionInput.graphQLContext)
-            graphQL.executeAsync(executionInput)
+            graphQL.executeAsync(executionInput).whenComplete { _, _ ->
+                if (dataLoaderRegistry is ScheduledDataLoaderRegistry) {
+                    dataLoaderRegistry.close()
+                }
+            }
         } catch (e: Exception) {
             logger.error("Encountered an exception while handling query {}", query, e)
             val errors: List<GraphQLError> = if (e is GraphQLError) listOf<GraphQLError>(e) else emptyList()

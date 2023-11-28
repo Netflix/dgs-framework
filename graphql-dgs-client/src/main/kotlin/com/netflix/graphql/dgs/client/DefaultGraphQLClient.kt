@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.client
 
+import org.intellij.lang.annotations.Language
 import reactor.core.publisher.Mono
 
 /**
@@ -55,7 +56,7 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
      */
     @Deprecated("The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.")
     override fun executeQuery(
-        query: String,
+        @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?,
         requestExecutor: RequestExecutor
@@ -65,15 +66,15 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
         return GraphQLClients.handleResponse(response, serializedRequest, url)
     }
 
-    override fun executeQuery(query: String): GraphQLResponse {
+    override fun executeQuery(@Language("graphql") query: String): GraphQLResponse {
         throw UnsupportedOperationException("Please move to [BlockingGraphQLClient] to use this method")
     }
 
-    override fun executeQuery(query: String, variables: Map<String, Any>): GraphQLResponse {
+    override fun executeQuery(@Language("graphql") query: String, variables: Map<String, Any>): GraphQLResponse {
         throw UnsupportedOperationException("Please move to [BlockingGraphQLClient] to use this method")
     }
 
-    override fun executeQuery(query: String, variables: Map<String, Any>, operationName: String?): GraphQLResponse {
+    override fun executeQuery(@Language("graphql") query: String, variables: Map<String, Any>, operationName: String?): GraphQLResponse {
         throw UnsupportedOperationException("Please move to [BlockingGraphQLClient] to use this method")
     }
 
@@ -90,7 +91,7 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
      */
     @Deprecated("The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.")
     override fun executeQuery(
-        query: String,
+        @Language("graphql") query: String,
         variables: Map<String, Any>,
         requestExecutor: RequestExecutor
     ): GraphQLResponse {
@@ -98,16 +99,16 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
         return executeQuery(query, variables, null, requestExecutor)
     }
 
-    override fun reactiveExecuteQuery(query: String): Mono<GraphQLResponse> {
+    override fun reactiveExecuteQuery(@Language("graphql") query: String): Mono<GraphQLResponse> {
         throw UnsupportedOperationException("Please move to [CustomGraphQLClient] to use this method")
     }
 
-    override fun reactiveExecuteQuery(query: String, variables: Map<String, Any>): Mono<GraphQLResponse> {
+    override fun reactiveExecuteQuery(@Language("graphql") query: String, variables: Map<String, Any>): Mono<GraphQLResponse> {
         throw UnsupportedOperationException("Please move to [CustomGraphQLClient] to use this method")
     }
 
     override fun reactiveExecuteQuery(
-        query: String,
+        @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?
     ): Mono<GraphQLResponse> {
@@ -127,7 +128,7 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
      */
     @Deprecated("The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.")
     override fun reactiveExecuteQuery(
-        query: String,
+        @Language("graphql") query: String,
         variables: Map<String, Any>,
         requestExecutor: MonoRequestExecutor
     ): Mono<GraphQLResponse> {
@@ -149,7 +150,7 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
      */
     @Deprecated("The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.")
     override fun reactiveExecuteQuery(
-        query: String,
+        @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?,
         requestExecutor: MonoRequestExecutor

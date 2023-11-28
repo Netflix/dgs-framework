@@ -36,4 +36,5 @@ dependencies {
     testImplementation(project(":graphql-dgs-client"))
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
     testImplementation("io.projectreactor:reactor-test")
+    testImplementation(project(mapOf("path" to ":graphql-dgs-example-shared")))
 }

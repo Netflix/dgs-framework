@@ -1,10 +1,10 @@
 {
     "annotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -14,19 +14,19 @@
         }
     },
     "apiDependenciesMetadata": {
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.7.20"
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.20"
         }
     },
     "compileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.7.22"
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -36,8 +36,8 @@
         }
     },
     "implementationDependenciesMetadata": {
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.7.20"
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.20"
         }
     },
     "jmh": {
@@ -50,10 +50,10 @@
     },
     "jmhAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -63,19 +63,19 @@
         }
     },
     "jmhApiDependenciesMetadata": {
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.7.20"
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.20"
         }
     },
     "jmhCompileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.7.22"
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.20"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.36"
@@ -91,8 +91,8 @@
         }
     },
     "jmhImplementationDependenciesMetadata": {
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.7.20"
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.20"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.36"
@@ -103,13 +103,13 @@
     },
     "jmhRuntimeClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.7.22"
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.20"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.36"
@@ -124,15 +124,32 @@
             "locked": "2022.0.0"
         }
     },
-    "kotlinCompilerClasspath": {
+    "kotlinBuildToolsApiClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
+        },
+        "org.jetbrains.kotlin:kotlin-build-tools-impl": {
+            "locked": "1.9.20"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
+            "locked": "3.0.8"
+        },
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "2022.0.0"
+        }
+    },
+    "kotlinCompilerClasspath": {
+        "com.fasterxml.jackson:jackson-bom": {
+            "locked": "2.15.3"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.7.22"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -143,10 +160,10 @@
     },
     "kotlinCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -157,16 +174,16 @@
     },
     "kotlinCompilerPluginClasspathJmh": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -177,16 +194,16 @@
     },
     "kotlinCompilerPluginClasspathMain": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -197,16 +214,16 @@
     },
     "kotlinCompilerPluginClasspathTest": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -217,21 +234,21 @@
     },
     "kotlinKaptWorkerDependencies": {
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         }
     },
     "kotlinKlibCommonizerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -242,10 +259,10 @@
     },
     "kotlinNativeCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -256,10 +273,10 @@
     },
     "nebulaRecommenderBom": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -270,13 +287,13 @@
     },
     "runtimeClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.7.22"
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -287,10 +304,10 @@
     },
     "testAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -301,13 +318,13 @@
     },
     "testCompileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.7.22"
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -317,19 +334,19 @@
         }
     },
     "testImplementationDependenciesMetadata": {
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.7.20"
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.20"
         }
     },
     "testRuntimeClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.7.22"
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"

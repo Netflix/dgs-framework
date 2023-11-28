@@ -1,10 +1,10 @@
 {
     "annotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
             "locked": "3.0.8"
@@ -21,10 +21,10 @@
     },
     "compileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "20.6"
+            "locked": "21.2"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -33,10 +33,10 @@
             "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.7.22"
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.20"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.7"
@@ -61,10 +61,10 @@
     },
     "jmhAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -75,10 +75,10 @@
     },
     "jmhCompileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "20.6"
+            "locked": "21.2"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -87,10 +87,10 @@
             "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.7.22"
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.20"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.36"
@@ -113,10 +113,10 @@
     },
     "jmhRuntimeClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "20.6"
+            "locked": "21.2"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -128,10 +128,10 @@
             "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.8.20"
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.20"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.36"
@@ -155,47 +155,32 @@
             "locked": "2022.0.0"
         }
     },
-    "kapt": {
-        "org.springframework.boot:spring-boot-autoconfigure-processor": {
+    "kotlinBuildToolsApiClasspath": {
+        "com.fasterxml.jackson:jackson-bom": {
+            "locked": "2.15.3"
+        },
+        "org.jetbrains.kotlin:kotlin-bom": {
+            "locked": "1.9.20"
+        },
+        "org.jetbrains.kotlin:kotlin-build-tools-impl": {
+            "locked": "1.9.20"
+        },
+        "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
         },
-        "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "3.0.8"
-        }
-    },
-    "kaptClasspath_kaptKotlin": {
-        "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "3.0.8"
-        },
-        "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "3.0.8"
-        }
-    },
-    "kaptJmh": {
-        "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "3.0.8"
-        },
-        "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "3.0.8"
-        }
-    },
-    "kaptTest": {
-        "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "3.0.8"
-        },
-        "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "3.0.8"
+        "org.springframework.cloud:spring-cloud-dependencies": {
+            "locked": "2022.0.0"
         }
     },
     "kotlinCompilerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.7.22"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -206,10 +191,10 @@
     },
     "kotlinCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -220,16 +205,13 @@
     },
     "kotlinCompilerPluginClasspathJmh": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
-        },
-        "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.7.20"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -240,16 +222,13 @@
     },
     "kotlinCompilerPluginClasspathMain": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
-        },
-        "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.7.20"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -260,16 +239,13 @@
     },
     "kotlinCompilerPluginClasspathTest": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
-        },
-        "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.7.20"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -278,23 +254,15 @@
             "locked": "2022.0.0"
         }
     },
-    "kotlinKaptWorkerDependencies": {
-        "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.7.20"
-        },
-        "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.7.20"
-        }
-    },
     "kotlinKlibCommonizerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -305,10 +273,10 @@
     },
     "kotlinNativeCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -319,10 +287,10 @@
     },
     "nebulaRecommenderBom": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -333,10 +301,10 @@
     },
     "runtimeClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "20.6"
+            "locked": "21.2"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -345,10 +313,10 @@
             "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.7.22"
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.20"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.7"
@@ -362,10 +330,10 @@
     },
     "testAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.0.8"
@@ -376,10 +344,10 @@
     },
     "testCompileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "20.6"
+            "locked": "21.2"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -391,10 +359,10 @@
             "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.8.20"
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.20"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.7"
@@ -411,10 +379,10 @@
     },
     "testRuntimeClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.2"
+            "locked": "2.15.3"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "20.6"
+            "locked": "21.2"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -426,10 +394,10 @@
             "locked": "1.9.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.7.20"
+            "locked": "1.9.20"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.8.20"
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.20"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.7"

@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.mvc
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
@@ -27,6 +28,7 @@ import com.netflix.graphql.dgs.internal.utils.MultipartVariableMapper
 import com.netflix.graphql.dgs.internal.utils.TimeTracer
 import com.netflix.graphql.dgs.internal.utils.VariableMappingException
 import graphql.execution.reactive.SubscriptionPublisher
+import org.intellij.lang.annotations.Language
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
@@ -79,8 +81,9 @@ open class DgsRestController(
         const val DGS_RESPONSE_HEADERS_KEY = DgsExecutionResult.DGS_RESPONSE_HEADERS_KEY
         private val logger: Logger = LoggerFactory.getLogger(DgsRestController::class.java)
 
+        @JsonIgnoreProperties(ignoreUnknown = true)
         private data class InputQuery(
-            val query: String?,
+            @Language("graphql") val query: String?,
             val operationName: String? = null,
             val variables: Map<String, Any>? = mapOf(),
             val extensions: Map<String, Any>? = mapOf()

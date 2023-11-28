@@ -16,14 +16,10 @@
 
 package com.netflix.graphql.dgs.internal
 
-import com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider
-import com.netflix.graphql.dgs.DgsComponent
-import com.netflix.graphql.dgs.DgsDataLoader
-import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
-import com.netflix.graphql.dgs.DgsDataLoaderRegistryConsumer
-import com.netflix.graphql.dgs.DgsDispatchPredicate
+import com.netflix.graphql.dgs.*
 import com.netflix.graphql.dgs.exceptions.DgsUnnamedDataLoaderOnFieldException
 import com.netflix.graphql.dgs.exceptions.InvalidDataLoaderTypeException
+import com.netflix.graphql.dgs.exceptions.MultipleDataLoadersDefinedException
 import com.netflix.graphql.dgs.exceptions.UnsupportedSecuredDataLoaderException
 import com.netflix.graphql.dgs.internal.utils.DataLoaderNameUtil
 import jakarta.annotation.PostConstruct
@@ -35,12 +31,16 @@ import org.dataloader.DataLoaderRegistry
 import org.dataloader.MappedBatchLoader
 import org.dataloader.MappedBatchLoaderWithContext
 import org.dataloader.registries.DispatchPredicate
+import org.dataloader.registries.ScheduledDataLoaderRegistry
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.aop.support.AopUtils
 import org.springframework.beans.factory.NoSuchBeanDefinitionException
 import org.springframework.context.ApplicationContext
 import org.springframework.util.ReflectionUtils
+import java.time.Duration
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
 import java.util.function.Supplier
 import kotlin.system.measureTimeMillis
 
@@ -49,7 +49,10 @@ import kotlin.system.measureTimeMillis
  */
 class DgsDataLoaderProvider(
     private val applicationContext: ApplicationContext,
-    private val dataLoaderOptionsProvider: DgsDataLoaderOptionsProvider = DefaultDataLoaderOptionsProvider()
+    private val dataLoaderOptionsProvider: DgsDataLoaderOptionsProvider = DefaultDataLoaderOptionsProvider(),
+    private val scheduledExecutorService: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
+    private val scheduleDuration: Duration = Duration.ofMillis(10),
+    private val enableTickerMode: Boolean = false
 ) {
 
     private data class LoaderHolder<T>(val theLoader: T, val annotation: DgsDataLoader, val name: String, val dispatchPredicate: DispatchPredicate? = null)
@@ -59,12 +62,17 @@ class DgsDataLoaderProvider(
     private val mappedBatchLoaders = mutableListOf<LoaderHolder<MappedBatchLoader<*, *>>>()
     private val mappedBatchLoadersWithContext = mutableListOf<LoaderHolder<MappedBatchLoaderWithContext<*, *>>>()
 
+    private val loaderMap = mutableMapOf<String, String>()
+
     fun buildRegistry(): DataLoaderRegistry {
         return buildRegistryWithContextSupplier { null }
     }
 
     fun <T> buildRegistryWithContextSupplier(contextSupplier: Supplier<T>): DataLoaderRegistry {
-        val registry = DgsDataLoaderRegistry()
+        // We need to set the default predicate to 20ms and individually override with DISPATCH_ALWAYS or the custom dispatch predicate, if specified
+        // The data loader ends up applying the overall dispatch predicate when the custom dispatch predicate is not true otherwise.
+        val registry = ScheduledDataLoaderRegistry.newScheduledRegistry().scheduledExecutorService(scheduledExecutorService).tickerMode(enableTickerMode).schedule(scheduleDuration).dispatchPredicate(DispatchPredicate.DISPATCH_NEVER).build()
+
         val totalTime = measureTimeMillis {
             val extensionProviders = applicationContext
                 .getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java)
@@ -87,7 +95,8 @@ class DgsDataLoaderProvider(
     }
 
     private fun addDataLoaderFields() {
-        applicationContext.getBeansWithAnnotation(DgsComponent::class.java).values.forEach { dgsComponent ->
+        val dataLoaders = applicationContext.getBeansWithAnnotation(DgsComponent::class.java)
+        dataLoaders.values.forEach { dgsComponent ->
             val javaClass = AopUtils.getTargetClass(dgsComponent)
 
             javaClass.declaredFields.asSequence().filter { it.isAnnotationPresent(DgsDataLoader::class.java) }
@@ -219,7 +228,7 @@ class DgsDataLoaderProvider(
 
     private fun registerDataLoader(
         holder: LoaderHolder<*>,
-        registry: DgsDataLoaderRegistry,
+        registry: ScheduledDataLoaderRegistry,
         contextSupplier: Supplier<*>,
         extensionProviders: Iterable<DataLoaderInstrumentationExtensionProvider>
     ) {
@@ -230,10 +239,15 @@ class DgsDataLoaderProvider(
             is MappedBatchLoaderWithContext<*, *> -> createDataLoader(holder.theLoader, holder.annotation, holder.name, contextSupplier, registry, extensionProviders)
             else -> throw IllegalArgumentException("Data loader ${holder.name} has unknown type")
         }
+        // detect and throw an exception if multiple data loaders use the same name
+        if (registry.keys.contains(holder.name)) {
+            throw MultipleDataLoadersDefinedException(holder.theLoader.javaClass)
+        }
+
         if (holder.dispatchPredicate == null) {
-            registry.register(holder.name, loader)
+            registry.register(holder.name, loader, DispatchPredicate.DISPATCH_ALWAYS)
         } else {
-            registry.registerWithDispatchPredicate(holder.name, loader, holder.dispatchPredicate)
+            registry.register(holder.name, loader, holder.dispatchPredicate)
         }
     }
 

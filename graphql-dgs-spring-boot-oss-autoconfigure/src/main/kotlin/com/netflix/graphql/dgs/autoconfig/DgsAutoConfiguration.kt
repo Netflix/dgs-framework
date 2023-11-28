@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.autoconfig
 import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.conditionals.ConditionalOnJava21
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.context.GraphQLContextContributor
@@ -45,6 +46,8 @@ import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.visibility.DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
 import graphql.schema.visibility.GraphqlFieldVisibility
 import graphql.schema.visibility.NoIntrospectionGraphqlFieldVisibility.NO_INTROSPECTION_FIELD_VISIBILITY
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.AutoConfiguration
@@ -56,14 +59,18 @@ import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
+import org.springframework.core.DefaultParameterNameDiscoverer
 import org.springframework.core.PriorityOrdered
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
+import org.springframework.core.task.AsyncTaskExecutor
 import org.springframework.http.HttpHeaders
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.context.request.WebRequest
 import java.util.*
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
 
 /**
  * Framework auto configuration based on open source Spring only, without Netflix integrations.
@@ -71,14 +78,16 @@ import java.util.*
  */
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @AutoConfiguration
-@EnableConfigurationProperties(DgsConfigurationProperties::class)
+@EnableConfigurationProperties(DgsConfigurationProperties::class, DgsDataloaderConfigurationProperties::class)
 @ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class, DgsInputArgumentConfiguration::class])
 open class DgsAutoConfiguration(
-    private val configProps: DgsConfigurationProperties
+    private val configProps: DgsConfigurationProperties,
+    private val dataloaderConfigProps: DgsDataloaderConfigurationProperties
 ) {
 
     companion object {
         const val AUTO_CONF_PREFIX = "dgs.graphql"
+        private val LOG: Logger = LoggerFactory.getLogger(DgsAutoConfiguration::class.java)
     }
 
     @Bean
@@ -147,9 +156,16 @@ open class DgsAutoConfiguration(
         return DefaultDataLoaderOptionsProvider()
     }
 
+    @Bean(destroyMethod = "shutdown")
+    @ConditionalOnMissingBean
+    @Qualifier("dgsScheduledExecutorService")
+    open fun dgsScheduledExecutorService(): ScheduledExecutorService {
+        return Executors.newSingleThreadScheduledExecutor()
+    }
+
     @Bean
-    open fun dgsDataLoaderProvider(applicationContext: ApplicationContext): DgsDataLoaderProvider {
-        return DgsDataLoaderProvider(applicationContext)
+    open fun dgsDataLoaderProvider(applicationContext: ApplicationContext, dataloaderOptionProvider: DgsDataLoaderOptionsProvider, @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService): DgsDataLoaderProvider {
+        return DgsDataLoaderProvider(applicationContext, dataloaderOptionProvider, dgsScheduledExecutorService, dataloaderConfigProps.scheduleDuration, dataloaderConfigProps.tickerModeEnabled)
     }
 
     /**
@@ -198,7 +214,8 @@ open class DgsAutoConfiguration(
             entityFetcherRegistry = entityFetcherRegistry,
             defaultDataFetcherFactory = defaultDataFetcherFactory,
             methodDataFetcherFactory = methodDataFetcherFactory,
-            schemaWiringValidationEnabled = configProps.schemaWiringValidationEnabled
+            schemaWiringValidationEnabled = configProps.schemaWiringValidationEnabled,
+            enableEntityFetcherCustomScalarParsing = configProps.enableEntityFetcherCustomScalarParsing
         )
     }
 
@@ -271,9 +288,29 @@ open class DgsAutoConfiguration(
         return FluxDataFetcherResultProcessor()
     }
 
+    /**
+     * JDK 21+ only - Creates the dgsAsyncTaskExecutor which is used to run data fetchers automatically wrapped in CompletableFuture.
+     * Can be provided by other frameworks to enable context propagation.
+     */
     @Bean
-    open fun methodDataFetcherFactory(argumentResolvers: ObjectProvider<ArgumentResolver>): MethodDataFetcherFactory {
-        return MethodDataFetcherFactory(argumentResolvers.orderedStream().toList())
+    @Qualifier("dgsAsyncTaskExecutor")
+    @ConditionalOnJava21
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(name = ["dgs.graphql.virtualthreads.enabled"], havingValue = "true", matchIfMissing = false)
+    open fun virtualThreadsTaskExecutor(): AsyncTaskExecutor {
+        LOG.info("Enabling virtual threads for DGS")
+        return VirtualThreadTaskExecutor()
+    }
+
+    @Bean
+    open fun methodDataFetcherFactory(argumentResolvers: ObjectProvider<ArgumentResolver>, @Qualifier("dgsAsyncTaskExecutor") taskExecutorOptional: Optional<AsyncTaskExecutor>): MethodDataFetcherFactory {
+        val taskExecutor = if (taskExecutorOptional.isPresent) {
+            taskExecutorOptional.get()
+        } else {
+            null
+        }
+
+        return MethodDataFetcherFactory(argumentResolvers.orderedStream().toList(), DefaultParameterNameDiscoverer(), taskExecutor)
     }
 
     @Bean

@@ -25,12 +25,16 @@ import com.netflix.graphql.dgs.exceptions.MissingDgsEntityFetcherException
 import com.netflix.graphql.dgs.exceptions.MissingFederatedQueryArgument
 import com.netflix.graphql.dgs.internal.EntityFetcherRegistry
 import com.netflix.graphql.types.errors.TypedGraphQLError
+import graphql.GraphQLContext
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherExceptionHandlerParameters
 import graphql.execution.DataFetcherResult
+import graphql.execution.ExecutionStepInfo
 import graphql.execution.ResultPath
+import graphql.schema.Coercing
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
+import graphql.schema.DataFetchingEnvironmentImpl
 import graphql.schema.TypeResolver
 import org.dataloader.Try
 import org.slf4j.Logger
@@ -42,6 +46,7 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionException
 import java.util.concurrent.CompletionStage
+import java.util.stream.Collectors
 
 @DgsComponent
 open class DefaultDgsFederationResolver() :
@@ -76,6 +81,26 @@ open class DefaultDgsFederationResolver() :
         }
     }
 
+    private fun valuesWithMappedScalars(graphQLContext: GraphQLContext, values: Map<String, Any>, scalarMappings: Map<List<String>, Coercing<*, *>>, currentPath: MutableList<String>): Map<String, Any> {
+        return values.entries.stream()
+            .map {
+                currentPath.add(it.key)
+
+                val newValue = if (scalarMappings[currentPath] != null) {
+                    scalarMappings[currentPath]!!.parseValue(it.value, graphQLContext, Locale.getDefault())
+                } else if (it.value is Map<*, *>) {
+                    valuesWithMappedScalars(graphQLContext, it.value as Map<String, Any>, scalarMappings, currentPath)
+                } else {
+                    it.value
+                }
+
+                currentPath.removeLast()
+
+                Pair(it.key, newValue)
+            }
+            .collect(Collectors.toMap({ it.first }, { it.second!! }))
+    }
+
     private fun dgsEntityFetchers(env: DataFetchingEnvironment): CompletableFuture<DataFetcherResult<List<Any?>>> {
         val resultList = env.getArgument<List<Map<String, Any>>>(_Entity.argumentName)
             .map { values ->
@@ -88,11 +113,18 @@ open class DefaultDgsFederationResolver() :
                     if (!fetcher.second.parameterTypes.any { it.isAssignableFrom(Map::class.java) }) {
                         throw InvalidDgsEntityFetcher("@DgsEntityFetcher ${fetcher.first::class.java.name}.${fetcher.second.name} is invalid. A DgsEntityFetcher must accept an argument of type Map<String, Object>")
                     }
+
+                    val coercedValues = if (entityFetcherRegistry.entityFetcherInputMappings[typename] != null) {
+                        valuesWithMappedScalars(env.graphQlContext, values, entityFetcherRegistry.entityFetcherInputMappings[typename]!!, ArrayList())
+                    } else {
+                        values
+                    }
+
                     val result =
                         if (fetcher.second.parameterTypes.any { it.isAssignableFrom(DgsDataFetchingEnvironment::class.java) }) {
-                            fetcher.second.invoke(fetcher.first, values, DgsDataFetchingEnvironment(env))
+                            fetcher.second.invoke(fetcher.first, coercedValues, DgsDataFetchingEnvironment(env))
                         } else {
-                            fetcher.second.invoke(fetcher.first, values)
+                            fetcher.second.invoke(fetcher.first, coercedValues)
                         }
 
                     if (result == null) {
@@ -122,21 +154,23 @@ open class DefaultDgsFederationResolver() :
                 )
                 .errors(
                     trySequence
-                        .filter { tryResult -> tryResult.isFailure }
-                        .map { tryResult -> tryResult.throwable }
-                        .flatMap { e ->
+                        .mapIndexed { index, tryResult -> Pair(index, tryResult) }
+                        .filter { iter -> iter.second.isFailure }
+                        .map { iter -> Pair(iter.first, iter.second.throwable) }
+                        .flatMap { iter: Pair<Int, Throwable> ->
                             // extract exception from known wrapper types
                             val exception = when {
-                                e is InvocationTargetException && e.targetException != null -> e.targetException
-                                e is CompletionException && e.cause != null -> e.cause!!
-                                else -> e
+                                iter.second is InvocationTargetException && (iter.second as InvocationTargetException).targetException != null -> (iter.second as InvocationTargetException).targetException
+                                iter.second is CompletionException && iter.second.cause != null -> iter.second.cause!!
+                                else -> iter.second
                             }
                             // handle the exception (using the custom handler if present)
                             if (dgsExceptionHandler.isPresent) {
+                                val dfeWithErrorPath = createDataFetchingEnvironmentWithPath(env, iter.first)
                                 val res = dgsExceptionHandler.get().handleException(
                                     DataFetcherExceptionHandlerParameters
                                         .newExceptionParameters()
-                                        .dataFetchingEnvironment(env)
+                                        .dataFetchingEnvironment(dfeWithErrorPath)
                                         .exception(exception)
                                         .build()
                                 )
@@ -145,7 +179,7 @@ open class DefaultDgsFederationResolver() :
                                 sequenceOf(
                                     TypedGraphQLError.newInternalErrorBuilder()
                                         .message("%s: %s", exception::class.java.name, exception.message)
-                                        .path(ResultPath.parse("/_entities"))
+                                        .path(ResultPath.parse("/_entities,${iter.first}"))
                                         .build()
                                 )
                             }
@@ -154,6 +188,13 @@ open class DefaultDgsFederationResolver() :
                 )
                 .build()
         }
+    }
+
+    open fun createDataFetchingEnvironmentWithPath(env: DataFetchingEnvironment, pathIndex: Int): DgsDataFetchingEnvironment {
+        val pathWithIndex = env.executionStepInfo.path.segment("$pathIndex")
+        val executionStepInfoWithPath = ExecutionStepInfo.newExecutionStepInfo(env.executionStepInfo).path(pathWithIndex).build()
+        val dfe = if (env is DgsDataFetchingEnvironment) env.getDfe() else env
+        return DgsDataFetchingEnvironment(DataFetchingEnvironmentImpl.newDataFetchingEnvironment(dfe).executionStepInfo(executionStepInfoWithPath).build())
     }
 
     open fun typeMapping(): Map<Class<*>, String> {

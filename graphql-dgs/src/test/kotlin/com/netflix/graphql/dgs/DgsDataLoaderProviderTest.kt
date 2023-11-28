@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs
 
 import com.netflix.graphql.dgs.exceptions.DgsUnnamedDataLoaderOnFieldException
 import com.netflix.graphql.dgs.exceptions.InvalidDataLoaderTypeException
+import com.netflix.graphql.dgs.exceptions.MultipleDataLoadersDefinedException
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import graphql.schema.DataFetchingEnvironmentImpl
 import org.assertj.core.api.Assertions.assertThat
@@ -62,6 +63,16 @@ class DgsDataLoaderProviderTest {
             Assertions.assertNotNull(dataLoader)
             val dataLoaderWithDispatch = dataLoaderRegistry.getDataLoader<Any, Any>("exampleLoaderWithContextAndDispatch")
             Assertions.assertNotNull(dataLoaderWithDispatch)
+        }
+    }
+
+    @Test
+    fun detectDuplicateDataLoaders() {
+        applicationContextRunner.withBean(ExampleBatchLoader::class.java).withBean(ExampleDuplicateBatchLoader::class.java).run { context ->
+            val provider = context.getBean(DgsDataLoaderProvider::class.java)
+            assertThrows<MultipleDataLoadersDefinedException> {
+                provider.buildRegistry()
+            }
         }
     }
 

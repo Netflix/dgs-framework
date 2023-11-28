@@ -49,21 +49,29 @@ dependencies {
         // GraphQL Platform
         api("com.graphql-java:graphql-java") {
             version {
-                strictly("[20.6]")
-                prefer("20.6")
-                reject("[19.5, 18.2]")
+                strictly("[21.2]")
+                prefer("21.2")
+                reject("[20.6, 19.5, 18.2]")
+            }
+
+        }
+        api("com.graphql-java:java-dataloader") {
+            version {
+                strictly("[3.2.2]")
+                prefer("3.2.2")
+                reject("[3.2.1]")
             }
 
         }
         api("com.graphql-java:graphql-java-extended-scalars") {
             version {
-                 strictly("[19.1, 20.2]")
-                 prefer("20.2")
-                 reject("18.2")
+                 strictly("[21.0]")
+                 prefer("21.0")
+                 reject("20.2")
             }
         }
         api("com.graphql-java:graphql-java-extended-validation") {
-            version { strictly("20.0") }
+            version { strictly("21.0") }
         }
         api("com.apollographql.federation:federation-graphql-java-support") {
             version {

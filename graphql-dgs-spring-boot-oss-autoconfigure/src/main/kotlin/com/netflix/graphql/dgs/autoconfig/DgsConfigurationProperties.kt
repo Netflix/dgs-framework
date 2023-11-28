@@ -28,8 +28,10 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 data class DgsConfigurationProperties(
     /** Location of the GraphQL schema files. */
     @DefaultValue(DEFAULT_SCHEMA_LOCATION) val schemaLocations: List<String>,
-    @DefaultValue("true") val schemaWiringValidationEnabled: Boolean
+    @DefaultValue("true") val schemaWiringValidationEnabled: Boolean,
+    @DefaultValue("false") val enableEntityFetcherCustomScalarParsing: Boolean
 ) {
+
     companion object {
         const val PREFIX: String = "dgs.graphql"
     }

@@ -13,6 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+plugins {
+    id("me.champeau.mrjar")
+}
+
+multiRelease {
+    targetVersions(17, 21)
+}
 
 dependencies {
 
@@ -20,12 +27,14 @@ dependencies {
     api(project(":graphql-dgs-mocking"))
 
     api("com.graphql-java:graphql-java")
+    api("com.graphql-java:java-dataloader")
     api("com.jayway.jsonpath:json-path")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     implementation("org.springframework:spring-web")
     implementation("org.springframework:spring-context")
+    "java21Implementation"("org.springframework:spring-context")
 
     compileOnly("org.springframework.security:spring-security-core")
     compileOnly("io.projectreactor:reactor-core")
@@ -38,9 +47,11 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
+
     testImplementation("org.springframework.security:spring-security-core")
     testImplementation("io.projectreactor:reactor-core")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("com.graphql-java:graphql-java-extended-scalars")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
 }
+

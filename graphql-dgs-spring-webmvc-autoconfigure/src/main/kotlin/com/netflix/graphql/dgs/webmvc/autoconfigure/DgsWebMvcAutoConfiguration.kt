@@ -23,6 +23,7 @@ import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.method.ArgumentResolver
 import com.netflix.graphql.dgs.mvc.DefaultDgsGraphQLRequestHeaderValidator
+import com.netflix.graphql.dgs.mvc.DgsGraphQLCSRFInstrumentation
 import com.netflix.graphql.dgs.mvc.DgsGraphQLRequestHeaderValidator
 import com.netflix.graphql.dgs.mvc.DgsRestController
 import com.netflix.graphql.dgs.mvc.DgsRestSchemaJsonController
@@ -91,7 +92,7 @@ open class DgsWebMvcAutoConfiguration {
 
         @Bean
         @Dgs
-        open fun dgsWebDataBinderFactory(adapter: ObjectProvider<RequestMappingHandlerAdapter>): WebDataBinderFactory {
+        open fun dgsWebDataBinderFactory(@Qualifier("requestMappingHandlerAdapter") adapter: ObjectProvider<RequestMappingHandlerAdapter>): WebDataBinderFactory {
             return ServletRequestDataBinderFactory(listOf(), adapter.ifAvailable?.webBindingInitializer)
         }
 
@@ -149,6 +150,12 @@ open class DgsWebMvcAutoConfiguration {
         @ConditionalOnProperty("dgs.graphql.header.validation.enabled", havingValue = "true", matchIfMissing = true)
         open fun graphqlRequestHeaderValidationRules(): List<GraphQLRequestHeaderValidationRule> {
             return DgsGraphQLRequestHeaderValidator.RECOMMENDED_GRAPHQL_REQUEST_HEADERS_VALIDATOR
+        }
+
+        @Bean
+        @ConditionalOnProperty("dgs.graphql.prevent-mutation-over-get.enabled", havingValue = "true", matchIfMissing = true)
+        open fun csrfCheckInstrumentation(): DgsGraphQLCSRFInstrumentation {
+            return DgsGraphQLCSRFInstrumentation()
         }
     }
 }

@@ -12,3 +12,8 @@ management:
 logging:
   level:
     com.netflix.graphql.dgs.example: DEBUG
+
+dgs:
+  graphql:
+    prevent-mutation-over-get:
+      enabled: true

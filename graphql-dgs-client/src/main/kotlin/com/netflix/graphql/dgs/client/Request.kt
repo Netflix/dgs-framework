@@ -16,4 +16,6 @@
 
 package com.netflix.graphql.dgs.client
 
-internal data class Request(val query: String, val variables: Map<String, Any>, val operationName: String?)
+import org.intellij.lang.annotations.Language
+
+internal data class Request(@Language("graphql") val query: String, val variables: Map<String, Any>, val operationName: String?)
