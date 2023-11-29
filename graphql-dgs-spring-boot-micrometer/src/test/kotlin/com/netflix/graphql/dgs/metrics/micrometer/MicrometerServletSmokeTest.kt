@@ -78,7 +78,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.Executor
 
-@SpringBootTest
+@SpringBootTest(properties = ["${DgsGraphQLMicrometerAutoConfiguration.AUTO_CONF_QUERY_SIG_PREFIX}.enabled=false"])
 @EnableAutoConfiguration
 @AutoConfigureMockMvc
 @Execution(ExecutionMode.SAME_THREAD)
