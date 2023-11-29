@@ -157,7 +157,7 @@ open class DgsAutoConfiguration(
     }
 
     @Bean(destroyMethod = "shutdown")
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = ["dgsScheduledExecutorService"])
     @Qualifier("dgsScheduledExecutorService")
     open fun dgsScheduledExecutorService(): ScheduledExecutorService {
         return Executors.newSingleThreadScheduledExecutor()
