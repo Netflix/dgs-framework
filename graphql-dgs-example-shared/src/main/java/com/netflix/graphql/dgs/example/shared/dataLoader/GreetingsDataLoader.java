@@ -27,7 +27,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
-@DgsDataLoader(name = "greetings")
+//@DgsDataLoader(name = "greetings")
 public class GreetingsDataLoader implements BatchLoader<String, String> {
     @Override
     public CompletionStage<List<String>> load(List<String> keys) {

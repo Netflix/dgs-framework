@@ -51,7 +51,11 @@ public class HelloDataFetcher {
     public CompletableFuture<String> getMessage(DataFetchingEnvironment env) {
         DataLoader<String, String> dataLoader = env.getDataLoader("messages");
         DataLoader<String, String> dataLoaderB = env.getDataLoader("greetings");
-        return dataLoader.load("a");
+        return dataLoader.load("a").thenCompose(key -> {
+            CompletableFuture<String> loadA = dataLoaderB.load(key);
+            dataLoaderB.dispatch();
+            return loadA;
+        });
     }
 
     @DgsData(parentType = "Query", field = "messageFromBatchLoaderWithGreetings")

@@ -30,8 +30,12 @@ public class ExtraTypeDefinitionRegistry {
         ObjectTypeExtensionDefinition objectTypeExtensionDefinition = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query").fieldDefinition(FieldDefinition.newFieldDefinition().name("myField").type(new TypeName("String")).build())
                 .build();
 
+        ObjectTypeExtensionDefinition objectTypeExtensionDefinition2 = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query").fieldDefinition(FieldDefinition.newFieldDefinition().name("myGreetings").type(new TypeName("String")).build())
+                .build();
+
         TypeDefinitionRegistry typeDefinitionRegistry = new TypeDefinitionRegistry();
         typeDefinitionRegistry.add(objectTypeExtensionDefinition);
+        typeDefinitionRegistry.add(objectTypeExtensionDefinition2);
 
 
 
