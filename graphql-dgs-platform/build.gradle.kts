@@ -90,7 +90,7 @@ dependencies {
             version { require("3.4.22") }
         }
         // CVEs
-        api("org.apache.logging.log4j:log4j-to-slf4j:2.20.0") {
+        api("org.apache.logging.log4j:log4j-to-slf4j:2.22.0") {
             because("Refer to CVE-2021-44228; https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228")
          }
          api("org.apache.logging.log4j:log4j-api:2.20.0") {
