@@ -32,12 +32,15 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.15.3"
         },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "3.1.8"
+        },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "21.2"
+            "locked": "21.3"
         },
         "com.graphql-java:java-dataloader": {
             "locked": "3.2.2"
@@ -188,7 +191,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "21.2"
+            "locked": "21.3"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "21.0"
@@ -283,7 +286,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "21.2"
+            "locked": "21.3"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "21.0"
@@ -410,12 +413,15 @@
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.15.3"
         },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "3.1.8"
+        },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "21.2"
+            "locked": "21.3"
         },
         "com.graphql-java:java-dataloader": {
             "locked": "3.2.2"
@@ -507,7 +513,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "21.2"
+            "locked": "21.3"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "21.0"
@@ -801,7 +807,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "21.2"
+            "locked": "21.3"
         },
         "com.graphql-java:java-dataloader": {
             "locked": "3.2.2"
@@ -901,7 +907,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "21.2"
+            "locked": "21.3"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "21.0"
@@ -996,7 +1002,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "21.2"
+            "locked": "21.3"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "21.0"
