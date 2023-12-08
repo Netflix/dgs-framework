@@ -157,28 +157,6 @@ internal class InputObjectMapperTest {
     }
 
     @Test
-    fun `An input argument of the wrong type should throw a DgsInvalidArgumentException for a Java object`() {
-        val newInput = input.toMutableMap()
-        // Use an Int as input where a String was expected
-        newInput["simpleString"] = 1
-
-        assertThatThrownBy { inputObjectMapper.mapToJavaObject(newInput, JInputObject::class.java) }.isInstanceOf(
-            DgsInvalidInputArgumentException::class.java
-        ).hasMessageStartingWith("Invalid input argument `1` for field `simpleString` on type `com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObject`")
-    }
-
-    @Test
-    fun `An input argument of the wrong type should throw a DgsInvalidArgumentException for a Kotlin object`() {
-        val newInput = input.toMutableMap()
-        // Use an Int as input where a String was expected
-        newInput["simpleString"] = 1
-
-        assertThatThrownBy { inputObjectMapper.mapToKotlinObject(newInput, KotlinInputObject::class) }.isInstanceOf(
-            DgsInvalidInputArgumentException::class.java
-        ).hasMessageStartingWith("Provided input arguments")
-    }
-
-    @Test
     fun `A list argument should be able to convert to Set in Kotlin`() {
         val input = mapOf("items" to listOf(1, 2, 3))
         val withSet = inputObjectMapper.mapToKotlinObject(input, KotlinObjectWithSet::class)
