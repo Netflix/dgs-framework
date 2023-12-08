@@ -234,6 +234,19 @@ internal class InputObjectMapperTest {
         assertThat(result.string).isEqualTo("default")
     }
 
+    @Test
+    fun `mapping to an object with a Kotlin class works when there is a field with an enum type`() {
+        val result = inputObjectMapper.mapToKotlinObject(mapOf("name" to "the-name", "type" to "BAR"), KotlinObjectWithEnumField::class)
+        assertThat(result.name).isEqualTo("the-name")
+        assertThat(result.type).isEqualTo(FieldType.BAR)
+    }
+
+    @Test
+    fun `mapping to an object works when the input type can be converted to the target type`() {
+        val result = inputObjectMapper.mapToKotlinObject(mapOf("items" to listOf("1", "2", "3", "4")), KotlinObjectWithSet::class)
+        assertThat(result.items).isEqualTo(setOf(1, 2, 3, 4))
+    }
+
     data class KotlinInputObject(val simpleString: String?, val someDate: LocalDateTime, val someObject: KotlinSomeObject)
     data class KotlinNestedInputObject(val input: KotlinInputObject)
     data class KotlinDoubleNestedInputObject(val inputL1: KotlinNestedInputObject)
@@ -243,4 +256,7 @@ internal class InputObjectMapperTest {
     data class KotlinObjectWithMap(val json: Map<String, Any>)
 
     data class KotlinWithJavaProperty(val name: String, val objectProperty: JInputObject)
+
+    enum class FieldType { FOO, BAR, BAZ }
+    data class KotlinObjectWithEnumField(val name: String, val type: FieldType)
 }
