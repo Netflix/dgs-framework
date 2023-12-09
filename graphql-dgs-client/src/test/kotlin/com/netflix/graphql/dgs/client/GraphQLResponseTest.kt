@@ -18,6 +18,9 @@
 
 package com.netflix.graphql.dgs.client
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import graphql.relay.DefaultPageInfo
+import graphql.relay.PageInfo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -256,5 +259,16 @@ class GraphQLResponseTest {
         val response = GraphQLResponse("""{"data": {"submitReview": {"submittedBy": "abc@netflix.com"}}}""")
         val result = response.dataAsObject(Response::class.java)
         assertEquals(Response(submitReview = mapOf("submittedBy" to "abc@netflix.com")), result)
+    }
+
+    @Test
+    fun injectObjectMapper() {
+        val customObjectMapper = ObjectMapper()
+        val graphQLResponse =
+            GraphQLResponse(
+                """{"data": {"submitReview": {"submittedBy": "abc@netflix.com"}}}""",
+                emptyMap(),
+                customObjectMapper)
+        assertEquals(customObjectMapper, graphQLResponse.mapper)
     }
 }
