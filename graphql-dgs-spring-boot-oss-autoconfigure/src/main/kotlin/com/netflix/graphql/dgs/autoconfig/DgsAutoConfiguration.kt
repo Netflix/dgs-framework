@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.autoconfig
 
 import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
+import com.netflix.graphql.dgs.DgsDefaultPreparsedDocumentProvider
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.conditionals.ConditionalOnJava21
@@ -68,6 +69,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.context.request.WebRequest
+import java.time.Duration
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -77,7 +79,7 @@ import java.util.concurrent.ScheduledExecutorService
  * This does NOT have logging, tracing, metrics and security integration.
  */
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
-@AutoConfiguration
+@AutoConfiguration(afterName = ["org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration"])
 @EnableConfigurationProperties(DgsConfigurationProperties::class, DgsDataloaderConfigurationProperties::class)
 @ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class, DgsInputArgumentConfiguration::class])
 open class DgsAutoConfiguration(
@@ -157,7 +159,7 @@ open class DgsAutoConfiguration(
     }
 
     @Bean(destroyMethod = "shutdown")
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = ["dgsScheduledExecutorService"])
     @Qualifier("dgsScheduledExecutorService")
     open fun dgsScheduledExecutorService(): ScheduledExecutorService {
         return Executors.newSingleThreadScheduledExecutor()
@@ -234,6 +236,21 @@ open class DgsAutoConfiguration(
     @ConditionalOnMissingBean
     open fun schema(dgsSchemaProvider: DgsSchemaProvider, fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
         return dgsSchemaProvider.schema(null, fieldVisibility)
+    }
+
+    @Bean
+    @ConditionalOnProperty(
+        prefix = "$AUTO_CONF_PREFIX.preparsedDocumentProvider",
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = false
+    )
+    @ConditionalOnMissingBean
+    open fun preparsedDocumentProvider(configProps: DgsConfigurationProperties): PreparsedDocumentProvider {
+        return DgsDefaultPreparsedDocumentProvider(
+            configProps.preparsedDocumentProvider.maximumCacheSize,
+            Duration.parse(configProps.preparsedDocumentProvider.cacheValidityDuration)
+        )
     }
 
     @Bean
