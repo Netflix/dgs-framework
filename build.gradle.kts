@@ -30,7 +30,7 @@ plugins {
 
     id("nebula.netflixoss") version "11.3.2"
     id("org.jmailen.kotlinter") version "3.11.1"
-    id("me.champeau.jmh") version "0.7.1"
+    id("me.champeau.jmh") version "0.7.2"
     id("me.champeau.mrjar") version "0.1.1"
 
 
@@ -98,7 +98,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     }
 
     val springBootVersion = extra["sb.version"] as String
-    val jmhVersion = "1.36"
+    val jmhVersion = "1.37"
 
     dependencies {
         // Apply the BOM to applicable subprojects.
@@ -122,7 +122,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         testImplementation("org.springframework.boot:spring-boot-starter-test") {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         }
-        testImplementation("io.mockk:mockk:1.13.5")
+        testImplementation("io.mockk:mockk:1.+")
     }
 
     java {
