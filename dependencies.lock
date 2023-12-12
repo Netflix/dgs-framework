@@ -7,7 +7,7 @@
             "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.8"
+            "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
@@ -29,7 +29,7 @@
             "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.8"
+            "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
@@ -56,7 +56,7 @@
             "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.8"
+            "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
@@ -84,7 +84,7 @@
             "locked": "1.36"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.8"
+            "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
@@ -118,7 +118,7 @@
             "locked": "1.36"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.8"
+            "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
@@ -135,7 +135,7 @@
             "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.8"
+            "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
@@ -152,7 +152,7 @@
             "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.8"
+            "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
@@ -166,7 +166,7 @@
             "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.8"
+            "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
@@ -186,7 +186,7 @@
             "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.8"
+            "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
@@ -206,7 +206,7 @@
             "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.8"
+            "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
@@ -226,7 +226,7 @@
             "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.8"
+            "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
@@ -251,7 +251,7 @@
             "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.8"
+            "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
@@ -265,7 +265,7 @@
             "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.8"
+            "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
@@ -279,7 +279,7 @@
             "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.8"
+            "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
@@ -296,7 +296,7 @@
             "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.8"
+            "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
@@ -310,7 +310,7 @@
             "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.8"
+            "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
@@ -327,7 +327,7 @@
             "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.8"
+            "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
@@ -349,7 +349,7 @@
             "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.0.8"
+            "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
