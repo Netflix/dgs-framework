@@ -25,11 +25,13 @@ import com.netflix.graphql.dgs.exceptions.MissingDgsEntityFetcherException
 import com.netflix.graphql.dgs.exceptions.MissingFederatedQueryArgument
 import com.netflix.graphql.dgs.internal.EntityFetcherRegistry
 import com.netflix.graphql.types.errors.TypedGraphQLError
+import graphql.GraphQLContext
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherExceptionHandlerParameters
 import graphql.execution.DataFetcherResult
 import graphql.execution.ExecutionStepInfo
 import graphql.execution.ResultPath
+import graphql.schema.Coercing
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.DataFetchingEnvironmentImpl
@@ -44,6 +46,7 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionException
 import java.util.concurrent.CompletionStage
+import java.util.stream.Collectors
 
 @DgsComponent
 open class DefaultDgsFederationResolver() :
@@ -78,6 +81,26 @@ open class DefaultDgsFederationResolver() :
         }
     }
 
+    private fun valuesWithMappedScalars(graphQLContext: GraphQLContext, values: Map<String, Any>, scalarMappings: Map<List<String>, Coercing<*, *>>, currentPath: MutableList<String>): Map<String, Any> {
+        return values.entries.stream()
+            .map {
+                currentPath.add(it.key)
+
+                val newValue = if (scalarMappings[currentPath] != null) {
+                    scalarMappings[currentPath]!!.parseValue(it.value, graphQLContext, Locale.getDefault())
+                } else if (it.value is Map<*, *>) {
+                    valuesWithMappedScalars(graphQLContext, it.value as Map<String, Any>, scalarMappings, currentPath)
+                } else {
+                    it.value
+                }
+
+                currentPath.removeLast()
+
+                Pair(it.key, newValue)
+            }
+            .collect(Collectors.toMap({ it.first }, { it.second!! }))
+    }
+
     private fun dgsEntityFetchers(env: DataFetchingEnvironment): CompletableFuture<DataFetcherResult<List<Any?>>> {
         val resultList = env.getArgument<List<Map<String, Any>>>(_Entity.argumentName)
             .map { values ->
@@ -91,11 +114,17 @@ open class DefaultDgsFederationResolver() :
                         throw InvalidDgsEntityFetcher("@DgsEntityFetcher ${fetcher.first::class.java.name}.${fetcher.second.name} is invalid. A DgsEntityFetcher must accept an argument of type Map<String, Object>")
                     }
 
+                    val coercedValues = if (entityFetcherRegistry.entityFetcherInputMappings[typename] != null) {
+                        valuesWithMappedScalars(env.graphQlContext, values, entityFetcherRegistry.entityFetcherInputMappings[typename]!!, ArrayList())
+                    } else {
+                        values
+                    }
+
                     val result =
                         if (fetcher.second.parameterTypes.any { it.isAssignableFrom(DgsDataFetchingEnvironment::class.java) }) {
-                            fetcher.second.invoke(fetcher.first, values, DgsDataFetchingEnvironment(env))
+                            fetcher.second.invoke(fetcher.first, coercedValues, DgsDataFetchingEnvironment(env))
                         } else {
-                            fetcher.second.invoke(fetcher.first, values)
+                            fetcher.second.invoke(fetcher.first, coercedValues)
                         }
 
                     if (result == null) {

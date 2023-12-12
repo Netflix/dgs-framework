@@ -26,13 +26,17 @@ import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
 import com.netflix.graphql.dgs.internal.method.InputArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
+import com.netflix.graphql.dgs.internal.utils.SelectionSetUtil
 import com.netflix.graphql.mocking.DgsSchemaTransformer
 import com.netflix.graphql.mocking.MockProvider
 import graphql.TypeResolutionEnvironment
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.language.FieldDefinition
+import graphql.language.ImplementingTypeDefinition
 import graphql.language.InterfaceTypeDefinition
 import graphql.language.ObjectTypeDefinition
+import graphql.language.ScalarTypeDefinition
+import graphql.language.StringValue
 import graphql.language.TypeName
 import graphql.language.UnionTypeDefinition
 import graphql.parser.MultiSourceReader
@@ -90,7 +94,8 @@ class DgsSchemaProvider(
     private val defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty(),
     private val methodDataFetcherFactory: MethodDataFetcherFactory,
     private val componentFilter: ((Any) -> Boolean)? = null,
-    private val schemaWiringValidationEnabled: Boolean = true
+    private val schemaWiringValidationEnabled: Boolean = true,
+    private val enableEntityFetcherCustomScalarParsing: Boolean = false
 ) {
 
     private val schemaReadWriteLock = ReentrantReadWriteLock()
@@ -175,16 +180,6 @@ class DgsSchemaProvider(
             mergedRegistry = mergedRegistry.merge(existingTypeDefinitionRegistry.get())
         }
 
-        val federationResolverInstance =
-            federationResolver.orElseGet {
-                DefaultDgsFederationResolver(
-                    entityFetcherRegistry,
-                    dataFetcherExceptionHandler
-                )
-            }
-
-        val entityFetcher = federationResolverInstance.entitiesFetcher()
-        val typeResolver = federationResolverInstance.typeResolver()
         val codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry().fieldVisibility(fieldVisibility)
         if (defaultDataFetcherFactory.isPresent) {
             codeRegistryBuilder.defaultDataFetcher(defaultDataFetcherFactory.get())
@@ -200,7 +195,6 @@ class DgsSchemaProvider(
         findDirectives(applicationContext, runtimeWiringBuilder)
         findDataFetchers(dgsComponents, codeRegistryBuilder, mergedRegistry)
         findTypeResolvers(dgsComponents, runtimeWiringBuilder, mergedRegistry)
-        findEntityFetchers(dgsComponents)
 
         dgsComponents.forEach { dgsComponent ->
             invokeDgsCodeRegistry(
@@ -213,8 +207,24 @@ class DgsSchemaProvider(
         runtimeWiringBuilder.codeRegistry(codeRegistryBuilder.build())
 
         dgsComponents.forEach { dgsComponent -> invokeDgsRuntimeWiring(dgsComponent, runtimeWiringBuilder) }
+
+        val runtimeWiring = runtimeWiringBuilder.build()
+
+        findEntityFetchers(dgsComponents, mergedRegistry, runtimeWiring)
+
+        val federationResolverInstance =
+            federationResolver.orElseGet {
+                DefaultDgsFederationResolver(
+                    entityFetcherRegistry,
+                    dataFetcherExceptionHandler
+                )
+            }
+
+        val entityFetcher = federationResolverInstance.entitiesFetcher()
+        val typeResolver = federationResolverInstance.typeResolver()
+
         val graphQLSchema =
-            Federation.transform(mergedRegistry, runtimeWiringBuilder.build()).fetchEntities(entityFetcher)
+            Federation.transform(mergedRegistry, runtimeWiring).fetchEntities(entityFetcher)
                 .resolveEntityType(typeResolver).build()
 
         val endTime = System.currentTimeMillis()
@@ -490,7 +500,7 @@ class DgsSchemaProvider(
         }
     }
 
-    private fun findEntityFetchers(dgsComponents: Collection<Any>) {
+    private fun findEntityFetchers(dgsComponents: Collection<Any>, registry: TypeDefinitionRegistry, runtimeWiring: RuntimeWiring) {
         dgsComponents.forEach { dgsComponent ->
             val javaClass = AopUtils.getTargetClass(dgsComponent)
 
@@ -508,8 +518,63 @@ class DgsSchemaProvider(
                         enableInstrumentation
 
                     entityFetcherRegistry.entityFetchers[dgsEntityFetcherAnnotation.name] = dgsComponent to method
+
+                    val type = registry.getType(dgsEntityFetcherAnnotation.name)
+
+                    if (enableEntityFetcherCustomScalarParsing) {
+                        type.ifPresent {
+                            val typeDefinition = it as? ImplementingTypeDefinition
+                            val keyDirective = it.directives.stream()
+                                .filter { it.name.equals("key") }
+                                .findAny()
+
+                            keyDirective.ifPresent {
+                                val fields = it.argumentsByName["fields"]
+
+                                if (fields != null && fields.value is StringValue) {
+                                    val fieldsSelection = (fields.value as StringValue).value
+                                    val paths = SelectionSetUtil.toPaths(fieldsSelection)
+
+                                    entityFetcherRegistry.entityFetcherInputMappings[dgsEntityFetcherAnnotation.name] =
+                                        paths.stream()
+                                            .map {
+                                                Pair(
+                                                    it,
+                                                    traverseType(it.iterator(), typeDefinition, registry, runtimeWiring)
+                                                )
+                                            }
+                                            .filter { it.second != null }
+                                            .collect(Collectors.toMap({ it.first }, { it.second!! }))
+                                }
+                            }
+                        }
+                    }
                 }
         }
+    }
+
+    private fun traverseType(path: Iterator<String>, type: ImplementingTypeDefinition<*>?, registry: TypeDefinitionRegistry, runtimeWiring: RuntimeWiring): Coercing<*, *>? {
+        if (type == null || !path.hasNext()) {
+            return null
+        }
+
+        val item = path.next()
+        val fieldDefinition = type.fieldDefinitions.firstOrNull { it.name.equals(item) }
+        val fieldDefinitionType = fieldDefinition?.type
+
+        if (fieldDefinitionType is TypeName) {
+            val fieldType = registry.getType(fieldDefinitionType.name)
+
+            if (fieldType.isPresent) {
+                return when (val unwrappedFieldType = fieldType.get()) {
+                    is ObjectTypeDefinition -> traverseType(path, unwrappedFieldType, registry, runtimeWiring)
+                    is ScalarTypeDefinition -> runtimeWiring.scalars.get(unwrappedFieldType.name)?.coercing
+                    else -> null
+                }
+            }
+        }
+
+        return null
     }
 
     private fun createBasicDataFetcher(method: Method, dgsComponent: Any, isSubscription: Boolean): DataFetcher<Any?> {

@@ -30,6 +30,7 @@ import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
+import org.intellij.lang.annotations.Language
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -37,7 +38,7 @@ import org.slf4j.LoggerFactory
  * Representation of a GraphQL response, which may contain GraphQL errors.
  * This class gives convenient JSON parsing methods to get data out of the response.
  */
-data class GraphQLResponse(val json: String, val headers: Map<String, List<String>>) {
+data class GraphQLResponse(@Language("json") val json: String, val headers: Map<String, List<String>>) {
 
     /**
      * A JsonPath DocumentContext. Typically, only used internally.
@@ -51,7 +52,7 @@ data class GraphQLResponse(val json: String, val headers: Map<String, List<Strin
     val data: Map<String, Any> = parsed.read("data") ?: emptyMap()
     val errors: List<GraphQLError> = parsed.read("errors", jsonTypeRef<List<GraphQLError>>()) ?: emptyList()
 
-    constructor(json: String) : this(json, emptyMap())
+    constructor(@Language("json") json: String) : this(json, emptyMap())
 
     /**
      * Deserialize data into the given class.

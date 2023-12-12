@@ -16,8 +16,10 @@
 
 package com.netflix.graphql.dgs.internal
 
+import graphql.schema.Coercing
 import java.lang.reflect.Method
 
 class EntityFetcherRegistry {
     val entityFetchers = mutableMapOf<String, Pair<Any, Method>>()
+    val entityFetcherInputMappings = mutableMapOf<String, Map<List<String>, Coercing<*, *>>>()
 }

@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.autoconfig
 
 import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
+import com.netflix.graphql.dgs.DgsDefaultPreparsedDocumentProvider
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.conditionals.ConditionalOnJava21
@@ -68,18 +69,22 @@ import org.springframework.http.HttpHeaders
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.context.request.WebRequest
+import java.time.Duration
 import java.util.*
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
 
 /**
  * Framework auto configuration based on open source Spring only, without Netflix integrations.
  * This does NOT have logging, tracing, metrics and security integration.
  */
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
-@AutoConfiguration
-@EnableConfigurationProperties(DgsConfigurationProperties::class)
+@AutoConfiguration(afterName = ["org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration"])
+@EnableConfigurationProperties(DgsConfigurationProperties::class, DgsDataloaderConfigurationProperties::class)
 @ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class, DgsInputArgumentConfiguration::class])
 open class DgsAutoConfiguration(
-    private val configProps: DgsConfigurationProperties
+    private val configProps: DgsConfigurationProperties,
+    private val dataloaderConfigProps: DgsDataloaderConfigurationProperties
 ) {
 
     companion object {
@@ -153,9 +158,16 @@ open class DgsAutoConfiguration(
         return DefaultDataLoaderOptionsProvider()
     }
 
+    @Bean(destroyMethod = "shutdown")
+    @ConditionalOnMissingBean(name = ["dgsScheduledExecutorService"])
+    @Qualifier("dgsScheduledExecutorService")
+    open fun dgsScheduledExecutorService(): ScheduledExecutorService {
+        return Executors.newSingleThreadScheduledExecutor()
+    }
+
     @Bean
-    open fun dgsDataLoaderProvider(applicationContext: ApplicationContext, dataloaderOptionProvider: DgsDataLoaderOptionsProvider): DgsDataLoaderProvider {
-        return DgsDataLoaderProvider(applicationContext, dataloaderOptionProvider)
+    open fun dgsDataLoaderProvider(applicationContext: ApplicationContext, dataloaderOptionProvider: DgsDataLoaderOptionsProvider, @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService): DgsDataLoaderProvider {
+        return DgsDataLoaderProvider(applicationContext, dataloaderOptionProvider, dgsScheduledExecutorService, dataloaderConfigProps.scheduleDuration, dataloaderConfigProps.tickerModeEnabled)
     }
 
     /**
@@ -204,7 +216,8 @@ open class DgsAutoConfiguration(
             entityFetcherRegistry = entityFetcherRegistry,
             defaultDataFetcherFactory = defaultDataFetcherFactory,
             methodDataFetcherFactory = methodDataFetcherFactory,
-            schemaWiringValidationEnabled = configProps.schemaWiringValidationEnabled
+            schemaWiringValidationEnabled = configProps.schemaWiringValidationEnabled,
+            enableEntityFetcherCustomScalarParsing = configProps.enableEntityFetcherCustomScalarParsing
         )
     }
 
@@ -223,6 +236,21 @@ open class DgsAutoConfiguration(
     @ConditionalOnMissingBean
     open fun schema(dgsSchemaProvider: DgsSchemaProvider, fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
         return dgsSchemaProvider.schema(null, fieldVisibility)
+    }
+
+    @Bean
+    @ConditionalOnProperty(
+        prefix = "$AUTO_CONF_PREFIX.preparsedDocumentProvider",
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = false
+    )
+    @ConditionalOnMissingBean
+    open fun preparsedDocumentProvider(configProps: DgsConfigurationProperties): PreparsedDocumentProvider {
+        return DgsDefaultPreparsedDocumentProvider(
+            configProps.preparsedDocumentProvider.maximumCacheSize,
+            Duration.parse(configProps.preparsedDocumentProvider.cacheValidityDuration)
+        )
     }
 
     @Bean
