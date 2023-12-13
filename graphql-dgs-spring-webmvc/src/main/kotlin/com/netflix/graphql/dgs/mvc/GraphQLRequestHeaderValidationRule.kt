@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.mvc
 
+import com.netflix.graphql.dgs.mvc.DgsGraphQLRequestHeaderValidator.GraphQLRequestHeaderRuleException
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpHeaders
 
@@ -27,9 +28,8 @@ import org.springframework.http.HttpHeaders
 @Order
 fun interface GraphQLRequestHeaderValidationRule {
     /**
-     * Validate the [HttpHeaders], and in case it is not valid, throw a [DgsGraphQLRequestHeaderRuleException] exception or any of its derivatives.
-     * @throws DgsGraphQLRequestHeaderValidator.GraphQLRequestHeaderRuleException
+     * Validate the [HttpHeaders], and in case it is not valid, throw a [GraphQLRequestHeaderRuleException] exception or any of its derivatives.
+     * @throws GraphQLRequestHeaderRuleException
      */
-    @kotlin.jvm.Throws(DgsGraphQLRequestHeaderValidator.GraphQLRequestHeaderRuleException::class)
     fun assert(headers: HttpHeaders)
 }
