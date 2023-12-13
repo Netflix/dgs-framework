@@ -672,28 +672,26 @@ class DefaultDgsFederationResolverTest {
             val dataFetchingEnvironment = constructDFE(arguments)
 
             // Create a custom exception handler which uses fields in DFE available when doing custom handling.
-            val customExceptionHandler = object : DataFetcherExceptionHandler {
-                override fun handleException(handlerParameters: DataFetcherExceptionHandlerParameters?): CompletableFuture<DataFetcherExceptionHandlerResult> {
-                    return if (handlerParameters?.exception is DgsEntityNotFoundException) {
-                        // Check DFE field
-                        val fieldName = handlerParameters.dataFetchingEnvironment.field.name
+            val customExceptionHandler = DataFetcherExceptionHandler { handlerParameters ->
+                if (handlerParameters?.exception is DgsEntityNotFoundException) {
+                    // Check DFE field
+                    val fieldName = handlerParameters.dataFetchingEnvironment.field.name
 
-                        val exception = handlerParameters.exception
-                        val graphqlError: GraphQLError =
-                            TypedGraphQLError
-                                .newBuilder()
-                                .errorDetail(ErrorDetail.Common.ENHANCE_YOUR_CALM)
-                                .message("$fieldName Error: " + exception.message)
-                                .path(handlerParameters.path)
-                                .build()
-                        CompletableFuture.completedFuture(
-                            DataFetcherExceptionHandlerResult.newResult()
-                                .error(graphqlError)
-                                .build()
-                        )
-                    } else {
-                        dgsExceptionHandler.handleException(handlerParameters)
-                    }
+                    val exception = handlerParameters.exception
+                    val graphqlError: GraphQLError =
+                        TypedGraphQLError
+                            .newBuilder()
+                            .errorDetail(ErrorDetail.Common.ENHANCE_YOUR_CALM)
+                            .message("$fieldName Error: ${exception.message}")
+                            .path(handlerParameters.path)
+                            .build()
+                    CompletableFuture.completedFuture(
+                        DataFetcherExceptionHandlerResult.newResult()
+                            .error(graphqlError)
+                            .build()
+                    )
+                } else {
+                    dgsExceptionHandler.handleException(handlerParameters)
                 }
             }
 

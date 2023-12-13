@@ -87,7 +87,7 @@ class DgsDataLoaderProviderTest {
                 }
                 assertThat(exc.cause)
                     .isInstanceOf(BeanCreationException::class.java)
-                    .rootCause
+                    .rootCause()
                     .isInstanceOf(InvalidDataLoaderTypeException::class.java)
             }
     }
@@ -194,7 +194,7 @@ class DgsDataLoaderProviderTest {
         fun findDataLoadersFromFieldsWithoutName() {
             applicationContextRunner.withBean(ExampleBatchLoaderWithoutNameFromField::class.java).run { context ->
                 assertThatThrownBy { context.getBean(DgsDataLoaderProvider::class.java) }
-                    .rootCause
+                    .rootCause()
                     .isInstanceOf(DgsUnnamedDataLoaderOnFieldException::class.java)
                     .hasMessage(
                         "Field `batchLoader` in class `com.netflix.graphql.dgs.ExampleBatchLoaderWithoutNameFromField` was annotated with @DgsDataLoader, but the data loader was not given a proper name"

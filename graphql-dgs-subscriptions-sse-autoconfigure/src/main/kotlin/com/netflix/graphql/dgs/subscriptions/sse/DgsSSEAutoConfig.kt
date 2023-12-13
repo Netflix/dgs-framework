@@ -28,7 +28,7 @@ import org.springframework.web.servlet.DispatcherServlet
 @ConditionalOnClass(DispatcherServlet::class)
 open class DgsSSEAutoConfig {
     @Bean
-    open fun DgsSSEController(dgsQueryExecutor: DgsQueryExecutor): DgsSSESubscriptionHandler {
+    open fun dgsSseController(dgsQueryExecutor: DgsQueryExecutor): DgsSSESubscriptionHandler {
         return DgsSSESubscriptionHandler(dgsQueryExecutor)
     }
 }
