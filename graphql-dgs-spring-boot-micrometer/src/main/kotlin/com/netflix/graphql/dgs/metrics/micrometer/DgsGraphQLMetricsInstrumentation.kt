@@ -72,9 +72,12 @@ class DgsGraphQLMetricsInstrumentation(
         miState.isIntrospectionQuery = QueryUtils.isIntrospectionQuery(parameters.executionInput)
 
         return SimpleInstrumentationContext.whenCompleted { result, exc ->
-            val tags = tagsProvider.getContextualTags() +
-                tagsProvider.getExecutionTags(miState, parameters, result, exc) +
-                miState.tags()
+            val tags = buildList {
+                addAll(tagsProvider.getContextualTags())
+                addAll(tagsProvider.getExecutionTags(miState, parameters, result, exc))
+                addAll(miState.tags())
+            }
+
             miState.stopTimer(
                 properties.autotime
                     .builder(GqlMetric.QUERY.key)
@@ -89,27 +92,26 @@ class DgsGraphQLMetricsInstrumentation(
         state: InstrumentationState
     ): CompletableFuture<ExecutionResult> {
         val miState: MetricsInstrumentationState = state as MetricsInstrumentationState
-        val baseTags = tagsProvider.getContextualTags() +
-            tagsProvider.getExecutionTags(miState, parameters, executionResult, null) +
-            miState.tags()
 
-        fun errorTags(values: ErrorUtils.ErrorTagValues): Iterable<Tag> {
-            val errorTags = listOf(
-                Tag.of(GqlTag.PATH.key, values.path),
-                Tag.of(GqlTag.ERROR_CODE.key, values.type),
-                Tag.of(GqlTag.ERROR_DETAIL.key, values.detail)
-            )
-            return baseTags + errorTags
-        }
-
-        ErrorUtils
-            .sanitizeErrorPaths(executionResult)
-            .forEach {
-                registrySupplier
-                    .get()
-                    .counter(GqlMetric.ERROR.key, errorTags(it))
-                    .increment()
+        val errorTagValues = ErrorUtils.sanitizeErrorPaths(executionResult)
+        if (errorTagValues.isNotEmpty()) {
+            val baseTags = buildList {
+                addAll(tagsProvider.getContextualTags())
+                addAll(tagsProvider.getExecutionTags(miState, parameters, executionResult, null))
+                addAll(miState.tags())
             }
+
+            val registry = registrySupplier.get()
+            for (errorTagValue in errorTagValues) {
+                val errorTags = buildList(baseTags.size + 3) {
+                    addAll(baseTags)
+                    add(Tag.of(GqlTag.PATH.key, errorTagValue.path))
+                    add(Tag.of(GqlTag.ERROR_CODE.key, errorTagValue.type))
+                    add(Tag.of(GqlTag.ERROR_DETAIL.key, errorTagValue.detail))
+                }
+                registry.counter(GqlMetric.ERROR.key, errorTags)
+            }
+        }
 
         return CompletableFuture.completedFuture(executionResult)
     }
@@ -133,9 +135,11 @@ class DgsGraphQLMetricsInstrumentation(
 
         return DataFetcher { environment ->
             val registry = registrySupplier.get()
-            val baseTags = mutableListOf(Tag.of(GqlTag.FIELD.key, gqlField)) +
-                tagsProvider.getContextualTags() +
-                miState.tags()
+            val baseTags = buildList {
+                add(Tag.of(GqlTag.FIELD.key, gqlField))
+                addAll(tagsProvider.getContextualTags())
+                addAll(miState.tags())
+            }
 
             val sampler = Timer.start(registry)
             try {

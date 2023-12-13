@@ -104,7 +104,7 @@ object DgsMetrics {
         SUCCESS(GqlTag.OUTCOME.key, "success") {
             /** Returns the success [tag] along with the [JAVA_CLASS] of the value.*/
             override fun <T : Any> tags(v: T): Iterable<Tag> {
-                return listOf(tag).plus(JAVA_CLASS.tags(v))
+                return JAVA_CLASS.tags(v) + tag
             }
         },
 
@@ -114,7 +114,7 @@ object DgsMetrics {
         FAILURE(GqlTag.OUTCOME.key, "failure") {
             /** Returns failure [tag] along with the [JAVA_CLASS] of the value.*/
             override fun <T : Any> tags(v: T): Iterable<Tag> {
-                return listOf(tag).plus(JAVA_CLASS.tags(v))
+                return JAVA_CLASS.tags(v) + tag
             }
         },
 
