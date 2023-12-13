@@ -22,8 +22,7 @@ dependencies {
 
     implementation("jakarta.servlet:jakarta.servlet-api")
     implementation("org.springframework:spring-webmvc")
-    implementation("org.springframework.boot:spring-boot-starter-graphql:3.1.0")
-    //implementation("org.springframework.graphql:spring-graphql:1.2.0")
+    implementation("org.springframework.boot:spring-boot-starter-graphql:3.2.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
