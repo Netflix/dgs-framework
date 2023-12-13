@@ -16,11 +16,7 @@
 
 package com.netflix.graphql.dgs
 
-<<<<<<< HEAD
 import com.netflix.graphql.dgs.exceptions.DataFetcherSchemaMismatchException
-import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
-=======
->>>>>>> bcff65a3 (Initial integration with spring-graphql with an example app.)
 import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
 import com.netflix.graphql.dgs.internal.DefaultInputObjectMapper

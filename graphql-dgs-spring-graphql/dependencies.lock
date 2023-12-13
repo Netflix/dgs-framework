@@ -20,6 +20,12 @@
         }
     },
     "compileClasspath": {
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "locked": "2.15.3"
+        },
+        "com.fasterxml.jackson.module:jackson-module-kotlin": {
+            "locked": "2.15.3"
+        },
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.15.3"
         },
@@ -128,6 +134,12 @@
         }
     },
     "jmhCompileClasspath": {
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "locked": "2.15.3"
+        },
+        "com.fasterxml.jackson.module:jackson-module-kotlin": {
+            "locked": "2.15.3"
+        },
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.15.3"
         },
@@ -682,6 +694,12 @@
         }
     },
     "testCompileClasspath": {
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
+            "locked": "2.15.3"
+        },
+        "com.fasterxml.jackson.module:jackson-module-kotlin": {
+            "locked": "2.15.3"
+        },
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.15.3"
         },

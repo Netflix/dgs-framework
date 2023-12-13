@@ -15,11 +15,11 @@
  */
 
 package com.netflix.graphql.dgs.autoconfig
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
-import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
-import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
-import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.*
 import com.netflix.graphql.dgs.internal.method.ArgumentResolver
 import com.netflix.graphql.dgs.mvc.internal.method.HandlerMethodArgumentResolverAdapter
 import graphql.GraphQL
@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.autoconfigure.graphql.GraphQlSourceBuilderCustomizer
 import org.springframework.context.annotation.Bean
@@ -129,8 +130,15 @@ open class DgsSpringGraphQLAutoConfiguration {
     }
 
     @Bean
-    open fun springGraphQLDgsQueryExecutor(executionService: DefaultExecutionGraphQlService, dgsContextBuilder: DefaultDgsGraphQLContextBuilder, dgsDataLoaderProvider: DgsDataLoaderProvider): DgsQueryExecutor {
-        return SpringGraphQLDgsQueryExecutor(executionService, dgsContextBuilder, dgsDataLoaderProvider)
+    open fun springGraphQLDgsQueryExecutor(executionService: DefaultExecutionGraphQlService, dgsContextBuilder: DefaultDgsGraphQLContextBuilder, dgsDataLoaderProvider: DgsDataLoaderProvider, requestCustomizer: ObjectProvider<DgsQueryExecutorRequestCustomizer>): DgsQueryExecutor {
+        return SpringGraphQLDgsQueryExecutor(executionService, dgsContextBuilder, dgsDataLoaderProvider, requestCustomizer = requestCustomizer.getIfAvailable(DgsQueryExecutorRequestCustomizer::DEFAULT_REQUEST_CUSTOMIZER))
+    }
+
+    @Bean
+    @Qualifier("dgsObjectMapper")
+    @ConditionalOnMissingBean(name = ["dgsObjectMapper"])
+    open fun dgsObjectMapper(): ObjectMapper {
+        return jacksonObjectMapper().registerModule(JavaTimeModule())
     }
 
     @Configuration(proxyBeanMethods = false)

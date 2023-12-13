@@ -25,6 +25,7 @@ type Query {
 
     headers: String
     referer: String
+    demoHeader: String
 
     ### To show how to handle HttpHeaders
     helloWithHeaders(name: String): String
@@ -96,8 +97,4 @@ scalar Upload
 scalar LocalTime
 
 directive @connection on OBJECT
-
-
-
->>>>>>> bcff65a3 (Initial integration with spring-graphql with an example app.)
 
