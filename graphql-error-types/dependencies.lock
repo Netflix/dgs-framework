@@ -47,10 +47,10 @@
     },
     "jmh": {
         "org.openjdk.jmh:jmh-core": {
-            "locked": "1.36"
+            "locked": "1.37"
         },
         "org.openjdk.jmh:jmh-generator-annprocess": {
-            "locked": "1.36"
+            "locked": "1.37"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.36"
@@ -90,10 +90,10 @@
             "locked": "1.9.21"
         },
         "org.openjdk.jmh:jmh-core": {
-            "locked": "1.36"
+            "locked": "1.37"
         },
         "org.openjdk.jmh:jmh-generator-annprocess": {
-            "locked": "1.36"
+            "locked": "1.37"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.36"
@@ -116,7 +116,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.13.5"
+            "locked": "1.13.8"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.21"
@@ -125,10 +125,10 @@
             "locked": "1.9.21"
         },
         "org.openjdk.jmh:jmh-core": {
-            "locked": "1.36"
+            "locked": "1.37"
         },
         "org.openjdk.jmh:jmh-generator-annprocess": {
-            "locked": "1.36"
+            "locked": "1.37"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.36"
@@ -335,7 +335,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.13.5"
+            "locked": "1.13.8"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.21"
@@ -364,7 +364,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.13.5"
+            "locked": "1.13.8"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.21"
