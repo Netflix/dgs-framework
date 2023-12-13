@@ -16,7 +16,6 @@
 
 package com.netflix.graphql.dgs.client
 
-@FunctionalInterface
 /**
  * Code responsible for executing the HTTP request for a GraphQL query.
  * Typically provided as a lambda.
@@ -25,6 +24,7 @@ package com.netflix.graphql.dgs.client
  * @param body The request body
  * @returns HttpResponse which is a representation of the HTTP status code and the response body as a String.
  */
+@FunctionalInterface
 fun interface RequestExecutor {
     fun execute(url: String, headers: Map<String, List<String>>, body: String): HttpResponse
 }

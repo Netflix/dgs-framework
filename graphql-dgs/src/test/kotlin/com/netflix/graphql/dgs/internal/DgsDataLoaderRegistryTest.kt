@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs
+package com.netflix.graphql.dgs.internal
 
-import com.netflix.graphql.dgs.internal.DgsDataLoaderRegistry
+import com.netflix.graphql.dgs.DgsDataLoader
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
@@ -84,9 +84,7 @@ class DgsDataLoaderRegistryTest {
 
     @Test
     fun combine() {
-        val error: UnsupportedOperationException = assertThrows {
-            dgsDataLoaderRegistry.combine(DataLoaderRegistry())
-        }
+        assertThrows<UnsupportedOperationException> { dgsDataLoaderRegistry.combine(DataLoaderRegistry()) }
     }
 
     @Test
