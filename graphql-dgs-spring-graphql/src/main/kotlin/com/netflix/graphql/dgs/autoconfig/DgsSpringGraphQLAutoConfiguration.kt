@@ -100,7 +100,6 @@ open class DgsSpringGraphQLAutoConfiguration {
         return GraphQlSourceBuilderCustomizer { builder ->
             builder.configureGraphQl { graphQlBuilder: GraphQL.Builder ->
                 graphQlBuilder
-                    .preparsedDocumentProvider(preparsedDocumentProvider.getIfAvailable())
                     .instrumentation(instrumentation)
                     .queryExecutionStrategy(queryExecutionStrategy)
                     .mutationExecutionStrategy(mutationExecutionStrategy)
@@ -109,6 +108,10 @@ open class DgsSpringGraphQLAutoConfiguration {
                 if (idProvider.isPresent) {
                     graphQlBuilder.executionIdProvider(idProvider.get())
                 }
+                preparsedDocumentProvider.ifAvailable {
+                    graphQlBuilder.preparsedDocumentProvider(it)
+                }
+
             }
             builder
                 .configureRuntimeWiring(dgsRuntimeWiringConfigurer)
