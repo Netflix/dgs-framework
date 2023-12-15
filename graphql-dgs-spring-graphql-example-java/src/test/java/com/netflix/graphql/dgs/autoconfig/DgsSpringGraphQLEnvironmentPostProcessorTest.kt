@@ -18,18 +18,23 @@ package com.netflix.graphql.dgs.autoconfig
 
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.SpringApplication
 import org.springframework.core.env.MapPropertySource
 import org.springframework.mock.env.MockEnvironment
 
 class DgsSpringGraphQLEnvironmentPostProcessorTest {
+    val application = mockk<SpringApplication>()
+    lateinit var env : MockEnvironment
+
+    @BeforeEach
+    fun setup() {
+        env = MockEnvironment()
+    }
+
     @Test
     fun `Default schema location`() {
-
-        val application = mockk<SpringApplication>()
-        val env = MockEnvironment()
-
         DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
 
         assertThat(env.getProperty("spring.graphql.schema.locations")).isEqualTo("classpath*:schema/**/")
@@ -38,10 +43,6 @@ class DgsSpringGraphQLEnvironmentPostProcessorTest {
 
     @Test
     fun `Explicitly set schema location`() {
-
-        val application = mockk<SpringApplication>()
-        val env = MockEnvironment()
-
         env.setProperty("dgs.graphql.schema-locations", "classpath*:dgs-schema/**/*.graphql*")
 
         DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
@@ -52,10 +53,6 @@ class DgsSpringGraphQLEnvironmentPostProcessorTest {
 
     @Test
     fun `Explicitly set schema location to directory only`() {
-
-        val application = mockk<SpringApplication>()
-        val env = MockEnvironment()
-
         env.setProperty("dgs.graphql.schema-locations", "classpath*:schema/**/")
 
         DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
@@ -66,10 +63,6 @@ class DgsSpringGraphQLEnvironmentPostProcessorTest {
 
     @Test
     fun `Explicitly set schema location to multiple`() {
-
-        val application = mockk<SpringApplication>()
-        val env = MockEnvironment()
-
         env.propertySources.addLast(
             MapPropertySource(
                 "props",
@@ -86,5 +79,53 @@ class DgsSpringGraphQLEnvironmentPostProcessorTest {
 
         assertThat(env.getProperty("spring.graphql.schema.locations")).isEqualTo("classpath*:schema/**/,classpath*:otherschemas/**/")
         assertThat(env.getProperty("spring.graphql.schema.fileExtensions")).isEqualTo("*graphql*")
+    }
+
+    @Test
+    fun `Default for graphiql-enabled`() {
+        DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
+
+        assertThat(env.getProperty("spring.graphql.graphiql.enabled")).isEqualTo("true")
+    }
+
+    @Test
+    fun `DGS setting should propagate to spring graphql for graphiql-enabled`() {
+        env.setProperty("dgs.graphql.graphiql.enabled", "false")
+
+        DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
+
+        assertThat(env.getProperty("spring.graphql.graphiql.enabled")).isEqualTo("false")
+    }
+
+    @Test
+    fun `Default for graphiql-path`() {
+        DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
+
+        assertThat(env.getProperty("spring.graphql.graphiql.path")).isEqualTo("/graphiql")
+    }
+
+    @Test
+    fun `DGS setting should propagate to spring graphql for graphiql-path`() {
+        env.setProperty("dgs.graphql.graphiql.path", "/somepath")
+
+        DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
+
+        assertThat(env.getProperty("spring.graphql.graphiql.path")).isEqualTo("/somepath")
+    }
+
+    @Test
+    fun `Default for websocket-connection-timeout`() {
+        DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
+
+        assertThat(env.getProperty("spring.graphql.websocket.connection-init-timeout")).isEqualTo("10s")
+    }
+
+    @Test
+    fun `DGS setting should propagate to spring graphql for websocket-connection-timeout`() {
+        env.setProperty("dgs.graphql.websocket.connection-init-timeout", "30s")
+
+        DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
+
+        assertThat(env.getProperty("spring.graphql.websocket.connection-init-timeout")).isEqualTo("30s")
     }
 }
