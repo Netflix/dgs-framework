@@ -312,7 +312,7 @@ open class DgsAutoConfiguration(
     @Bean
     @Qualifier("dgsAsyncTaskExecutor")
     @ConditionalOnJava21
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = ["dgsAsyncTaskExecutor"])
     @ConditionalOnProperty(name = ["dgs.graphql.virtualthreads.enabled"], havingValue = "true", matchIfMissing = false)
     open fun virtualThreadsTaskExecutor(): AsyncTaskExecutor {
         LOG.info("Enabling virtual threads for DGS")
