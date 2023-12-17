@@ -66,7 +66,7 @@ sealed class Message(
 
     data class NextMessage(
         val id: String,
-        val payload: com.netflix.graphql.types.subscription.websockets.ExecutionResult
+        val payload: ExecutionResult
     ) : Message(MessageType.NEXT)
 
     data class ErrorMessage(

@@ -13,13 +13,13 @@ jobs:
       - uses: actions/checkout@v4.1.1
 
       - name: Setup Java ${{ matrix.jdk-version }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: 17
 
       - name: Set up Python 3.8
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.8
 
@@ -28,7 +28,7 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f scripts/requirements.txt ]; then pip install -r scripts/requirements.txt; fi
 
-      - uses: actions/cache@v3.3.1
+      - uses: actions/cache@v3.3.2
         id: gradle-wrapper-cache
         with:
           path: ~/.gradle/wrapper
@@ -36,14 +36,14 @@ jobs:
           restore-keys: ${{ runner.os }}-gradlewrapper-
 
       - name: Cache Gradle packages
-        uses: actions/cache@v3.3.1
+        uses: actions/cache@v3.3.2
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
       - name: Maven cache
-        uses: actions/cache@v3.3.1
+        uses: actions/cache@v3.3.2
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}

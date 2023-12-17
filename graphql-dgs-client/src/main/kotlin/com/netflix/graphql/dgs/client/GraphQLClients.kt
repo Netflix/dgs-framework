@@ -17,18 +17,19 @@
 package com.netflix.graphql.dgs.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.MediaType
-import org.springframework.util.ClassUtils
 
 internal object GraphQLClients {
 
-    internal val objectMapper: ObjectMapper =
-        if (ClassUtils.isPresent("com.fasterxml.jackson.module.kotlin.KotlinModule\$Builder", this::class.java.classLoader)) {
-            ObjectMapper().registerModule(KotlinModule.Builder().nullIsSameAsDefault(true).build())
-        } else ObjectMapper().registerKotlinModule()
+    internal val objectMapper: ObjectMapper = ObjectMapper().registerModule(
+        KotlinModule.Builder()
+            .enable(KotlinFeature.NullIsSameAsDefault)
+            .build()
+    )
 
     internal val defaultHeaders: HttpHeaders = HttpHeaders.readOnlyHttpHeaders(
         HttpHeaders().apply {
@@ -40,7 +41,7 @@ internal object GraphQLClients {
     fun handleResponse(response: HttpResponse, requestBody: String, url: String): GraphQLResponse {
         val (statusCode, body) = response
         val headers = response.headers
-        if (statusCode !in 200..299) {
+        if (HttpStatusCode.valueOf(response.statusCode).isError) {
             throw GraphQLClientException(statusCode, url, body ?: "", requestBody)
         }
 

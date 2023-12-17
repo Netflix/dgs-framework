@@ -16,6 +16,6 @@
 
 dependencies {
     api("com.graphql-java:graphql-java")
-    implementation("net.datafaker:datafaker:1.9.0")
+    implementation("net.datafaker:datafaker:2.+")
     implementation("org.slf4j:slf4j-api")
 }
