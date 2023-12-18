@@ -141,12 +141,6 @@ data class GraphQLResponse(
             .registerModule(Jdk8Module())
             .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
 
-        private val DEFAULT_MAPPER: ObjectMapper = jacksonObjectMapper()
-            .registerModule(JavaTimeModule())
-            .registerModule(ParameterNamesModule())
-            .registerModule(Jdk8Module())
-            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
-
         fun getDataPath(path: String): String {
             return if (path == "data" || path.startsWith("data.")) {
                 path
