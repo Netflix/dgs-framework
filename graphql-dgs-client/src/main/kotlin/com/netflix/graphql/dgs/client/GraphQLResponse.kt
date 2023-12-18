@@ -133,7 +133,13 @@ data class GraphQLResponse(
     fun hasErrors(): Boolean = errors.isNotEmpty()
 
     companion object {
-        val logger: Logger = LoggerFactory.getLogger(GraphQLResponse::class.java)
+        private val logger: Logger = LoggerFactory.getLogger(GraphQLResponse::class.java)
+
+        private val DEFAULT_MAPPER: ObjectMapper = jacksonObjectMapper()
+            .registerModule(JavaTimeModule())
+            .registerModule(ParameterNamesModule())
+            .registerModule(Jdk8Module())
+            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
 
         private val DEFAULT_MAPPER: ObjectMapper = jacksonObjectMapper()
             .registerModule(JavaTimeModule())
