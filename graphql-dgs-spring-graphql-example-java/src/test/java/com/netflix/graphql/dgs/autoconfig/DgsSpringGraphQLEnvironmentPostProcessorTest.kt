@@ -21,7 +21,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.SpringApplication
-import org.springframework.core.env.MapPropertySource
 import org.springframework.mock.env.MockEnvironment
 
 class DgsSpringGraphQLEnvironmentPostProcessorTest {
@@ -31,54 +30,6 @@ class DgsSpringGraphQLEnvironmentPostProcessorTest {
     @BeforeEach
     fun setup() {
         env = MockEnvironment()
-    }
-
-    @Test
-    fun `Default schema location`() {
-        DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
-
-        assertThat(env.getProperty("spring.graphql.schema.locations")).isEqualTo("classpath*:schema/**/")
-        assertThat(env.getProperty("spring.graphql.schema.fileExtensions")).isEqualTo("*.graphql*")
-    }
-
-    @Test
-    fun `Explicitly set schema location`() {
-        env.setProperty("dgs.graphql.schema-locations", "classpath*:dgs-schema/**/*.graphql*")
-
-        DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
-
-        assertThat(env.getProperty("spring.graphql.schema.locations")).isEqualTo("classpath*:dgs-schema/**/")
-        assertThat(env.getProperty("spring.graphql.schema.fileExtensions")).isEqualTo("*.graphql*")
-    }
-
-    @Test
-    fun `Explicitly set schema location to directory only`() {
-        env.setProperty("dgs.graphql.schema-locations", "classpath*:schema/**/")
-
-        DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
-
-        assertThat(env.getProperty("spring.graphql.schema.locations")).isEqualTo("classpath*:schema/**/")
-        assertThat(env.getProperty("spring.graphql.schema.fileExtensions")).isNull()
-    }
-
-    @Test
-    fun `Explicitly set schema location to multiple`() {
-        env.propertySources.addLast(
-            MapPropertySource(
-                "props",
-                mapOf(
-                    Pair(
-                        "dgs.graphql.schema-locations",
-                        listOf("classpath*:schema/**/", "classpath*:otherschemas/**/*graphql*")
-                    )
-                )
-            )
-        )
-
-        DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
-
-        assertThat(env.getProperty("spring.graphql.schema.locations")).isEqualTo("classpath*:schema/**/,classpath*:otherschemas/**/")
-        assertThat(env.getProperty("spring.graphql.schema.fileExtensions")).isEqualTo("*graphql*")
     }
 
     @Test

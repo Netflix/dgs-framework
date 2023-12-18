@@ -79,6 +79,9 @@
             ],
             "project": true
         },
+        "io.micrometer:context-propagation": {
+            "locked": "1.1.0"
+        },
         "jakarta.servlet:jakarta.servlet-api": {
             "locked": "6.0.0"
         },
@@ -204,6 +207,9 @@
             ],
             "project": true
         },
+        "io.micrometer:context-propagation": {
+            "locked": "1.1.0"
+        },
         "jakarta.servlet:jakarta.servlet-api": {
             "locked": "6.0.0"
         },
@@ -325,6 +331,9 @@
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
             "project": true
+        },
+        "io.micrometer:context-propagation": {
+            "locked": "1.1.0"
         },
         "io.mockk:mockk": {
             "locked": "1.13.8"
@@ -641,6 +650,9 @@
             ],
             "project": true
         },
+        "io.micrometer:context-propagation": {
+            "locked": "1.1.0"
+        },
         "io.projectreactor.kotlin:reactor-kotlin-extensions": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-reactive"
@@ -795,6 +807,9 @@
             ],
             "project": true
         },
+        "io.micrometer:context-propagation": {
+            "locked": "1.1.0"
+        },
         "io.mockk:mockk": {
             "locked": "1.13.8"
         },
@@ -904,6 +919,9 @@
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
             "project": true
+        },
+        "io.micrometer:context-propagation": {
+            "locked": "1.1.0"
         },
         "io.mockk:mockk": {
             "locked": "1.13.8"

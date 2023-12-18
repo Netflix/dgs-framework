@@ -424,6 +424,12 @@
             ],
             "project": true
         },
+        "io.micrometer:context-propagation": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
+            ],
+            "locked": "1.1.0"
+        },
         "io.mockk:mockk": {
             "locked": "1.13.8"
         },
@@ -845,6 +851,12 @@
             ],
             "project": true
         },
+        "io.micrometer:context-propagation": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
+            ],
+            "locked": "1.1.0"
+        },
         "io.projectreactor.kotlin:reactor-kotlin-extensions": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-reactive"
@@ -1245,6 +1257,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
             "project": true
+        },
+        "io.micrometer:context-propagation": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
+            ],
+            "locked": "1.1.0"
         },
         "io.mockk:mockk": {
             "locked": "1.13.8"

@@ -42,7 +42,7 @@ class DgsGraphQLInterceptor(
             (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes).request
         } else null
 
-        val dgsContext = if(servletRequest != null) {
+        val dgsContext = if (servletRequest != null) {
             val webRequest: WebRequest = ServletWebRequest(servletRequest)
             dgsContextBuilder.build(DgsWebMvcRequestData(request.extensions, request.headers, webRequest))
         } else {

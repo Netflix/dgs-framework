@@ -19,6 +19,8 @@ dependencies {
     implementation(project(":graphql-dgs-reactive"))
     implementation("org.springframework:spring-web")
     implementation("org.springframework.boot:spring-boot-autoconfigure")
+    implementation("io.micrometer:context-propagation:1.1.0")
+
 
     compileOnly("jakarta.servlet:jakarta.servlet-api")
     compileOnly("org.springframework:spring-webmvc")

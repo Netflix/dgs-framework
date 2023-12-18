@@ -19,7 +19,9 @@ package com.netflix.graphql.dgs.autoconfig
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.DgsRuntimeWiring
 import com.netflix.graphql.dgs.internal.*
 import com.netflix.graphql.dgs.internal.method.ArgumentResolver
 import com.netflix.graphql.dgs.mvc.internal.method.HandlerMethodArgumentResolverAdapter
@@ -27,16 +29,9 @@ import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithReque
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
 import com.netflix.graphql.dgs.reactive.internal.method.SyncHandlerMethodArgumentResolverAdapter
-import graphql.GraphQL
-import graphql.execution.AsyncExecutionStrategy
-import graphql.execution.AsyncSerialExecutionStrategy
-import graphql.execution.DataFetcherExceptionHandler
-import graphql.execution.ExecutionIdProvider
-import graphql.execution.ExecutionStrategy
-import graphql.execution.SubscriptionExecutionStrategy
-import graphql.execution.instrumentation.ChainedInstrumentation
+import com.netflix.graphql.dgs.springgraphql.DgsGraphQLSourceBuilder
 import graphql.execution.instrumentation.Instrumentation
-import graphql.execution.preparsed.PreparsedDocumentProvider
+import graphql.schema.idl.RuntimeWiring
 import org.reactivestreams.Publisher
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Qualifier
@@ -50,9 +45,12 @@ import org.springframework.boot.autoconfigure.graphql.GraphQlSourceBuilderCustom
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.ReactiveAdapterRegistry
-import org.springframework.core.env.Environment
+import org.springframework.graphql.execution.ConnectionTypeDefinitionConfigurer
+import org.springframework.graphql.execution.DataFetcherExceptionResolver
 import org.springframework.graphql.execution.DefaultExecutionGraphQlService
+import org.springframework.graphql.execution.GraphQlSource
 import org.springframework.graphql.execution.RuntimeWiringConfigurer
+import org.springframework.graphql.execution.SubscriptionExceptionResolver
 import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.filter.reactive.ServerWebExchangeContextFilter
 import org.springframework.web.method.annotation.RequestHeaderMapMethodArgumentResolver
@@ -74,61 +72,55 @@ import java.util.*
 @AutoConfiguration
 @AutoConfigureBefore(name = ["com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration"])
 open class DgsSpringGraphQLAutoConfiguration {
-    // Instead of creating a GraphQLSource directly, this allows us to add datafetchers/type registries/scalars that are
-    // using DGS annotations processed by the DgsSchemaProvider in addition to SpringGraphQL controllers
+
     @Bean
-    @Qualifier("dgsRuntime")
-    open fun runtimeWiringConfigurer(schemaProvider: DgsSchemaProvider): RuntimeWiringConfigurer {
-        return RuntimeWiringConfigurer { builder -> schemaProvider.buildRuntimeWiring(null, builder) }
+    @DgsComponent
+    open fun dgsRuntimeWiringConfigurerBridge(configurers: List<RuntimeWiringConfigurer>): DgsRuntimeWiringConfigurerBridge {
+        return DgsRuntimeWiringConfigurerBridge(configurers)
     }
 
-    // This allows us to wire up DGS related instrumentations etc. in addition to existing spring graphql set up
-    @Bean
-    open fun sourceBuilderCustomizer(
-        schemaProvider: DgsSchemaProvider,
-        dataFetcherExceptionHandler: DataFetcherExceptionHandler,
-        instrumentations: ObjectProvider<Instrumentation>,
-        environment: Environment,
-        @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
-        @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
-        idProvider: Optional<ExecutionIdProvider>,
-        reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator,
-        preparsedDocumentProvider: ObjectProvider<PreparsedDocumentProvider>,
-        @Qualifier("dgsRuntime") dgsRuntimeWiringConfigurer: RuntimeWiringConfigurer
-    ): GraphQlSourceBuilderCustomizer {
-        val queryExecutionStrategy =
-            providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
-        val mutationExecutionStrategy =
-            providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
-
-        val instrumentationImpls = instrumentations.orderedStream().toList()
-        val instrumentation: Instrumentation? = when {
-            instrumentationImpls.size == 1 -> instrumentationImpls.single()
-            instrumentationImpls.isNotEmpty() -> ChainedInstrumentation(instrumentationImpls)
-            else -> null
-        }
-
-        return GraphQlSourceBuilderCustomizer { builder ->
-            builder.configureGraphQl { graphQlBuilder: GraphQL.Builder ->
-                graphQlBuilder
-                    .instrumentation(instrumentation)
-                    .queryExecutionStrategy(queryExecutionStrategy)
-                    .mutationExecutionStrategy(mutationExecutionStrategy)
-                    .subscriptionExecutionStrategy(SubscriptionExecutionStrategy())
-                    .defaultDataFetcherExceptionHandler(dataFetcherExceptionHandler)
-                if (idProvider.isPresent) {
-                    graphQlBuilder.executionIdProvider(idProvider.get())
-                }
-                preparsedDocumentProvider.ifAvailable {
-                    graphQlBuilder.preparsedDocumentProvider(it)
-                }
+    class DgsRuntimeWiringConfigurerBridge(private val configurers: List<RuntimeWiringConfigurer>) {
+        @DgsRuntimeWiring
+        fun runtimeWiring(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
+            configurers.forEach {
+                it.configure(builder)
             }
-            builder
-                .configureRuntimeWiring(dgsRuntimeWiringConfigurer)
-                .schemaFactory { registry, wiring ->
-                    schemaProvider.transformFederation(registry, wiring)
-                }
+
+            return builder
         }
+    }
+
+    @Bean
+    open fun sourceBuilderCustomizer(): GraphQlSourceBuilderCustomizer {
+        return GraphQlSourceBuilderCustomizer { }
+    }
+
+    @Bean
+    open fun graphQlSource(
+        dgsSchemaProvider: DgsSchemaProvider,
+        exceptionResolvers: ObjectProvider<DataFetcherExceptionResolver>,
+        subscriptionExceptionResolvers: ObjectProvider<SubscriptionExceptionResolver>,
+        instrumentations: ObjectProvider<Instrumentation?>,
+        wiringConfigurers: ObjectProvider<RuntimeWiringConfigurer>,
+        sourceCustomizers: ObjectProvider<GraphQlSourceBuilderCustomizer>
+    ): GraphQlSource {
+        val builder = DgsGraphQLSourceBuilder(dgsSchemaProvider)
+            .exceptionResolvers(exceptionResolvers.orderedStream().toList())
+            .subscriptionExceptionResolvers(subscriptionExceptionResolvers.orderedStream().toList())
+            .instrumentation(instrumentations.orderedStream().toList())
+
+        builder.configureTypeDefinitions(ConnectionTypeDefinitionConfigurer())
+        wiringConfigurers.orderedStream().forEach { configurer: RuntimeWiringConfigurer ->
+            builder.configureRuntimeWiring(
+                configurer
+            )
+        }
+        sourceCustomizers.orderedStream().forEach { customizer: GraphQlSourceBuilderCustomizer ->
+            customizer.customize(
+                builder
+            )
+        }
+        return builder.build()
     }
 
     @Bean

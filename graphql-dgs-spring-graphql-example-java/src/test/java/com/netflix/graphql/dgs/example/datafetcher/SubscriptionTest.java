@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.example.reactive;
+package com.netflix.graphql.dgs.example.datafetcher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.graphql.dgs.DgsQueryExecutor;
 import com.netflix.graphql.dgs.example.shared.types.Stock;
-import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor;
 import graphql.ExecutionResult;
-import graphql.execution.reactive.SubscriptionPublisher;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.Map;
@@ -35,11 +31,10 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@Disabled
 public class SubscriptionTest {
 
     @Autowired
-    DgsReactiveQueryExecutor queryExecutor;
+    DgsQueryExecutor queryExecutor;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -48,7 +43,8 @@ public class SubscriptionTest {
     void stocks() {
         var executionResult = queryExecutor.execute("subscription Stocks { stocks { name, price } }");
 
-        Publisher<ExecutionResult> publisher = executionResult.flatMap(ExecutionResult::getData);
+        Publisher<ExecutionResult> publisher = executionResult.getData();
+
         StepVerifier.withVirtualTime(() -> publisher, 3)
                 .expectSubscription()
                 .thenRequest(3)

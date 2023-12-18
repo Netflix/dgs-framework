@@ -71,9 +71,7 @@ import org.springframework.core.io.Resource
 import org.springframework.core.io.support.ResourcePatternUtils
 import org.springframework.util.ReflectionUtils
 import java.io.IOException
-import java.io.InputStreamReader
 import java.lang.reflect.Method
-import java.nio.charset.StandardCharsets
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
@@ -240,91 +238,6 @@ class DgsSchemaProvider(
         } else {
             graphQLSchema
         }
-    }
-
-    // This method is invoked from SpringGraphQLAutoconfig during the set up of RuntimeWiringConfigurer and allows us to
-    // pass the final code registry based on processing DGS annotated classes
-    // into Spring GraphQL's runtimeWiringConfigurer so it adds to existing SpringGraphQL processed
-    // runtime wiring
-    fun buildRuntimeWiring(schema: String? = null, runtimeWiringBuilder: RuntimeWiring.Builder): RuntimeWiring.Builder {
-        val startTime = System.currentTimeMillis()
-        val dgsComponents = applicationContext.getBeansWithAnnotation<DgsComponent>().values.let { beans ->
-            if (componentFilter != null) beans.filter(componentFilter) else beans
-        }
-        val hasDynamicTypeRegistry =
-            dgsComponents.any { it.javaClass.methods.any { m -> m.isAnnotationPresent(DgsTypeDefinitionRegistry::class.java) } }
-
-        var mergedRegistry = if (schema == null) {
-            findSchemaFiles(hasDynamicTypeRegistry = hasDynamicTypeRegistry).asSequence().map {
-                InputStreamReader(it.inputStream, StandardCharsets.UTF_8).use { reader ->
-                    // Convert reader kind for GraphQL Java to specify source name in a type definition's source location
-                    val multiSourceReader = MultiSourceReader.newMultiSourceReader()
-                        .reader(reader, it.filename).build()
-                    SchemaParser().parse(multiSourceReader)
-                }
-            }.fold(TypeDefinitionRegistry()) { a, b -> a.merge(b) }
-        } else {
-            SchemaParser().parse(schema)
-        }
-
-        if (existingTypeDefinitionRegistry.isPresent) {
-            mergedRegistry = mergedRegistry.merge(existingTypeDefinitionRegistry.get())
-        }
-
-        val federationResolverInstance =
-            federationResolver.orElseGet {
-                DefaultDgsFederationResolver(
-                    entityFetcherRegistry,
-                    dataFetcherExceptionHandler
-                )
-            }
-
-        val entityFetcher = federationResolverInstance.entitiesFetcher()
-        val typeResolver = federationResolverInstance.typeResolver()
-        val codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry().fieldVisibility(DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY)
-        if (defaultDataFetcherFactory.isPresent) {
-            codeRegistryBuilder.defaultDataFetcher(defaultDataFetcherFactory.get())
-        }
-
-        runtimeWiringBuilder.codeRegistry(codeRegistryBuilder).fieldVisibility(DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY)
-
-        dgsComponents.asSequence()
-            .mapNotNull { dgsComponent -> invokeDgsTypeDefinitionRegistry(dgsComponent, mergedRegistry) }
-            .fold(mergedRegistry) { a, b -> a.merge(b) }
-        findScalars(applicationContext, runtimeWiringBuilder)
-        findDirectives(applicationContext, runtimeWiringBuilder)
-        findDataFetchers(dgsComponents, codeRegistryBuilder, mergedRegistry)
-        findTypeResolvers(dgsComponents, runtimeWiringBuilder, mergedRegistry)
-        findEntityFetchers(dgsComponents, mergedRegistry, scalars)
-
-        dgsComponents.forEach { dgsComponent ->
-            invokeDgsCodeRegistry(
-                dgsComponent,
-                codeRegistryBuilder,
-                mergedRegistry
-            )
-        }
-
-        runtimeWiringBuilder.codeRegistry(codeRegistryBuilder.build())
-
-        dgsComponents.forEach { dgsComponent -> invokeDgsRuntimeWiring(dgsComponent, runtimeWiringBuilder) }
-
-        return runtimeWiringBuilder
-    }
-
-    fun transformFederation(typeDefinitionRegistry: TypeDefinitionRegistry, runtimeWiring: RuntimeWiring): GraphQLSchema {
-        val federationResolverInstance =
-            federationResolver.orElseGet {
-                DefaultDgsFederationResolver(
-                    entityFetcherRegistry,
-                    dataFetcherExceptionHandler
-                )
-            }
-
-        val entityFetcher = federationResolverInstance.entitiesFetcher()
-        val typeResolver = federationResolverInstance.typeResolver()
-        return Federation.transform(typeDefinitionRegistry, runtimeWiring).fetchEntities(entityFetcher)
-            .resolveEntityType(typeResolver).build()
     }
 
     private fun invokeDgsTypeDefinitionRegistry(

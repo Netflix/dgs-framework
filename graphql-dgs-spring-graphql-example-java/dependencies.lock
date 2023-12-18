@@ -611,6 +611,12 @@
             ],
             "locked": "1.16.0"
         },
+        "io.micrometer:context-propagation": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
+            ],
+            "locked": "1.1.0"
+        },
         "io.micrometer:micrometer-core": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
@@ -1172,6 +1178,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ],
             "locked": "1.16.0"
+        },
+        "io.micrometer:context-propagation": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
+            ],
+            "locked": "1.1.0"
         },
         "io.micrometer:micrometer-core": {
             "firstLevelTransitive": [
@@ -1765,6 +1777,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ],
             "locked": "1.16.0"
+        },
+        "io.micrometer:context-propagation": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
+            ],
+            "locked": "1.1.0"
         },
         "io.micrometer:micrometer-core": {
             "firstLevelTransitive": [

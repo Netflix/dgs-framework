@@ -17,24 +17,17 @@
 package com.netflix.graphql.dgs.autoconfig
 
 import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
-import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.env.EnvironmentPostProcessor
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.MapPropertySource
 import kotlin.collections.MutableMap
-import kotlin.collections.isNotEmpty
-import kotlin.collections.joinToString
-import kotlin.collections.map
-import kotlin.collections.mapNotNull
 import kotlin.collections.mutableMapOf
 import kotlin.collections.set
 
 class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
     override fun postProcessEnvironment(environment: ConfigurableEnvironment, application: SpringApplication) {
         val properties = mutableMapOf<String, Any>()
-
-        defaultSchemaLocation(environment, properties)
 
         properties["spring.graphql.graphiql.enabled"] = environment.getProperty("dgs.graphql.graphiql.enabled") ?: true
         properties["spring.graphql.graphiql.path"] = environment.getProperty("dgs.graphql.graphiql.path") ?: "/graphiql"
@@ -59,25 +52,6 @@ class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
 
         environment.getProperty("spring.graphql.schema.fileExtensions")?.let {
             throw InvalidDgsConfigurationException("Do not set spring.graphql.schema.fileExtensions, instead use dgs.graphql.schema-locations")
-        }
-
-        val dgsLocation =
-            environment.getProperty("dgs.graphql.schema-locations") ?: DgsSchemaProvider.DEFAULT_SCHEMA_LOCATION
-
-        val schemaDirs = dgsLocation.split(",").map {
-            it.substringBeforeLast("/") + "/"
-        }
-
-        val fileExtensions = dgsLocation.split(",").mapNotNull {
-            val extension = it.substringAfterLast("/")
-            extension.ifBlank {
-                null
-            }
-        }
-
-        properties["spring.graphql.schema.locations"] = schemaDirs.joinToString(",")
-        if (fileExtensions.isNotEmpty()) {
-            properties["spring.graphql.schema.fileExtensions"] = fileExtensions.joinToString(",")
         }
     }
 }
