@@ -397,9 +397,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
             "locked": "6.1.1"
-        },
-        "org.springframework:spring-webflux": {
-            "locked": "6.1.1"
         }
     },
     "kotlinBuildToolsApiClasspath": {
@@ -664,9 +661,6 @@
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.0"
         },
-        "org.springframework.boot:spring-boot-starter": {
-            "locked": "3.2.0"
-        },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
         },
@@ -680,9 +674,6 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "6.1.1"
-        },
-        "org.springframework:spring-webflux": {
             "locked": "6.1.1"
         }
     },
@@ -794,17 +785,11 @@
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.0"
         },
-        "org.springframework.boot:spring-boot-starter": {
-            "locked": "3.2.0"
-        },
         "org.springframework.boot:spring-boot-starter-test": {
             "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
-        },
-        "org.springframework:spring-webflux": {
-            "locked": "6.1.1"
         }
     },
     "testRuntimeClasspath": {
@@ -981,9 +966,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
-            "locked": "6.1.1"
-        },
-        "org.springframework:spring-webflux": {
             "locked": "6.1.1"
         }
     }

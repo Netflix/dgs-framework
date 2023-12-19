@@ -26,7 +26,7 @@ import org.springframework.mock.env.MockEnvironment
 
 class DgsSpringGraphQLEnvironmentPostProcessorTest {
     val application = mockk<SpringApplication>()
-    lateinit var env : MockEnvironment
+    lateinit var env: MockEnvironment
 
     @BeforeEach
     fun setup() {

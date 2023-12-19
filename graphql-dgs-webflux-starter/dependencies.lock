@@ -548,7 +548,6 @@
         },
         "org.springframework.boot:spring-boot-starter": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure"
             ],
@@ -580,7 +579,6 @@
         },
         "org.springframework:spring-webflux": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure"
             ],
             "locked": "6.1.1"
@@ -959,7 +957,6 @@
         },
         "org.springframework.boot:spring-boot-starter": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure"
             ],
@@ -988,7 +985,6 @@
         },
         "org.springframework:spring-webflux": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure"
             ],
             "locked": "6.1.1"
@@ -1376,7 +1372,6 @@
         },
         "org.springframework.boot:spring-boot-starter": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure"
             ],
@@ -1408,7 +1403,6 @@
         },
         "org.springframework:spring-webflux": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure"
             ],
             "locked": "6.1.1"

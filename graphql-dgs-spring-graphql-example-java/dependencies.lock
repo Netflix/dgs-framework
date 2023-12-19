@@ -4,7 +4,7 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
             "locked": "3.2.0"
@@ -147,7 +147,7 @@
             "locked": "3.6.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -165,7 +165,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.0"
@@ -188,10 +188,10 @@
     },
     "jmh": {
         "org.openjdk.jmh:jmh-core": {
-            "locked": "1.36"
+            "locked": "1.37"
         },
         "org.openjdk.jmh:jmh-generator-annprocess": {
-            "locked": "1.36"
+            "locked": "1.37"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.36"
@@ -202,7 +202,7 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.0"
@@ -339,7 +339,7 @@
             "locked": "3.6.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -357,13 +357,13 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.openjdk.jmh:jmh-core": {
-            "locked": "1.36"
+            "locked": "1.37"
         },
         "org.openjdk.jmh:jmh-generator-annprocess": {
-            "locked": "1.36"
+            "locked": "1.37"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.36"
@@ -426,6 +426,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
@@ -482,6 +483,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
+                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -526,6 +528,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
+                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -535,6 +538,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-reactive": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
             ],
             "project": true
         },
@@ -605,7 +614,13 @@
             "locked": "1.12.0"
         },
         "io.mockk:mockk": {
-            "locked": "1.13.5"
+            "locked": "1.13.8"
+        },
+        "io.projectreactor.kotlin:reactor-kotlin-extensions": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-reactive"
+            ],
+            "locked": "1.2.2"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -617,12 +632,6 @@
         "io.projectreactor:reactor-test": {
             "locked": "3.6.0"
         },
-        "jakarta.servlet:jakarta.servlet-api": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
-            ],
-            "locked": "6.0.0"
-        },
         "net.bytebuddy:byte-buddy": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
@@ -633,7 +642,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.9.0"
+            "locked": "2.0.2"
         },
         "org.apache.commons:commons-lang3": {
             "firstLevelTransitive": [
@@ -642,14 +651,14 @@
             "locked": "3.13.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -659,6 +668,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
+                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -669,11 +679,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-reactive"
             ],
             "locked": "1.7.3"
         },
@@ -696,10 +707,10 @@
             "locked": "23.0.0"
         },
         "org.openjdk.jmh:jmh-core": {
-            "locked": "1.36"
+            "locked": "1.37"
         },
         "org.openjdk.jmh:jmh-generator-annprocess": {
-            "locked": "1.36"
+            "locked": "1.37"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.36"
@@ -714,6 +725,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
             ],
@@ -724,8 +736,7 @@
         },
         "org.springframework.boot:spring-boot-starter": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure"
             ],
             "locked": "3.2.0"
         },
@@ -734,7 +745,6 @@
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter"
             ],
             "locked": "3.2.0"
@@ -743,22 +753,19 @@
             "locked": "3.2.0"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter"
-            ],
             "locked": "3.2.0"
         },
         "org.springframework.boot:spring-boot-starter-webflux": {
             "locked": "3.2.0"
         },
-        "org.springframework.boot:spring-boot-starter-websocket": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter"
-            ],
-            "locked": "3.2.0"
-        },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
+        },
+        "org.springframework.graphql:spring-graphql": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
+            ],
+            "locked": "1.2.4"
         },
         "org.springframework:spring-context": {
             "firstLevelTransitive": [
@@ -785,13 +792,6 @@
             ],
             "locked": "6.1.1"
         },
-        "org.springframework:spring-webmvc": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter"
-            ],
-            "locked": "6.1.1"
-        },
         "org.springframework:spring-websocket": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
@@ -806,10 +806,10 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.jetbrains.kotlin:kotlin-build-tools-impl": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.0"
@@ -823,10 +823,10 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.0"
@@ -840,7 +840,7 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.0"
@@ -854,10 +854,10 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.0"
@@ -871,10 +871,10 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.0"
@@ -888,10 +888,10 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.0"
@@ -905,10 +905,10 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.0"
@@ -922,7 +922,7 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.0"
@@ -936,7 +936,7 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.0"
@@ -984,6 +984,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
@@ -1040,6 +1041,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
+                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -1084,6 +1086,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
+                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -1093,6 +1096,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-reactive": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
             ],
             "project": true
         },
@@ -1162,18 +1171,18 @@
             ],
             "locked": "1.12.0"
         },
+        "io.projectreactor.kotlin:reactor-kotlin-extensions": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-reactive"
+            ],
+            "locked": "1.2.2"
+        },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared"
             ],
             "locked": "3.6.0"
-        },
-        "jakarta.servlet:jakarta.servlet-api": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
-            ],
-            "locked": "6.0.0"
         },
         "net.bytebuddy:byte-buddy": {
             "firstLevelTransitive": [
@@ -1185,7 +1194,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.9.0"
+            "locked": "2.0.2"
         },
         "org.apache.commons:commons-lang3": {
             "firstLevelTransitive": [
@@ -1194,14 +1203,14 @@
             "locked": "3.13.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -1211,6 +1220,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
+                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -1221,11 +1231,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-reactive"
             ],
             "locked": "1.7.3"
         },
@@ -1257,6 +1268,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
             ],
@@ -1267,8 +1279,7 @@
         },
         "org.springframework.boot:spring-boot-starter": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure"
             ],
             "locked": "3.2.0"
         },
@@ -1277,25 +1288,21 @@
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter"
             ],
             "locked": "3.2.0"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter"
-            ],
-            "locked": "3.2.0"
-        },
-        "org.springframework.boot:spring-boot-starter-websocket": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter"
-            ],
             "locked": "3.2.0"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
+        },
+        "org.springframework.graphql:spring-graphql": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
+            ],
+            "locked": "1.2.4"
         },
         "org.springframework:spring-context": {
             "firstLevelTransitive": [
@@ -1322,13 +1329,6 @@
             ],
             "locked": "6.1.1"
         },
-        "org.springframework:spring-webmvc": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter"
-            ],
-            "locked": "6.1.1"
-        },
         "org.springframework:spring-websocket": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
@@ -1343,7 +1343,7 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.0"
@@ -1474,7 +1474,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.13.5"
+            "locked": "1.13.8"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -1486,7 +1486,7 @@
             "locked": "3.6.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -1504,7 +1504,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.0"
@@ -1570,6 +1570,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
@@ -1626,6 +1627,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
+                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -1670,6 +1672,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
+                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -1679,6 +1682,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-error-types"
+            ],
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-reactive": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
             ],
             "project": true
         },
@@ -1749,7 +1758,13 @@
             "locked": "1.12.0"
         },
         "io.mockk:mockk": {
-            "locked": "1.13.5"
+            "locked": "1.13.8"
+        },
+        "io.projectreactor.kotlin:reactor-kotlin-extensions": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-reactive"
+            ],
+            "locked": "1.2.2"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -1761,12 +1776,6 @@
         "io.projectreactor:reactor-test": {
             "locked": "3.6.0"
         },
-        "jakarta.servlet:jakarta.servlet-api": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
-            ],
-            "locked": "6.0.0"
-        },
         "net.bytebuddy:byte-buddy": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
@@ -1777,7 +1786,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ],
-            "locked": "1.9.0"
+            "locked": "2.0.2"
         },
         "org.apache.commons:commons-lang3": {
             "firstLevelTransitive": [
@@ -1786,14 +1795,14 @@
             "locked": "3.13.0"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -1803,6 +1812,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
+                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -1813,11 +1823,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.21"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-reactive"
             ],
             "locked": "1.7.3"
         },
@@ -1849,6 +1860,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
             ],
@@ -1859,8 +1871,7 @@
         },
         "org.springframework.boot:spring-boot-starter": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure"
             ],
             "locked": "3.2.0"
         },
@@ -1869,7 +1880,6 @@
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter"
             ],
             "locked": "3.2.0"
@@ -1878,22 +1888,19 @@
             "locked": "3.2.0"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter"
-            ],
             "locked": "3.2.0"
         },
         "org.springframework.boot:spring-boot-starter-webflux": {
             "locked": "3.2.0"
         },
-        "org.springframework.boot:spring-boot-starter-websocket": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter"
-            ],
-            "locked": "3.2.0"
-        },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2022.0.0"
+        },
+        "org.springframework.graphql:spring-graphql": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
+            ],
+            "locked": "1.2.4"
         },
         "org.springframework:spring-context": {
             "firstLevelTransitive": [
@@ -1917,13 +1924,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets"
-            ],
-            "locked": "6.1.1"
-        },
-        "org.springframework:spring-webmvc": {
-            "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter"
             ],
             "locked": "6.1.1"
         },

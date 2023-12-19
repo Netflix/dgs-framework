@@ -36,9 +36,9 @@ class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
 
         defaultSchemaLocation(environment, properties)
 
-        properties["spring.graphql.graphiql.enabled"] = environment.getProperty("dgs.graphql.graphiql.enabled")?:true
-        properties["spring.graphql.graphiql.path"] = environment.getProperty("dgs.graphql.graphiql.path")?:"/graphiql"
-        properties["spring.graphql.websocket.connection-init-timeout"] = environment.getProperty("dgs.graphql.websocket.connection-init-timeout")?:"10s"
+        properties["spring.graphql.graphiql.enabled"] = environment.getProperty("dgs.graphql.graphiql.enabled") ?: true
+        properties["spring.graphql.graphiql.path"] = environment.getProperty("dgs.graphql.graphiql.path") ?: "/graphiql"
+        properties["spring.graphql.websocket.connection-init-timeout"] = environment.getProperty("dgs.graphql.websocket.connection-init-timeout") ?: "10s"
 
         environment.getProperty("dgs.graphql.websocket.path")?.let {
             properties["spring.graphql.websocket.path"] = environment.getProperty("dgs.graphql.websocket.path")!!
@@ -62,7 +62,7 @@ class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
         }
 
         val dgsLocation =
-                environment.getProperty("dgs.graphql.schema-locations") ?: DgsSchemaProvider.DEFAULT_SCHEMA_LOCATION
+            environment.getProperty("dgs.graphql.schema-locations") ?: DgsSchemaProvider.DEFAULT_SCHEMA_LOCATION
 
         val schemaDirs = dgsLocation.split(",").map {
             it.substringBeforeLast("/") + "/"
@@ -79,7 +79,5 @@ class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
         if (fileExtensions.isNotEmpty()) {
             properties["spring.graphql.schema.fileExtensions"] = fileExtensions.joinToString(",")
         }
-
-
     }
 }

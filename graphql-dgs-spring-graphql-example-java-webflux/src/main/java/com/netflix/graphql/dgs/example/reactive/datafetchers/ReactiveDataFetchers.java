@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2023 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-dependencies {
-    api(project(":graphql-dgs"))
-    compileOnly("org.springframework.boot:spring-boot-starter")
-    compileOnly("org.springframework:spring-webflux")
+package com.netflix.graphql.dgs.example.reactive.datafetchers;
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
-    testImplementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
-    testImplementation("io.projectreactor:reactor-test")
+import com.netflix.graphql.dgs.DgsComponent;
+import com.netflix.graphql.dgs.DgsQuery;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+@DgsComponent
+public class ReactiveDataFetchers {
+    @DgsQuery
+    public Mono<String> mono() {
+        return Mono.just("hello mono");
+    }
+
+    @DgsQuery
+    public Flux<Integer> flux() {
+        return Flux.just(1, 2, 3);
+    }
 }

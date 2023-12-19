@@ -16,13 +16,16 @@
 
 dependencies {
     implementation(project(":graphql-dgs"))
-        //api(project(":graphql-dgs-spring-webmvc"))
+    implementation(project(":graphql-dgs-reactive"))
     implementation("org.springframework:spring-web")
-    implementation("org.springframework.boot:spring-boot-starter")
+    implementation("org.springframework.boot:spring-boot-autoconfigure")
 
-    implementation("jakarta.servlet:jakarta.servlet-api")
-    implementation("org.springframework:spring-webmvc")
-    implementation("org.springframework.boot:spring-boot-starter-graphql:3.2.0")
+    compileOnly("jakarta.servlet:jakarta.servlet-api")
+    compileOnly("org.springframework:spring-webmvc")
+
+    compileOnly("org.springframework:spring-webflux")
+
+    implementation("org.springframework.graphql:spring-graphql")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 

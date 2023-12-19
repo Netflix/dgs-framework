@@ -20,9 +20,5 @@ dependencies {
     api(project(":graphql-dgs-spring-graphql"))
     api(project(":graphql-dgs-client"))
     api(project(":graphql-error-types"))
-    api("org.springframework.boot:spring-boot-starter-graphql:3.2.0")
-
-    implementation("org.springframework.boot:spring-boot-starter-websocket")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework:spring-webmvc")
+    api("org.springframework.boot:spring-boot-starter-graphql")
 }
