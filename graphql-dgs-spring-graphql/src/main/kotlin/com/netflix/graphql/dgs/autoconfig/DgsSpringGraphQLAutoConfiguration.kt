@@ -54,6 +54,7 @@ import org.springframework.core.env.Environment
 import org.springframework.graphql.execution.DefaultExecutionGraphQlService
 import org.springframework.graphql.execution.RuntimeWiringConfigurer
 import org.springframework.web.bind.support.WebDataBinderFactory
+import org.springframework.web.filter.reactive.ServerWebExchangeContextFilter
 import org.springframework.web.method.annotation.RequestHeaderMapMethodArgumentResolver
 import org.springframework.web.method.annotation.RequestHeaderMethodArgumentResolver
 import org.springframework.web.method.annotation.RequestParamMapMethodArgumentResolver
@@ -129,7 +130,6 @@ open class DgsSpringGraphQLAutoConfiguration {
                 }
         }
     }
-
 
     @Bean
     open fun springGraphQLDgsQueryExecutor(
@@ -237,6 +237,11 @@ open class DgsSpringGraphQLAutoConfiguration {
             dgsReactiveCustomContextBuilderWithRequest: Optional<DgsReactiveCustomContextBuilderWithRequest<*>>
         ): DefaultDgsReactiveGraphQLContextBuilder {
             return DefaultDgsReactiveGraphQLContextBuilder(dgsReactiveCustomContextBuilderWithRequest)
+        }
+
+        @Bean
+        open fun serverWebExchangeContextFilter(): ServerWebExchangeContextFilter {
+            return ServerWebExchangeContextFilter()
         }
     }
 

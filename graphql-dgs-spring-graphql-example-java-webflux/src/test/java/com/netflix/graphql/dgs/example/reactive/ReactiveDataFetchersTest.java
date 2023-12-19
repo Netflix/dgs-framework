@@ -21,8 +21,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpCookie;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.reactive.function.server.MockServerRequest;
+import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import java.util.Collections;
@@ -70,7 +73,9 @@ public class ReactiveDataFetchersTest {
 
     @Test
     void webRequest() {
-        MockServerRequest mockServerRequest = MockServerRequest.builder().cookie(new HttpCookie("mydgscookie", "DGS cookies are yummy")).build();
+        MockServerRequest mockServerRequest = MockServerRequest.builder()
+                .exchange(MockServerWebExchange.builder(MockServerHttpRequest.get("/graphql").cookie(new HttpCookie("mydgscookie", "DGS cookies are yummy")).build()).build())
+                .cookie(new HttpCookie("mydgscookie", "DGS cookies are yummy")).build();
         var result = queryExecutor.execute("{ withCookie }", Collections.emptyMap(), Collections.emptyMap(), null, "", mockServerRequest).block();
         assertThat(result.isDataPresent()).isTrue();
         Map<String, Object> data = result.getData();
