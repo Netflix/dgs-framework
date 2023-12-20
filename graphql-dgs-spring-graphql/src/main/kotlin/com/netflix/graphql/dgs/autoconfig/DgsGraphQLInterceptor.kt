@@ -42,8 +42,12 @@ class DgsGraphQLInterceptor(
             (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes).request
         } else null
 
-        val webRequest: WebRequest = ServletWebRequest(servletRequest)
-        val dgsContext = dgsContextBuilder.build(DgsWebMvcRequestData(request.extensions, request.headers, webRequest))
+        val dgsContext = if(servletRequest != null) {
+            val webRequest: WebRequest = ServletWebRequest(servletRequest)
+            dgsContextBuilder.build(DgsWebMvcRequestData(request.extensions, request.headers, webRequest))
+        } else {
+            dgsContextBuilder.build(DgsWebMvcRequestData(request.extensions, request.headers))
+        }
         val graphQLContextFuture = CompletableFuture<GraphQLContext>()
         val dataLoaderRegistry = dgsDataLoaderProvider.buildRegistryWithContextSupplier { graphQLContextFuture.get() }
 

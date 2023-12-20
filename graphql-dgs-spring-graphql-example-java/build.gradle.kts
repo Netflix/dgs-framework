@@ -19,8 +19,10 @@ dependencies {
     implementation(project(":graphql-dgs-example-shared"))
 
     implementation(project(":graphql-dgs-pagination"))
-    implementation(project(":graphql-dgs-subscriptions-websockets-autoconfigure"))
+    implementation(project(":graphql-dgs-subscriptions-graphql-sse-autoconfigure"))
+
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("io.projectreactor:reactor-core")
 
     // Adding spring-graphql integration instead of the regular webmvc-starter
