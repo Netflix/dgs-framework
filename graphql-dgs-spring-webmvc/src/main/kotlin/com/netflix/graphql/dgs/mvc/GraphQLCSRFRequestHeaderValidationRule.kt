@@ -48,7 +48,7 @@ class GraphQLCSRFRequestHeaderValidationRule : GraphQLRequestHeaderValidationRul
          * In other words, if the `content-type` of the request matches any of these the browser will not enforce a CORS
          * check.
          *
-         * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+         * See [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS).
          */
         val NON_PREFLIGHTED_CONTENT_TYPES = setOf(
             MediaType.APPLICATION_FORM_URLENCODED,
@@ -64,7 +64,7 @@ class GraphQLCSRFRequestHeaderValidationRule : GraphQLRequestHeaderValidationRul
          *
          * Apollo Client Web, Apollo iOS, and Apollo Kotlin always send `x-apollo-operation-name` for example.
          *
-         * @see https://github.com/apollographql/apollo-server/blob/version-4/packages/server/src/preventCsrf.ts
+         * See [](https://github.com/apollographql/apollo-server/blob/version-4/packages/server/src/preventCsrf.ts)
          */
         val GRAPHQL_PREFLIGHT_REQUESTS_HEADERS = listOf(
             HEADER_APOLLO_REQUIRE_PREFLIGHT,

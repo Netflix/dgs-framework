@@ -20,11 +20,13 @@ import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.autoconfig.testcomponents.CustomContextBuilderConfig
 import com.netflix.graphql.dgs.autoconfig.testcomponents.CustomDataFetcherFactoryFixtures
+import com.netflix.graphql.dgs.autoconfig.testcomponents.CustomDataLoaderOptionsProvider
 import com.netflix.graphql.dgs.autoconfig.testcomponents.CustomInputObjectMapperConfig
 import com.netflix.graphql.dgs.autoconfig.testcomponents.DataFetcherWithInputObject
 import com.netflix.graphql.dgs.autoconfig.testcomponents.DataLoaderConfig
 import com.netflix.graphql.dgs.autoconfig.testcomponents.HelloDataFetcherConfig
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
+import com.netflix.graphql.dgs.internal.DefaultDataLoaderOptionsProvider
 import com.netflix.graphql.dgs.internal.InputObjectMapper
 import com.netflix.graphql.dgs.internal.method.ContinuationArgumentResolver
 import com.netflix.graphql.dgs.internal.method.DataFetchingEnvironmentArgumentResolver
@@ -39,8 +41,7 @@ import org.springframework.boot.test.context.runner.WebApplicationContextRunner
 import org.springframework.core.io.ClassPathResource
 
 class DgsAutoConfigurationTest {
-    private val context =
-        WebApplicationContextRunner().withConfiguration(AutoConfigurations.of(DgsAutoConfiguration::class.java))!!
+    private val context = WebApplicationContextRunner().withConfiguration(AutoConfigurations.of(DgsAutoConfiguration::class.java))
 
     @Test
     fun noSchemaException() {
@@ -152,7 +153,7 @@ class DgsAutoConfigurationTest {
     fun `DGS custom data loader options beans is available and used`() {
         context.withUserConfiguration(DataLoaderConfig::class.java).run { ctx ->
             assertThat(ctx).getBean(DgsDataLoaderOptionsProvider::class.java).isNotNull()
-            assertThat(ctx).getBean(DgsDataLoaderOptionsProvider::class.java).javaClass.simpleName.equals("CustomDataLoaderOptionsProvider")
+            assertThat(ctx).getBean(DgsDataLoaderOptionsProvider::class.java).isExactlyInstanceOf(CustomDataLoaderOptionsProvider::class.java)
         }
     }
 
@@ -160,7 +161,7 @@ class DgsAutoConfigurationTest {
     fun `DGS default data loader options bean is available`() {
         context.run { ctx ->
             assertThat(ctx).getBean(DgsDataLoaderOptionsProvider::class.java).isNotNull()
-            assertThat(ctx).getBean(DgsDataLoaderOptionsProvider::class.java).javaClass.simpleName.equals("DefaultDataLoaderOptionsProvider")
+            assertThat(ctx).getBean(DgsDataLoaderOptionsProvider::class.java).isExactlyInstanceOf(DefaultDataLoaderOptionsProvider::class.java)
         }
     }
 

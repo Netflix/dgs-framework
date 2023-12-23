@@ -312,7 +312,7 @@ open class DgsAutoConfiguration(
     @Bean
     @Qualifier("dgsAsyncTaskExecutor")
     @ConditionalOnJava21
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = ["dgsAsyncTaskExecutor"])
     @ConditionalOnProperty(name = ["dgs.graphql.virtualthreads.enabled"], havingValue = "true", matchIfMissing = false)
     open fun virtualThreadsTaskExecutor(): AsyncTaskExecutor {
         LOG.info("Enabling virtual threads for DGS")
@@ -335,7 +335,7 @@ open class DgsAutoConfiguration(
     open fun mockRequestHeaderCustomizer(): DgsQueryExecutorRequestCustomizer {
         /**
          * [DgsQueryExecutorRequestCustomizer] implementation which copies headers into
-         * the request if the request is [MockHttpServletRequest]; intendeded to support
+         * the request if the request is [MockHttpServletRequest]; intended to support
          * test use cases.
          */
         return object : DgsQueryExecutorRequestCustomizer {

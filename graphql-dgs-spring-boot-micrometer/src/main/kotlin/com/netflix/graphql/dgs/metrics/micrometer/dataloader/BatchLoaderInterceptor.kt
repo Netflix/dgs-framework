@@ -3,7 +3,6 @@ package com.netflix.graphql.dgs.metrics.micrometer.dataloader
 import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlMetric
 import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlTag
 import io.micrometer.core.instrument.MeterRegistry
-import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Timer
 import net.bytebuddy.implementation.bind.annotation.Pipe
 import org.dataloader.BatchLoader
@@ -24,12 +23,8 @@ internal class BatchLoaderInterceptor(
                 logger.debug("Finished timer[{}] for BatchLoader.", ID)
                 timerSampler.stop(
                     Timer.builder(ID)
-                        .tags(
-                            listOf(
-                                Tag.of(GqlTag.LOADER_NAME.key, name),
-                                Tag.of(GqlTag.LOADER_BATCH_SIZE.key, result.size.toString())
-                            )
-                        ).register(registry)
+                        .tags(GqlTag.LOADER_BATCH_SIZE.key, result.size.toString(), GqlTag.LOADER_NAME.key, name)
+                        .register(registry)
                 )
             }
         } catch (exception: Exception) {

@@ -10,15 +10,16 @@ import org.dataloader.BatchLoader
 import org.dataloader.BatchLoaderWithContext
 import org.dataloader.MappedBatchLoader
 import org.dataloader.MappedBatchLoaderWithContext
+import java.lang.reflect.Constructor
 
 class DgsDataLoaderInstrumentationProvider(
     private val meterRegistrySupplier: DgsMeterRegistrySupplier
 ) : DataLoaderInstrumentationExtensionProvider {
 
-    private val batchLoaderClasses = mutableMapOf<String, Class<out BatchLoader<*, *>>>()
-    private val batchLoaderWithContextClasses = mutableMapOf<String, Class<out BatchLoaderWithContext<*, *>>>()
-    private val mappedBatchLoaderClasses = mutableMapOf<String, Class<out MappedBatchLoader<*, *>>>()
-    private val mappedBatchLoaderWithContextClasses = mutableMapOf<String, Class<out MappedBatchLoaderWithContext<*, *>>>()
+    private val batchLoaderClasses = mutableMapOf<String, Constructor<out BatchLoader<*, *>>>()
+    private val batchLoaderWithContextClasses = mutableMapOf<String, Constructor<out BatchLoaderWithContext<*, *>>>()
+    private val mappedBatchLoaderClasses = mutableMapOf<String, Constructor<out MappedBatchLoader<*, *>>>()
+    private val mappedBatchLoaderWithContextClasses = mutableMapOf<String, Constructor<out MappedBatchLoaderWithContext<*, *>>>()
 
     override fun provide(original: BatchLoader<*, *>, name: String): BatchLoader<*, *> {
         return batchLoaderClasses.getOrPut(name) {
@@ -34,6 +35,7 @@ class DgsDataLoaderInstrumentationProvider(
                 .make()
                 .load(javaClass.classLoader)
                 .loaded
+                .getDeclaredConstructor()
         }.newInstance()
     }
 
@@ -50,6 +52,7 @@ class DgsDataLoaderInstrumentationProvider(
                 .make()
                 .load(javaClass.classLoader)
                 .loaded
+                .getDeclaredConstructor()
         }.newInstance()
     }
 
@@ -67,6 +70,7 @@ class DgsDataLoaderInstrumentationProvider(
                 .make()
                 .load(javaClass.classLoader)
                 .loaded
+                .getDeclaredConstructor()
         }.newInstance()
     }
 
@@ -85,6 +89,7 @@ class DgsDataLoaderInstrumentationProvider(
                 .make()
                 .load(javaClass.classLoader)
                 .loaded
+                .getDeclaredConstructor()
         }.newInstance()
     }
 }

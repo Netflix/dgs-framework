@@ -72,7 +72,7 @@ class CompletableFutureWrapperTest {
     @Test
     fun `A method should successfully get wrapped`() {
         val completableFutureWrapper = CompletableFutureWrapper(mockTaskExecutor)
-        val wrapped = completableFutureWrapper.wrapInCompletableFuture { fun(): String { return "hello" } }
+        val wrapped = completableFutureWrapper.wrapInCompletableFuture(fun(): String { return "hello" })
         assertThat(wrapped).isInstanceOf(CompletableFuture::class.java)
     }
 }
