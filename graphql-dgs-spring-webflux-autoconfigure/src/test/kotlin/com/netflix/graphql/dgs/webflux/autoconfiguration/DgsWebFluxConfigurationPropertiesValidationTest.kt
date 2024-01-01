@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.webmvc.autoconfigure
+package com.netflix.graphql.dgs.webflux.autoconfiguration
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -23,7 +23,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import org.springframework.context.annotation.Configuration
 
-class DgsWebMvcConfigurationPropertiesValidationTest {
+class DgsWebFluxConfigurationPropertiesValidationTest {
 
     private val context = ApplicationContextRunner().withConfiguration(
         AutoConfigurations.of(
@@ -148,6 +148,6 @@ class DgsWebMvcConfigurationPropertiesValidationTest {
     }
 
     @Configuration
-    @EnableConfigurationProperties(DgsWebMvcConfigurationProperties::class)
+    @EnableConfigurationProperties(DgsWebfluxConfigurationProperties::class)
     open class MockConfigPropsAutoConfiguration
 }

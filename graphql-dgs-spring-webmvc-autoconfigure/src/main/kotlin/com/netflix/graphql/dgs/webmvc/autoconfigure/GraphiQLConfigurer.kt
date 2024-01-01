@@ -49,7 +49,7 @@ open class GraphiQLConfigurer(
     }
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
-        val graphqlPath = servletContext.contextPath + configProps.path
+        val graphqlPath = servletContext.contextPath + configProps.graphiql.subpath + configProps.path
         logger.info("Configuring GraphiQL to use GraphQL endpoint at '{}'", graphqlPath)
         registry
             .addResourceHandler("/graphiql/**")
