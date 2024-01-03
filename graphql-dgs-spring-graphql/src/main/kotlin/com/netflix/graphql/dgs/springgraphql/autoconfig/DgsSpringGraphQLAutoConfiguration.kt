@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Netflix, Inc.
+ * Copyright 2024 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.autoconfig
+package com.netflix.graphql.dgs.springgraphql.autoconfig
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
@@ -29,7 +29,11 @@ import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithReque
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
 import com.netflix.graphql.dgs.reactive.internal.method.SyncHandlerMethodArgumentResolverAdapter
+import com.netflix.graphql.dgs.springgraphql.DgsGraphQLInterceptor
 import com.netflix.graphql.dgs.springgraphql.DgsGraphQLSourceBuilder
+import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsQueryExecutor
+import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsReactiveQueryExecutor
+import com.netflix.graphql.dgs.springgraphql.WebFluxDgsGraphQLInterceptor
 import graphql.execution.instrumentation.Instrumentation
 import graphql.schema.idl.RuntimeWiring
 import org.reactivestreams.Publisher

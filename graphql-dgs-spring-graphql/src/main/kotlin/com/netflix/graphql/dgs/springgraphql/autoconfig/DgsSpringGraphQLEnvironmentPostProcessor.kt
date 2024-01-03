@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.autoconfig
+package com.netflix.graphql.dgs.springgraphql.autoconfig
 
 import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
 import org.springframework.boot.SpringApplication

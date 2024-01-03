@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Netflix, Inc.
+ * Copyright 2024 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.autoconfig
+package com.netflix.graphql.dgs.springgraphql.autoconfig
 
 import io.mockk.mockk
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.SpringApplication
@@ -36,7 +36,7 @@ class DgsSpringGraphQLEnvironmentPostProcessorTest {
     fun `Default for graphiql-enabled`() {
         DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
 
-        assertThat(env.getProperty("spring.graphql.graphiql.enabled")).isEqualTo("true")
+        Assertions.assertThat(env.getProperty("spring.graphql.graphiql.enabled")).isEqualTo("true")
     }
 
     @Test
@@ -45,14 +45,14 @@ class DgsSpringGraphQLEnvironmentPostProcessorTest {
 
         DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
 
-        assertThat(env.getProperty("spring.graphql.graphiql.enabled")).isEqualTo("false")
+        Assertions.assertThat(env.getProperty("spring.graphql.graphiql.enabled")).isEqualTo("false")
     }
 
     @Test
     fun `Default for graphiql-path`() {
         DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
 
-        assertThat(env.getProperty("spring.graphql.graphiql.path")).isEqualTo("/graphiql")
+        Assertions.assertThat(env.getProperty("spring.graphql.graphiql.path")).isEqualTo("/graphiql")
     }
 
     @Test
@@ -61,14 +61,14 @@ class DgsSpringGraphQLEnvironmentPostProcessorTest {
 
         DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
 
-        assertThat(env.getProperty("spring.graphql.graphiql.path")).isEqualTo("/somepath")
+        Assertions.assertThat(env.getProperty("spring.graphql.graphiql.path")).isEqualTo("/somepath")
     }
 
     @Test
     fun `Default for websocket-connection-timeout`() {
         DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
 
-        assertThat(env.getProperty("spring.graphql.websocket.connection-init-timeout")).isEqualTo("10s")
+        Assertions.assertThat(env.getProperty("spring.graphql.websocket.connection-init-timeout")).isEqualTo("10s")
     }
 
     @Test
@@ -77,6 +77,6 @@ class DgsSpringGraphQLEnvironmentPostProcessorTest {
 
         DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
 
-        assertThat(env.getProperty("spring.graphql.websocket.connection-init-timeout")).isEqualTo("30s")
+        Assertions.assertThat(env.getProperty("spring.graphql.websocket.connection-init-timeout")).isEqualTo("30s")
     }
 }
