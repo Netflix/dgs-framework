@@ -29,11 +29,11 @@ import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithReque
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
 import com.netflix.graphql.dgs.reactive.internal.method.SyncHandlerMethodArgumentResolverAdapter
-import com.netflix.graphql.dgs.springgraphql.DgsGraphQLInterceptor
+import com.netflix.graphql.dgs.springgraphql.webmvc.DgsWebMvcGraphQLInterceptor
 import com.netflix.graphql.dgs.springgraphql.DgsGraphQLSourceBuilder
 import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsReactiveQueryExecutor
-import com.netflix.graphql.dgs.springgraphql.WebFluxDgsGraphQLInterceptor
+import com.netflix.graphql.dgs.springgraphql.webflux.DgsWebFluxGraphQLInterceptor
 import graphql.execution.instrumentation.Instrumentation
 import graphql.schema.idl.RuntimeWiring
 import org.reactivestreams.Publisher
@@ -157,8 +157,8 @@ open class DgsSpringGraphQLAutoConfiguration {
         open fun dgsGraphQlInterceptor(
             dgsDataLoaderProvider: DgsDataLoaderProvider,
             dgsDefaultContextBuilder: DefaultDgsGraphQLContextBuilder
-        ): DgsGraphQLInterceptor {
-            return DgsGraphQLInterceptor(
+        ): DgsWebMvcGraphQLInterceptor {
+            return DgsWebMvcGraphQLInterceptor(
                 dgsDataLoaderProvider,
                 dgsDefaultContextBuilder
             )
@@ -249,8 +249,8 @@ open class DgsSpringGraphQLAutoConfiguration {
         open fun webFluxDgsGraphQLInterceptor(
             dgsDataLoaderProvider: DgsDataLoaderProvider,
             defaultDgsReactiveGraphQLContextBuilder: DefaultDgsReactiveGraphQLContextBuilder
-        ): WebFluxDgsGraphQLInterceptor {
-            return WebFluxDgsGraphQLInterceptor(
+        ): DgsWebFluxGraphQLInterceptor {
+            return DgsWebFluxGraphQLInterceptor(
                 dgsDataLoaderProvider,
                 defaultDgsReactiveGraphQLContextBuilder
             )

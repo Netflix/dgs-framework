@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.springgraphql
+package com.netflix.graphql.dgs.springgraphql.webmvc
 
 import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
@@ -29,10 +29,9 @@ import org.springframework.web.context.request.ServletRequestAttributes
 import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
 import reactor.core.publisher.Mono
-import java.util.*
 import java.util.concurrent.CompletableFuture
 
-class DgsGraphQLInterceptor(
+class DgsWebMvcGraphQLInterceptor(
     private val dgsDataLoaderProvider: DgsDataLoaderProvider,
     private val dgsContextBuilder: DefaultDgsGraphQLContextBuilder
 ) : WebGraphQlInterceptor {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.springgraphql
+package com.netflix.graphql.dgs.springgraphql.webflux
 
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
@@ -28,7 +28,7 @@ import org.springframework.web.reactive.function.server.ServerRequest
 import reactor.core.publisher.Mono
 import java.util.concurrent.CompletableFuture
 
-class WebFluxDgsGraphQLInterceptor(
+class DgsWebFluxGraphQLInterceptor(
     private val dgsDataLoaderProvider: DgsDataLoaderProvider,
     private val dgsReactiveGraphQLContextBuilder: DefaultDgsReactiveGraphQLContextBuilder
 ) : WebGraphQlInterceptor {
