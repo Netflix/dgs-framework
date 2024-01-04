@@ -83,7 +83,7 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      * @param <V>             the type of values
      *
      * @return a data loader
-    </V></K> */
+     </V></K> */
     override fun <K, V> computeIfAbsent(
         key: String,
         mappingFunction: Function<String, DataLoader<*, *>>?
@@ -138,7 +138,7 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      * @param <V> the type of values
      *
      * @return a data loader or null if its not present
-    </V></K> */
+     </V></K> */
     override fun <K, V> getDataLoader(key: String): DataLoader<K, V>? {
         return dataLoaderRegistry.getDataLoader(key) ?: scheduledDataLoaderRegistries[key]?.getDataLoader(key)
     }
