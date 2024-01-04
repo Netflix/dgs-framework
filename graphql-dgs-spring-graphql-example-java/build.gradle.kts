@@ -17,32 +17,16 @@
 dependencies {
 
     implementation(project(":graphql-dgs-example-shared"))
-
     implementation(project(":graphql-dgs-pagination"))
     implementation(project(":graphql-dgs-subscriptions-graphql-sse-autoconfigure"))
-
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("io.projectreactor:reactor-core")
-
-    // Adding spring-graphql integration instead of the regular webmvc-starter
-    //implementation(project(":graphql-dgs-spring-boot-starter"))
     implementation(project(":graphql-dgs-spring-graphql-starter"))
-   // implementation("org.springframework.boot:spring-boot-starter-graphql:3.1.0")
-
-    //implementation(project(":graphql-dgs-spring-boot-starter"))
-
-    // Enabling Spring Boot Actuators. We are not expressing any opinion on which Metric System should be used
-    // please review the Spring Boot Docs in the link below for additional information.
-    // https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-metrics-export-simple
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-
-    // Adding the DGS Micrometer integration that provides timers for gql.*
-    // For additional information go to the link below:
-    // https://netflix.github.io/dgs/advanced/instrumentation/
     implementation(project(":graphql-dgs-spring-boot-micrometer"))
-
     implementation("com.github.ben-manes.caffeine:caffeine")
+
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
     testImplementation(project(":graphql-dgs-client"))
     testImplementation("io.projectreactor:reactor-test")

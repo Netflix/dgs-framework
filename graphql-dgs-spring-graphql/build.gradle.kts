@@ -20,19 +20,15 @@ dependencies {
     implementation("org.springframework:spring-web")
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("io.micrometer:context-propagation:1.1.0")
-
-
-    compileOnly("jakarta.servlet:jakarta.servlet-api")
-    compileOnly("org.springframework:spring-webmvc")
-
-    compileOnly("org.springframework:spring-webflux")
-
     implementation("org.springframework.graphql:spring-graphql")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
-
+    compileOnly("jakarta.servlet:jakarta.servlet-api")
+    compileOnly("org.springframework:spring-webmvc")
+    compileOnly("org.springframework:spring-webflux")
     compileOnly("org.springframework:spring-test")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-web")
 }
