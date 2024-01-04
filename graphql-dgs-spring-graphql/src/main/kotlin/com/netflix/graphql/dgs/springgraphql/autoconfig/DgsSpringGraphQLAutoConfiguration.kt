@@ -39,7 +39,6 @@ import graphql.schema.idl.RuntimeWiring
 import org.reactivestreams.Publisher
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
@@ -68,7 +67,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import org.springframework.web.servlet.mvc.method.annotation.ServletCookieValueMethodArgumentResolver
 import org.springframework.web.servlet.mvc.method.annotation.ServletRequestDataBinderFactory
 import java.util.*
-
 
 /**
  * Framework auto configuration based on open source Spring only, without Netflix integrations.
