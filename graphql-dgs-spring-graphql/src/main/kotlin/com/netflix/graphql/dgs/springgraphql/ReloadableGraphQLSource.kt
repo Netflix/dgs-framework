@@ -16,13 +16,16 @@
 
 package com.netflix.graphql.dgs.springgraphql
 
+import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import graphql.GraphQL
 import graphql.schema.GraphQLSchema
 import org.springframework.graphql.execution.GraphQlSource
-import org.springframework.graphql.execution.GraphQlSource.Builder
 
-class ReloadableGraphQLSource(val builder: Builder<*>) : GraphQlSource {
-
+class ReloadableGraphQLSource(
+    var graphQlSource: GraphQlSource,
+    val dgsGraphQLSourceBuilder: DgsGraphQLSourceBuilder,
+    val reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator
+) : GraphQlSource {
     override fun graphQl(): GraphQL {
         return getSource().graphQl()
     }
@@ -32,6 +35,10 @@ class ReloadableGraphQLSource(val builder: Builder<*>) : GraphQlSource {
     }
 
     private fun getSource(): GraphQlSource {
-        return builder.build()
+        if (reloadSchemaIndicator.reloadSchema()) {
+            graphQlSource = dgsGraphQLSourceBuilder.reload()
+        }
+
+        return graphQlSource
     }
 }

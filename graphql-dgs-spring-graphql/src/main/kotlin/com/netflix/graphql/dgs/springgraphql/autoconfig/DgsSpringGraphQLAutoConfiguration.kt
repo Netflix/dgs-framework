@@ -39,6 +39,7 @@ import graphql.schema.idl.RuntimeWiring
 import org.reactivestreams.Publisher
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
@@ -67,6 +68,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import org.springframework.web.servlet.mvc.method.annotation.ServletCookieValueMethodArgumentResolver
 import org.springframework.web.servlet.mvc.method.annotation.ServletRequestDataBinderFactory
 import java.util.*
+
 
 /**
  * Framework auto configuration based on open source Spring only, without Netflix integrations.
@@ -106,9 +108,10 @@ open class DgsSpringGraphQLAutoConfiguration {
         subscriptionExceptionResolvers: ObjectProvider<SubscriptionExceptionResolver>,
         instrumentations: ObjectProvider<Instrumentation?>,
         wiringConfigurers: ObjectProvider<RuntimeWiringConfigurer>,
-        sourceCustomizers: ObjectProvider<GraphQlSourceBuilderCustomizer>
+        sourceCustomizers: ObjectProvider<GraphQlSourceBuilderCustomizer>,
+        reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator
     ): GraphQlSource {
-        val builder = DgsGraphQLSourceBuilder(dgsSchemaProvider)
+        val builder = DgsGraphQLSourceBuilder(dgsSchemaProvider, reloadSchemaIndicator)
             .exceptionResolvers(exceptionResolvers.orderedStream().toList())
             .subscriptionExceptionResolvers(subscriptionExceptionResolvers.orderedStream().toList())
             .instrumentation(instrumentations.orderedStream().toList())

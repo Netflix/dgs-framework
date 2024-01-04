@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.springgraphql
 
+import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import graphql.GraphQL
 import graphql.execution.instrumentation.ChainedInstrumentation
@@ -43,7 +44,7 @@ import org.springframework.lang.Nullable
 import java.util.function.BiFunction
 import java.util.function.Consumer
 
-class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider) : SchemaResourceBuilder {
+class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider, private val reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator) : SchemaResourceBuilder {
     private val typeDefinitionConfigurers = mutableListOf<TypeDefinitionConfigurer>()
     private val runtimeWiringConfigurers = mutableListOf<RuntimeWiringConfigurer>()
 
@@ -91,6 +92,11 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider) 
     }
 
     override fun build(): GraphQlSource {
+        return ReloadableGraphQLSource(reload(), this, reloadSchemaIndicator)
+    }
+
+    fun reload(): GraphQlSource {
+        println("reloading schema")
         var schema: GraphQLSchema = dgsSchemaProvider.schema()
         val schemaTransformer = SchemaTransformer()
         typeVisitorsToTransformSchema.forEach {
