@@ -47,7 +47,7 @@ class DgsWebSocketConfigurationPropertiesValidationTest {
             .withPropertyValues("dgs.graphql.websocket.path: /pws/")
             .run { ctx ->
                 Assertions.assertThat(ctx).hasFailed()
-                    .failure.rootCause.hasMessageContaining("dgs.graphql.websocket.path must start with '/' and not end with '/'")
+                    .failure.rootCause().hasMessageContaining("dgs.graphql.websocket.path must start with '/' and not end with '/'")
             }
     }
 

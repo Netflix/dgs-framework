@@ -634,7 +634,7 @@ class DefaultDgsFederationResolverTest {
             // Define a mock movie entity fetcher that throws an EntityNotFoundException for movieId 1
             val movieEntityFetcher = object {
                 @DgsEntityFetcher(name = "Movie")
-                fun movieEntityFetcher(values: Map<String, Any>, dfe: DgsDataFetchingEnvironment?): Movie {
+                fun movieEntityFetcher(values: Map<String, Any>): Movie {
                     if (values["movieId"] == "1") {
                         throw DgsEntityNotFoundException("No entity found for movieId 1")
                     }
@@ -645,7 +645,7 @@ class DefaultDgsFederationResolverTest {
             // Define a mock show entity fetcher that throws an EntityNotFoundException for showId 2
             val showEntityFetcher = object {
                 @DgsEntityFetcher(name = "Show")
-                fun showEntityFetcher(values: Map<String, Any>, dfe: DgsDataFetchingEnvironment?): Show {
+                fun showEntityFetcher(values: Map<String, Any>): Show {
                     if (values["showId"] == "2") {
                         throw DgsEntityNotFoundException("No entity found for showId 2")
                     }
