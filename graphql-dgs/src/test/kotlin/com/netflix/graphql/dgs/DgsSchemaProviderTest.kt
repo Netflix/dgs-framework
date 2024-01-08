@@ -498,15 +498,16 @@ internal class DgsSchemaProviderTest {
             val typeDefinitionRegistry = TypeDefinitionRegistry()
             val objectTypeExtensionDefinition = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition()
                 .name("Query")
-                .fieldDefinitions(listOf(
-                    FieldDefinition.newFieldDefinition()
-                        .name("myField")
-                        .type(TypeName("String")).build(),
-                    FieldDefinition.newFieldDefinition()
-                        .name("myProcessedField")
-                        .type(TypeName("String")).build(),
-                ))
-                .build()
+                .fieldDefinitions(
+                    listOf(
+                        FieldDefinition.newFieldDefinition()
+                            .name("myField")
+                            .type(TypeName("String")).build(),
+                        FieldDefinition.newFieldDefinition()
+                            .name("myProcessedField")
+                            .type(TypeName("String")).build()
+                    )
+                ).build()
 
             val processor = object : DataFetcherResultProcessor {
                 override fun supportsType(originalResult: Any): Boolean {
