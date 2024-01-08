@@ -261,13 +261,12 @@ class DgsSchemaProvider(
         codeRegistryBuilder: GraphQLCodeRegistry.Builder,
         registry: TypeDefinitionRegistry
     ) {
-        val dgsCodeRegistryBuilder = DgsCodeRegistryBuilder(dataFetcherResultProcessors, codeRegistryBuilder);
+        val dgsCodeRegistryBuilder = DgsCodeRegistryBuilder(dataFetcherResultProcessors, codeRegistryBuilder)
 
         dgsComponent.javaClass.methods.asSequence()
             .filter { it.isAnnotationPresent(DgsCodeRegistry::class.java) }
             .forEach { method ->
-                if (method.returnType != GraphQLCodeRegistry.Builder::class.java
-                    && method.returnType != DgsCodeRegistryBuilder::class.java) {
+                if (method.returnType != GraphQLCodeRegistry.Builder::class.java && method.returnType != DgsCodeRegistryBuilder::class.java) {
                     throw InvalidDgsConfigurationException("Method annotated with @DgsCodeRegistry must have return type GraphQLCodeRegistry.Builder or DgsCodeRegistryBuilder")
                 }
 
