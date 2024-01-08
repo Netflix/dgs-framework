@@ -261,18 +261,25 @@ class DgsSchemaProvider(
         codeRegistryBuilder: GraphQLCodeRegistry.Builder,
         registry: TypeDefinitionRegistry
     ) {
+        val dgsCodeRegistryBuilder = DgsCodeRegistryBuilder(dataFetcherResultProcessors, codeRegistryBuilder);
+
         dgsComponent.javaClass.methods.asSequence()
             .filter { it.isAnnotationPresent(DgsCodeRegistry::class.java) }
             .forEach { method ->
-                if (method.returnType != GraphQLCodeRegistry.Builder::class.java) {
-                    throw InvalidDgsConfigurationException("Method annotated with @DgsCodeRegistry must have return type GraphQLCodeRegistry.Builder")
+                if (method.returnType != GraphQLCodeRegistry.Builder::class.java
+                    && method.returnType != DgsCodeRegistryBuilder::class.java) {
+                    throw InvalidDgsConfigurationException("Method annotated with @DgsCodeRegistry must have return type GraphQLCodeRegistry.Builder or DgsCodeRegistryBuilder")
                 }
 
-                if (method.parameterCount != 2 || method.parameterTypes[0] != GraphQLCodeRegistry.Builder::class.java || method.parameterTypes[1] != TypeDefinitionRegistry::class.java) {
-                    throw InvalidDgsConfigurationException("Method annotated with @DgsCodeRegistry must accept the following arguments: GraphQLCodeRegistry.Builder, TypeDefinitionRegistry. ${dgsComponent.javaClass.name}.${method.name} has the following arguments: ${method.parameterTypes.joinToString()}")
+                if (method.parameterCount != 2 || method.parameterTypes[0] != method.returnType || method.parameterTypes[1] != TypeDefinitionRegistry::class.java) {
+                    throw InvalidDgsConfigurationException("Method annotated with @DgsCodeRegistry must accept the following arguments: GraphQLCodeRegistry.Builder or DgsCodeRegistryBuilder, and TypeDefinitionRegistry. ${dgsComponent.javaClass.name}.${method.name} has the following arguments: ${method.parameterTypes.joinToString()}")
                 }
 
-                ReflectionUtils.invokeMethod(method, dgsComponent, codeRegistryBuilder, registry)
+                if (method.returnType == DgsCodeRegistryBuilder::class.java) {
+                    ReflectionUtils.invokeMethod(method, dgsComponent, dgsCodeRegistryBuilder, registry)
+                } else if (method.returnType == GraphQLCodeRegistry.Builder::class.java) {
+                    ReflectionUtils.invokeMethod(method, dgsComponent, codeRegistryBuilder, registry)
+                }
             }
     }
 
