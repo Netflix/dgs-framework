@@ -42,11 +42,11 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import reactor.core.publisher.Mono
 import java.lang.reflect.InvocationTargetException
-import java.util.*
+import java.util.Locale
+import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionException
 import java.util.concurrent.CompletionStage
-import java.util.stream.Collectors
 
 @DgsComponent
 open class DefaultDgsFederationResolver() :
@@ -68,7 +68,6 @@ open class DefaultDgsFederationResolver() :
     /**
      * Used when the DefaultDgsFederationResolver is extended.
      */
-    @Suppress("JoinDeclarationAndAssignment")
     @Autowired
     lateinit var entityFetcherRegistry: EntityFetcherRegistry
 
@@ -82,23 +81,25 @@ open class DefaultDgsFederationResolver() :
     }
 
     private fun valuesWithMappedScalars(graphQLContext: GraphQLContext, values: Map<String, Any>, scalarMappings: Map<List<String>, Coercing<*, *>>, currentPath: MutableList<String>): Map<String, Any> {
-        return values.entries.stream()
-            .map {
-                currentPath.add(it.key)
+        return values.mapValues { (key, value) ->
+            currentPath += key
 
-                val newValue = if (scalarMappings[currentPath] != null) {
-                    scalarMappings[currentPath]!!.parseValue(it.value, graphQLContext, Locale.getDefault())
-                } else if (it.value is Map<*, *>) {
-                    valuesWithMappedScalars(graphQLContext, it.value as Map<String, Any>, scalarMappings, currentPath)
-                } else {
-                    it.value
-                }
+            val converter = scalarMappings[currentPath]
 
-                currentPath.removeLast()
-
-                Pair(it.key, newValue)
+            val newValue = if (converter != null) {
+                converter.parseValue(value, graphQLContext, Locale.getDefault())
+            } else if (value is Map<*, *>) {
+                @Suppress("UNCHECKED_CAST")
+                value as Map<String, Any>
+                valuesWithMappedScalars(graphQLContext, value, scalarMappings, currentPath)
+            } else {
+                value
             }
-            .collect(Collectors.toMap({ it.first }, { it.second!! }))
+
+            currentPath.removeLast()
+
+            newValue!!
+        }
     }
 
     private fun dgsEntityFetchers(env: DataFetchingEnvironment): CompletableFuture<DataFetcherResult<List<Any?>>> {
@@ -128,7 +129,7 @@ open class DefaultDgsFederationResolver() :
                         }
 
                     if (result == null) {
-                        logger.error("@DgsEntityFetcher returned null for type: $typename")
+                        logger.error("@DgsEntityFetcher returned null for type: {}", typename)
                         CompletableFuture.completedFuture(null)
                     }
 

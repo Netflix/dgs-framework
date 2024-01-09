@@ -68,7 +68,7 @@ class GraphiQLPathConfigWithCustomGraphQLPathAndServletContextTest(
             absPathWithoutContextPath,
             String::class.java
         )
-        assertThat(graphqlResponse.statusCodeValue).isEqualTo(HttpStatus.NOT_FOUND.value())
+        assertThat(graphqlResponse.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
 
         // graphql is available with context path in uri (400 expected as we don't sent proper request)
         val absPathWithContextPath = "$rootUri/zuzu"
@@ -76,7 +76,7 @@ class GraphiQLPathConfigWithCustomGraphQLPathAndServletContextTest(
             absPathWithContextPath,
             String::class.java
         )
-        assertThat(graphqlResponse.statusCodeValue).isEqualTo(HttpStatus.BAD_REQUEST.value())
+        assertThat(graphqlResponse.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
 
         val graphiqlResponse = testRestTemplate.getForEntity(
             "/graphiql",
