@@ -22,6 +22,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.DgsRuntimeWiring
+import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import com.netflix.graphql.dgs.internal.*
 import com.netflix.graphql.dgs.internal.method.ArgumentResolver
 import com.netflix.graphql.dgs.mvc.internal.method.HandlerMethodArgumentResolverAdapter
@@ -36,6 +37,7 @@ import com.netflix.graphql.dgs.springgraphql.webflux.DgsWebFluxGraphQLIntercepto
 import com.netflix.graphql.dgs.springgraphql.webmvc.DgsWebMvcGraphQLInterceptor
 import graphql.execution.instrumentation.Instrumentation
 import graphql.schema.idl.RuntimeWiring
+import graphql.schema.idl.TypeDefinitionRegistry
 import org.reactivestreams.Publisher
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Qualifier
@@ -44,17 +46,14 @@ import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.autoconfigure.graphql.GraphQlSourceBuilderCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.ReactiveAdapterRegistry
-import org.springframework.graphql.execution.ConnectionTypeDefinitionConfigurer
-import org.springframework.graphql.execution.DataFetcherExceptionResolver
-import org.springframework.graphql.execution.DefaultExecutionGraphQlService
-import org.springframework.graphql.execution.GraphQlSource
-import org.springframework.graphql.execution.RuntimeWiringConfigurer
-import org.springframework.graphql.execution.SubscriptionExceptionResolver
+import org.springframework.core.env.Environment
+import org.springframework.graphql.execution.*
 import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.filter.reactive.ServerWebExchangeContextFilter
 import org.springframework.web.method.annotation.RequestHeaderMapMethodArgumentResolver
@@ -89,8 +88,23 @@ open class DgsSpringGraphQLAutoConfiguration {
             configurers.forEach {
                 it.configure(builder)
             }
-
             return builder
+        }
+    }
+
+    @Bean
+    @ConditionalOnProperty("dgs.springgraphql.pagination.enabled", havingValue = "true", matchIfMissing = true)
+    @DgsComponent
+    open fun dgsTypeDefinitionConfigurerBridge(environment: Environment): DgsTypeDefinitionConfigurerBridge {
+        return DgsTypeDefinitionConfigurerBridge()
+    }
+
+    class DgsTypeDefinitionConfigurerBridge() {
+        @DgsTypeDefinitionRegistry
+        fun typeDefinitionRegistry(typeDefinitionRegistry: TypeDefinitionRegistry): TypeDefinitionRegistry {
+            val newTypeDefinitionRegistry = TypeDefinitionRegistry()
+            ConnectionTypeDefinitionConfigurer().configure(typeDefinitionRegistry)
+            return newTypeDefinitionRegistry
         }
     }
 
