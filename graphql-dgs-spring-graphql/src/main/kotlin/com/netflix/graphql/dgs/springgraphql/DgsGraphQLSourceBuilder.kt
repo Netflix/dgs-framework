@@ -96,7 +96,6 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider, 
     }
 
     fun reload(): GraphQlSource {
-        println("reloading schema")
         var schema: GraphQLSchema = dgsSchemaProvider.schema()
         val schemaTransformer = SchemaTransformer()
         typeVisitorsToTransformSchema.forEach {
@@ -145,7 +144,7 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider, 
     }
 
     override fun schemaResources(vararg resources: Resource?): SchemaResourceBuilder {
-        TODO("Not yet implemented")
+        throw IllegalStateException("Setting schema resources in this builder is not supported - DGS SchemaProvider is already handling schema loading")
     }
 
     override fun configureTypeDefinitions(configurer: TypeDefinitionConfigurer): SchemaResourceBuilder {
@@ -169,6 +168,6 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider, 
     }
 
     override fun schemaFactory(schemaFactory: BiFunction<TypeDefinitionRegistry, RuntimeWiring, GraphQLSchema>): SchemaResourceBuilder {
-        TODO("Not yet implemented")
+        throw IllegalStateException("Overriding the schema factory is not supported in this builder")
     }
 }

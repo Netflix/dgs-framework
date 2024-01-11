@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.springgraphql
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import graphql.GraphQL
 import graphql.schema.GraphQLSchema
+import org.slf4j.LoggerFactory
 import org.springframework.graphql.execution.GraphQlSource
 
 class ReloadableGraphQLSource(
@@ -36,9 +37,14 @@ class ReloadableGraphQLSource(
 
     private fun getSource(): GraphQlSource {
         if (reloadSchemaIndicator.reloadSchema()) {
+            LOGGER.info("Rebuilding GraphQLSource")
             graphQlSource = dgsGraphQLSourceBuilder.reload()
         }
 
         return graphQlSource
+    }
+
+    companion object {
+        val LOGGER = LoggerFactory.getLogger(ReloadableGraphQLSource::class.java)
     }
 }
