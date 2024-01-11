@@ -128,7 +128,6 @@ open class DgsSpringGraphQLAutoConfiguration {
             .subscriptionExceptionResolvers(subscriptionExceptionResolvers.orderedStream().toList())
             .instrumentation(instrumentations.orderedStream().toList())
 
-        builder.configureTypeDefinitions(ConnectionTypeDefinitionConfigurer())
         wiringConfigurers.orderedStream().forEach { configurer: RuntimeWiringConfigurer ->
             builder.configureRuntimeWiring(
                 configurer
