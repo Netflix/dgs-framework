@@ -41,8 +41,6 @@ import graphql.language.TypeName
 import graphql.language.UnionTypeDefinition
 import graphql.parser.MultiSourceReader
 import graphql.schema.Coercing
-import graphql.schema.DataFetcher
-import graphql.schema.DataFetcherFactories
 import graphql.schema.DataFetcherFactory
 import graphql.schema.FieldCoordinates
 import graphql.schema.GraphQLCodeRegistry
@@ -188,12 +186,14 @@ class DgsSchemaProvider(
         val runtimeWiringBuilder =
             RuntimeWiring.newRuntimeWiring().codeRegistry(codeRegistryBuilder).fieldVisibility(fieldVisibility)
 
+        val dgsCodeRegistryBuilder = DgsCodeRegistryBuilder(dataFetcherResultProcessors, codeRegistryBuilder)
+
         dgsComponents.asSequence()
             .mapNotNull { dgsComponent -> invokeDgsTypeDefinitionRegistry(dgsComponent, mergedRegistry) }
             .fold(mergedRegistry) { a, b -> a.merge(b) }
         findScalars(applicationContext, runtimeWiringBuilder)
         findDirectives(applicationContext, runtimeWiringBuilder)
-        findDataFetchers(dgsComponents, codeRegistryBuilder, mergedRegistry)
+        findDataFetchers(dgsComponents, dgsCodeRegistryBuilder, mergedRegistry)
         findTypeResolvers(dgsComponents, runtimeWiringBuilder, mergedRegistry)
 
         dgsComponents.forEach { dgsComponent ->
@@ -270,7 +270,10 @@ class DgsSchemaProvider(
                     throw InvalidDgsConfigurationException("Method annotated with @DgsCodeRegistry must have return type GraphQLCodeRegistry.Builder or DgsCodeRegistryBuilder")
                 }
 
-                if (method.parameterCount != 2 || method.parameterTypes[0] != method.returnType || method.parameterTypes[1] != TypeDefinitionRegistry::class.java) {
+                if (method.parameterCount != 2 ||
+                    method.parameterTypes[0] != method.returnType || // Check that the first argument is of type DgsCodeRegistryBuilder or GraphQLCodeRegistry.Builder and the return type is the same
+                    method.parameterTypes[1] != TypeDefinitionRegistry::class.java
+                ) {
                     throw InvalidDgsConfigurationException("Method annotated with @DgsCodeRegistry must accept the following arguments: GraphQLCodeRegistry.Builder or DgsCodeRegistryBuilder, and TypeDefinitionRegistry. ${dgsComponent.javaClass.name}.${method.name} has the following arguments: ${method.parameterTypes.joinToString()}")
                 }
 
@@ -300,7 +303,7 @@ class DgsSchemaProvider(
 
     private fun findDataFetchers(
         dgsComponents: Collection<Any>,
-        codeRegistryBuilder: GraphQLCodeRegistry.Builder,
+        codeRegistryBuilder: DgsCodeRegistryBuilder,
         typeDefinitionRegistry: TypeDefinitionRegistry
     ) {
         dgsComponents.forEach { dgsComponent ->
@@ -334,7 +337,7 @@ class DgsSchemaProvider(
 
     private fun registerDataFetcher(
         typeDefinitionRegistry: TypeDefinitionRegistry,
-        codeRegistryBuilder: GraphQLCodeRegistry.Builder,
+        codeRegistryBuilder: DgsCodeRegistryBuilder,
         dgsComponent: Any,
         method: Method,
         dgsDataAnnotation: MergedAnnotation<DgsData>,
@@ -387,12 +390,9 @@ class DgsSchemaProvider(
                         // if we have a datafetcher explicitly defined for a parentType/field, use that and do not
                         // register the base implementation for interfaces
                         if (!codeRegistryBuilder.hasDataFetcher(FieldCoordinates.coordinates(implType.name, field))) {
-                            val dataFetcher =
-                                createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
-                            codeRegistryBuilder.dataFetcher(
-                                FieldCoordinates.coordinates(implType.name, field),
-                                dataFetcher
-                            )
+                            val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent, method)
+                            codeRegistryBuilder.dataFetcher(FieldCoordinates.coordinates(implType.name, field), dataFetcher)
+
                             dataFetcherTracingInstrumentationEnabled["${implType.name}.$field"] =
                                 enableTracingInstrumentation
                             dataFetcherMetricsInstrumentationEnabled["${implType.name}.$field"] =
@@ -402,12 +402,9 @@ class DgsSchemaProvider(
                 }
                 is UnionTypeDefinition -> {
                     type.memberTypes.asSequence().filterIsInstance<TypeName>().forEach { memberType ->
-                        val dataFetcher =
-                            createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
-                        codeRegistryBuilder.dataFetcher(
-                            FieldCoordinates.coordinates(memberType.name, field),
-                            dataFetcher
-                        )
+                        val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent, method)
+                        codeRegistryBuilder.dataFetcher(FieldCoordinates.coordinates(memberType.name, field), dataFetcher)
+
                         dataFetcherTracingInstrumentationEnabled["${memberType.name}.$field"] = enableTracingInstrumentation
                         dataFetcherMetricsInstrumentationEnabled["${memberType.name}.$field"] = enableMetricsInstrumentation
                     }
@@ -421,11 +418,9 @@ class DgsSchemaProvider(
                             matchingField.inputValueDefinitions.map { it.name }.toSet()
                         )
                     }
-                    val dataFetcher = createBasicDataFetcher(method, dgsComponent, parentType == "Subscription")
-                    codeRegistryBuilder.dataFetcher(
-                        FieldCoordinates.coordinates(parentType, field),
-                        dataFetcher
-                    )
+
+                    val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent, method)
+                    codeRegistryBuilder.dataFetcher(FieldCoordinates.coordinates(parentType, field), dataFetcher)
                 }
                 else -> {
                     throw InvalidDgsConfigurationException(
@@ -581,21 +576,6 @@ class DgsSchemaProvider(
         }
 
         return null
-    }
-
-    private fun createBasicDataFetcher(method: Method, dgsComponent: Any, isSubscription: Boolean): DataFetcher<Any?> {
-        val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent, method)
-
-        if (isSubscription) {
-            return dataFetcher
-        }
-
-        return DataFetcherFactories.wrapDataFetcher(dataFetcher) { dfe, result ->
-            result?.let {
-                val env = DgsDataFetchingEnvironment(dfe)
-                dataFetcherResultProcessors.find { it.supportsType(result) }?.process(result, env) ?: result
-            }
-        }
     }
 
     private fun findTypeResolvers(
