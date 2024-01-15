@@ -143,17 +143,18 @@ class DgsSchemaProvider(
 
     fun schema(
         @Language("GraphQL") schema: String? = null,
+        schemaResources: Set<Resource>? = null,
         fieldVisibility: GraphqlFieldVisibility = DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
     ): GraphQLSchema {
         schemaReadWriteLock.write {
             dataFetchers.clear()
             dataFetcherTracingInstrumentationEnabled.clear()
             dataFetcherMetricsInstrumentationEnabled.clear()
-            return computeSchema(schema, fieldVisibility)
+            return computeSchema(schema, schemaResources, fieldVisibility)
         }
     }
 
-    private fun computeSchema(schema: String? = null, fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
+    private fun computeSchema(schema: String? = null, schemaResources: Set<Resource>? = emptySet(), fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
         val startTime = System.currentTimeMillis()
         val dgsComponents = applicationContext.getBeansWithAnnotation<DgsComponent>().values.let { beans ->
             if (componentFilter != null) beans.filter(componentFilter) else beans
@@ -170,6 +171,11 @@ class DgsSchemaProvider(
                 // Add a reader that inserts a newline between schema files to avoid issues when
                 // the source files aren't newline-terminated.
                 readerBuilder.reader("\n".reader(), "newline")
+            }
+            if (schemaResources != null) {
+                for (resource in schemaResources) {
+                    readerBuilder.reader(resource.inputStream.reader(), resource.filename)
+                }
             }
             SchemaParser().parse(readerBuilder.build())
         } else {

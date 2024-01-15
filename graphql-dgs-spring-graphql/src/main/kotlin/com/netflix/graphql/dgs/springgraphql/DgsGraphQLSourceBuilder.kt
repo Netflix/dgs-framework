@@ -21,26 +21,15 @@ import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import graphql.GraphQL
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
-import graphql.schema.GraphQLCodeRegistry
-import graphql.schema.GraphQLSchema
+import graphql.schema.*
 import graphql.schema.GraphQLSchema.BuilderWithoutTypes
-import graphql.schema.GraphQLTypeVisitor
-import graphql.schema.SchemaTransformer
-import graphql.schema.SchemaTraverser
-import graphql.schema.TypeResolver
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.springframework.core.io.Resource
-import org.springframework.graphql.execution.ContextDataFetcherDecorator
-import org.springframework.graphql.execution.DataFetcherExceptionResolver
-import org.springframework.graphql.execution.GraphQlSource
+import org.springframework.graphql.execution.*
 import org.springframework.graphql.execution.GraphQlSource.SchemaResourceBuilder
-import org.springframework.graphql.execution.RuntimeWiringConfigurer
-import org.springframework.graphql.execution.SchemaReport
-import org.springframework.graphql.execution.SubscriptionExceptionResolver
-import org.springframework.graphql.execution.TypeDefinitionConfigurer
-import org.springframework.graphql.execution.TypeVisitorHelper
 import org.springframework.lang.Nullable
+import java.util.*
 import java.util.function.BiFunction
 import java.util.function.Consumer
 
@@ -48,6 +37,7 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider, 
     private val typeDefinitionConfigurers = mutableListOf<TypeDefinitionConfigurer>()
     private val runtimeWiringConfigurers = mutableListOf<RuntimeWiringConfigurer>()
 
+    private val schemaResources: Set<Resource> = LinkedHashSet()
     private val exceptionResolvers = mutableListOf<DataFetcherExceptionResolver>()
     private val subscriptionExceptionResolvers = mutableListOf<SubscriptionExceptionResolver>()
     private val typeVisitors = mutableListOf<GraphQLTypeVisitor>()
@@ -96,7 +86,7 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider, 
     }
 
     fun reload(): GraphQlSource {
-        var schema: GraphQLSchema = dgsSchemaProvider.schema()
+        var schema: GraphQLSchema = dgsSchemaProvider.schema(schemaResources = schemaResources)
         val schemaTransformer = SchemaTransformer()
         typeVisitorsToTransformSchema.forEach {
             schemaTransformer.transform(schema, it)
@@ -144,7 +134,8 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider, 
     }
 
     override fun schemaResources(vararg resources: Resource?): SchemaResourceBuilder {
-        throw IllegalStateException("Setting schema resources in this builder is not supported - DGS SchemaProvider is already handling schema loading")
+        schemaResources.plus(listOf(*resources))
+        return this
     }
 
     override fun configureTypeDefinitions(configurer: TypeDefinitionConfigurer): SchemaResourceBuilder {

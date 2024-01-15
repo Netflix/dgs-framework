@@ -236,7 +236,7 @@ open class DgsAutoConfiguration(
     @Bean
     @ConditionalOnMissingBean
     open fun schema(dgsSchemaProvider: DgsSchemaProvider, fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
-        return dgsSchemaProvider.schema(null, fieldVisibility)
+        return dgsSchemaProvider.schema(null, null, fieldVisibility)
     }
 
     @Bean
