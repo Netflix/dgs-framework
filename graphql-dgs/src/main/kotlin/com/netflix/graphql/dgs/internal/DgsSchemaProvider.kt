@@ -143,18 +143,18 @@ class DgsSchemaProvider(
 
     fun schema(
         @Language("GraphQL") schema: String? = null,
-        schemaResources: Set<Resource>? = null,
-        fieldVisibility: GraphqlFieldVisibility = DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
+        fieldVisibility: GraphqlFieldVisibility = DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY,
+        schemaResources: Set<Resource> = emptySet()
     ): GraphQLSchema {
         schemaReadWriteLock.write {
             dataFetchers.clear()
             dataFetcherTracingInstrumentationEnabled.clear()
             dataFetcherMetricsInstrumentationEnabled.clear()
-            return computeSchema(schema, schemaResources, fieldVisibility)
+            return computeSchema(schema, fieldVisibility, schemaResources)
         }
     }
 
-    private fun computeSchema(schema: String? = null, schemaResources: Set<Resource>? = emptySet(), fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
+    private fun computeSchema(schema: String? = null, fieldVisibility: GraphqlFieldVisibility, schemaResources: Set<Resource> = emptySet()): GraphQLSchema {
         val startTime = System.currentTimeMillis()
         val dgsComponents = applicationContext.getBeansWithAnnotation<DgsComponent>().values.let { beans ->
             if (componentFilter != null) beans.filter(componentFilter) else beans
@@ -172,10 +172,9 @@ class DgsSchemaProvider(
                 // the source files aren't newline-terminated.
                 readerBuilder.reader("\n".reader(), "newline")
             }
-            if (schemaResources != null) {
-                for (resource in schemaResources) {
-                    readerBuilder.reader(resource.inputStream.reader(), resource.filename)
-                }
+
+            for (resource in schemaResources) {
+                readerBuilder.reader(resource.inputStream.reader(), resource.filename)
             }
             SchemaParser().parse(readerBuilder.build())
         } else {
