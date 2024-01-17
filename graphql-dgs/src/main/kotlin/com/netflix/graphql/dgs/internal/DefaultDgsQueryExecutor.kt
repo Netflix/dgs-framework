@@ -101,7 +101,7 @@ class DefaultDgsQueryExecutor(
         if (result.errors.size > 0) {
             val nullValueError = result.errors.find { it is NonNullableFieldWasNullError }
             if (nullValueError != null) {
-                logger.error(nullValueError.message)
+                logger.error("{}", nullValueError.message)
             }
         }
 

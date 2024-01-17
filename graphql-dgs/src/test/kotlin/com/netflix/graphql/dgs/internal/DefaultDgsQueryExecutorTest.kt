@@ -33,11 +33,14 @@ import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import graphql.InvalidSyntaxError
 import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
+import graphql.execution.UnknownOperationException
 import graphql.execution.instrumentation.SimplePerformantInstrumentation
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.InstanceOfAssertFactory
 import org.dataloader.DataLoaderRegistry
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -45,6 +48,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 import java.util.Optional
 import java.util.function.Supplier
@@ -52,6 +56,10 @@ import java.util.function.Supplier
 @Suppress("GraphQLUnresolvedReference")
 @ExtendWith(MockKExtension::class)
 internal class DefaultDgsQueryExecutorTest {
+
+    companion object {
+        private val DGS_RESULT = InstanceOfAssertFactory(DgsExecutionResult::class.java, Assertions::assertThat)
+    }
 
     @MockK
     lateinit var applicationContextMock: ApplicationContext
@@ -63,35 +71,35 @@ internal class DefaultDgsQueryExecutorTest {
 
     @BeforeEach
     fun createExecutor() {
-        val fetcher = object : Any() {
+        val fetcher = object {
             @DgsData(parentType = "Query", field = "hello")
             fun hello(): String {
                 return "hi!"
             }
         }
 
-        val numbersFetcher = object : Any() {
+        val numbersFetcher = object {
             @DgsData(parentType = "Query", field = "numbers")
             fun hello(): List<Int> {
                 return listOf(1, 2, 3)
             }
         }
 
-        val moviesFetcher = object : Any() {
+        val moviesFetcher = object {
             @DgsData(parentType = "Query", field = "movies")
             fun movies(): List<Movie> {
                 return listOf(Movie("Extraction", LocalDateTime.MIN), Movie("Da 5 Bloods", LocalDateTime.MAX))
             }
         }
 
-        val fetcherWithError = object : Any() {
+        val fetcherWithError = object {
             @DgsData(parentType = "Query", field = "withError")
             fun withError(): String {
                 throw RuntimeException("Broken!")
             }
         }
 
-        val echoFetcher = object : Any() {
+        val echoFetcher = object {
             @DgsData(parentType = "Query", field = "echo")
             fun echo(@InputArgument("message") message: String): String {
                 return message
@@ -99,21 +107,13 @@ internal class DefaultDgsQueryExecutorTest {
         }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            ),
-            Pair("numbersFetcher", numbersFetcher),
-            Pair("moviesFetcher", moviesFetcher),
-            Pair("withErrorFetcher", fetcherWithError),
-            Pair("echoFetcher", echoFetcher)
+            "helloFetcher" to fetcher,
+            "numbersFetcher" to numbersFetcher,
+            "moviesFetcher" to moviesFetcher,
+            "withErrorFetcher" to fetcherWithError,
+            "echoFetcher" to echoFetcher
         )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(
-            Pair(
-                "DateTimeScalar",
-                LocalDateTimeScalar()
-            )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf("DateTimeScalar" to LocalDateTimeScalar())
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
         every { dgsDataLoaderProvider.buildRegistryWithContextSupplier(any<Supplier<Any>>()) } returns DataLoaderRegistry()
 
@@ -186,13 +186,11 @@ internal class DefaultDgsQueryExecutorTest {
                 .message
         ).isEqualTo(DgsBadRequestException.NULL_OR_EMPTY_QUERY_EXCEPTION.message)
 
-        val springResponse = (result as DgsExecutionResult).toSpringResponse()
-
-        assertThat(
-            springResponse
-                .statusCode
-                .value()
-        ).isEqualTo(400)
+        assertThat(result)
+            .asInstanceOf(DGS_RESULT)
+            .extracting { it.toSpringResponse() }
+            .extracting { it.statusCode }
+            .isEqualTo(HttpStatus.BAD_REQUEST)
     }
 
     @Test
@@ -200,8 +198,27 @@ internal class DefaultDgsQueryExecutorTest {
         val result = dgsQueryExecutor.execute("a")
         assertThat(result)
             .isNotNull
-            .extracting { it.errors.first() }
+            .extracting { it.errors }
+            .asList()
+            .singleElement()
             .isInstanceOf(InvalidSyntaxError::class.java)
+    }
+
+    @Test
+    fun `Invalid operation returns a GraphQL Error with type UnknownOperationException`() {
+        val result = dgsQueryExecutor.execute("""{ movies { title } }""", emptyMap(), "foo")
+        assertThat(result)
+            .isNotNull
+            .extracting { it.errors }
+            .asList()
+            .singleElement()
+            .isInstanceOf(UnknownOperationException::class.java)
+
+        assertThat(result)
+            .asInstanceOf(DGS_RESULT)
+            .extracting { it.toSpringResponse() }
+            .extracting { it.statusCode }
+            .isEqualTo(HttpStatus.BAD_REQUEST)
     }
 
     @Test

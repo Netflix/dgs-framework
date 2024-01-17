@@ -626,7 +626,7 @@ internal class InputArgumentTest {
         @DgsComponent
         class Fetcher {
             @DgsQuery(field = "numbers")
-            fun numbers(@InputArgument("list") listOptional: Optional<List<Int>>, dfe: DataFetchingEnvironment): String {
+            fun numbers(@InputArgument("list") listOptional: Optional<List<Int>>): String {
                 assertThat(listOptional).isNotEmpty
                 assertThat(listOptional.get()).containsExactlyElementsOf(listOf(1, 2, 3))
                 return "Numbers are ${listOptional.map{ it.joinToString(", ") }.orElse("na")}"

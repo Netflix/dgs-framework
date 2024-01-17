@@ -36,6 +36,7 @@ public class VirtualThreadTaskExecutor implements AsyncTaskExecutor {
     }
 
     @Override
+    @Deprecated
     public void execute(@NotNull Runnable task, long startTimeout) {
         throw new UnsupportedOperationException("VirtualThreadTaskExecutor is only supported on JDK 21+");
     }
