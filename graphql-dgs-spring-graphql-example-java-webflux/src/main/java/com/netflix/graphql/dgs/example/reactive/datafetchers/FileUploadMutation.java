@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.example.datafetcher;
+package com.netflix.graphql.dgs.example.reactive.datafetchers;
 
 import com.netflix.graphql.dgs.DgsComponent;
 import com.netflix.graphql.dgs.DgsData;
@@ -22,7 +22,9 @@ import com.netflix.graphql.dgs.InputArgument;
 import graphql.schema.DataFetchingEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 import java.util.List;
@@ -52,23 +54,14 @@ public class FileUploadMutation {
      * @return boolean that will be true if all files are uploaded.
      */
     @DgsData(parentType = "Mutation", field = "uploadFile")
-    public boolean uploadFile(@InputArgument FileUploadInput input, DataFetchingEnvironment dfe) {
-        List<MultipartFile> parts = input.getFiles();
-        for (int i = 0; i < parts.size(); i++) {
-            try {
-                String content = new String(parts.get(i).getBytes());
-                log.debug("File upload contents are\n{}\n", content);
-            } catch (IOException e) {
-                log.error("Failed to upload file[{}]!", i, e);
-                e.printStackTrace();
-            }
-        }
-        return !parts.isEmpty();
+    public Flux<Boolean> uploadFile(@InputArgument FileUploadInput input, DataFetchingEnvironment dfe) {
+        List<FilePart> parts = input.getFiles();
+        return Flux.just(!parts.isEmpty());
     }
 
     static class FileUploadInput {
         private String description;
-        private List<MultipartFile> files;
+        private List<FilePart> files;
 
         public String getDescription() {
             return description;
@@ -78,11 +71,11 @@ public class FileUploadMutation {
             this.description = description;
         }
 
-        public List<MultipartFile> getFiles() {
+        public List<FilePart> getFiles() {
             return files;
         }
 
-        public void setFiles(List<MultipartFile> file) {
+        public void setFiles(List<FilePart> file) {
             this.files = file;
         }
     }
