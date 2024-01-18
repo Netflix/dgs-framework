@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.List;
@@ -54,9 +55,10 @@ public class FileUploadMutation {
      * @return boolean that will be true if all files are uploaded.
      */
     @DgsData(parentType = "Mutation", field = "uploadFile")
-    public Flux<Boolean> uploadFile(@InputArgument FileUploadInput input, DataFetchingEnvironment dfe) {
+    public Mono<Boolean> uploadFile(@InputArgument FileUploadInput input, DataFetchingEnvironment dfe) {
         List<FilePart> parts = input.getFiles();
-        return Flux.just(!parts.isEmpty());
+        parts.forEach( filePart -> log.info(filePart.filename()));
+        return Mono.just(!parts.isEmpty());
     }
 
     static class FileUploadInput {
