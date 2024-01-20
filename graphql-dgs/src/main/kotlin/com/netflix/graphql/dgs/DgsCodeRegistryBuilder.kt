@@ -28,7 +28,7 @@ class DgsCodeRegistryBuilder(
     private val graphQLCodeRegistry: GraphQLCodeRegistry.Builder
 ) {
 
-    fun dataFetcher(coordinates: FieldCoordinates, dataFetcher: DataFetcher<*>?): DgsCodeRegistryBuilder {
+    fun dataFetcher(coordinates: FieldCoordinates, dataFetcher: DataFetcher<*>): DgsCodeRegistryBuilder {
         val wrapped = DataFetcherFactories.wrapDataFetcher(dataFetcher) { dfe, result ->
             if (coordinates.typeName == "Subscription") {
                 return@wrapDataFetcher result
@@ -44,11 +44,11 @@ class DgsCodeRegistryBuilder(
         return this
     }
 
-    fun hasDataFetcher(coordinates: FieldCoordinates?): Boolean {
+    fun hasDataFetcher(coordinates: FieldCoordinates): Boolean {
         return graphQLCodeRegistry.hasDataFetcher(coordinates)
     }
 
-    fun getDataFetcher(coordinates: FieldCoordinates?, fieldDefinition: GraphQLFieldDefinition?): DataFetcher<*> {
+    fun getDataFetcher(coordinates: FieldCoordinates, fieldDefinition: GraphQLFieldDefinition): DataFetcher<*> {
         return graphQLCodeRegistry.getDataFetcher(coordinates, fieldDefinition)
     }
 }
