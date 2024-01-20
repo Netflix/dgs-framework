@@ -44,6 +44,7 @@ allprojects {
     group = "com.netflix.graphql.dgs"
     repositories {
         mavenCentral()
+        mavenLocal()
     }
 
     apply(plugin = "nebula.netflixoss")

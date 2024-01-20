@@ -18,32 +18,22 @@ package com.netflix.graphql.dgs.springgraphql
 
 import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
-import graphql.GraphQL
-import graphql.execution.instrumentation.ChainedInstrumentation
-import graphql.execution.instrumentation.Instrumentation
-import graphql.schema.*
-import graphql.schema.GraphQLSchema.BuilderWithoutTypes
+import graphql.schema.GraphQLSchema
+import graphql.schema.TypeResolver
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.springframework.core.io.Resource
 import org.springframework.graphql.execution.*
 import org.springframework.graphql.execution.GraphQlSource.SchemaResourceBuilder
 import org.springframework.lang.Nullable
-import java.util.*
 import java.util.function.BiFunction
 import java.util.function.Consumer
 
-class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider, private val reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator) : SchemaResourceBuilder {
+class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider, private val reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator) : AbstractGraphQlSourceBuilder<SchemaResourceBuilder>(), SchemaResourceBuilder {
     private val typeDefinitionConfigurers = mutableListOf<TypeDefinitionConfigurer>()
     private val runtimeWiringConfigurers = mutableListOf<RuntimeWiringConfigurer>()
 
     private val schemaResources: Set<Resource> = LinkedHashSet()
-    private val exceptionResolvers = mutableListOf<DataFetcherExceptionResolver>()
-    private val subscriptionExceptionResolvers = mutableListOf<SubscriptionExceptionResolver>()
-    private val typeVisitors = mutableListOf<GraphQLTypeVisitor>()
-    private val typeVisitorsToTransformSchema = mutableListOf<GraphQLTypeVisitor>()
-    private val instrumentations = mutableListOf<Instrumentation>()
-    private var graphQlConfigurers = Consumer { builder: GraphQL.Builder -> }
 
     @Nullable
     private var typeResolver: TypeResolver? = null
@@ -51,86 +41,21 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider, 
     @Nullable
     private var schemaReportConsumer: Consumer<SchemaReport>? = null
 
-    override fun exceptionResolvers(resolvers: List<DataFetcherExceptionResolver>): SchemaResourceBuilder {
-        exceptionResolvers.addAll(resolvers)
-        return this
-    }
-
-    override fun subscriptionExceptionResolvers(resolvers: List<SubscriptionExceptionResolver>): SchemaResourceBuilder {
-        subscriptionExceptionResolvers.addAll(resolvers)
-        return this
-    }
-
-    override fun typeVisitors(typeVisitors: List<GraphQLTypeVisitor>): SchemaResourceBuilder {
-        this.typeVisitors.addAll(typeVisitors)
-        return this
-    }
-
-    override fun typeVisitorsToTransformSchema(typeVisitors: List<GraphQLTypeVisitor>): SchemaResourceBuilder {
-        typeVisitorsToTransformSchema.addAll(typeVisitors)
-        return this
-    }
-
-    override fun instrumentation(instrumentations: List<Instrumentation>): SchemaResourceBuilder {
-        this.instrumentations.addAll(instrumentations)
-        return this
-    }
-
-    override fun configureGraphQl(configurer: Consumer<GraphQL.Builder>): SchemaResourceBuilder {
-        graphQlConfigurers = this.graphQlConfigurers.andThen(configurer)
-        return this
-    }
-
-    override fun build(): GraphQlSource {
-        return ReloadableGraphQLSource(reload(), this, reloadSchemaIndicator)
-    }
-
-    fun reload(): GraphQlSource {
+    override fun initGraphQlSchema(): GraphQLSchema {
         var schema: GraphQLSchema = dgsSchemaProvider.schema(schemaResources = schemaResources)
-        val schemaTransformer = SchemaTransformer()
-        typeVisitorsToTransformSchema.forEach {
-            schemaTransformer.transform(schema, it)
-        }
 
-        schema = this.applyTypeVisitors(schema)
-        var builder = GraphQL.newGraphQL(schema)
-        builder.defaultDataFetcherExceptionHandler(DataFetcherExceptionResolver.createExceptionHandler(this.exceptionResolvers))
-        if (!instrumentations.isEmpty()) {
-            builder = builder.instrumentation(ChainedInstrumentation(this.instrumentations))
-        }
-
-        graphQlConfigurers.accept(builder)
-
-        return object : GraphQlSource {
-            val graphql = builder.build()
-
-            override fun graphQl(): GraphQL {
-                return graphql
+        // SchemaMappingInspector needs RuntimeWiring, but cannot run here since type
+        // visitors may transform the schema, for example to add Connection types.
+        // TODO: refactor schemaprovider.schema to return the pair<GraphQlSchema, RuntimeWiring>
+        /*if (schemaReportConsumer != null) {
+            configureGraphQl { builder: GraphQL.Builder ->
+                val schema = builder.build().graphQLSchema
+                val report = SchemaMappingInspector.inspect(schema, runtimeWiring)
+                schemaReportConsumer!!.accept(report)
             }
+        }*/
 
-            override fun schema(): GraphQLSchema {
-                return schema
-            }
-        }
-    }
-
-    private fun applyTypeVisitors(schema: GraphQLSchema): GraphQLSchema {
-        val outputCodeRegistry =
-            GraphQLCodeRegistry.newCodeRegistry(schema.codeRegistry)
-
-        val vars: MutableMap<Class<*>, Any> = HashMap(2)
-        vars[GraphQLCodeRegistry.Builder::class.java] = outputCodeRegistry
-        vars[TypeVisitorHelper::class.java] = TypeVisitorHelper.create(schema)
-
-        val visitorsToUse: MutableList<GraphQLTypeVisitor> = ArrayList(this.typeVisitors)
-        visitorsToUse.add(ContextDataFetcherDecorator.createVisitor(this.subscriptionExceptionResolvers))
-
-        SchemaTraverser().depthFirstFullSchema(visitorsToUse, schema, vars)
-        return schema.transformWithoutTypes { builder: BuilderWithoutTypes ->
-            builder.codeRegistry(
-                outputCodeRegistry
-            )
-        }
+        return schema
     }
 
     override fun schemaResources(vararg resources: Resource?): SchemaResourceBuilder {

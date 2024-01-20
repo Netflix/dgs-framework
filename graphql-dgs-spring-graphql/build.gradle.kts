@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
+
 dependencies {
     implementation(project(":graphql-dgs"))
     implementation(project(":graphql-dgs-reactive"))
     implementation("org.springframework:spring-web")
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("io.micrometer:context-propagation:1.1.0")
-    implementation("org.springframework.graphql:spring-graphql")
+    implementation("org.springframework.graphql:spring-graphql:1.2.5-SNAPSHOT")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 

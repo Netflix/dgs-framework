@@ -23,10 +23,12 @@ import org.slf4j.LoggerFactory
 import org.springframework.graphql.execution.GraphQlSource
 
 class ReloadableGraphQLSource(
-    var graphQlSource: GraphQlSource,
-    val dgsGraphQLSourceBuilder: DgsGraphQLSourceBuilder,
-    val reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator
+    private var graphQlSourceBuilder: GraphQlSource.Builder<*>,
+    private val reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator
 ) : GraphQlSource {
+
+    private var graphQlSource: GraphQlSource? = null
+
     override fun graphQl(): GraphQL {
         return getSource().graphQl()
     }
@@ -36,12 +38,12 @@ class ReloadableGraphQLSource(
     }
 
     private fun getSource(): GraphQlSource {
-        if (reloadSchemaIndicator.reloadSchema()) {
+        if (graphQlSource == null || reloadSchemaIndicator.reloadSchema()) {
             LOGGER.info("Rebuilding GraphQLSource")
-            graphQlSource = dgsGraphQLSourceBuilder.reload()
+            graphQlSource = graphQlSourceBuilder.build()
         }
 
-        return graphQlSource
+        return graphQlSource!!
     }
 
     companion object {
