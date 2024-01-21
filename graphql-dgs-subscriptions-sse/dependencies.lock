@@ -22,7 +22,7 @@
             "locked": "3.2.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "compileClasspath": {
@@ -200,7 +200,7 @@
             "locked": "3.2.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.2",
@@ -327,7 +327,7 @@
             "locked": "3.2.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "jmhCompileClasspath": {
@@ -551,7 +551,7 @@
             "locked": "3.2.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.2",
@@ -1389,7 +1389,7 @@
             ]
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.2",
@@ -1595,7 +1595,7 @@
             "locked": "3.2.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "kotlinCompilerClasspath": {
@@ -1658,7 +1658,7 @@
             "locked": "3.2.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "kotlinCompilerPluginClasspath": {
@@ -1672,7 +1672,7 @@
             "locked": "3.2.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "kotlinCompilerPluginClasspathJmh": {
@@ -1737,7 +1737,7 @@
             "locked": "3.2.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
@@ -1802,7 +1802,7 @@
             "locked": "3.2.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
@@ -1867,7 +1867,7 @@
             "locked": "3.2.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "kotlinKlibCommonizerClasspath": {
@@ -1935,7 +1935,7 @@
             "locked": "3.2.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "kotlinNativeCompilerPluginClasspath": {
@@ -1949,7 +1949,7 @@
             "locked": "3.2.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "nebulaRecommenderBom": {
@@ -1963,7 +1963,7 @@
             "locked": "3.2.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "runtimeClasspath": {
@@ -2304,7 +2304,7 @@
             "locked": "3.2.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.2",
@@ -2402,7 +2402,7 @@
             "locked": "3.2.1"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "testCompileClasspath": {
@@ -2976,7 +2976,7 @@
             ]
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.2",
@@ -3799,7 +3799,7 @@
             ]
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.2",
