@@ -38,10 +38,8 @@ internal class CompletableFutureWrapper(private val taskExecutor: AsyncTaskExecu
      * Wrap the call to a data fetcher in CompletableFuture to enable parallel behavior.
      * Used when virtual threads are enabled.
      */
-    fun wrapInCompletableFuture(function: () -> Any?): Any? {
-        return CompletableFuture.supplyAsync({
-            return@supplyAsync function.invoke()
-        }, taskExecutor)
+    fun wrapInCompletableFuture(function: () -> Any?): CompletableFuture<Any?> {
+        return CompletableFuture.supplyAsync({ function() }, taskExecutor)
     }
 
     /**
