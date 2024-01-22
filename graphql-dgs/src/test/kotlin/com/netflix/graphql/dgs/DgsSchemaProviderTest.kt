@@ -172,7 +172,7 @@ internal class DgsSchemaProviderTest {
                 schemaLocations = listOf("classpath*:schema/**/*.graphql*")
             )
 
-            val schema = schemaProvider.schema()
+            val schema = schemaProvider.schema().graphQLSchema
 
             for (type in schema.allTypesAsList) {
                 if (type.definition?.sourceLocation != null) {
@@ -237,7 +237,7 @@ internal class DgsSchemaProviderTest {
         contextRunner.withBeans(Fetcher::class).run { context ->
             val schemaProvider = schemaProvider(applicationContext = context)
             assertThat(schemaProvider.resolvedDataFetchers()).isEmpty()
-            val schema = schemaProvider.schema()
+            val schema = schemaProvider.schema().graphQLSchema
             assertThat(schemaProvider.resolvedDataFetchers())
                 .isNotEmpty.hasSize(1).first().satisfies(
                     Consumer {
@@ -264,7 +264,7 @@ internal class DgsSchemaProviderTest {
         contextRunner.withBeans(Fetcher::class).run { context ->
             val schemaProvider = schemaProvider(applicationContext = context)
             assertThat(schemaProvider.resolvedDataFetchers()).isEmpty()
-            val schema = schemaProvider.schema()
+            val schema = schemaProvider.schema().graphQLSchema
             assertThat(schemaProvider.resolvedDataFetchers())
                 .isNotEmpty.hasSize(1).first().satisfies(
                     Consumer {
@@ -295,7 +295,7 @@ internal class DgsSchemaProviderTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val exc = assertThrows<InvalidDgsConfigurationException> {
-                GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema()).build()
+                GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema().graphQLSchema).build()
             }
             assertThat(exc.message).isEqualTo("Duplicate data fetchers registered for Query.hello")
         }
@@ -316,7 +316,7 @@ internal class DgsSchemaProviderTest {
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
-            val schema = schemaProvider(applicationContext = context).schema()
+            val schema = schemaProvider(applicationContext = context).schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertHello(build)
         }
@@ -336,7 +336,7 @@ internal class DgsSchemaProviderTest {
 
         contextRunner.withBeans(VideoFetcher::class).run { context ->
             val error = assertThrows<InvalidTypeResolverException> {
-                val build = GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema(schema)).build()
+                val build = GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema(schema).graphQLSchema).build()
                 build.execute("{video{title}}")
             }
             assertThat(error.message).isEqualTo("The default type resolver could not find a suitable Java type for GraphQL interface type `Video`. Provide a @DgsTypeResolver for `Show`.")
@@ -365,7 +365,7 @@ internal class DgsSchemaProviderTest {
 
         contextRunner.withBean(SearchFetcher::class.java).run { context ->
             val error = assertThrows<InvalidTypeResolverException> {
-                val build = GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema(schema)).build()
+                val build = GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema(schema).graphQLSchema).build()
                 build.execute(
                     """
                      query {
@@ -411,7 +411,7 @@ internal class DgsSchemaProviderTest {
         contextRunner.withBean(FetcherWithDefaultResolver::class.java).withBean(VideoFetcher::class.java).run { context ->
             assertThatNoException().isThrownBy {
                 // verify that it should not trigger a build failure
-                GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema(schema)).build()
+                GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema(schema).graphQLSchema).build()
             }
         }
     }
@@ -450,7 +450,7 @@ internal class DgsSchemaProviderTest {
         }
 
         contextRunner.withBeans(FetcherWithDefaultResolver::class, FetcherWithResolverOverride::class, VideoFetcher::class).run { context ->
-            val build = GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema(schema)).build()
+            val build = GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema(schema).graphQLSchema).build()
             assertVideo(build)
         }
     }
@@ -458,7 +458,7 @@ internal class DgsSchemaProviderTest {
     @Test
     fun addFetchersWithoutDataFetchingEnvironment() {
         contextRunner.withBeans(HelloFetcher::class).run { context ->
-            val schema = schemaProvider(applicationContext = context).schema()
+            val schema = schemaProvider(applicationContext = context).schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertHello(build)
         }
@@ -491,7 +491,7 @@ internal class DgsSchemaProviderTest {
                 .build()
 
             typeDefinitionRegistry.add(objectTypeExtensionDefinition)
-            val schema = schemaProvider(applicationContext = context, typeDefinitionRegistry = typeDefinitionRegistry).schema()
+            val schema = schemaProvider(applicationContext = context, typeDefinitionRegistry = typeDefinitionRegistry).schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertHello(build)
 
@@ -514,7 +514,7 @@ internal class DgsSchemaProviderTest {
                 .build()
 
             typeDefinitionRegistry.add(objectTypeExtensionDefinition)
-            val schema = schemaProvider(applicationContext = context, typeDefinitionRegistry = typeDefinitionRegistry).schema()
+            val schema = schemaProvider(applicationContext = context, typeDefinitionRegistry = typeDefinitionRegistry).schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertHello(build)
 
@@ -550,7 +550,7 @@ internal class DgsSchemaProviderTest {
 
         contextRunner.run { context ->
             val dgsSchemaProvider = schemaProvider(applicationContext = context)
-            assertThat(dgsSchemaProvider.schema(schema)).isNotNull
+            assertThat(dgsSchemaProvider.schema(schema).graphQLSchema).isNotNull
         }
     }
 
@@ -739,7 +739,7 @@ internal class DgsSchemaProviderTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val schemaProvider = schemaProvider(applicationContext = context)
-            val schema = schemaProvider.schema()
+            val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertHello(build)
         }
@@ -757,7 +757,7 @@ internal class DgsSchemaProviderTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val schemaProvider = schemaProvider(applicationContext = context)
-            val schema = schemaProvider.schema()
+            val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertHello(build)
         }
@@ -774,7 +774,7 @@ internal class DgsSchemaProviderTest {
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
-            val schema = schemaProvider(applicationContext = context).schema()
+            val schema = schemaProvider(applicationContext = context).schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertHello(build)
         }
@@ -797,7 +797,7 @@ internal class DgsSchemaProviderTest {
                 addMessage(message: String): String
             }
                 """.trimIndent()
-            )
+            ).graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertInputMessage(build)
         }
@@ -820,7 +820,7 @@ internal class DgsSchemaProviderTest {
                 addMessage(message: String): String
             }
                 """.trimIndent()
-            )
+            ).graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertInputMessage(build)
         }
@@ -843,7 +843,7 @@ internal class DgsSchemaProviderTest {
                 messages: String
             }
                 """.trimIndent()
-            )
+            ).graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertSubscription(build)
         }
@@ -866,7 +866,7 @@ internal class DgsSchemaProviderTest {
                 messages: String
             }
                 """.trimIndent()
-            )
+            ).graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertSubscription(build)
         }
@@ -881,7 +881,7 @@ internal class DgsSchemaProviderTest {
         Files.writeString(anotherPath, """directive @bar on FIELD_DEFINITION""")
 
         contextRunner.run { context ->
-            val schema = schemaProvider(context, schemaLocations = listOf("file:$tempDir/*.graphql")).schema()
+            val schema = schemaProvider(context, schemaLocations = listOf("file:$tempDir/*.graphql")).schema().graphQLSchema
             assertThat(schema.getType("Foo")).isNotNull
             assertThat(schema.getDirective("bar")).isNotNull
         }
@@ -912,7 +912,7 @@ internal class DgsSchemaProviderTest {
             val schema = schemaProvider(
                 applicationContext = context,
                 componentFilter = { !it::class.hasAnnotation<TestAnnotation>() }
-            ).schema()
+            ).schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertHello(build)
         }
@@ -948,7 +948,7 @@ internal class DgsSchemaProviderTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val schemaProvider = schemaProvider(applicationContext = context)
-            val schema = schemaProvider.schema()
+            val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             val executionResult = build.execute("{world}")
             assertTrue(executionResult.isDataPresent)
@@ -1001,7 +1001,7 @@ internal class DgsSchemaProviderTest {
 
         contextRunner.withBeans(Fetcher::class, FetcherWithDefaultResolver::class).run { context ->
             val schemaProvider = schemaProvider(applicationContext = context)
-            val schema = schemaProvider.schema()
+            val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             val executionResult = build.execute("{character { age }}")
             assertTrue(executionResult.isDataPresent)
@@ -1042,7 +1042,7 @@ internal class DgsSchemaProviderTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val schemaProvider = schemaProvider(applicationContext = context)
-            val schema = schemaProvider.schema()
+            val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             val executionResult = build.execute("{world}")
             assertTrue(executionResult.isDataPresent)

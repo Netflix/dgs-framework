@@ -42,7 +42,7 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider, 
     private var schemaReportConsumer: Consumer<SchemaReport>? = null
 
     override fun initGraphQlSchema(): GraphQLSchema {
-        var schema: GraphQLSchema = dgsSchemaProvider.schema(schemaResources = schemaResources)
+        var schema: GraphQLSchema = dgsSchemaProvider.schema(schemaResources = schemaResources).graphQLSchema
 
         // SchemaMappingInspector needs RuntimeWiring, but cannot run here since type
         // visitors may transform the schema, for example to add Connection types.

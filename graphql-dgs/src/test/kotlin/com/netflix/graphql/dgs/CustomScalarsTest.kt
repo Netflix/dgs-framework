@@ -82,7 +82,7 @@ class CustomScalarsTest {
             
             scalar DateTime
             """.trimIndent()
-        )
+        ).graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
         val executionResult = build.execute(

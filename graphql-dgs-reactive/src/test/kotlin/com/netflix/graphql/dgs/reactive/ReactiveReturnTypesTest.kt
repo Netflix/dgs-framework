@@ -169,7 +169,7 @@ internal class ReactiveReturnTypesTest {
 
             scalar DateTime
             """.trimIndent()
-        )
+        ).graphQLSchema
 
         dgsQueryExecutor = DefaultDgsReactiveQueryExecutor(
             defaultSchema = schema,

@@ -145,7 +145,7 @@ class DgsSchemaProvider(
         @Language("GraphQL") schema: String? = null,
         fieldVisibility: GraphqlFieldVisibility = DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY,
         schemaResources: Set<Resource> = emptySet()
-    ): GraphQLSchema {
+    ): SchemaProviderResult {
         schemaReadWriteLock.write {
             dataFetchers.clear()
             dataFetcherTracingInstrumentationEnabled.clear()
@@ -154,7 +154,7 @@ class DgsSchemaProvider(
         }
     }
 
-    private fun computeSchema(schema: String? = null, fieldVisibility: GraphqlFieldVisibility, schemaResources: Set<Resource> = emptySet()): GraphQLSchema {
+    private fun computeSchema(schema: String? = null, fieldVisibility: GraphqlFieldVisibility, schemaResources: Set<Resource> = emptySet()): SchemaProviderResult {
         val startTime = System.currentTimeMillis()
         val dgsComponents = applicationContext.getBeansWithAnnotation<DgsComponent>().values.let { beans ->
             if (componentFilter != null) beans.filter(componentFilter) else beans
@@ -228,7 +228,7 @@ class DgsSchemaProvider(
         val entityFetcher = federationResolverInstance.entitiesFetcher()
         val typeResolver = federationResolverInstance.typeResolver()
 
-        val graphQLSchema =
+        var graphQLSchema =
             Federation.transform(mergedRegistry, runtimeWiring).fetchEntities(entityFetcher)
                 .resolveEntityType(typeResolver).build()
 
@@ -236,11 +236,13 @@ class DgsSchemaProvider(
         val totalTime = endTime - startTime
         logger.debug("DGS initialized schema in {}ms", totalTime)
 
-        return if (mockProviders.isNotEmpty()) {
+        graphQLSchema = if (mockProviders.isNotEmpty()) {
             DgsSchemaTransformer().transformSchemaWithMockProviders(graphQLSchema, mockProviders)
         } else {
             graphQLSchema
         }
+
+        return SchemaProviderResult(graphQLSchema, runtimeWiring)
     }
 
     private fun invokeDgsTypeDefinitionRegistry(
@@ -752,3 +754,5 @@ class DgsSchemaProvider(
         private val logger: Logger = LoggerFactory.getLogger(DgsSchemaProvider::class.java)
     }
 }
+
+data class SchemaProviderResult(val graphQLSchema: GraphQLSchema, val runtimeWiring: RuntimeWiring)
