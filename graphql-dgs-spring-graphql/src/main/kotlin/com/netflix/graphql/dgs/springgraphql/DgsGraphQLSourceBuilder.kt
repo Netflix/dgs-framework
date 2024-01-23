@@ -16,7 +16,6 @@
 
 package com.netflix.graphql.dgs.springgraphql
 
-import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import graphql.schema.GraphQLSchema
 import graphql.schema.TypeResolver
@@ -42,19 +41,16 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider) 
     private var schemaReportConsumer: Consumer<SchemaReport>? = null
 
     override fun initGraphQlSchema(): GraphQLSchema {
-        val schema = dgsSchemaProvider.schema(schemaResources = schemaResources).graphQLSchema
+        val schema = dgsSchemaProvider.schema(schemaResources = schemaResources)
 
-        // SchemaMappingInspector needs RuntimeWiring, but cannot run here since type
-        // visitors may transform the schema, for example to add Connection types.
-        // TODO: refactor schemaprovider.schema to return the pair<GraphQlSchema, RuntimeWiring>
-//        if (schemaReportConsumer != null) {
-//            configureGraphQl { builder: GraphQL.Builder ->
-//                val report = SchemaMappingInspector.inspect(schema.graphQLSchema, schema.runtimeWiring)
-//                schemaReportConsumer!!.accept(report)
-//            }
-//        }
+        if (schemaReportConsumer != null) {
+            configureGraphQl {
+                val report = SchemaMappingInspector.inspect(schema.graphQLSchema, schema.runtimeWiring)
+                schemaReportConsumer!!.accept(report)
+            }
+        }
 
-        return schema
+        return schema.graphQLSchema
     }
 
     override fun schemaResources(vararg resources: Resource?): SchemaResourceBuilder {

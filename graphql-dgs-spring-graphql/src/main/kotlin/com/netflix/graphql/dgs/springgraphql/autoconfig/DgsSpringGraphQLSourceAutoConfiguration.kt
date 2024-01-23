@@ -21,23 +21,26 @@ import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.springgraphql.DgsGraphQLSourceBuilder
 import com.netflix.graphql.dgs.springgraphql.ReloadableGraphQLSource
 import graphql.execution.instrumentation.Instrumentation
+import org.apache.commons.logging.LogFactory
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties
 import org.springframework.boot.autoconfigure.graphql.GraphQlSourceBuilderCustomizer
 import org.springframework.context.annotation.Bean
-import org.springframework.graphql.execution.DataFetcherExceptionResolver
-import org.springframework.graphql.execution.GraphQlSource
-import org.springframework.graphql.execution.RuntimeWiringConfigurer
-import org.springframework.graphql.execution.SubscriptionExceptionResolver
+import org.springframework.graphql.execution.*
 
 @AutoConfiguration
 @AutoConfigureBefore(name = ["org.springframework.boot.autoconfigure.graphql.GraphQlAutoConfiguration"])
 @AutoConfigureAfter(name = ["com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration"])
 open class DgsSpringGraphQLSourceAutoConfiguration {
+
+    private val logger = LogFactory.getLog(DgsSpringGraphQLAutoConfiguration::class.java)
+
     @Bean
     open fun graphQlSource(
+        properties: GraphQlProperties,
         dgsSchemaProvider: DgsSchemaProvider,
         exceptionResolvers: ObjectProvider<DataFetcherExceptionResolver>,
         subscriptionExceptionResolvers: ObjectProvider<SubscriptionExceptionResolver>,
@@ -50,6 +53,10 @@ open class DgsSpringGraphQLSourceAutoConfiguration {
             .exceptionResolvers(exceptionResolvers.orderedStream().toList())
             .subscriptionExceptionResolvers(subscriptionExceptionResolvers.orderedStream().toList())
             .instrumentation(instrumentations.orderedStream().toList())
+
+        if (properties.schema.inspection.isEnabled) {
+            builder.inspectSchemaMappings { message: SchemaReport? -> logger.info(message) }
+        }
 
         wiringConfigurers.orderedStream().forEach { configurer: RuntimeWiringConfigurer ->
             builder.configureRuntimeWiring(

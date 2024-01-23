@@ -8,6 +8,10 @@ spring:
     websocket:
       path: /graphql
 
+    schema:
+      inspection:
+        enabled: true
+
 dgs.reload: true
 
 management:

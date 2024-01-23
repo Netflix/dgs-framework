@@ -45,8 +45,7 @@ allprojects {
     group = "com.netflix.graphql.dgs"
     repositories {
         mavenCentral()
-        mavenLocal()
-        maven { url = URI.create("https://repo.spring.io/libs-snapshot") }
+        maven { url = URI.create("https://repo.spring.io/snapshot") }
 
     }
 
