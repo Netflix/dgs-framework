@@ -99,7 +99,7 @@
             ]
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.8.0",
+            "locked": "2.9.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
@@ -434,7 +434,7 @@
             ]
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.8.0",
+            "locked": "2.9.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
@@ -820,7 +820,7 @@
             ]
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.8.0",
+            "locked": "2.9.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
@@ -2178,7 +2178,7 @@
             ]
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.8.0",
+            "locked": "2.9.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
@@ -2643,7 +2643,7 @@
             ]
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.8.0",
+            "locked": "2.9.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
@@ -3393,7 +3393,7 @@
             ]
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.8.0",
+            "locked": "2.9.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
