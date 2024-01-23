@@ -25,16 +25,20 @@ import graphql.schema.idl.TypeDefinitionRegistry
 @DgsComponent
 class DgsPaginationTypeDefinitionRegistry {
 
+    companion object {
+        private const val CONNECTION_DIRECTIVE_NAME = "connection"
+        private const val PAGE_INFO_TYPE_NAME = "PageInfo"
+    }
+
     @DgsTypeDefinitionRegistry
     fun registry(schemaRegistry: TypeDefinitionRegistry): TypeDefinitionRegistry {
-        val definitions = schemaRegistry.types()
-        val connectionTypes = parseConnectionDirective(definitions.values.toMutableList())
+        val connectionTypes = parseConnectionDirective(schemaRegistry)
 
         val typeDefinitionRegistry = TypeDefinitionRegistry()
         typeDefinitionRegistry.addAll(connectionTypes)
-        if (!schemaRegistry.directiveDefinitions.contains("connection")) {
+        if (schemaRegistry.getDirectiveDefinition(CONNECTION_DIRECTIVE_NAME).isEmpty) {
             val directive = DirectiveDefinition.newDirectiveDefinition()
-                .name("connection")
+                .name(CONNECTION_DIRECTIVE_NAME)
                 .description(createDescription("Connection"))
                 .directiveLocation(DirectiveLocation.newDirectiveLocation().name(Introspection.DirectiveLocation.OBJECT.name).build()).build()
             typeDefinitionRegistry.add(directive)
@@ -43,17 +47,20 @@ class DgsPaginationTypeDefinitionRegistry {
         return typeDefinitionRegistry
     }
 
-    private fun parseConnectionDirective(types: MutableList<TypeDefinition<*>>): List<TypeDefinition<*>> {
+    private fun parseConnectionDirective(registry: TypeDefinitionRegistry): List<TypeDefinition<*>> {
         val definitions = mutableListOf<ObjectTypeDefinition>()
-        types.filter { it is ObjectTypeDefinition || it is InterfaceTypeDefinition || it is UnionTypeDefinition }
-            .filter { it.hasDirective("connection") }
-            .forEach {
-                definitions.add(createConnection(it.name))
-                definitions.add(createEdge(it.name))
+        for ((_, typedef) in registry.types()) {
+            if (!typedef.hasDirective(CONNECTION_DIRECTIVE_NAME)) {
+                continue
             }
+            if (typedef is ObjectTypeDefinition || typedef is InterfaceTypeDefinition || typedef is UnionTypeDefinition) {
+                definitions += createConnection(typedef.name)
+                definitions += createEdge(typedef.name)
+            }
+        }
 
-        if (types.any { it.hasDirective("connection") } && !types.any { it.name == "PageInfo" }) {
-            definitions.add(createPageInfo())
+        if (definitions.isNotEmpty() && !registry.getType(PAGE_INFO_TYPE_NAME).isPresent) {
+            definitions += createPageInfo()
         }
 
         return definitions
@@ -79,8 +86,8 @@ class DgsPaginationTypeDefinitionRegistry {
 
     private fun createPageInfo(): ObjectTypeDefinition {
         return ObjectTypeDefinition.newObjectTypeDefinition()
-            .name("PageInfo")
-            .description(createDescription("PageInfo"))
+            .name(PAGE_INFO_TYPE_NAME)
+            .description(createDescription(PAGE_INFO_TYPE_NAME))
             .fieldDefinition(createFieldDefinition("hasPreviousPage", NonNullType(TypeName("Boolean"))))
             .fieldDefinition(createFieldDefinition("hasNextPage", NonNullType(TypeName("Boolean"))))
             .fieldDefinition(createFieldDefinition("startCursor", TypeName("String")))
@@ -89,9 +96,11 @@ class DgsPaginationTypeDefinitionRegistry {
     }
 
     private fun createFieldDefinition(name: String, type: Type<*>): FieldDefinition {
-        return FieldDefinition(name, type).transform {
-            it.description(createDescription("Field $name"))
-        }
+        return FieldDefinition.newFieldDefinition()
+            .name(name)
+            .type(type)
+            .description(createDescription("Field $name"))
+            .build()
     }
 
     private fun createDescription(content: String): Description {
