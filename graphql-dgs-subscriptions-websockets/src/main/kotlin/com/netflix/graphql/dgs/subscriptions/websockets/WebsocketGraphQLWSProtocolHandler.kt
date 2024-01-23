@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.subscriptions.websockets
 
+import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.types.subscription.*
@@ -30,6 +31,7 @@ import org.slf4j.event.Level
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 import org.springframework.web.socket.handler.TextWebSocketHandler
+import java.io.UncheckedIOException
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
@@ -110,7 +112,11 @@ class WebsocketGraphQLWSProtocolHandler(
 
             override fun onNext(er: ExecutionResult) {
                 val message = OperationMessage(GQL_DATA, DataPayload(er.getData(), er.errors), id)
-                val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
+                val jsonMessage = try {
+                    TextMessage(objectMapper.writeValueAsBytes(message))
+                } catch (exc: JsonProcessingException) {
+                    throw UncheckedIOException(exc)
+                }
                 logger.debug("Sending subscription data: {}", jsonMessage)
 
                 if (session.isOpen) {

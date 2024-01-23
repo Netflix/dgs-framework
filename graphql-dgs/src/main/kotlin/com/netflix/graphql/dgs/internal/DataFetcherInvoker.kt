@@ -31,6 +31,7 @@ import org.springframework.util.CollectionUtils
 import org.springframework.util.ReflectionUtils
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
+import java.lang.reflect.UndeclaredThrowableException
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.callSuspendBy
@@ -58,12 +59,17 @@ class DataFetcherInvoker internal constructor(
         ReflectionUtils.makeAccessible(bridgedMethod)
     }
 
+    @Throws(Exception::class)
     override fun get(environment: DataFetchingEnvironment): Any? {
         if (methodParameters.isEmpty()) {
             if (completableFutureWrapper.shouldWrapInCompletableFuture(bridgedMethod)) {
                 return completableFutureWrapper.wrapInCompletableFuture { ReflectionUtils.invokeMethod(bridgedMethod, dgsComponent) }
             }
-            return ReflectionUtils.invokeMethod(bridgedMethod, dgsComponent)
+            return try {
+                bridgedMethod.invoke(dgsComponent)
+            } catch (exc: Exception) {
+                handleReflectionException(exc)
+            }
         }
 
         if (kotlinFunction != null) {
@@ -82,7 +88,11 @@ class DataFetcherInvoker internal constructor(
         return if (completableFutureWrapper.shouldWrapInCompletableFuture(bridgedMethod)) {
             completableFutureWrapper.wrapInCompletableFuture { ReflectionUtils.invokeMethod(bridgedMethod, dgsComponent, *args) }
         } else {
-            ReflectionUtils.invokeMethod(bridgedMethod, dgsComponent, *args)
+            try {
+                bridgedMethod.invoke(dgsComponent, *args)
+            } catch (exc: Exception) {
+                handleReflectionException(exc)
+            }
         }
     }
 
@@ -113,19 +123,40 @@ class DataFetcherInvoker internal constructor(
                 kFunc.callSuspendBy(argsByName)
             }.onErrorMap(InvocationTargetException::class.java) { it.targetException }
         }
-        return try {
-            if (completableFutureWrapper.shouldWrapInCompletableFuture(kFunc)) {
-                completableFutureWrapper.wrapInCompletableFuture { kFunc.callBy(argsByName) }
-            } else {
+        return if (completableFutureWrapper.shouldWrapInCompletableFuture(kFunc)) {
+            completableFutureWrapper.wrapInCompletableFuture { kFunc.callBy(argsByName) }
+        } else {
+            try {
                 kFunc.callBy(argsByName)
+            } catch (exc: Exception) {
+                handleReflectionException(exc)
             }
-        } catch (ex: Exception) {
-            ReflectionUtils.handleReflectionException(ex)
         }
     }
 
     private fun formatArgumentError(param: MethodParameter, message: String): String {
         return "Could not resolve parameter [${param.parameterIndex}] in " +
             param.executable.toGenericString() + if (message.isNotEmpty()) ": $message" else ""
+    }
+
+    /**
+     * Handle the given reflection exception.
+     *
+     * Variant of [ReflectionUtils.handleReflectionException] that allows checked exceptions
+     * to propagate, but handles [NoSuchMethodException], [IllegalAccessException], and [InvocationTargetException]
+     * the same way as that helper does; the main difference is that this method that this method will never throw
+     * [UndeclaredThrowableException].
+     */
+    private fun handleReflectionException(exc: Exception): Nothing {
+        if (exc is NoSuchMethodException) {
+            throw IllegalStateException("Method not found: ${exc.message}")
+        }
+        if (exc is IllegalAccessException) {
+            throw IllegalStateException("Could not access method or field: ${exc.message}")
+        }
+        if (exc is InvocationTargetException) {
+            throw exc.targetException
+        }
+        throw exc
     }
 }
