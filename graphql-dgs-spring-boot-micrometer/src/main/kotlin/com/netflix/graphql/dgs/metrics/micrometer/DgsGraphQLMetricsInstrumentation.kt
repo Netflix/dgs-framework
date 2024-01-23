@@ -34,6 +34,7 @@ import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Timer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.boot.actuate.metrics.AutoTimer
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
@@ -45,7 +46,8 @@ class DgsGraphQLMetricsInstrumentation(
     private val tagsProvider: DgsGraphQLMetricsTagsProvider,
     private val properties: DgsGraphQLMetricsProperties,
     private val limitedTagMetricResolver: LimitedTagMetricResolver,
-    private val optQuerySignatureRepository: Optional<QuerySignatureRepository> = Optional.empty()
+    private val optQuerySignatureRepository: Optional<QuerySignatureRepository> = Optional.empty(),
+    private val autoTimer: AutoTimer
 ) : SimplePerformantInstrumentation() {
 
     companion object {
@@ -80,11 +82,7 @@ class DgsGraphQLMetricsInstrumentation(
                 addAll(state.tags())
             }
 
-            state.stopTimer(
-                properties.autotime
-                    .builder(GqlMetric.QUERY.key)
-                    .tags(tags)
-            )
+            state.stopTimer(autoTimer.builder(GqlMetric.QUERY.key).tags(tags))
         }
     }
 
@@ -217,8 +215,7 @@ class DgsGraphQLMetricsInstrumentation(
         val recordedTags = baseTags + tagsProvider.getFieldFetchTags(state, parameters, error)
 
         timerSampler.stop(
-            properties
-                .autotime
+            autoTimer
                 .builder(GqlMetric.RESOLVER.key)
                 .tags(recordedTags)
                 .register(registry)

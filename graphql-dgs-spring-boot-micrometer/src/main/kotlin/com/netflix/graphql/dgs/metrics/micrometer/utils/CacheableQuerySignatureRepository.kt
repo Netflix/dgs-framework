@@ -18,12 +18,12 @@ package com.netflix.graphql.dgs.metrics.micrometer.utils
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.netflix.graphql.dgs.Internal
-import com.netflix.graphql.dgs.metrics.micrometer.DgsGraphQLMetricsProperties
 import com.netflix.graphql.dgs.metrics.micrometer.DgsMeterRegistrySupplier
 import graphql.language.Document
 import io.micrometer.core.instrument.binder.cache.CaffeineCacheMetrics
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.boot.actuate.metrics.AutoTimer
 import org.springframework.cache.Cache
 import org.springframework.cache.CacheManager
 import org.springframework.cache.caffeine.CaffeineCacheManager
@@ -53,10 +53,10 @@ import java.util.*
  */
 @Internal
 open class CacheableQuerySignatureRepository(
-    properties: DgsGraphQLMetricsProperties,
+    autoTimer: AutoTimer,
     meterRegistrySupplier: DgsMeterRegistrySupplier,
     private val optionalCacheManager: Optional<CacheManager>
-) : SimpleQuerySignatureRepository(properties, meterRegistrySupplier) {
+) : SimpleQuerySignatureRepository(autoTimer, meterRegistrySupplier) {
 
     private lateinit var cache: Cache
 
