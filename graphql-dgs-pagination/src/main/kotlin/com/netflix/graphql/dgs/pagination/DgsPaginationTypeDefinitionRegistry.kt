@@ -40,7 +40,10 @@ class DgsPaginationTypeDefinitionRegistry {
             val directive = DirectiveDefinition.newDirectiveDefinition()
                 .name(CONNECTION_DIRECTIVE_NAME)
                 .description(createDescription("Connection"))
-                .directiveLocation(DirectiveLocation.newDirectiveLocation().name(Introspection.DirectiveLocation.OBJECT.name).build()).build()
+                .directiveLocation(DirectiveLocation.newDirectiveLocation().name(Introspection.DirectiveLocation.OBJECT.name).build())
+                .directiveLocation(DirectiveLocation.newDirectiveLocation().name(Introspection.DirectiveLocation.INTERFACE.name).build())
+                .directiveLocation(DirectiveLocation.newDirectiveLocation().name(Introspection.DirectiveLocation.UNION.name).build())
+                .build()
             typeDefinitionRegistry.add(directive)
         }
 
