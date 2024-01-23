@@ -16,9 +16,6 @@
 
 package com.netflix.graphql.dgs.springgraphql.autoconfig
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.DgsRuntimeWiring
@@ -30,13 +27,10 @@ import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithReque
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
 import com.netflix.graphql.dgs.reactive.internal.method.SyncHandlerMethodArgumentResolverAdapter
-import com.netflix.graphql.dgs.springgraphql.DgsGraphQLSourceBuilder
-import com.netflix.graphql.dgs.springgraphql.ReloadableGraphQLSource
 import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.webflux.DgsWebFluxGraphQLInterceptor
 import com.netflix.graphql.dgs.springgraphql.webmvc.DgsWebMvcGraphQLInterceptor
-import graphql.execution.instrumentation.Instrumentation
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.reactivestreams.Publisher
@@ -115,34 +109,6 @@ open class DgsSpringGraphQLAutoConfiguration {
     }
 
     @Bean
-    open fun graphQlSource(
-        dgsSchemaProvider: DgsSchemaProvider,
-        exceptionResolvers: ObjectProvider<DataFetcherExceptionResolver>,
-        subscriptionExceptionResolvers: ObjectProvider<SubscriptionExceptionResolver>,
-        instrumentations: ObjectProvider<Instrumentation?>,
-        wiringConfigurers: ObjectProvider<RuntimeWiringConfigurer>,
-        sourceCustomizers: ObjectProvider<GraphQlSourceBuilderCustomizer>,
-        reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator
-    ): GraphQlSource {
-        val builder = DgsGraphQLSourceBuilder(dgsSchemaProvider, reloadSchemaIndicator)
-            .exceptionResolvers(exceptionResolvers.orderedStream().toList())
-            .subscriptionExceptionResolvers(subscriptionExceptionResolvers.orderedStream().toList())
-            .instrumentation(instrumentations.orderedStream().toList())
-
-        wiringConfigurers.orderedStream().forEach { configurer: RuntimeWiringConfigurer ->
-            builder.configureRuntimeWiring(
-                configurer
-            )
-        }
-        sourceCustomizers.orderedStream().forEach { customizer: GraphQlSourceBuilderCustomizer ->
-            customizer.customize(
-                builder
-            )
-        }
-        return ReloadableGraphQLSource(builder, reloadSchemaIndicator)
-    }
-
-    @Bean
     open fun springGraphQLDgsQueryExecutor(
         executionService: DefaultExecutionGraphQlService,
         dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
@@ -155,13 +121,6 @@ open class DgsSpringGraphQLAutoConfiguration {
             dgsDataLoaderProvider,
             requestCustomizer = requestCustomizer.getIfAvailable(DgsQueryExecutorRequestCustomizer::DEFAULT_REQUEST_CUSTOMIZER)
         )
-    }
-
-    @Bean
-    @Qualifier("dgsObjectMapper")
-    @ConditionalOnMissingBean(name = ["dgsObjectMapper"])
-    open fun dgsObjectMapper(): ObjectMapper {
-        return jacksonObjectMapper().registerModule(JavaTimeModule())
     }
 
     @Configuration(proxyBeanMethods = false)

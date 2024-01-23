@@ -29,7 +29,7 @@ import org.springframework.lang.Nullable
 import java.util.function.BiFunction
 import java.util.function.Consumer
 
-class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider, private val reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator) : AbstractGraphQlSourceBuilder<SchemaResourceBuilder>(), SchemaResourceBuilder {
+class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider) : AbstractGraphQlSourceBuilder<SchemaResourceBuilder>(), SchemaResourceBuilder {
     private val typeDefinitionConfigurers = mutableListOf<TypeDefinitionConfigurer>()
     private val runtimeWiringConfigurers = mutableListOf<RuntimeWiringConfigurer>()
 
@@ -42,18 +42,17 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider, 
     private var schemaReportConsumer: Consumer<SchemaReport>? = null
 
     override fun initGraphQlSchema(): GraphQLSchema {
-        var schema: GraphQLSchema = dgsSchemaProvider.schema(schemaResources = schemaResources).graphQLSchema
+        val schema = dgsSchemaProvider.schema(schemaResources = schemaResources).graphQLSchema
 
         // SchemaMappingInspector needs RuntimeWiring, but cannot run here since type
         // visitors may transform the schema, for example to add Connection types.
         // TODO: refactor schemaprovider.schema to return the pair<GraphQlSchema, RuntimeWiring>
-        /*if (schemaReportConsumer != null) {
-            configureGraphQl { builder: GraphQL.Builder ->
-                val schema = builder.build().graphQLSchema
-                val report = SchemaMappingInspector.inspect(schema, runtimeWiring)
-                schemaReportConsumer!!.accept(report)
-            }
-        }*/
+//        if (schemaReportConsumer != null) {
+//            configureGraphQl { builder: GraphQL.Builder ->
+//                val report = SchemaMappingInspector.inspect(schema.graphQLSchema, schema.runtimeWiring)
+//                schemaReportConsumer!!.accept(report)
+//            }
+//        }
 
         return schema
     }
