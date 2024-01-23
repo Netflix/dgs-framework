@@ -19,7 +19,6 @@ package com.netflix.graphql.dgs.metrics.micrometer.utils
 import com.netflix.graphql.dgs.Internal
 import com.netflix.graphql.dgs.metrics.DgsMetrics.CommonTags
 import com.netflix.graphql.dgs.metrics.DgsMetrics.InternalMetric
-import com.netflix.graphql.dgs.metrics.micrometer.DgsGraphQLMetricsProperties
 import com.netflix.graphql.dgs.metrics.micrometer.DgsMeterRegistrySupplier
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
 import graphql.language.Document
@@ -29,6 +28,7 @@ import io.micrometer.core.instrument.Timer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.InitializingBean
+import org.springframework.boot.actuate.metrics.AutoTimer
 import java.util.*
 
 /**
@@ -38,7 +38,7 @@ import java.util.*
  */
 @Internal
 open class SimpleQuerySignatureRepository(
-    private val properties: DgsGraphQLMetricsProperties,
+    private val autoTimer: AutoTimer,
     private val meterRegistrySupplier: DgsMeterRegistrySupplier
 ) : QuerySignatureRepository, InitializingBean {
 
@@ -77,7 +77,7 @@ open class SimpleQuerySignatureRepository(
             tags += CommonTags.JAVA_CLASS.tags(this)
             tags += CommonTags.JAVA_CLASS_METHOD.tags("get")
             timerSample.stop(
-                properties.autotime
+                autoTimer
                     .builder(InternalMetric.TIMED_METHOD.key)
                     .tags(tags)
                     .register(meterRegistry)
