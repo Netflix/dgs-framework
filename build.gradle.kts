@@ -15,6 +15,7 @@
  */
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.net.URI
 
 buildscript {
     repositories {
@@ -45,6 +46,8 @@ allprojects {
     repositories {
         mavenCentral()
         mavenLocal()
+        maven { url = URI.create("https://repo.spring.io/libs-snapshot") }
+
     }
 
     apply(plugin = "nebula.netflixoss")
@@ -58,6 +61,12 @@ allprojects {
     extra["sb.version"] = "3.2.0"
     extra["kotlin.version"] = Versions.KOTLIN_VERSION
     val springBootVersion = extra["sb.version"] as String
+
+    configurations.all {
+        resolutionStrategy {
+            force("org.springframework.graphql:spring-graphql:1.2.5-SNAPSHOT")
+        }
+    }
 
     dependencyRecommendations {
         mavenBom(mapOf("module" to "org.jetbrains.kotlin:kotlin-bom:${Versions.KOTLIN_VERSION}"))
