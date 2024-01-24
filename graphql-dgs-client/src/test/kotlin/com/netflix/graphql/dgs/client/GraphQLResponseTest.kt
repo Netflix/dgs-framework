@@ -19,6 +19,7 @@
 package com.netflix.graphql.dgs.client
 
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -256,5 +257,33 @@ class GraphQLResponseTest {
         val response = GraphQLResponse("""{"data": {"submitReview": {"submittedBy": "abc@netflix.com"}}}""")
         val result = response.dataAsObject(Response::class.java)
         assertEquals(Response(submitReview = mapOf("submittedBy" to "abc@netflix.com")), result)
+    }
+
+    @Test
+    fun testObjectErrorClassification() {
+        val response = GraphQLResponse(
+            """{
+            "data":  null,
+            "errors": [{
+              "message": "Validation failed",
+              "path": ["shows", 12],
+              "extensions": {
+                "errorType": "INTERNAL",
+                "classification": {
+                  "type": "ExtendedValidationError",
+                  "validatedPath": ["shows", "title"]
+                }
+              }
+            }]
+        }
+            """.trimIndent()
+        )
+        val error = response.errors.singleOrNull() ?: fail("Expected single error on response: $response")
+        assertThat(error.message).isEqualTo("Validation failed")
+        assertThat(error.path).isEqualTo(listOf("shows", 12))
+
+        val extensions = error.extensions ?: fail("Expected non-null extensions on error: $error")
+        assertThat(extensions.errorType).isEqualTo(ErrorType.INTERNAL)
+        assertThat(extensions.classification).isEqualTo(mapOf("type" to "ExtendedValidationError", "validatedPath" to listOf("shows", "title")))
     }
 }
