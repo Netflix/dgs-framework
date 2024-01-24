@@ -72,7 +72,7 @@ class DgsGraphQLMetricsInstrumentation(
         require(state is MetricsInstrumentationState)
         state.startTimer()
 
-        state.operationName = parameters.operation
+        state.operationNameValue = parameters.operation
         state.isIntrospectionQuery = QueryUtils.isIntrospectionQuery(parameters.executionInput)
 
         return SimpleInstrumentationContext.whenCompleted { result, exc ->
@@ -182,7 +182,7 @@ class DgsGraphQLMetricsInstrumentation(
 
         return SimpleInstrumentationContext.whenCompleted { errors, throwable ->
             if (errors.isNullOrEmpty() && throwable == null) {
-                state.querySignature = querySignatureRepository.get(document, parameters).getOrNull()
+                state.querySignatureValue = querySignatureRepository.get(document, parameters).getOrNull()
             }
         }
     }
@@ -193,13 +193,13 @@ class DgsGraphQLMetricsInstrumentation(
     ): InstrumentationContext<ExecutionResult>? {
         require(state is MetricsInstrumentationState)
         if (parameters.executionContext.getRoot<Any>() == null) {
-            state.operation = parameters.executionContext.operationDefinition.operation
-            if (state.operationName == null) {
-                state.operationName = parameters.executionContext.operationDefinition.name
+            state.operationValue = parameters.executionContext.operationDefinition.operation
+            if (state.operationNameValue == null) {
+                state.operationNameValue = parameters.executionContext.operationDefinition.name
             }
         }
         if (properties.tags.complexity.enabled) {
-            state.queryComplexity = ComplexityUtils.resolveComplexity(parameters)
+            state.queryComplexityValue = ComplexityUtils.resolveComplexity(parameters)
         }
         return super.beginExecuteOperation(parameters, state)
     }
@@ -229,10 +229,15 @@ class DgsGraphQLMetricsInstrumentation(
         private var timerSample: Timer.Sample? = null
 
         var isIntrospectionQuery = false
-        var queryComplexity: Int? = null
-        var operation: Operation? = null
-        var operationName: String? = null
-        var querySignature: QuerySignatureRepository.QuerySignature? = null
+        internal var queryComplexityValue: Int? = null
+        internal var operationValue: Operation? = null
+        internal var operationNameValue: String? = null
+        internal var querySignatureValue: QuerySignatureRepository.QuerySignature? = null
+
+        val queryComplexity: Optional<Int> get() = Optional.ofNullable(queryComplexityValue)
+        val operation: Optional<String> get() = Optional.ofNullable(operationValue?.name)
+        val operationName: Optional<String> get() = Optional.ofNullable(operationNameValue)
+        val querySignature: Optional<QuerySignatureRepository.QuerySignature> get() = Optional.ofNullable(querySignatureValue)
 
         fun startTimer() {
             this.timerSample = Timer.start(this.registry)
@@ -247,21 +252,21 @@ class DgsGraphQLMetricsInstrumentation(
             val tags = mutableListOf<Tag>()
             tags += Tag.of(
                 GqlTag.QUERY_COMPLEXITY.key,
-                queryComplexity?.toString() ?: TagUtils.TAG_VALUE_NONE
+                queryComplexityValue?.toString() ?: TagUtils.TAG_VALUE_NONE
             )
             tags += Tag.of(
                 GqlTag.OPERATION.key,
-                operation?.name ?: TagUtils.TAG_VALUE_NONE
+                operationValue?.name ?: TagUtils.TAG_VALUE_NONE
             )
 
             tags += limitedTagMetricResolver.tags(
                 GqlTag.OPERATION_NAME.key,
-                operationName ?: TagUtils.TAG_VALUE_ANONYMOUS
+                operationNameValue ?: TagUtils.TAG_VALUE_ANONYMOUS
             )
 
             tags += limitedTagMetricResolver.tags(
                 GqlTag.QUERY_SIG_HASH.key,
-                querySignature?.hash ?: TagUtils.TAG_VALUE_NONE
+                querySignatureValue?.hash ?: TagUtils.TAG_VALUE_NONE
             )
 
             return tags
