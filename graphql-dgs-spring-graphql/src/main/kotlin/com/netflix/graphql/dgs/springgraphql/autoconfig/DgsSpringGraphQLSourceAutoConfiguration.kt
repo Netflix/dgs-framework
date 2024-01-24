@@ -20,7 +20,11 @@ import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.springgraphql.DgsGraphQLSourceBuilder
 import com.netflix.graphql.dgs.springgraphql.ReloadableGraphQLSource
+import graphql.GraphQLError
+import graphql.execution.DataFetcherExceptionHandler
+import graphql.execution.DataFetcherExceptionHandlerParameters
 import graphql.execution.instrumentation.Instrumentation
+import graphql.schema.DataFetchingEnvironment
 import org.apache.commons.logging.LogFactory
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.autoconfigure.AutoConfiguration
@@ -47,10 +51,14 @@ open class DgsSpringGraphQLSourceAutoConfiguration {
         instrumentations: ObjectProvider<Instrumentation?>,
         wiringConfigurers: ObjectProvider<RuntimeWiringConfigurer>,
         sourceCustomizers: ObjectProvider<GraphQlSourceBuilderCustomizer>,
-        reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator
+        reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator,
+        defaultExceptionHandler: DataFetcherExceptionHandler
     ): GraphQlSource {
+        val dataFetcherExceptionResolvers: MutableList<DataFetcherExceptionResolver> = exceptionResolvers.orderedStream().toList().toMutableList()
+        dataFetcherExceptionResolvers.addLast(ExceptionHandlerResolverAdapter(defaultExceptionHandler))
+
         val builder = DgsGraphQLSourceBuilder(dgsSchemaProvider)
-            .exceptionResolvers(exceptionResolvers.orderedStream().toList())
+            .exceptionResolvers(dataFetcherExceptionResolvers)
             .subscriptionExceptionResolvers(subscriptionExceptionResolvers.orderedStream().toList())
             .instrumentation(instrumentations.orderedStream().toList())
 
@@ -69,5 +77,15 @@ open class DgsSpringGraphQLSourceAutoConfiguration {
             )
         }
         return ReloadableGraphQLSource(builder, reloadSchemaIndicator)
+    }
+}
+
+class ExceptionHandlerResolverAdapter(private val dataFetcherExceptionHandler: DataFetcherExceptionHandler) : DataFetcherExceptionResolverAdapter() {
+    override fun resolveToMultipleErrors(ex: Throwable, env: DataFetchingEnvironment): MutableList<GraphQLError>? {
+        val exceptionHandlerParameters =
+            DataFetcherExceptionHandlerParameters.newExceptionParameters().exception(ex).dataFetchingEnvironment(env)
+                .build()
+
+        return dataFetcherExceptionHandler.handleException(exceptionHandlerParameters).get().errors
     }
 }
