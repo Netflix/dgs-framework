@@ -15,7 +15,7 @@
             "locked": "3.2.2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1-SNAPSHOT"
         }
     }
 }
