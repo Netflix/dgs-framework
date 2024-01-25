@@ -377,7 +377,7 @@ class DgsSchemaProvider(
                         // register the base implementation for interfaces
                         if (!codeRegistryBuilder.hasDataFetcher(FieldCoordinates.coordinates(implType.name, field))) {
                             val dataFetcher =
-                                createBasicDataFetcher(method, dgsComponent.instance, parentType == "Subscription")
+                                createBasicDataFetcher(method, dgsComponent.instance)
                             codeRegistryBuilder.dataFetcher(
                                 FieldCoordinates.coordinates(implType.name, field),
                                 dataFetcher
@@ -392,7 +392,7 @@ class DgsSchemaProvider(
                 is UnionTypeDefinition -> {
                     type.memberTypes.asSequence().filterIsInstance<TypeName>().forEach { memberType ->
                         val dataFetcher =
-                            createBasicDataFetcher(method, dgsComponent.instance, parentType == "Subscription")
+                            createBasicDataFetcher(method, dgsComponent.instance)
                         codeRegistryBuilder.dataFetcher(
                             FieldCoordinates.coordinates(memberType.name, field),
                             dataFetcher
@@ -410,7 +410,7 @@ class DgsSchemaProvider(
                             matchingField.inputValueDefinitions.asSequence().map { it.name }.toSet()
                         )
                     }
-                    val dataFetcher = createBasicDataFetcher(method, dgsComponent.instance, parentType == "Subscription")
+                    val dataFetcher = createBasicDataFetcher(method, dgsComponent.instance)
                     codeRegistryBuilder.dataFetcher(
                         FieldCoordinates.coordinates(parentType, field),
                         dataFetcher
@@ -569,12 +569,8 @@ class DgsSchemaProvider(
         return null
     }
 
-    private fun createBasicDataFetcher(method: Method, dgsComponent: Any, isSubscription: Boolean): DataFetcher<Any?> {
+    private fun createBasicDataFetcher(method: Method, dgsComponent: Any): DataFetcher<Any?> {
         val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent, method)
-
-        if (isSubscription) {
-            return dataFetcher
-        }
 
         return DataFetcherFactories.wrapDataFetcher(dataFetcher) { dfe, result ->
             result?.let {
