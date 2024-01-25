@@ -55,7 +55,7 @@ open class DgsSpringGraphQLSourceAutoConfiguration {
         defaultExceptionHandler: DataFetcherExceptionHandler
     ): GraphQlSource {
         val dataFetcherExceptionResolvers: MutableList<DataFetcherExceptionResolver> = exceptionResolvers.orderedStream().toList().toMutableList()
-        dataFetcherExceptionResolvers.addLast(ExceptionHandlerResolverAdapter(defaultExceptionHandler))
+        dataFetcherExceptionResolvers.add((ExceptionHandlerResolverAdapter(defaultExceptionHandler)))
 
         val builder = DgsGraphQLSourceBuilder(dgsSchemaProvider)
             .exceptionResolvers(dataFetcherExceptionResolvers)
