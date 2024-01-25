@@ -81,13 +81,13 @@ dependencies {
         }
         // ---
         api("com.jayway.jsonpath:json-path") {
-            version { require("2.7.0") }
+            version { require("2.9.0") }
         }
         api("io.projectreactor:reactor-core") {
-            version { require("3.4.22") }
+            version { require("3.6.1") }
         }
         api("io.projectreactor:reactor-test"){
-            version { require("3.4.22") }
+            version { require("3.6.1") }
         }
         // CVEs
         api("org.apache.logging.log4j:log4j-to-slf4j:2.22.1") {

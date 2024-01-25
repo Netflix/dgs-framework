@@ -4,18 +4,18 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.0"
+            "locked": "3.2.2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "apiDependenciesMetadata": {
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         }
     },
     "compileClasspath": {
@@ -23,29 +23,75 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.21"
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-stdlib"
+            ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.0"
+            "locked": "3.2.2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "implementationDependenciesMetadata": {
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         }
     },
     "jmh": {
+        "net.sf.jopt-simple:jopt-simple": {
+            "locked": "5.0.4",
+            "transitive": [
+                "org.openjdk.jmh:jmh-core"
+            ]
+        },
+        "org.apache.commons:commons-math3": {
+            "locked": "3.2",
+            "transitive": [
+                "org.openjdk.jmh:jmh-core"
+            ]
+        },
         "org.openjdk.jmh:jmh-core": {
-            "locked": "1.36"
+            "locked": "1.36",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-asm",
+                "org.openjdk.jmh:jmh-generator-bytecode",
+                "org.openjdk.jmh:jmh-generator-reflection"
+            ]
+        },
+        "org.openjdk.jmh:jmh-generator-asm": {
+            "locked": "1.36",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-bytecode"
+            ]
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.36"
+        },
+        "org.openjdk.jmh:jmh-generator-reflection": {
+            "locked": "1.36",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-asm",
+                "org.openjdk.jmh:jmh-generator-bytecode"
+            ]
+        },
+        "org.ow2.asm:asm": {
+            "locked": "9.0",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-asm"
+            ]
         }
     },
     "jmhAnnotationProcessor": {
@@ -53,109 +99,368 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.0"
+            "locked": "3.2.2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "jmhApiDependenciesMetadata": {
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         }
     },
     "jmhCompileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.15.3"
         },
+        "net.sf.jopt-simple:jopt-simple": {
+            "locked": "5.0.4",
+            "transitive": [
+                "org.openjdk.jmh:jmh-core"
+            ]
+        },
+        "org.apache.commons:commons-math3": {
+            "locked": "3.2",
+            "transitive": [
+                "org.openjdk.jmh:jmh-core"
+            ]
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.21"
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-stdlib"
+            ]
         },
         "org.openjdk.jmh:jmh-core": {
-            "locked": "1.36"
+            "locked": "1.36",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-asm",
+                "org.openjdk.jmh:jmh-generator-bytecode",
+                "org.openjdk.jmh:jmh-generator-reflection"
+            ]
+        },
+        "org.openjdk.jmh:jmh-generator-asm": {
+            "locked": "1.36",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-bytecode"
+            ]
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.36"
         },
+        "org.openjdk.jmh:jmh-generator-reflection": {
+            "locked": "1.36",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-asm",
+                "org.openjdk.jmh:jmh-generator-bytecode"
+            ]
+        },
+        "org.ow2.asm:asm": {
+            "locked": "9.0",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-asm"
+            ]
+        },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.0"
+            "locked": "3.2.2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "jmhImplementationDependenciesMetadata": {
+        "net.sf.jopt-simple:jopt-simple": {
+            "locked": "5.0.4",
+            "transitive": [
+                "org.openjdk.jmh:jmh-core"
+            ]
+        },
+        "org.apache.commons:commons-math3": {
+            "locked": "3.2",
+            "transitive": [
+                "org.openjdk.jmh:jmh-core"
+            ]
+        },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         },
         "org.openjdk.jmh:jmh-core": {
-            "locked": "1.36"
+            "locked": "1.36",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-asm",
+                "org.openjdk.jmh:jmh-generator-bytecode",
+                "org.openjdk.jmh:jmh-generator-reflection"
+            ]
+        },
+        "org.openjdk.jmh:jmh-generator-asm": {
+            "locked": "1.36",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-bytecode"
+            ]
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.36"
+        },
+        "org.openjdk.jmh:jmh-generator-reflection": {
+            "locked": "1.36",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-asm",
+                "org.openjdk.jmh:jmh-generator-bytecode"
+            ]
+        },
+        "org.ow2.asm:asm": {
+            "locked": "9.0",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-asm"
+            ]
         }
     },
     "jmhRuntimeClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.15.3"
         },
+        "net.sf.jopt-simple:jopt-simple": {
+            "locked": "5.0.4",
+            "transitive": [
+                "org.openjdk.jmh:jmh-core"
+            ]
+        },
+        "org.apache.commons:commons-math3": {
+            "locked": "3.2",
+            "transitive": [
+                "org.openjdk.jmh:jmh-core"
+            ]
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.21"
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-stdlib"
+            ]
         },
         "org.openjdk.jmh:jmh-core": {
-            "locked": "1.36"
+            "locked": "1.36",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-asm",
+                "org.openjdk.jmh:jmh-generator-bytecode",
+                "org.openjdk.jmh:jmh-generator-reflection"
+            ]
+        },
+        "org.openjdk.jmh:jmh-generator-asm": {
+            "locked": "1.36",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-bytecode"
+            ]
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.36"
         },
+        "org.openjdk.jmh:jmh-generator-reflection": {
+            "locked": "1.36",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-asm",
+                "org.openjdk.jmh:jmh-generator-bytecode"
+            ]
+        },
+        "org.ow2.asm:asm": {
+            "locked": "9.0",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-asm"
+            ]
+        },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.0"
+            "locked": "3.2.2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "kotlinBuildToolsApiClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.15.3"
         },
+        "org.jetbrains.intellij.deps:trove4j": {
+            "locked": "1.0.20200330",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable"
+            ]
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
+        },
+        "org.jetbrains.kotlin:kotlin-build-common": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-compiler-runner"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-build-tools-api": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-build-tools-impl"
+            ]
         },
         "org.jetbrains.kotlin:kotlin-build-tools-impl": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
+        },
+        "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-build-tools-impl",
+                "org.jetbrains.kotlin:kotlin-compiler-runner",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-compiler-runner": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-build-tools-impl"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-daemon-client": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-compiler-runner",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-daemon-embeddable": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-reflect": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-script-runtime": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-build-tools-impl",
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm": {
+            "locked": "1.7.3",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-compiler-runner",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-stdlib"
+            ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.0"
+            "locked": "3.2.2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "kotlinCompilerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.15.3"
         },
+        "org.jetbrains.intellij.deps:trove4j": {
+            "locked": "1.0.20200330",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable"
+            ]
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         },
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.9.21"
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-daemon-embeddable": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-reflect": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-script-runtime": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-stdlib"
+            ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.0"
+            "locked": "3.2.2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "kotlinCompilerPluginClasspath": {
@@ -163,13 +468,13 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.0"
+            "locked": "3.2.2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "kotlinCompilerPluginClasspathJmh": {
@@ -177,19 +482,67 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
+        },
+        "org.jetbrains.kotlin:kotlin-script-runtime": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-scripting-jvm",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-scripting-common": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
+                "org.jetbrains.kotlin:kotlin-scripting-jvm",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
+        },
+        "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-scripting-jvm": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-scripting-common",
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable",
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
+                "org.jetbrains.kotlin:kotlin-scripting-jvm",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-stdlib"
+            ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.0"
+            "locked": "3.2.2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
@@ -197,19 +550,67 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
+        },
+        "org.jetbrains.kotlin:kotlin-script-runtime": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-scripting-jvm",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-scripting-common": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
+                "org.jetbrains.kotlin:kotlin-scripting-jvm",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
+        },
+        "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-scripting-jvm": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-scripting-common",
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable",
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
+                "org.jetbrains.kotlin:kotlin-scripting-jvm",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-stdlib"
+            ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.0"
+            "locked": "3.2.2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
@@ -217,44 +618,149 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
+        },
+        "org.jetbrains.kotlin:kotlin-script-runtime": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-scripting-jvm",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-scripting-common": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
+                "org.jetbrains.kotlin:kotlin-scripting-jvm",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
+        },
+        "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-scripting-jvm": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-scripting-common",
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable",
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
+                "org.jetbrains.kotlin:kotlin-scripting-jvm",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-stdlib"
+            ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.0"
+            "locked": "3.2.2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "kotlinKaptWorkerDependencies": {
         "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-stdlib"
+            ]
         }
     },
     "kotlinKlibCommonizerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
             "locked": "2.15.3"
         },
+        "org.jetbrains.intellij.deps:trove4j": {
+            "locked": "1.0.20200330",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable"
+            ]
+        },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
+        },
+        "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-daemon-embeddable": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable"
+            ]
         },
         "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
+        },
+        "org.jetbrains.kotlin:kotlin-reflect": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-script-runtime": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable",
+                "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-stdlib"
+            ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.0"
+            "locked": "3.2.2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "kotlinNativeCompilerPluginClasspath": {
@@ -262,13 +768,13 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.0"
+            "locked": "3.2.2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "nebulaRecommenderBom": {
@@ -276,13 +782,13 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.0"
+            "locked": "3.2.2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "runtimeClasspath": {
@@ -290,16 +796,26 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.21"
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-stdlib"
+            ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.0"
+            "locked": "3.2.2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "testAnnotationProcessor": {
@@ -307,13 +823,13 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.0"
+            "locked": "3.2.2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "testCompileClasspath": {
@@ -321,21 +837,31 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.21"
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-stdlib"
+            ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.0"
+            "locked": "3.2.2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     },
     "testImplementationDependenciesMetadata": {
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         }
     },
     "testRuntimeClasspath": {
@@ -343,16 +869,26 @@
             "locked": "2.15.3"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.21"
+            "locked": "1.9.22"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.21"
+            "locked": "1.9.22",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-bom",
+                "org.springframework.boot:spring-boot-dependencies"
+            ]
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-stdlib"
+            ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.0"
+            "locked": "3.2.2"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2022.0.0"
+            "locked": "2023.0.0"
         }
     }
 }

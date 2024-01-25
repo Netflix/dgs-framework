@@ -39,7 +39,7 @@ public class ConcurrentDataFetcher {
             }
 
             System.out.println("Done concurrent thing 1");
-            return  new Long(System.currentTimeMillis()).intValue();
+            return Long.valueOf(System.currentTimeMillis()).intValue();
         });
         System.out.println("Exit concurrent1");
 
@@ -59,7 +59,7 @@ public class ConcurrentDataFetcher {
             }
 
             System.out.println("Done concurrent thing 2");
-            return  new Long(System.currentTimeMillis()).intValue();
+            return Long.valueOf(System.currentTimeMillis()).intValue();
         });
         System.out.println("Exit concurrent2");
 
