@@ -385,7 +385,7 @@ class DgsSchemaProvider(
                         // if we have a datafetcher explicitly defined for a parentType/field, use that and do not
                         // register the base implementation for interfaces
                         if (!codeRegistryBuilder.hasDataFetcher(FieldCoordinates.coordinates(implType.name, field))) {
-                            val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent, method)
+                            val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent.instance, method)
                             codeRegistryBuilder.dataFetcher(FieldCoordinates.coordinates(implType.name, field), dataFetcher)
 
                             dataFetcherTracingInstrumentationEnabled["${implType.name}.$field"] =
@@ -397,7 +397,7 @@ class DgsSchemaProvider(
                 }
                 is UnionTypeDefinition -> {
                     type.memberTypes.asSequence().filterIsInstance<TypeName>().forEach { memberType ->
-                        val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent, method)
+                        val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent.instance, method)
                         codeRegistryBuilder.dataFetcher(FieldCoordinates.coordinates(memberType.name, field), dataFetcher)
 
                         dataFetcherTracingInstrumentationEnabled["${memberType.name}.$field"] = enableTracingInstrumentation
@@ -414,7 +414,7 @@ class DgsSchemaProvider(
                         )
                     }
 
-                    val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent, method)
+                    val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent.instance, method)
                     codeRegistryBuilder.dataFetcher(FieldCoordinates.coordinates(parentType, field), dataFetcher)
                 }
                 else -> {
