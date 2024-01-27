@@ -81,7 +81,7 @@ dependencies {
         }
         // ---
         api("com.jayway.jsonpath:json-path") {
-            version { require("2.7.0") }
+            version { require("2.9.0") }
         }
         api("io.projectreactor:reactor-core") {
             version { require("3.6.1") }

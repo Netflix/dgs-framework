@@ -12,6 +12,7 @@ import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration
+import org.springframework.boot.actuate.autoconfigure.metrics.PropertiesAutoTimer
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -53,12 +54,13 @@ open class DgsGraphQLMicrometerAutoConfiguration {
         optQuerySignatureRepository: Optional<QuerySignatureRepository>
     ): DgsGraphQLMetricsInstrumentation {
         return DgsGraphQLMetricsInstrumentation(
-            dgsSchemaProvider,
-            meterRegistrySupplier,
-            tagsProvider,
-            properties,
-            limitedTagMetricResolver,
-            optQuerySignatureRepository
+            schemaProvider = dgsSchemaProvider,
+            registrySupplier = meterRegistrySupplier,
+            tagsProvider = tagsProvider,
+            properties = properties,
+            limitedTagMetricResolver = limitedTagMetricResolver,
+            optQuerySignatureRepository = optQuerySignatureRepository,
+            autoTimer = PropertiesAutoTimer(properties.autotime)
         )
     }
 
@@ -125,9 +127,9 @@ open class DgsGraphQLMicrometerAutoConfiguration {
             optCacheManager: Optional<CacheManager>
         ): QuerySignatureRepository {
             return CacheableQuerySignatureRepository(
-                properties,
-                meterRegistrySupplier,
-                optCacheManager
+                autoTimer = PropertiesAutoTimer(properties.autotime),
+                meterRegistrySupplier = meterRegistrySupplier,
+                optionalCacheManager = optCacheManager
             )
         }
 
@@ -137,7 +139,7 @@ open class DgsGraphQLMicrometerAutoConfiguration {
             properties: DgsGraphQLMetricsProperties,
             meterRegistrySupplier: DgsMeterRegistrySupplier
         ): QuerySignatureRepository {
-            return SimpleQuerySignatureRepository(properties, meterRegistrySupplier)
+            return SimpleQuerySignatureRepository(PropertiesAutoTimer(properties.autotime), meterRegistrySupplier)
         }
     }
 

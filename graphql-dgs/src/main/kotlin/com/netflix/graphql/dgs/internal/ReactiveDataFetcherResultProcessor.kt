@@ -18,11 +18,13 @@ package com.netflix.graphql.dgs.internal
 
 import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
 import com.netflix.graphql.dgs.context.ReactiveDgsContext
+import graphql.language.OperationDefinition
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.future.future
+import kotlinx.coroutines.reactive.asPublisher
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.util.context.Context
@@ -33,10 +35,11 @@ class MonoDataFetcherResultProcessor : DataFetcherResultProcessor {
     }
 
     override fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any {
-        if (originalResult is Mono<*>) {
-            return originalResult.contextWrite(reactorContextFrom(dfe)).toFuture()
-        } else {
-            throw IllegalArgumentException("Instance passed to ${this::class.qualifiedName} was not a Mono<*>. It was a ${originalResult::class.qualifiedName} instead")
+        val mono = originalResult as? Mono<*>
+            ?: throw IllegalArgumentException("Instance passed to ${this::class.qualifiedName} was not a Mono<*>. It was a ${originalResult::class.qualifiedName} instead")
+        return when (dfe.operationDefinition.operation) {
+            OperationDefinition.Operation.SUBSCRIPTION -> mono
+            else -> originalResult.contextWrite(reactorContextFrom(dfe)).toFuture()
         }
     }
 }
@@ -47,12 +50,12 @@ class FlowDataFetcherResultProcessor : DataFetcherResultProcessor {
     }
 
     override fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any {
-        return if (originalResult is Flow<*>) {
-            CoroutineScope(Dispatchers.Default).future {
-                originalResult.toList()
-            }
-        } else {
-            throw IllegalArgumentException("Instance passed to ${this::class.qualifiedName} was not a Flow<*>. It was a ${originalResult::class.qualifiedName} instead")
+        @Suppress("unchecked_cast")
+        val flow = originalResult as? Flow<Any>
+            ?: throw IllegalArgumentException("Instance passed to ${this::class.qualifiedName} was not a Flow<*>. It was a ${originalResult::class.qualifiedName} instead")
+        return when (dfe.operationDefinition.operation) {
+            OperationDefinition.Operation.SUBSCRIPTION -> flow.asPublisher()
+            else -> CoroutineScope(Dispatchers.Default).future { flow.toList() }
         }
     }
 }
@@ -63,10 +66,11 @@ class FluxDataFetcherResultProcessor : DataFetcherResultProcessor {
     }
 
     override fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any {
-        if (originalResult is Flux<*>) {
-            return originalResult.contextWrite(reactorContextFrom(dfe)).collectList().toFuture()
-        } else {
-            throw IllegalArgumentException("Instance passed to ${this::class.qualifiedName} was not a Flux<*>. It was a ${originalResult::class.qualifiedName} instead")
+        val flux = originalResult as? Flux<*>
+            ?: throw IllegalArgumentException("Instance passed to ${this::class.qualifiedName} was not a Flux<*>. It was a ${originalResult::class.qualifiedName} instead")
+        return when (dfe.operationDefinition.operation) {
+            OperationDefinition.Operation.SUBSCRIPTION -> flux
+            else -> flux.contextWrite(reactorContextFrom(dfe)).collectList().toFuture()
         }
     }
 }

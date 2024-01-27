@@ -18,7 +18,7 @@ package com.netflix.graphql.dgs.webmvc.autoconfigure
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.method.ArgumentResolver
@@ -42,6 +42,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.method.annotation.RequestHeaderMapMethodArgumentResolver
 import org.springframework.web.method.annotation.RequestHeaderMethodArgumentResolver
@@ -60,7 +61,9 @@ open class DgsWebMvcAutoConfiguration {
     @Qualifier("dgsObjectMapper")
     @ConditionalOnMissingBean(name = ["dgsObjectMapper"])
     open fun dgsObjectMapper(): ObjectMapper {
-        return jacksonObjectMapper().registerModule(JavaTimeModule())
+        return Jackson2ObjectMapperBuilder.json()
+            .modulesToInstall(KotlinModule.Builder().build(), JavaTimeModule())
+            .build()
     }
 
     @Bean

@@ -17,23 +17,18 @@
 package com.netflix.graphql.dgs.pagination
 
 import graphql.introspection.Introspection
-import graphql.language.*
+import graphql.schema.GraphQLTypeUtil.simplePrint
+import graphql.schema.idl.RuntimeWiring
+import graphql.schema.idl.SchemaGenerator
 import graphql.schema.idl.SchemaParser
-import io.mockk.junit5.MockKExtension
+import graphql.schema.validation.SchemaValidator
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.fail
 
-@ExtendWith(MockKExtension::class)
 class DgsPaginationTypeDefinitionRegistryTest {
 
-    lateinit var paginationTypeRegistry: DgsPaginationTypeDefinitionRegistry
-
-    @BeforeEach
-    fun setup() {
-        paginationTypeRegistry = DgsPaginationTypeDefinitionRegistry()
-    }
+    private val paginationTypeRegistry = DgsPaginationTypeDefinitionRegistry()
 
     @Test
     fun generatePaginatedTypes() {
@@ -50,39 +45,50 @@ class DgsPaginationTypeDefinitionRegistryTest {
 
         val typeRegistry = SchemaParser().parse(schema)
         val paginatedTypeRegistry = paginationTypeRegistry.registry(typeRegistry)
+        val graphqlSchema = SchemaGenerator().makeExecutableSchema(typeRegistry.merge(paginatedTypeRegistry), RuntimeWiring.MOCKED_WIRING)
+        assertThat(SchemaValidator().validateSchema(graphqlSchema)).isEmpty()
 
-        val addedDirective = paginatedTypeRegistry.directiveDefinitions["connection"]
+        val addedDirective = graphqlSchema.getDirective("connection")
         assertThat(addedDirective).isNotNull
-        assertThat(addedDirective!!.directiveLocations[0].name).isEqualTo(Introspection.DirectiveLocation.OBJECT.name)
+        assertThat(addedDirective.validLocations())
+            .isEqualTo(setOf(Introspection.DirectiveLocation.OBJECT, Introspection.DirectiveLocation.UNION, Introspection.DirectiveLocation.INTERFACE))
 
-        val movieConnectionType = (paginatedTypeRegistry.types()["MovieConnection"] as ObjectTypeDefinition)
+        val movieConnectionType = graphqlSchema.getObjectType("MovieConnection")
         assertThat(movieConnectionType).isNotNull.extracting { it.description }.isNotNull
-        val movieEdgeType = (paginatedTypeRegistry.types()["MovieEdge"] as ObjectTypeDefinition)
+        val movieEdgeType = graphqlSchema.getObjectType("MovieEdge")
         assertThat(movieEdgeType).isNotNull.extracting { it.description }.isNotNull
-        val pageInfoType = (paginatedTypeRegistry.types()["PageInfo"] as ObjectTypeDefinition)
+        val pageInfoType = graphqlSchema.getObjectType("PageInfo")
         assertThat(pageInfoType).isNotNull.extracting { it.description }.isNotNull
 
-        val movieConnection = (paginatedTypeRegistry.types()["MovieConnection"] as ObjectTypeDefinition)
-        val edgesField = movieConnection.fieldDefinitions.find { it.name == "edges" } as FieldDefinition
-        assertThat(edgesField.type.toString()).isEqualTo(ListType(TypeName("MovieEdge")).toString())
-        val pageInfoField = movieConnection.fieldDefinitions.find { it.name == "pageInfo" } as FieldDefinition
-        assertThat(pageInfoField.type.toString()).isEqualTo(NonNullType(TypeName("PageInfo")).toString())
+        val movieConnection = graphqlSchema.getObjectType("MovieConnection")
+        val edgesField = movieConnection.getFieldDefinition("edges")
+            ?: fail("edges field not found on $movieConnection")
+        assertThat(simplePrint(edgesField.type)).isEqualTo("[MovieEdge]")
+        val pageInfoField = movieConnection.getFieldDefinition("pageInfo")
+            ?: fail("pageInfo field not found on $movieConnection")
+        assertThat(simplePrint(pageInfoField.type)).isEqualTo("PageInfo!")
 
-        val movieEdge = (paginatedTypeRegistry.types()["MovieEdge"] as ObjectTypeDefinition)
-        val cursorField = movieEdge.fieldDefinitions.find { it.name == "cursor" } as FieldDefinition
-        assertThat(cursorField.type.toString()).isEqualTo(TypeName("String").toString())
-        val nodeField = movieEdge.fieldDefinitions.find { it.name == "node" } as FieldDefinition
-        assertThat(nodeField.type.toString()).isEqualTo(TypeName("Movie").toString())
+        val movieEdge = graphqlSchema.getObjectType("MovieEdge")
+        val cursorField = movieEdge.getFieldDefinition("cursor")
+            ?: fail("cursor field not found on $movieEdge")
+        assertThat(simplePrint(cursorField.type)).isEqualTo("String")
+        val nodeField = movieEdge.getFieldDefinition("node")
+            ?: fail("node field not found on $movieEdge")
+        assertThat(simplePrint(nodeField.type)).isEqualTo("Movie")
 
-        val pageInfo = (paginatedTypeRegistry.types()["PageInfo"] as ObjectTypeDefinition)
-        val hasPreviousPageField = pageInfo.fieldDefinitions.find { it.name == "hasPreviousPage" } as FieldDefinition
-        assertThat(hasPreviousPageField.type.toString()).isEqualTo(NonNullType(TypeName("Boolean")).toString())
-        val hasNextPageField = pageInfo.fieldDefinitions.find { it.name == "hasNextPage" } as FieldDefinition
-        assertThat(hasNextPageField.type.toString()).isEqualTo(NonNullType(TypeName("Boolean")).toString())
-        val startCursorField = pageInfo.fieldDefinitions.find { it.name == "startCursor" } as FieldDefinition
-        assertThat(startCursorField.type.toString()).isEqualTo(TypeName("String").toString())
-        val endCursorField = pageInfo.fieldDefinitions.find { it.name == "endCursor" } as FieldDefinition
-        assertThat(endCursorField.type.toString()).isEqualTo(TypeName("String").toString())
+        val pageInfo = graphqlSchema.getObjectType("PageInfo")
+        val hasPreviousPageField = pageInfo.getFieldDefinition("hasPreviousPage")
+            ?: fail("hasPreviousPage field not found on $pageInfo")
+        assertThat(simplePrint(hasPreviousPageField.type)).isEqualTo("Boolean!")
+        val hasNextPageField = pageInfo.getFieldDefinition("hasNextPage")
+            ?: fail("hasNextPage field not found on $pageInfo")
+        assertThat(simplePrint(hasNextPageField.type)).isEqualTo("Boolean!")
+        val startCursorField = pageInfo.getFieldDefinition("startCursor")
+            ?: fail("startCursor field not found on $pageInfo")
+        assertThat(simplePrint(startCursorField.type)).isEqualTo("String")
+        val endCursorField = pageInfo.getFieldDefinition("endCursor")
+            ?: fail("endCursor field not found on $pageInfo")
+        assertThat(simplePrint(endCursorField.type)).isEqualTo("String")
     }
 
     @Test
@@ -107,10 +113,12 @@ class DgsPaginationTypeDefinitionRegistryTest {
 
         val typeRegistry = SchemaParser().parse(schema)
         val paginatedTypeRegistry = paginationTypeRegistry.registry(typeRegistry)
+        val graphqlSchema = SchemaGenerator().makeExecutableSchema(typeRegistry.merge(paginatedTypeRegistry), RuntimeWiring.MOCKED_WIRING)
+        assertThat(SchemaValidator().validateSchema(graphqlSchema)).isEmpty()
 
-        val movieConnectionType = (paginatedTypeRegistry.types()["MovieConnection"] as ObjectTypeDefinition)
+        val movieConnectionType = graphqlSchema.getObjectType("MovieConnection")
         assertThat(movieConnectionType).isNotNull.extracting { it.description }.isNotNull
-        val movieEdgeType = (paginatedTypeRegistry.types()["MovieEdge"] as ObjectTypeDefinition)
+        val movieEdgeType = graphqlSchema.getObjectType("MovieEdge")
         assertThat(movieEdgeType).isNotNull.extracting { it.description }.isNotNull
         assertThat(paginatedTypeRegistry.types()["PageInfo"]).isNull()
     }
@@ -130,22 +138,24 @@ class DgsPaginationTypeDefinitionRegistryTest {
             type ScaryMovie implements IMovie @connection {
                movieID: ID
                title: String
-               rating: Integer
+               rating: Int
             }
         """.trimIndent()
 
         val typeRegistry = SchemaParser().parse(schema)
         val paginatedTypeRegistry = paginationTypeRegistry.registry(typeRegistry)
+        val graphqlSchema = SchemaGenerator().makeExecutableSchema(typeRegistry.merge(paginatedTypeRegistry), RuntimeWiring.MOCKED_WIRING)
+        assertThat(SchemaValidator().validateSchema(graphqlSchema)).isEmpty()
 
-        val movieConnectionType = (paginatedTypeRegistry.types()["IMovieConnection"] as ObjectTypeDefinition)
+        val movieConnectionType = graphqlSchema.getObjectType("IMovieConnection")
         assertThat(movieConnectionType).isNotNull.extracting { it.description }.isNotNull
-        val movieEdgeType = (paginatedTypeRegistry.types()["IMovieEdge"] as ObjectTypeDefinition)
+        val movieEdgeType = graphqlSchema.getObjectType("IMovieEdge")
         assertThat(movieEdgeType).isNotNull.extracting { it.description }.isNotNull
-        val scaryMovieConnectionType = (paginatedTypeRegistry.types()["ScaryMovieConnection"] as ObjectTypeDefinition)
+        val scaryMovieConnectionType = graphqlSchema.getObjectType("ScaryMovieConnection")
         assertThat(scaryMovieConnectionType).isNotNull.extracting { it.description }.isNotNull
-        val scaryMovieEdgeType = (paginatedTypeRegistry.types()["ScaryMovieEdge"] as ObjectTypeDefinition)
+        val scaryMovieEdgeType = graphqlSchema.getObjectType("ScaryMovieEdge")
         assertThat(scaryMovieEdgeType).isNotNull.extracting { it.description }.isNotNull
-        val pageInfoType = (paginatedTypeRegistry.types()["PageInfo"] as ObjectTypeDefinition)
+        val pageInfoType = graphqlSchema.getObjectType("PageInfo")
         assertThat(pageInfoType).isNotNull.extracting { it.description }.isNotNull
     }
 
@@ -156,7 +166,7 @@ class DgsPaginationTypeDefinitionRegistryTest {
                 something: CustomScalarConnection
             }
             
-            scalar CustomScalar
+            scalar CustomScalar @connection
         """.trimIndent()
 
         val typeRegistry = SchemaParser().parse(schema)
@@ -175,25 +185,27 @@ class DgsPaginationTypeDefinitionRegistryTest {
             
             union IMovie @connection = ScaryMovie
             
-            type ScaryMovie implements IMovie @connection {
+            type ScaryMovie @connection {
                movieID: ID
                title: String
-               rating: Integer
+               rating: Int
             }
         """.trimIndent()
 
         val typeRegistry = SchemaParser().parse(schema)
         val paginatedTypeRegistry = paginationTypeRegistry.registry(typeRegistry)
+        val graphqlSchema = SchemaGenerator().makeExecutableSchema(typeRegistry.merge(paginatedTypeRegistry), RuntimeWiring.MOCKED_WIRING)
+        assertThat(SchemaValidator().validateSchema(graphqlSchema)).isEmpty()
 
-        val movieConnectionType = (paginatedTypeRegistry.types()["IMovieConnection"] as ObjectTypeDefinition)
+        val movieConnectionType = graphqlSchema.getObjectType("IMovieConnection")
         assertThat(movieConnectionType).isNotNull.extracting { it.description }.isNotNull
-        val movieEdgeType = (paginatedTypeRegistry.types()["IMovieEdge"] as ObjectTypeDefinition)
+        val movieEdgeType = graphqlSchema.getObjectType("IMovieEdge")
         assertThat(movieEdgeType).isNotNull.extracting { it.description }.isNotNull
-        val scaryMovieConnectionType = (paginatedTypeRegistry.types()["ScaryMovieConnection"] as ObjectTypeDefinition)
+        val scaryMovieConnectionType = graphqlSchema.getObjectType("ScaryMovieConnection")
         assertThat(scaryMovieConnectionType).isNotNull.extracting { it.description }.isNotNull
-        val scaryMovieEdgeType = (paginatedTypeRegistry.types()["ScaryMovieConnection"] as ObjectTypeDefinition)
+        val scaryMovieEdgeType = graphqlSchema.getObjectType("ScaryMovieEdge")
         assertThat(scaryMovieEdgeType).isNotNull.extracting { it.description }.isNotNull
-        val pageInfoType = (paginatedTypeRegistry.types()["ScaryMovieConnection"] as ObjectTypeDefinition)
+        val pageInfoType = graphqlSchema.getObjectType("PageInfo")
         assertThat(pageInfoType).isNotNull.extracting { it.description }.isNotNull
     }
 }

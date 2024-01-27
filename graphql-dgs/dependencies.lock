@@ -126,7 +126,7 @@
             ]
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.8.0",
+            "locked": "2.9.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.springframework.boot:spring-boot-dependencies"
@@ -701,7 +701,7 @@
             ]
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.8.0",
+            "locked": "2.9.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -1442,7 +1442,7 @@
             ]
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.8.0",
+            "locked": "2.9.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -2288,7 +2288,7 @@
             ]
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.8.0",
+            "locked": "2.9.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.springframework.boot:spring-boot-dependencies"
@@ -2716,7 +2716,7 @@
             ]
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.8.0",
+            "locked": "2.9.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -4135,7 +4135,7 @@
             ]
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.8.0",
+            "locked": "2.9.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.springframework.boot:spring-boot-dependencies"
@@ -4534,7 +4534,7 @@
             ]
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.8.0",
+            "locked": "2.9.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -5275,7 +5275,7 @@
             ]
         },
         "com.jayway.jsonpath:json-path": {
-            "locked": "2.8.0",
+            "locked": "2.9.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.springframework.boot:spring-boot-dependencies",

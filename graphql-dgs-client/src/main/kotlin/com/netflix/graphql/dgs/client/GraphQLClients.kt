@@ -22,14 +22,17 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.MediaType
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 
 internal object GraphQLClients {
 
-    internal val objectMapper: ObjectMapper = ObjectMapper().registerModule(
-        KotlinModule.Builder()
-            .enable(KotlinFeature.NullIsSameAsDefault)
-            .build()
-    )
+    internal val objectMapper: ObjectMapper = Jackson2ObjectMapperBuilder.json()
+        .modulesToInstall(
+            KotlinModule.Builder()
+                .enable(KotlinFeature.NullIsSameAsDefault)
+                .build()
+        )
+        .build()
 
     internal val defaultHeaders: HttpHeaders = HttpHeaders.readOnlyHttpHeaders(
         HttpHeaders().apply {
