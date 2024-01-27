@@ -416,7 +416,6 @@ class DgsSchemaProvider(
 
                     val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent, method)
                     codeRegistryBuilder.dataFetcher(FieldCoordinates.coordinates(parentType, field), dataFetcher)
-
                 }
                 else -> {
                     throw InvalidDgsConfigurationException(
