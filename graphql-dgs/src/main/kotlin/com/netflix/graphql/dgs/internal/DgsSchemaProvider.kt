@@ -275,9 +275,9 @@ class DgsSchemaProvider(
                 }
 
                 if (method.returnType == DgsCodeRegistryBuilder::class.java) {
-                    ReflectionUtils.invokeMethod(method, dgsComponent, dgsCodeRegistryBuilder, registry)
+                    ReflectionUtils.invokeMethod(method, dgsComponent.instance, dgsCodeRegistryBuilder, registry)
                 } else if (method.returnType == GraphQLCodeRegistry.Builder::class.java) {
-                    ReflectionUtils.invokeMethod(method, dgsComponent, codeRegistryBuilder, registry)
+                    ReflectionUtils.invokeMethod(method, dgsComponent.instance, codeRegistryBuilder, registry)
                 }
             }
     }

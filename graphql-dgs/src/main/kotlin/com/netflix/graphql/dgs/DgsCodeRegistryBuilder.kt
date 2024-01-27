@@ -30,10 +30,6 @@ class DgsCodeRegistryBuilder(
 
     fun dataFetcher(coordinates: FieldCoordinates, dataFetcher: DataFetcher<*>): DgsCodeRegistryBuilder {
         val wrapped = DataFetcherFactories.wrapDataFetcher(dataFetcher) { dfe, result ->
-            if (coordinates.typeName == "Subscription") {
-                return@wrapDataFetcher result
-            }
-
             result?.let {
                 val env = DgsDataFetchingEnvironment(dfe)
                 dataFetcherResultProcessors.find { it.supportsType(result) }?.process(result, env) ?: result
