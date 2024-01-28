@@ -67,6 +67,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
+import org.springframework.http.MediaType
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -114,7 +115,7 @@ class MicrometerServletSmokeTest {
             // We will also assert that the tag reflected by the metric is not affected by the alias.
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{ "query": "query my_op_1{ping}" }""")
         ).andExpect(status().isOk)
             .andExpect(content().json("""{"data":{"ping":"pong"}}""", false))
@@ -156,7 +157,7 @@ class MicrometerServletSmokeTest {
             // We will also assert that the tag reflected by the metric is not affected by the alias.
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{ "query": " mutation my_op_1{buzz}" }""".trimMargin())
         ).andExpect(status().isOk)
             .andExpect(content().json("""{"data":{"buzz":"buzz"}}""", false))
@@ -198,7 +199,7 @@ class MicrometerServletSmokeTest {
             // We will also assert that the tag reflected by the metric is not affected by the alias.
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     """
                     | {
@@ -246,7 +247,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     """{"query": 
                     |   "{transform(input: [\"A madam in a racecar.\", \"A man, a plan, a canal - Panama\" ]){ index value upperCased reversed } }" }
@@ -335,7 +336,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{ "query": "fail" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -395,7 +396,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{ "query": "{someTrivialThings}" }""")
         ).andExpect(status().isOk)
             .andExpect(content().json("""{"data":{"someTrivialThings":"some insignificance"}}""", false))
@@ -422,7 +423,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{ "query": "{ hello }" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -482,7 +483,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{ "query": "{triggerInternalFailure}" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -492,7 +493,7 @@ class MicrometerServletSmokeTest {
                        |    "errors":[
                        |      {
                        |       "message":"java.lang.IllegalStateException: Exception triggered.",
-                       |       "locations": [],
+                       |       "locations": [{"line":1, "column":2}],
                        |       "path": ["triggerInternalFailure"],
                        |       "extensions": {"errorType":"INTERNAL"}
                        |     }
@@ -557,7 +558,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{ "query": "{triggerBadRequestFailure}" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -626,7 +627,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{ "query": "{triggerCustomFailure}" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -697,14 +698,14 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{ "query": "{ triggerInternalFailure triggerBadRequestFailure triggerCustomFailure }" }""")
         ).andExpect(status().isOk)
             .andExpect(
                 content().json(
                     """
                     | {"errors":[
-                    |    {"message":"java.lang.IllegalStateException: Exception triggered.","locations":[],"path":["triggerInternalFailure"],"extensions":{"errorType":"INTERNAL"}},
+                    |    {"message":"java.lang.IllegalStateException: Exception triggered.","locations":[{"line":1,"column":3}],"path":["triggerInternalFailure"],"extensions":{"errorType":"INTERNAL"}},
                     |    {"message":"Exception triggered.","locations":[],"path":["triggerBadRequestFailure"],"extensions":{"class":"com.netflix.graphql.dgs.exceptions.DgsBadRequestException","errorType":"BAD_REQUEST"}},
                     |    {"message":"Exception triggered.","locations":[],"path":["triggerCustomFailure"],"extensions":{"errorType":"UNAVAILABLE","errorDetail":"ENHANCE_YOUR_CALM"}}
                     |  ],

@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.exceptions
 
 import com.netflix.graphql.types.errors.TypedGraphQLError
+import graphql.GraphQLError
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherExceptionHandlerParameters
 import graphql.execution.DataFetcherExceptionHandlerResult
@@ -30,13 +31,7 @@ import java.util.concurrent.CompletionException
  * Default DataFetcherExceptionHandler used by the framework, can be replaced with a custom implementation.
  * The default implementation uses the Common Errors library to return GraphQL errors.
  */
-class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
-
-    @Deprecated("Deprecated in GraphQL Java", replaceWith = ReplaceWith("handleException(handlerParameters)"))
-    fun onException(handlerParameters: DataFetcherExceptionHandlerParameters): DataFetcherExceptionHandlerResult {
-        logger.error("Usage of deprecated method detected - please use handleException instead")
-        return doHandleException(handlerParameters)
-    }
+open class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
 
     override fun handleException(handlerParameters: DataFetcherExceptionHandlerParameters): CompletableFuture<DataFetcherExceptionHandlerResult> {
         return CompletableFuture.completedFuture(doHandleException(handlerParameters))
@@ -44,31 +39,42 @@ class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
 
     private fun doHandleException(handlerParameters: DataFetcherExceptionHandlerParameters): DataFetcherExceptionHandlerResult {
         val exception = unwrapCompletionException(handlerParameters.exception)
-        logger.error(
-            "Exception while executing data fetcher for {}: {}",
-            handlerParameters.path,
-            exception.message,
-            exception
-        )
 
         val graphqlError = when (exception) {
-            is DgsException -> exception.toGraphQlError(handlerParameters.path)
-            else -> when {
-                springSecurityAvailable && isSpringSecurityAccessException(exception) -> TypedGraphQLError.newPermissionDeniedBuilder()
-                else -> TypedGraphQLError.newInternalErrorBuilder()
-            }.message("${exception::class.java.name}: ${exception.message}")
-                .path(handlerParameters.path)
-                .build()
+            is DgsException -> exception.toGraphQlError(path = handlerParameters.path)
+            else -> {
+                val builder = when {
+                    springSecurityAvailable && isSpringSecurityAccessException(exception) -> TypedGraphQLError.newPermissionDeniedBuilder()
+                    else -> TypedGraphQLError.newInternalErrorBuilder()
+                }
+                builder.message("${exception::class.java.name}: ${exception.message}")
+                    .path(handlerParameters.path)
+                handlerParameters.sourceLocation?.let { builder.location(it) }
+                builder.build()
+            }
         }
+
+        logException(handlerParameters, graphqlError, exception)
 
         return DataFetcherExceptionHandlerResult.newResult()
             .error(graphqlError)
             .build()
     }
 
+    protected open fun logException(handlerParameters: DataFetcherExceptionHandlerParameters, error: GraphQLError, exception: Throwable) {
+        logger.error(
+            "Exception while executing data fetcher for {}: {}",
+            handlerParameters.path,
+            exception.message,
+            exception
+        )
+    }
+
     private fun unwrapCompletionException(e: Throwable): Throwable {
         return if (e is CompletionException && e.cause != null) e.cause!! else e
     }
+
+    protected val logger: Logger get() = DefaultDataFetcherExceptionHandler.logger
 
     companion object {
 
