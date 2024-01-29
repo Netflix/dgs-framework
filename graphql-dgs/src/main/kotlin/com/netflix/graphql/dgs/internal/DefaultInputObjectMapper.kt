@@ -28,7 +28,6 @@ import org.springframework.core.convert.converter.GenericConverter
 import org.springframework.core.convert.support.DefaultConversionService
 import org.springframework.util.CollectionUtils
 import org.springframework.util.ReflectionUtils
-import java.lang.reflect.Field
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.primaryConstructor
@@ -112,22 +111,16 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
 
         val ctor = ReflectionUtils.accessibleConstructor(targetClass)
         val instance = ctor.newInstance()
-        var nrOfFieldErrors = 0
+        val setter = PropertySetter(instance as Any, conversionService)
+        var nrOfPropertyErrors = 0
         for ((name, value) in inputMap.entries) {
-            val field = ReflectionUtils.findField(targetClass, name)
-            if (field == null) {
-                nrOfFieldErrors++
+            if (!setter.hasProperty(name)) {
+                nrOfPropertyErrors++
                 logger.warn("Field '{}' was not found on Input object of type '{}'", name, targetClass)
                 continue
             }
 
-            val fieldType = TypeDescriptor(ResolvableType.forField(field, targetClass), null, null)
-            val convertedValue = try {
-                conversionService.convert(value, fieldType)
-            } catch (exc: ConversionException) {
-                throw DgsInvalidInputArgumentException("Failed to convert value $value to $fieldType", exc)
-            }
-            trySetField(field, instance, convertedValue)
+            setter.trySet(name, value)
         }
 
         /**
@@ -135,19 +128,11 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
          This would happen if new schema fields are added, but the Java type wasn't updated yet.
          If none of the fields match however, it's a pretty good indication that the wrong type was used, hence this check.
          */
-        if (inputMap.isNotEmpty() && nrOfFieldErrors == inputMap.size) {
+        if (inputMap.isNotEmpty() && nrOfPropertyErrors == inputMap.size) {
             throw DgsInvalidInputArgumentException("Input argument type '$targetClass' doesn't match input $inputMap")
         }
 
         return instance
     }
 
-    private fun trySetField(declaredField: Field, instance: Any?, value: Any?) {
-        try {
-            ReflectionUtils.makeAccessible(declaredField)
-            ReflectionUtils.setField(declaredField, instance, value)
-        } catch (ex: Exception) {
-            throw DgsInvalidInputArgumentException("Invalid input argument `$value` for field `${declaredField.name}` on type `${instance?.javaClass?.name}`")
-        }
-    }
 }
