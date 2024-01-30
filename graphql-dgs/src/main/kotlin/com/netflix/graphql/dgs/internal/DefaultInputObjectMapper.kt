@@ -128,7 +128,7 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
                     logger.warn("Field or property '{}' was not found on Input object of type '{}'", name, targetClass)
                 }
             } catch (ex: Exception) {
-                throw DgsInvalidInputArgumentException("Invalid input argument `$value` for field/property `${name}` on type `${targetClass.name}`", ex)
+                throw DgsInvalidInputArgumentException("Invalid input argument `$value` for field/property `$name` on type `${targetClass.name}`", ex)
             }
         }
 
