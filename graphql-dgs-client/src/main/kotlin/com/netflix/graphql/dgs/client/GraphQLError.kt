@@ -41,7 +41,7 @@ data class GraphQLErrorExtensions(
     @JsonProperty val errorDetail: String? = null,
     @JsonProperty val origin: String = "",
     @JsonProperty val debugInfo: GraphQLErrorDebugInfo = GraphQLErrorDebugInfo(),
-    @JsonProperty val classification: String = ""
+    @JsonProperty val classification: Any = ""
 )
 
 data class GraphQLErrorDebugInfo(
