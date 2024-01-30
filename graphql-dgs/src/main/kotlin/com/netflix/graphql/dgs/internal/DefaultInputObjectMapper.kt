@@ -19,6 +19,8 @@ package com.netflix.graphql.dgs.internal
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.ConfigurablePropertyAccessor
+import org.springframework.beans.PropertyAccessorFactory
 import org.springframework.core.KotlinDetector
 import org.springframework.core.ResolvableType
 import org.springframework.core.convert.ConversionException
@@ -111,16 +113,23 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
 
         val ctor = ReflectionUtils.accessibleConstructor(targetClass)
         val instance = ctor.newInstance()
-        val setter = PropertySetter(instance as Any, conversionService)
+        val setterAccessor = setterAccessor(instance)
+        val fieldAccessor = fieldAccessor(instance)
         var nrOfPropertyErrors = 0
-        for ((name, value) in inputMap.entries) {
-            if (!setter.hasProperty(name)) {
-                nrOfPropertyErrors++
-                logger.warn("Field '{}' was not found on Input object of type '{}'", name, targetClass)
-                continue
-            }
 
-            setter.trySet(name, value)
+        for ((name, value) in inputMap.entries) {
+            try {
+                if (setterAccessor.isWritableProperty(name)) {
+                    setterAccessor.setPropertyValue(name, value)
+                } else if (fieldAccessor.isWritableProperty(name)) {
+                    fieldAccessor.setPropertyValue(name, value)
+                } else {
+                    nrOfPropertyErrors++
+                    logger.warn("Field or property '{}' was not found on Input object of type '{}'", name, targetClass)
+                }
+            } catch (ex: Exception) {
+                throw DgsInvalidInputArgumentException("Invalid input argument `$value` for field/property `${name}` on type `${targetClass.name}`", ex)
+            }
         }
 
         /**
@@ -133,5 +142,19 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
         }
 
         return instance
+    }
+
+    private fun <T> fieldAccessor(instance: T?): ConfigurablePropertyAccessor {
+        val accessor = PropertyAccessorFactory.forDirectFieldAccess(instance as Any)
+
+        accessor.conversionService = conversionService
+        return accessor
+    }
+
+    private fun <T> setterAccessor(instance: T?): ConfigurablePropertyAccessor {
+        val accessor = PropertyAccessorFactory.forBeanPropertyAccess(instance as Any)
+
+        accessor.conversionService = conversionService
+        return accessor
     }
 }
