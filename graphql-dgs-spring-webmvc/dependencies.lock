@@ -957,7 +957,6 @@
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-stdlib",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm",
-                "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactive",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactor",
                 "org.springframework.boot:spring-boot-dependencies"
@@ -969,7 +968,6 @@
                 "io.mockk:mockk-dsl-jvm",
                 "io.mockk:mockk-jvm",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm",
-                "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactive",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactor"
             ]
@@ -981,7 +979,6 @@
                 "io.mockk:mockk-dsl-jvm",
                 "io.mockk:mockk-jvm",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-bom",
-                "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactive",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactor",
                 "org.springframework.boot:spring-boot-dependencies"
@@ -992,14 +989,6 @@
             "transitive": [
                 "org.jetbrains.kotlinx:kotlinx-coroutines-bom",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core",
-                "org.springframework.boot:spring-boot-dependencies"
-            ]
-        },
-        "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8": {
-            "locked": "1.7.3",
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "org.jetbrains.kotlinx:kotlinx-coroutines-bom",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
@@ -2048,7 +2037,6 @@
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-stdlib",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm",
-                "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactive",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactor",
                 "org.springframework.boot:spring-boot-dependencies"
@@ -2058,7 +2046,6 @@
             "locked": "1.7.3",
             "transitive": [
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm",
-                "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactive",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactor"
             ]
@@ -2068,7 +2055,6 @@
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-bom",
-                "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactive",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactor",
                 "org.springframework.boot:spring-boot-dependencies"
@@ -2079,14 +2065,6 @@
             "transitive": [
                 "org.jetbrains.kotlinx:kotlinx-coroutines-bom",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core",
-                "org.springframework.boot:spring-boot-dependencies"
-            ]
-        },
-        "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8": {
-            "locked": "1.7.3",
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "org.jetbrains.kotlinx:kotlinx-coroutines-bom",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
@@ -3264,7 +3242,6 @@
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-stdlib",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm",
-                "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactive",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactor",
                 "org.springframework.boot:spring-boot-dependencies"
@@ -3276,7 +3253,6 @@
                 "io.mockk:mockk-dsl-jvm",
                 "io.mockk:mockk-jvm",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm",
-                "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactive",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactor"
             ]
@@ -3288,7 +3264,6 @@
                 "io.mockk:mockk-dsl-jvm",
                 "io.mockk:mockk-jvm",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-bom",
-                "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactive",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactor",
                 "org.springframework.boot:spring-boot-dependencies"
@@ -3299,14 +3274,6 @@
             "transitive": [
                 "org.jetbrains.kotlinx:kotlinx-coroutines-bom",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core",
-                "org.springframework.boot:spring-boot-dependencies"
-            ]
-        },
-        "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8": {
-            "locked": "1.7.3",
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "org.jetbrains.kotlinx:kotlinx-coroutines-bom",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
