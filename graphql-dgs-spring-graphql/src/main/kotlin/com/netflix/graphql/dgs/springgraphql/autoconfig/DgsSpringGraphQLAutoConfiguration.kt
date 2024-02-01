@@ -56,6 +56,7 @@ import org.springframework.web.method.annotation.RequestHeaderMethodArgumentReso
 import org.springframework.web.method.annotation.RequestParamMapMethodArgumentResolver
 import org.springframework.web.method.annotation.RequestParamMethodArgumentResolver
 import org.springframework.web.reactive.BindingContext
+import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.result.method.annotation.CookieValueMethodArgumentResolver
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
 import org.springframework.web.servlet.mvc.method.annotation.ServletCookieValueMethodArgumentResolver
@@ -190,7 +191,7 @@ open class DgsSpringGraphQLAutoConfiguration {
     }
 
     @Configuration(proxyBeanMethods = false)
-    @ConditionalOnClass(Publisher::class)
+    @ConditionalOnClass(Publisher::class, ServerRequest::class)
     open class ReactiveConfiguration {
         @Bean
         open fun springGraphQLDgsReactiveQueryExecutor(
