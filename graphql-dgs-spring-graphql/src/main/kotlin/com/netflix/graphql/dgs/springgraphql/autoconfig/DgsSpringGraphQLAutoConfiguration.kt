@@ -31,6 +31,7 @@ import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.webflux.DgsWebFluxGraphQLInterceptor
 import com.netflix.graphql.dgs.springgraphql.webmvc.DgsWebMvcGraphQLInterceptor
+import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.reactivestreams.Publisher
@@ -105,8 +106,14 @@ open class DgsSpringGraphQLAutoConfiguration {
     }
 
     @Bean
-    open fun sourceBuilderCustomizer(): GraphQlSourceBuilderCustomizer {
-        return GraphQlSourceBuilderCustomizer { }
+    open fun sourceBuilderCustomizer(preparsedDocumentProvider: Optional<PreparsedDocumentProvider>): GraphQlSourceBuilderCustomizer {
+        return GraphQlSourceBuilderCustomizer { builder ->
+            builder.configureGraphQl { graphQlBuilder ->
+                if (preparsedDocumentProvider.isPresent) {
+                    graphQlBuilder.preparsedDocumentProvider(preparsedDocumentProvider.get())
+                }
+            }
+        }
     }
 
     @Bean
