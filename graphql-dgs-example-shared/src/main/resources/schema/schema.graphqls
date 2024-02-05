@@ -21,8 +21,6 @@ type Query {
     concurrent1: Int
     concurrent2: Int
 
-    nested: [NestedA!]!
-
     headers: String
     referer: String
     demoHeader: String
@@ -32,14 +30,6 @@ type Query {
 
     withPagination: MessageConnection
     withCookie: String
-}
-
-type NestedA {
-    nested2: Nested2!
-}
-
-type Nested2 {
-    message: String
 }
 
 type Message @connection {

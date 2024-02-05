@@ -16,11 +16,12 @@
 
 package com.netflix.graphql.dgs.springgraphql
 
+import com.netflix.graphql.dgs.internal.DataFetcherReference
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
-import graphql.schema.GraphQLSchema
-import graphql.schema.TypeResolver
+import graphql.schema.*
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.TypeDefinitionRegistry
+import org.springframework.core.ResolvableType
 import org.springframework.core.io.Resource
 import org.springframework.graphql.execution.*
 import org.springframework.graphql.execution.GraphQlSource.SchemaResourceBuilder
@@ -43,9 +44,22 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider) 
     override fun initGraphQlSchema(): GraphQLSchema {
         val schema = dgsSchemaProvider.schema(schemaResources = schemaResources)
 
+        val selfDescribingDataFetchers = wrapDataFetchers(dgsSchemaProvider.resolvedDataFetchers())
+        val mergedDataFetcherMap = mutableMapOf<String, Map<String, DataFetcher<Any>>>()
+        mergedDataFetcherMap.putAll(selfDescribingDataFetchers)
+
+        // merge the spring data fetcher map with dgs data fetchers
+        val springDataFetchers = schema.runtimeWiring.dataFetchers
+        springDataFetchers.keys.forEach {
+            if (selfDescribingDataFetchers.containsKey(it)) {
+                mergedDataFetcherMap[it] = (selfDescribingDataFetchers[it]!! + (springDataFetchers[it] as Map<String, DataFetcher<Any>>))
+            } else {
+                mergedDataFetcherMap[it] = springDataFetchers[it] as Map<String, DataFetcher<Any>>
+            }
+        }
         if (schemaReportConsumer != null) {
             configureGraphQl {
-                val report = SchemaMappingInspector.inspect(schema.graphQLSchema, schema.runtimeWiring)
+                val report = SchemaMappingInspector.inspect(schema.graphQLSchema, mergedDataFetcherMap)
                 schemaReportConsumer!!.accept(report)
             }
         }
@@ -80,5 +94,29 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider) 
 
     override fun schemaFactory(schemaFactory: BiFunction<TypeDefinitionRegistry, RuntimeWiring, GraphQLSchema>): SchemaResourceBuilder {
         throw IllegalStateException("Overriding the schema factory is not supported in this builder")
+    }
+
+    class SpringGraphQlDataFetcher(private val dataFetcher: DataFetcherReference) : SelfDescribingDataFetcher<Any> {
+        override fun get(environment: DataFetchingEnvironment?): Any {
+            TODO("Not yet implemented")
+        }
+        override fun getDescription(): String {
+            return dataFetcher.field
+        }
+        override fun getReturnType(): ResolvableType {
+            return ResolvableType.forMethodReturnType(dataFetcher.method)
+        }
+    }
+
+    private fun wrapDataFetchers(dataFetchers: List<DataFetcherReference>): Map<String, Map<String, SelfDescribingDataFetcher<Any>>> {
+        val wrappedDataFetchers: MutableMap<String, MutableMap<String, SelfDescribingDataFetcher<Any>>> = mutableMapOf()
+        dataFetchers.forEach {
+            val wrappedDataFetcher = SpringGraphQlDataFetcher(it)
+            if (!wrappedDataFetchers.containsKey(it.parentType)) {
+                wrappedDataFetchers[it.parentType] = mutableMapOf()
+            }
+            wrappedDataFetchers[it.parentType]!![it.field] = wrappedDataFetcher
+        }
+        return wrappedDataFetchers
     }
 }
