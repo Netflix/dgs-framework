@@ -22,6 +22,7 @@ import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.types.subscription.*
 import graphql.ExecutionResult
 import jakarta.annotation.PostConstruct
+import jakarta.annotation.PreDestroy
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
@@ -45,16 +46,30 @@ class WebsocketGraphQLWSProtocolHandler(
     internal val subscriptions = ConcurrentHashMap<String, MutableMap<String, Subscription>>()
     internal val sessions = CopyOnWriteArrayList<WebSocketSession>()
 
+    @Volatile
+    private var timer: Timer? = null
+
     @PostConstruct
     fun setupCleanup() {
+        val timer = Timer("dgs-graphql-ws-session-cleanup", true)
+        this.timer = timer
         val timerTask = object : TimerTask() {
             override fun run() {
-                sessions.filter { !it.isOpen }.forEach(this@WebsocketGraphQLWSProtocolHandler::cleanupSubscriptionsForSession)
+                for (session in sessions) {
+                    if (!session.isOpen) {
+                        cleanupSubscriptionsForSession(session)
+                    }
+                }
             }
         }
-
-        val timer = Timer(true)
         timer.scheduleAtFixedRate(timerTask, 0, 5000)
+    }
+
+    @PreDestroy
+    fun destroy() {
+        val timer = this.timer ?: return
+        timer.cancel()
+        this.timer = null
     }
 
     public override fun handleTextMessage(session: WebSocketSession, message: TextMessage) {
