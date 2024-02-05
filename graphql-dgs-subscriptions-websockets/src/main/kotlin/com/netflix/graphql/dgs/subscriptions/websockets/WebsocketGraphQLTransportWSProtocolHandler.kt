@@ -68,16 +68,18 @@ class WebsocketGraphQLTransportWSProtocolHandler(
 
     override fun afterConnectionEstablished(session: WebSocketSession) {
         contexts[session.id] = Context()
+        val timer = Timer()
+
         val timerTask = object : TimerTask() {
             override fun run() {
                 if (contexts[session.id]?.getConnectionInitReceived() == false) {
                     session.close(CloseStatus(CloseCode.ConnectionInitialisationTimeout.code))
                     contexts.remove(session.id)
                 }
+                timer.cancel()
             }
         }
 
-        val timer = Timer()
         timer.schedule(timerTask, connectionInitTimeout.toMillis())
     }
 
