@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.springgraphql
 
 import com.netflix.graphql.dgs.internal.DataFetcherReference
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.SchemaProviderResult
 import graphql.schema.*
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.TypeDefinitionRegistry
@@ -43,27 +44,7 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider) 
 
     override fun initGraphQlSchema(): GraphQLSchema {
         val schema = dgsSchemaProvider.schema(schemaResources = schemaResources)
-
-        val selfDescribingDataFetchers = wrapDataFetchers(dgsSchemaProvider.resolvedDataFetchers())
-        val mergedDataFetcherMap = mutableMapOf<String, Map<String, DataFetcher<Any>>>()
-        mergedDataFetcherMap.putAll(selfDescribingDataFetchers)
-
-        // merge the spring data fetcher map with dgs data fetchers
-        val springDataFetchers = schema.runtimeWiring.dataFetchers
-        springDataFetchers.keys.forEach {
-            if (selfDescribingDataFetchers.containsKey(it)) {
-                mergedDataFetcherMap[it] = (selfDescribingDataFetchers[it]!! + (springDataFetchers[it] as Map<String, DataFetcher<Any>>))
-            } else {
-                mergedDataFetcherMap[it] = springDataFetchers[it] as Map<String, DataFetcher<Any>>
-            }
-        }
-        if (schemaReportConsumer != null) {
-            configureGraphQl {
-                val report = SchemaMappingInspector.inspect(schema.graphQLSchema, mergedDataFetcherMap)
-                schemaReportConsumer!!.accept(report)
-            }
-        }
-
+        setupSchemaReporter(schema)
         return schema.graphQLSchema
     }
 
@@ -117,6 +98,35 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider) 
             }
             wrappedDataFetchers[it.parentType]!![it.field] = wrappedDataFetcher
         }
+
         return wrappedDataFetchers
+    }
+
+    private fun setupSchemaReporter(schema: SchemaProviderResult) {
+        // wrap DGS data fetchers in a SelfDescribingDataFetcher for schema reporting
+        val selfDescribingDgsDataFetchers = wrapDataFetchers(dgsSchemaProvider.resolvedDataFetchers())
+
+        val mergedDataFetchers = mutableMapOf<String, Map<String, DataFetcher<Any>>>()
+        mergedDataFetchers.putAll(selfDescribingDgsDataFetchers)
+
+        val springGraphQLDataFetchers = schema.runtimeWiring.dataFetchers
+        springGraphQLDataFetchers.keys.forEach {
+            if (selfDescribingDgsDataFetchers.containsKey(it)) {
+                val dgsDataFetchersForRootField = selfDescribingDgsDataFetchers[it]!!
+                val springGraphQLDataFetchersForRootField = (springGraphQLDataFetchers[it] as Map<String, DataFetcher<Any>>)
+                // Merge the spring data fetcher map with dgs data fetchers
+                // e.g For each entry, merge each Pair(Query, mapOf(Pair(movies, movieDgsDataFetcher)) in DGS with Spring Graphql's map of Pair(Query, mapOf(greetings, greetingSpringDataFetcher)
+                // to get Pair(Query, mapOf(Pair(movies, moviesDgsDataFetcher), Pair(greetings, greetingSpringDataFetcher)...))
+                mergedDataFetchers[it] = dgsDataFetchersForRootField + springGraphQLDataFetchersForRootField
+            } else {
+                mergedDataFetchers[it] = springGraphQLDataFetchers[it] as Map<String, DataFetcher<Any>>
+            }
+        }
+        if (schemaReportConsumer != null) {
+            configureGraphQl {
+                val report = SchemaMappingInspector.inspect(schema.graphQLSchema, mergedDataFetchers)
+                schemaReportConsumer!!.accept(report)
+            }
+        }
     }
 }
