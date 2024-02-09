@@ -49,6 +49,7 @@ import kotlin.system.measureTimeMillis
  */
 class DgsDataLoaderProvider(
     private val applicationContext: ApplicationContext,
+    private val extensionProviders: List<DataLoaderInstrumentationExtensionProvider> = listOf(),
     private val dataLoaderOptionsProvider: DgsDataLoaderOptionsProvider = DefaultDataLoaderOptionsProvider(),
     private val scheduledExecutorService: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
     private val scheduleDuration: Duration = Duration.ofMillis(10),
@@ -62,8 +63,6 @@ class DgsDataLoaderProvider(
     private val mappedBatchLoaders = mutableListOf<LoaderHolder<MappedBatchLoader<*, *>>>()
     private val mappedBatchLoadersWithContext = mutableListOf<LoaderHolder<MappedBatchLoaderWithContext<*, *>>>()
 
-    private val loaderMap = mutableMapOf<String, String>()
-
     fun buildRegistry(): DataLoaderRegistry {
         return buildRegistryWithContextSupplier { null }
     }
@@ -74,11 +73,6 @@ class DgsDataLoaderProvider(
         val registry = ScheduledDataLoaderRegistry.newScheduledRegistry().scheduledExecutorService(scheduledExecutorService).tickerMode(enableTickerMode).schedule(scheduleDuration).dispatchPredicate(DispatchPredicate.DISPATCH_NEVER).build()
 
         val totalTime = measureTimeMillis {
-            val extensionProviders = applicationContext
-                .getBeanProvider(DataLoaderInstrumentationExtensionProvider::class.java)
-                .orderedStream()
-                .toList()
-
             batchLoaders.forEach { registerDataLoader(it, registry, contextSupplier, extensionProviders) }
             batchLoadersWithContext.forEach { registerDataLoader(it, registry, contextSupplier, extensionProviders) }
             mappedBatchLoaders.forEach { registerDataLoader(it, registry, contextSupplier, extensionProviders) }
@@ -129,7 +123,7 @@ class DgsDataLoaderProvider(
         dataLoaders.values.forEach { dgsComponent ->
             val javaClass = AopUtils.getTargetClass(dgsComponent)
             val annotation = javaClass.getAnnotation(DgsDataLoader::class.java)
-            val predicateField = javaClass.declaredFields.asSequence().find { it.isAnnotationPresent(DgsDispatchPredicate::class.java) }
+            val predicateField = javaClass.declaredFields.find { it.isAnnotationPresent(DgsDispatchPredicate::class.java) }
             if (predicateField != null) {
                 ReflectionUtils.makeAccessible(predicateField)
                 val dispatchPredicate = predicateField.get(dgsComponent)
@@ -142,7 +136,7 @@ class DgsDataLoaderProvider(
         }
     }
 
-    private fun <T : Any>addDataLoaders(dgsComponent: T, targetClass: Class<*>, annotation: DgsDataLoader, dispatchPredicate: DispatchPredicate?) {
+    private fun <T : Any> addDataLoaders(dgsComponent: T, targetClass: Class<*>, annotation: DgsDataLoader, dispatchPredicate: DispatchPredicate?) {
         fun <T : Any> createHolder(t: T): LoaderHolder<T> =
             LoaderHolder(t, annotation, DataLoaderNameUtil.getDataLoaderName(targetClass, annotation), dispatchPredicate)
         when (dgsComponent) {

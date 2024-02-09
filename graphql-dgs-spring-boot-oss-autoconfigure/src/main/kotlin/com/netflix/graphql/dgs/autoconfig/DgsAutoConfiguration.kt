@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.autoconfig
 
+import com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider
 import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
 import com.netflix.graphql.dgs.DgsDefaultPreparsedDocumentProvider
 import com.netflix.graphql.dgs.DgsFederationResolver
@@ -166,8 +167,20 @@ open class DgsAutoConfiguration(
     }
 
     @Bean
-    open fun dgsDataLoaderProvider(applicationContext: ApplicationContext, dataloaderOptionProvider: DgsDataLoaderOptionsProvider, @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService): DgsDataLoaderProvider {
-        return DgsDataLoaderProvider(applicationContext, dataloaderOptionProvider, dgsScheduledExecutorService, dataloaderConfigProps.scheduleDuration, dataloaderConfigProps.tickerModeEnabled)
+    open fun dgsDataLoaderProvider(
+        applicationContext: ApplicationContext,
+        dataloaderOptionProvider: DgsDataLoaderOptionsProvider,
+        @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService,
+        extensionProviders: List<DataLoaderInstrumentationExtensionProvider>
+    ): DgsDataLoaderProvider {
+        return DgsDataLoaderProvider(
+            applicationContext = applicationContext,
+            extensionProviders = extensionProviders,
+            dataLoaderOptionsProvider = dataloaderOptionProvider,
+            scheduledExecutorService = dgsScheduledExecutorService,
+            scheduleDuration = dataloaderConfigProps.scheduleDuration,
+            enableTickerMode = dataloaderConfigProps.tickerModeEnabled
+        )
     }
 
     /**
