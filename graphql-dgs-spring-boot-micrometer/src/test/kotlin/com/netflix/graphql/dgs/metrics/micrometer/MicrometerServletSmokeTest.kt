@@ -47,9 +47,7 @@ import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Tags
 import io.micrometer.core.instrument.cumulative.CumulativeCounter
-import io.micrometer.core.instrument.cumulative.CumulativeTimer
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
-import io.mockk.core.ValueClassSupport.boxedValue
 import org.assertj.core.api.Assertions.assertThat
 import org.dataloader.BatchLoader
 import org.dataloader.DataLoaderRegistry
