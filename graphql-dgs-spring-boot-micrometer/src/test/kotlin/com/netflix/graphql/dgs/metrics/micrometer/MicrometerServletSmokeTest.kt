@@ -46,7 +46,10 @@ import io.micrometer.core.instrument.Meter
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Tags
+import io.micrometer.core.instrument.cumulative.CumulativeCounter
+import io.micrometer.core.instrument.cumulative.CumulativeTimer
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
+import io.mockk.core.ValueClassSupport.boxedValue
 import org.assertj.core.api.Assertions.assertThat
 import org.dataloader.BatchLoader
 import org.dataloader.DataLoaderRegistry
@@ -364,6 +367,7 @@ class MicrometerServletSmokeTest {
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query")
 
         assertThat(meters["gql.error"]).isNotNull.hasSize(1)
+        assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
                 Tags.of("execution-tag", "foo")
@@ -451,6 +455,7 @@ class MicrometerServletSmokeTest {
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query")
 
         assertThat(meters["gql.error"]).isNotNull.hasSize(1)
+        assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
                 Tags.of("execution-tag", "foo")
@@ -511,6 +516,7 @@ class MicrometerServletSmokeTest {
 
         logMeters(meters["gql.error"])
         assertThat(meters["gql.error"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
                 Tags.of("execution-tag", "foo")
@@ -582,6 +588,7 @@ class MicrometerServletSmokeTest {
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
 
         assertThat(meters["gql.error"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
                 Tags.of("execution-tag", "foo")
@@ -653,6 +660,7 @@ class MicrometerServletSmokeTest {
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
 
         assertThat(meters["gql.error"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
                 Tags.of("execution-tag", "foo")
