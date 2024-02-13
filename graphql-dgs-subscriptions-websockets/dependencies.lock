@@ -693,16 +693,10 @@
             ]
         },
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "3.0.0",
+            "locked": "4.4.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
-        "com.apollographql.federation:federation-graphql-java-support-api": {
-            "locked": "3.0.0",
-            "transitive": [
-                "com.apollographql.federation:federation-graphql-java-support"
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
@@ -767,7 +761,7 @@
             ]
         },
         "com.google.protobuf:protobuf-java": {
-            "locked": "3.22.1",
+            "locked": "3.25.2",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support"
             ]
@@ -1973,16 +1967,10 @@
     },
     "runtimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "3.0.0",
+            "locked": "4.4.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
-        "com.apollographql.federation:federation-graphql-java-support-api": {
-            "locked": "3.0.0",
-            "transitive": [
-                "com.apollographql.federation:federation-graphql-java-support"
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
@@ -2047,7 +2035,7 @@
             ]
         },
         "com.google.protobuf:protobuf-java": {
-            "locked": "3.22.1",
+            "locked": "3.25.2",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support"
             ]
@@ -3050,16 +3038,10 @@
             ]
         },
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "3.0.0",
+            "locked": "4.4.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
-        "com.apollographql.federation:federation-graphql-java-support-api": {
-            "locked": "3.0.0",
-            "transitive": [
-                "com.apollographql.federation:federation-graphql-java-support"
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
@@ -3124,7 +3106,7 @@
             ]
         },
         "com.google.protobuf:protobuf-java": {
-            "locked": "3.22.1",
+            "locked": "3.25.2",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support"
             ]
