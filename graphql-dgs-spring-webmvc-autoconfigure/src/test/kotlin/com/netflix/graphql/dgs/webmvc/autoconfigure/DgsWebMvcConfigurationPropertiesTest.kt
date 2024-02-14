@@ -62,6 +62,12 @@ class DgsWebMvcConfigurationPropertiesTest {
     }
 
     @Test
+    fun graphiQLGraphQLSubpathDefault() {
+        val properties = bind(Collections.emptyMap())
+        assertThat(properties.graphiql.subpath).isEqualTo("")
+    }
+
+    @Test
     fun schemaJsonPathDefault() {
         val properties = bind(Collections.emptyMap())
         assertThat(properties.schemaJson.path).isEqualTo("/schema.json")

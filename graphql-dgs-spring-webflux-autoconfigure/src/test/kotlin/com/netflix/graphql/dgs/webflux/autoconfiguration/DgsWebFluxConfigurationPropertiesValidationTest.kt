@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.webmvc.autoconfigure
+package com.netflix.graphql.dgs.webflux.autoconfiguration
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -23,7 +23,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import org.springframework.context.annotation.Configuration
 
-class DgsWebMvcConfigurationPropertiesValidationTest {
+class DgsWebFluxConfigurationPropertiesValidationTest {
 
     private val context = ApplicationContextRunner().withConfiguration(
         AutoConfigurations.of(
@@ -36,7 +36,7 @@ class DgsWebMvcConfigurationPropertiesValidationTest {
         context
             .withPropertyValues("dgs.graphql.path: /fooql/")
             .run { ctx ->
-                assertThat(ctx).hasFailed().failure.rootCause().hasMessageContaining("dgs.graphql.path must start with '/' and not end with '/'")
+                assertThat(ctx).hasFailed().failure.getRootCause().hasMessageContaining("dgs.graphql.path must start with '/' and not end with '/'")
             }
     }
 
@@ -45,7 +45,7 @@ class DgsWebMvcConfigurationPropertiesValidationTest {
         context
             .withPropertyValues("dgs.graphql.path: fooql")
             .run { ctx ->
-                assertThat(ctx).hasFailed().failure.rootCause().hasMessageContaining("dgs.graphql.path must start with '/' and not end with '/'")
+                assertThat(ctx).hasFailed().failure.getRootCause().hasMessageContaining("dgs.graphql.path must start with '/' and not end with '/'")
             }
     }
 
@@ -63,7 +63,7 @@ class DgsWebMvcConfigurationPropertiesValidationTest {
         context
             .withPropertyValues("dgs.graphql.graphiql.path: /fooql/")
             .run { ctx ->
-                assertThat(ctx).hasFailed().failure.rootCause().hasMessageContaining("dgs.graphql.graphiql.path must start with '/' and not end with '/'")
+                assertThat(ctx).hasFailed().failure.getRootCause().hasMessageContaining("dgs.graphql.graphiql.path must start with '/' and not end with '/'")
             }
     }
 
@@ -72,7 +72,7 @@ class DgsWebMvcConfigurationPropertiesValidationTest {
         context
             .withPropertyValues("dgs.graphql.graphiql.path: fooql")
             .run { ctx ->
-                assertThat(ctx).hasFailed().failure.rootCause().hasMessageContaining("dgs.graphql.graphiql.path must start with '/' and not end with '/'")
+                assertThat(ctx).hasFailed().failure.getRootCause().hasMessageContaining("dgs.graphql.graphiql.path must start with '/' and not end with '/'")
             }
     }
 
@@ -117,7 +117,7 @@ class DgsWebMvcConfigurationPropertiesValidationTest {
         context
             .withPropertyValues("dgs.graphql.schema-json.path: /fooql/")
             .run { ctx ->
-                assertThat(ctx).hasFailed().failure.rootCause().hasMessageContaining("dgs.graphql.schema-json.path must start with '/' and not end with '/'")
+                assertThat(ctx).hasFailed().failure.getRootCause().hasMessageContaining("dgs.graphql.schema-json.path must start with '/' and not end with '/'")
             }
     }
 
@@ -126,7 +126,7 @@ class DgsWebMvcConfigurationPropertiesValidationTest {
         context
             .withPropertyValues("dgs.graphql.schema-json.path: fooql")
             .run { ctx ->
-                assertThat(ctx).hasFailed().failure.rootCause().hasMessageContaining("dgs.graphql.schema-json.path must start with '/' and not end with '/'")
+                assertThat(ctx).hasFailed().failure.getRootCause().hasMessageContaining("dgs.graphql.schema-json.path must start with '/' and not end with '/'")
             }
     }
 
@@ -148,6 +148,6 @@ class DgsWebMvcConfigurationPropertiesValidationTest {
     }
 
     @Configuration
-    @EnableConfigurationProperties(DgsWebMvcConfigurationProperties::class)
+    @EnableConfigurationProperties(DgsWebfluxConfigurationProperties::class)
     open class MockConfigPropsAutoConfiguration
 }

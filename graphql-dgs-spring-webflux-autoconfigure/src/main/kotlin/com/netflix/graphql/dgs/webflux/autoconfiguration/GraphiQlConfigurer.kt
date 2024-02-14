@@ -31,7 +31,7 @@ import java.nio.charset.StandardCharsets
 
 class GraphiQlConfigurer(private val configProps: DgsWebfluxConfigurationProperties) : WebFluxConfigurer {
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
-        val graphqlPath = configProps.path
+        val graphqlPath = configProps.graphiql.subpath + configProps.path
         val graphiQLTitle = configProps.graphiql.title
         registry
             .addResourceHandler(configProps.graphiql.path + "/**")

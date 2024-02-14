@@ -39,7 +39,9 @@ data class DgsWebMvcConfigurationProperties(
         /** Path to the GraphiQL endpoint without trailing slash. */
         @DefaultValue("/graphiql") var path: String = "/graphiql",
         /** GraphiQL title */
-        @DefaultValue("Simple GraphiQL Example") var title: String = "Simple GraphiQL Example"
+        @DefaultValue("Simple GraphiQL Example") var title: String = "Simple GraphiQL Example",
+        /** Subpath that GraphiQL should include when calling the GraphQL endpoint */
+        @DefaultValue("") var subpath: String = ""
     )
 
     /**
@@ -54,7 +56,14 @@ data class DgsWebMvcConfigurationProperties(
     fun validatePaths() {
         validatePath(this.path, "dgs.graphql.path")
         validatePath(this.graphiql.path, "dgs.graphql.graphiql.path")
+        validateOptionalPath(this.graphiql.subpath, "dgs.graphql.graphiql.subpath")
         validatePath(this.schemaJson.path, "dgs.graphql.schema-json.path")
+    }
+
+    private fun validateOptionalPath(path: String, pathProperty: String) {
+        if ("" != path) {
+            validatePath(path, pathProperty)
+        }
     }
 
     private fun validatePath(path: String, pathProperty: String) {
