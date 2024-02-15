@@ -18,9 +18,11 @@ package com.netflix.graphql.dgs.autoconfig
 
 import com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider
 import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
+import com.netflix.graphql.dgs.DgsDataLoaderScanningInterceptor
 import com.netflix.graphql.dgs.DgsDefaultPreparsedDocumentProvider
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.DgsSimpleDataLoaderInstrumentation
 import com.netflix.graphql.dgs.conditionals.ConditionalOnJava21
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
@@ -167,11 +169,32 @@ open class DgsAutoConfiguration(
     }
 
     @Bean
+    @ConditionalOnProperty(
+        prefix = "$AUTO_CONF_PREFIX.convertAllDataLoadersToWithContext",
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = true
+    )
+    @Order(0)
+    open fun dgsWrapWithContextDataLoaderScanningInterceptor(): DgsWrapWithContextDataLoaderScanningInterceptor {
+        return DgsWrapWithContextDataLoaderScanningInterceptor()
+    }
+
+    @Bean
+    @Order(100)
+    open fun dgsSimpleDataLoaderInstrumentationDataLoaderScanningInterceptor(
+        instrumentations: List<DgsSimpleDataLoaderInstrumentation<*>>
+    ): DgsSimpleDataLoaderInstrumentationDataLoaderScanningInterceptor {
+        return DgsSimpleDataLoaderInstrumentationDataLoaderScanningInterceptor(instrumentations)
+    }
+
+    @Bean
     open fun dgsDataLoaderProvider(
         applicationContext: ApplicationContext,
         dataloaderOptionProvider: DgsDataLoaderOptionsProvider,
         @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService,
-        extensionProviders: List<DataLoaderInstrumentationExtensionProvider>
+        extensionProviders: List<DataLoaderInstrumentationExtensionProvider>,
+        scanningInterceptors: List<DgsDataLoaderScanningInterceptor>
     ): DgsDataLoaderProvider {
         return DgsDataLoaderProvider(
             applicationContext = applicationContext,
@@ -179,7 +202,8 @@ open class DgsAutoConfiguration(
             dataLoaderOptionsProvider = dataloaderOptionProvider,
             scheduledExecutorService = dgsScheduledExecutorService,
             scheduleDuration = dataloaderConfigProps.scheduleDuration,
-            enableTickerMode = dataloaderConfigProps.tickerModeEnabled
+            enableTickerMode = dataloaderConfigProps.tickerModeEnabled,
+            scanningInterceptors = scanningInterceptors
         )
     }
 
