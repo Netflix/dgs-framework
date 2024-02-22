@@ -17,7 +17,7 @@
 package com.netflix.graphql.dgs
 
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
-import com.netflix.graphql.dgs.internal.DgsSimpleDataLoaderInstrumentationDataLoaderCustomizer
+import com.netflix.graphql.dgs.internal.DgsDataLoaderInstrumentationDataLoaderCustomizer
 import com.netflix.graphql.dgs.internal.DgsWrapWithContextDataLoaderCustomizer
 import org.assertj.core.api.Assertions.assertThat
 import org.dataloader.BatchLoaderEnvironment
@@ -53,7 +53,7 @@ class DgsDataLoaderInstrumentationTest {
 
         applicationContextRunner.withBean(ExampleBatchLoaderWithoutName::class.java)
             .withBean(DgsWrapWithContextDataLoaderCustomizer::class.java)
-            .withBean(DgsSimpleDataLoaderInstrumentationDataLoaderCustomizer::class.java)
+            .withBean(DgsDataLoaderInstrumentationDataLoaderCustomizer::class.java)
             .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter).run { context ->
                 val provider = context.getBean(DgsDataLoaderProvider::class.java)
                 val dataLoaderRegistry = provider.buildRegistry()
@@ -75,7 +75,7 @@ class DgsDataLoaderInstrumentationTest {
 
         applicationContextRunner.withBean(ExampleBatchLoaderThatThrows::class.java)
             .withBean(DgsWrapWithContextDataLoaderCustomizer::class.java)
-            .withBean(DgsSimpleDataLoaderInstrumentationDataLoaderCustomizer::class.java)
+            .withBean(DgsDataLoaderInstrumentationDataLoaderCustomizer::class.java)
             .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter).run { context ->
                 val provider = context.getBean(DgsDataLoaderProvider::class.java)
                 val dataLoaderRegistry = provider.buildRegistry()

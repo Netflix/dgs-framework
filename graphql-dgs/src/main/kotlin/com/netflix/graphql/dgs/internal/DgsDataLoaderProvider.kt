@@ -50,7 +50,7 @@ import kotlin.system.measureTimeMillis
 class DgsDataLoaderProvider(
     private val applicationContext: ApplicationContext,
     private val extensionProviders: List<DataLoaderInstrumentationExtensionProvider> = listOf(),
-    private val scanningInterceptors: List<DgsDataLoaderCustomizer> = listOf(),
+    private val customizers: List<DgsDataLoaderCustomizer> = listOf(),
     private val dataLoaderOptionsProvider: DgsDataLoaderOptionsProvider = DefaultDataLoaderOptionsProvider(),
     private val scheduledExecutorService: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
     private val scheduleDuration: Duration = Duration.ofMillis(10),
@@ -108,7 +108,7 @@ class DgsDataLoaderProvider(
                     }
 
                     fun <T : Any> createHolder(t: T): LoaderHolder<T> = LoaderHolder(t, annotation, annotation.name)
-                    when (val dataLoader = runScanningInterceptors(field.get(dgsComponent), annotation.name, dgsComponent::class.java)) {
+                    when (val dataLoader = runCustomizers(field.get(dgsComponent), annotation.name, dgsComponent::class.java)) {
                         is BatchLoader<*, *> -> batchLoaders.add(createHolder(dataLoader))
                         is BatchLoaderWithContext<*, *> -> batchLoadersWithContext.add(createHolder(dataLoader))
                         is MappedBatchLoader<*, *> -> mappedBatchLoaders.add(createHolder(dataLoader))
@@ -142,7 +142,7 @@ class DgsDataLoaderProvider(
         fun <T : Any> createHolder(t: T): LoaderHolder<T> =
             LoaderHolder(t, annotation, DataLoaderNameUtil.getDataLoaderName(targetClass, annotation), dispatchPredicate)
 
-        when (val dataLoader = runScanningInterceptors(dgsComponent, name, dgsComponent::class.java)) {
+        when (val dataLoader = runCustomizers(dgsComponent, name, dgsComponent::class.java)) {
             is BatchLoader<*, *> -> batchLoaders.add(createHolder(dataLoader))
             is BatchLoaderWithContext<*, *> -> batchLoadersWithContext.add(createHolder(dataLoader))
             is MappedBatchLoader<*, *> -> mappedBatchLoaders.add(createHolder(dataLoader))
@@ -151,10 +151,10 @@ class DgsDataLoaderProvider(
         }
     }
 
-    private fun runScanningInterceptors(originalDataLoader: Any, name: String, dgsComponentClass: Class<*>): Any {
+    private fun runCustomizers(originalDataLoader: Any, name: String, dgsComponentClass: Class<*>): Any {
         var dataLoader = originalDataLoader
 
-        scanningInterceptors.forEach {
+        customizers.forEach {
             dataLoader = when (dataLoader) {
                 is BatchLoader<*, *> -> it.provide(dataLoader as BatchLoader<*, *>, name)
                 is BatchLoaderWithContext<*, *> -> it.provide(dataLoader as BatchLoaderWithContext<*, *>, name)

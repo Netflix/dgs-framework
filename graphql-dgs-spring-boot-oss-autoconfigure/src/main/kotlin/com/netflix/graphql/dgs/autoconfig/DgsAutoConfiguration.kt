@@ -176,16 +176,16 @@ open class DgsAutoConfiguration(
         matchIfMissing = true
     )
     @Order(0)
-    open fun dgsWrapWithContextDataLoaderScanningInterceptor(): DgsWrapWithContextDataLoaderCustomizer {
+    open fun dgsWrapWithContextDataLoaderCustomizer(): DgsWrapWithContextDataLoaderCustomizer {
         return DgsWrapWithContextDataLoaderCustomizer()
     }
 
     @Bean
     @Order(100)
-    open fun dgsSimpleDataLoaderInstrumentationDataLoaderScanningInterceptor(
-        instrumentations: List<DgsDataLoaderInstrumentation<*>>
-    ): DgsSimpleDataLoaderInstrumentationDataLoaderCustomizer {
-        return DgsSimpleDataLoaderInstrumentationDataLoaderCustomizer(instrumentations)
+    open fun dgsDataLoaderInstrumentationDataLoaderCustomizer(
+        instrumentations: List<DgsDataLoaderInstrumentation>
+    ): DgsDataLoaderInstrumentationDataLoaderCustomizer {
+        return DgsDataLoaderInstrumentationDataLoaderCustomizer(instrumentations)
     }
 
     @Bean
@@ -194,7 +194,7 @@ open class DgsAutoConfiguration(
         dataloaderOptionProvider: DgsDataLoaderOptionsProvider,
         @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService,
         extensionProviders: List<DataLoaderInstrumentationExtensionProvider>,
-        scanningInterceptors: List<DgsDataLoaderCustomizer>
+        customizers: List<DgsDataLoaderCustomizer>
     ): DgsDataLoaderProvider {
         return DgsDataLoaderProvider(
             applicationContext = applicationContext,
@@ -203,7 +203,7 @@ open class DgsAutoConfiguration(
             scheduledExecutorService = dgsScheduledExecutorService,
             scheduleDuration = dataloaderConfigProps.scheduleDuration,
             enableTickerMode = dataloaderConfigProps.tickerModeEnabled,
-            scanningInterceptors = scanningInterceptors
+            customizers = customizers
         )
     }
 
