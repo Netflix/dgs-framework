@@ -18,7 +18,7 @@ package com.netflix.graphql.dgs.internal
 
 import com.netflix.graphql.dgs.DgsDataLoaderCustomizer
 import com.netflix.graphql.dgs.DgsDataLoaderInstrumentation
-import com.netflix.graphql.dgs.exceptions.DgsSimpleDataLoaderInstrumentationException
+import com.netflix.graphql.dgs.exceptions.DgsDataLoaderInstrumentationException
 import org.dataloader.BatchLoader
 import org.dataloader.BatchLoaderEnvironment
 import org.dataloader.BatchLoaderWithContext
@@ -26,27 +26,27 @@ import org.dataloader.MappedBatchLoader
 import org.dataloader.MappedBatchLoaderWithContext
 import java.util.concurrent.CompletionStage
 
-class DgsSimpleDataLoaderInstrumentationDataLoaderCustomizer(
+class DgsDataLoaderInstrumentationDataLoaderCustomizer(
     private val instrumentations: List<DgsDataLoaderInstrumentation>
 ) : DgsDataLoaderCustomizer {
     override fun provide(original: BatchLoader<*, *>, name: String): Any {
-        throw DgsSimpleDataLoaderInstrumentationException(name)
+        throw DgsDataLoaderInstrumentationException(name)
     }
 
     override fun provide(original: BatchLoaderWithContext<*, *>, name: String): Any {
-        return BatchLoaderWithContextSimpleInstrumentationDriver(original, name, instrumentations)
+        return BatchLoaderWithContextInstrumentationDriver(original, name, instrumentations)
     }
 
     override fun provide(original: MappedBatchLoader<*, *>, name: String): Any {
-        throw DgsSimpleDataLoaderInstrumentationException(name)
+        throw DgsDataLoaderInstrumentationException(name)
     }
 
     override fun provide(original: MappedBatchLoaderWithContext<*, *>, name: String): Any {
-        return MappedBatchLoaderWithContextSimpleInstrumentationDriver(original, name, instrumentations)
+        return MappedBatchLoaderWithContextInstrumentationDriver(original, name, instrumentations)
     }
 }
 
-internal class BatchLoaderWithContextSimpleInstrumentationDriver<K : Any, V>(
+internal class BatchLoaderWithContextInstrumentationDriver<K : Any, V>(
     private val original: BatchLoaderWithContext<K, V>,
     private val name: String,
     private val instrumentations: List<DgsDataLoaderInstrumentation>
@@ -66,7 +66,7 @@ internal class BatchLoaderWithContextSimpleInstrumentationDriver<K : Any, V>(
     }
 }
 
-internal class MappedBatchLoaderWithContextSimpleInstrumentationDriver<K : Any, V>(
+internal class MappedBatchLoaderWithContextInstrumentationDriver<K : Any, V>(
     private val original: MappedBatchLoaderWithContext<K, V>,
     private val name: String,
     private val instrumentations: List<DgsDataLoaderInstrumentation>

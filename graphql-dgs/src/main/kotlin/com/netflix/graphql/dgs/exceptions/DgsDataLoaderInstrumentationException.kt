@@ -16,4 +16,4 @@
 
 package com.netflix.graphql.dgs.exceptions
 
-class DgsSimpleDataLoaderInstrumentationException(name: String) : RuntimeException("data loader `$name` is not a MappedBatchLoaderWithContext or BatchLoaderWithContext. Is dgs.graphql.convertAllDataLoadersToWithContext.enabled set to false?")
+class DgsDataLoaderInstrumentationException(name: String) : RuntimeException("data loader `$name` is not a MappedBatchLoaderWithContext or BatchLoaderWithContext. Is dgs.graphql.convertAllDataLoadersToWithContext.enabled set to false?")
