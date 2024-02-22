@@ -50,7 +50,7 @@ import kotlin.system.measureTimeMillis
 class DgsDataLoaderProvider(
     private val applicationContext: ApplicationContext,
     private val extensionProviders: List<DataLoaderInstrumentationExtensionProvider> = listOf(),
-    private val scanningInterceptors: List<DgsDataLoaderScanningInterceptor> = listOf(),
+    private val scanningInterceptors: List<DgsDataLoaderCustomizer> = listOf(),
     private val dataLoaderOptionsProvider: DgsDataLoaderOptionsProvider = DefaultDataLoaderOptionsProvider(),
     private val scheduledExecutorService: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
     private val scheduleDuration: Duration = Duration.ofMillis(10),

@@ -16,7 +16,7 @@
 
 package com.netflix.graphql.dgs.internal
 
-import com.netflix.graphql.dgs.DgsDataLoaderScanningInterceptor
+import com.netflix.graphql.dgs.DgsDataLoaderCustomizer
 import org.dataloader.BatchLoader
 import org.dataloader.BatchLoaderEnvironment
 import org.dataloader.BatchLoaderWithContext
@@ -24,7 +24,7 @@ import org.dataloader.MappedBatchLoader
 import org.dataloader.MappedBatchLoaderWithContext
 import java.util.concurrent.CompletionStage
 
-class DgsWrapWithContextDataLoaderScanningInterceptor : DgsDataLoaderScanningInterceptor {
+class DgsWrapWithContextDataLoaderCustomizer : DgsDataLoaderCustomizer {
     override fun provide(original: BatchLoader<*, *>, name: String): Any {
         return BatchLoaderWithContextWrapper(original)
     }
@@ -43,13 +43,13 @@ class DgsWrapWithContextDataLoaderScanningInterceptor : DgsDataLoaderScanningInt
 }
 
 internal class BatchLoaderWithContextWrapper<K, V>(private val original: BatchLoader<K, V>) : BatchLoaderWithContext<K, V> {
-    override fun load(keys: MutableList<K>?, environment: BatchLoaderEnvironment?): CompletionStage<MutableList<V>> {
+    override fun load(keys: List<K>, environment: BatchLoaderEnvironment): CompletionStage<List<V>> {
         return original.load(keys)
     }
 }
 
 internal class MappedBatchLoaderWithContextWrapper<K, V>(private val original: MappedBatchLoader<K, V>) : MappedBatchLoaderWithContext<K, V> {
-    override fun load(keys: MutableSet<K>?, environment: BatchLoaderEnvironment?): CompletionStage<MutableMap<K, V>> {
+    override fun load(keys: Set<K>, environment: BatchLoaderEnvironment): CompletionStage<Map<K, V>> {
         return original.load(keys)
     }
 }

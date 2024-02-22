@@ -28,15 +28,23 @@ import org.dataloader.MappedBatchLoaderWithContext
  *
  * While this hook appears very similar to [com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider]
  * there are two important differences:
- * - DgsDataLoaderScanningInterceptors are called when scanning for @DgsDataLoaders, whereas the
+ * - DgsDataLoaderCustomizers are called when scanning for @DgsDataLoaders, whereas the
  *   DataLoaderInstrumentationExtensionProviders are called once per request
- * - DgsDataLoaderScanningInterceptors are afforded the opportunity to change the type of each DataLoader
+ * - DgsDataLoaderCustomizers are afforded the opportunity to change the type of each DataLoader
  *   as it is being initially registered. Most notably, this allows for converting BatchLoader and MappedBatchLoader
  *   into their "WithContext" versions, which can simplify certain types of DataLoader instrumentation.
  */
-interface DgsDataLoaderScanningInterceptor {
-    fun provide(original: BatchLoader<*, *>, name: String): Any
-    fun provide(original: BatchLoaderWithContext<*, *>, name: String): Any
-    fun provide(original: MappedBatchLoader<*, *>, name: String): Any
-    fun provide(original: MappedBatchLoaderWithContext<*, *>, name: String): Any
+interface DgsDataLoaderCustomizer {
+    fun provide(original: BatchLoader<*, *>, name: String): Any {
+        return original
+    }
+    fun provide(original: BatchLoaderWithContext<*, *>, name: String): Any {
+        return original
+    }
+    fun provide(original: MappedBatchLoader<*, *>, name: String): Any {
+        return original
+    }
+    fun provide(original: MappedBatchLoaderWithContext<*, *>, name: String): Any {
+        return original
+    }
 }

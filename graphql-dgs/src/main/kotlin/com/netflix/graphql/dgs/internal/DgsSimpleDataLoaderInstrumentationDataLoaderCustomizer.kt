@@ -16,8 +16,8 @@
 
 package com.netflix.graphql.dgs.internal
 
-import com.netflix.graphql.dgs.DgsDataLoaderScanningInterceptor
-import com.netflix.graphql.dgs.DgsSimpleDataLoaderInstrumentation
+import com.netflix.graphql.dgs.DgsDataLoaderCustomizer
+import com.netflix.graphql.dgs.DgsDataLoaderInstrumentation
 import com.netflix.graphql.dgs.exceptions.DgsSimpleDataLoaderInstrumentationException
 import org.dataloader.BatchLoader
 import org.dataloader.BatchLoaderEnvironment
@@ -26,9 +26,9 @@ import org.dataloader.MappedBatchLoader
 import org.dataloader.MappedBatchLoaderWithContext
 import java.util.concurrent.CompletionStage
 
-class DgsSimpleDataLoaderInstrumentationDataLoaderScanningInterceptor(
-    private val instrumentations: List<DgsSimpleDataLoaderInstrumentation<*>>
-) : DgsDataLoaderScanningInterceptor {
+class DgsSimpleDataLoaderInstrumentationDataLoaderCustomizer(
+    private val instrumentations: List<DgsDataLoaderInstrumentation>
+) : DgsDataLoaderCustomizer {
     override fun provide(original: BatchLoader<*, *>, name: String): Any {
         throw DgsSimpleDataLoaderInstrumentationException(name)
     }
@@ -49,16 +49,18 @@ class DgsSimpleDataLoaderInstrumentationDataLoaderScanningInterceptor(
 internal class BatchLoaderWithContextSimpleInstrumentationDriver<K : Any, V>(
     private val original: BatchLoaderWithContext<K, V>,
     private val name: String,
-    private val instrumentations: List<DgsSimpleDataLoaderInstrumentation<*>>
+    private val instrumentations: List<DgsDataLoaderInstrumentation>
 ) : BatchLoaderWithContext<K, V> {
-    override fun load(keys: MutableList<K>, environment: BatchLoaderEnvironment): CompletionStage<MutableList<V>> {
-        val contexts = instrumentations.map { it.beforeLoad(name, keys, environment) }
-
+    override fun load(keys: List<K>, environment: BatchLoaderEnvironment): CompletionStage<List<V>> {
+        val contexts = instrumentations.map { it.onDispatch(name, keys, environment) }
         val future = original.load(keys, environment)
 
-        return instrumentations.zip(contexts).reversed().fold(future) { f, p ->
-            f.whenComplete { result, exception ->
-                p.first.afterLoadWithCast(name, keys, environment, result, exception, p.second!!)
+        return future.whenComplete { result, exception ->
+            try {
+                contexts.asReversed().forEach { c ->
+                    c.onComplete(result, exception)
+                }
+            } catch (_: Throwable) {
             }
         }
     }
@@ -67,17 +69,20 @@ internal class BatchLoaderWithContextSimpleInstrumentationDriver<K : Any, V>(
 internal class MappedBatchLoaderWithContextSimpleInstrumentationDriver<K : Any, V>(
     private val original: MappedBatchLoaderWithContext<K, V>,
     private val name: String,
-    private val instrumentations: List<DgsSimpleDataLoaderInstrumentation<*>>
+    private val instrumentations: List<DgsDataLoaderInstrumentation>
 ) : MappedBatchLoaderWithContext<K, V> {
-    override fun load(keys: MutableSet<K>, environment: BatchLoaderEnvironment): CompletionStage<MutableMap<K, V>> {
-        val keysList = ArrayList(keys)
-        val contexts = instrumentations.map { it.beforeLoad(name, keysList, environment) }
+    override fun load(keys: Set<K>, environment: BatchLoaderEnvironment): CompletionStage<Map<K, V>> {
+        val keysList = keys.toList()
+        val contexts = instrumentations.map { it.onDispatch(name, keysList, environment) }
 
         val future = original.load(keys, environment)
 
-        return instrumentations.zip(contexts).reversed().fold(future) { f, p ->
-            f.whenComplete { result, exception ->
-                p.first.afterLoadWithCast(name, keysList, environment, result, exception, p.second!!)
+        return future.whenComplete { result, exception ->
+            try {
+                contexts.asReversed().forEach { c ->
+                    c.onComplete(result, exception)
+                }
+            } catch (_: Throwable) {
             }
         }
     }

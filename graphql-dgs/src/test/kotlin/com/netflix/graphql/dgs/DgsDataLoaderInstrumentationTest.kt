@@ -17,8 +17,8 @@
 package com.netflix.graphql.dgs
 
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
-import com.netflix.graphql.dgs.internal.DgsSimpleDataLoaderInstrumentationDataLoaderScanningInterceptor
-import com.netflix.graphql.dgs.internal.DgsWrapWithContextDataLoaderScanningInterceptor
+import com.netflix.graphql.dgs.internal.DgsSimpleDataLoaderInstrumentationDataLoaderCustomizer
+import com.netflix.graphql.dgs.internal.DgsWrapWithContextDataLoaderCustomizer
 import org.assertj.core.api.Assertions.assertThat
 import org.dataloader.BatchLoaderEnvironment
 import org.junit.jupiter.api.Test
@@ -41,7 +41,7 @@ import java.util.concurrent.atomic.AtomicInteger
  * limitations under the License.
  */
 
-class DgsSimpleDataLoaderInstrumentationTest {
+class DgsDataLoaderInstrumentationTest {
     private val applicationContextRunner: ApplicationContextRunner = ApplicationContextRunner()
         .withBean(DgsDataLoaderProvider::class.java)
 
@@ -52,8 +52,8 @@ class DgsSimpleDataLoaderInstrumentationTest {
         val exceptionCounter = AtomicInteger(0)
 
         applicationContextRunner.withBean(ExampleBatchLoaderWithoutName::class.java)
-            .withBean(DgsWrapWithContextDataLoaderScanningInterceptor::class.java)
-            .withBean(DgsSimpleDataLoaderInstrumentationDataLoaderScanningInterceptor::class.java)
+            .withBean(DgsWrapWithContextDataLoaderCustomizer::class.java)
+            .withBean(DgsSimpleDataLoaderInstrumentationDataLoaderCustomizer::class.java)
             .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter).run { context ->
                 val provider = context.getBean(DgsDataLoaderProvider::class.java)
                 val dataLoaderRegistry = provider.buildRegistry()
@@ -74,8 +74,8 @@ class DgsSimpleDataLoaderInstrumentationTest {
         val exceptionCounter = AtomicInteger(0)
 
         applicationContextRunner.withBean(ExampleBatchLoaderThatThrows::class.java)
-            .withBean(DgsWrapWithContextDataLoaderScanningInterceptor::class.java)
-            .withBean(DgsSimpleDataLoaderInstrumentationDataLoaderScanningInterceptor::class.java)
+            .withBean(DgsWrapWithContextDataLoaderCustomizer::class.java)
+            .withBean(DgsSimpleDataLoaderInstrumentationDataLoaderCustomizer::class.java)
             .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter).run { context ->
                 val provider = context.getBean(DgsDataLoaderProvider::class.java)
                 val dataLoaderRegistry = provider.buildRegistry()
@@ -90,26 +90,21 @@ class DgsSimpleDataLoaderInstrumentationTest {
     }
 }
 
-class TestDataLoaderInstrumentation(private val beforeCounter: AtomicInteger, private val afterCounter: AtomicInteger, private val exceptionCounter: AtomicInteger) : DgsSimpleDataLoaderInstrumentation<Int> {
-    override fun beforeLoad(name: String, keys: List<Any>, batchLoaderEnvironment: BatchLoaderEnvironment): Int {
-        beforeCounter.addAndGet(1)
-        return 0
+class TestDataLoaderInstrumentation(private val beforeCounter: AtomicInteger, private val afterCounter: AtomicInteger, private val exceptionCounter: AtomicInteger) : DgsDataLoaderInstrumentation {
+    class TestDataLoaderInstrumentationContext(private val afterCounter: AtomicInteger, private val exceptionCounter: AtomicInteger) : DgsDataLoaderInstrumentationContext {
+        override fun onComplete(result: Any?, exception: Any?) {
+            if (result != null) {
+                afterCounter.addAndGet(1)
+            }
+
+            if (exception != null) {
+                exceptionCounter.addAndGet(1)
+            }
+        }
     }
 
-    override fun afterLoad(
-        name: String,
-        keys: List<Any>,
-        batchLoaderEnvironment: BatchLoaderEnvironment,
-        result: Any?,
-        exception: Any?,
-        instrumentationContext: Int
-    ) {
-        if (result != null) {
-            afterCounter.addAndGet(1)
-        }
-
-        if (exception != null) {
-            exceptionCounter.addAndGet(1)
-        }
+    override fun onDispatch(name: String, keys: List<Any>, batchLoaderEnvironment: BatchLoaderEnvironment): TestDataLoaderInstrumentationContext {
+        beforeCounter.addAndGet(1)
+        return TestDataLoaderInstrumentationContext(afterCounter, exceptionCounter)
     }
 }
