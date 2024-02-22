@@ -16,8 +16,8 @@
 
 package com.netflix.graphql.dgs
 
-import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsDataLoaderInstrumentationDataLoaderCustomizer
+import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsWrapWithContextDataLoaderCustomizer
 import org.assertj.core.api.Assertions.assertThat
 import org.dataloader.BatchLoaderEnvironment
