@@ -17,12 +17,12 @@
 package com.netflix.graphql.dgs.autoconfig
 
 import com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider
+import com.netflix.graphql.dgs.DgsDataLoaderCustomizer
+import com.netflix.graphql.dgs.DgsDataLoaderInstrumentation
 import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
-import com.netflix.graphql.dgs.DgsDataLoaderScanningInterceptor
 import com.netflix.graphql.dgs.DgsDefaultPreparsedDocumentProvider
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.dgs.DgsSimpleDataLoaderInstrumentation
 import com.netflix.graphql.dgs.conditionals.ConditionalOnJava21
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
@@ -176,16 +176,16 @@ open class DgsAutoConfiguration(
         matchIfMissing = true
     )
     @Order(0)
-    open fun dgsWrapWithContextDataLoaderScanningInterceptor(): DgsWrapWithContextDataLoaderScanningInterceptor {
-        return DgsWrapWithContextDataLoaderScanningInterceptor()
+    open fun dgsWrapWithContextDataLoaderScanningInterceptor(): DgsWrapWithContextDataLoaderCustomizer {
+        return DgsWrapWithContextDataLoaderCustomizer()
     }
 
     @Bean
     @Order(100)
     open fun dgsSimpleDataLoaderInstrumentationDataLoaderScanningInterceptor(
-        instrumentations: List<DgsSimpleDataLoaderInstrumentation<*>>
-    ): DgsSimpleDataLoaderInstrumentationDataLoaderScanningInterceptor {
-        return DgsSimpleDataLoaderInstrumentationDataLoaderScanningInterceptor(instrumentations)
+        instrumentations: List<DgsDataLoaderInstrumentation<*>>
+    ): DgsSimpleDataLoaderInstrumentationDataLoaderCustomizer {
+        return DgsSimpleDataLoaderInstrumentationDataLoaderCustomizer(instrumentations)
     }
 
     @Bean
@@ -194,7 +194,7 @@ open class DgsAutoConfiguration(
         dataloaderOptionProvider: DgsDataLoaderOptionsProvider,
         @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService,
         extensionProviders: List<DataLoaderInstrumentationExtensionProvider>,
-        scanningInterceptors: List<DgsDataLoaderScanningInterceptor>
+        scanningInterceptors: List<DgsDataLoaderCustomizer>
     ): DgsDataLoaderProvider {
         return DgsDataLoaderProvider(
             applicationContext = applicationContext,
