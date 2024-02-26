@@ -286,4 +286,37 @@ class GraphQLResponseTest {
         assertThat(extensions.errorType).isEqualTo(ErrorType.INTERNAL)
         assertThat(extensions.classification).isEqualTo(mapOf("type" to "ExtendedValidationError", "validatedPath" to listOf("shows", "title")))
     }
+
+    @Test
+    fun testExplicitNullPath() {
+        val response = GraphQLResponse(
+            """{
+            "data": null,
+            "errors": [{
+              "message": "Validation failed",
+              "path": null,
+              "extensions": {
+                "errorType": "INTERNAL",
+                "classification": {
+                  "type": "ExtendedValidationError",
+                  "validatedPath": ["shows", "title"]
+                }
+              }
+            }]
+        }
+            """.trimIndent()
+        )
+        assertThat(response.data).isEmpty()
+        assertThat(response.errors).hasSize(1)
+        assertThat(response.errors[0].path).isEmpty()
+        assertThat(response.errors[0].message).isEqualTo("Validation failed")
+    }
+
+    @Test
+    fun testMinimalResponse() {
+        val response = GraphQLResponse("""{"errors": [{"message": "An error occurred"}]}""")
+        assertThat(response.errors).hasSize(1)
+        assertThat(response.errors[0].message).isEqualTo("An error occurred")
+        assertThat(response.errors[0].path).isEmpty()
+    }
 }
