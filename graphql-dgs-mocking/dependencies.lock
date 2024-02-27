@@ -1,7 +1,7 @@
 {
     "annotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -27,7 +27,7 @@
     },
     "compileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "com.github.mifmif:generex": {
             "locked": "1.0.2",
@@ -155,7 +155,7 @@
     },
     "jmhAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -169,7 +169,7 @@
     },
     "jmhCompileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "com.github.mifmif:generex": {
             "locked": "1.0.2",
@@ -309,7 +309,7 @@
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "com.github.mifmif:generex": {
             "locked": "1.0.2",
@@ -937,7 +937,7 @@
     },
     "kotlinBuildToolsApiClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.intellij.deps:trove4j": {
             "locked": "1.0.20200330",
@@ -1039,7 +1039,7 @@
     },
     "kotlinCompilerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.intellij.deps:trove4j": {
             "locked": "1.0.20200330",
@@ -1102,7 +1102,7 @@
     },
     "kotlinCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -1116,7 +1116,7 @@
     },
     "kotlinCompilerPluginClasspathJmh": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -1181,7 +1181,7 @@
     },
     "kotlinCompilerPluginClasspathMain": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -1246,7 +1246,7 @@
     },
     "kotlinCompilerPluginClasspathTest": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -1311,7 +1311,7 @@
     },
     "kotlinKlibCommonizerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.intellij.deps:trove4j": {
             "locked": "1.0.20200330",
@@ -1379,7 +1379,7 @@
     },
     "kotlinNativeCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -1393,7 +1393,7 @@
     },
     "nebulaRecommenderBom": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -1407,7 +1407,7 @@
     },
     "runtimeClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "com.github.mifmif:generex": {
             "locked": "1.0.2",
@@ -1488,7 +1488,7 @@
     },
     "testAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -1516,7 +1516,7 @@
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "com.github.mifmif:generex": {
             "locked": "1.0.2",
@@ -2041,7 +2041,7 @@
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "com.github.mifmif:generex": {
             "locked": "1.0.2",

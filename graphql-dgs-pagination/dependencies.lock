@@ -1,7 +1,7 @@
 {
     "annotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -27,7 +27,7 @@
     },
     "compileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "com.graphql-java:graphql-java": {
             "locked": "21.3",
@@ -247,7 +247,7 @@
     },
     "jmhAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -261,7 +261,7 @@
     },
     "jmhCompileClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "com.graphql-java:graphql-java": {
             "locked": "21.3",
@@ -506,7 +506,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -516,7 +516,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-core": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -525,7 +525,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
@@ -534,7 +534,7 @@
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -542,7 +542,7 @@
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -550,7 +550,7 @@
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
@@ -1287,7 +1287,7 @@
     },
     "kotlinBuildToolsApiClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.intellij.deps:trove4j": {
             "locked": "1.0.20200330",
@@ -1389,7 +1389,7 @@
     },
     "kotlinCompilerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.intellij.deps:trove4j": {
             "locked": "1.0.20200330",
@@ -1452,7 +1452,7 @@
     },
     "kotlinCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -1466,7 +1466,7 @@
     },
     "kotlinCompilerPluginClasspathJmh": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -1531,7 +1531,7 @@
     },
     "kotlinCompilerPluginClasspathMain": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -1596,7 +1596,7 @@
     },
     "kotlinCompilerPluginClasspathTest": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -1661,7 +1661,7 @@
     },
     "kotlinKlibCommonizerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.intellij.deps:trove4j": {
             "locked": "1.0.20200330",
@@ -1729,7 +1729,7 @@
     },
     "kotlinNativeCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -1743,7 +1743,7 @@
     },
     "nebulaRecommenderBom": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -1770,7 +1770,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -1780,7 +1780,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-core": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -1789,7 +1789,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
@@ -1798,7 +1798,7 @@
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -1806,7 +1806,7 @@
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -1814,7 +1814,7 @@
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
@@ -2165,7 +2165,7 @@
     },
     "testAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -2193,7 +2193,7 @@
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "com.graphql-java:graphql-java": {
             "locked": "21.3",
@@ -2748,7 +2748,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -2758,7 +2758,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-core": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -2767,7 +2767,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
@@ -2776,7 +2776,7 @@
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -2784,7 +2784,7 @@
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -2792,7 +2792,7 @@
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
