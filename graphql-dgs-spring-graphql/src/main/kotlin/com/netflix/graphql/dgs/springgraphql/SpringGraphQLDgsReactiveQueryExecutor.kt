@@ -31,7 +31,7 @@ import graphql.ExecutionResult
 import graphql.GraphQLContext
 import graphql.GraphQLError
 import org.intellij.lang.annotations.Language
-import org.springframework.graphql.execution.DefaultExecutionGraphQlService
+import org.springframework.graphql.ExecutionGraphQlService
 import org.springframework.graphql.support.DefaultExecutionGraphQlRequest
 import org.springframework.http.HttpHeaders
 import org.springframework.web.reactive.function.server.ServerRequest
@@ -39,7 +39,7 @@ import reactor.core.publisher.Mono
 import java.util.concurrent.CompletableFuture
 
 class SpringGraphQLDgsReactiveQueryExecutor(
-    val executionService: DefaultExecutionGraphQlService,
+    val executionService: ExecutionGraphQlService,
     private val dgsContextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
     private val dgsDataLoaderProvider: DgsDataLoaderProvider
 ) : DgsReactiveQueryExecutor {

@@ -49,6 +49,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.ReactiveAdapterRegistry
 import org.springframework.core.env.Environment
+import org.springframework.graphql.ExecutionGraphQlService
 import org.springframework.graphql.execution.*
 import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.filter.reactive.ServerWebExchangeContextFilter
@@ -118,7 +119,7 @@ open class DgsSpringGraphQLAutoConfiguration {
 
     @Bean
     open fun springGraphQLDgsQueryExecutor(
-        executionService: DefaultExecutionGraphQlService,
+        executionService: ExecutionGraphQlService,
         dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
         dgsDataLoaderProvider: DgsDataLoaderProvider,
         requestCustomizer: ObjectProvider<DgsQueryExecutorRequestCustomizer>
@@ -202,7 +203,7 @@ open class DgsSpringGraphQLAutoConfiguration {
     open class ReactiveConfiguration {
         @Bean
         open fun springGraphQLDgsReactiveQueryExecutor(
-            executionService: DefaultExecutionGraphQlService,
+            executionService: ExecutionGraphQlService,
             dgsContextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
             dgsDataLoaderProvider: DgsDataLoaderProvider
         ): DgsReactiveQueryExecutor {

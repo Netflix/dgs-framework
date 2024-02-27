@@ -23,11 +23,15 @@ import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
-import com.netflix.graphql.dgs.internal.*
+import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor
+import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
+import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
+import com.netflix.graphql.dgs.internal.DgsQueryExecutorRequestCustomizer
+import com.netflix.graphql.dgs.internal.DgsWebMvcRequestData
 import graphql.ExecutionResult
 import graphql.GraphQLContext
 import graphql.GraphQLError
-import org.springframework.graphql.execution.DefaultExecutionGraphQlService
+import org.springframework.graphql.ExecutionGraphQlService
 import org.springframework.graphql.support.DefaultExecutionGraphQlRequest
 import org.springframework.http.HttpHeaders
 import org.springframework.web.context.request.RequestContextHolder
@@ -35,7 +39,7 @@ import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
 import java.util.concurrent.CompletableFuture
 
-class SpringGraphQLDgsQueryExecutor(val executionService: DefaultExecutionGraphQlService, private val dgsContextBuilder: DefaultDgsGraphQLContextBuilder, private val dgsDataLoaderProvider: DgsDataLoaderProvider, private val requestCustomizer: DgsQueryExecutorRequestCustomizer = DgsQueryExecutorRequestCustomizer.DEFAULT_REQUEST_CUSTOMIZER) : DgsQueryExecutor {
+class SpringGraphQLDgsQueryExecutor(val executionService: ExecutionGraphQlService, private val dgsContextBuilder: DefaultDgsGraphQLContextBuilder, private val dgsDataLoaderProvider: DgsDataLoaderProvider, private val requestCustomizer: DgsQueryExecutorRequestCustomizer = DgsQueryExecutorRequestCustomizer.DEFAULT_REQUEST_CUSTOMIZER) : DgsQueryExecutor {
 
     override fun execute(
         query: String,
