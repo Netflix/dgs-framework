@@ -18,31 +18,43 @@ package com.netflix.graphql.dgs.example.datafetcher;
 
 import com.netflix.graphql.dgs.example.shared.types.Stock;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.graphql.tester.AutoConfigureGraphQlTester;
 import org.springframework.boot.test.autoconfigure.graphql.tester.AutoConfigureHttpGraphQlTester;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.graphql.test.tester.HttpGraphQlTester;
+import org.springframework.graphql.test.tester.WebSocketGraphQlTester;
+import org.springframework.web.reactive.socket.client.ReactorNettyWebSocketClient;
+import org.springframework.web.reactive.socket.client.WebSocketClient;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
-/**
- * This test exposes a bug with how the DGSContext is set up. For normal flow, we end up using DgsWebMvcGraphQlInterceptor that copies DgsContext into GraphQLContext.
- * For subscriptions, this is actually incorrect. This test exposes this issue since for tests, there is no WebMvcGraphQlInterceptor that gets set up.
- * Therefore, the test fails because GraphQlContextContributorInstrumentation tries to extract the context, and it isn't there.
- * SpringGraphQlQueryExecutor handles this fine by copying the context and hence we do not run into this issue with query executor tests.
- */
-@SpringBootTest()
-@AutoConfigureGraphQlTester
-@Disabled
+import java.net.URI;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SubscriptionsGraphQlTesterTest {
 
-    @Autowired
+    @LocalServerPort
+    private int port;
+
+    @Value("http://localhost:${local.server.port}/graphql")
+    private String baseUrl;
+
     private GraphQlTester graphQlTester;
+
+
+    @BeforeEach
+    void setUp() {
+        URI url = URI.create(baseUrl);
+        this.graphQlTester = WebSocketGraphQlTester.builder(url, new ReactorNettyWebSocketClient()).build();
+    }
 
     @Test
     void stocks() {
