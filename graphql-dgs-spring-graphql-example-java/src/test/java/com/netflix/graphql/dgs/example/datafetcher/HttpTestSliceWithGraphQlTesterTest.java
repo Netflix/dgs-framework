@@ -16,23 +16,19 @@
 
 package com.netflix.graphql.dgs.example.datafetcher;
 
-import com.netflix.graphql.dgs.example.shared.types.Stock;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.graphql.tester.AutoConfigureHttpGraphQlTester;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.graphql.test.tester.HttpGraphQlTester;
-import reactor.core.publisher.Flux;
-import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureHttpGraphQlTester
-public class HttpGraphQlTesterTest {
+public class HttpTestSliceWithGraphQlTesterTest {
 
     @Autowired
     private HttpGraphQlTester graphQlTester;
