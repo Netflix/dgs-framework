@@ -16,7 +16,7 @@
 
 package com.netflix.graphql.dgs.example.datafetcher;
 
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,16 +24,18 @@ import org.springframework.graphql.ExecutionGraphQlService;
 import org.springframework.graphql.test.tester.ExecutionGraphQlServiceTester;
 
 @SpringBootTest
-@Disabled
 public class GreetingTestWithGraphQlTester {
     @Autowired
     ExecutionGraphQlService service;
-    ExecutionGraphQlServiceTester graphQlTester = ExecutionGraphQlServiceTester.create(service);
+    private ExecutionGraphQlServiceTester graphQlTester;
+    @BeforeEach
+    void setUp() {
+        graphQlTester = ExecutionGraphQlServiceTester.create(service);
+    }
 
     @Test
     void testSpringDataFetcher() {
         graphQlTester.document("query Greetings($name: String){ greetings(name: $name) }").variable("name", "Spring GraphQL").execute()
                 .path("greetings").entity(String.class).isEqualTo("Hello, Spring GraphQL!");
     }
-
 }
