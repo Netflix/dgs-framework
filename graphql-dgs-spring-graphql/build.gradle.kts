@@ -30,6 +30,9 @@ dependencies {
     compileOnly("org.springframework:spring-webflux")
     compileOnly("org.springframework:spring-test")
 
+    testImplementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
+    testImplementation("org.springframework.boot:spring-boot-starter-graphql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-web")
+    testImplementation("com.github.ben-manes.caffeine:caffeine")
 }

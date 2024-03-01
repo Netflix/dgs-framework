@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.springgraphql.webmvc
 import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsWebMvcRequestData
+import com.netflix.graphql.dgs.internal.QueryValueCustomizer
 import graphql.GraphQLContext
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.graphql.server.WebGraphQlInterceptor
@@ -33,7 +34,8 @@ import java.util.concurrent.CompletableFuture
 
 class DgsWebMvcGraphQLInterceptor(
     private val dgsDataLoaderProvider: DgsDataLoaderProvider,
-    private val dgsContextBuilder: DefaultDgsGraphQLContextBuilder
+    private val dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
+    private val queryValueCustomizer: QueryValueCustomizer
 ) : WebGraphQlInterceptor {
     override fun intercept(request: WebGraphQlRequest, chain: WebGraphQlInterceptor.Chain): Mono<WebGraphQlResponse> {
         // We need to pass in the original server request for the dgs context

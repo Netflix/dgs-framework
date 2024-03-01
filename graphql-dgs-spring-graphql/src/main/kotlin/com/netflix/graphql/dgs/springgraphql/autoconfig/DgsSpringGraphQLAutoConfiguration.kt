@@ -138,11 +138,13 @@ open class DgsSpringGraphQLAutoConfiguration {
         @Bean
         open fun dgsGraphQlInterceptor(
             dgsDataLoaderProvider: DgsDataLoaderProvider,
-            dgsDefaultContextBuilder: DefaultDgsGraphQLContextBuilder
+            dgsDefaultContextBuilder: DefaultDgsGraphQLContextBuilder,
+            queryValueCustomizer: QueryValueCustomizer
         ): DgsWebMvcGraphQLInterceptor {
             return DgsWebMvcGraphQLInterceptor(
                 dgsDataLoaderProvider,
-                dgsDefaultContextBuilder
+                dgsDefaultContextBuilder,
+                queryValueCustomizer
             )
         }
     }

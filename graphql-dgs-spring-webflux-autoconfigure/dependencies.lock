@@ -1,7 +1,7 @@
 {
     "annotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -41,7 +41,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
@@ -51,7 +51,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-core": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson:jackson-bom",
@@ -59,7 +59,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
                 "com.fasterxml.jackson:jackson-bom",
@@ -67,14 +67,14 @@
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
@@ -607,7 +607,7 @@
     },
     "jmhAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -635,7 +635,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
@@ -645,7 +645,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-core": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson:jackson-bom",
@@ -653,7 +653,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
                 "com.fasterxml.jackson:jackson-bom",
@@ -661,14 +661,14 @@
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
@@ -1226,7 +1226,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -1237,7 +1237,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-core": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jdk8",
@@ -1248,7 +1248,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.datatype:jackson-datatype-jdk8",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -1260,7 +1260,7 @@
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -1268,7 +1268,7 @@
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -1277,7 +1277,7 @@
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -1287,7 +1287,7 @@
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-parameter-names": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -1295,7 +1295,7 @@
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
@@ -1448,35 +1448,35 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.13.9"
+            "locked": "1.13.10"
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api-jvm": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-agent-api"
             ]
         },
         "io.mockk:mockk-agent-jvm": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-dsl-jvm",
@@ -1484,25 +1484,25 @@
             ]
         },
         "io.mockk:mockk-core-jvm": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-core"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-dsl-jvm": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-dsl"
             ]
         },
         "io.mockk:mockk-jvm": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk"
             ]
@@ -2385,7 +2385,7 @@
     },
     "kotlinBuildToolsApiClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.intellij.deps:trove4j": {
             "locked": "1.0.20200330",
@@ -2487,7 +2487,7 @@
     },
     "kotlinCompilerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.intellij.deps:trove4j": {
             "locked": "1.0.20200330",
@@ -2550,7 +2550,7 @@
     },
     "kotlinCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -2564,7 +2564,7 @@
     },
     "kotlinCompilerPluginClasspathJmh": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -2629,7 +2629,7 @@
     },
     "kotlinCompilerPluginClasspathMain": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -2694,7 +2694,7 @@
     },
     "kotlinCompilerPluginClasspathTest": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -2759,7 +2759,7 @@
     },
     "kotlinKlibCommonizerClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.intellij.deps:trove4j": {
             "locked": "1.0.20200330",
@@ -2827,7 +2827,7 @@
     },
     "kotlinNativeCompilerPluginClasspath": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -2841,7 +2841,7 @@
     },
     "nebulaRecommenderBom": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -2882,7 +2882,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -2893,7 +2893,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-core": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -2902,7 +2902,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
@@ -2911,7 +2911,7 @@
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -2919,7 +2919,7 @@
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -2928,7 +2928,7 @@
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
@@ -3597,7 +3597,7 @@
     },
     "testAnnotationProcessor": {
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3"
+            "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
             "locked": "1.9.22"
@@ -3625,7 +3625,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -3636,7 +3636,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-core": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jdk8",
@@ -3647,7 +3647,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.datatype:jackson-datatype-jdk8",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -3659,7 +3659,7 @@
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -3667,7 +3667,7 @@
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -3675,14 +3675,14 @@
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-parameter-names": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -3690,7 +3690,7 @@
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
@@ -3824,59 +3824,59 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.13.9"
+            "locked": "1.13.10"
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api-jvm": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-agent-api"
             ]
         },
         "io.mockk:mockk-agent-jvm": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-core-jvm": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-core"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-dsl-jvm": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-dsl"
             ]
         },
         "io.mockk:mockk-jvm": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk"
             ]
@@ -4577,7 +4577,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -4588,7 +4588,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-core": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jdk8",
@@ -4599,7 +4599,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.datatype:jackson-datatype-jdk8",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -4611,7 +4611,7 @@
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -4619,7 +4619,7 @@
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -4628,7 +4628,7 @@
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -4638,7 +4638,7 @@
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-parameter-names": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -4646,7 +4646,7 @@
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.3",
+            "locked": "2.15.4",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
@@ -4799,35 +4799,35 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.13.9"
+            "locked": "1.13.10"
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api-jvm": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-agent-api"
             ]
         },
         "io.mockk:mockk-agent-jvm": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-dsl-jvm",
@@ -4835,25 +4835,25 @@
             ]
         },
         "io.mockk:mockk-core-jvm": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-core"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-dsl-jvm": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk-dsl"
             ]
         },
         "io.mockk:mockk-jvm": {
-            "locked": "1.13.9",
+            "locked": "1.13.10",
             "transitive": [
                 "io.mockk:mockk"
             ]
