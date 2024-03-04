@@ -34,5 +34,6 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-graphql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-web")
+    testImplementation("org.springframework:spring-webflux")
     testImplementation("com.github.ben-manes.caffeine:caffeine")
 }
