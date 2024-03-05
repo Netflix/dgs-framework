@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.example.datafetcher;
 
 import com.netflix.graphql.dgs.autoconfig.DgsExtendedScalarsAutoConfiguration;
+import com.netflix.graphql.dgs.example.shared.dataLoader.MessageDataLoader;
 import com.netflix.graphql.dgs.pagination.DgsPaginationAutoConfiguration;
 import com.netflix.graphql.dgs.scalars.UploadScalar;
 import com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLAutoConfiguration;
@@ -24,28 +25,30 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.graphql.servlet.GraphQlWebMvcAutoConfiguration;
 import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.graphql.tester.AutoConfigureHttpGraphQlTester;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.graphql.test.tester.HttpGraphQlTester;
 
-@SpringBootTest(classes={HelloDataFetcher.class,
+@SpringBootTest(classes={com.netflix.graphql.dgs.example.datafetcher.HelloDataFetcher.class,
+        SpringGraphQLDataFetchers.class,
+        MessageDataLoader.class,
+        UploadScalar.class,
+        DgsExtendedScalarsAutoConfiguration.class,
+        DgsPaginationAutoConfiguration.class,
         DgsSpringGraphQLAutoConfiguration.class,
         com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration.class,
         com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLSourceAutoConfiguration.class,
         org.springframework.boot.autoconfigure.graphql.GraphQlAutoConfiguration.class,
-        UploadScalar.class,
-        DgsExtendedScalarsAutoConfiguration.class,
-        DgsPaginationAutoConfiguration.class,
         GraphQlWebMvcAutoConfiguration.class,
-        HttpMessageConvertersAutoConfiguration.class,
-        WebFluxAutoConfiguration.class
+        WebMvcAutoConfiguration.class,
+        HttpMessageConvertersAutoConfiguration.class
 },
     properties = {"debug=true"})
 @AutoConfigureMockMvc
 @AutoConfigureHttpGraphQlTester
-public class HttpTestSliceWithDgsTestSliceGraphQlTester {
+public class DgsTestSliceWithMockMvcAndHttpGraphQlTester {
 
     @Autowired
     private HttpGraphQlTester graphQlTester;

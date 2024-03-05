@@ -28,7 +28,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureHttpGraphQlTester
-public class HttpTestSliceWithGraphQlTesterTest {
+public class MockMvcTestWithHttpGraphQlTester {
 
     @Autowired
     private HttpGraphQlTester graphQlTester;

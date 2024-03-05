@@ -31,5 +31,6 @@ dependencies {
     testImplementation(project(":graphql-dgs-client"))
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.graphql:spring-graphql-test:1.2.5-SNAPSHOT")
-    //testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation(project(":graphql-dgs-pagination"))
+    testImplementation(project(":graphql-dgs-extended-scalars"))
 }
