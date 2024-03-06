@@ -24,11 +24,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 @SpringBootApplication(scanBasePackages = {"com.netflix.graphql.dgs.example.shared", "com.netflix.graphql.dgs.example"})
+@EnableAsync
 public class SpringGraphQLExampleApp {
     public static void main(String[] args) {
         SpringApplication.run(SpringGraphQLExampleApp.class, args);

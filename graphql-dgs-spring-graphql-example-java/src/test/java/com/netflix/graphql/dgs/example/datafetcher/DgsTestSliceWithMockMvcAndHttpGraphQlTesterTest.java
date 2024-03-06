@@ -20,35 +20,22 @@ import com.netflix.graphql.dgs.autoconfig.DgsExtendedScalarsAutoConfiguration;
 import com.netflix.graphql.dgs.example.shared.dataLoader.MessageDataLoader;
 import com.netflix.graphql.dgs.pagination.DgsPaginationAutoConfiguration;
 import com.netflix.graphql.dgs.scalars.UploadScalar;
-import com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLAutoConfiguration;
+import com.netflix.graphql.dgs.test.EnableDgsMockMvcTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.graphql.servlet.GraphQlWebMvcAutoConfiguration;
-import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.graphql.tester.AutoConfigureHttpGraphQlTester;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.graphql.test.tester.HttpGraphQlTester;
 
-@SpringBootTest(classes={com.netflix.graphql.dgs.example.datafetcher.HelloDataFetcher.class,
-        SpringGraphQLDataFetchers.class,
-        MessageDataLoader.class,
-        UploadScalar.class,
-        DgsExtendedScalarsAutoConfiguration.class,
-        DgsPaginationAutoConfiguration.class,
-        DgsSpringGraphQLAutoConfiguration.class,
-        com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration.class,
-        com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLSourceAutoConfiguration.class,
-        org.springframework.boot.autoconfigure.graphql.GraphQlAutoConfiguration.class,
-        GraphQlWebMvcAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        HttpMessageConvertersAutoConfiguration.class
-},
-    properties = {"debug=true"})
+@SpringBootTest(classes = {com.netflix.graphql.dgs.example.datafetcher.HelloDataFetcher.class,
+        SpringGraphQLDataFetchers.class}
+)
+@TestAppTestSlice
+@EnableDgsMockMvcTest
 @AutoConfigureMockMvc
 @AutoConfigureHttpGraphQlTester
-public class DgsTestSliceWithMockMvcAndHttpGraphQlTester {
+public class DgsTestSliceWithMockMvcAndHttpGraphQlTesterTest {
 
     @Autowired
     private HttpGraphQlTester graphQlTester;

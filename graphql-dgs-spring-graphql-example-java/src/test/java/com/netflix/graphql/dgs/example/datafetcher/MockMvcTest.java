@@ -17,9 +17,9 @@
 package com.netflix.graphql.dgs.example.datafetcher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netflix.graphql.dgs.test.EnableDgsMockMvcTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,8 +27,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@SpringBootTest(classes = {com.netflix.graphql.dgs.example.datafetcher.HelloDataFetcher.class, SpringGraphQLDataFetchers.class})
+@TestAppTestSlice
+@EnableDgsMockMvcTest
 public class MockMvcTest {
     @Autowired
     MockMvc mockMvc;
@@ -40,7 +41,8 @@ public class MockMvcTest {
     void testWithMockMvc() throws Exception {
         var query = """
             query {
-                hello
+                hello(name: "DGS")
+                greetings(name: "SpringGraphQL")
             }
         """;
 
@@ -54,7 +56,8 @@ public class MockMvcTest {
                 .andExpect(MockMvcResultMatchers.content().json("""
                     {
                         "data": {
-                            "hello": "hello, Stranger!"
+                            "hello": "hello, DGS!",
+                            "greetings": "Hello, SpringGraphQL!"
                         }
                     }"""));
     }
