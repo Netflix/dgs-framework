@@ -34,16 +34,19 @@ import org.springframework.stereotype.Controller
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 
-@SpringBootTest(classes = [
-    DgsSpringGraphQlSmokeTest.TestApp::class,
-    DgsSpringGraphQLAutoConfiguration::class,
-    DgsAutoConfiguration::class,
-    DgsSpringGraphQLSourceAutoConfiguration::class,
-    GraphQlAutoConfiguration::class,
-    GraphQlWebMvcAutoConfiguration::class,
-    WebMvcAutoConfiguration::class],
+@SpringBootTest(
+    classes = [
+        DgsSpringGraphQlSmokeTest.TestApp::class,
+        DgsSpringGraphQLAutoConfiguration::class,
+        DgsAutoConfiguration::class,
+        DgsSpringGraphQLSourceAutoConfiguration::class,
+        GraphQlAutoConfiguration::class,
+        GraphQlWebMvcAutoConfiguration::class,
+        WebMvcAutoConfiguration::class
+    ],
 
-    properties = ["dgs.graphql.schema-locations=classpath:/dgs-spring-graphql-smoke-test.graphqls"])
+    properties = ["dgs.graphql.schema-locations=classpath:/dgs-spring-graphql-smoke-test.graphqls"]
+)
 @AutoConfigureMockMvc
 class DgsSpringGraphQlSmokeTest {
 
@@ -67,12 +70,17 @@ class DgsSpringGraphQlSmokeTest {
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
-            content { json("""{
+            content {
+                json(
+                    """{
                 |  "data": {
                 |    "dgsField": "test from DGS",
                 |    "springControllerField": "test from Spring Controller"
                 |  }
-                |}""".trimMargin()) }
+                |}
+                    """.trimMargin()
+                )
+            }
         }
     }
 
@@ -89,7 +97,7 @@ class DgsSpringGraphQlSmokeTest {
         @Controller
         open class SpringDatafetcher {
             @QueryMapping
-            fun springControllerField() : String {
+            fun springControllerField(): String {
                 return "test from Spring Controller"
             }
         }

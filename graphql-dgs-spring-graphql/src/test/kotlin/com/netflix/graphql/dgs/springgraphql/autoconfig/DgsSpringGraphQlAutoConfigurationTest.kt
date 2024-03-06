@@ -39,7 +39,6 @@ import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.filter.reactive.ServerWebExchangeContextFilter
 import org.springframework.web.reactive.BindingContext
 
-
 class DgsSpringGraphQlAutoConfigurationTest {
     private val autoConfigurations = AutoConfigurations.of(
         DgsSpringGraphQLAutoConfiguration::class.java,
@@ -131,8 +130,6 @@ class DgsSpringGraphQlAutoConfigurationTest {
             assertThat(context).getBean("requestParamMapArgumentResolver").isExactlyInstanceOf(
                 SyncHandlerMethodArgumentResolverAdapter::class.java
             )
-
-
         }
     }
 }

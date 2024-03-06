@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.springgraphql.autoconfig;
+package com.netflix.graphql.dgs.springgraphql.autoconfig
 
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
@@ -148,7 +148,6 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                 )
             )
     }
-
 
     @Test
     @Order(2)
