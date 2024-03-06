@@ -16,6 +16,9 @@
 
 package com.netflix.graphql.dgs.autoconfig
 
+import com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider
+import com.netflix.graphql.dgs.DgsDataLoaderCustomizer
+import com.netflix.graphql.dgs.DgsDataLoaderInstrumentation
 import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
 import com.netflix.graphql.dgs.DgsDefaultPreparsedDocumentProvider
 import com.netflix.graphql.dgs.DgsFederationResolver
@@ -168,8 +171,42 @@ open class DgsAutoConfiguration(
     }
 
     @Bean
-    open fun dgsDataLoaderProvider(applicationContext: ApplicationContext, dataloaderOptionProvider: DgsDataLoaderOptionsProvider, @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService): DgsDataLoaderProvider {
-        return DgsDataLoaderProvider(applicationContext, dataloaderOptionProvider, dgsScheduledExecutorService, dataloaderConfigProps.scheduleDuration, dataloaderConfigProps.tickerModeEnabled)
+    @ConditionalOnProperty(
+        prefix = "$AUTO_CONF_PREFIX.convertAllDataLoadersToWithContext",
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = true
+    )
+    @Order(0)
+    open fun dgsWrapWithContextDataLoaderCustomizer(): DgsWrapWithContextDataLoaderCustomizer {
+        return DgsWrapWithContextDataLoaderCustomizer()
+    }
+
+    @Bean
+    @Order(100)
+    open fun dgsDataLoaderInstrumentationDataLoaderCustomizer(
+        instrumentations: List<DgsDataLoaderInstrumentation>
+    ): DgsDataLoaderInstrumentationDataLoaderCustomizer {
+        return DgsDataLoaderInstrumentationDataLoaderCustomizer(instrumentations)
+    }
+
+    @Bean
+    open fun dgsDataLoaderProvider(
+        applicationContext: ApplicationContext,
+        dataloaderOptionProvider: DgsDataLoaderOptionsProvider,
+        @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService,
+        extensionProviders: List<DataLoaderInstrumentationExtensionProvider>,
+        customizers: List<DgsDataLoaderCustomizer>
+    ): DgsDataLoaderProvider {
+        return DgsDataLoaderProvider(
+            applicationContext = applicationContext,
+            extensionProviders = extensionProviders,
+            dataLoaderOptionsProvider = dataloaderOptionProvider,
+            scheduledExecutorService = dgsScheduledExecutorService,
+            scheduleDuration = dataloaderConfigProps.scheduleDuration,
+            enableTickerMode = dataloaderConfigProps.tickerModeEnabled,
+            customizers = customizers
+        )
     }
 
     /**

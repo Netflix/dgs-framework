@@ -109,7 +109,10 @@ class DgsGraphQLMetricsInstrumentation(
                     add(Tag.of(GqlTag.ERROR_CODE.key, errorTagValue.type))
                     add(Tag.of(GqlTag.ERROR_DETAIL.key, errorTagValue.detail))
                 }
-                registry.counter(GqlMetric.ERROR.key, errorTags)
+
+                registry
+                    .counter(GqlMetric.ERROR.key, errorTags)
+                    .increment()
             }
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2024 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-dependencies {
-    api("com.graphql-java:graphql-java")
-    implementation("net.datafaker:datafaker:2.+")
-    implementation("org.slf4j:slf4j-api")
+package com.netflix.graphql.dgs
 
-    testImplementation("org.assertj:assertj-core")
+import org.dataloader.BatchLoader
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionStage
+
+@DgsDataLoader(name = "exampleLoaderThatThrows")
+class ExampleBatchLoaderThatThrows : BatchLoader<String, String> {
+    override fun load(keys: MutableList<String>?): CompletionStage<MutableList<String>> {
+        return CompletableFuture.supplyAsync { throw RuntimeException("an error!") }
+    }
 }

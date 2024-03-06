@@ -19,6 +19,8 @@ package com.netflix.graphql.dgs.internal
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.ConfigurablePropertyAccessor
+import org.springframework.beans.PropertyAccessorFactory
 import org.springframework.core.KotlinDetector
 import org.springframework.core.ResolvableType
 import org.springframework.core.convert.ConversionException
@@ -28,7 +30,6 @@ import org.springframework.core.convert.converter.GenericConverter
 import org.springframework.core.convert.support.DefaultConversionService
 import org.springframework.util.CollectionUtils
 import org.springframework.util.ReflectionUtils
-import java.lang.reflect.Field
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.primaryConstructor
@@ -112,22 +113,23 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
 
         val ctor = ReflectionUtils.accessibleConstructor(targetClass)
         val instance = ctor.newInstance()
-        var nrOfFieldErrors = 0
-        for ((name, value) in inputMap.entries) {
-            val field = ReflectionUtils.findField(targetClass, name)
-            if (field == null) {
-                nrOfFieldErrors++
-                logger.warn("Field '{}' was not found on Input object of type '{}'", name, targetClass)
-                continue
-            }
+        val setterAccessor = setterAccessor(instance)
+        val fieldAccessor = fieldAccessor(instance)
+        var nrOfPropertyErrors = 0
 
-            val fieldType = TypeDescriptor(ResolvableType.forField(field, targetClass), null, null)
-            val convertedValue = try {
-                conversionService.convert(value, fieldType)
-            } catch (exc: ConversionException) {
-                throw DgsInvalidInputArgumentException("Failed to convert value $value to $fieldType", exc)
+        for ((name, value) in inputMap.entries) {
+            try {
+                if (setterAccessor.isWritableProperty(name)) {
+                    setterAccessor.setPropertyValue(name, value)
+                } else if (fieldAccessor.isWritableProperty(name)) {
+                    fieldAccessor.setPropertyValue(name, value)
+                } else {
+                    nrOfPropertyErrors++
+                    logger.warn("Field or property '{}' was not found on Input object of type '{}'", name, targetClass)
+                }
+            } catch (ex: Exception) {
+                throw DgsInvalidInputArgumentException("Invalid input argument `$value` for field/property `$name` on type `${targetClass.name}`", ex)
             }
-            trySetField(field, instance, convertedValue)
         }
 
         /**
@@ -135,19 +137,24 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
          This would happen if new schema fields are added, but the Java type wasn't updated yet.
          If none of the fields match however, it's a pretty good indication that the wrong type was used, hence this check.
          */
-        if (inputMap.isNotEmpty() && nrOfFieldErrors == inputMap.size) {
+        if (inputMap.isNotEmpty() && nrOfPropertyErrors == inputMap.size) {
             throw DgsInvalidInputArgumentException("Input argument type '$targetClass' doesn't match input $inputMap")
         }
 
         return instance
     }
 
-    private fun trySetField(declaredField: Field, instance: Any?, value: Any?) {
-        try {
-            ReflectionUtils.makeAccessible(declaredField)
-            ReflectionUtils.setField(declaredField, instance, value)
-        } catch (ex: Exception) {
-            throw DgsInvalidInputArgumentException("Invalid input argument `$value` for field `${declaredField.name}` on type `${instance?.javaClass?.name}`")
-        }
+    private fun <T> fieldAccessor(instance: T?): ConfigurablePropertyAccessor {
+        val accessor = PropertyAccessorFactory.forDirectFieldAccess(instance as Any)
+
+        accessor.conversionService = conversionService
+        return accessor
+    }
+
+    private fun <T> setterAccessor(instance: T?): ConfigurablePropertyAccessor {
+        val accessor = PropertyAccessorFactory.forBeanPropertyAccess(instance as Any)
+
+        accessor.conversionService = conversionService
+        return accessor
     }
 }

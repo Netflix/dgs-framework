@@ -20,6 +20,7 @@ import com.netflix.graphql.dgs.exceptions.DataFetcherSchemaMismatchException
 import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
 import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
+import com.netflix.graphql.dgs.internal.DataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.DefaultInputObjectMapper
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.kotlin.test.Show
@@ -73,7 +74,8 @@ internal class DgsSchemaProviderTest {
         typeDefinitionRegistry: TypeDefinitionRegistry? = null,
         schemaLocations: List<String> = listOf(DgsSchemaProvider.DEFAULT_SCHEMA_LOCATION),
         componentFilter: ((Any) -> Boolean)? = null,
-        schemaWiringValidationEnabled: Boolean = true
+        schemaWiringValidationEnabled: Boolean = true,
+        dataFetcherResultProcessors: List<DataFetcherResultProcessor> = emptyList()
     ): DgsSchemaProvider {
         return DgsSchemaProvider(
             applicationContext = applicationContext,
@@ -87,7 +89,8 @@ internal class DgsSchemaProviderTest {
                 )
             ),
             componentFilter = componentFilter,
-            schemaWiringValidationEnabled = schemaWiringValidationEnabled
+            schemaWiringValidationEnabled = schemaWiringValidationEnabled,
+            dataFetcherResultProcessors = dataFetcherResultProcessors
         )
     }
 
@@ -468,6 +471,7 @@ internal class DgsSchemaProviderTest {
     fun allowMergingStaticAndDynamicSchema() {
         @DgsComponent
         class CodeRegistryComponent {
+            // Result should not be processed by DataFetcherResultProcessors
             @DgsCodeRegistry
             fun registry(
                 codeRegistryBuilder: GraphQLCodeRegistry.Builder,
@@ -477,29 +481,66 @@ internal class DgsSchemaProviderTest {
                 val coordinates = FieldCoordinates.coordinates("Query", "myField")
                 return codeRegistryBuilder.dataFetcher(coordinates, df)
             }
+
+            // Result should be processed by DataFetcherResultProcessors
+            @DgsCodeRegistry
+            fun dgsProcessedRegistry(
+                codeRegistryBuilder: DgsCodeRegistryBuilder,
+                @Suppress("unused_parameter") registry: TypeDefinitionRegistry?
+            ): DgsCodeRegistryBuilder {
+                val df = DataFetcher { "Runtime added field" }
+                val coordinates = FieldCoordinates.coordinates("Query", "myProcessedField")
+                return codeRegistryBuilder.dataFetcher(coordinates, df)
+            }
         }
 
         contextRunner.withBeans(HelloFetcher::class, CodeRegistryComponent::class).run { context ->
             val typeDefinitionRegistry = TypeDefinitionRegistry()
             val objectTypeExtensionDefinition = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition()
                 .name("Query")
-                .fieldDefinition(
-                    FieldDefinition.newFieldDefinition()
-                        .name("myField")
-                        .type(TypeName("String")).build()
-                )
-                .build()
+                .fieldDefinitions(
+                    listOf(
+                        FieldDefinition.newFieldDefinition()
+                            .name("myField")
+                            .type(TypeName("String")).build(),
+                        FieldDefinition.newFieldDefinition()
+                            .name("myProcessedField")
+                            .type(TypeName("String")).build()
+                    )
+                ).build()
+
+            val processor = object : DataFetcherResultProcessor {
+                override fun supportsType(originalResult: Any): Boolean {
+                    return true
+                }
+
+                override fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any {
+                    // Avoid processing other results apart from the one for this test
+                    if (originalResult != "Runtime added field") {
+                        return originalResult
+                    }
+                    return originalResult as String + " [suffixFromProcessor]"
+                }
+            }
 
             typeDefinitionRegistry.add(objectTypeExtensionDefinition)
-            val schema = schemaProvider(applicationContext = context, typeDefinitionRegistry = typeDefinitionRegistry).schema().graphQLSchema
+            val schema = schemaProvider(
+                applicationContext = context,
+                typeDefinitionRegistry = typeDefinitionRegistry,
+                dataFetcherResultProcessors = listOf(processor)
+            ).schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertHello(build)
 
-            val executionResult2 = build.execute("{myField}")
-            assertTrue(executionResult2.isDataPresent)
-
-            val data = executionResult2.getData<Map<String, *>>()
+            val executionResult = build.execute("{myField}")
+            assertTrue(executionResult.isDataPresent)
+            val data = executionResult.getData<Map<String, *>>()
             assertEquals("Runtime added field", data["myField"])
+
+            val processedExecutionResult = build.execute("{myProcessedField}")
+            assertTrue(processedExecutionResult.isDataPresent)
+            val processedData = processedExecutionResult.getData<Map<String, *>>()
+            assertEquals("Runtime added field [suffixFromProcessor]", processedData["myProcessedField"])
         }
 
         contextRunner.withBeans(HelloFetcher::class, CodeRegistryComponent::class).run { context ->

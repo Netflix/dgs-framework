@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2024 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-dependencies {
-    api("com.graphql-java:graphql-java")
-    implementation("net.datafaker:datafaker:2.+")
-    implementation("org.slf4j:slf4j-api")
+package com.netflix.graphql.dgs.exceptions
 
-    testImplementation("org.assertj:assertj-core")
-}
+class DgsDataLoaderInstrumentationException(name: String) : RuntimeException("data loader `$name` is not a MappedBatchLoaderWithContext or BatchLoaderWithContext. Is dgs.graphql.convertAllDataLoadersToWithContext.enabled set to false?")
