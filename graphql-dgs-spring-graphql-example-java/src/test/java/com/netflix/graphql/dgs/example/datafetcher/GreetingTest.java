@@ -19,11 +19,13 @@ package com.netflix.graphql.dgs.example.datafetcher;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.TypeRef;
 import com.netflix.graphql.dgs.DgsQueryExecutor;
+import com.netflix.graphql.dgs.example.shared.datafetcher.MovieDataFetcher;
+import com.netflix.graphql.dgs.example.shared.datafetcher.RequestHeadersDataFetcher;
 import com.netflix.graphql.dgs.example.shared.types.ActionMovie;
 import com.netflix.graphql.dgs.example.shared.types.Movie;
+import com.netflix.graphql.dgs.test.EnableDgsTest;
 import graphql.ExecutionResult;
 import jakarta.servlet.http.Cookie;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,7 +39,15 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+/**
+ * Example test using test slices with DgsQueryExecutor.
+ * No web stack is used, so there is no need for MockMvc.
+ * The correct test slice to use is @EnableDgsTest
+ * The data fetchers are listed in the classes attribute of @SpringBootTest, while more generic classes are in a app specific @TestAppTestSlice, so that this configuration can be reused between tests.
+ */
+@SpringBootTest(classes = {SpringGraphQLDataFetchers.class, com.netflix.graphql.dgs.example.datafetcher.HelloDataFetcher.class, WithHeader.class, WithCookie.class, MovieDataFetcher.class, RequestHeadersDataFetcher.class})
+@EnableDgsTest
+@TestAppTestSlice
 public class GreetingTest {
     @Autowired
     DgsQueryExecutor queryExecutor;
