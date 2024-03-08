@@ -1,3 +1,8 @@
 extend type Query {
     greetings(name: String): String
+    greetingFromBatchLoader(person: Person): String
+}
+
+input Person {
+    name: String
 }
