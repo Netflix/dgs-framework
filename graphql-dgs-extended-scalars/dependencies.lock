@@ -4,7 +4,7 @@
             "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
             "locked": "3.2.3",
@@ -104,10 +104,10 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
@@ -256,7 +256,7 @@
             "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.3"
@@ -356,10 +356,10 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
@@ -986,10 +986,10 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -1003,7 +1003,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
@@ -1023,7 +1023,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-common": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "io.mockk:mockk-agent-api-jvm",
                 "io.mockk:mockk-agent-jvm",
@@ -1037,7 +1037,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk7": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-stdlib",
@@ -1046,7 +1046,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "io.mockk:mockk-agent-api-jvm",
                 "io.mockk:mockk-agent-jvm",
@@ -1505,25 +1505,25 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-build-common": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-runner"
             ]
         },
         "org.jetbrains.kotlin:kotlin-build-tools-api": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-build-tools-impl"
             ]
         },
         "org.jetbrains.kotlin:kotlin-build-tools-impl": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-build-tools-impl",
@@ -1532,13 +1532,13 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-compiler-runner": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-build-tools-impl"
             ]
         },
         "org.jetbrains.kotlin:kotlin-daemon-client": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-compiler-runner",
@@ -1546,13 +1546,13 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-daemon-embeddable": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable",
@@ -1560,7 +1560,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable",
@@ -1568,7 +1568,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-build-tools-impl",
@@ -1607,23 +1607,23 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "org.jetbrains.kotlin:kotlin-daemon-embeddable": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable",
@@ -1631,7 +1631,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable",
@@ -1639,7 +1639,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable",
@@ -1664,7 +1664,7 @@
             "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.3"
@@ -1678,10 +1678,10 @@
             "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-jvm",
@@ -1689,7 +1689,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-common": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
@@ -1698,16 +1698,16 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-jvm": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
@@ -1715,7 +1715,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-common",
@@ -1743,10 +1743,10 @@
             "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-jvm",
@@ -1754,7 +1754,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-common": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
@@ -1763,16 +1763,16 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-jvm": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
@@ -1780,7 +1780,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-common",
@@ -1808,10 +1808,10 @@
             "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-jvm",
@@ -1819,7 +1819,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-common": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
@@ -1828,16 +1828,16 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-jvm": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
@@ -1845,7 +1845,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-common",
@@ -1879,10 +1879,10 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable",
@@ -1890,16 +1890,16 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-daemon-embeddable": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable",
@@ -1907,7 +1907,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable",
@@ -1915,7 +1915,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable",
@@ -1941,7 +1941,7 @@
             "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.3"
@@ -1955,7 +1955,7 @@
             "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.3"
@@ -2149,10 +2149,10 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -2161,7 +2161,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
@@ -2175,7 +2175,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-common": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-stdlib",
@@ -2184,7 +2184,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk7": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-stdlib",
@@ -2193,7 +2193,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-stdlib",
@@ -2367,7 +2367,7 @@
             "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.3"
@@ -2706,10 +2706,10 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
@@ -2728,7 +2728,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-common": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "io.mockk:mockk-agent-api-jvm",
                 "io.mockk:mockk-agent-jvm",
@@ -2741,7 +2741,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk7": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-stdlib",
@@ -2750,7 +2750,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "io.mockk:mockk-agent-api-jvm",
                 "io.mockk:mockk-agent-jvm",
@@ -3491,10 +3491,10 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -3508,7 +3508,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
@@ -3528,7 +3528,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-common": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "io.mockk:mockk-agent-api-jvm",
                 "io.mockk:mockk-agent-jvm",
@@ -3542,7 +3542,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk7": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-stdlib",
@@ -3551,7 +3551,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "io.mockk:mockk-agent-api-jvm",
                 "io.mockk:mockk-agent-jvm",
