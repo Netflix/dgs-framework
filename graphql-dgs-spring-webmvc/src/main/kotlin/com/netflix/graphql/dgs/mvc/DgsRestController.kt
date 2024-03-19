@@ -25,7 +25,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.netflix.graphql.dgs.DgsExecutionResult
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.internal.utils.MultipartVariableMapper
-import com.netflix.graphql.dgs.internal.utils.TimeTracer
 import com.netflix.graphql.dgs.internal.utils.VariableMappingException
 import graphql.execution.reactive.SubscriptionPublisher
 import org.intellij.lang.annotations.Language
@@ -42,6 +41,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.multipart.MultipartFile
 import java.io.InputStream
+import kotlin.time.measureTimedValue
 
 /**
  * HTTP entrypoint for the framework. Functionality in this class should be limited, so that as much code as possible
@@ -210,20 +210,17 @@ open class DgsRestController(
         headers: HttpHeaders,
         webRequest: WebRequest
     ): ResponseEntity<Any> {
-        val executionResult = TimeTracer.logTime(
-            {
-                dgsQueryExecutor.execute(
-                    inputQuery.query,
-                    inputQuery.variables.orEmpty(),
-                    inputQuery.extensions,
-                    headers,
-                    inputQuery.operationName,
-                    webRequest
-                )
-            },
-            logger,
-            "Executed query in {}ms"
-        )
+        val (executionResult, elapsed) = measureTimedValue {
+            dgsQueryExecutor.execute(
+                inputQuery.query,
+                inputQuery.variables.orEmpty(),
+                inputQuery.extensions,
+                headers,
+                inputQuery.operationName,
+                webRequest
+            )
+        }
+        logger.debug("Executed query in {}ms", elapsed.inWholeMilliseconds)
         logger.debug(
             "Execution result - Contains data: '{}' - Number of errors: {}",
             executionResult.isDataPresent,

@@ -19,12 +19,12 @@ package com.netflix.graphql.dgs.internal
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
-import com.netflix.graphql.dgs.internal.utils.TimeTracer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.web.context.request.WebRequest
 import java.util.*
+import kotlin.time.measureTimedValue
 
 open class DefaultDgsGraphQLContextBuilder(
     private val dgsCustomContextBuilder: Optional<DgsCustomContextBuilder<*>>,
@@ -32,7 +32,9 @@ open class DefaultDgsGraphQLContextBuilder(
 ) {
 
     fun build(dgsRequestData: DgsWebMvcRequestData): DgsContext {
-        return TimeTracer.logTime({ buildDgsContext(dgsRequestData) }, logger, "Created DGS context in {}ms")
+        val (context, elapsed) = measureTimedValue { buildDgsContext(dgsRequestData) }
+        logger.debug("Created DGS context in {}ms", elapsed.inWholeMilliseconds)
+        return context
     }
 
     private fun buildDgsContext(dgsRequestData: DgsWebMvcRequestData?): DgsContext {
