@@ -18,8 +18,8 @@ package com.netflix.graphql.dgs.internal
 
 import com.netflix.graphql.dgs.DgsDataLoader
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.dataloader.BatchLoader
 import org.dataloader.DataLoader
@@ -37,12 +37,8 @@ class DgsDataLoaderRegistryTest {
     private val dgsDataLoaderRegistry = DgsDataLoaderRegistry()
     private val dataLoaderA = ExampleDataLoaderA()
     private val dataLoaderB = ExampleDataLoaderB()
-
-    @MockK
-    var mockDataLoaderA: DataLoader<String, String> = mockk()
-
-    @MockK
-    var mockDataLoaderB: DataLoader<String, String> = mockk()
+    private val mockDataLoaderA = mockk<DataLoader<String, String>>()
+    private val mockDataLoaderB = mockk<DataLoader<String, String>>()
 
     @Test
     fun register() {
@@ -146,6 +142,7 @@ class DgsDataLoaderRegistryTest {
             DispatchPredicate.dispatchIfDepthGreaterThan(1)
         )
         dgsDataLoaderRegistry.dispatchAll()
+        verify { mockDataLoaderA.dispatch() }
     }
 
     @Test
@@ -195,6 +192,23 @@ class DgsDataLoaderRegistryTest {
         assertThat(dgsDataLoaderRegistry.statistics.batchLoadCount).isEqualTo(3)
         assertThat(dgsDataLoaderRegistry.statistics.batchLoadExceptionCount).isEqualTo(3)
         assertThat(dgsDataLoaderRegistry.statistics.cacheHitCount).isEqualTo(3)
+    }
+
+    @Test
+    fun getKeys() {
+        assertThat(dgsDataLoaderRegistry.keys).isEmpty()
+
+        dgsDataLoaderRegistry.register("exampleLoaderA", mockDataLoaderA)
+        assertThat(dgsDataLoaderRegistry.keys).containsExactly("exampleLoaderA")
+
+        dgsDataLoaderRegistry.registerWithDispatchPredicate(
+            "exampleLoaderB",
+            mockDataLoaderB,
+            DispatchPredicate.dispatchIfDepthGreaterThan(1)
+        )
+        assertThat(dgsDataLoaderRegistry.keys).containsExactlyInAnyOrder("exampleLoaderA", "exampleLoaderB")
+        dgsDataLoaderRegistry.unregister("exampleLoaderA")
+        assertThat(dgsDataLoaderRegistry.keys).containsExactly("exampleLoaderB")
     }
 
     @DgsDataLoader(name = "exampleLoaderA")
