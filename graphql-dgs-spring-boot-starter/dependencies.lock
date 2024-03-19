@@ -109,7 +109,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "21.3",
+            "locked": "21.4",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
@@ -238,7 +238,7 @@
             ]
         },
         "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.23.0",
+            "locked": "2.23.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.apache.logging.log4j:log4j-to-slf4j",
@@ -246,7 +246,7 @@
             ]
         },
         "org.apache.logging.log4j:log4j-to-slf4j": {
-            "locked": "2.23.0",
+            "locked": "2.23.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -631,7 +631,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "21.3",
+            "locked": "21.4",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
@@ -772,7 +772,7 @@
             ]
         },
         "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.23.0",
+            "locked": "2.23.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.apache.logging.log4j:log4j-to-slf4j",
@@ -780,7 +780,7 @@
             ]
         },
         "org.apache.logging.log4j:log4j-to-slf4j": {
-            "locked": "2.23.0",
+            "locked": "2.23.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -1175,7 +1175,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "21.3",
+            "locked": "21.4",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -1464,7 +1464,7 @@
             ]
         },
         "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.23.0",
+            "locked": "2.23.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.apache.logging.log4j:log4j-to-slf4j",
@@ -1472,7 +1472,7 @@
             ]
         },
         "org.apache.logging.log4j:log4j-to-slf4j": {
-            "locked": "2.23.0",
+            "locked": "2.23.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -2629,7 +2629,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "21.3",
+            "locked": "21.4",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -2800,7 +2800,7 @@
             ]
         },
         "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.23.0",
+            "locked": "2.23.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.apache.logging.log4j:log4j-to-slf4j",
@@ -2808,7 +2808,7 @@
             ]
         },
         "org.apache.logging.log4j:log4j-to-slf4j": {
-            "locked": "2.23.0",
+            "locked": "2.23.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -3253,7 +3253,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "21.3",
+            "locked": "21.4",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
@@ -3491,7 +3491,7 @@
             ]
         },
         "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.23.0",
+            "locked": "2.23.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.apache.logging.log4j:log4j-to-slf4j",
@@ -3499,7 +3499,7 @@
             ]
         },
         "org.apache.logging.log4j:log4j-to-slf4j": {
-            "locked": "2.23.0",
+            "locked": "2.23.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -4051,7 +4051,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "21.3",
+            "locked": "21.4",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -4328,7 +4328,7 @@
             ]
         },
         "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.23.0",
+            "locked": "2.23.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.apache.logging.log4j:log4j-to-slf4j",
@@ -4336,7 +4336,7 @@
             ]
         },
         "org.apache.logging.log4j:log4j-to-slf4j": {
-            "locked": "2.23.0",
+            "locked": "2.23.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.springframework.boot:spring-boot-dependencies",
