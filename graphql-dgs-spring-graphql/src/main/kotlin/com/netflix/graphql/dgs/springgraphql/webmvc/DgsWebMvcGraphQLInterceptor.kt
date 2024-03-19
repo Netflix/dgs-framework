@@ -60,6 +60,7 @@ class DgsWebMvcGraphQLInterceptor(
         }
         graphQLContextFuture.complete(request.toExecutionInput().graphQLContext)
 
-        return chain.next(request)
+        @Suppress("BlockingMethodInNonBlockingContext")
+        return Mono.just(chain.next(request).block()!!)
     }
 }
