@@ -351,7 +351,7 @@
             "locked": "2023.0.1-SNAPSHOT"
         },
         "org.springframework.graphql:spring-graphql": {
-            "locked": "1.2.5-SNAPSHOT",
+            "locked": "1.2.6-SNAPSHOT",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-graphql"
@@ -857,7 +857,7 @@
             "locked": "2023.0.1-SNAPSHOT"
         },
         "org.springframework.graphql:spring-graphql": {
-            "locked": "1.2.5-SNAPSHOT",
+            "locked": "1.2.6-SNAPSHOT",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-graphql"
@@ -1776,7 +1776,7 @@
             "locked": "2023.0.1-SNAPSHOT"
         },
         "org.springframework.graphql:spring-graphql": {
-            "locked": "1.2.5-SNAPSHOT",
+            "locked": "1.2.6-SNAPSHOT",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -2879,7 +2879,7 @@
             "locked": "2023.0.1-SNAPSHOT"
         },
         "org.springframework.graphql:spring-graphql": {
-            "locked": "1.2.5-SNAPSHOT",
+            "locked": "1.2.6-SNAPSHOT",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -3593,7 +3593,7 @@
             "locked": "2023.0.1-SNAPSHOT"
         },
         "org.springframework.graphql:spring-graphql": {
-            "locked": "1.2.5-SNAPSHOT",
+            "locked": "1.2.6-SNAPSHOT",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-graphql"
@@ -4487,7 +4487,7 @@
             "locked": "2023.0.1-SNAPSHOT"
         },
         "org.springframework.graphql:spring-graphql": {
-            "locked": "1.2.5-SNAPSHOT",
+            "locked": "1.2.6-SNAPSHOT",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "org.springframework.boot:spring-boot-dependencies",

@@ -31,6 +31,10 @@ import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.webflux.DgsWebFluxGraphQLInterceptor
 import com.netflix.graphql.dgs.springgraphql.webmvc.DgsWebMvcGraphQLInterceptor
+import graphql.execution.AsyncExecutionStrategy
+import graphql.execution.AsyncSerialExecutionStrategy
+import graphql.execution.DataFetcherExceptionHandler
+import graphql.execution.ExecutionStrategy
 import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.TypeDefinitionRegistry
@@ -107,11 +111,24 @@ open class DgsSpringGraphQLAutoConfiguration {
     }
 
     @Bean
-    open fun sourceBuilderCustomizer(preparsedDocumentProvider: Optional<PreparsedDocumentProvider>): GraphQlSourceBuilderCustomizer {
+    open fun sourceBuilderCustomizer(
+        preparsedDocumentProvider: Optional<PreparsedDocumentProvider>,
+        @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
+        @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
+        dataFetcherExceptionHandler: DataFetcherExceptionHandler
+    ): GraphQlSourceBuilderCustomizer {
+        val queryExecutionStrategy =
+            providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
+        val mutationExecutionStrategy =
+            providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
+
         return GraphQlSourceBuilderCustomizer { builder ->
             builder.configureGraphQl { graphQlBuilder ->
                 if (preparsedDocumentProvider.isPresent) {
-                    graphQlBuilder.preparsedDocumentProvider(preparsedDocumentProvider.get())
+                    graphQlBuilder
+                        .preparsedDocumentProvider(preparsedDocumentProvider.get())
+                        .queryExecutionStrategy(queryExecutionStrategy)
+                        .mutationExecutionStrategy(mutationExecutionStrategy)
                 }
             }
         }
