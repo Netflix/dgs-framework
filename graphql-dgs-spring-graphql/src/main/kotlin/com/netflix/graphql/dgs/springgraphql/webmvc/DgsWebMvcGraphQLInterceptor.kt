@@ -34,8 +34,7 @@ import java.util.concurrent.CompletableFuture
 
 class DgsWebMvcGraphQLInterceptor(
     private val dgsDataLoaderProvider: DgsDataLoaderProvider,
-    private val dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
-    private val queryValueCustomizer: QueryValueCustomizer
+    private val dgsContextBuilder: DefaultDgsGraphQLContextBuilder
 ) : WebGraphQlInterceptor {
     override fun intercept(request: WebGraphQlRequest, chain: WebGraphQlInterceptor.Chain): Mono<WebGraphQlResponse> {
         // We need to pass in the original server request for the dgs context
