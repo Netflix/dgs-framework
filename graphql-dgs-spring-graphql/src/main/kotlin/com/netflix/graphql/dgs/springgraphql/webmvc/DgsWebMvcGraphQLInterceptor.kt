@@ -19,7 +19,7 @@ package com.netflix.graphql.dgs.springgraphql.webmvc
 import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsWebMvcRequestData
-import com.netflix.graphql.dgs.internal.QueryValueCustomizer
+import com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLConfigurationProperties
 import graphql.GraphQLContext
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.graphql.server.WebGraphQlInterceptor
@@ -34,7 +34,8 @@ import java.util.concurrent.CompletableFuture
 
 class DgsWebMvcGraphQLInterceptor(
     private val dgsDataLoaderProvider: DgsDataLoaderProvider,
-    private val dgsContextBuilder: DefaultDgsGraphQLContextBuilder
+    private val dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
+    private val dgsSpringConfigurationProperties: DgsSpringGraphQLConfigurationProperties,
 ) : WebGraphQlInterceptor {
     override fun intercept(request: WebGraphQlRequest, chain: WebGraphQlInterceptor.Chain): Mono<WebGraphQlResponse> {
         // We need to pass in the original server request for the dgs context
@@ -59,7 +60,12 @@ class DgsWebMvcGraphQLInterceptor(
         }
         graphQLContextFuture.complete(request.toExecutionInput().graphQLContext)
 
-        @Suppress("BlockingMethodInNonBlockingContext")
-        return Mono.just(chain.next(request).block()!!)
+        return if(dgsSpringConfigurationProperties.webmvc.asyncdispatch.enabled) {
+            chain.next(request)
+        } else {
+            @Suppress("BlockingMethodInNonBlockingContext")
+            return Mono.just(chain.next(request).block()!!)
+        }
+
     }
 }

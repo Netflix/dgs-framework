@@ -132,4 +132,33 @@ class DgsSpringGraphQlAutoConfigurationTest {
             )
         }
     }
+
+    @Test
+    fun loadsDefaultWebMvcConfiguration() {
+        ApplicationContextRunner()
+            .withConfiguration(autoConfigurations)
+            .run { context ->
+                assertThat(context.getBean(DgsSpringGraphQLConfigurationProperties::class.java).webmvc.asyncdispatch.enabled).isFalse()
+            }
+    }
+
+    @Test
+    fun loadsWebMvcConfiguration() {
+        ApplicationContextRunner()
+            .withConfiguration(autoConfigurations)
+            .withPropertyValues("dgs.graphql.spring.webmvc.asyncdispatch.enabled=true")
+            .run { context ->
+                assertThat(context.getBean(DgsSpringGraphQLConfigurationProperties::class.java).webmvc.asyncdispatch.enabled).isTrue()
+            }
+    }
+
+    @Test
+    fun loadsWebMvcConfigurationDisabled() {
+        ApplicationContextRunner()
+            .withConfiguration(autoConfigurations)
+            .withPropertyValues("dgs.graphql.spring.webmvc.asyncdispatch.enabled=false")
+            .run { context ->
+                assertThat(context.getBean(DgsSpringGraphQLConfigurationProperties::class.java).webmvc.asyncdispatch.enabled).isFalse()
+            }
+    }
 }

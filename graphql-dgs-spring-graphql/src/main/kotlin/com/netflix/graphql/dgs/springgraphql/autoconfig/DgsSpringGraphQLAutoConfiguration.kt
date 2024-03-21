@@ -49,6 +49,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.autoconfigure.graphql.GraphQlSourceBuilderCustomizer
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.ReactiveAdapterRegistry
@@ -76,8 +77,8 @@ import java.util.*
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @AutoConfiguration
 @AutoConfigureBefore(name = ["com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration"])
+@EnableConfigurationProperties(DgsSpringGraphQLConfigurationProperties::class)
 open class DgsSpringGraphQLAutoConfiguration {
-
     @Bean
     @DgsComponent
     open fun dgsRuntimeWiringConfigurerBridge(configurers: List<RuntimeWiringConfigurer>): DgsRuntimeWiringConfigurerBridge {
@@ -151,17 +152,18 @@ open class DgsSpringGraphQLAutoConfiguration {
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-    open class WebMvcConfiguration {
+    open class WebMvcConfiguration(
+        private val dgsSpringGraphQLConfigurationProperties: DgsSpringGraphQLConfigurationProperties
+    ) {
         @Bean
         open fun dgsGraphQlInterceptor(
             dgsDataLoaderProvider: DgsDataLoaderProvider,
-            dgsDefaultContextBuilder: DefaultDgsGraphQLContextBuilder,
-            queryValueCustomizer: QueryValueCustomizer
+            dgsDefaultContextBuilder: DefaultDgsGraphQLContextBuilder
         ): DgsWebMvcGraphQLInterceptor {
             return DgsWebMvcGraphQLInterceptor(
                 dgsDataLoaderProvider,
                 dgsDefaultContextBuilder,
-                queryValueCustomizer
+                dgsSpringGraphQLConfigurationProperties
             )
         }
     }
