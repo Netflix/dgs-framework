@@ -7,19 +7,19 @@
             "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2023.0.1"
@@ -216,14 +216,14 @@
             ]
         },
         "io.micrometer:micrometer-commons": {
-            "locked": "1.12.3",
+            "locked": "1.12.4",
             "transitive": [
                 "io.micrometer:micrometer-observation",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "io.micrometer:micrometer-observation": {
-            "locked": "1.12.3",
+            "locked": "1.12.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-context",
@@ -405,21 +405,21 @@
             ]
         },
         "io.projectreactor.netty:reactor-netty-core": {
-            "locked": "1.1.16",
+            "locked": "1.1.17",
             "transitive": [
                 "io.projectreactor.netty:reactor-netty-http",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "io.projectreactor.netty:reactor-netty-http": {
-            "locked": "1.1.16",
+            "locked": "1.1.17",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-reactor-netty"
             ]
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.6.3",
+            "locked": "3.6.4",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
@@ -503,7 +503,7 @@
             ]
         },
         "org.springframework.boot:spring-boot": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-autoconfigure",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -511,17 +511,17 @@
             ]
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter"
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.boot:spring-boot-starter": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-json",
@@ -529,28 +529,28 @@
             ]
         },
         "org.springframework.boot:spring-boot-starter-json": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-webflux"
             ]
         },
         "org.springframework.boot:spring-boot-starter-logging": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter"
             ]
         },
         "org.springframework.boot:spring-boot-starter-reactor-netty": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-webflux"
             ]
         },
         "org.springframework.boot:spring-boot-starter-webflux": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies"
             ]
@@ -559,14 +559,14 @@
             "locked": "2023.0.1"
         },
         "org.springframework:spring-aop": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-beans": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-aop",
@@ -576,14 +576,14 @@
             ]
         },
         "org.springframework:spring-context": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "org.springframework:spring-core": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -597,21 +597,21 @@
             ]
         },
         "org.springframework:spring-expression": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-jcl": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-core"
             ]
         },
         "org.springframework:spring-web": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-json",
@@ -620,7 +620,7 @@
             ]
         },
         "org.springframework:spring-webflux": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-webflux"
@@ -690,7 +690,7 @@
             "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2023.0.1"
@@ -887,14 +887,14 @@
             ]
         },
         "io.micrometer:micrometer-commons": {
-            "locked": "1.12.3",
+            "locked": "1.12.4",
             "transitive": [
                 "io.micrometer:micrometer-observation",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "io.micrometer:micrometer-observation": {
-            "locked": "1.12.3",
+            "locked": "1.12.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-context",
@@ -1076,21 +1076,21 @@
             ]
         },
         "io.projectreactor.netty:reactor-netty-core": {
-            "locked": "1.1.16",
+            "locked": "1.1.17",
             "transitive": [
                 "io.projectreactor.netty:reactor-netty-http",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "io.projectreactor.netty:reactor-netty-http": {
-            "locked": "1.1.16",
+            "locked": "1.1.17",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-reactor-netty"
             ]
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.6.3",
+            "locked": "3.6.4",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
@@ -1220,7 +1220,7 @@
             ]
         },
         "org.springframework.boot:spring-boot": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-autoconfigure",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -1228,17 +1228,17 @@
             ]
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter"
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.boot:spring-boot-starter": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-json",
@@ -1246,28 +1246,28 @@
             ]
         },
         "org.springframework.boot:spring-boot-starter-json": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-webflux"
             ]
         },
         "org.springframework.boot:spring-boot-starter-logging": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter"
             ]
         },
         "org.springframework.boot:spring-boot-starter-reactor-netty": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-webflux"
             ]
         },
         "org.springframework.boot:spring-boot-starter-webflux": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies"
             ]
@@ -1276,14 +1276,14 @@
             "locked": "2023.0.1"
         },
         "org.springframework:spring-aop": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-beans": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-aop",
@@ -1293,14 +1293,14 @@
             ]
         },
         "org.springframework:spring-context": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "org.springframework:spring-core": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -1314,21 +1314,21 @@
             ]
         },
         "org.springframework:spring-expression": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-jcl": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-core"
             ]
         },
         "org.springframework:spring-web": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-json",
@@ -1337,7 +1337,7 @@
             ]
         },
         "org.springframework:spring-webflux": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-webflux"
@@ -1595,14 +1595,14 @@
             ]
         },
         "io.micrometer:micrometer-commons": {
-            "locked": "1.12.3",
+            "locked": "1.12.4",
             "transitive": [
                 "io.micrometer:micrometer-observation",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "io.micrometer:micrometer-observation": {
-            "locked": "1.12.3",
+            "locked": "1.12.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-context",
@@ -1670,13 +1670,13 @@
             ]
         },
         "io.netty.incubator:netty-incubator-codec-classes-quic": {
-            "locked": "0.0.57.Final",
+            "locked": "0.0.59.Final",
             "transitive": [
                 "io.netty.incubator:netty-incubator-codec-native-quic"
             ]
         },
         "io.netty.incubator:netty-incubator-codec-native-quic": {
-            "locked": "0.0.57.Final",
+            "locked": "0.0.59.Final",
             "transitive": [
                 "io.projectreactor.netty.incubator:reactor-netty-incubator-quic"
             ]
@@ -1868,20 +1868,20 @@
             ]
         },
         "io.projectreactor.netty.incubator:reactor-netty-incubator-quic": {
-            "locked": "0.1.16",
+            "locked": "0.1.17",
             "transitive": [
                 "io.projectreactor.netty:reactor-netty"
             ]
         },
         "io.projectreactor.netty:reactor-netty": {
-            "locked": "1.1.16",
+            "locked": "1.1.17",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "io.projectreactor.netty:reactor-netty-core": {
-            "locked": "1.1.16",
+            "locked": "1.1.17",
             "transitive": [
                 "io.projectreactor.netty.incubator:reactor-netty-incubator-quic",
                 "io.projectreactor.netty:reactor-netty",
@@ -1890,7 +1890,7 @@
             ]
         },
         "io.projectreactor.netty:reactor-netty-http": {
-            "locked": "1.1.16",
+            "locked": "1.1.17",
             "transitive": [
                 "io.projectreactor.netty:reactor-netty",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -1898,7 +1898,7 @@
             ]
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.6.3",
+            "locked": "3.6.4",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
@@ -1911,7 +1911,7 @@
             ]
         },
         "jakarta.activation:jakarta.activation-api": {
-            "locked": "2.1.2",
+            "locked": "2.1.3",
             "transitive": [
                 "jakarta.xml.bind:jakarta.xml.bind-api",
                 "org.springframework.boot:spring-boot-dependencies"
@@ -1925,7 +1925,7 @@
             ]
         },
         "jakarta.xml.bind:jakarta.xml.bind-api": {
-            "locked": "4.0.1",
+            "locked": "4.0.2",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-test"
@@ -2337,7 +2337,7 @@
             ]
         },
         "org.springframework.boot:spring-boot": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-autoconfigure",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -2347,7 +2347,7 @@
             ]
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter",
@@ -2355,10 +2355,10 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.boot:spring-boot-starter": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure",
@@ -2369,40 +2369,40 @@
             ]
         },
         "org.springframework.boot:spring-boot-starter-json": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-webflux"
             ]
         },
         "org.springframework.boot:spring-boot-starter-logging": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter"
             ]
         },
         "org.springframework.boot:spring-boot-starter-reactor-netty": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-webflux"
             ]
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "org.springframework.boot:spring-boot-starter-webflux": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "org.springframework.boot:spring-boot-test": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-test",
@@ -2410,7 +2410,7 @@
             ]
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-test"
@@ -2420,14 +2420,14 @@
             "locked": "2023.0.1"
         },
         "org.springframework:spring-aop": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-beans": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-aop",
@@ -2437,7 +2437,7 @@
             ]
         },
         "org.springframework:spring-context": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "org.springframework.boot:spring-boot",
@@ -2446,7 +2446,7 @@
             ]
         },
         "org.springframework:spring-core": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -2463,28 +2463,28 @@
             ]
         },
         "org.springframework:spring-expression": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-jcl": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-core"
             ]
         },
         "org.springframework:spring-test": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.springframework:spring-web": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
@@ -2498,7 +2498,7 @@
             ]
         },
         "org.springframework:spring-webflux": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -2506,7 +2506,7 @@
             ]
         },
         "org.springframework:spring-websocket": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "org.springframework.boot:spring-boot-dependencies"
@@ -2624,7 +2624,7 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2023.0.1"
@@ -2687,7 +2687,7 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2023.0.1"
@@ -2701,7 +2701,7 @@
             "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2023.0.1"
@@ -2766,7 +2766,7 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2023.0.1"
@@ -2831,7 +2831,7 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2023.0.1"
@@ -2896,7 +2896,7 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2023.0.1"
@@ -2964,7 +2964,7 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2023.0.1"
@@ -2978,7 +2978,7 @@
             "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2023.0.1"
@@ -2992,7 +2992,7 @@
             "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2023.0.1"
@@ -3235,14 +3235,14 @@
             ]
         },
         "io.micrometer:micrometer-commons": {
-            "locked": "1.12.3",
+            "locked": "1.12.4",
             "transitive": [
                 "io.micrometer:micrometer-observation",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "io.micrometer:micrometer-observation": {
-            "locked": "1.12.3",
+            "locked": "1.12.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-context",
@@ -3250,13 +3250,13 @@
             ]
         },
         "io.netty.incubator:netty-incubator-codec-classes-quic": {
-            "locked": "0.0.57.Final",
+            "locked": "0.0.59.Final",
             "transitive": [
                 "io.netty.incubator:netty-incubator-codec-native-quic"
             ]
         },
         "io.netty.incubator:netty-incubator-codec-native-quic": {
-            "locked": "0.0.57.Final",
+            "locked": "0.0.59.Final",
             "transitive": [
                 "io.projectreactor.netty.incubator:reactor-netty-incubator-quic"
             ]
@@ -3448,20 +3448,20 @@
             ]
         },
         "io.projectreactor.netty.incubator:reactor-netty-incubator-quic": {
-            "locked": "0.1.16",
+            "locked": "0.1.17",
             "transitive": [
                 "io.projectreactor.netty:reactor-netty"
             ]
         },
         "io.projectreactor.netty:reactor-netty": {
-            "locked": "1.1.16",
+            "locked": "1.1.17",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "io.projectreactor.netty:reactor-netty-core": {
-            "locked": "1.1.16",
+            "locked": "1.1.17",
             "transitive": [
                 "io.projectreactor.netty.incubator:reactor-netty-incubator-quic",
                 "io.projectreactor.netty:reactor-netty",
@@ -3470,7 +3470,7 @@
             ]
         },
         "io.projectreactor.netty:reactor-netty-http": {
-            "locked": "1.1.16",
+            "locked": "1.1.17",
             "transitive": [
                 "io.projectreactor.netty:reactor-netty",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -3478,7 +3478,7 @@
             ]
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.6.3",
+            "locked": "3.6.4",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
@@ -3689,7 +3689,7 @@
             ]
         },
         "org.springframework.boot:spring-boot": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-autoconfigure",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -3697,17 +3697,17 @@
             ]
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter"
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.boot:spring-boot-starter": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure",
@@ -3717,28 +3717,28 @@
             ]
         },
         "org.springframework.boot:spring-boot-starter-json": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-webflux"
             ]
         },
         "org.springframework.boot:spring-boot-starter-logging": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter"
             ]
         },
         "org.springframework.boot:spring-boot-starter-reactor-netty": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-webflux"
             ]
         },
         "org.springframework.boot:spring-boot-starter-webflux": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies"
             ]
@@ -3747,14 +3747,14 @@
             "locked": "2023.0.1"
         },
         "org.springframework:spring-aop": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-beans": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-aop",
@@ -3764,7 +3764,7 @@
             ]
         },
         "org.springframework:spring-context": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "org.springframework.boot:spring-boot",
@@ -3773,7 +3773,7 @@
             ]
         },
         "org.springframework:spring-core": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -3788,21 +3788,21 @@
             ]
         },
         "org.springframework:spring-expression": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-jcl": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-core"
             ]
         },
         "org.springframework:spring-web": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
@@ -3816,7 +3816,7 @@
             ]
         },
         "org.springframework:spring-webflux": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -3824,7 +3824,7 @@
             ]
         },
         "org.springframework:spring-websocket": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "org.springframework.boot:spring-boot-dependencies"
@@ -3847,7 +3847,7 @@
             "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
             "locked": "2023.0.1"
@@ -4051,14 +4051,14 @@
             ]
         },
         "io.micrometer:micrometer-commons": {
-            "locked": "1.12.3",
+            "locked": "1.12.4",
             "transitive": [
                 "io.micrometer:micrometer-observation",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "io.micrometer:micrometer-observation": {
-            "locked": "1.12.3",
+            "locked": "1.12.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-context",
@@ -4298,21 +4298,21 @@
             ]
         },
         "io.projectreactor.netty:reactor-netty-core": {
-            "locked": "1.1.16",
+            "locked": "1.1.17",
             "transitive": [
                 "io.projectreactor.netty:reactor-netty-http",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "io.projectreactor.netty:reactor-netty-http": {
-            "locked": "1.1.16",
+            "locked": "1.1.17",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-reactor-netty"
             ]
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.6.3",
+            "locked": "3.6.4",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
@@ -4323,7 +4323,7 @@
             ]
         },
         "jakarta.activation:jakarta.activation-api": {
-            "locked": "2.1.2",
+            "locked": "2.1.3",
             "transitive": [
                 "jakarta.xml.bind:jakarta.xml.bind-api",
                 "org.springframework.boot:spring-boot-dependencies"
@@ -4337,7 +4337,7 @@
             ]
         },
         "jakarta.xml.bind:jakarta.xml.bind-api": {
-            "locked": "4.0.1",
+            "locked": "4.0.2",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-test"
@@ -4590,7 +4590,7 @@
             ]
         },
         "org.springframework.boot:spring-boot": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-autoconfigure",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -4600,7 +4600,7 @@
             ]
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter",
@@ -4608,10 +4608,10 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.boot:spring-boot-starter": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-json",
@@ -4620,40 +4620,40 @@
             ]
         },
         "org.springframework.boot:spring-boot-starter-json": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-webflux"
             ]
         },
         "org.springframework.boot:spring-boot-starter-logging": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter"
             ]
         },
         "org.springframework.boot:spring-boot-starter-reactor-netty": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-webflux"
             ]
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "org.springframework.boot:spring-boot-starter-webflux": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "org.springframework.boot:spring-boot-test": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-test",
@@ -4661,7 +4661,7 @@
             ]
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-test"
@@ -4671,14 +4671,14 @@
             "locked": "2023.0.1"
         },
         "org.springframework:spring-aop": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-beans": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-aop",
@@ -4688,14 +4688,14 @@
             ]
         },
         "org.springframework:spring-context": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "org.springframework:spring-core": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -4711,28 +4711,28 @@
             ]
         },
         "org.springframework:spring-expression": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-jcl": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-core"
             ]
         },
         "org.springframework:spring-test": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.springframework:spring-web": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-json",
@@ -4741,7 +4741,7 @@
             ]
         },
         "org.springframework:spring-webflux": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-webflux"
@@ -5006,14 +5006,14 @@
             ]
         },
         "io.micrometer:micrometer-commons": {
-            "locked": "1.12.3",
+            "locked": "1.12.4",
             "transitive": [
                 "io.micrometer:micrometer-observation",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "io.micrometer:micrometer-observation": {
-            "locked": "1.12.3",
+            "locked": "1.12.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-context",
@@ -5081,13 +5081,13 @@
             ]
         },
         "io.netty.incubator:netty-incubator-codec-classes-quic": {
-            "locked": "0.0.57.Final",
+            "locked": "0.0.59.Final",
             "transitive": [
                 "io.netty.incubator:netty-incubator-codec-native-quic"
             ]
         },
         "io.netty.incubator:netty-incubator-codec-native-quic": {
-            "locked": "0.0.57.Final",
+            "locked": "0.0.59.Final",
             "transitive": [
                 "io.projectreactor.netty.incubator:reactor-netty-incubator-quic"
             ]
@@ -5279,20 +5279,20 @@
             ]
         },
         "io.projectreactor.netty.incubator:reactor-netty-incubator-quic": {
-            "locked": "0.1.16",
+            "locked": "0.1.17",
             "transitive": [
                 "io.projectreactor.netty:reactor-netty"
             ]
         },
         "io.projectreactor.netty:reactor-netty": {
-            "locked": "1.1.16",
+            "locked": "1.1.17",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "io.projectreactor.netty:reactor-netty-core": {
-            "locked": "1.1.16",
+            "locked": "1.1.17",
             "transitive": [
                 "io.projectreactor.netty.incubator:reactor-netty-incubator-quic",
                 "io.projectreactor.netty:reactor-netty",
@@ -5301,7 +5301,7 @@
             ]
         },
         "io.projectreactor.netty:reactor-netty-http": {
-            "locked": "1.1.16",
+            "locked": "1.1.17",
             "transitive": [
                 "io.projectreactor.netty:reactor-netty",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -5309,7 +5309,7 @@
             ]
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.6.3",
+            "locked": "3.6.4",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
@@ -5322,7 +5322,7 @@
             ]
         },
         "jakarta.activation:jakarta.activation-api": {
-            "locked": "2.1.2",
+            "locked": "2.1.3",
             "transitive": [
                 "jakarta.xml.bind:jakarta.xml.bind-api",
                 "org.springframework.boot:spring-boot-dependencies"
@@ -5336,7 +5336,7 @@
             ]
         },
         "jakarta.xml.bind:jakarta.xml.bind-api": {
-            "locked": "4.0.1",
+            "locked": "4.0.2",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-test"
@@ -5707,7 +5707,7 @@
             ]
         },
         "org.springframework.boot:spring-boot": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-autoconfigure",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -5717,7 +5717,7 @@
             ]
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter",
@@ -5725,10 +5725,10 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.boot:spring-boot-starter": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure",
@@ -5739,40 +5739,40 @@
             ]
         },
         "org.springframework.boot:spring-boot-starter-json": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-webflux"
             ]
         },
         "org.springframework.boot:spring-boot-starter-logging": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter"
             ]
         },
         "org.springframework.boot:spring-boot-starter-reactor-netty": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-webflux"
             ]
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "org.springframework.boot:spring-boot-starter-webflux": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "org.springframework.boot:spring-boot-test": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-test",
@@ -5780,7 +5780,7 @@
             ]
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
-            "locked": "3.2.3",
+            "locked": "3.2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-test"
@@ -5790,14 +5790,14 @@
             "locked": "2023.0.1"
         },
         "org.springframework:spring-aop": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-beans": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-aop",
@@ -5807,7 +5807,7 @@
             ]
         },
         "org.springframework:spring-context": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "org.springframework.boot:spring-boot",
@@ -5816,7 +5816,7 @@
             ]
         },
         "org.springframework:spring-core": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -5833,28 +5833,28 @@
             ]
         },
         "org.springframework:spring-expression": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-jcl": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework:spring-core"
             ]
         },
         "org.springframework:spring-test": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.springframework:spring-web": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
@@ -5868,7 +5868,7 @@
             ]
         },
         "org.springframework:spring-webflux": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webflux-autoconfigure",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -5876,7 +5876,7 @@
             ]
         },
         "org.springframework:spring-websocket": {
-            "locked": "6.1.4",
+            "locked": "6.1.5",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "org.springframework.boot:spring-boot-dependencies"
