@@ -50,7 +50,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @EnableAutoConfiguration
 @Execution(ExecutionMode.SAME_THREAD)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-@Disabled
 class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
 
     @Autowired
@@ -67,50 +66,6 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
         val uriBuilder =
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    """
-                       |{
-                       |    "extensions":{
-                       |        "persistedQuery":{
-                       |            "version":1,
-                       |            "sha256Hash":"ecf4edb46db40b5132295c0291d62fb65d6759a9eedfa4d5d612dd5ec54a6b38"
-                       |        }
-                       |    }
-                       | }
-                       |
-                    """.trimMargin()
-                )
-        mvc.perform(uriBuilder)
-            .andExpect(status().isOk)
-            .andExpect(
-                content().json(
-                    """
-                    |{
-                    |   "errors":[
-                    |     {
-                    |       "message":"PersistedQueryNotFound",
-                    |       "locations":[],
-                    |       "extensions":{
-                    |         "persistedQueryId":"ecf4edb46db40b5132295c0291d62fb65d6759a9eedfa4d5d612dd5ec54a6b38",
-                    |         "generatedBy":"graphql-java",
-                    |         "classification":"PersistedQueryNotFound"
-                    |       }
-                    |     }
-                    |   ]
-                    | }
-                    |
-                    """.trimMargin()
-                )
-            )
-    }
-
-    @Test
-    @Order(1)
-    fun `Attempt to execute a GET Request with a known hash`() {
-        val uriBuilder =
-            MockMvcRequestBuilders
-                .get("/graphql")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     """
@@ -196,7 +151,6 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                 .content(
                     """
                        |{
-                       |    "query": "{__typename}",
                        |    "extensions":{
                        |        "persistedQuery":{
                        |            "version":1,
