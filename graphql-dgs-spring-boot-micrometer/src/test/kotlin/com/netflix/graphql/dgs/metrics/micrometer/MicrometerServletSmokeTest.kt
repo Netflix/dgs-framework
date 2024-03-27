@@ -243,6 +243,82 @@ class MicrometerServletSmokeTest {
     }
 
     @Test
+    fun `Metrics for a successful request with data loaders with registry consumer`() {
+        mvc.perform(
+            MockMvcRequestBuilders
+                .post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """{"query": 
+                    |   "{ registryVerifier }" }
+                    """.trimMargin()
+                )
+        ).andExpect(status().isOk)
+            .andExpect(
+                content().json(
+                    """
+                    |{
+                    |   "data":{
+                    |       "registryVerifier": "present"
+                    |   }
+                    |}
+                    """.trimMargin(),
+                    false
+                )
+            )
+
+//        val meters = fetchMeters()
+
+//        assertThat(meters).containsOnlyKeys("gql.dataLoader", "gql.query", "gql.resolver")
+//
+//        assertThat(meters["gql.dataLoader"]).isNotNull.hasSize(2)
+//        assertThat(meters["gql.dataLoader"]?.map { it.id.tags })
+//            .containsAll(
+//                listOf(
+//                    Tags.of("gql.loaderBatchSize", "2").and("gql.loaderName", "reverser").toList(),
+//                    Tags.of("gql.loaderBatchSize", "2").and("gql.loaderName", "upperCaseLoader").toList()
+//                )
+//            )
+//
+//        assertThat(meters["gql.query"]).isNotNull.hasSize(1)
+//        assertThat(meters["gql.query"]?.first()?.id?.tags)
+//            .containsAll(
+//                Tags.of("execution-tag", "foo")
+//                    .and("contextual-tag", "foo")
+//                    .and("outcome", "success")
+//                    .and("gql.operation", "QUERY")
+//                    .and("gql.operation.name", "anonymous")
+//                    .and("gql.query.complexity", "10")
+//                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+//            )
+//
+//        assertThat(meters["gql.resolver"]?.first()?.id?.tags)
+//            .containsAll(
+//                Tags.of("gql.field", "Query.transform")
+//                    .and("field-fetch-tag", "foo")
+//                    .and("contextual-tag", "foo")
+//                    .and("outcome", "success")
+//                    .and("gql.operation", "QUERY")
+//                    .and("gql.operation.name", "anonymous")
+//                    .and("gql.query.complexity", "10")
+//                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+//            )
+//
+//        assertThat(meters["gql.dataLoader"]).isNotNull.hasSize(2)
+//        assertThat(meters["gql.dataLoader"]?.map { it.id.tags })
+//            .containsAll(
+//                listOf(
+//                    Tags.of("gql.loaderBatchSize", "2")
+//                        .and("gql.loaderName", "reverser")
+//                        .toList(),
+//                    Tags.of("gql.loaderBatchSize", "2")
+//                        .and("gql.loaderName", "upperCaseLoader")
+//                        .toList()
+//                )
+//            )
+    }
+
+    @Test
     @Disabled
     fun `Metrics for a successful request with data loaders`() {
         mvc.perform(
@@ -841,6 +917,7 @@ class MicrometerServletSmokeTest {
                 |    triggerInternalFailure: String
                 |    triggerBadRequestFailure:String
                 |    triggerCustomFailure: String
+                |    registryVerifier: String
                 |}
                 |
                 |type Mutation{
@@ -930,6 +1007,32 @@ class MicrometerServletSmokeTest {
                         dataLoaderTaskExecutor
                     )
                 }
+
+                override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry) {
+                    this.dataLoaderRegistry = Optional.of(dataLoaderRegistry)
+                }
+            }
+
+            @DgsQuery
+            fun registryVerifier(dfe: DataFetchingEnvironment): CompletableFuture<String>? {
+                val dataLoader = dfe.getDataLoader<String, String>("registry-verifier")
+                return dataLoader.load("test")
+            }
+
+            @DgsDataLoader(name = "registry-verifier")
+            class RegistryVerifierDataLoader(
+                @Qualifier("dataLoaderTaskExecutor") private val dataLoaderTaskExecutor: Executor
+            ) : MappedBatchLoader<String, String>, DgsDataLoaderRegistryConsumer {
+
+                private var dataLoaderRegistry: Optional<DataLoaderRegistry> = Optional.empty()
+
+                override fun load(keys: Set<String>): CompletionStage<Map<String, String>> {
+                    return CompletableFuture.supplyAsync(
+                        { if (dataLoaderRegistry.isPresent) mapOf("test" to "present") else mapOf("test" to "absent") },
+                        dataLoaderTaskExecutor
+                    )
+                }
+
                 override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry) {
                     this.dataLoaderRegistry = Optional.of(dataLoaderRegistry)
                 }
