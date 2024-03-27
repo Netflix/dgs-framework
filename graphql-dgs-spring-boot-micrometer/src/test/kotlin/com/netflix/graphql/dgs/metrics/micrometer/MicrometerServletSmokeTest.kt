@@ -266,56 +266,6 @@ class MicrometerServletSmokeTest {
                     false
                 )
             )
-
-//        val meters = fetchMeters()
-
-//        assertThat(meters).containsOnlyKeys("gql.dataLoader", "gql.query", "gql.resolver")
-//
-//        assertThat(meters["gql.dataLoader"]).isNotNull.hasSize(2)
-//        assertThat(meters["gql.dataLoader"]?.map { it.id.tags })
-//            .containsAll(
-//                listOf(
-//                    Tags.of("gql.loaderBatchSize", "2").and("gql.loaderName", "reverser").toList(),
-//                    Tags.of("gql.loaderBatchSize", "2").and("gql.loaderName", "upperCaseLoader").toList()
-//                )
-//            )
-//
-//        assertThat(meters["gql.query"]).isNotNull.hasSize(1)
-//        assertThat(meters["gql.query"]?.first()?.id?.tags)
-//            .containsAll(
-//                Tags.of("execution-tag", "foo")
-//                    .and("contextual-tag", "foo")
-//                    .and("outcome", "success")
-//                    .and("gql.operation", "QUERY")
-//                    .and("gql.operation.name", "anonymous")
-//                    .and("gql.query.complexity", "10")
-//                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
-//            )
-//
-//        assertThat(meters["gql.resolver"]?.first()?.id?.tags)
-//            .containsAll(
-//                Tags.of("gql.field", "Query.transform")
-//                    .and("field-fetch-tag", "foo")
-//                    .and("contextual-tag", "foo")
-//                    .and("outcome", "success")
-//                    .and("gql.operation", "QUERY")
-//                    .and("gql.operation.name", "anonymous")
-//                    .and("gql.query.complexity", "10")
-//                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
-//            )
-//
-//        assertThat(meters["gql.dataLoader"]).isNotNull.hasSize(2)
-//        assertThat(meters["gql.dataLoader"]?.map { it.id.tags })
-//            .containsAll(
-//                listOf(
-//                    Tags.of("gql.loaderBatchSize", "2")
-//                        .and("gql.loaderName", "reverser")
-//                        .toList(),
-//                    Tags.of("gql.loaderBatchSize", "2")
-//                        .and("gql.loaderName", "upperCaseLoader")
-//                        .toList()
-//                )
-//            )
     }
 
     @Test
