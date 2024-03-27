@@ -22,7 +22,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "compileClasspath": {
@@ -37,7 +37,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "21.4",
+            "locked": "21.5",
             "transitive": [
                 "com.graphql-java:graphql-java-extended-validation",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -201,7 +201,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.4",
@@ -310,7 +310,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "jmhCompileClasspath": {
@@ -325,7 +325,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "21.4",
+            "locked": "21.5",
             "transitive": [
                 "com.graphql-java:graphql-java-extended-validation",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -535,7 +535,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.4",
@@ -714,7 +714,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "21.4",
+            "locked": "21.5",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.graphql-java:graphql-java-extended-scalars",
@@ -1514,7 +1514,7 @@
             ]
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.4",
@@ -1737,7 +1737,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "kotlinCompilerClasspath": {
@@ -1800,7 +1800,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "kotlinCompilerPluginClasspath": {
@@ -1814,7 +1814,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "kotlinCompilerPluginClasspathJmh": {
@@ -1879,7 +1879,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
@@ -1944,7 +1944,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
@@ -2009,7 +2009,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "kotlinKlibCommonizerClasspath": {
@@ -2077,7 +2077,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "kotlinNativeCompilerPluginClasspath": {
@@ -2091,7 +2091,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "nebulaRecommenderBom": {
@@ -2105,7 +2105,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "runtimeClasspath": {
@@ -2190,7 +2190,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "21.4",
+            "locked": "21.5",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.graphql-java:graphql-java-extended-scalars",
@@ -2487,7 +2487,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.4",
@@ -2565,7 +2565,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "testCompileClasspath": {
@@ -2606,7 +2606,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "21.4",
+            "locked": "21.5",
             "transitive": [
                 "com.graphql-java:graphql-java-extended-validation",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -3172,7 +3172,7 @@
             ]
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.4",
@@ -3375,7 +3375,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "21.4",
+            "locked": "21.5",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.graphql-java:graphql-java-extended-scalars",
@@ -4134,7 +4134,7 @@
             ]
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.4",
