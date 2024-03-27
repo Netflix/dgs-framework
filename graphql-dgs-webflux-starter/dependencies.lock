@@ -43,7 +43,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.5"
+            "locked": "19.11"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -204,7 +204,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.5"
+            "locked": "19.11"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -379,7 +379,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.5"
+            "locked": "19.11"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -527,6 +527,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
             "locked": "1.6.4"
+        },
+        "org.jetbrains:annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "locked": "13.0"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.35"
@@ -876,7 +882,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.5"
+            "locked": "19.11"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -1022,6 +1028,12 @@
             ],
             "locked": "1.6.4"
         },
+        "org.jetbrains:annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "locked": "13.0"
+        },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
@@ -1118,7 +1130,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.5"
+            "locked": "19.11"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -1290,7 +1302,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.5"
+            "locked": "19.11"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -1438,6 +1450,12 @@
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
             "locked": "1.6.4"
+        },
+        "org.jetbrains:annotations": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "locked": "13.0"
         },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [

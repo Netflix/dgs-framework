@@ -51,7 +51,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-            "locked": "19.5"
+            "locked": "19.11"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -76,6 +76,9 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
             "locked": "1.7.20"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.7.5"
@@ -153,7 +156,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-            "locked": "19.5"
+            "locked": "19.11"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -178,6 +181,9 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
             "locked": "1.7.20"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.35"
@@ -252,7 +258,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.5"
+            "locked": "19.11"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "19.1"
@@ -413,6 +419,9 @@
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
             "locked": "1.6.4"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.35"
@@ -752,7 +761,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-            "locked": "19.5"
+            "locked": "19.11"
         },
         "com.jayway.jsonpath:json-path": {
             "locked": "2.7.0"
@@ -777,6 +786,9 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
             "locked": "1.7.20"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.7.5"
@@ -849,7 +861,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.5"
+            "locked": "19.11"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "19.1"
@@ -941,6 +953,9 @@
             ],
             "locked": "1.7.20"
         },
+        "org.jetbrains:annotations": {
+            "locked": "13.0"
+        },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "2.7.5"
         },
@@ -1014,7 +1029,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "19.5"
+            "locked": "19.11"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "19.1"
@@ -1175,6 +1190,9 @@
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
             "locked": "1.6.4"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0"
         },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
