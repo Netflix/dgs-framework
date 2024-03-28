@@ -75,7 +75,7 @@ class CustomDirectivesTest {
             
             directive @uppercase on FIELD_DEFINITION
             """.trimIndent()
-        )
+        ).graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
         val executionResult = build.execute(

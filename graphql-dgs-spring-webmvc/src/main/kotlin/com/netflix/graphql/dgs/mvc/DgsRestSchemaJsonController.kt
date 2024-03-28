@@ -42,7 +42,7 @@ open class DgsRestSchemaJsonController(open val schemaProvider: DgsSchemaProvide
         produces = [ MediaType.APPLICATION_JSON_VALUE ]
     )
     fun schema(): String {
-        val graphQLSchema: GraphQLSchema = schemaProvider.schema()
+        val graphQLSchema: GraphQLSchema = schemaProvider.schema().graphQLSchema
         val graphQL = GraphQL.newGraphQL(graphQLSchema).build()
 
         val executionInput: ExecutionInput = ExecutionInput.newExecutionInput().query(IntrospectionQuery.INTROSPECTION_QUERY)

@@ -58,6 +58,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -104,6 +105,7 @@ open class DgsAutoConfiguration(
     }
 
     @Bean
+    @ConditionalOnMissingBean
     open fun dgsQueryExecutor(
         applicationContext: ApplicationContext,
         schema: GraphQLSchema,
@@ -272,7 +274,7 @@ open class DgsAutoConfiguration(
     @Bean
     @ConditionalOnMissingBean
     open fun schema(dgsSchemaProvider: DgsSchemaProvider, fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
-        return dgsSchemaProvider.schema(null, fieldVisibility)
+        return dgsSchemaProvider.schema(null, fieldVisibility).graphQLSchema
     }
 
     @Bean
@@ -317,6 +319,7 @@ open class DgsAutoConfiguration(
     }
 
     @Bean
+    @ConditionalOnMissingClass("com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLAutoConfiguration")
     open fun uploadScalar(): UploadScalar {
         return UploadScalar()
     }

@@ -132,7 +132,7 @@ internal class DefaultDgsReactiveQueryExecutorTest {
 
             scalar DateTime
             """.trimIndent()
-        )
+        ).graphQLSchema
 
         dgsQueryExecutor = DefaultDgsReactiveQueryExecutor(
             defaultSchema = schema,

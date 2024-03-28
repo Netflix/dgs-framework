@@ -28,7 +28,14 @@ import java.util.Map;
 
 @DgsComponent
 public class RequestHeadersDataFetcher {
+
     @DgsData(parentType = "Query", field = "headers")
+    public String headers(DgsDataFetchingEnvironment dfe) {
+        HttpHeaders headers = dfe.getDgsContext().getRequestData().getHeaders();
+        return headers.toString();
+    }
+
+    @DgsData(parentType = "Query", field = "demoHeader")
     public String headers(DgsDataFetchingEnvironment dfe, @RequestHeader("demo-header") String demoHeader) {
         return demoHeader;
     }

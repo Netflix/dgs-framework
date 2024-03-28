@@ -44,7 +44,7 @@ class RequestHeaderDataFetcherTest {
         MockHttpServletRequest servletRequest = new MockHttpServletRequest();
         servletRequest.addHeader("demo-header", "demo-header-value");
 
-        String message = queryExecutor.executeAndExtractJsonPath("{headers}", "data.headers", new ServletWebRequest(servletRequest));
+        String message = queryExecutor.executeAndExtractJsonPath("{demoHeader}", "data.demoHeader", new ServletWebRequest(servletRequest));
         assertThat(message).isEqualTo("demo-header-value");
     }
 
@@ -53,7 +53,7 @@ class RequestHeaderDataFetcherTest {
         HttpHeaders headers = new HttpHeaders();
         headers.add("demo-header", "demo-header-value");
 
-        String message = queryExecutor.executeAndExtractJsonPath("{headers}", "data.headers", headers);
+        String message = queryExecutor.executeAndExtractJsonPath("{demoHeader}", "data.demoHeader", headers);
         assertThat(message).isEqualTo("demo-header-value");
     }
 }

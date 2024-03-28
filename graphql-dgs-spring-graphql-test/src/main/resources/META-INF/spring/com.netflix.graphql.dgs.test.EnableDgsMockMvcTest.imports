@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.graphql.servlet.GraphQlWebMvcAutoConfiguration
+org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration
+org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration

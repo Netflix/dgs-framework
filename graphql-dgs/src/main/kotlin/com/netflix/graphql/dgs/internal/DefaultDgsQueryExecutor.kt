@@ -72,7 +72,7 @@ class DefaultDgsQueryExecutor(
     ): ExecutionResult {
         val graphQLSchema: GraphQLSchema =
             if (reloadIndicator.reloadSchema()) {
-                schema.updateAndGet { schemaProvider.schema() }
+                schema.updateAndGet { schemaProvider.schema().graphQLSchema }
             } else {
                 schema.get()
             }

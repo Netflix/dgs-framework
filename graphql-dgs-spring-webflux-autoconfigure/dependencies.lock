@@ -2201,7 +2201,6 @@
         "org.springframework.boot:spring-boot-starter": {
             "locked": "3.2.3",
             "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-json",
@@ -2340,7 +2339,6 @@
         "org.springframework:spring-webflux": {
             "locked": "6.1.4",
             "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-webflux"
             ]
@@ -3464,7 +3462,6 @@
         "org.springframework.boot:spring-boot-starter": {
             "locked": "3.2.3",
             "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
@@ -3545,7 +3542,6 @@
         "org.springframework:spring-webflux": {
             "locked": "6.1.4",
             "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
@@ -5481,7 +5477,6 @@
         "org.springframework.boot:spring-boot-starter": {
             "locked": "3.2.3",
             "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-json",
@@ -5620,7 +5615,6 @@
         "org.springframework:spring-webflux": {
             "locked": "6.1.4",
             "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "org.springframework.boot:spring-boot-dependencies",
                 "org.springframework.boot:spring-boot-starter-webflux"
             ]

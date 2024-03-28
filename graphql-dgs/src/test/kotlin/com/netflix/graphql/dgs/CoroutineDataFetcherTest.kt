@@ -101,7 +101,7 @@ class CoroutineDataFetcherTest {
                 concurrent(from: Int, to: Int): Int
             }           
             """.trimIndent()
-        )
+        ).graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
 
@@ -177,7 +177,7 @@ class CoroutineDataFetcherTest {
                 concurrent: Int
             }           
             """.trimIndent()
-        )
+        ).graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
 
@@ -217,7 +217,7 @@ class CoroutineDataFetcherTest {
                 exceptionWithMessage(message: String): Int
             }           
             """.trimIndent()
-        )
+        ).graphQLSchema
         val build = GraphQL.newGraphQL(schema).build()
 
         val context = DgsContext(

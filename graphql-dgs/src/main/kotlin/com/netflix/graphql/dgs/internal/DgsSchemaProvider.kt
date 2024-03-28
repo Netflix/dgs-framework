@@ -141,17 +141,18 @@ class DgsSchemaProvider(
 
     fun schema(
         @Language("GraphQL") schema: String? = null,
-        fieldVisibility: GraphqlFieldVisibility = DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
-    ): GraphQLSchema {
+        fieldVisibility: GraphqlFieldVisibility = DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY,
+        schemaResources: Set<Resource> = emptySet()
+    ): SchemaProviderResult {
         schemaReadWriteLock.write {
             dataFetchers.clear()
             dataFetcherTracingInstrumentationEnabled.clear()
             dataFetcherMetricsInstrumentationEnabled.clear()
-            return computeSchema(schema, fieldVisibility)
+            return computeSchema(schema, fieldVisibility, schemaResources)
         }
     }
 
-    private fun computeSchema(schema: String? = null, fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
+    private fun computeSchema(schema: String? = null, fieldVisibility: GraphqlFieldVisibility, schemaResources: Set<Resource> = emptySet()): SchemaProviderResult {
         val startTime = System.currentTimeMillis()
         val dgsComponents = applicationContext.getBeansWithAnnotation<DgsComponent>().values.asSequence()
             .let { beans -> if (componentFilter != null) beans.filter(componentFilter) else beans }
@@ -167,6 +168,10 @@ class DgsSchemaProvider(
                 // Add a reader that inserts a newline between schema files to avoid issues when
                 // the source files aren't newline-terminated.
                 readerBuilder.reader("\n".reader(), "newline")
+            }
+
+            for (resource in schemaResources) {
+                readerBuilder.reader(resource.inputStream.reader(), resource.filename)
             }
             SchemaParser().parse(readerBuilder.build())
         } else {
@@ -222,7 +227,7 @@ class DgsSchemaProvider(
         val entityFetcher = federationResolverInstance.entitiesFetcher()
         val typeResolver = federationResolverInstance.typeResolver()
 
-        val graphQLSchema =
+        var graphQLSchema =
             Federation.transform(mergedRegistry, runtimeWiring).fetchEntities(entityFetcher)
                 .resolveEntityType(typeResolver).build()
 
@@ -230,11 +235,13 @@ class DgsSchemaProvider(
         val totalTime = endTime - startTime
         logger.debug("DGS initialized schema in {}ms", totalTime)
 
-        return if (mockProviders.isNotEmpty()) {
+        graphQLSchema = if (mockProviders.isNotEmpty()) {
             DgsSchemaTransformer().transformSchemaWithMockProviders(graphQLSchema, mockProviders)
         } else {
             graphQLSchema
         }
+
+        return SchemaProviderResult(graphQLSchema, runtimeWiring)
     }
 
     private fun invokeDgsTypeDefinitionRegistry(
@@ -729,3 +736,5 @@ class DgsSchemaProvider(
         }
     }
 }
+
+data class SchemaProviderResult(val graphQLSchema: GraphQLSchema, val runtimeWiring: RuntimeWiring)
