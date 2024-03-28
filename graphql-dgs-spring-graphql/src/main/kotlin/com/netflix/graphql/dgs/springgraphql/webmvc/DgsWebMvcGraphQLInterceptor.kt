@@ -35,7 +35,7 @@ import java.util.concurrent.CompletableFuture
 class DgsWebMvcGraphQLInterceptor(
     private val dgsDataLoaderProvider: DgsDataLoaderProvider,
     private val dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
-    private val dgsSpringConfigurationProperties: DgsSpringGraphQLConfigurationProperties,
+    private val dgsSpringConfigurationProperties: DgsSpringGraphQLConfigurationProperties
 ) : WebGraphQlInterceptor {
     override fun intercept(request: WebGraphQlRequest, chain: WebGraphQlInterceptor.Chain): Mono<WebGraphQlResponse> {
         // We need to pass in the original server request for the dgs context
@@ -60,12 +60,11 @@ class DgsWebMvcGraphQLInterceptor(
         }
         graphQLContextFuture.complete(request.toExecutionInput().graphQLContext)
 
-        return if(dgsSpringConfigurationProperties.webmvc.asyncdispatch.enabled) {
+        return if (dgsSpringConfigurationProperties.webmvc.asyncdispatch.enabled) {
             chain.next(request)
         } else {
             @Suppress("BlockingMethodInNonBlockingContext")
             return Mono.just(chain.next(request).block()!!)
         }
-
     }
 }

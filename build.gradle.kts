@@ -45,8 +45,6 @@ allprojects {
     group = "com.netflix.graphql.dgs"
     repositories {
         mavenCentral()
-        maven { url = URI.create("https://repo.spring.io/snapshot") }
-
     }
 
     apply(plugin = "nebula.netflixoss")
@@ -63,7 +61,7 @@ allprojects {
 
     configurations.all {
         resolutionStrategy {
-            force("org.springframework.graphql:spring-graphql:1.2.6-SNAPSHOT")
+            force("org.springframework.graphql:spring-graphql:1.2.6")
         }
     }
 

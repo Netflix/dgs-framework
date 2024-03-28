@@ -4,7 +4,7 @@
             "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-autoconfigure-processor": {
             "locked": "3.2.3",
@@ -22,7 +22,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.1-SNAPSHOT"
+            "locked": "2023.0.1"
         }
     },
     "compileClasspath": {
@@ -47,10 +47,10 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.springframework.boot:spring-boot-dependencies"
@@ -95,7 +95,7 @@
             ]
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.1-SNAPSHOT"
+            "locked": "2023.0.1"
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.4",
@@ -198,13 +198,13 @@
             "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.1-SNAPSHOT"
+            "locked": "2023.0.1"
         }
     },
     "jmhCompileClasspath": {
@@ -241,10 +241,10 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.springframework.boot:spring-boot-dependencies"
@@ -323,7 +323,7 @@
             ]
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.1-SNAPSHOT"
+            "locked": "2023.0.1"
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.4",
@@ -554,7 +554,7 @@
             ]
         },
         "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.23.0",
+            "locked": "2.23.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.apache.logging.log4j:log4j-to-slf4j",
@@ -562,7 +562,7 @@
             ]
         },
         "org.apache.logging.log4j:log4j-to-slf4j": {
-            "locked": "2.23.0",
+            "locked": "2.23.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -600,10 +600,10 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-core-jvm",
@@ -614,7 +614,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-reflect",
@@ -625,7 +625,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-common": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "io.mockk:mockk-agent-api-jvm",
                 "io.mockk:mockk-agent-jvm",
@@ -639,7 +639,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk7": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-stdlib",
@@ -648,7 +648,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "io.mockk:mockk-agent-api-jvm",
                 "io.mockk:mockk-agent-jvm",
@@ -902,7 +902,7 @@
             ]
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.1-SNAPSHOT"
+            "locked": "2023.0.1"
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.4",
@@ -987,25 +987,25 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-build-common": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-runner"
             ]
         },
         "org.jetbrains.kotlin:kotlin-build-tools-api": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-build-tools-impl"
             ]
         },
         "org.jetbrains.kotlin:kotlin-build-tools-impl": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-build-tools-impl",
@@ -1014,13 +1014,13 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-compiler-runner": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-build-tools-impl"
             ]
         },
         "org.jetbrains.kotlin:kotlin-daemon-client": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-compiler-runner",
@@ -1028,13 +1028,13 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-daemon-embeddable": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable",
@@ -1042,7 +1042,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable",
@@ -1050,7 +1050,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-build-tools-impl",
@@ -1075,7 +1075,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.1-SNAPSHOT"
+            "locked": "2023.0.1"
         }
     },
     "kotlinCompilerClasspath": {
@@ -1089,23 +1089,23 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.springframework.boot:spring-boot-dependencies"
             ]
         },
         "org.jetbrains.kotlin:kotlin-daemon-embeddable": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable",
@@ -1113,7 +1113,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable",
@@ -1121,7 +1121,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable",
@@ -1138,7 +1138,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.1-SNAPSHOT"
+            "locked": "2023.0.1"
         }
     },
     "kotlinCompilerPluginClasspath": {
@@ -1146,13 +1146,13 @@
             "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.1-SNAPSHOT"
+            "locked": "2023.0.1"
         }
     },
     "kotlinCompilerPluginClasspathJmh": {
@@ -1160,10 +1160,10 @@
             "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-jvm",
@@ -1171,7 +1171,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-common": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
@@ -1180,16 +1180,16 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-jvm": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
@@ -1197,7 +1197,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-common",
@@ -1217,7 +1217,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.1-SNAPSHOT"
+            "locked": "2023.0.1"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
@@ -1225,10 +1225,10 @@
             "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-jvm",
@@ -1236,7 +1236,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-common": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
@@ -1245,16 +1245,16 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-jvm": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
@@ -1262,7 +1262,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-common",
@@ -1282,7 +1282,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.1-SNAPSHOT"
+            "locked": "2023.0.1"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
@@ -1290,10 +1290,10 @@
             "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-jvm",
@@ -1301,7 +1301,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-common": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
@@ -1310,16 +1310,16 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-jvm": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
@@ -1327,7 +1327,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-scripting-common",
@@ -1347,7 +1347,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.1-SNAPSHOT"
+            "locked": "2023.0.1"
         }
     },
     "kotlinKlibCommonizerClasspath": {
@@ -1361,10 +1361,10 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable",
@@ -1372,16 +1372,16 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-daemon-embeddable": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable",
@@ -1389,7 +1389,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable",
@@ -1397,7 +1397,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable",
@@ -1415,7 +1415,7 @@
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.1-SNAPSHOT"
+            "locked": "2023.0.1"
         }
     },
     "kotlinNativeCompilerPluginClasspath": {
@@ -1423,13 +1423,13 @@
             "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.1-SNAPSHOT"
+            "locked": "2023.0.1"
         }
     },
     "nebulaRecommenderBom": {
@@ -1437,13 +1437,13 @@
             "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.1-SNAPSHOT"
+            "locked": "2023.0.1"
         }
     },
     "runtimeClasspath": {
@@ -1468,10 +1468,10 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.springframework.boot:spring-boot-dependencies"
@@ -1516,7 +1516,7 @@
             ]
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.1-SNAPSHOT"
+            "locked": "2023.0.1"
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.4",
@@ -1571,13 +1571,13 @@
             "locked": "2.15.4"
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
             "locked": "3.2.3"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.1-SNAPSHOT"
+            "locked": "2023.0.1"
         }
     },
     "testCompileClasspath": {
@@ -1739,7 +1739,7 @@
             ]
         },
         "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.23.0",
+            "locked": "2.23.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.apache.logging.log4j:log4j-to-slf4j",
@@ -1747,7 +1747,7 @@
             ]
         },
         "org.apache.logging.log4j:log4j-to-slf4j": {
-            "locked": "2.23.0",
+            "locked": "2.23.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -1785,10 +1785,10 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-stdlib-common",
@@ -1798,7 +1798,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-common": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "io.mockk:mockk-agent-api-jvm",
                 "io.mockk:mockk-agent-jvm",
@@ -1811,7 +1811,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk7": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-stdlib",
@@ -1820,7 +1820,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "io.mockk:mockk-agent-api-jvm",
                 "io.mockk:mockk-agent-jvm",
@@ -1993,7 +1993,7 @@
             ]
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.1-SNAPSHOT"
+            "locked": "2023.0.1"
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.4",
@@ -2236,7 +2236,7 @@
             ]
         },
         "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.23.0",
+            "locked": "2.23.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.apache.logging.log4j:log4j-to-slf4j",
@@ -2244,7 +2244,7 @@
             ]
         },
         "org.apache.logging.log4j:log4j-to-slf4j": {
-            "locked": "2.23.0",
+            "locked": "2.23.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.springframework.boot:spring-boot-dependencies",
@@ -2282,10 +2282,10 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-bom": {
-            "locked": "1.9.22"
+            "locked": "1.9.23"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-core-jvm",
@@ -2296,7 +2296,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-reflect",
@@ -2307,7 +2307,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-common": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "io.mockk:mockk-agent-api-jvm",
                 "io.mockk:mockk-agent-jvm",
@@ -2321,7 +2321,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk7": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-bom",
                 "org.jetbrains.kotlin:kotlin-stdlib",
@@ -2330,7 +2330,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8": {
-            "locked": "1.9.22",
+            "locked": "1.9.23",
             "transitive": [
                 "io.mockk:mockk-agent-api-jvm",
                 "io.mockk:mockk-agent-jvm",
@@ -2555,7 +2555,7 @@
             ]
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.1-SNAPSHOT"
+            "locked": "2023.0.1"
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.4",
