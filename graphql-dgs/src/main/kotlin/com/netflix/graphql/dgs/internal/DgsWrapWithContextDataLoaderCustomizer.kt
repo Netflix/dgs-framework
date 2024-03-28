@@ -17,9 +17,11 @@
 package com.netflix.graphql.dgs.internal
 
 import com.netflix.graphql.dgs.DgsDataLoaderCustomizer
+import com.netflix.graphql.dgs.DgsDataLoaderRegistryConsumer
 import org.dataloader.BatchLoader
 import org.dataloader.BatchLoaderEnvironment
 import org.dataloader.BatchLoaderWithContext
+import org.dataloader.DataLoaderRegistry
 import org.dataloader.MappedBatchLoader
 import org.dataloader.MappedBatchLoaderWithContext
 import java.util.concurrent.CompletionStage
@@ -42,14 +44,28 @@ class DgsWrapWithContextDataLoaderCustomizer : DgsDataLoaderCustomizer {
     }
 }
 
-internal class BatchLoaderWithContextWrapper<K, V>(private val original: BatchLoader<K, V>) : BatchLoaderWithContext<K, V> {
+internal class BatchLoaderWithContextWrapper<K, V>(private val original: BatchLoader<K, V>) :
+    BatchLoaderWithContext<K, V>, DgsDataLoaderRegistryConsumer {
     override fun load(keys: List<K>, environment: BatchLoaderEnvironment): CompletionStage<List<V>> {
         return original.load(keys)
     }
+
+    override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry?) {
+        if (original is DgsDataLoaderRegistryConsumer) {
+            (original as DgsDataLoaderRegistryConsumer).setDataLoaderRegistry(dataLoaderRegistry)
+        }
+    }
 }
 
-internal class MappedBatchLoaderWithContextWrapper<K, V>(private val original: MappedBatchLoader<K, V>) : MappedBatchLoaderWithContext<K, V> {
+internal class MappedBatchLoaderWithContextWrapper<K, V>(private val original: MappedBatchLoader<K, V>) :
+    MappedBatchLoaderWithContext<K, V>, DgsDataLoaderRegistryConsumer {
     override fun load(keys: Set<K>, environment: BatchLoaderEnvironment): CompletionStage<Map<K, V>> {
         return original.load(keys)
+    }
+
+    override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry?) {
+        if (original is DgsDataLoaderRegistryConsumer) {
+            (original as DgsDataLoaderRegistryConsumer).setDataLoaderRegistry(dataLoaderRegistry)
+        }
     }
 }

@@ -18,10 +18,12 @@ package com.netflix.graphql.dgs.internal
 
 import com.netflix.graphql.dgs.DgsDataLoaderCustomizer
 import com.netflix.graphql.dgs.DgsDataLoaderInstrumentation
+import com.netflix.graphql.dgs.DgsDataLoaderRegistryConsumer
 import com.netflix.graphql.dgs.exceptions.DgsDataLoaderInstrumentationException
 import org.dataloader.BatchLoader
 import org.dataloader.BatchLoaderEnvironment
 import org.dataloader.BatchLoaderWithContext
+import org.dataloader.DataLoaderRegistry
 import org.dataloader.MappedBatchLoader
 import org.dataloader.MappedBatchLoaderWithContext
 import java.util.concurrent.CompletionStage
@@ -50,7 +52,7 @@ internal class BatchLoaderWithContextInstrumentationDriver<K : Any, V>(
     private val original: BatchLoaderWithContext<K, V>,
     private val name: String,
     private val instrumentations: List<DgsDataLoaderInstrumentation>
-) : BatchLoaderWithContext<K, V> {
+) : BatchLoaderWithContext<K, V>, DgsDataLoaderRegistryConsumer {
     override fun load(keys: List<K>, environment: BatchLoaderEnvironment): CompletionStage<List<V>> {
         val contexts = instrumentations.map { it.onDispatch(name, keys, environment) }
         val future = original.load(keys, environment)
@@ -64,13 +66,19 @@ internal class BatchLoaderWithContextInstrumentationDriver<K : Any, V>(
             }
         }
     }
+
+    override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry?) {
+        if (original is DgsDataLoaderRegistryConsumer) {
+            (original as DgsDataLoaderRegistryConsumer).setDataLoaderRegistry(dataLoaderRegistry)
+        }
+    }
 }
 
 internal class MappedBatchLoaderWithContextInstrumentationDriver<K : Any, V>(
     private val original: MappedBatchLoaderWithContext<K, V>,
     private val name: String,
     private val instrumentations: List<DgsDataLoaderInstrumentation>
-) : MappedBatchLoaderWithContext<K, V> {
+) : MappedBatchLoaderWithContext<K, V>, DgsDataLoaderRegistryConsumer {
     override fun load(keys: Set<K>, environment: BatchLoaderEnvironment): CompletionStage<Map<K, V>> {
         val keysList = keys.toList()
         val contexts = instrumentations.map { it.onDispatch(name, keysList, environment) }
@@ -84,6 +92,12 @@ internal class MappedBatchLoaderWithContextInstrumentationDriver<K : Any, V>(
                 }
             } catch (_: Throwable) {
             }
+        }
+    }
+
+    override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry?) {
+        if (original is DgsDataLoaderRegistryConsumer) {
+            (original as DgsDataLoaderRegistryConsumer).setDataLoaderRegistry(dataLoaderRegistry)
         }
     }
 }
