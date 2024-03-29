@@ -71,7 +71,7 @@ class DgsTypeRegistryDefinitionTest {
                 methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
             )
 
-            val schema = provider.schema()
+            val schema = provider.schema().graphQLSchema
             val graphql = GraphQL.newGraphQL(schema).build()
             val result = graphql.execute(
                 """
@@ -146,7 +146,7 @@ class DgsTypeRegistryDefinitionTest {
                 methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
             )
 
-            val schema = provider.schema()
+            val schema = provider.schema().graphQLSchema
             val graphql = GraphQL.newGraphQL(schema).build()
             val result = graphql.execute(
                 """

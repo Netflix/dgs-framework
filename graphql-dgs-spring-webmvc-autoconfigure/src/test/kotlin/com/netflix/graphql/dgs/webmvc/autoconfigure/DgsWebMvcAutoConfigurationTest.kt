@@ -21,6 +21,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.SchemaProviderResult
 import com.netflix.graphql.dgs.mvc.DgsRestController
 import com.netflix.graphql.dgs.mvc.DgsRestSchemaJsonController
 import graphql.ExecutionResultImpl
@@ -28,6 +29,7 @@ import graphql.Scalars
 import graphql.schema.GraphQLFieldDefinition
 import graphql.schema.GraphQLObjectType
 import graphql.schema.GraphQLSchema
+import graphql.schema.idl.RuntimeWiring
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.*
@@ -233,7 +235,7 @@ class DgsWebMvcAutoConfigurationTest {
                 .clearDirectives()
                 .query(objectType).build()
             val mockSchemaProvider = mockk<DgsSchemaProvider>()
-            every { mockSchemaProvider.schema() } returns schema
+            every { mockSchemaProvider.schema() } returns SchemaProviderResult(schema, RuntimeWiring.MOCKED_WIRING)
             return mockSchemaProvider
         }
 

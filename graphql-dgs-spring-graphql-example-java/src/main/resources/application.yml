@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: dgs-spring-graphql-example
+
+  graphql:
+    graphiql:
+      enabled: true
+    websocket:
+      path: /graphql
+
+    schema:
+      inspection:
+        enabled: true
+
+dgs.reload: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - metrics
+debug: true
