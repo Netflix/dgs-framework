@@ -2,7 +2,8 @@
 
 This is the release branch for 5.x.x releases that is compatible with Spring Boot 2.7. 
 All future 5.x.x releases should be cut from this branch.
-Ongoing bug fixes and patches will be ported from master to this branch.
+Only critical bug fixes and patches will be ported from master to this branch.
+
 
 ![CI](https://github.com/Netflix/dgs-framework/workflows/CI/badge.svg?branch=master)
 [![GitHub release](https://img.shields.io/github/v/release/Netflix/dgs-framework.svg)](https://GitHub.com/Netflix/dgs-framework/releases)
