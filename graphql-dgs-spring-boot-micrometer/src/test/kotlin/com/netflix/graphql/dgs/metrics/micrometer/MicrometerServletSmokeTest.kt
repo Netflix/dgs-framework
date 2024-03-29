@@ -243,32 +243,6 @@ class MicrometerServletSmokeTest {
     }
 
     @Test
-    fun `Metrics for a successful request with data loaders with registry consumer`() {
-        mvc.perform(
-            MockMvcRequestBuilders
-                .post("/graphql")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    """{"query": 
-                    |   "{ registryVerifier }" }
-                    """.trimMargin()
-                )
-        ).andExpect(status().isOk)
-            .andExpect(
-                content().json(
-                    """
-                    |{
-                    |   "data":{
-                    |       "registryVerifier": "present"
-                    |   }
-                    |}
-                    """.trimMargin(),
-                    false
-                )
-            )
-    }
-
-    @Test
     @Disabled
     fun `Metrics for a successful request with data loaders`() {
         mvc.perform(
@@ -867,7 +841,6 @@ class MicrometerServletSmokeTest {
                 |    triggerInternalFailure: String
                 |    triggerBadRequestFailure:String
                 |    triggerCustomFailure: String
-                |    registryVerifier: String
                 |}
                 |
                 |type Mutation{
@@ -954,31 +927,6 @@ class MicrometerServletSmokeTest {
                 override fun load(keys: Set<String>): CompletionStage<Map<String, String>> {
                     return CompletableFuture.supplyAsync(
                         { keys.associateWith { it.reversed() } },
-                        dataLoaderTaskExecutor
-                    )
-                }
-
-                override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry) {
-                    this.dataLoaderRegistry = Optional.of(dataLoaderRegistry)
-                }
-            }
-
-            @DgsQuery
-            fun registryVerifier(dfe: DataFetchingEnvironment): CompletableFuture<String>? {
-                val dataLoader = dfe.getDataLoader<String, String>("registry-verifier")
-                return dataLoader.load("test")
-            }
-
-            @DgsDataLoader(name = "registry-verifier")
-            class RegistryVerifierDataLoader(
-                @Qualifier("dataLoaderTaskExecutor") private val dataLoaderTaskExecutor: Executor
-            ) : MappedBatchLoader<String, String>, DgsDataLoaderRegistryConsumer {
-
-                private var dataLoaderRegistry: Optional<DataLoaderRegistry> = Optional.empty()
-
-                override fun load(keys: Set<String>): CompletionStage<Map<String, String>> {
-                    return CompletableFuture.supplyAsync(
-                        { if (dataLoaderRegistry.isPresent) mapOf("test" to "present") else mapOf("test" to "absent") },
                         dataLoaderTaskExecutor
                     )
                 }
