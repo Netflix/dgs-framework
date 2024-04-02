@@ -29,17 +29,15 @@ import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContex
 import com.netflix.graphql.dgs.reactive.internal.DgsReactiveRequestData
 import graphql.ExecutionResult
 import graphql.GraphQLContext
-import graphql.GraphQLError
 import org.intellij.lang.annotations.Language
 import org.springframework.graphql.ExecutionGraphQlService
 import org.springframework.graphql.support.DefaultExecutionGraphQlRequest
 import org.springframework.http.HttpHeaders
 import org.springframework.web.reactive.function.server.ServerRequest
 import reactor.core.publisher.Mono
-import java.util.concurrent.CompletableFuture
 
 class SpringGraphQLDgsReactiveQueryExecutor(
-    val executionService: ExecutionGraphQlService,
+    private val executionService: ExecutionGraphQlService,
     private val dgsContextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
     private val dgsDataLoaderProvider: DgsDataLoaderProvider
 ) : DgsReactiveQueryExecutor {
@@ -49,7 +47,7 @@ class SpringGraphQLDgsReactiveQueryExecutor(
         extensions: Map<String, Any>?,
         headers: HttpHeaders?,
         operationName: String?,
-        serverRequest: org.springframework.web.reactive.function.server.ServerRequest?
+        serverRequest: ServerRequest?
     ): Mono<ExecutionResult> {
         val request = DefaultExecutionGraphQlRequest(
             query,
@@ -60,8 +58,8 @@ class SpringGraphQLDgsReactiveQueryExecutor(
             null
         )
 
-        val graphQLContextFuture = CompletableFuture<GraphQLContext>()
-        val dataLoaderRegistry = dgsDataLoaderProvider.buildRegistryWithContextSupplier { graphQLContextFuture.get() }
+        lateinit var graphQLContext: GraphQLContext
+        val dataLoaderRegistry = dgsDataLoaderProvider.buildRegistryWithContextSupplier { graphQLContext }
         return dgsContextBuilder.build(DgsReactiveRequestData(request.extensions, headers, serverRequest))
             .flatMap { context ->
                 request.configureExecutionInput { _, builder ->
@@ -71,16 +69,13 @@ class SpringGraphQLDgsReactiveQueryExecutor(
                         .dataLoaderRegistry(dataLoaderRegistry).build()
                 }
 
-                graphQLContextFuture.complete(request.toExecutionInput().graphQLContext)
+                graphQLContext = request.toExecutionInput().graphQLContext
 
                 executionService.execute(
                     request
-                ) ?: throw IllegalStateException("Unexpected null response from Spring GraphQL client")
-            }.map { execute ->
-                ExecutionResult.newExecutionResult()
-                    .data(execute.getData())
-                    .errors(execute.errors.map { GraphQLError.newError().message(it.message).build() })
-                    .build()
+                ) ?: Mono.error(IllegalStateException("Unexpected null response from Spring GraphQL client"))
+            }.map { response ->
+                response.executionResult
             }
     }
 
