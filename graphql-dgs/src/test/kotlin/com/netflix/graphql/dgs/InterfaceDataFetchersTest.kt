@@ -130,7 +130,7 @@ class InterfaceDataFetchersTest {
                 nrOfExplosions: Int
             }
             """.trimIndent()
-        )
+        ).graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
 
