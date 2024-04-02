@@ -17,6 +17,8 @@
 package com.netflix.graphql.dgs.autoconfig
 
 import com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider
+import com.netflix.graphql.dgs.DgsDataLoaderCustomizer
+import com.netflix.graphql.dgs.DgsDataLoaderInstrumentation
 import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
 import com.netflix.graphql.dgs.DgsDefaultPreparsedDocumentProvider
 import com.netflix.graphql.dgs.DgsFederationResolver
@@ -56,6 +58,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -102,6 +105,7 @@ open class DgsAutoConfiguration(
     }
 
     @Bean
+    @ConditionalOnMissingBean
     open fun dgsQueryExecutor(
         applicationContext: ApplicationContext,
         schema: GraphQLSchema,
@@ -167,11 +171,32 @@ open class DgsAutoConfiguration(
     }
 
     @Bean
+    @ConditionalOnProperty(
+        prefix = "$AUTO_CONF_PREFIX.convertAllDataLoadersToWithContext",
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = true
+    )
+    @Order(0)
+    open fun dgsWrapWithContextDataLoaderCustomizer(): DgsWrapWithContextDataLoaderCustomizer {
+        return DgsWrapWithContextDataLoaderCustomizer()
+    }
+
+    @Bean
+    @Order(100)
+    open fun dgsDataLoaderInstrumentationDataLoaderCustomizer(
+        instrumentations: List<DgsDataLoaderInstrumentation>
+    ): DgsDataLoaderInstrumentationDataLoaderCustomizer {
+        return DgsDataLoaderInstrumentationDataLoaderCustomizer(instrumentations)
+    }
+
+    @Bean
     open fun dgsDataLoaderProvider(
         applicationContext: ApplicationContext,
         dataloaderOptionProvider: DgsDataLoaderOptionsProvider,
         @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService,
-        extensionProviders: List<DataLoaderInstrumentationExtensionProvider>
+        extensionProviders: List<DataLoaderInstrumentationExtensionProvider>,
+        customizers: List<DgsDataLoaderCustomizer>
     ): DgsDataLoaderProvider {
         return DgsDataLoaderProvider(
             applicationContext = applicationContext,
@@ -179,7 +204,8 @@ open class DgsAutoConfiguration(
             dataLoaderOptionsProvider = dataloaderOptionProvider,
             scheduledExecutorService = dgsScheduledExecutorService,
             scheduleDuration = dataloaderConfigProps.scheduleDuration,
-            enableTickerMode = dataloaderConfigProps.tickerModeEnabled
+            enableTickerMode = dataloaderConfigProps.tickerModeEnabled,
+            customizers = customizers
         )
     }
 
@@ -248,7 +274,7 @@ open class DgsAutoConfiguration(
     @Bean
     @ConditionalOnMissingBean
     open fun schema(dgsSchemaProvider: DgsSchemaProvider, fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
-        return dgsSchemaProvider.schema(null, fieldVisibility)
+        return dgsSchemaProvider.schema(null, fieldVisibility).graphQLSchema
     }
 
     @Bean
@@ -293,6 +319,7 @@ open class DgsAutoConfiguration(
     }
 
     @Bean
+    @ConditionalOnMissingClass("com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLAutoConfiguration")
     open fun uploadScalar(): UploadScalar {
         return UploadScalar()
     }

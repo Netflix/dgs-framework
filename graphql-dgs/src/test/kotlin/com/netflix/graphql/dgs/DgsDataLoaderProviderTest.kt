@@ -20,11 +20,15 @@ import com.netflix.graphql.dgs.exceptions.DgsUnnamedDataLoaderOnFieldException
 import com.netflix.graphql.dgs.exceptions.InvalidDataLoaderTypeException
 import com.netflix.graphql.dgs.exceptions.MultipleDataLoadersDefinedException
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
+import com.netflix.graphql.dgs.internal.DgsWrapWithContextDataLoaderCustomizer
 import graphql.schema.DataFetchingEnvironmentImpl
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.dataloader.BatchLoader
+import org.dataloader.BatchLoaderWithContext
 import org.dataloader.DataLoaderRegistry
+import org.dataloader.MappedBatchLoader
+import org.dataloader.MappedBatchLoaderWithContext
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -200,6 +204,45 @@ class DgsDataLoaderProviderTest {
                         "Field `batchLoader` in class `com.netflix.graphql.dgs.ExampleBatchLoaderWithoutNameFromField` was annotated with @DgsDataLoader, but the data loader was not given a proper name"
                     )
             }
+        }
+
+        @Test
+        fun wrapWithContextDataLoaderScanningInterceptorTest() {
+            applicationContextRunner.withBean(ExampleBatchLoaderWithoutName::class.java).withBean(DgsWrapWithContextDataLoaderCustomizer::class.java).withBean(DataLoaderCustomizerCounter::class.java).run { context ->
+                val provider = context.getBean(DgsDataLoaderProvider::class.java)
+                val dataLoaderRegistry = provider.buildRegistry()
+
+                val counter = context.getBean(DataLoaderCustomizerCounter::class.java)
+
+                assertThat(dataLoaderRegistry.dataLoaders.size).isEqualTo(1)
+
+                assertThat(counter.batchLoaderCount).isEqualTo(0)
+                assertThat(counter.batchLoaderWithContextCount).isEqualTo(1)
+                assertThat(counter.mappedBatchLoaderCount).isEqualTo(0)
+                assertThat(counter.mappedBatchLoaderWithContextCount).isEqualTo(0)
+            }
+        }
+    }
+
+    class DataLoaderCustomizerCounter(var batchLoaderCount: Int = 0, var batchLoaderWithContextCount: Int = 0, var mappedBatchLoaderCount: Int = 0, var mappedBatchLoaderWithContextCount: Int = 0) : DgsDataLoaderCustomizer {
+        override fun provide(original: BatchLoader<*, *>, name: String): Any {
+            batchLoaderCount += 1
+            return original
+        }
+
+        override fun provide(original: BatchLoaderWithContext<*, *>, name: String): Any {
+            batchLoaderWithContextCount += 1
+            return original
+        }
+
+        override fun provide(original: MappedBatchLoader<*, *>, name: String): Any {
+            mappedBatchLoaderCount += 1
+            return original
+        }
+
+        override fun provide(original: MappedBatchLoaderWithContext<*, *>, name: String): Any {
+            mappedBatchLoaderWithContextCount += 1
+            return original
         }
     }
 

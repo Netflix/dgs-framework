@@ -50,6 +50,7 @@ import kotlin.system.measureTimeMillis
 class DgsDataLoaderProvider(
     private val applicationContext: ApplicationContext,
     private val extensionProviders: List<DataLoaderInstrumentationExtensionProvider> = listOf(),
+    private val customizers: List<DgsDataLoaderCustomizer> = listOf(),
     private val dataLoaderOptionsProvider: DgsDataLoaderOptionsProvider = DefaultDataLoaderOptionsProvider(),
     private val scheduledExecutorService: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
     private val scheduleDuration: Duration = Duration.ofMillis(10),
@@ -107,11 +108,11 @@ class DgsDataLoaderProvider(
                     }
 
                     fun <T : Any> createHolder(t: T): LoaderHolder<T> = LoaderHolder(t, annotation, annotation.name)
-                    when (val get = field.get(dgsComponent)) {
-                        is BatchLoader<*, *> -> batchLoaders.add(createHolder(get))
-                        is BatchLoaderWithContext<*, *> -> batchLoadersWithContext.add(createHolder(get))
-                        is MappedBatchLoader<*, *> -> mappedBatchLoaders.add(createHolder(get))
-                        is MappedBatchLoaderWithContext<*, *> -> mappedBatchLoadersWithContext.add(createHolder(get))
+                    when (val dataLoader = runCustomizers(field.get(dgsComponent), annotation.name, dgsComponent::class.java)) {
+                        is BatchLoader<*, *> -> batchLoaders.add(createHolder(dataLoader))
+                        is BatchLoaderWithContext<*, *> -> batchLoadersWithContext.add(createHolder(dataLoader))
+                        is MappedBatchLoader<*, *> -> mappedBatchLoaders.add(createHolder(dataLoader))
+                        is MappedBatchLoaderWithContext<*, *> -> mappedBatchLoadersWithContext.add(createHolder(dataLoader))
                         else -> throw InvalidDataLoaderTypeException(dgsComponent::class.java)
                     }
                 }
@@ -137,15 +138,33 @@ class DgsDataLoaderProvider(
     }
 
     private fun <T : Any> addDataLoaders(dgsComponent: T, targetClass: Class<*>, annotation: DgsDataLoader, dispatchPredicate: DispatchPredicate?) {
+        val name = DataLoaderNameUtil.getDataLoaderName(targetClass, annotation)
         fun <T : Any> createHolder(t: T): LoaderHolder<T> =
             LoaderHolder(t, annotation, DataLoaderNameUtil.getDataLoaderName(targetClass, annotation), dispatchPredicate)
-        when (dgsComponent) {
-            is BatchLoader<*, *> -> batchLoaders.add(createHolder(dgsComponent))
-            is BatchLoaderWithContext<*, *> -> batchLoadersWithContext.add(createHolder(dgsComponent))
-            is MappedBatchLoader<*, *> -> mappedBatchLoaders.add(createHolder(dgsComponent))
-            is MappedBatchLoaderWithContext<*, *> -> mappedBatchLoadersWithContext.add(createHolder(dgsComponent))
+
+        when (val dataLoader = runCustomizers(dgsComponent, name, dgsComponent::class.java)) {
+            is BatchLoader<*, *> -> batchLoaders.add(createHolder(dataLoader))
+            is BatchLoaderWithContext<*, *> -> batchLoadersWithContext.add(createHolder(dataLoader))
+            is MappedBatchLoader<*, *> -> mappedBatchLoaders.add(createHolder(dataLoader))
+            is MappedBatchLoaderWithContext<*, *> -> mappedBatchLoadersWithContext.add(createHolder(dataLoader))
             else -> throw InvalidDataLoaderTypeException(dgsComponent::class.java)
         }
+    }
+
+    private fun runCustomizers(originalDataLoader: Any, name: String, dgsComponentClass: Class<*>): Any {
+        var dataLoader = originalDataLoader
+
+        customizers.forEach {
+            dataLoader = when (dataLoader) {
+                is BatchLoader<*, *> -> it.provide(dataLoader as BatchLoader<*, *>, name)
+                is BatchLoaderWithContext<*, *> -> it.provide(dataLoader as BatchLoaderWithContext<*, *>, name)
+                is MappedBatchLoader<*, *> -> it.provide(dataLoader as MappedBatchLoader<*, *>, name)
+                is MappedBatchLoaderWithContext<*, *> -> it.provide(dataLoader as MappedBatchLoaderWithContext<*, *>, name)
+                else -> throw InvalidDataLoaderTypeException(dgsComponentClass)
+            }
+        }
+
+        return dataLoader
     }
 
     private fun createDataLoader(

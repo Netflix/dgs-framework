@@ -21,7 +21,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
+import com.fasterxml.jackson.module.kotlin.jsonMapper
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule
 import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.DocumentContext
@@ -135,11 +137,13 @@ data class GraphQLResponse(
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(GraphQLResponse::class.java)
 
-        private val DEFAULT_MAPPER: ObjectMapper = jacksonObjectMapper()
-            .registerModule(JavaTimeModule())
-            .registerModule(ParameterNamesModule())
-            .registerModule(Jdk8Module())
-            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+        internal val DEFAULT_MAPPER: ObjectMapper = jsonMapper {
+            addModule(kotlinModule { enable(KotlinFeature.NullIsSameAsDefault) })
+            addModule(JavaTimeModule())
+            addModule(ParameterNamesModule())
+            addModule(Jdk8Module())
+            enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+        }
 
         fun getDataPath(path: String): String {
             return if (path == "data" || path.startsWith("data.")) {

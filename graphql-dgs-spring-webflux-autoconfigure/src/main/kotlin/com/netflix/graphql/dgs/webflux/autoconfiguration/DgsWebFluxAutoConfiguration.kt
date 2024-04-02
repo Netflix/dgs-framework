@@ -188,7 +188,7 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
             .GET(
                 configProps.schemaJson.path
             ) {
-                val graphQLSchema: GraphQLSchema = schemaProvider.schema()
+                val graphQLSchema: GraphQLSchema = schemaProvider.schema().graphQLSchema
                 val graphQL = GraphQL.newGraphQL(graphQLSchema).build()
 
                 val executionInput: ExecutionInput =
