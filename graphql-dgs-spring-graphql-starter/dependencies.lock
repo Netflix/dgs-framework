@@ -1174,7 +1174,7 @@
             ]
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.1.0",
+            "locked": "1.1.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "org.springframework.graphql:spring-graphql"
@@ -2590,7 +2590,7 @@
             ]
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.1.0",
+            "locked": "1.1.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "org.springframework.graphql:spring-graphql"
@@ -3926,7 +3926,7 @@
             ]
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.1.0",
+            "locked": "1.1.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "org.springframework.graphql:spring-graphql"

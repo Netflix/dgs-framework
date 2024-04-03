@@ -501,7 +501,7 @@
             ]
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "1.1.4"
+            "locked": "1.2.1"
         },
         "org.apache.logging.log4j:log4j-api": {
             "locked": "2.23.1",
@@ -1291,7 +1291,7 @@
             ]
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "1.1.4"
+            "locked": "1.2.1"
         },
         "net.sf.jopt-simple:jopt-simple": {
             "locked": "5.0.4",
@@ -1917,7 +1917,7 @@
             ]
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.1.0",
+            "locked": "1.1.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "org.springframework.graphql:spring-graphql"
@@ -2265,7 +2265,7 @@
             ]
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "1.1.4"
+            "locked": "1.2.1"
         },
         "net.bytebuddy:byte-buddy": {
             "locked": "1.14.12",
@@ -3730,7 +3730,7 @@
             ]
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.1.0",
+            "locked": "1.1.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "org.springframework.graphql:spring-graphql"
@@ -3989,7 +3989,7 @@
             ]
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "1.1.4"
+            "locked": "1.2.1"
         },
         "net.bytebuddy:byte-buddy": {
             "locked": "1.14.12",
@@ -4998,7 +4998,7 @@
             ]
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "1.1.4"
+            "locked": "1.2.1"
         },
         "net.bytebuddy:byte-buddy": {
             "locked": "1.14.12",
@@ -5799,7 +5799,7 @@
             ]
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.1.0",
+            "locked": "1.1.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "org.springframework.graphql:spring-graphql"
@@ -6147,7 +6147,7 @@
             ]
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "1.1.4"
+            "locked": "1.2.1"
         },
         "net.bytebuddy:byte-buddy": {
             "locked": "1.14.12",

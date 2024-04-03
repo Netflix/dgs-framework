@@ -142,7 +142,7 @@
             ]
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.1.0"
+            "locked": "1.1.1"
         },
         "io.micrometer:micrometer-commons": {
             "locked": "1.12.4",
@@ -507,7 +507,7 @@
             ]
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.1.0"
+            "locked": "1.1.1"
         },
         "io.micrometer:micrometer-commons": {
             "locked": "1.12.4",
@@ -961,7 +961,7 @@
             ]
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.1.0",
+            "locked": "1.1.1",
             "transitive": [
                 "org.springframework.graphql:spring-graphql"
             ]
@@ -2333,7 +2333,7 @@
             ]
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.1.0",
+            "locked": "1.1.1",
             "transitive": [
                 "org.springframework.graphql:spring-graphql"
             ]
@@ -2818,7 +2818,7 @@
             ]
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.1.0"
+            "locked": "1.1.1"
         },
         "io.micrometer:micrometer-commons": {
             "locked": "1.12.4",
@@ -3627,7 +3627,7 @@
             ]
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.1.0",
+            "locked": "1.1.1",
             "transitive": [
                 "org.springframework.graphql:spring-graphql"
             ]
