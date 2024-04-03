@@ -114,7 +114,7 @@ internal class DgsDataFetchingEnvironmentTest {
                 existingTypeDefinitionRegistry = Optional.empty(),
                 methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver()))
             )
-            val schema = schemaProvider.schema()
+            val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
 
             val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
@@ -141,7 +141,7 @@ internal class DgsDataFetchingEnvironmentTest {
                 existingTypeDefinitionRegistry = Optional.empty(),
                 methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver()))
             )
-            val schema = schemaProvider.schema()
+            val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
 
             val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
@@ -168,7 +168,7 @@ internal class DgsDataFetchingEnvironmentTest {
                 existingTypeDefinitionRegistry = Optional.empty(),
                 methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver()))
             )
-            val schema = schemaProvider.schema()
+            val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
 
             val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
@@ -196,7 +196,7 @@ internal class DgsDataFetchingEnvironmentTest {
                 methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
             )
 
-            val schema = schemaProvider.schema()
+            val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
 
             val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
@@ -223,7 +223,7 @@ internal class DgsDataFetchingEnvironmentTest {
                 methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver()))
             )
 
-            val schema = schemaProvider.schema()
+            val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
 
             val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
@@ -251,7 +251,7 @@ internal class DgsDataFetchingEnvironmentTest {
                 methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver()))
             )
 
-            val schema = schemaProvider.schema()
+            val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
 
             val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()

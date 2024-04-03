@@ -1,0 +1,7 @@
+extend type Query {
+    mono: String
+    flux: [Int]
+    usingContext: String
+    greetings(name: String): String
+    greetingsMono(name: String): String
+}

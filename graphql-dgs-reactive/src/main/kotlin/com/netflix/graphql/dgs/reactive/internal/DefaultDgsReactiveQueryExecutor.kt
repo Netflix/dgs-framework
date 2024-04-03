@@ -71,7 +71,7 @@ class DefaultDgsReactiveQueryExecutor(
         return Mono
             .fromCallable {
                 if (reloadIndicator.reloadSchema()) {
-                    schema.updateAndGet { schemaProvider.schema() }
+                    schema.updateAndGet { schemaProvider.schema().graphQLSchema }
                 } else {
                     schema.get()
                 }

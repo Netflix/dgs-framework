@@ -7,10 +7,10 @@
             "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "apiDependenciesMetadata": {
@@ -39,10 +39,10 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "implementationDependenciesMetadata": {
@@ -102,10 +102,10 @@
             "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "jmhApiDependenciesMetadata": {
@@ -176,10 +176,10 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "jmhImplementationDependenciesMetadata": {
@@ -292,10 +292,10 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "kotlinBuildToolsApiClasspath": {
@@ -394,10 +394,10 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "kotlinCompilerClasspath": {
@@ -457,10 +457,10 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "kotlinCompilerPluginClasspath": {
@@ -471,10 +471,10 @@
             "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "kotlinCompilerPluginClasspathJmh": {
@@ -539,10 +539,10 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
@@ -607,10 +607,10 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
@@ -675,10 +675,10 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "kotlinKaptWorkerDependencies": {
@@ -757,10 +757,10 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "kotlinNativeCompilerPluginClasspath": {
@@ -771,10 +771,10 @@
             "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "nebulaRecommenderBom": {
@@ -785,10 +785,10 @@
             "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "runtimeClasspath": {
@@ -812,10 +812,10 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "testAnnotationProcessor": {
@@ -826,10 +826,10 @@
             "locked": "1.9.23"
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "testCompileClasspath": {
@@ -853,10 +853,10 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -885,10 +885,10 @@
             ]
         },
         "org.springframework.boot:spring-boot-dependencies": {
-            "locked": "3.2.3"
+            "locked": "3.2.4"
         },
         "org.springframework.cloud:spring-cloud-dependencies": {
-            "locked": "2023.0.0"
+            "locked": "2023.0.1"
         }
     }
 }

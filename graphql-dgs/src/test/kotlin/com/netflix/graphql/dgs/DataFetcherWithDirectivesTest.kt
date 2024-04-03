@@ -79,7 +79,7 @@ class DataFetcherWithDirectivesTest {
             }
             
             """.trimIndent()
-        )
+        ).graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
         val executionResult = build.execute("{ hello }")
