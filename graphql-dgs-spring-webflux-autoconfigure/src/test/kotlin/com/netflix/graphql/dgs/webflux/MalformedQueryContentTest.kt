@@ -85,7 +85,6 @@ class MalformedQueryContentTest {
                   "errors":[
                     {
                       "message": "GraphQL operations must contain a non-empty `query`.",
-                      "locations":[],
                       "extensions": {
                         "errorType":"BAD_REQUEST",
                         "class":"com.netflix.graphql.dgs.exceptions.DgsBadRequestException"

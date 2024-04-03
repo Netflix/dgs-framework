@@ -20,23 +20,28 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import graphql.ErrorClassification;
 import graphql.GraphQLError;
+import graphql.GraphqlErrorHelper;
 import graphql.execution.ResultPath;
 import graphql.language.SourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import static graphql.Assert.assertNotNull;
 
 public class TypedGraphQLError implements GraphQLError {
 
     private final String message;
+    @Nullable
     private final List<SourceLocation> locations;
+    @Nullable
     private final ErrorClassification classification;
+    @Nullable
     private final List<Object> path;
+    @Nullable
     private final Map<String, Object> extensions;
 
     @JsonCreator
@@ -63,9 +68,8 @@ public class TypedGraphQLError implements GraphQLError {
     }
 
     @Override
-    // We return null here because we don't want graphql-java to write classification field
     public ErrorClassification getErrorType() {
-        return null;
+        return classification;
     }
 
     @Override
@@ -76,6 +80,27 @@ public class TypedGraphQLError implements GraphQLError {
     @Override
     public Map<String, Object> getExtensions() {
         return extensions;
+    }
+
+    @Override
+    public Map<String, Object> toSpecification() {
+        // We override toSpecification and explicitly don't delegate
+        // to GraphqlErrorHelper.toSpecification because it will add
+        // classification to extensions, but our builder has already
+        // handled that.
+
+        Map<String, Object> errorMap = newLinkedHashMap(4);
+        errorMap.put("message", message);
+        if (locations != null) {
+            errorMap.put("locations", GraphqlErrorHelper.locations(locations));
+        }
+        if (path != null) {
+            errorMap.put("path", path);
+        }
+        if (extensions != null) {
+            errorMap.put("extensions", extensions);
+        }
+        return errorMap;
     }
 
     /**
@@ -92,7 +117,7 @@ public class TypedGraphQLError implements GraphQLError {
      * @return A new TypedGraphQLError.Builder instance to further customize the error. Pre-sets ErrorType.INTERNAL.
      */
     public static Builder newInternalErrorBuilder() {
-        return new Builder().errorType(ErrorType.INTERNAL);
+        return newBuilder().errorType(ErrorType.INTERNAL);
     }
 
     /**
@@ -100,7 +125,7 @@ public class TypedGraphQLError implements GraphQLError {
      * @return A new TypedGraphQLError.Builder instance to further customize the error. Pre-sets ErrorType.NOT_FOUND.
      */
     public static Builder newNotFoundBuilder() {
-        return new Builder().errorType(ErrorType.NOT_FOUND);
+        return newBuilder().errorType(ErrorType.NOT_FOUND);
     }
 
     /**
@@ -108,7 +133,7 @@ public class TypedGraphQLError implements GraphQLError {
      * @return A new TypedGraphQLError.Builder instance to further customize the error. Pre-sets ErrorType.PERMISSION_DENIED.
      */
     public static Builder newPermissionDeniedBuilder() {
-        return new Builder().errorType(ErrorType.PERMISSION_DENIED);
+        return newBuilder().errorType(ErrorType.PERMISSION_DENIED);
     }
 
     /**
@@ -116,7 +141,7 @@ public class TypedGraphQLError implements GraphQLError {
      * @return A new TypedGraphQLError.Builder instance to further customize the error. Pre-sets ErrorType.BAD_REQUEST.
      */
     public static Builder newBadRequestBuilder() {
-        return new Builder().errorType(ErrorType.BAD_REQUEST);
+        return newBuilder().errorType(ErrorType.BAD_REQUEST);
     }
 
     /**
@@ -124,7 +149,7 @@ public class TypedGraphQLError implements GraphQLError {
      * @return A new TypedGraphQLError.Builder instance to further customize the error. Pre-sets {@link ErrorDetail.Common#CONFLICT}.
      */
     public static Builder newConflictBuilder() {
-        return new Builder().errorDetail(ErrorDetail.Common.CONFLICT);
+        return newBuilder().errorDetail(ErrorDetail.Common.CONFLICT);
     }
 
     @Override
@@ -132,6 +157,7 @@ public class TypedGraphQLError implements GraphQLError {
         return "TypedGraphQLError{" +
                 "message='" + message + '\'' +
                 ", locations=" + locations +
+                ", classification=" + classification +
                 ", path=" + path +
                 ", extensions=" + extensions +
                 '}';
@@ -139,29 +165,18 @@ public class TypedGraphQLError implements GraphQLError {
 
     @Override
     public int hashCode() {
-        return Objects.hash(message, locations, path, extensions);
+        return GraphqlErrorHelper.hashCode(this);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null) return false;
-        if (obj.getClass() != this.getClass()) return false;
-
-        TypedGraphQLError e = (TypedGraphQLError)obj;
-
-        if (!Objects.equals(message, e.message)) return false;
-        if (!Objects.equals(locations, e.locations)) return false;
-        if (!Objects.equals(path, e.path)) return false;
-        if (!Objects.equals(extensions, e.extensions)) return false;
-
-        return true;
+        return GraphqlErrorHelper.equals(this, obj);
     }
 
-    public static class Builder {
+    public static final class Builder implements GraphQLError.Builder<Builder> {
         private String message;
         private List<Object> path;
-        private List<SourceLocation> locations = new ArrayList<>();
+        private List<SourceLocation> locations;
         private ErrorClassification errorClassification = ErrorType.UNKNOWN;
         private Map<String, Object> extensions;
         private String origin;
@@ -176,13 +191,23 @@ public class TypedGraphQLError implements GraphQLError {
         }
 
         private Map<String, Object> getExtensions() {
-            HashMap<String, Object> extensionsMap = new HashMap<>();
-            if (extensions != null) extensionsMap.putAll(extensions);
-            if (errorClassification instanceof ErrorType) {
-                extensionsMap.put("errorType", String.valueOf(errorClassification));
-            } else if (errorClassification instanceof ErrorDetail) {
-                extensionsMap.put("errorType", String.valueOf(((ErrorDetail) errorClassification).getErrorType()));
-                extensionsMap.put("errorDetail", String.valueOf(errorClassification));
+            final Map<String, Object> extensionsMap;
+            if (extensions == null) {
+                extensionsMap = newLinkedHashMap(5);
+            } else {
+                extensionsMap = newLinkedHashMap(extensions.size() + 5);
+                extensionsMap.putAll(extensions);
+            }
+
+            if (errorClassification != null) {
+                if (errorClassification instanceof ErrorType) {
+                    extensionsMap.put("errorType", String.valueOf(errorClassification));
+                } else if (errorClassification instanceof ErrorDetail) {
+                    extensionsMap.put("errorType", String.valueOf(((ErrorDetail) errorClassification).getErrorType()));
+                    extensionsMap.put("errorDetail", String.valueOf(errorClassification));
+                } else if (!extensionsMap.containsKey("classification")) {
+                    extensionsMap.put("classification", String.valueOf(errorClassification));
+                }
             }
             if (origin != null) extensionsMap.put("origin", origin);
             if (debugUri != null) extensionsMap.put("debugUri", debugUri);
@@ -195,28 +220,54 @@ public class TypedGraphQLError implements GraphQLError {
             return this;
         }
 
+        @Override
         public Builder message(String message, Object... formatArgs) {
-            this.message = String.format(assertNotNull(message), formatArgs);
+            if (formatArgs == null || formatArgs.length == 0) {
+                this.message = assertNotNull(message);
+            } else {
+                this.message = String.format(assertNotNull(message), formatArgs);
+            }
             return this;
         }
 
-        public Builder locations(List<SourceLocation> locations) {
-            this.locations.addAll(assertNotNull(locations));
+        @Override
+        public Builder locations(@Nullable List<SourceLocation> locations) {
+            if (locations != null) {
+                if (this.locations == null) {
+                    this.locations = new ArrayList<>(locations);
+                } else {
+                    this.locations.addAll(locations);
+                }
+            } else {
+                this.locations = null;
+            }
             return this;
         }
 
-        public Builder location(SourceLocation location) {
-            this.locations.add(assertNotNull(location));
+        @Override
+        public Builder location(@Nullable SourceLocation location) {
+            if (location != null) {
+                if (this.locations == null) {
+                    this.locations = new ArrayList<>();
+                }
+                this.locations.add(location);
+            }
             return this;
         }
 
-        public Builder path(ResultPath path) {
-            this.path = assertNotNull(path).toList();
+        @Override
+        public Builder path(@Nullable ResultPath path) {
+            if (path != null) {
+                this.path = path.toList();
+            } else {
+                this.path = null;
+            }
             return this;
         }
 
-        public Builder path(List<Object> path) {
-            this.path = assertNotNull(path);
+        @Override
+        public Builder path(@Nullable List<Object> path) {
+            this.path = path;
             return this;
         }
 
@@ -245,8 +296,15 @@ public class TypedGraphQLError implements GraphQLError {
             return this;
         }
 
-        public Builder extensions(Map<String, Object> extensions) {
-            this.extensions = assertNotNull(extensions);
+        @Override
+        public Builder extensions(@Nullable Map<String, Object> extensions) {
+            this.extensions = extensions;
+            return this;
+        }
+
+        @Override
+        public Builder errorType(ErrorClassification errorType) {
+            this.errorClassification = errorType;
             return this;
         }
 
@@ -259,4 +317,10 @@ public class TypedGraphQLError implements GraphQLError {
         }
     }
 
+    /**
+     * Creates a new, empty LinkedHashMap suitable for the expected number of mappings.
+     */
+    private static <K, V> LinkedHashMap<K, V> newLinkedHashMap(int numMappings) {
+        return new LinkedHashMap<>((int) Math.ceil(numMappings / (double) 0.75f));
+    }
 }

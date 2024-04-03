@@ -571,7 +571,7 @@ class MicrometerServletSmokeTest {
                         |{
                         |   "errors":[
                         |      {"message":"Exception triggered.",
-                        |          "locations":[],"path":["triggerBadRequestFailure"],
+                        |          "path":["triggerBadRequestFailure"],
                         |          "extensions":{"errorType":"BAD_REQUEST"}}
                         |   ],
                         |   "data":{"triggerBadRequestFailure":null}
@@ -641,7 +641,7 @@ class MicrometerServletSmokeTest {
                     |{
                     |   "errors":[
                     |       { 
-                    |           "message":"Exception triggered.","locations":[],
+                    |           "message":"Exception triggered.",
                     |           "path":["triggerCustomFailure"],
                     |           "extensions":{"errorType":"UNAVAILABLE","errorDetail":"ENHANCE_YOUR_CALM"}
                     |       }
@@ -712,8 +712,8 @@ class MicrometerServletSmokeTest {
                     """
                     | {"errors":[
                     |    {"message":"java.lang.IllegalStateException: Exception triggered.","locations":[{"line":1,"column":3}],"path":["triggerInternalFailure"],"extensions":{"errorType":"INTERNAL"}},
-                    |    {"message":"Exception triggered.","locations":[],"path":["triggerBadRequestFailure"],"extensions":{"class":"com.netflix.graphql.dgs.exceptions.DgsBadRequestException","errorType":"BAD_REQUEST"}},
-                    |    {"message":"Exception triggered.","locations":[],"path":["triggerCustomFailure"],"extensions":{"errorType":"UNAVAILABLE","errorDetail":"ENHANCE_YOUR_CALM"}}
+                    |    {"message":"Exception triggered.","path":["triggerBadRequestFailure"],"extensions":{"class":"com.netflix.graphql.dgs.exceptions.DgsBadRequestException","errorType":"BAD_REQUEST"}},
+                    |    {"message":"Exception triggered.","path":["triggerCustomFailure"],"extensions":{"errorType":"UNAVAILABLE","errorDetail":"ENHANCE_YOUR_CALM"}}
                     |  ],
                     |  "data":{"triggerInternalFailure":null,"triggerBadRequestFailure":null,"triggerCustomFailure":null}}
                     """.trimMargin(),
