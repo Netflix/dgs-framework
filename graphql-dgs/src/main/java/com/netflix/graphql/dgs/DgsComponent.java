@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  * Each DgsComponent is also a regular Spring Component.
  * The framework will scan each DgsComponent for other annotations.
  */
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Component
 @Qualifier("dgs")

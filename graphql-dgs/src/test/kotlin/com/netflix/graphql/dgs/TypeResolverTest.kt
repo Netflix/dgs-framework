@@ -94,7 +94,7 @@ class TypeResolverTest {
                 nrOfExplosions: Int
             }
             """.trimIndent()
-        )
+        ).graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
         val executionResult = build.execute(
@@ -150,7 +150,7 @@ class TypeResolverTest {
                 nrOfExplosions: Int
             }
             """.trimIndent()
-        )
+        ).graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
 
@@ -217,7 +217,7 @@ class TypeResolverTest {
                 nrOfExplosions: Int
             }
             """.trimIndent()
-        )
+        ).graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
         val executionResult = build.execute(

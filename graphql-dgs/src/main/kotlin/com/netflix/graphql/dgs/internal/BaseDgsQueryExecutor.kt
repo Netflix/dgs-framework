@@ -139,6 +139,7 @@ object BaseDgsQueryExecutor {
                         .executionResult(ExecutionResult.newExecutionResult().addError(cause).build())
                         .build()
                 } else {
+                    logger.error("Encountered an exception while handling query {}", query, cause)
                     DgsExecutionResult
                         .builder()
                         .status(HttpStatus.INTERNAL_SERVER_ERROR)
