@@ -21,7 +21,6 @@ import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsWebMvcRequestData
 import com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLConfigurationProperties
 import graphql.GraphQLContext
-import jakarta.servlet.http.HttpServletRequest
 import org.springframework.graphql.server.WebGraphQlInterceptor
 import org.springframework.graphql.server.WebGraphQlRequest
 import org.springframework.graphql.server.WebGraphQlResponse
@@ -39,12 +38,12 @@ class DgsWebMvcGraphQLInterceptor(
 ) : WebGraphQlInterceptor {
     override fun intercept(request: WebGraphQlRequest, chain: WebGraphQlInterceptor.Chain): Mono<WebGraphQlResponse> {
         // We need to pass in the original server request for the dgs context
-        val servletRequest: HttpServletRequest? = if (RequestContextHolder.getRequestAttributes() is ServletRequestAttributes) {
-            (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes).request
+        val servletRequestAttributes = if (RequestContextHolder.getRequestAttributes() is ServletRequestAttributes) {
+            (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes)
         } else null
 
-        val dgsContext = if (servletRequest != null) {
-            val webRequest: WebRequest = ServletWebRequest(servletRequest)
+        val dgsContext = if (servletRequestAttributes != null) {
+            val webRequest: WebRequest = ServletWebRequest(servletRequestAttributes.request, servletRequestAttributes.response)
             dgsContextBuilder.build(DgsWebMvcRequestData(request.extensions, request.headers, webRequest))
         } else {
             dgsContextBuilder.build(DgsWebMvcRequestData(request.extensions, request.headers))
