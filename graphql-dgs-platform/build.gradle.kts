@@ -96,6 +96,9 @@ dependencies {
          api("org.apache.logging.log4j:log4j-api:2.23.1") {
             because("Refer to CVE-2021-44228; https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228")
          }
+        api("io.micrometer:context-propagation") {
+            version { require("1.1.1") }
+        }
     }
 }
 

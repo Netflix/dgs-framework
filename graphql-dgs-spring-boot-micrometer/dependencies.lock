@@ -230,7 +230,7 @@
             ]
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.7.10"
+            "locked": "1.7.11"
         },
         "commons-codec:commons-codec": {
             "locked": "1.16.1",
@@ -804,7 +804,7 @@
             ]
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.7.10"
+            "locked": "1.7.11"
         },
         "commons-codec:commons-codec": {
             "locked": "1.16.1",
@@ -1405,7 +1405,7 @@
             ]
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.7.10"
+            "locked": "1.7.11"
         },
         "com.vaadin.external.google:android-json": {
             "locked": "0.0.20131108.vaadin1",
@@ -1423,6 +1423,14 @@
             "locked": "1.11-8",
             "transitive": [
                 "com.github.mifmif:generex"
+            ]
+        },
+        "io.micrometer:context-propagation": {
+            "locked": "1.1.1",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure"
             ]
         },
         "io.micrometer:micrometer-commons": {
@@ -2842,7 +2850,7 @@
             ]
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.7.10"
+            "locked": "1.7.11"
         },
         "commons-codec:commons-codec": {
             "locked": "1.16.1",
@@ -2854,6 +2862,13 @@
             "locked": "1.11-8",
             "transitive": [
                 "com.github.mifmif:generex"
+            ]
+        },
+        "io.micrometer:context-propagation": {
+            "locked": "1.1.1",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
         "io.micrometer:micrometer-commons": {
@@ -3359,7 +3374,7 @@
             ]
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.7.10"
+            "locked": "1.7.11"
         },
         "com.vaadin.external.google:android-json": {
             "locked": "0.0.20131108.vaadin1",
@@ -4207,7 +4222,7 @@
             ]
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.7.10"
+            "locked": "1.7.11"
         },
         "com.vaadin.external.google:android-json": {
             "locked": "0.0.20131108.vaadin1",
@@ -4225,6 +4240,14 @@
             "locked": "1.11-8",
             "transitive": [
                 "com.github.mifmif:generex"
+            ]
+        },
+        "io.micrometer:context-propagation": {
+            "locked": "1.1.1",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure"
             ]
         },
         "io.micrometer:micrometer-commons": {

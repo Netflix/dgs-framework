@@ -842,6 +842,13 @@
                 "com.github.mifmif:generex"
             ]
         },
+        "io.micrometer:context-propagation": {
+            "locked": "1.1.1",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
         "io.micrometer:micrometer-commons": {
             "locked": "1.12.4",
             "transitive": [
@@ -2109,6 +2116,13 @@
                 "com.github.mifmif:generex"
             ]
         },
+        "io.micrometer:context-propagation": {
+            "locked": "1.1.1",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
         "io.micrometer:micrometer-commons": {
             "locked": "1.12.4",
             "transitive": [
@@ -3185,6 +3199,13 @@
             "locked": "1.11-8",
             "transitive": [
                 "com.github.mifmif:generex"
+            ]
+        },
+        "io.micrometer:context-propagation": {
+            "locked": "1.1.1",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
         "io.micrometer:micrometer-commons": {

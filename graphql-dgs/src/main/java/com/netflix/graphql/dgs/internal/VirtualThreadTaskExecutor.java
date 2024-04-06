@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.internal;
 
+import io.micrometer.context.ContextSnapshotFactory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.task.AsyncTaskExecutor;
 
@@ -27,7 +28,7 @@ import java.util.concurrent.Future;
  * The actual implementation is in the java21 source folder, using the multi-release JAR feature.
  */
 public class VirtualThreadTaskExecutor implements AsyncTaskExecutor {
-    public VirtualThreadTaskExecutor() {
+    public VirtualThreadTaskExecutor(ContextSnapshotFactory contextSnapshotFactory) {
     }
 
     @Override
