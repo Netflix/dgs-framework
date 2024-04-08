@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.internal;
 
+import io.micrometer.context.ContextSnapshotFactory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.task.AsyncTaskExecutor;
 
@@ -31,14 +32,18 @@ import java.util.concurrent.ThreadFactory;
 @SuppressWarnings("unused")
 public class VirtualThreadTaskExecutor implements AsyncTaskExecutor {
     private final ThreadFactory threadFactory;
+    private final ContextSnapshotFactory contextSnapshotFactory;
 
-    public VirtualThreadTaskExecutor() {
+    public VirtualThreadTaskExecutor(ContextSnapshotFactory contextSnapshotFactory) {
+        this.contextSnapshotFactory = contextSnapshotFactory;
         this.threadFactory = Thread.ofVirtual().name("dgs-virtual-thread-", 0).factory();
     }
 
     @Override
     public void execute(@NotNull Runnable task) {
-        threadFactory.newThread(task).start();
+        var contextSnapshot = contextSnapshotFactory.captureAll();
+        var wrapped = contextSnapshot.wrap(task);
+        threadFactory.newThread(wrapped).start();
     }
 
     @Override

@@ -1561,7 +1561,7 @@
             ]
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.7.10",
+            "locked": "1.7.11",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ]
@@ -1583,6 +1583,14 @@
             "locked": "1.11-8",
             "transitive": [
                 "com.github.mifmif:generex"
+            ]
+        },
+        "io.micrometer:context-propagation": {
+            "locked": "1.1.1",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure"
             ]
         },
         "io.micrometer:micrometer-commons": {
@@ -3436,7 +3444,7 @@
             ]
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.7.10",
+            "locked": "1.7.11",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ]
@@ -3452,6 +3460,14 @@
             "locked": "1.11-8",
             "transitive": [
                 "com.github.mifmif:generex"
+            ]
+        },
+        "io.micrometer:context-propagation": {
+            "locked": "1.1.1",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure"
             ]
         },
         "io.micrometer:micrometer-commons": {
@@ -5384,7 +5400,7 @@
             ]
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.7.10",
+            "locked": "1.7.11",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ]
@@ -5406,6 +5422,14 @@
             "locked": "1.11-8",
             "transitive": [
                 "com.github.mifmif:generex"
+            ]
+        },
+        "io.micrometer:context-propagation": {
+            "locked": "1.1.1",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure"
             ]
         },
         "io.micrometer:micrometer-commons": {

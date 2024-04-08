@@ -142,7 +142,10 @@
             ]
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.1.0"
+            "locked": "1.1.1",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
         },
         "io.micrometer:micrometer-commons": {
             "locked": "1.12.4",
@@ -507,7 +510,10 @@
             ]
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.1.0"
+            "locked": "1.1.1",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
         },
         "io.micrometer:micrometer-commons": {
             "locked": "1.12.4",
@@ -961,8 +967,11 @@
             ]
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.1.0",
+            "locked": "1.1.1",
             "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "org.springframework.graphql:spring-graphql"
             ]
         },
@@ -2333,8 +2342,10 @@
             ]
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.1.0",
+            "locked": "1.1.1",
             "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.springframework.graphql:spring-graphql"
             ]
         },
@@ -2818,7 +2829,10 @@
             ]
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.1.0"
+            "locked": "1.1.1",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
         },
         "io.micrometer:micrometer-commons": {
             "locked": "1.12.4",
@@ -3627,8 +3641,11 @@
             ]
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.1.0",
+            "locked": "1.1.1",
             "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "org.springframework.graphql:spring-graphql"
             ]
         },
