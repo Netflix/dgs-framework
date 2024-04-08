@@ -16,16 +16,23 @@
 
 package com.netflix.graphql.types.errors;
 
+import graphql.ErrorClassification;
+import graphql.GraphQLError;
 import graphql.execution.ResultPath;
 import graphql.language.SourceLocation;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class TypedGraphQLErrorTest {
     @Test
@@ -33,14 +40,37 @@ public class TypedGraphQLErrorTest {
         TypedGraphQLError baseError = TypedGraphQLError.newPermissionDeniedBuilder()
                 .message("org.springframework.security.access.AccessDeniedException: Access is denied")
                 .path(ResultPath.parse("/graphqlEndpoint"))
+                .location(new SourceLocation(5, 10))
+                .extensions(Map.of("foo", "bar"))
                 .build();
 
         TypedGraphQLError sameError = TypedGraphQLError.newPermissionDeniedBuilder()
                 .message("org.springframework.security.access.AccessDeniedException: Access is denied")
                 .path(ResultPath.parse("/graphqlEndpoint"))
+                .location(new SourceLocation(5, 10))
+                .extensions(Map.of("foo", "bar"))
                 .build();
 
-        Assertions.assertEquals(baseError, sameError);
+        assertEquals(baseError, sameError);
+    }
+
+    @Test
+    void hashCodeTest() {
+        TypedGraphQLError baseError = TypedGraphQLError.newPermissionDeniedBuilder()
+                .message("org.springframework.security.access.AccessDeniedException: Access is denied")
+                .path(ResultPath.parse("/graphqlEndpoint"))
+                .location(SourceLocation.EMPTY)
+                .extensions(Map.of("foo", "bar"))
+                .build();
+
+        TypedGraphQLError sameError = TypedGraphQLError.newPermissionDeniedBuilder()
+                .message("org.springframework.security.access.AccessDeniedException: Access is denied")
+                .path(ResultPath.parse("/graphqlEndpoint"))
+                .location(SourceLocation.EMPTY)
+                .extensions(Map.of("foo", "bar"))
+                .build();
+
+        assertEquals(baseError.hashCode(), sameError.hashCode());
     }
 
     @Test
@@ -55,7 +85,7 @@ public class TypedGraphQLErrorTest {
                 .path(ResultPath.parse("/graphqlEndpoint"))
                 .build();
 
-        Assertions.assertNotEquals(baseError, differentMessageError);
+        assertNotEquals(baseError, differentMessageError);
 
         TypedGraphQLError differentLocationsError = TypedGraphQLError.newPermissionDeniedBuilder()
                 .message("Different Error Message")
@@ -63,30 +93,63 @@ public class TypedGraphQLErrorTest {
                 .path(ResultPath.parse("/graphqlEndpoint"))
                 .build();
 
-        Assertions.assertNotEquals(baseError, differentLocationsError);
+        assertNotEquals(baseError, differentLocationsError);
 
         TypedGraphQLError differentPathError = TypedGraphQLError.newPermissionDeniedBuilder()
                 .message("org.springframework.security.access.AccessDeniedException: Access is denied")
                 .path(ResultPath.parse("/differentGraphQlEndpoint"))
                 .build();
 
-        Assertions.assertNotEquals(baseError, differentPathError);
+        assertNotEquals(baseError, differentPathError);
 
         TypedGraphQLError differentExtensionsError = TypedGraphQLError.newPermissionDeniedBuilder()
                 .message("org.springframework.security.access.AccessDeniedException: Access is denied")
                 .path(ResultPath.parse("/differentGraphQlEndpoint"))
-                .extensions(new HashMap<String, Object>() {{
-                    put("key", "value");
-                }})
+                .extensions(Map.of("key", "value"))
                 .build();
 
-        Assertions.assertNotEquals(baseError, differentExtensionsError);
+        assertNotEquals(baseError, differentExtensionsError);
+    }
+
+    @Test
+    void specificationTest() {
+        GraphQLError error = TypedGraphQLError.newInternalErrorBuilder()
+                .message("unknown error")
+                .build();
+        Map<String, Object> spec = error.toSpecification();
+        assertEquals("unknown error", spec.get("message"));
+        assertNull(spec.get("locations"));
+        Map<?, ?> extensions = (Map<?, ?>) spec.get("extensions");
+        assertNotNull(extensions);
+        assertEquals("INTERNAL", extensions.get("errorType"));
+    }
+
+    @Test
+    void customExtensionsAndClassificationSpecificationTest() {
+        GraphQLError error = TypedGraphQLError.newBuilder()
+                .message("unknown error")
+                .path(ResultPath.rootPath())
+                .errorType(ErrorClassification.errorClassification("unknown"))
+                .location(new SourceLocation(1, 10))
+                .extensions(Map.of("foo", "bar"))
+                .build();
+        Map<String, Object> spec = error.toSpecification();
+        assertEquals("unknown error", spec.get("message"));
+        List<?> locations = (List<?>) spec.get("locations");
+        assertNotNull(locations);
+        assertEquals(1, locations.size());
+        assertEquals(Map.of("line", 1, "column", 10), locations.get(0));
+
+        Map<?, ?> extensions = (Map<?, ?>) spec.get("extensions");
+        assertNotNull(extensions);
+        assertEquals("bar", extensions.get("foo"));
+        assertEquals("unknown", extensions.get("classification"));
     }
 
     @ParameterizedTest
     @MethodSource("reflexiveEqualitySource")
     void reflexiveEqualityWithNullFieldsTest(TypedGraphQLError error, TypedGraphQLError sameError) {
-        Assertions.assertEquals(error, sameError);
+        assertEquals(error, sameError);
     }
 
     private static Stream<Arguments> reflexiveEqualitySource() {
