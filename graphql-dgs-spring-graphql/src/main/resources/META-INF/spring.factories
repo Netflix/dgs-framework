@@ -1,1 +1,3 @@
-org.springframework.boot.env.EnvironmentPostProcessor=com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLEnvironmentPostProcessor
+org.springframework.boot.env.EnvironmentPostProcessor=\
+  com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLEnvironmentPostProcessor,\
+  com.netflix.graphql.dgs.springgraphql.autoconfig.ExcludeAutoConfigurationsEnvironmentPostProcessor
