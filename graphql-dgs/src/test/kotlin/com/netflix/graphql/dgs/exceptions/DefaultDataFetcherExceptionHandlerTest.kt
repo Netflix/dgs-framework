@@ -58,8 +58,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo("PERMISSION_DENIED")
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(ErrorType.PERMISSION_DENIED)
     }
 
     @Test
@@ -74,8 +73,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo("INTERNAL")
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(ErrorType.INTERNAL)
         assertThat(result.errors[0].path).isEqualTo(listOf("Foo", "bar"))
         assertThat(result.errors[0].locations).isEqualTo(listOf(SourceLocation(5, 5)))
     }
@@ -93,8 +91,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo("INTERNAL")
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(ErrorType.INTERNAL)
     }
 
     @Test
@@ -110,8 +107,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo("NOT_FOUND")
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(ErrorType.NOT_FOUND)
     }
 
     @Test
@@ -127,8 +123,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo("BAD_REQUEST")
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(ErrorType.BAD_REQUEST)
     }
 
     @Test
@@ -149,8 +144,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo(customDgsExceptionType.name)
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(customDgsExceptionType)
     }
 
     @Test
@@ -171,7 +165,6 @@ class DefaultDataFetcherExceptionHandlerTest {
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo("NOT_FOUND")
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(ErrorType.NOT_FOUND)
     }
 }
