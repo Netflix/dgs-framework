@@ -50,6 +50,9 @@ import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.visibility.DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
 import graphql.schema.visibility.GraphqlFieldVisibility
 import graphql.schema.visibility.NoIntrospectionGraphqlFieldVisibility.NO_INTROSPECTION_FIELD_VISIBILITY
+import io.micrometer.context.ContextRegistry
+import io.micrometer.context.ContextSnapshotFactory
+import io.micrometer.context.integration.Slf4jThreadLocalAccessor
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.ObjectProvider
@@ -345,6 +348,13 @@ open class DgsAutoConfiguration(
         return FluxDataFetcherResultProcessor()
     }
 
+    @Bean
+    @ConditionalOnMissingBean
+    open fun dgsMicrometerContextRegistry(): ContextRegistry {
+        return ContextRegistry.getInstance()
+            .registerThreadLocalAccessor(Slf4jThreadLocalAccessor())
+    }
+
     /**
      * JDK 21+ only - Creates the dgsAsyncTaskExecutor which is used to run data fetchers automatically wrapped in CompletableFuture.
      * Can be provided by other frameworks to enable context propagation.
@@ -354,9 +364,10 @@ open class DgsAutoConfiguration(
     @ConditionalOnJava21
     @ConditionalOnMissingBean(name = ["dgsAsyncTaskExecutor"])
     @ConditionalOnProperty(name = ["dgs.graphql.virtualthreads.enabled"], havingValue = "true", matchIfMissing = false)
-    open fun virtualThreadsTaskExecutor(): AsyncTaskExecutor {
+    open fun virtualThreadsTaskExecutor(contextRegistry: ContextRegistry): AsyncTaskExecutor {
         LOG.info("Enabling virtual threads for DGS")
-        return VirtualThreadTaskExecutor()
+        val contextSnapshotFactory = ContextSnapshotFactory.builder().contextRegistry(contextRegistry).build()
+        return VirtualThreadTaskExecutor(contextSnapshotFactory)
     }
 
     @Bean
