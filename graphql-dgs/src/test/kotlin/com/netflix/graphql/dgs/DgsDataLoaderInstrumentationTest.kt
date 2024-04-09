@@ -59,11 +59,35 @@ class DgsDataLoaderInstrumentationTest {
                 val dataLoaderRegistry = provider.buildRegistry()
 
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("ExampleBatchLoaderWithoutName")
+                dataLoader.load("test")
                 dataLoader.dispatch().whenComplete { _, _ ->
                     assertThat(beforeCounter.get()).isEqualTo(1)
                     assertThat(afterCounter.get()).isEqualTo(1)
                     assertThat(exceptionCounter.get()).isEqualTo(0)
-                }
+                }.join()
+            }
+    }
+
+    @Test
+    fun instrumentationIsCorrectlyPassingToRegistryConsumer() {
+        val beforeCounter = AtomicInteger(0)
+        val afterCounter = AtomicInteger(0)
+        val exceptionCounter = AtomicInteger(0)
+
+        applicationContextRunner.withBean(ExampleBatchLoaderWithRegistryConsumer::class.java)
+            .withBean(DgsWrapWithContextDataLoaderCustomizer::class.java)
+            .withBean(DgsDataLoaderInstrumentationDataLoaderCustomizer::class.java)
+            .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter).run { context ->
+                val provider = context.getBean(DgsDataLoaderProvider::class.java)
+                val dataLoaderRegistry = provider.buildRegistry()
+
+                val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleBatchLoaderWithRegistryConsumer")
+                dataLoader.load("test")
+                dataLoader.dispatch().whenComplete { _, _ ->
+                    assertThat(beforeCounter.get()).isEqualTo(1)
+                    assertThat(afterCounter.get()).isEqualTo(1)
+                    assertThat(exceptionCounter.get()).isEqualTo(0)
+                }.join()
             }
     }
 
@@ -81,11 +105,12 @@ class DgsDataLoaderInstrumentationTest {
                 val dataLoaderRegistry = provider.buildRegistry()
 
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleLoaderThatThrows")
+                dataLoader.load("test")
                 dataLoader.dispatch().whenComplete { _, _ ->
                     assertThat(beforeCounter.get()).isEqualTo(1)
                     assertThat(afterCounter.get()).isEqualTo(0)
                     assertThat(exceptionCounter.get()).isEqualTo(1)
-                }
+                }.join()
             }
     }
 }

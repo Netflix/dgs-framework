@@ -930,6 +930,7 @@ class MicrometerServletSmokeTest {
                         dataLoaderTaskExecutor
                     )
                 }
+
                 override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry) {
                     this.dataLoaderRegistry = Optional.of(dataLoaderRegistry)
                 }
