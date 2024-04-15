@@ -25,9 +25,17 @@ import graphql.execution.ResultPath
 import graphql.language.Field
 import graphql.language.SourceLocation
 import graphql.schema.DataFetchingEnvironmentImpl
+import io.mockk.confirmVerified
+import io.mockk.every
+import io.mockk.spyk
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.slf4j.Logger
+import org.slf4j.event.Level
+import org.slf4j.spi.NOPLoggingEventBuilder
 import org.springframework.security.access.AccessDeniedException
+import java.lang.IllegalStateException
 import java.util.concurrent.CompletionException
 
 class DefaultDataFetcherExceptionHandlerTest {
@@ -166,5 +174,46 @@ class DefaultDataFetcherExceptionHandlerTest {
         assertThat(extensions["errorType"]).isEqualTo("NOT_FOUND")
 
         assertThat(result.errors[0].errorType).isEqualTo(ErrorType.NOT_FOUND)
+    }
+
+    @Test
+    fun `DgsException with explicit log level`() {
+        val debugLevelException = object : DgsException(
+            "something went wrong",
+            IllegalStateException("something went wrong"),
+            ErrorType.UNAVAILABLE,
+            Level.DEBUG
+        ) {}
+
+        val defaultLevelException = object : DgsException(
+            "something went wrong",
+            IllegalStateException("something went wrong"),
+            ErrorType.UNAVAILABLE
+        ) {}
+
+        // Configure the logger to be a mock so we can check invocations
+        val loggerMock = spyk<Logger>()
+        every { loggerMock.atLevel(any()) } answers { NOPLoggingEventBuilder.singleton() }
+
+        val mock = spyk<DefaultDataFetcherExceptionHandler>()
+        every { mock.getProperty("logger") } answers { loggerMock }
+
+        val handlerParametersForDebugException = DataFetcherExceptionHandlerParameters.newExceptionParameters()
+            .exception(debugLevelException)
+            .dataFetchingEnvironment(environment)
+            .build()
+
+        val handlerParametersForDefaultException = DataFetcherExceptionHandlerParameters.newExceptionParameters()
+            .exception(defaultLevelException)
+            .dataFetchingEnvironment(environment)
+            .build()
+
+        // Handle both exceptions
+        mock.handleException(handlerParametersForDebugException).get()
+        mock.handleException(handlerParametersForDefaultException).get()
+
+        verify { loggerMock.atLevel(Level.DEBUG) }
+        verify { loggerMock.atLevel(Level.ERROR) }
+        confirmVerified(loggerMock)
     }
 }
