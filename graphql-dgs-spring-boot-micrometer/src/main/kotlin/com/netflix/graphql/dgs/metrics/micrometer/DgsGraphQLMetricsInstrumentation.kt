@@ -35,6 +35,14 @@ import io.micrometer.core.instrument.DistributionSummary
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Timer
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.metrics.AutoTimer
@@ -44,14 +52,6 @@ import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import kotlin.jvm.optionals.getOrNull
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 
 class DgsGraphQLMetricsInstrumentation(
     private val schemaProvider: DgsSchemaProvider,
@@ -257,8 +257,10 @@ class DgsGraphQLMetricsInstrumentation(
         )
     }
 
-    private suspend fun captureGqlQueryRequestSizeMetric(executionInput: ExecutionInput,
-                                                         state: MetricsInstrumentationState) = coroutineScope {
+    private suspend fun captureGqlQueryRequestSizeMetric(
+        executionInput: ExecutionInput,
+        state: MetricsInstrumentationState
+    ) = coroutineScope {
         val tags = buildList { addAll(state.tags()) }
 
         val requestSizeMeter = DistributionSummary.builder(GqlMetric.QUERY_REQUEST_SIZE.key)
@@ -278,8 +280,11 @@ class DgsGraphQLMetricsInstrumentation(
         }
     }
 
-    private suspend fun captureGqlQueryResponseSizeMetric(executionResult: ExecutionResult, parameters: InstrumentationExecutionParameters,
-                                                  state: MetricsInstrumentationState) = coroutineScope {
+    private suspend fun captureGqlQueryResponseSizeMetric(
+        executionResult: ExecutionResult,
+        parameters: InstrumentationExecutionParameters,
+        state: MetricsInstrumentationState
+    ) = coroutineScope {
         val tags = buildList {
             addAll(state.tags())
             addAll(tagsProvider.getExecutionTags(state, parameters, executionResult, null))
