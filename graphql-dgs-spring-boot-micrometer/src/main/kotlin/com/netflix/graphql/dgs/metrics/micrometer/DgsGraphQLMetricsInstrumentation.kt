@@ -1,5 +1,7 @@
 package com.netflix.graphql.dgs.metrics.micrometer
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.netflix.graphql.dgs.Internal
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlMetric
@@ -29,16 +31,27 @@ import graphql.schema.DataFetcher
 import graphql.schema.GraphQLNamedType
 import graphql.schema.GraphQLTypeUtil
 import graphql.validation.ValidationError
+import io.micrometer.core.instrument.DistributionSummary
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Timer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.metrics.AutoTimer
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
+import java.io.ByteArrayOutputStream
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import kotlin.jvm.optionals.getOrNull
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 class DgsGraphQLMetricsInstrumentation(
     private val schemaProvider: DgsSchemaProvider,
@@ -52,6 +65,8 @@ class DgsGraphQLMetricsInstrumentation(
 
     companion object {
         private val log: Logger = LoggerFactory.getLogger(DgsGraphQLMetricsInstrumentation::class.java)
+        private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        private val mapper: ObjectMapper = Jackson2ObjectMapperBuilder().modules(kotlinModule()).build()
     }
 
     @Deprecated("Deprecated in Java")
@@ -92,6 +107,14 @@ class DgsGraphQLMetricsInstrumentation(
         state: InstrumentationState
     ): CompletableFuture<ExecutionResult> {
         require(state is MetricsInstrumentationState)
+
+        try {
+            applicationScope.launch(CoroutineName("captureGqlQueryResponseSizeMetric-${state.operationNameValue}")) {
+                captureGqlQueryResponseSizeMetric(executionResult, parameters, state)
+            }
+        } catch (exc: Exception) {
+            log.warn("Exception thrown while attempting to serialize and measure response size of graphql data.")
+        }
 
         val errorTagValues = ErrorUtils.sanitizeErrorPaths(executionResult)
         if (errorTagValues.isNotEmpty()) {
@@ -204,6 +227,15 @@ class DgsGraphQLMetricsInstrumentation(
         if (properties.tags.complexity.enabled) {
             state.queryComplexityValue = ComplexityUtils.resolveComplexity(parameters)
         }
+
+        try {
+            applicationScope.launch(CoroutineName("captureGqlQueryRequestSizeMetric-${state.operationNameValue}")) {
+                captureGqlQueryRequestSizeMetric(parameters.executionContext.executionInput, state)
+            }
+        } catch (exc: Exception) {
+            log.warn("Exception thrown while attempting to serialize and measure request size of graphql data.")
+        }
+
         return super.beginExecuteOperation(parameters, state)
     }
 
@@ -223,6 +255,51 @@ class DgsGraphQLMetricsInstrumentation(
                 .tags(recordedTags)
                 .register(registry)
         )
+    }
+
+    private suspend fun captureGqlQueryRequestSizeMetric(executionInput: ExecutionInput,
+                                                         state: MetricsInstrumentationState) = coroutineScope {
+        val tags = buildList { addAll(state.tags()) }
+
+        val requestSizeMeter = DistributionSummary.builder(GqlMetric.QUERY_REQUEST_SIZE.key)
+            .description("Tracks graphql query request size.")
+            .baseUnit("bytes")
+            .tags(tags)
+            .publishPercentiles(0.90, 0.95, 0.99)
+            .register(registrySupplier.get())
+
+        launch {
+            val gqlQuerySize: Deferred<Int> = async { MeasurementUtils.serializeAndMeasureSize(executionInput.query) }
+            val gqlVariablesSize: Deferred<Int> = async { MeasurementUtils.serializeAndMeasureSize(executionInput.rawVariables) }
+
+            val totalSize = gqlQuerySize.await() + gqlVariablesSize.await()
+
+            requestSizeMeter.record(totalSize.toDouble())
+        }
+    }
+
+    private suspend fun captureGqlQueryResponseSizeMetric(executionResult: ExecutionResult, parameters: InstrumentationExecutionParameters,
+                                                  state: MetricsInstrumentationState) = coroutineScope {
+        val tags = buildList {
+            addAll(state.tags())
+            addAll(tagsProvider.getExecutionTags(state, parameters, executionResult, null))
+        }
+
+        val responseSizeMeter = DistributionSummary.builder(GqlMetric.QUERY_RESPONSE_SIZE.key)
+            .description("Tracks graphql query response size.")
+            .baseUnit("bytes")
+            .tags(tags)
+            .publishPercentiles(0.90, 0.95, 0.99)
+            .register(registrySupplier.get())
+
+        launch {
+            val gqlDataSize: Deferred<Int> = async { MeasurementUtils.serializeAndMeasureSize(executionResult.getData<Map<String, *>>()) }
+            val gqlErrorsSize: Deferred<Int> = async { MeasurementUtils.serializeAndMeasureSize(executionResult.errors) }
+            val gqlExtensionsSize: Deferred<Int> = async { MeasurementUtils.serializeAndMeasureSize(executionResult.extensions) }
+
+            val totalSize = gqlDataSize.await() + gqlErrorsSize.await() + gqlExtensionsSize.await()
+            responseSizeMeter.record(totalSize.toDouble())
+        }
     }
 
     class MetricsInstrumentationState(
@@ -381,5 +458,14 @@ class DgsGraphQLMetricsInstrumentation(
         }
 
         internal data class ErrorTagValues(val path: String, val type: String, val detail: String)
+    }
+
+    internal object MeasurementUtils {
+        suspend inline fun <reified T> serializeAndMeasureSize(obj: T): Int = coroutineScope {
+            ByteArrayOutputStream().use { outputStream ->
+                mapper.writeValue(outputStream, obj)
+                outputStream.size()
+            }
+        }
     }
 }

@@ -123,7 +123,7 @@ class MicrometerServletSmokeTest {
 
         val meters = fetchMeters()
 
-        assertThat(meters).containsOnlyKeys("gql.query", "gql.resolver")
+        assertThat(meters).containsKeys("gql.query", "gql.resolver")
 
         assertThat(meters["gql.query"]).isNotNull.hasSize(1)
         assertThat(meters["gql.query"]?.first()?.id?.tags)
@@ -165,7 +165,7 @@ class MicrometerServletSmokeTest {
 
         val meters = fetchMeters()
 
-        assertThat(meters).containsOnlyKeys("gql.query", "gql.resolver")
+        assertThat(meters).containsKeys("gql.query", "gql.resolver")
 
         assertThat(meters["gql.query"]).isNotNull.hasSize(1)
         assertThat(meters["gql.query"]?.first()?.id?.tags)
@@ -214,7 +214,7 @@ class MicrometerServletSmokeTest {
 
         val meters = fetchMeters()
 
-        assertThat(meters).containsOnlyKeys("gql.query", "gql.resolver")
+        assertThat(meters).containsKeys("gql.query", "gql.resolver")
 
         assertThat(meters["gql.query"]).isNotNull.hasSize(1)
         assertThat(meters["gql.query"]?.first()?.id?.tags)
@@ -283,7 +283,7 @@ class MicrometerServletSmokeTest {
 
         val meters = fetchMeters()
 
-        assertThat(meters).containsOnlyKeys("gql.dataLoader", "gql.query", "gql.resolver")
+        assertThat(meters).containsKeys("gql.dataLoader", "gql.query", "gql.resolver")
 
         assertThat(meters["gql.dataLoader"]).isNotNull.hasSize(2)
         assertThat(meters["gql.dataLoader"]?.map { it.id.tags })
@@ -362,7 +362,7 @@ class MicrometerServletSmokeTest {
             )
         val meters = fetchMeters("gql.")
 
-        assertThat(meters).containsOnlyKeys("gql.error", "gql.query")
+        assertThat(meters).containsKeys("gql.error", "gql.query")
 
         assertThat(meters["gql.error"]).isNotNull.hasSize(1)
         assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
@@ -405,7 +405,7 @@ class MicrometerServletSmokeTest {
 
         val meters = fetchMeters()
 
-        assertThat(meters).containsOnlyKeys("gql.query")
+        assertThat(meters).containsKeys("gql.query")
 
         assertThat(meters["gql.query"]).isNotNull.hasSize(1)
         assertThat(meters["gql.query"]?.first()?.id?.tags)
@@ -450,7 +450,7 @@ class MicrometerServletSmokeTest {
             )
         val meters = fetchMeters("gql.")
 
-        assertThat(meters).containsOnlyKeys("gql.error", "gql.query")
+        assertThat(meters).containsKeys("gql.error", "gql.query")
 
         assertThat(meters["gql.error"]).isNotNull.hasSize(1)
         assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
@@ -510,7 +510,7 @@ class MicrometerServletSmokeTest {
 
         val meters = fetchMeters("gql.")
 
-        assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
+        assertThat(meters).containsKeys("gql.error", "gql.query", "gql.resolver")
 
         logMeters(meters["gql.error"])
         assertThat(meters["gql.error"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
@@ -583,7 +583,7 @@ class MicrometerServletSmokeTest {
 
         val meters = fetchMeters("gql.")
 
-        assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
+        assertThat(meters).containsKeys("gql.error", "gql.query", "gql.resolver")
 
         assertThat(meters["gql.error"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
         assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
@@ -655,7 +655,7 @@ class MicrometerServletSmokeTest {
 
         val meters = fetchMeters()
 
-        assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
+        assertThat(meters).containsKeys("gql.error", "gql.query", "gql.resolver")
 
         assertThat(meters["gql.error"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
         assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
@@ -723,7 +723,7 @@ class MicrometerServletSmokeTest {
 
         val meters = fetchMeters()
 
-        assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
+        assertThat(meters).containsKeys("gql.error", "gql.query", "gql.resolver")
 
         assertThat(meters["gql.query"]).hasSizeGreaterThanOrEqualTo(1)
         assertThat(meters["gql.error"]).hasSizeGreaterThanOrEqualTo(3)
@@ -765,6 +765,102 @@ class MicrometerServletSmokeTest {
                 .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
                 .toList()
         )
+    }
+
+    @Test
+    fun `Query input size metrics for a successful graphql request`() {
+        mvc.perform(
+            MockMvcRequestBuilders
+                .post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{ "query": "query my_op_1{ping}" }""")
+        ).andExpect(status().isOk)
+            .andExpect(content().json("""{"data":{"ping":"pong"}}""", false))
+
+        val meters = fetchMeters()
+
+        // Check metrics are present.
+        assertThat(meters).containsKeys(
+            "gql.query.request.size", "gql.query.request.size.percentile",
+            "gql.query.response.size", "gql.query.response.size.percentile"
+        )
+
+        // Check expected percentiles: .90, .95, .99
+        assertThat(meters["gql.query.request.size.percentile"]).isNotNull
+        assertThat(meters["gql.query.response.size.percentile"]).isNotNull
+
+        // Check metric name and expected tags.
+        assertThat(meters["gql.query.request.size"]).isNotNull
+        assertThat(meters["gql.query.request.size"]?.first()?.id?.tags)
+            .containsAll(
+                Tags.of("gql.operation", "QUERY")
+                    .and("gql.operation.name", "my_op_1")
+                    .and("gql.query.complexity", "5")
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+            )
+
+        assertThat(meters["gql.query.response.size"]).isNotNull
+        assertThat(meters["gql.query.response.size"]?.first()?.id?.tags)
+            .containsAll(
+                Tags.of("outcome", "success")
+                    .and("gql.operation", "QUERY")
+                    .and("gql.operation.name", "my_op_1")
+                    .and("gql.query.complexity", "5")
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+            )
+    }
+
+    @Test
+    fun `Query input size metrics for a unsuccessful graphql request`() {
+        mvc.perform(
+            MockMvcRequestBuilders
+                .post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{ "query": "{triggerBadRequestFailure}" }""")
+        ).andExpect(status().isOk)
+            .andExpect(
+                content().json(
+                    """
+                        |{
+                        |   "errors":[
+                        |      {"message":"Exception triggered.",
+                        |          "locations":[],"path":["triggerBadRequestFailure"],
+                        |          "extensions":{"errorType":"BAD_REQUEST"}}
+                        |   ],
+                        |   "data":{"triggerBadRequestFailure":null}
+                        |}
+                    """.trimMargin(),
+                    false
+                )
+            )
+
+        val meters = fetchMeters()
+
+        // Check metrics are present.
+        assertThat(meters).containsKeys(
+            "gql.query.request.size", "gql.query.request.size.percentile",
+            "gql.query.response.size", "gql.query.response.size.percentile"
+        )
+
+        // Check metric name and expected tags.
+        assertThat(meters["gql.query.request.size"]).isNotNull
+        assertThat(meters["gql.query.request.size"]?.first()?.id?.tags)
+            .containsAll(
+                Tags.of("gql.operation", "QUERY")
+                    .and("gql.operation.name", "anonymous")
+                    .and("gql.query.complexity", "5")
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+            )
+
+        assertThat(meters["gql.query.response.size"]).isNotNull
+        assertThat(meters["gql.query.response.size"]?.first()?.id?.tags)
+            .containsAll(
+                Tags.of("outcome", "failure")
+                    .and("gql.operation", "QUERY")
+                    .and("gql.operation.name", "anonymous")
+                    .and("gql.query.complexity", "5")
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+            )
     }
 
     private fun fetchMeters(prefix: String = "gql."): Map<String, List<Meter>> {
