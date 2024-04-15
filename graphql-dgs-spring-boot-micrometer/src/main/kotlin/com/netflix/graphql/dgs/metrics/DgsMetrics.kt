@@ -41,6 +41,18 @@ object DgsMetrics {
          * This is useful if you want to find data loaders that might be responsible for poor query performance.
          */
         DATA_LOADER("gql.dataLoader"),
+
+        /**
+         * _DistributionSummary_ that captures the size of a graphql query in a request.
+         * Measures size in bytes of the query and variables.
+         */
+        QUERY_REQUEST_SIZE("gql.query.request.size"),
+
+        /**
+         * _DistributionSummary_ that captures the size of the result of a graphql query returned in a response.
+         * Measures size in bytes of the data, errors, and extensions.
+         */
+        QUERY_RESPONSE_SIZE("gql.query.response.size"),
     }
 
     /** Defines the tags applied to the [GqlMetric] emitted by the framework. */
