@@ -66,6 +66,14 @@ public class FileUploadMutation {
         return !parts.isEmpty();
     }
 
+    @DgsData(parentType = "Mutation", field = "uploadTest")
+    public boolean uploadTest(@InputArgument MultipartFile input, DataFetchingEnvironment dfe) {
+        MultipartFile file = input;
+        MultipartFile inputTest = (MultipartFile) dfe.getArgument("input");
+        if (file == null || file.isEmpty()) return false;
+        return true;
+    }
+
     static class FileUploadInput {
         private String description;
         private List<MultipartFile> files;

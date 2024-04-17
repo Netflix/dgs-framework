@@ -58,6 +58,7 @@ type Mutation {
     addRating(input: RatingInput):Rating
     uploadFile(input: FileUploadInput!): Boolean
     updateCookie(value: String): String
+    uploadTest(input: Upload!): Boolean
 }
 
 input RatingInput {
