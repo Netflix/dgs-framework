@@ -781,8 +781,10 @@ class MicrometerServletSmokeTest {
 
         // Check metrics are present.
         assertThat(meters).containsKeys(
-            "gql.query.request.size", "gql.query.request.size.percentile",
-            "gql.query.response.size", "gql.query.response.size.percentile"
+            "gql.query.request.size",
+            "gql.query.request.size.percentile",
+            "gql.query.response.size",
+            "gql.query.response.size.percentile"
         )
 
         // Check expected percentiles: .90, .95, .99
@@ -824,7 +826,7 @@ class MicrometerServletSmokeTest {
                         |{
                         |   "errors":[
                         |      {"message":"Exception triggered.",
-                        |          "locations":[],"path":["triggerBadRequestFailure"],
+                        |          "path":["triggerBadRequestFailure"],
                         |          "extensions":{"errorType":"BAD_REQUEST"}}
                         |   ],
                         |   "data":{"triggerBadRequestFailure":null}
@@ -838,8 +840,10 @@ class MicrometerServletSmokeTest {
 
         // Check metrics are present.
         assertThat(meters).containsKeys(
-            "gql.query.request.size", "gql.query.request.size.percentile",
-            "gql.query.response.size", "gql.query.response.size.percentile"
+            "gql.query.request.size",
+            "gql.query.request.size.percentile",
+            "gql.query.response.size",
+            "gql.query.response.size.percentile"
         )
 
         // Check metric name and expected tags.
