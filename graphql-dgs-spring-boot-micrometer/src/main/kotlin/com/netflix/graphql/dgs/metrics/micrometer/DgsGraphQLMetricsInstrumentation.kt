@@ -35,14 +35,6 @@ import io.micrometer.core.instrument.DistributionSummary
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Timer
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.metrics.AutoTimer
@@ -65,7 +57,6 @@ class DgsGraphQLMetricsInstrumentation(
 
     companion object {
         private val log: Logger = LoggerFactory.getLogger(DgsGraphQLMetricsInstrumentation::class.java)
-        private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
         private val mapper: ObjectMapper = Jackson2ObjectMapperBuilder().modules(kotlinModule()).build()
     }
 
@@ -109,9 +100,7 @@ class DgsGraphQLMetricsInstrumentation(
         require(state is MetricsInstrumentationState)
 
         try {
-            applicationScope.launch(CoroutineName("captureGqlQueryResponseSizeMetric-${state.operationNameValue}")) {
-                captureGqlQueryResponseSizeMetric(executionResult, parameters, state)
-            }
+            captureGqlQueryResponseSizeMetric(executionResult, parameters, state)
         } catch (exc: Exception) {
             log.warn("Exception thrown while attempting to serialize and measure response size of graphql data.")
         }
@@ -229,9 +218,7 @@ class DgsGraphQLMetricsInstrumentation(
         }
 
         try {
-            applicationScope.launch(CoroutineName("captureGqlQueryRequestSizeMetric-${state.operationNameValue}")) {
-                captureGqlQueryRequestSizeMetric(parameters.executionContext.executionInput, state)
-            }
+            captureGqlQueryRequestSizeMetric(parameters.executionContext.executionInput, state)
         } catch (exc: Exception) {
             log.warn("Exception thrown while attempting to serialize and measure request size of graphql data.")
         }
@@ -257,10 +244,10 @@ class DgsGraphQLMetricsInstrumentation(
         )
     }
 
-    private suspend fun captureGqlQueryRequestSizeMetric(
+    private fun captureGqlQueryRequestSizeMetric(
         executionInput: ExecutionInput,
         state: MetricsInstrumentationState
-    ) = coroutineScope {
+    ) {
         val tags = buildList { addAll(state.tags()) }
 
         val requestSizeMeter = DistributionSummary.builder(GqlMetric.QUERY_REQUEST_SIZE.key)
@@ -270,21 +257,18 @@ class DgsGraphQLMetricsInstrumentation(
             .publishPercentiles(0.90, 0.95, 0.99)
             .register(registrySupplier.get())
 
-        launch {
-            val gqlQuerySize: Deferred<Int> = async { MeasurementUtils.serializeAndMeasureSize(executionInput.query) }
-            val gqlVariablesSize: Deferred<Int> = async { MeasurementUtils.serializeAndMeasureSize(executionInput.rawVariables) }
+        val gqlQuerySize = MeasurementUtils.serializeAndMeasureSize(executionInput.query)
+        val gqlVariablesSize = MeasurementUtils.serializeAndMeasureSize(executionInput.rawVariables)
 
-            val totalSize = gqlQuerySize.await() + gqlVariablesSize.await()
-
-            requestSizeMeter.record(totalSize.toDouble())
-        }
+        val totalSize = gqlQuerySize + gqlVariablesSize
+        requestSizeMeter.record(totalSize.toDouble())
     }
 
-    private suspend fun captureGqlQueryResponseSizeMetric(
+    private fun captureGqlQueryResponseSizeMetric(
         executionResult: ExecutionResult,
         parameters: InstrumentationExecutionParameters,
         state: MetricsInstrumentationState
-    ) = coroutineScope {
+    ) {
         val tags = buildList {
             addAll(state.tags())
             addAll(tagsProvider.getExecutionTags(state, parameters, executionResult, null))
@@ -297,14 +281,12 @@ class DgsGraphQLMetricsInstrumentation(
             .publishPercentiles(0.90, 0.95, 0.99)
             .register(registrySupplier.get())
 
-        launch {
-            val gqlDataSize: Deferred<Int> = async { MeasurementUtils.serializeAndMeasureSize(executionResult.getData<Map<String, *>>()) }
-            val gqlErrorsSize: Deferred<Int> = async { MeasurementUtils.serializeAndMeasureSize(executionResult.errors) }
-            val gqlExtensionsSize: Deferred<Int> = async { MeasurementUtils.serializeAndMeasureSize(executionResult.extensions) }
+        val gqlDataSize = MeasurementUtils.serializeAndMeasureSize(executionResult.getData<Map<String, *>>())
+        val gqlErrorsSize = MeasurementUtils.serializeAndMeasureSize(executionResult.errors)
+        val gqlExtensionsSize = MeasurementUtils.serializeAndMeasureSize(executionResult.extensions)
 
-            val totalSize = gqlDataSize.await() + gqlErrorsSize.await() + gqlExtensionsSize.await()
-            responseSizeMeter.record(totalSize.toDouble())
-        }
+        val totalSize = gqlDataSize + gqlErrorsSize + gqlExtensionsSize
+        responseSizeMeter.record(totalSize.toDouble())
     }
 
     class MetricsInstrumentationState(
@@ -466,10 +448,10 @@ class DgsGraphQLMetricsInstrumentation(
     }
 
     internal object MeasurementUtils {
-        suspend inline fun <reified T> serializeAndMeasureSize(obj: T): Int = coroutineScope {
-            ByteArrayOutputStream().use { outputStream ->
+        inline fun <reified T> serializeAndMeasureSize(obj: T): Int {
+            return ByteArrayOutputStream().use { outputStream ->
                 mapper.writeValue(outputStream, obj)
-                outputStream.size()
+                return@use outputStream.size()
             }
         }
     }
