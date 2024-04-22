@@ -174,7 +174,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
              *   > compatibility for existing clients compiled against previous library versions.
              * Ref. https://kotlinlang.org/docs/kotlin-reference.pdf
              */
-            freeCompilerArgs = freeCompilerArgs + "-Xjvm-default=all-compatibility"
+            freeCompilerArgs = freeCompilerArgs + "-Xjvm-default=all-compatibility" + "-java-parameters"
             jvmTarget = "17"
         }
     }
