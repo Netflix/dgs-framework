@@ -768,7 +768,7 @@ class MicrometerServletSmokeTest {
     }
 
     @Test
-    fun `Query input size metrics for a successful graphql request`() {
+    fun `Gql request size metric for a successful graphql query request`() {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
@@ -781,31 +781,18 @@ class MicrometerServletSmokeTest {
 
         // Check metrics are present.
         assertThat(meters).containsKeys(
-            "gql.query.request.size",
-            "gql.query.request.size.percentile",
-            "gql.query.response.size",
-            "gql.query.response.size.percentile"
+            "gql.request.size",
+            "gql.request.size.percentile"
         )
 
         // Check expected percentiles: .90, .95, .99
-        assertThat(meters["gql.query.request.size.percentile"]).isNotNull
-        assertThat(meters["gql.query.response.size.percentile"]).isNotNull
+        assertThat(meters["gql.request.size.percentile"]).isNotNull
 
         // Check metric name and expected tags.
-        assertThat(meters["gql.query.request.size"]).isNotNull
-        assertThat(meters["gql.query.request.size"]?.first()?.id?.tags)
+        assertThat(meters["gql.request.size"]).isNotNull
+        assertThat(meters["gql.request.size"]?.first()?.id?.tags)
             .containsAll(
                 Tags.of("gql.operation", "QUERY")
-                    .and("gql.operation.name", "my_op_1")
-                    .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
-            )
-
-        assertThat(meters["gql.query.response.size"]).isNotNull
-        assertThat(meters["gql.query.response.size"]?.first()?.id?.tags)
-            .containsAll(
-                Tags.of("outcome", "success")
-                    .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "my_op_1")
                     .and("gql.query.complexity", "5")
                     .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
@@ -813,7 +800,36 @@ class MicrometerServletSmokeTest {
     }
 
     @Test
-    fun `Query input size metrics for a unsuccessful graphql request`() {
+    fun `Gql request size metric for a successful graphql mutation request with explicit operation name`() {
+        mvc.perform(
+            MockMvcRequestBuilders
+                .post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{ "query": " mutation my_op_1{buzz}" }""".trimMargin())
+        ).andExpect(status().isOk)
+            .andExpect(content().json("""{"data":{"buzz":"buzz"}}""", false))
+
+        val meters = fetchMeters()
+
+        // Check metrics are present.
+        assertThat(meters).containsKeys(
+            "gql.request.size",
+            "gql.request.size.percentile"
+        )
+
+        // Check metric name and expected tags.
+        assertThat(meters["gql.request.size"]).isNotNull
+        assertThat(meters["gql.request.size"]?.first()?.id?.tags)
+            .containsAll(
+                Tags.of("gql.operation", "MUTATION")
+                    .and("gql.operation.name", "my_op_1")
+                    .and("gql.query.complexity", "5")
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+            )
+    }
+
+    @Test
+    fun `Query request size metrics for a unsuccessful graphql request`() {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
@@ -840,27 +856,15 @@ class MicrometerServletSmokeTest {
 
         // Check metrics are present.
         assertThat(meters).containsKeys(
-            "gql.query.request.size",
-            "gql.query.request.size.percentile",
-            "gql.query.response.size",
-            "gql.query.response.size.percentile"
+            "gql.request.size",
+            "gql.request.size.percentile"
         )
 
         // Check metric name and expected tags.
-        assertThat(meters["gql.query.request.size"]).isNotNull
-        assertThat(meters["gql.query.request.size"]?.first()?.id?.tags)
+        assertThat(meters["gql.request.size"]).isNotNull
+        assertThat(meters["gql.request.size"]?.first()?.id?.tags)
             .containsAll(
                 Tags.of("gql.operation", "QUERY")
-                    .and("gql.operation.name", "anonymous")
-                    .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
-            )
-
-        assertThat(meters["gql.query.response.size"]).isNotNull
-        assertThat(meters["gql.query.response.size"]?.first()?.id?.tags)
-            .containsAll(
-                Tags.of("outcome", "failure")
-                    .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "5")
                     .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)

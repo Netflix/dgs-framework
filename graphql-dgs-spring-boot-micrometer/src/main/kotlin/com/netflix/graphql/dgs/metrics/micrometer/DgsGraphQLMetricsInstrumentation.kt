@@ -1,8 +1,7 @@
 package com.netflix.graphql.dgs.metrics.micrometer
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.netflix.graphql.dgs.Internal
+import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlMetric
 import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlTag
@@ -38,8 +37,6 @@ import io.micrometer.core.instrument.Timer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.metrics.AutoTimer
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
-import java.io.ByteArrayOutputStream
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
@@ -57,7 +54,6 @@ class DgsGraphQLMetricsInstrumentation(
 
     companion object {
         private val log: Logger = LoggerFactory.getLogger(DgsGraphQLMetricsInstrumentation::class.java)
-        private val mapper: ObjectMapper = Jackson2ObjectMapperBuilder().modules(kotlinModule()).build()
     }
 
     @Deprecated("Deprecated in Java")
@@ -98,12 +94,6 @@ class DgsGraphQLMetricsInstrumentation(
         state: InstrumentationState
     ): CompletableFuture<ExecutionResult> {
         require(state is MetricsInstrumentationState)
-
-        try {
-            captureGqlQueryResponseSizeMetric(executionResult, parameters, state)
-        } catch (exc: Exception) {
-            log.warn("Exception thrown while attempting to serialize and measure response size of graphql data.")
-        }
 
         val errorTagValues = ErrorUtils.sanitizeErrorPaths(executionResult)
         if (errorTagValues.isNotEmpty()) {
@@ -217,11 +207,7 @@ class DgsGraphQLMetricsInstrumentation(
             state.queryComplexityValue = ComplexityUtils.resolveComplexity(parameters)
         }
 
-        try {
-            captureGqlQueryRequestSizeMetric(parameters.executionContext.executionInput, state)
-        } catch (exc: Exception) {
-            log.warn("Exception thrown while attempting to serialize and measure request size of graphql data.")
-        }
+        recordGqlRequestSizeMetric(parameters.executionContext, state)
 
         return super.beginExecuteOperation(parameters, state)
     }
@@ -244,49 +230,27 @@ class DgsGraphQLMetricsInstrumentation(
         )
     }
 
-    private fun captureGqlQueryRequestSizeMetric(
-        executionInput: ExecutionInput,
+    private fun recordGqlRequestSizeMetric(
+        executionContext: ExecutionContext,
         state: MetricsInstrumentationState
     ) {
-        val tags = buildList { addAll(state.tags()) }
-
-        val requestSizeMeter = DistributionSummary.builder(GqlMetric.QUERY_REQUEST_SIZE.key)
-            .description("Tracks graphql query request size.")
-            .baseUnit("bytes")
-            .tags(tags)
-            .publishPercentiles(0.90, 0.95, 0.99)
-            .register(registrySupplier.get())
-
-        val gqlQuerySize = MeasurementUtils.serializeAndMeasureSize(executionInput.query)
-        val gqlVariablesSize = MeasurementUtils.serializeAndMeasureSize(executionInput.rawVariables)
-
-        val totalSize = gqlQuerySize + gqlVariablesSize
-        requestSizeMeter.record(totalSize.toDouble())
-    }
-
-    private fun captureGqlQueryResponseSizeMetric(
-        executionResult: ExecutionResult,
-        parameters: InstrumentationExecutionParameters,
-        state: MetricsInstrumentationState
-    ) {
-        val tags = buildList {
-            addAll(state.tags())
-            addAll(tagsProvider.getExecutionTags(state, parameters, executionResult, null))
+        // Capture size using Content-Length header.
+        val requestSizeBytes = DgsContext.from(executionContext.graphQLContext).requestData?.headers?.contentLength
+        if (requestSizeBytes == null) {
+            log.warn("Missing or improper Content-Length header. Unable to record graphql request size metric.")
+            return
         }
 
-        val responseSizeMeter = DistributionSummary.builder(GqlMetric.QUERY_RESPONSE_SIZE.key)
-            .description("Tracks graphql query response size.")
+        // Record metric.
+        val tags = buildList { addAll(state.tags()) }
+        val requestSizeMeter = DistributionSummary.builder(GqlMetric.REQUEST_SIZE.key)
+            .description("Tracks graphql request size.")
             .baseUnit("bytes")
             .tags(tags)
             .publishPercentiles(0.90, 0.95, 0.99)
             .register(registrySupplier.get())
 
-        val gqlDataSize = MeasurementUtils.serializeAndMeasureSize(executionResult.getData<Map<String, *>>())
-        val gqlErrorsSize = MeasurementUtils.serializeAndMeasureSize(executionResult.errors)
-        val gqlExtensionsSize = MeasurementUtils.serializeAndMeasureSize(executionResult.extensions)
-
-        val totalSize = gqlDataSize + gqlErrorsSize + gqlExtensionsSize
-        responseSizeMeter.record(totalSize.toDouble())
+        requestSizeMeter.record(requestSizeBytes.toDouble())
     }
 
     class MetricsInstrumentationState(
@@ -445,14 +409,5 @@ class DgsGraphQLMetricsInstrumentation(
         }
 
         internal data class ErrorTagValues(val path: String, val type: String, val detail: String)
-    }
-
-    internal object MeasurementUtils {
-        inline fun <reified T> serializeAndMeasureSize(obj: T): Int {
-            return ByteArrayOutputStream().use { outputStream ->
-                mapper.writeValue(outputStream, obj)
-                return@use outputStream.size()
-            }
-        }
     }
 }

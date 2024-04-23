@@ -7,7 +7,6 @@ dependencies {
     implementation("com.netflix.spectator:spectator-api:1.7.+")
     implementation("com.github.ben-manes.caffeine:caffeine")
     implementation("org.springframework:spring-context-support")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     compileOnly(project(":graphql-dgs-spring-boot-starter"))
     compileOnly("org.springframework.boot:spring-boot-actuator-autoconfigure")

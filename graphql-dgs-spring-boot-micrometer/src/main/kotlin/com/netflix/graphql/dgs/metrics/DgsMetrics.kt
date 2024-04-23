@@ -43,16 +43,10 @@ object DgsMetrics {
         DATA_LOADER("gql.dataLoader"),
 
         /**
-         * _DistributionSummary_ that captures the size of a graphql query in a request.
-         * Measures size in bytes of the query and variables.
+         * _DistributionSummary_ that captures the size of a graphql request.
+         * Measures size in bytes of a graphql http request body.
          */
-        QUERY_REQUEST_SIZE("gql.query.request.size"),
-
-        /**
-         * _DistributionSummary_ that captures the size of the result of a graphql query returned in a response.
-         * Measures size in bytes of the data, errors, and extensions.
-         */
-        QUERY_RESPONSE_SIZE("gql.query.response.size"),
+        REQUEST_SIZE("gql.request.size"),
     }
 
     /** Defines the tags applied to the [GqlMetric] emitted by the framework. */
