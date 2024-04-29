@@ -65,11 +65,10 @@ open class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
     protected open fun logException(handlerParameters: DataFetcherExceptionHandlerParameters, error: GraphQLError, exception: Throwable) {
         val logLevel = if (exception is DgsException) exception.logLevel else Level.ERROR
 
-        logger.atLevel(logLevel).log(
+        logger.atLevel(logLevel).setCause(exception).log(
             "Exception while executing data fetcher for {}: {}",
             handlerParameters.path,
-            exception.message,
-            exception
+            exception.message
         )
     }
 
