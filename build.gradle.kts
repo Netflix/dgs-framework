@@ -185,6 +185,12 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         }
     }
 
+    tasks.withType<Javadoc>().configureEach {
+        options {
+            (this as CoreJavadocOptions).addStringOption("Xdoclint:none", "-quiet")
+        }
+    }
+
     kotlinter {
         reporters = arrayOf("checkstyle", "plain")
         experimentalRules = false
