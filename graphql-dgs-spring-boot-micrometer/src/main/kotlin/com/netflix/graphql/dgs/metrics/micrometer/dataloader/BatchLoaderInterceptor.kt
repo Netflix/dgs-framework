@@ -3,34 +3,46 @@ package com.netflix.graphql.dgs.metrics.micrometer.dataloader
 import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlMetric
 import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlTag
 import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Timer
-import net.bytebuddy.implementation.bind.annotation.Pipe
 import org.dataloader.BatchLoader
 import org.slf4j.LoggerFactory
+import java.lang.reflect.InvocationHandler
+import java.lang.reflect.Method
 import java.util.concurrent.CompletionStage
 
 internal class BatchLoaderInterceptor(
-    private val batchLoader: BatchLoader<*, *>,
-    private val name: String,
-    private val registry: MeterRegistry
-) {
+        private val batchLoader: BatchLoader<*, *>,
+        private val name: String,
+        private val registry: MeterRegistry
+) : InvocationHandler {
 
-    fun load(@Pipe pipe: Forwarder<CompletionStage<List<*>>, BatchLoader<*, *>>): CompletionStage<List<*>> {
-        logger.debug("Starting metered timer[{}] for BatchLoader.", ID)
-        val timerSampler = Timer.start(registry)
-        return try {
-            pipe.to(batchLoader).whenComplete { result, _ ->
-                logger.debug("Finished timer[{}] for BatchLoader.", ID)
-                timerSampler.stop(
-                    Timer.builder(ID)
-                        .tags(GqlTag.LOADER_BATCH_SIZE.key, result.size.toString(), GqlTag.LOADER_NAME.key, name)
-                        .register(registry)
-                )
+    override fun invoke(proxy: Any, method: Method, args: Array<out Any>): CompletionStage<List<*>> {
+        if (method.name == "load") {
+            logger.debug("Starting metered timer[{}] for {}.", ID, javaClass.simpleName)
+            val timerSampler = Timer.start(registry)
+            return try {
+                @Suppress("UNCHECKED_CAST")
+                val future = method.invoke(batchLoader, *(args)) as CompletionStage<List<*>>
+                future.whenComplete { result, _ ->
+                    logger.debug("Stopping timer[{}] for {}", ID, javaClass.simpleName)
+                    timerSampler.stop(
+                            Timer.builder(ID)
+                                    .tags(
+                                            listOf(
+                                                    Tag.of(GqlTag.LOADER_NAME.key, name),
+                                                    Tag.of(GqlTag.LOADER_BATCH_SIZE.key, result.size.toString())
+                                            )
+                                    ).register(registry)
+                    )
+                }
+            } catch (exception: Exception) {
+                logger.warn("Error creating timer interceptor '{}' for {} with exception {}", ID, javaClass.simpleName, exception.message)
+                @Suppress("UNCHECKED_CAST")
+                method.invoke(batchLoader, *(args)) as CompletionStage<List<*>>
             }
-        } catch (exception: Exception) {
-            logger.warn("Error creating timer interceptor '{}' for {} with exception {}", ID, javaClass.simpleName, exception.message)
-            pipe.to(batchLoader)
         }
+        throw UnsupportedOperationException("Unsupported method: ${method.name}")
     }
 
     companion object {

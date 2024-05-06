@@ -1,7 +1,6 @@
 dependencies {
     api(project(":graphql-dgs"))
 
-    implementation("net.bytebuddy:byte-buddy")
     implementation("io.micrometer:micrometer-core")
     implementation("commons-codec:commons-codec")
     implementation("com.netflix.spectator:spectator-api:1.7.+")
