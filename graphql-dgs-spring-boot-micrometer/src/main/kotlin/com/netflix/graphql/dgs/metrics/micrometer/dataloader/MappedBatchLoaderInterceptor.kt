@@ -12,9 +12,9 @@ import java.lang.reflect.Method
 import java.util.concurrent.CompletionStage
 
 internal class MappedBatchLoaderInterceptor(
-        private val mappedBatchLoader: MappedBatchLoader<*, *>,
-        private val name: String,
-        private val registry: MeterRegistry
+    private val mappedBatchLoader: MappedBatchLoader<*, *>,
+    private val name: String,
+    private val registry: MeterRegistry
 ) : InvocationHandler {
 
     override fun invoke(proxy: Any, method: Method, args: Array<out Any>): CompletionStage<Map<*, *>> {
@@ -27,13 +27,13 @@ internal class MappedBatchLoaderInterceptor(
                 future.whenComplete { result, _ ->
                     logger.debug("Stopping timer[{}] for {}", ID, javaClass.simpleName)
                     timerSampler.stop(
-                            Timer.builder(ID)
-                                    .tags(
-                                            listOf(
-                                                    Tag.of(GqlTag.LOADER_NAME.key, name),
-                                                    Tag.of(GqlTag.LOADER_BATCH_SIZE.key, result.size.toString())
-                                            )
-                                    ).register(registry)
+                        Timer.builder(ID)
+                            .tags(
+                                listOf(
+                                    Tag.of(GqlTag.LOADER_NAME.key, name),
+                                    Tag.of(GqlTag.LOADER_BATCH_SIZE.key, result.size.toString())
+                                )
+                            ).register(registry)
                     )
                 }
             } catch (exception: Exception) {
