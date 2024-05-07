@@ -108,6 +108,11 @@ open class DgsAutoConfiguration(
     }
 
     @Bean
+    open fun validationErrorInstrumentation(): Instrumentation {
+        return ValidationErrorInstrumentation()
+    }
+
+    @Bean
     @ConditionalOnMissingBean
     open fun dgsQueryExecutor(
         applicationContext: ApplicationContext,
