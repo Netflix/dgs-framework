@@ -29,9 +29,11 @@ class GraphQLJavaErrorInstrumentation : SimplePerformantInstrumentation() {
                 if (error.errorType == graphql.ErrorType.ValidationError || error.errorType == graphql.ErrorType.InvalidSyntax ||
                     error.errorType == graphql.ErrorType.NullValueInNonNullableField
                 ) {
+                    val path = if (error is ValidationError) error.queryPath else error.path
                     val graphqlErrorBuilder = TypedGraphQLError
                         .newBadRequestBuilder()
                         .locations(error.locations)
+                        .path(path)
                         .message(error.message)
                         .extensions(extensions)
                     if (error is ValidationError) {
