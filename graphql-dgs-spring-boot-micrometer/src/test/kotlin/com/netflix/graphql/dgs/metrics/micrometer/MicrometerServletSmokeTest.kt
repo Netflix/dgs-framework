@@ -462,7 +462,7 @@ class MicrometerServletSmokeTest {
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "none")
                     .and("gql.query.sig.hash", "none")
-                    .and("gql.errorDetail", "none")
+                    .and("gql.errorDetail", "INVALID_ARGUMENT")
                     .and("gql.errorCode", "BAD_REQUEST")
                     .and("gql.path", "[hello]")
                     .and("outcome", "failure")
