@@ -115,6 +115,25 @@ class GraphQLJavaErrorInstrumentationTest {
     }
 
     @Test
+    fun `Error contains errorDetail and errorType in the extensions for invalid operation`() {
+        val graphQL: GraphQL = buildGraphQL(schema)
+        val result = graphQL.execute(
+                """
+            mutation {
+                hell
+            }
+            """.trimIndent()
+        )
+
+        Assertions.assertThat(result.isDataPresent).isFalse
+        Assertions.assertThat(result.errors.size).isEqualTo(1)
+        Assertions.assertThat(result.errors[0].extensions.keys.containsAll(listOf("classification", "errorDetail", "errorType")))
+        Assertions.assertThat(result.errors[0].extensions["classification"]).isEqualTo("OperationNotSupported")
+        Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("BAD_REQUEST")
+        Assertions.assertThat(result.errors[0].extensions["errorDetail"]).isEqualTo("INVALID_ARGUMENT")
+    }
+
+    @Test
     fun `Multiple validation errors contain errorDetail and errorType in the extensions for multiple invalid fields`() {
         val graphQL: GraphQL = buildGraphQL(schema)
         val result = graphQL.execute(

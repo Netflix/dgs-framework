@@ -27,7 +27,7 @@ class GraphQLJavaErrorInstrumentation : SimplePerformantInstrumentation() {
                 }
 
                 if (error.errorType == graphql.ErrorType.ValidationError || error.errorType == graphql.ErrorType.InvalidSyntax ||
-                    error.errorType == graphql.ErrorType.NullValueInNonNullableField
+                    error.errorType == graphql.ErrorType.NullValueInNonNullableField || error.errorType == graphql.ErrorType.OperationNotSupported
                 ) {
                     val path = if (error is ValidationError) error.queryPath else error.path
                     val graphqlErrorBuilder = TypedGraphQLError
@@ -36,27 +36,24 @@ class GraphQLJavaErrorInstrumentation : SimplePerformantInstrumentation() {
                         .path(path)
                         .message(error.message)
                         .extensions(extensions)
+
                     if (error is ValidationError) {
-                        if (error.validationErrorType == ValidationErrorType.NullValueForNonNullArgument) {
-                            graphqlErrorBuilder.errorDetail(ErrorDetail.Common.INVALID_ARGUMENT)
-                        } else if (error.validationErrorType == ValidationErrorType.FieldUndefined) {
+                        if (error.validationErrorType == ValidationErrorType.FieldUndefined) {
                             graphqlErrorBuilder.errorDetail(ErrorDetail.Common.FIELD_NOT_FOUND)
+                        } else {
+                            graphqlErrorBuilder.errorDetail(ErrorDetail.Common.INVALID_ARGUMENT)
                         }
                     }
 
-                    graphqlErrors.add(graphqlErrorBuilder.build())
-                } else if (error.errorType == graphql.ErrorType.OperationNotSupported) {
-                    val graphqlErrorBuilder = TypedGraphQLError
-                        .newBuilder()
-                        .errorType(ErrorType.UNAVAILABLE)
-                        .locations(error.locations)
-                        .message(error.message)
-                        .extensions(error.extensions)
+                    if (error.errorType == graphql.ErrorType.OperationNotSupported) {
+                        graphqlErrorBuilder.errorDetail(ErrorDetail.Common.INVALID_ARGUMENT)
+                    }
                     graphqlErrors.add(graphqlErrorBuilder.build())
                 } else if (error.errorType == graphql.ErrorType.DataFetchingException || error.errorType == graphql.ErrorType.ExecutionAborted) {
                     val graphqlErrorBuilder = TypedGraphQLError
                         .newBuilder()
-                        .errorType(ErrorType.UNKNOWN)
+                        .errorType(ErrorType.INTERNAL)
+                        .errorDetail(ErrorDetail.Common.SERVICE_ERROR)
                         .locations(error.locations)
                         .message(error.message)
                         .extensions(error.extensions)
