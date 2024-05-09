@@ -118,7 +118,7 @@ class GraphQLJavaErrorInstrumentationTest {
     fun `Error contains errorDetail and errorType in the extensions for invalid operation`() {
         val graphQL: GraphQL = buildGraphQL(schema)
         val result = graphQL.execute(
-                """
+            """
             mutation {
                 hell
             }
