@@ -16,7 +16,7 @@
 
 package com.netflix.graphql.dgs
 
-import com.netflix.graphql.dgs.internal.ValidationErrorInstrumentation
+import com.netflix.graphql.dgs.internal.GraphQLJavaErrorInstrumentation
 import graphql.GraphQL
 import graphql.execution.instrumentation.Instrumentation
 import graphql.schema.StaticDataFetcher
@@ -30,17 +30,17 @@ import org.junit.jupiter.api.Test
 
 class ValidationErrorInstrumentationTest {
 
-    private lateinit var validationErrorInstrumentation: Instrumentation
+    private lateinit var graphqlJavaErrorInstrumentation: Instrumentation
 
     private val schema = """
                 type Query{
-                    hello: String
+                    hello(name: String!): String
                 }
     """.trimMargin()
 
     @BeforeEach
     fun setup() {
-        validationErrorInstrumentation = ValidationErrorInstrumentation()
+        graphqlJavaErrorInstrumentation = GraphQLJavaErrorInstrumentation()
     }
 
     @Test
@@ -49,7 +49,7 @@ class ValidationErrorInstrumentationTest {
         val result = graphQL.execute(
             """
             {
-                hello
+                hello(name: "xyz")
             }
             """.trimIndent()
         )
@@ -72,14 +72,50 @@ class ValidationErrorInstrumentationTest {
 
         Assertions.assertThat(result.isDataPresent).isFalse
         Assertions.assertThat(result.errors.size).isEqualTo(1)
-        Assertions.assertThat(result.errors[0].extensions.keys.containsAll(listOf("class", "errorDetail", "errorType")))
-        Assertions.assertThat(result.errors[0].extensions["class"]).isEqualTo("ValidationError")
+        Assertions.assertThat(result.errors[0].extensions.keys.containsAll(listOf("classification", "errorDetail", "errorType")))
+        Assertions.assertThat(result.errors[0].extensions["classification"]).isEqualTo("ValidationError")
         Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("BAD_REQUEST")
         Assertions.assertThat(result.errors[0].extensions["errorDetail"]).isEqualTo("FIELD_NOT_FOUND")
     }
 
     @Test
-    fun `Multiple validation errors contain errorDetail and errorType in the extensions for invalid fields`() {
+    fun `Validation errors contain errorDetail and errorType in the extensions for invalid input`() {
+        val graphQL: GraphQL = buildGraphQL(schema)
+        val result = graphQL.execute(
+            """
+            {
+                hello
+            }
+            """.trimIndent()
+        )
+
+        Assertions.assertThat(result.isDataPresent).isFalse
+        Assertions.assertThat(result.errors.size).isEqualTo(1)
+        Assertions.assertThat(result.errors[0].extensions.keys.containsAll(listOf("classification", "errorType")))
+        Assertions.assertThat(result.errors[0].extensions["classification"]).isEqualTo("ValidationError")
+        Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("BAD_REQUEST")
+    }
+
+    @Test
+    fun `Validation errors contain errorDetail and errorType in the extensions for invalid syntax`() {
+        val graphQL: GraphQL = buildGraphQL(schema)
+        val result = graphQL.execute(
+            """
+            {
+                hello(
+            }
+            """.trimIndent()
+        )
+
+        Assertions.assertThat(result.isDataPresent).isFalse
+        Assertions.assertThat(result.errors.size).isEqualTo(1)
+        Assertions.assertThat(result.errors[0].extensions.keys.containsAll(listOf("classification", "errorDetail", "errorType")))
+        Assertions.assertThat(result.errors[0].extensions["classification"]).isEqualTo("InvalidSyntax")
+        Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("BAD_REQUEST")
+    }
+
+    @Test
+    fun `Multiple validation errors contain errorDetail and errorType in the extensions for multiple invalid fields`() {
         val graphQL: GraphQL = buildGraphQL(schema)
         val result = graphQL.execute(
             """
@@ -92,12 +128,12 @@ class ValidationErrorInstrumentationTest {
 
         Assertions.assertThat(result.isDataPresent).isFalse
         Assertions.assertThat(result.errors.size).isEqualTo(2)
-        Assertions.assertThat(result.errors[0].extensions.keys.containsAll(listOf("class", "errorDetail", "errorType")))
-        Assertions.assertThat(result.errors[0].extensions["class"]).isEqualTo("ValidationError")
+        Assertions.assertThat(result.errors[0].extensions.keys.containsAll(listOf("classification", "errorDetail", "errorType")))
+        Assertions.assertThat(result.errors[0].extensions["classification"]).isEqualTo("ValidationError")
         Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("BAD_REQUEST")
         Assertions.assertThat(result.errors[0].extensions["errorDetail"]).isEqualTo("FIELD_NOT_FOUND")
         Assertions.assertThat(result.errors[1].extensions.keys.containsAll(listOf("class", "errorDetail", "errorType")))
-        Assertions.assertThat(result.errors[1].extensions["class"]).isEqualTo("ValidationError")
+        Assertions.assertThat(result.errors[1].extensions["classification"]).isEqualTo("ValidationError")
         Assertions.assertThat(result.errors[1].extensions["errorType"]).isEqualTo("BAD_REQUEST")
         Assertions.assertThat(result.errors[1].extensions["errorDetail"]).isEqualTo("FIELD_NOT_FOUND")
     }
@@ -113,6 +149,6 @@ class ValidationErrorInstrumentationTest {
         val schemaGenerator = SchemaGenerator()
         val graphQLSchema = schemaGenerator.makeExecutableSchema(typeDefinitionRegistry, runtimeWiring)
 
-        return GraphQL.newGraphQL(graphQLSchema).instrumentation(validationErrorInstrumentation).build()
+        return GraphQL.newGraphQL(graphQLSchema).instrumentation(graphqlJavaErrorInstrumentation).build()
     }
 }

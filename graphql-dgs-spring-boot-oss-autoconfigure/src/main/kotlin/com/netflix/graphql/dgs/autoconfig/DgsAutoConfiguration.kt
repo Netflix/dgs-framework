@@ -108,8 +108,8 @@ open class DgsAutoConfiguration(
     }
 
     @Bean
-    open fun validationErrorInstrumentation(): Instrumentation {
-        return ValidationErrorInstrumentation()
+    open fun graphqlJavaErrorInstrumentation(): Instrumentation {
+        return GraphQLJavaErrorInstrumentation()
     }
 
     @Bean
