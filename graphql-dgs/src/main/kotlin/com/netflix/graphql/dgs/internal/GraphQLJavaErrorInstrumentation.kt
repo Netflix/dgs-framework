@@ -57,6 +57,9 @@ class GraphQLJavaErrorInstrumentation : SimplePerformantInstrumentation() {
                         .locations(error.locations)
                         .message(error.message)
                         .extensions(error.extensions)
+                    if (error.path != null) {
+                        graphqlErrorBuilder.path(error.path)
+                    }
                     graphqlErrors.add(graphqlErrorBuilder.build())
                 } else {
                     graphqlErrors.add(error)
