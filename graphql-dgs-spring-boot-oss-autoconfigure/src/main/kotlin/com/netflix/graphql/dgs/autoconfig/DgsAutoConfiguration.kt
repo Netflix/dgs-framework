@@ -108,6 +108,11 @@ open class DgsAutoConfiguration(
     }
 
     @Bean
+    open fun graphqlJavaErrorInstrumentation(): Instrumentation {
+        return GraphQLJavaErrorInstrumentation()
+    }
+
+    @Bean
     @ConditionalOnMissingBean
     open fun dgsQueryExecutor(
         applicationContext: ApplicationContext,
