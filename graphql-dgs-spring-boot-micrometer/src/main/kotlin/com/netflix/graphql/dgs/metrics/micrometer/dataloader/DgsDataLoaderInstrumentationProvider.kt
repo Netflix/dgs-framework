@@ -19,7 +19,7 @@ class DgsDataLoaderInstrumentationProvider(
 
     override fun provide(original: BatchLoader<*, *>, name: String): BatchLoader<*, *> =
         batchLoaderClasses.getOrPut(name) {
-            val handler = BatchLoaderInterceptor(original, name, meterRegistrySupplier.get())
+            val handler = BatchLoaderWithContextInterceptor(original, name, meterRegistrySupplier.get())
             Proxy.newProxyInstance(
                 javaClass.classLoader,
                 arrayOf(BatchLoader::class.java),
@@ -39,7 +39,7 @@ class DgsDataLoaderInstrumentationProvider(
 
     override fun provide(original: MappedBatchLoader<*, *>, name: String): MappedBatchLoader<*, *> =
         mappedBatchLoaderClasses.getOrPut(name) {
-            val handler = MappedBatchLoaderInterceptor(original, name, meterRegistrySupplier.get())
+            val handler = BatchLoaderWithContextInterceptor(original, name, meterRegistrySupplier.get())
             Proxy.newProxyInstance(
                 javaClass.classLoader,
                 arrayOf(MappedBatchLoader::class.java),
@@ -52,7 +52,7 @@ class DgsDataLoaderInstrumentationProvider(
         name: String
     ): MappedBatchLoaderWithContext<*, *> =
         mappedBatchLoaderWithContextClasses.getOrPut(name) {
-            val handler = MappedBatchLoaderWithContextInterceptor(original, name, meterRegistrySupplier.get())
+            val handler = BatchLoaderWithContextInterceptor(original, name, meterRegistrySupplier.get())
             Proxy.newProxyInstance(
                 javaClass.classLoader,
                 arrayOf(MappedBatchLoaderWithContext::class.java),
