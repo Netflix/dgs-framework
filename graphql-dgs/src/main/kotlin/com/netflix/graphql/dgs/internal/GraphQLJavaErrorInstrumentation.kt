@@ -27,7 +27,8 @@ class GraphQLJavaErrorInstrumentation : SimplePerformantInstrumentation() {
                 }
 
                 if (error.errorType == graphql.ErrorType.ValidationError || error.errorType == graphql.ErrorType.InvalidSyntax ||
-                    error.errorType == graphql.ErrorType.NullValueInNonNullableField || error.errorType == graphql.ErrorType.OperationNotSupported
+                    error.errorType == graphql.ErrorType.NullValueInNonNullableField || error.errorType == graphql.ErrorType.OperationNotSupported ||
+                    error.errorType == graphql.ErrorType.ExecutionAborted
                 ) {
                     val path = if (error is ValidationError) error.queryPath else error.path
                     val graphqlErrorBuilder = TypedGraphQLError
@@ -49,7 +50,7 @@ class GraphQLJavaErrorInstrumentation : SimplePerformantInstrumentation() {
                         graphqlErrorBuilder.errorDetail(ErrorDetail.Common.INVALID_ARGUMENT)
                     }
                     graphqlErrors.add(graphqlErrorBuilder.build())
-                } else if (error.errorType == graphql.ErrorType.DataFetchingException || error.errorType == graphql.ErrorType.ExecutionAborted) {
+                } else if (error.errorType == graphql.ErrorType.DataFetchingException) {
                     val graphqlErrorBuilder = TypedGraphQLError
                         .newBuilder()
                         .errorType(ErrorType.INTERNAL)
