@@ -23,6 +23,7 @@ import com.netflix.graphql.types.subscription.websockets.Message
 import graphql.ExecutionResult
 import graphql.GraphqlErrorBuilder
 import jakarta.annotation.PostConstruct
+import jakarta.annotation.PreDestroy
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
@@ -51,33 +52,50 @@ class WebsocketGraphQLTransportWSProtocolHandler(
 ) : TextWebSocketHandler() {
 
     internal val sessions = CopyOnWriteArrayList<WebSocketSession>()
-    internal val contexts = ConcurrentHashMap<String, Context<Any>>()
+    internal val contexts = ConcurrentHashMap<String, Context<Any?>>()
+
+    @Volatile
+    private var timer: Timer? = null
 
     @PostConstruct
     fun setupCleanup() {
+        val timer = Timer("dgs-graphql-ws-transport-session-cleanup", true)
+        this.timer = timer
+
         val timerTask = object : TimerTask() {
             override fun run() {
-                sessions.filter { !it.isOpen }
-                    .forEach(this@WebsocketGraphQLTransportWSProtocolHandler::cleanupSubscriptionsForSession)
-            }
-        }
-
-        val timer = Timer(true)
-        timer.scheduleAtFixedRate(timerTask, 0, 5000)
-    }
-
-    override fun afterConnectionEstablished(session: WebSocketSession) {
-        contexts[session.id] = Context()
-        val timerTask = object : TimerTask() {
-            override fun run() {
-                if (contexts[session.id]?.getConnectionInitReceived() == false) {
-                    session.close(CloseStatus(CloseCode.ConnectionInitialisationTimeout.code))
-                    contexts.remove(session.id)
+                for (session in sessions) {
+                    if (!session.isOpen) {
+                        cleanupSubscriptionsForSession(session)
+                    }
                 }
             }
         }
+        timer.scheduleAtFixedRate(timerTask, 0, 5000)
+    }
 
-        val timer = Timer()
+    @PreDestroy
+    fun destroy() {
+        val timer = this.timer ?: return
+        timer.cancel()
+        this.timer = null
+    }
+
+    override fun afterConnectionEstablished(session: WebSocketSession) {
+        val context = Context<Any?>()
+        contexts[session.id] = context
+        val timer = Timer("dgs-graphql-ws-transport-connection-timeout-watchdog-${session.id}", true)
+
+        val timerTask = object : TimerTask() {
+            override fun run() {
+                if (!context.getConnectionInitReceived()) {
+                    session.close(CloseStatus(CloseCode.ConnectionInitialisationTimeout.code))
+                    contexts.remove(session.id)
+                }
+                timer.cancel()
+            }
+        }
+
         timer.schedule(timerTask, connectionInitTimeout.toMillis())
     }
 

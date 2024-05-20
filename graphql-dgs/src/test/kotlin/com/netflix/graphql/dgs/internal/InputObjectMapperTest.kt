@@ -157,28 +157,6 @@ internal class InputObjectMapperTest {
     }
 
     @Test
-    fun `An input argument of the wrong type should throw a DgsInvalidArgumentException for a Java object`() {
-        val newInput = input.toMutableMap()
-        // Use an Int as input where a String was expected
-        newInput["simpleString"] = 1
-
-        assertThatThrownBy { inputObjectMapper.mapToJavaObject(newInput, JInputObject::class.java) }.isInstanceOf(
-            DgsInvalidInputArgumentException::class.java
-        ).hasMessageStartingWith("Invalid input argument `1` for field `simpleString` on type `com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObject`")
-    }
-
-    @Test
-    fun `An input argument of the wrong type should throw a DgsInvalidArgumentException for a Kotlin object`() {
-        val newInput = input.toMutableMap()
-        // Use an Int as input where a String was expected
-        newInput["simpleString"] = 1
-
-        assertThatThrownBy { inputObjectMapper.mapToKotlinObject(newInput, KotlinInputObject::class) }.isInstanceOf(
-            DgsInvalidInputArgumentException::class.java
-        ).hasMessageStartingWith("Provided input arguments")
-    }
-
-    @Test
     fun `A list argument should be able to convert to Set in Kotlin`() {
         val input = mapOf("items" to listOf(1, 2, 3))
         val withSet = inputObjectMapper.mapToKotlinObject(input, KotlinObjectWithSet::class)
@@ -256,6 +234,19 @@ internal class InputObjectMapperTest {
         assertThat(result.string).isEqualTo("default")
     }
 
+    @Test
+    fun `mapping to an object with a Kotlin class works when there is a field with an enum type`() {
+        val result = inputObjectMapper.mapToKotlinObject(mapOf("name" to "the-name", "type" to "BAR"), KotlinObjectWithEnumField::class)
+        assertThat(result.name).isEqualTo("the-name")
+        assertThat(result.type).isEqualTo(FieldType.BAR)
+    }
+
+    @Test
+    fun `mapping to an object works when the input type can be converted to the target type`() {
+        val result = inputObjectMapper.mapToKotlinObject(mapOf("items" to listOf("1", "2", "3", "4")), KotlinObjectWithSet::class)
+        assertThat(result.items).isEqualTo(setOf(1, 2, 3, 4))
+    }
+
     data class KotlinInputObject(val simpleString: String?, val someDate: LocalDateTime, val someObject: KotlinSomeObject)
     data class KotlinNestedInputObject(val input: KotlinInputObject)
     data class KotlinDoubleNestedInputObject(val inputL1: KotlinNestedInputObject)
@@ -265,4 +256,7 @@ internal class InputObjectMapperTest {
     data class KotlinObjectWithMap(val json: Map<String, Any>)
 
     data class KotlinWithJavaProperty(val name: String, val objectProperty: JInputObject)
+
+    enum class FieldType { FOO, BAR, BAZ }
+    data class KotlinObjectWithEnumField(val name: String, val type: FieldType)
 }

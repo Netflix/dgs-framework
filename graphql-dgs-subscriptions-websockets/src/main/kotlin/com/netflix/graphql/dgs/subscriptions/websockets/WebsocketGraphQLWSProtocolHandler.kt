@@ -16,11 +16,13 @@
 
 package com.netflix.graphql.dgs.subscriptions.websockets
 
+import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.types.subscription.*
 import graphql.ExecutionResult
 import jakarta.annotation.PostConstruct
+import jakarta.annotation.PreDestroy
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
@@ -30,6 +32,7 @@ import org.slf4j.event.Level
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 import org.springframework.web.socket.handler.TextWebSocketHandler
+import java.io.UncheckedIOException
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
@@ -43,16 +46,30 @@ class WebsocketGraphQLWSProtocolHandler(
     internal val subscriptions = ConcurrentHashMap<String, MutableMap<String, Subscription>>()
     internal val sessions = CopyOnWriteArrayList<WebSocketSession>()
 
+    @Volatile
+    private var timer: Timer? = null
+
     @PostConstruct
     fun setupCleanup() {
+        val timer = Timer("dgs-graphql-ws-session-cleanup", true)
+        this.timer = timer
         val timerTask = object : TimerTask() {
             override fun run() {
-                sessions.filter { !it.isOpen }.forEach(this@WebsocketGraphQLWSProtocolHandler::cleanupSubscriptionsForSession)
+                for (session in sessions) {
+                    if (!session.isOpen) {
+                        cleanupSubscriptionsForSession(session)
+                    }
+                }
             }
         }
-
-        val timer = Timer(true)
         timer.scheduleAtFixedRate(timerTask, 0, 5000)
+    }
+
+    @PreDestroy
+    fun destroy() {
+        val timer = this.timer ?: return
+        timer.cancel()
+        this.timer = null
     }
 
     public override fun handleTextMessage(session: WebSocketSession, message: TextMessage) {
@@ -110,7 +127,11 @@ class WebsocketGraphQLWSProtocolHandler(
 
             override fun onNext(er: ExecutionResult) {
                 val message = OperationMessage(GQL_DATA, DataPayload(er.getData(), er.errors), id)
-                val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
+                val jsonMessage = try {
+                    TextMessage(objectMapper.writeValueAsBytes(message))
+                } catch (exc: JsonProcessingException) {
+                    throw UncheckedIOException(exc)
+                }
                 logger.debug("Sending subscription data: {}", jsonMessage)
 
                 if (session.isOpen) {

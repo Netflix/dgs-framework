@@ -71,8 +71,16 @@ internal class MultiDataLoaderInstrumentationProvidersProviderTest {
     class TailDataLoaderInstrumentationExtensionProvider(acc: MultiValueMap<String, String>) :
         BaseDataLoaderInstrumentationExtensionProvider(acc, "tail")
 
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     open class TestLocalConfiguration {
+
+        @Bean
+        open fun dgsDataLoaderProvider(applicationContext: ApplicationContext, extensionProviders: List<DataLoaderInstrumentationExtensionProvider>): DgsDataLoaderProvider {
+            return DgsDataLoaderProvider(
+                applicationContext = applicationContext,
+                extensionProviders = extensionProviders
+            )
+        }
 
         @Bean
         open fun testAcc(): MultiValueMap<String, String> {
@@ -118,11 +126,6 @@ internal class MultiDataLoaderInstrumentationProvidersProviderTest {
             acc: MultiValueMap<String, String>
         ): DataLoaderInstrumentationExtensionProvider {
             return TailDataLoaderInstrumentationExtensionProvider(acc)
-        }
-
-        @Bean
-        open fun dgsDataLoaderProvider(applicationContext: ApplicationContext): DgsDataLoaderProvider {
-            return DgsDataLoaderProvider(applicationContext)
         }
     }
 

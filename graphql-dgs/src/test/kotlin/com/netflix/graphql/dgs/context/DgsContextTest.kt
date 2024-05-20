@@ -78,7 +78,7 @@ internal class DgsContextTest {
         )
 
         return DefaultDgsQueryExecutor(
-            defaultSchema = provider.schema(schemaString),
+            defaultSchema = provider.schema(schemaString).graphQLSchema,
             schemaProvider = provider,
             dataLoaderProvider = context.getBean(DgsDataLoaderProvider::class.java),
             contextBuilder = DefaultDgsGraphQLContextBuilder(Optional.empty()),

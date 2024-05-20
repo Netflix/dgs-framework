@@ -32,39 +32,39 @@ class CompletableFutureWrapperTest {
 
     @Test
     fun `A Kotlin String function should be wrapped`() {
-        val completableFutureWrapper = CompletableFutureWrapper(VirtualThreadTaskExecutor())
+        val completableFutureWrapper = CompletableFutureWrapper(VirtualThreadTaskExecutor(null))
         assertThat(completableFutureWrapper.shouldWrapInCompletableFuture(fun(): String { return "hello" }.reflect()!!)).isTrue()
     }
 
     @Test
     fun `A Kotlin CompletableFuture function should not be wrapped`() {
-        val completableFutureWrapper = CompletableFutureWrapper(VirtualThreadTaskExecutor())
+        val completableFutureWrapper = CompletableFutureWrapper(VirtualThreadTaskExecutor(null))
         assertThat(completableFutureWrapper.shouldWrapInCompletableFuture(fun(): CompletableFuture<String> { return CompletableFuture() }.reflect()!!)).isFalse()
     }
 
     @Test
     fun `A Kotlin Mono function should not be wrapped`() {
-        val completableFutureWrapper = CompletableFutureWrapper(VirtualThreadTaskExecutor())
+        val completableFutureWrapper = CompletableFutureWrapper(VirtualThreadTaskExecutor(null))
         assertThat(completableFutureWrapper.shouldWrapInCompletableFuture(fun(): Mono<String> { return Mono.just("hi") }.reflect()!!)).isFalse()
     }
 
     @Test
     fun `A Java String method should be wrapped`() {
-        val completableFutureWrapper = CompletableFutureWrapper(VirtualThreadTaskExecutor())
+        val completableFutureWrapper = CompletableFutureWrapper(VirtualThreadTaskExecutor(null))
         val stringMethod = String::class.java.getMethod("toString")
         assertThat(completableFutureWrapper.shouldWrapInCompletableFuture(stringMethod)).isTrue()
     }
 
     @Test
     fun `A Java CompletableFuture method should not be wrapped`() {
-        val completableFutureWrapper = CompletableFutureWrapper(VirtualThreadTaskExecutor())
+        val completableFutureWrapper = CompletableFutureWrapper(VirtualThreadTaskExecutor(null))
         val cfMethod = CompletableFuture::class.java.getMethod("thenApplyAsync", Function::class.java)
         assertThat(completableFutureWrapper.shouldWrapInCompletableFuture(cfMethod)).isFalse()
     }
 
     @Test
     fun `A Java Mono method should not be wrapped`() {
-        val completableFutureWrapper = CompletableFutureWrapper(VirtualThreadTaskExecutor())
+        val completableFutureWrapper = CompletableFutureWrapper(VirtualThreadTaskExecutor(null))
         val monoMethod = Mono::class.java.getMethod("empty")
         assertThat(completableFutureWrapper.shouldWrapInCompletableFuture(monoMethod)).isFalse()
     }

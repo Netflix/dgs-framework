@@ -16,6 +16,9 @@
 
 package com.netflix.graphql.dgs.autoconfig
 
+import com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider
+import com.netflix.graphql.dgs.DgsDataLoaderCustomizer
+import com.netflix.graphql.dgs.DgsDataLoaderInstrumentation
 import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
 import com.netflix.graphql.dgs.DgsDefaultPreparsedDocumentProvider
 import com.netflix.graphql.dgs.DgsFederationResolver
@@ -47,6 +50,9 @@ import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.visibility.DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
 import graphql.schema.visibility.GraphqlFieldVisibility
 import graphql.schema.visibility.NoIntrospectionGraphqlFieldVisibility.NO_INTROSPECTION_FIELD_VISIBILITY
+import io.micrometer.context.ContextRegistry
+import io.micrometer.context.ContextSnapshotFactory
+import io.micrometer.context.integration.Slf4jThreadLocalAccessor
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.ObjectProvider
@@ -55,6 +61,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -101,6 +108,12 @@ open class DgsAutoConfiguration(
     }
 
     @Bean
+    open fun graphqlJavaErrorInstrumentation(): Instrumentation {
+        return GraphQLJavaErrorInstrumentation()
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
     open fun dgsQueryExecutor(
         applicationContext: ApplicationContext,
         schema: GraphQLSchema,
@@ -166,8 +179,42 @@ open class DgsAutoConfiguration(
     }
 
     @Bean
-    open fun dgsDataLoaderProvider(applicationContext: ApplicationContext, dataloaderOptionProvider: DgsDataLoaderOptionsProvider, @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService): DgsDataLoaderProvider {
-        return DgsDataLoaderProvider(applicationContext, dataloaderOptionProvider, dgsScheduledExecutorService, dataloaderConfigProps.scheduleDuration, dataloaderConfigProps.tickerModeEnabled)
+    @ConditionalOnProperty(
+        prefix = "$AUTO_CONF_PREFIX.convertAllDataLoadersToWithContext",
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = true
+    )
+    @Order(0)
+    open fun dgsWrapWithContextDataLoaderCustomizer(): DgsWrapWithContextDataLoaderCustomizer {
+        return DgsWrapWithContextDataLoaderCustomizer()
+    }
+
+    @Bean
+    @Order(100)
+    open fun dgsDataLoaderInstrumentationDataLoaderCustomizer(
+        instrumentations: List<DgsDataLoaderInstrumentation>
+    ): DgsDataLoaderInstrumentationDataLoaderCustomizer {
+        return DgsDataLoaderInstrumentationDataLoaderCustomizer(instrumentations)
+    }
+
+    @Bean
+    open fun dgsDataLoaderProvider(
+        applicationContext: ApplicationContext,
+        dataloaderOptionProvider: DgsDataLoaderOptionsProvider,
+        @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService,
+        extensionProviders: List<DataLoaderInstrumentationExtensionProvider>,
+        customizers: List<DgsDataLoaderCustomizer>
+    ): DgsDataLoaderProvider {
+        return DgsDataLoaderProvider(
+            applicationContext = applicationContext,
+            extensionProviders = extensionProviders,
+            dataLoaderOptionsProvider = dataloaderOptionProvider,
+            scheduledExecutorService = dgsScheduledExecutorService,
+            scheduleDuration = dataloaderConfigProps.scheduleDuration,
+            enableTickerMode = dataloaderConfigProps.tickerModeEnabled,
+            customizers = customizers
+        )
     }
 
     /**
@@ -235,7 +282,7 @@ open class DgsAutoConfiguration(
     @Bean
     @ConditionalOnMissingBean
     open fun schema(dgsSchemaProvider: DgsSchemaProvider, fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
-        return dgsSchemaProvider.schema(null, fieldVisibility)
+        return dgsSchemaProvider.schema(null, fieldVisibility).graphQLSchema
     }
 
     @Bean
@@ -280,6 +327,7 @@ open class DgsAutoConfiguration(
     }
 
     @Bean
+    @ConditionalOnMissingClass("com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLAutoConfiguration")
     open fun uploadScalar(): UploadScalar {
         return UploadScalar()
     }
@@ -305,6 +353,13 @@ open class DgsAutoConfiguration(
         return FluxDataFetcherResultProcessor()
     }
 
+    @Bean
+    @ConditionalOnMissingBean
+    open fun dgsMicrometerContextRegistry(): ContextRegistry {
+        return ContextRegistry.getInstance()
+            .registerThreadLocalAccessor(Slf4jThreadLocalAccessor())
+    }
+
     /**
      * JDK 21+ only - Creates the dgsAsyncTaskExecutor which is used to run data fetchers automatically wrapped in CompletableFuture.
      * Can be provided by other frameworks to enable context propagation.
@@ -314,9 +369,10 @@ open class DgsAutoConfiguration(
     @ConditionalOnJava21
     @ConditionalOnMissingBean(name = ["dgsAsyncTaskExecutor"])
     @ConditionalOnProperty(name = ["dgs.graphql.virtualthreads.enabled"], havingValue = "true", matchIfMissing = false)
-    open fun virtualThreadsTaskExecutor(): AsyncTaskExecutor {
+    open fun virtualThreadsTaskExecutor(contextRegistry: ContextRegistry): AsyncTaskExecutor {
         LOG.info("Enabling virtual threads for DGS")
-        return VirtualThreadTaskExecutor()
+        val contextSnapshotFactory = ContextSnapshotFactory.builder().contextRegistry(contextRegistry).build()
+        return VirtualThreadTaskExecutor(contextSnapshotFactory)
     }
 
     @Bean

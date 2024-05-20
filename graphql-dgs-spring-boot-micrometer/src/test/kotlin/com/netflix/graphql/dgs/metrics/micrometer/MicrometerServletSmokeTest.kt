@@ -46,6 +46,7 @@ import io.micrometer.core.instrument.Meter
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Tags
+import io.micrometer.core.instrument.cumulative.CumulativeCounter
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import org.assertj.core.api.Assertions.assertThat
 import org.dataloader.BatchLoader
@@ -67,6 +68,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
+import org.springframework.http.MediaType
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -114,7 +116,7 @@ class MicrometerServletSmokeTest {
             // We will also assert that the tag reflected by the metric is not affected by the alias.
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{ "query": "query my_op_1{ping}" }""")
         ).andExpect(status().isOk)
             .andExpect(content().json("""{"data":{"ping":"pong"}}""", false))
@@ -156,7 +158,7 @@ class MicrometerServletSmokeTest {
             // We will also assert that the tag reflected by the metric is not affected by the alias.
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{ "query": " mutation my_op_1{buzz}" }""".trimMargin())
         ).andExpect(status().isOk)
             .andExpect(content().json("""{"data":{"buzz":"buzz"}}""", false))
@@ -198,7 +200,7 @@ class MicrometerServletSmokeTest {
             // We will also assert that the tag reflected by the metric is not affected by the alias.
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     """
                     | {
@@ -246,7 +248,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     """{"query": 
                     |   "{transform(input: [\"A madam in a racecar.\", \"A man, a plan, a canal - Panama\" ]){ index value upperCased reversed } }" }
@@ -335,7 +337,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{ "query": "fail" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -363,6 +365,7 @@ class MicrometerServletSmokeTest {
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query")
 
         assertThat(meters["gql.error"]).isNotNull.hasSize(1)
+        assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
                 Tags.of("execution-tag", "foo")
@@ -395,7 +398,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{ "query": "{someTrivialThings}" }""")
         ).andExpect(status().isOk)
             .andExpect(content().json("""{"data":{"someTrivialThings":"some insignificance"}}""", false))
@@ -422,7 +425,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{ "query": "{ hello }" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -450,6 +453,7 @@ class MicrometerServletSmokeTest {
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query")
 
         assertThat(meters["gql.error"]).isNotNull.hasSize(1)
+        assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
                 Tags.of("execution-tag", "foo")
@@ -458,7 +462,7 @@ class MicrometerServletSmokeTest {
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "none")
                     .and("gql.query.sig.hash", "none")
-                    .and("gql.errorDetail", "none")
+                    .and("gql.errorDetail", "INVALID_ARGUMENT")
                     .and("gql.errorCode", "BAD_REQUEST")
                     .and("gql.path", "[hello]")
                     .and("outcome", "failure")
@@ -482,7 +486,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{ "query": "{triggerInternalFailure}" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -492,7 +496,7 @@ class MicrometerServletSmokeTest {
                        |    "errors":[
                        |      {
                        |       "message":"java.lang.IllegalStateException: Exception triggered.",
-                       |       "locations": [],
+                       |       "locations": [{"line":1, "column":2}],
                        |       "path": ["triggerInternalFailure"],
                        |       "extensions": {"errorType":"INTERNAL"}
                        |     }
@@ -510,6 +514,7 @@ class MicrometerServletSmokeTest {
 
         logMeters(meters["gql.error"])
         assertThat(meters["gql.error"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
                 Tags.of("execution-tag", "foo")
@@ -557,7 +562,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{ "query": "{triggerBadRequestFailure}" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -566,7 +571,7 @@ class MicrometerServletSmokeTest {
                         |{
                         |   "errors":[
                         |      {"message":"Exception triggered.",
-                        |          "locations":[],"path":["triggerBadRequestFailure"],
+                        |          "path":["triggerBadRequestFailure"],
                         |          "extensions":{"errorType":"BAD_REQUEST"}}
                         |   ],
                         |   "data":{"triggerBadRequestFailure":null}
@@ -581,6 +586,7 @@ class MicrometerServletSmokeTest {
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
 
         assertThat(meters["gql.error"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
                 Tags.of("execution-tag", "foo")
@@ -626,7 +632,7 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{ "query": "{triggerCustomFailure}" }""")
         ).andExpect(status().isOk)
             .andExpect(
@@ -635,7 +641,7 @@ class MicrometerServletSmokeTest {
                     |{
                     |   "errors":[
                     |       { 
-                    |           "message":"Exception triggered.","locations":[],
+                    |           "message":"Exception triggered.",
                     |           "path":["triggerCustomFailure"],
                     |           "extensions":{"errorType":"UNAVAILABLE","errorDetail":"ENHANCE_YOUR_CALM"}
                     |       }
@@ -652,6 +658,7 @@ class MicrometerServletSmokeTest {
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
 
         assertThat(meters["gql.error"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
                 Tags.of("execution-tag", "foo")
@@ -697,16 +704,16 @@ class MicrometerServletSmokeTest {
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/graphql")
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("""{ "query": "{ triggerInternalFailure triggerBadRequestFailure triggerCustomFailure }" }""")
         ).andExpect(status().isOk)
             .andExpect(
                 content().json(
                     """
                     | {"errors":[
-                    |    {"message":"java.lang.IllegalStateException: Exception triggered.","locations":[],"path":["triggerInternalFailure"],"extensions":{"errorType":"INTERNAL"}},
-                    |    {"message":"Exception triggered.","locations":[],"path":["triggerBadRequestFailure"],"extensions":{"class":"com.netflix.graphql.dgs.exceptions.DgsBadRequestException","errorType":"BAD_REQUEST"}},
-                    |    {"message":"Exception triggered.","locations":[],"path":["triggerCustomFailure"],"extensions":{"errorType":"UNAVAILABLE","errorDetail":"ENHANCE_YOUR_CALM"}}
+                    |    {"message":"java.lang.IllegalStateException: Exception triggered.","locations":[{"line":1,"column":3}],"path":["triggerInternalFailure"],"extensions":{"errorType":"INTERNAL"}},
+                    |    {"message":"Exception triggered.","path":["triggerBadRequestFailure"],"extensions":{"class":"com.netflix.graphql.dgs.exceptions.DgsBadRequestException","errorType":"BAD_REQUEST"}},
+                    |    {"message":"Exception triggered.","path":["triggerCustomFailure"],"extensions":{"errorType":"UNAVAILABLE","errorDetail":"ENHANCE_YOUR_CALM"}}
                     |  ],
                     |  "data":{"triggerInternalFailure":null,"triggerBadRequestFailure":null,"triggerCustomFailure":null}}
                     """.trimMargin(),
@@ -923,6 +930,7 @@ class MicrometerServletSmokeTest {
                         dataLoaderTaskExecutor
                     )
                 }
+
                 override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry) {
                     this.dataLoaderRegistry = Optional.of(dataLoaderRegistry)
                 }

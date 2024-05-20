@@ -17,96 +17,121 @@
 package com.netflix.graphql.dgs.exceptions
 
 import com.netflix.graphql.types.errors.ErrorType
+import graphql.Scalars.GraphQLString
 import graphql.execution.DataFetcherExceptionHandlerParameters
+import graphql.execution.ExecutionStepInfo
+import graphql.execution.MergedField
 import graphql.execution.ResultPath
-import io.mockk.MockKAnnotations
+import graphql.language.Field
+import graphql.language.SourceLocation
+import graphql.schema.DataFetchingEnvironmentImpl
+import io.mockk.confirmVerified
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
+import io.mockk.spyk
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.slf4j.Logger
+import org.slf4j.event.Level
+import org.slf4j.spi.NOPLoggingEventBuilder
 import org.springframework.security.access.AccessDeniedException
+import java.lang.IllegalStateException
 import java.util.concurrent.CompletionException
 
-internal class DefaultDataFetcherExceptionHandlerTest {
+class DefaultDataFetcherExceptionHandlerTest {
 
-    @MockK
-    lateinit var dataFetcherExceptionHandlerParameters: DataFetcherExceptionHandlerParameters
-
-    @BeforeEach
-    fun setup() {
-        MockKAnnotations.init(this)
-        every { dataFetcherExceptionHandlerParameters.path }.returns(ResultPath.parse("/Query/test"))
-    }
+    private val field = MergedField.newMergedField(
+        Field.newField().name("bar")
+            .sourceLocation(SourceLocation(5, 5)).build()
+    ).build()
+    private val executionStepInfo = ExecutionStepInfo.newExecutionStepInfo()
+        .type(GraphQLString)
+        .field(field)
+        .path(ResultPath.fromList(listOf("Foo", "bar")))
+        .build()
+    private val environment = DataFetchingEnvironmentImpl.newDataFetchingEnvironment()
+        .mergedField(field)
+        .executionStepInfo(executionStepInfo)
+        .build()
 
     @Test
     fun securityError() {
-        every { dataFetcherExceptionHandlerParameters.exception }.returns(AccessDeniedException("Denied"))
-
-        val result = DefaultDataFetcherExceptionHandler().handleException(dataFetcherExceptionHandlerParameters).get()
+        val handlerParameters = DataFetcherExceptionHandlerParameters.newExceptionParameters()
+            .dataFetchingEnvironment(environment)
+            .exception(AccessDeniedException("Denied"))
+            .build()
+        val result = DefaultDataFetcherExceptionHandler().handleException(handlerParameters).get()
         assertThat(result.errors.size).isEqualTo(1)
 
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo("PERMISSION_DENIED")
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(ErrorType.PERMISSION_DENIED)
     }
 
     @Test
     fun normalError() {
-        every { dataFetcherExceptionHandlerParameters.exception }.returns(RuntimeException("Something broke"))
-
-        val result = DefaultDataFetcherExceptionHandler().handleException(dataFetcherExceptionHandlerParameters).get()
+        val handlerParameters = DataFetcherExceptionHandlerParameters.newExceptionParameters()
+            .exception(RuntimeException("Something broke"))
+            .dataFetchingEnvironment(environment)
+            .build()
+        val result = DefaultDataFetcherExceptionHandler().handleException(handlerParameters).get()
         assertThat(result.errors.size).isEqualTo(1)
 
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo("INTERNAL")
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(ErrorType.INTERNAL)
+        assertThat(result.errors[0].path).isEqualTo(listOf("Foo", "bar"))
+        assertThat(result.errors[0].locations).isEqualTo(listOf(SourceLocation(5, 5)))
     }
 
     @Test
     fun normalErrorWithSpecialCharacterString() {
-        every { dataFetcherExceptionHandlerParameters.exception }.returns(RuntimeException("/bgt_budgetingProject/specificPass: not a PassId: bdgt%3Apass%2F3"))
+        val handlerParameters = DataFetcherExceptionHandlerParameters.newExceptionParameters()
+            .exception(RuntimeException("/bgt_budgetingProject/specificPass: not a PassId: bdgt%3Apass%2F3"))
+            .dataFetchingEnvironment(environment)
+            .build()
 
-        val result = DefaultDataFetcherExceptionHandler().handleException(dataFetcherExceptionHandlerParameters).get()
+        val result = DefaultDataFetcherExceptionHandler().handleException(handlerParameters).get()
         assertThat(result.errors.size).isEqualTo(1)
 
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo("INTERNAL")
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(ErrorType.INTERNAL)
     }
 
     @Test
     fun entityNotFoundException() {
-        every { dataFetcherExceptionHandlerParameters.exception }.returns(DgsEntityNotFoundException("Movie with movieId '1' was not found"))
+        val handlerParameters = DataFetcherExceptionHandlerParameters.newExceptionParameters()
+            .exception(DgsEntityNotFoundException("Movie with movieId '1' was not found"))
+            .dataFetchingEnvironment(environment)
+            .build()
 
-        val result = DefaultDataFetcherExceptionHandler().handleException(dataFetcherExceptionHandlerParameters).get()
+        val result = DefaultDataFetcherExceptionHandler().handleException(handlerParameters).get()
         assertThat(result.errors.size).isEqualTo(1)
 
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo("NOT_FOUND")
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(ErrorType.NOT_FOUND)
     }
 
     @Test
     fun badRequestException() {
-        every { dataFetcherExceptionHandlerParameters.exception }.returns(DgsBadRequestException("Malformed movie request"))
+        val handlerParameters = DataFetcherExceptionHandlerParameters.newExceptionParameters()
+            .exception(DgsBadRequestException("Malformed movie request"))
+            .dataFetchingEnvironment(environment)
+            .build()
 
-        val result = DefaultDataFetcherExceptionHandler().handleException(dataFetcherExceptionHandlerParameters).get()
+        val result = DefaultDataFetcherExceptionHandler().handleException(handlerParameters).get()
         assertThat(result.errors.size).isEqualTo(1)
 
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo("BAD_REQUEST")
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(ErrorType.BAD_REQUEST)
     }
 
     @Test
@@ -116,16 +141,18 @@ internal class DefaultDataFetcherExceptionHandlerTest {
         class CustomDgsException :
             DgsException(message = customDgsExceptionMessage, errorType = customDgsExceptionType)
 
-        every { dataFetcherExceptionHandlerParameters.exception }.returns(CustomDgsException())
+        val handlerParameters = DataFetcherExceptionHandlerParameters.newExceptionParameters()
+            .exception(CustomDgsException())
+            .dataFetchingEnvironment(environment)
+            .build()
 
-        val result = DefaultDataFetcherExceptionHandler().handleException(dataFetcherExceptionHandlerParameters).get()
+        val result = DefaultDataFetcherExceptionHandler().handleException(handlerParameters).get()
         assertThat(result.errors.size).isEqualTo(1)
 
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo(customDgsExceptionType.name)
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(customDgsExceptionType)
     }
 
     @Test
@@ -134,15 +161,59 @@ internal class DefaultDataFetcherExceptionHandlerTest {
             "com.netflix.graphql.dgs.exceptions.DgsEntityNotFoundException: Requested entity not found",
             DgsEntityNotFoundException()
         )
-        every { dataFetcherExceptionHandlerParameters.exception }.returns(completionException)
 
-        val result = DefaultDataFetcherExceptionHandler().handleException(dataFetcherExceptionHandlerParameters).get()
+        val handlerParameters = DataFetcherExceptionHandlerParameters.newExceptionParameters()
+            .exception(completionException)
+            .dataFetchingEnvironment(environment)
+            .build()
+
+        val result = DefaultDataFetcherExceptionHandler().handleException(handlerParameters).get()
         assertThat(result.errors.size).isEqualTo(1)
 
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo("NOT_FOUND")
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(ErrorType.NOT_FOUND)
+    }
+
+    @Test
+    fun `DgsException with explicit log level`() {
+        val debugLevelException = object : DgsException(
+            "something went wrong",
+            IllegalStateException("something went wrong"),
+            ErrorType.UNAVAILABLE,
+            Level.DEBUG
+        ) {}
+
+        val defaultLevelException = object : DgsException(
+            "something went wrong",
+            IllegalStateException("something went wrong"),
+            ErrorType.UNAVAILABLE
+        ) {}
+
+        // Configure the logger to be a mock so we can check invocations
+        val loggerMock = spyk<Logger>()
+        every { loggerMock.atLevel(any()) } answers { NOPLoggingEventBuilder.singleton() }
+
+        val mock = spyk<DefaultDataFetcherExceptionHandler>()
+        every { mock.getProperty("logger") } answers { loggerMock }
+
+        val handlerParametersForDebugException = DataFetcherExceptionHandlerParameters.newExceptionParameters()
+            .exception(debugLevelException)
+            .dataFetchingEnvironment(environment)
+            .build()
+
+        val handlerParametersForDefaultException = DataFetcherExceptionHandlerParameters.newExceptionParameters()
+            .exception(defaultLevelException)
+            .dataFetchingEnvironment(environment)
+            .build()
+
+        // Handle both exceptions
+        mock.handleException(handlerParametersForDebugException).get()
+        mock.handleException(handlerParametersForDefaultException).get()
+
+        verify { loggerMock.atLevel(Level.DEBUG) }
+        verify { loggerMock.atLevel(Level.ERROR) }
+        confirmVerified(loggerMock)
     }
 }

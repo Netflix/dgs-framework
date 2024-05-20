@@ -20,6 +20,7 @@ dependencies {
     implementation("org.springframework:spring-web")
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.apache.commons:commons-lang3")
+    implementation("io.micrometer:context-propagation")
 
     compileOnly("com.github.ben-manes.caffeine:caffeine")
     compileOnly("io.micrometer:micrometer-core")

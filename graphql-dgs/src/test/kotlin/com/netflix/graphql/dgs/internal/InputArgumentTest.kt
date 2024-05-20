@@ -99,7 +99,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val schema = provider.schema()
+            val schema = provider.schema().graphQLSchema
 
             val build = GraphQL.newGraphQL(schema).build()
             val executionResult = build.execute("""{hello(name: "tester")}""")
@@ -123,7 +123,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val schema = provider.schema()
+            val schema = provider.schema().graphQLSchema
 
             val build = GraphQL.newGraphQL(schema).build()
             val executionResult = build.execute("""{hello(name: "tester")}""")
@@ -169,7 +169,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val schema = provider.schema()
+            val schema = provider.schema().graphQLSchema
 
             val build = GraphQL.newGraphQL(schema).build()
             val executionResult = build.execute("""{hello(name: "tester")}""")
@@ -212,7 +212,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val schema = provider.schema()
+            val schema = provider.schema().graphQLSchema
 
             val build = GraphQL.newGraphQL(schema).build()
             val executionResult = build.execute("""{hello(name: "tester")}""")
@@ -247,7 +247,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(person: {name: "tester"})}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
@@ -279,7 +279,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(person: {name: "tester"})}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
@@ -311,7 +311,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(person: {name: "tester"})}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
@@ -343,7 +343,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(person: {name: "tester"})}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
@@ -371,7 +371,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(names: ["tester 1", "tester 2"])}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
@@ -399,7 +399,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(names: ["tester 1", "tester 2"])}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
@@ -427,7 +427,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(names: ["tester 1", "tester 2"])}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
@@ -455,7 +455,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(names: ["tester 1", "tester 2"])}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
@@ -487,7 +487,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(person: [{name: "tester 1"}, {name: "tester 2"}])}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
@@ -520,7 +520,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(persons: [{name: "tester"}, {name: "tester 2"}])}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
@@ -559,7 +559,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(person: [{name: "tester 1"}, {name: "tester 2"}])}""")!!
 
             assertThat(executionResult).isNotNull
@@ -601,7 +601,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(person: [{name: "tester 1"}, {name: "tester 2"}])}""")!!
 
             assertThat(executionResult).isNotNull
@@ -626,7 +626,7 @@ internal class InputArgumentTest {
         @DgsComponent
         class Fetcher {
             @DgsQuery(field = "numbers")
-            fun numbers(@InputArgument("list") listOptional: Optional<List<Int>>, dfe: DataFetchingEnvironment): String {
+            fun numbers(@InputArgument("list") listOptional: Optional<List<Int>>): String {
                 assertThat(listOptional).isNotEmpty
                 assertThat(listOptional.get()).containsExactlyElementsOf(listOf(1, 2, 3))
                 return "Numbers are ${listOptional.map{ it.joinToString(", ") }.orElse("na")}"
@@ -635,7 +635,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{ numbers(list: [1, 2, 3]) }""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.isDataPresent).isTrue
@@ -674,7 +674,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{titles(filter: {movieIds: [1, "two"]})}""")
             assertThat(executionResult).isNotNull
             Assertions.assertTrue(executionResult.isDataPresent)
@@ -717,7 +717,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult =
                 build.execute("""{titles(input: {bars: [{name: "bar 1", value: 1}, {name: "bar 2", value: "two"}]})}""")
             assertThat(executionResult).isNotNull
@@ -761,7 +761,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult =
                 build.execute("""{titles(input: {bars: [{name: "bar 1", value: 1}, {name: "bar 2", value: "two"}]})}""")
             assertThat(executionResult).isNotNull
@@ -793,7 +793,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
 
             val executionResult =
                 build.execute("""{hello(person: [{name: "tester"}, {name: "tester 2"}, {name: "tester"}])}""")
@@ -828,7 +828,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
 
             val executionResult = build.execute("""{hello(person: [{name: "tester"}, {name: "tester 2"}])}""")
             assertThat(executionResult.errors).hasSize(1)
@@ -862,7 +862,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
 
             val executionResult = build.execute("""{hello(person: {})}""")
             assertThat(executionResult).isNotNull
@@ -896,7 +896,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -937,7 +937,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(capitalize: true, person: {name: "tester"})}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -984,7 +984,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult =
                 build.execute("""{hello(capitalize: true, person: {name: "tester"}, otherArg: "!")}""")
             assertThat(executionResult).isNotNull
@@ -1028,7 +1028,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult =
                 build.execute("""{hello(capitalize: true, person: {name: "tester"}, otherArg: "!")}""")
             assertThat(executionResult).isNotNull
@@ -1059,7 +1059,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class, UploadScalar::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
 
             val file = MockMultipartFile("hello.txt", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".toByteArray())
             val executionResult = build.execute(
@@ -1094,7 +1094,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1125,7 +1125,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class, LocalDateTimeScalar::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""mutation {setDate(date: "2021-01-27T10:15:30")}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1159,7 +1159,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class, LocalDateTimeScalar::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""mutation {setDate(date: null)}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1190,7 +1190,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class, LocalDateTimeScalar::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""mutation {setDate(date: ["2021-01-27T10:15:30"])}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1224,7 +1224,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class, LocalDateTimeScalar::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""mutation {setDate(input: {date: "2021-01-27T10:15:30"})}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1254,7 +1254,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""mutation {setRatings(ratings: [1, 2, 3])}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1277,7 +1277,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val schema = provider.schema()
+            val schema = provider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             val executionResult = build.execute("""{hello(name: "tester")}""")
             assertThat(executionResult).isNotNull
@@ -1311,7 +1311,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(person: {name: "tester"})}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1334,7 +1334,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val schema = provider.schema()
+            val schema = provider.schema().graphQLSchema
 
             val build = GraphQL.newGraphQL(schema).build()
             val executionResult = build.execute("""{hello}""")
@@ -1371,7 +1371,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(type: FRIENDLY)}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1406,7 +1406,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(type: FRIENDLY)}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1448,7 +1448,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute(
                 """{
             |   khello(input: [FRIENDLY POLITE])
@@ -1488,7 +1488,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1522,7 +1522,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1556,7 +1556,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(type: FRIENDLY)}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1590,7 +1590,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(type: FRIENDLY)}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1624,7 +1624,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1666,7 +1666,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute(
                 """
                 { hello(input: { type: FRIENDLY, typeList: [POLITE, FRIENDLY] }) }
@@ -1709,7 +1709,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(someInput: {type: null})}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1751,7 +1751,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute(
                 """
                 { hello(input: { type: FRIENDLY, typeList: [POLITE, FRIENDLY] }) }
@@ -1779,7 +1779,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val schema = provider.schema()
+            val schema = provider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             val executionResult = build.execute("""{hello(name: "tester")}""")
             assertThat(executionResult).isNotNull
@@ -1821,7 +1821,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult =
                 build.execute("""{hello(objects: [{name: "Test 1", value: 1}, {name: "Test 2", value: "two"}])}""")
             assertThat(executionResult).isNotNull
@@ -1858,7 +1858,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(json: {keyA: "value A", keyB: "value B"})}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1898,7 +1898,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(filter: {query: {and: ["title", "genre"]}})}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1940,7 +1940,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(filter: {query: {and: ["title", "genre"]}})}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1984,7 +1984,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute(
                 """
             {
@@ -2075,7 +2075,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
 
             val executionResult = build.execute(
                 """
@@ -2167,7 +2167,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute(
                 """
                 {
@@ -2209,7 +2209,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{ hello }""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
@@ -2249,7 +2249,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(input: {countryCode: "US"})}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -2286,7 +2286,7 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val build = GraphQL.newGraphQL(provider.schema(schema)).build()
+            val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
             val executionResult = build.execute("""{hello(countryCode: "ZW")}""")
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()

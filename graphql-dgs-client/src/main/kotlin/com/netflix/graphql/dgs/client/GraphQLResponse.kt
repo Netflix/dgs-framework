@@ -21,7 +21,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
+import com.fasterxml.jackson.module.kotlin.jsonMapper
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule
 import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.DocumentContext
@@ -38,12 +40,21 @@ import org.slf4j.LoggerFactory
  * Representation of a GraphQL response, which may contain GraphQL errors.
  * This class gives convenient JSON parsing methods to get data out of the response.
  */
-data class GraphQLResponse(@Language("json") val json: String, val headers: Map<String, List<String>>) {
+data class GraphQLResponse(
+    @Language("json") val json: String,
+    val headers: Map<String, List<String>>,
+    private val mapper: ObjectMapper
+) {
 
     /**
      * A JsonPath DocumentContext. Typically, only used internally.
      */
-    val parsed: DocumentContext = JsonPath.using(jsonPathConfig).parse(json)
+    val parsed: DocumentContext = JsonPath.using(
+        Configuration.builder()
+            .jsonProvider(JacksonJsonProvider(mapper))
+            .mappingProvider(JacksonMappingProvider(mapper)).build()
+            .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)
+    ).parse(json)
 
     /**
      * Map representation of data
@@ -53,6 +64,12 @@ data class GraphQLResponse(@Language("json") val json: String, val headers: Map<
     val errors: List<GraphQLError> = parsed.read("errors", jsonTypeRef<List<GraphQLError>>()) ?: emptyList()
 
     constructor(@Language("json") json: String) : this(json, emptyMap())
+    constructor(@Language("json") json: String, headers: Map<String, List<String>>) : this(
+        json,
+        headers,
+        // default object mapper instead no instance is passed in the constructor
+        DEFAULT_MAPPER
+    )
 
     /**
      * Deserialize data into the given class.
@@ -120,16 +137,13 @@ data class GraphQLResponse(@Language("json") val json: String, val headers: Map<
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(GraphQLResponse::class.java)
 
-        private val mapper: ObjectMapper = jacksonObjectMapper()
-            .registerModule(JavaTimeModule())
-            .registerModule(ParameterNamesModule())
-            .registerModule(Jdk8Module())
-            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
-
-        private val jsonPathConfig: Configuration = Configuration.builder()
-            .jsonProvider(JacksonJsonProvider(mapper))
-            .mappingProvider(JacksonMappingProvider(mapper)).build()
-            .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)
+        internal val DEFAULT_MAPPER: ObjectMapper = jsonMapper {
+            addModule(kotlinModule { enable(KotlinFeature.NullIsSameAsDefault) })
+            addModule(JavaTimeModule())
+            addModule(ParameterNamesModule())
+            addModule(Jdk8Module())
+            enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+        }
 
         fun getDataPath(path: String): String {
             return if (path == "data" || path.startsWith("data.")) {

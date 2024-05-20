@@ -16,8 +16,9 @@
 
 dependencies {
     api(project(":graphql-dgs"))
-    implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.springframework:spring-webflux")
+    compileOnly("org.springframework.boot:spring-boot-starter")
+    compileOnly("org.springframework:spring-webflux")
+
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")

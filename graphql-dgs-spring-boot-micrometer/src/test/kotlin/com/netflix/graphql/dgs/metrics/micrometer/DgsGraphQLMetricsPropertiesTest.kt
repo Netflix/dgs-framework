@@ -36,13 +36,13 @@ internal class DgsGraphQLMetricsPropertiesTest {
 
             assertThat(props).isNotNull
             assertThat(props.autotime.isEnabled).isTrue
-            assertThat(props.autotimeProperties.percentiles).isNull()
-            assertThat(props.autotimeProperties.isPercentilesHistogram).isFalse
+            assertThat(props.autotime.percentiles).isNull()
+            assertThat(props.autotime.isPercentilesHistogram).isFalse
 
             assertThat(props.tags).isNotNull
             assertThat(props.tags.limiter.kind).isEqualTo(DgsGraphQLMetricsProperties.CardinalityLimiterKind.FIRST)
             assertThat(props.tags.limiter.limit).isEqualTo(100)
-            assertThat(props.tags.complexity.enabled).isEqualTo(true)
+            assertThat(props.tags.complexity.enabled).isTrue()
 
             assertThat(props.resolver.enabled).isTrue()
             assertThat(props.query.enabled).isTrue()
@@ -72,7 +72,7 @@ internal class DgsGraphQLMetricsPropertiesTest {
             ).run { ctx ->
                 val props = ctx.getBean(DgsGraphQLMetricsProperties::class.java)
 
-                assertThat(props.tags.complexity.enabled).isEqualTo(false)
+                assertThat(props.tags.complexity.enabled).isFalse()
             }
     }
 
@@ -84,7 +84,7 @@ internal class DgsGraphQLMetricsPropertiesTest {
             ).run { ctx ->
                 val props = ctx.getBean(DgsGraphQLMetricsProperties::class.java)
 
-                assertThat(props.resolver.enabled).isEqualTo(false)
+                assertThat(props.resolver.enabled).isFalse()
             }
     }
 
@@ -96,11 +96,32 @@ internal class DgsGraphQLMetricsPropertiesTest {
             ).run { ctx ->
                 val props = ctx.getBean(DgsGraphQLMetricsProperties::class.java)
 
-                assertThat(props.query.enabled).isEqualTo(false)
+                assertThat(props.query.enabled).isFalse()
             }
     }
 
-    @Configuration
+    @Test
+    fun `can override autotime configuration`() {
+        contextRunner.withPropertyValues(
+            "management.metrics.dgs-graphql.autotime.percentiles-histogram=true",
+            "management.metrics.dgs-graphql.autotime.percentiles=0.50,0.95,0.99"
+        )
+            .run { ctx ->
+                val props = ctx.getBean(DgsGraphQLMetricsProperties::class.java)
+                assertThat(props.autotime.isPercentilesHistogram).isTrue()
+                assertThat(props.autotime.percentiles).isEqualTo(doubleArrayOf(0.50, 0.95, 0.99))
+            }
+
+        contextRunner.withPropertyValues(
+            "management.metrics.dgs-graphql.autotime.enabled=false"
+        )
+            .run { ctx ->
+                val props = ctx.getBean(DgsGraphQLMetricsProperties::class.java)
+                assertThat(props.autotime.isEnabled).isFalse()
+            }
+    }
+
+    @Configuration(proxyBeanMethods = false)
     @EnableConfigurationProperties(DgsGraphQLMetricsProperties::class)
     open class TestConfiguration
 }

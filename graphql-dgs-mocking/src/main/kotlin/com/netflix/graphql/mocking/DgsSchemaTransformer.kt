@@ -17,31 +17,26 @@
 package com.netflix.graphql.mocking
 
 import graphql.schema.*
-import java.util.*
 
 class DgsSchemaTransformer {
 
     fun transformSchemaWithMockProviders(schema: GraphQLSchema, mockProviders: Set<MockProvider>): GraphQLSchema {
-        val mockConfig = HashMap<String, Any>()
-
+        val mockConfig = mutableMapOf<String, Any>()
         mockProviders.forEach { p -> mockConfig.putAll(p.provide()) }
-
         return transformSchema(schema, mockConfig)
     }
 
     fun transformSchema(schema: GraphQLSchema, mockConfig: Map<String, *>): GraphQLSchema {
-        val mockFetchers = HashMap<FieldCoordinates, DataFetcher<*>>()
+        val mockFetchers = mutableMapOf<FieldCoordinates, DataFetcher<*>>()
         val graphQLTypeVisitorStub = MockGraphQLVisitor(mockConfig, mockFetchers)
-        SchemaTraverser().depthFirst(graphQLTypeVisitorStub, schema.getType("Query"))
 
-        return schema.transform { b ->
-            val newCodeRegistry = GraphQLCodeRegistry.newCodeRegistry(schema.codeRegistry)
-            mockFetchers.forEach { (coordinates, dataFetcher) -> newCodeRegistry.dataFetcher(coordinates, dataFetcher) }
+        SchemaTraverser().depthFirstFullSchema(graphQLTypeVisitorStub, schema)
 
-            b.codeRegistry(
-                newCodeRegistry
-                    .build()
-            )
+        return schema.transform { schemaBuilder ->
+            val newCodeRegistry = schema.codeRegistry.transform { codeRegistryBuilder ->
+                mockFetchers.forEach { (coordinates, dataFetcher) -> codeRegistryBuilder.dataFetcher(coordinates, dataFetcher) }
+            }
+            schemaBuilder.codeRegistry(newCodeRegistry)
         }
     }
 }
