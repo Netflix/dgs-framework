@@ -15,6 +15,7 @@
  */
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.net.URI
 
 buildscript {
     repositories {
@@ -54,9 +55,15 @@ allprojects {
     // and suggest an upgrade. The only exception currently are those defined
     // in buildSrc, most likely because the variables are used in plugins as well
     // as dependencies. e.g. KOTLIN_VERSION
-    extra["sb.version"] = "3.2.2"
+    extra["sb.version"] = "3.2.5"
     extra["kotlin.version"] = Versions.KOTLIN_VERSION
     val springBootVersion = extra["sb.version"] as String
+
+    configurations.all {
+        resolutionStrategy {
+            force("org.springframework.graphql:spring-graphql:1.2.6")
+        }
+    }
 
     dependencyRecommendations {
         mavenBom(mapOf("module" to "org.jetbrains.kotlin:kotlin-bom:${Versions.KOTLIN_VERSION}"))
@@ -167,7 +174,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
              *   > compatibility for existing clients compiled against previous library versions.
              * Ref. https://kotlinlang.org/docs/kotlin-reference.pdf
              */
-            freeCompilerArgs = freeCompilerArgs + "-Xjvm-default=all-compatibility"
+            freeCompilerArgs = freeCompilerArgs + "-Xjvm-default=all-compatibility" + "-java-parameters"
             jvmTarget = "17"
         }
     }
@@ -175,6 +182,12 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     tasks {
         test {
             useJUnitPlatform()
+        }
+    }
+
+    tasks.withType<Javadoc>().configureEach {
+        options {
+            (this as CoreJavadocOptions).addStringOption("Xdoclint:none", "-quiet")
         }
     }
 

@@ -45,8 +45,9 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.apollographql.federation:federation-graphql-java-support")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    implementation("io.micrometer:context-propagation")
+    "java21Implementation"("io.micrometer:context-propagation:1.1.1") //Version should come from our BOM, but this doesn't work with the multi release JAR plugin.
 
 
     testImplementation("org.springframework.security:spring-security-core")

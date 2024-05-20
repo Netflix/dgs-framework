@@ -73,7 +73,7 @@ class RequestParamTest {
         applicationContext.registerBean("helloFetcher", Fetcher::class.java, *emptyArray())
         applicationContext.refresh()
 
-        val schema = provider.schema()
+        val schema = provider.schema().graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
 
@@ -110,7 +110,7 @@ class RequestParamTest {
         applicationContext.registerBean("helloFetcher", Fetcher::class.java, *emptyArray())
         applicationContext.refresh()
 
-        val schema = provider.schema()
+        val schema = provider.schema().graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
 
@@ -147,7 +147,7 @@ class RequestParamTest {
         applicationContext.registerBean("helloFetcher", Fetcher::class.java, *emptyArray())
         applicationContext.refresh()
 
-        val schema = provider.schema()
+        val schema = provider.schema().graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
 

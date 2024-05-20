@@ -25,9 +25,17 @@ import graphql.execution.ResultPath
 import graphql.language.Field
 import graphql.language.SourceLocation
 import graphql.schema.DataFetchingEnvironmentImpl
+import io.mockk.confirmVerified
+import io.mockk.every
+import io.mockk.spyk
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.slf4j.Logger
+import org.slf4j.event.Level
+import org.slf4j.spi.NOPLoggingEventBuilder
 import org.springframework.security.access.AccessDeniedException
+import java.lang.IllegalStateException
 import java.util.concurrent.CompletionException
 
 class DefaultDataFetcherExceptionHandlerTest {
@@ -58,8 +66,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo("PERMISSION_DENIED")
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(ErrorType.PERMISSION_DENIED)
     }
 
     @Test
@@ -74,8 +81,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo("INTERNAL")
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(ErrorType.INTERNAL)
         assertThat(result.errors[0].path).isEqualTo(listOf("Foo", "bar"))
         assertThat(result.errors[0].locations).isEqualTo(listOf(SourceLocation(5, 5)))
     }
@@ -93,8 +99,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo("INTERNAL")
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(ErrorType.INTERNAL)
     }
 
     @Test
@@ -110,8 +115,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo("NOT_FOUND")
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(ErrorType.NOT_FOUND)
     }
 
     @Test
@@ -127,8 +131,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo("BAD_REQUEST")
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(ErrorType.BAD_REQUEST)
     }
 
     @Test
@@ -149,8 +152,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo(customDgsExceptionType.name)
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(customDgsExceptionType)
     }
 
     @Test
@@ -171,7 +173,47 @@ class DefaultDataFetcherExceptionHandlerTest {
         val extensions = result.errors[0].extensions
         assertThat(extensions["errorType"]).isEqualTo("NOT_FOUND")
 
-        // We return null here because we don't want graphql-java to write classification field
-        assertThat(result.errors[0].errorType).isNull()
+        assertThat(result.errors[0].errorType).isEqualTo(ErrorType.NOT_FOUND)
+    }
+
+    @Test
+    fun `DgsException with explicit log level`() {
+        val debugLevelException = object : DgsException(
+            "something went wrong",
+            IllegalStateException("something went wrong"),
+            ErrorType.UNAVAILABLE,
+            Level.DEBUG
+        ) {}
+
+        val defaultLevelException = object : DgsException(
+            "something went wrong",
+            IllegalStateException("something went wrong"),
+            ErrorType.UNAVAILABLE
+        ) {}
+
+        // Configure the logger to be a mock so we can check invocations
+        val loggerMock = spyk<Logger>()
+        every { loggerMock.atLevel(any()) } answers { NOPLoggingEventBuilder.singleton() }
+
+        val mock = spyk<DefaultDataFetcherExceptionHandler>()
+        every { mock.getProperty("logger") } answers { loggerMock }
+
+        val handlerParametersForDebugException = DataFetcherExceptionHandlerParameters.newExceptionParameters()
+            .exception(debugLevelException)
+            .dataFetchingEnvironment(environment)
+            .build()
+
+        val handlerParametersForDefaultException = DataFetcherExceptionHandlerParameters.newExceptionParameters()
+            .exception(defaultLevelException)
+            .dataFetchingEnvironment(environment)
+            .build()
+
+        // Handle both exceptions
+        mock.handleException(handlerParametersForDebugException).get()
+        mock.handleException(handlerParametersForDefaultException).get()
+
+        verify { loggerMock.atLevel(Level.DEBUG) }
+        verify { loggerMock.atLevel(Level.ERROR) }
+        confirmVerified(loggerMock)
     }
 }

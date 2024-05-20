@@ -49,8 +49,8 @@ dependencies {
         // GraphQL Platform
         api("com.graphql-java:graphql-java") {
             version {
-                strictly("[21.2, 21.3]")
-                prefer("21.3")
+                strictly("[21.4, 21.5]")
+                prefer("21.5")
                 reject("[20.6, 19.5, 18.2]")
             }
 
@@ -75,8 +75,8 @@ dependencies {
         }
         api("com.apollographql.federation:federation-graphql-java-support") {
             version {
-                strictly("[3.0.0]")
-                prefer("3.0.0")
+                strictly("[4.4.0]")
+                prefer("4.4.0")
             }
         }
         // ---
@@ -90,12 +90,15 @@ dependencies {
             version { require("3.6.1") }
         }
         // CVEs
-        api("org.apache.logging.log4j:log4j-to-slf4j:2.22.1") {
+        api("org.apache.logging.log4j:log4j-to-slf4j:2.23.1") {
             because("Refer to CVE-2021-44228; https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228")
          }
-         api("org.apache.logging.log4j:log4j-api:2.22.1") {
+         api("org.apache.logging.log4j:log4j-api:2.23.1") {
             because("Refer to CVE-2021-44228; https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228")
          }
+        api("io.micrometer:context-propagation") {
+            version { require("1.1.1") }
+        }
     }
 }
 

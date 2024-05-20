@@ -20,10 +20,12 @@ import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.Option
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.SchemaProviderResult
 import graphql.Scalars
 import graphql.schema.GraphQLFieldDefinition
 import graphql.schema.GraphQLObjectType
 import graphql.schema.GraphQLSchema
+import graphql.schema.idl.RuntimeWiring
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -52,7 +54,7 @@ class DgsRestSchemaJsonControllerTest {
             .clearDirectives()
             .query(objectType).build()
 
-        every { dgsSchemaProvider.schema() } returns schema
+        every { dgsSchemaProvider.schema() } returns SchemaProviderResult(schema, runtimeWiring = RuntimeWiring.MOCKED_WIRING)
 
         val result = DgsRestSchemaJsonController(dgsSchemaProvider).schema()
 

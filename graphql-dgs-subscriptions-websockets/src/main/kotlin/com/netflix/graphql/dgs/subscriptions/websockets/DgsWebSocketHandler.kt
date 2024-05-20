@@ -21,6 +21,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.types.subscription.*
 import jakarta.annotation.PostConstruct
+import jakarta.annotation.PreDestroy
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
@@ -58,17 +59,31 @@ class DgsWebSocketHandler(
         }
     }
 
+    @PreDestroy
+    fun destroy() {
+        try {
+            graphqlWSHandler.destroy()
+        } catch (exc: Exception) {
+            logger.warn("Error calling destroy method on {}", graphqlWSHandler, exc)
+        }
+        try {
+            graphqlTransportWSHandler.destroy()
+        } catch (exc: Exception) {
+            logger.warn("Error calling destroy method on {}", graphqlTransportWSHandler, exc)
+        }
+    }
+
     override fun afterConnectionEstablished(session: WebSocketSession) {
         try {
             graphqlWSHandler.afterConnectionEstablished(session)
         } catch (e: Exception) {
-            logger.error("Unable to handle connection established for ${session.id}")
+            logger.error("Unable to handle connection established for {}", session.id)
         }
 
         try {
             graphqlTransportWSHandler.afterConnectionEstablished(session)
         } catch (e: Exception) {
-            logger.error("Unable to handle connection established for ${session.id}")
+            logger.error("Unable to handle connection established for {}", session.id)
         }
     }
 
@@ -76,13 +91,13 @@ class DgsWebSocketHandler(
         try {
             graphqlWSHandler.afterConnectionClosed(session, status)
         } catch (e: Exception) {
-            logger.error("Error closing connection for session ${session.id}")
+            logger.error("Error closing connection for session {}", session.id)
         }
 
         try {
             graphqlTransportWSHandler.afterConnectionClosed(session, status)
         } catch (e: Exception) {
-            logger.error("Error closing connection for session ${session.id}")
+            logger.error("Error closing connection for session {}", session.id)
         }
     }
 

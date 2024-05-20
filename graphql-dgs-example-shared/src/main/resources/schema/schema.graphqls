@@ -21,24 +21,15 @@ type Query {
     concurrent1: Int
     concurrent2: Int
 
-    nested: [NestedA!]!
-
     headers: String
     referer: String
+    demoHeader: String
 
     ### To show how to handle HttpHeaders
     helloWithHeaders(name: String): String
 
     withPagination: MessageConnection
     withCookie: String
-}
-
-type NestedA {
-    nested2: Nested2!
-}
-
-type Nested2 {
-    message: String
 }
 
 type Message @connection {
@@ -67,6 +58,7 @@ type Mutation {
     addRating(input: RatingInput):Rating
     uploadFile(input: FileUploadInput!): Boolean
     updateCookie(value: String): String
+    uploadTest(input: Upload!): Boolean
 }
 
 input RatingInput {
@@ -94,4 +86,6 @@ type Stock {
 
 scalar Upload
 scalar LocalTime
+
+directive @connection on OBJECT
 

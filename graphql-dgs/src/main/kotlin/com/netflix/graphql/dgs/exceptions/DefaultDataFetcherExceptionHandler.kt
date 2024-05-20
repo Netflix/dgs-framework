@@ -23,6 +23,7 @@ import graphql.execution.DataFetcherExceptionHandlerParameters
 import graphql.execution.DataFetcherExceptionHandlerResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.slf4j.event.Level
 import org.springframework.util.ClassUtils
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionException
@@ -62,11 +63,12 @@ open class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
     }
 
     protected open fun logException(handlerParameters: DataFetcherExceptionHandlerParameters, error: GraphQLError, exception: Throwable) {
-        logger.error(
+        val logLevel = if (exception is DgsException) exception.logLevel else Level.ERROR
+
+        logger.atLevel(logLevel).setCause(exception).log(
             "Exception while executing data fetcher for {}: {}",
             handlerParameters.path,
-            exception.message,
-            exception
+            exception.message
         )
     }
 

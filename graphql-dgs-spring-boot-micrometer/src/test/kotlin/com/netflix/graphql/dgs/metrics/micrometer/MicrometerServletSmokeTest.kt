@@ -46,6 +46,7 @@ import io.micrometer.core.instrument.Meter
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Tags
+import io.micrometer.core.instrument.cumulative.CumulativeCounter
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import org.assertj.core.api.Assertions.assertThat
 import org.dataloader.BatchLoader
@@ -364,6 +365,7 @@ class MicrometerServletSmokeTest {
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query")
 
         assertThat(meters["gql.error"]).isNotNull.hasSize(1)
+        assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
                 Tags.of("execution-tag", "foo")
@@ -451,6 +453,7 @@ class MicrometerServletSmokeTest {
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query")
 
         assertThat(meters["gql.error"]).isNotNull.hasSize(1)
+        assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
                 Tags.of("execution-tag", "foo")
@@ -459,7 +462,7 @@ class MicrometerServletSmokeTest {
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "none")
                     .and("gql.query.sig.hash", "none")
-                    .and("gql.errorDetail", "none")
+                    .and("gql.errorDetail", "INVALID_ARGUMENT")
                     .and("gql.errorCode", "BAD_REQUEST")
                     .and("gql.path", "[hello]")
                     .and("outcome", "failure")
@@ -511,6 +514,7 @@ class MicrometerServletSmokeTest {
 
         logMeters(meters["gql.error"])
         assertThat(meters["gql.error"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
                 Tags.of("execution-tag", "foo")
@@ -567,7 +571,7 @@ class MicrometerServletSmokeTest {
                         |{
                         |   "errors":[
                         |      {"message":"Exception triggered.",
-                        |          "locations":[],"path":["triggerBadRequestFailure"],
+                        |          "path":["triggerBadRequestFailure"],
                         |          "extensions":{"errorType":"BAD_REQUEST"}}
                         |   ],
                         |   "data":{"triggerBadRequestFailure":null}
@@ -582,6 +586,7 @@ class MicrometerServletSmokeTest {
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
 
         assertThat(meters["gql.error"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
                 Tags.of("execution-tag", "foo")
@@ -636,7 +641,7 @@ class MicrometerServletSmokeTest {
                     |{
                     |   "errors":[
                     |       { 
-                    |           "message":"Exception triggered.","locations":[],
+                    |           "message":"Exception triggered.",
                     |           "path":["triggerCustomFailure"],
                     |           "extensions":{"errorType":"UNAVAILABLE","errorDetail":"ENHANCE_YOUR_CALM"}
                     |       }
@@ -653,6 +658,7 @@ class MicrometerServletSmokeTest {
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
 
         assertThat(meters["gql.error"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
                 Tags.of("execution-tag", "foo")
@@ -706,8 +712,8 @@ class MicrometerServletSmokeTest {
                     """
                     | {"errors":[
                     |    {"message":"java.lang.IllegalStateException: Exception triggered.","locations":[{"line":1,"column":3}],"path":["triggerInternalFailure"],"extensions":{"errorType":"INTERNAL"}},
-                    |    {"message":"Exception triggered.","locations":[],"path":["triggerBadRequestFailure"],"extensions":{"class":"com.netflix.graphql.dgs.exceptions.DgsBadRequestException","errorType":"BAD_REQUEST"}},
-                    |    {"message":"Exception triggered.","locations":[],"path":["triggerCustomFailure"],"extensions":{"errorType":"UNAVAILABLE","errorDetail":"ENHANCE_YOUR_CALM"}}
+                    |    {"message":"Exception triggered.","path":["triggerBadRequestFailure"],"extensions":{"class":"com.netflix.graphql.dgs.exceptions.DgsBadRequestException","errorType":"BAD_REQUEST"}},
+                    |    {"message":"Exception triggered.","path":["triggerCustomFailure"],"extensions":{"errorType":"UNAVAILABLE","errorDetail":"ENHANCE_YOUR_CALM"}}
                     |  ],
                     |  "data":{"triggerInternalFailure":null,"triggerBadRequestFailure":null,"triggerCustomFailure":null}}
                     """.trimMargin(),
@@ -924,6 +930,7 @@ class MicrometerServletSmokeTest {
                         dataLoaderTaskExecutor
                     )
                 }
+
                 override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry) {
                     this.dataLoaderRegistry = Optional.of(dataLoaderRegistry)
                 }

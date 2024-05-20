@@ -30,6 +30,7 @@ import org.springframework.core.convert.converter.GenericConverter
 import org.springframework.core.convert.support.DefaultConversionService
 import org.springframework.util.CollectionUtils
 import org.springframework.util.ReflectionUtils
+import java.lang.reflect.Type
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.primaryConstructor
@@ -89,19 +90,34 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
             }
 
             val input = inputMap[parameter.name]
-            val typeDescriptor = TypeDescriptor(ResolvableType.forType(parameter.type.javaType), null, null)
-            val convertedValue = try {
-                conversionService.convert(input, typeDescriptor)
-            } catch (exc: ConversionException) {
-                throw throw DgsInvalidInputArgumentException("Failed to convert value $input to $typeDescriptor", exc)
-            }
-            parametersByName[parameter] = convertedValue
+            val parameterType = parameter.type.javaType
+            parametersByName[parameter] = maybeConvert(input, parameterType)
         }
 
         return try {
             constructor.callBy(parametersByName)
         } catch (ex: Exception) {
             throw DgsInvalidInputArgumentException("Provided input arguments do not match arguments of data class `$targetClass`", ex)
+        }
+    }
+
+    private fun maybeConvert(input: Any?, parameterType: Type): Any? {
+        val targetType: TypeDescriptor
+        if (parameterType is Class<*>) {
+            if (parameterType.isInstance(input)) {
+                // No conversion necessary
+                return input
+            }
+            targetType = TypeDescriptor.valueOf(parameterType)
+        } else {
+            targetType = TypeDescriptor(ResolvableType.forType(parameterType), null, null)
+        }
+        val sourceType = TypeDescriptor.forObject(input)
+
+        try {
+            return conversionService.convert(input, sourceType, targetType)
+        } catch (exc: ConversionException) {
+            throw throw DgsInvalidInputArgumentException("Failed to convert value $input to $targetType", exc)
         }
     }
 
