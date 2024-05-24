@@ -2741,7 +2741,6 @@
         "net.bytebuddy:byte-buddy": {
             "locked": "1.14.13",
             "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "io.mockk:mockk-agent-jvm",
                 "org.assertj:assertj-core",
                 "org.mockito:mockito-core"
@@ -4173,12 +4172,6 @@
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
             "locked": "1.2.2"
-        },
-        "net.bytebuddy:byte-buddy": {
-            "locked": "1.14.13",
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
-            ]
         },
         "net.datafaker:datafaker": {
             "locked": "2.2.2",
@@ -6973,7 +6966,6 @@
         "net.bytebuddy:byte-buddy": {
             "locked": "1.14.13",
             "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "io.mockk:mockk-agent-jvm",
                 "org.assertj:assertj-core",
                 "org.mockito:mockito-core"
