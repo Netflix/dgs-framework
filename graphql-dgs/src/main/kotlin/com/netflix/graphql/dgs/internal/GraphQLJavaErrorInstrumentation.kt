@@ -21,7 +21,7 @@ class GraphQLJavaErrorInstrumentation : SimplePerformantInstrumentation() {
             executionResult.errors.forEach { error ->
                 // put in the classification unless it's already there since graphql-java errors contain this field
                 val extensions = (if (error.extensions != null) error.extensions else emptyMap<String, Any>()).toMutableMap()
-                if (!extensions.containsKey("classification")) {
+                if (!extensions.containsKey("classification") && error.errorType != null) {
                     val errorClassification = error.errorType
                     extensions["classification"] = errorClassification.toSpecification(error)
                 }
