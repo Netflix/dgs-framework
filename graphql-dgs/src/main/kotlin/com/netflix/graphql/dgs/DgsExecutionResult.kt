@@ -104,7 +104,7 @@ class DgsExecutionResult(
         fun executionResult(executionResult: ExecutionResult) =
             apply { this.executionResult = executionResult }
 
-        fun executionResult(executionResultBuilder: ExecutionResultImpl.Builder) =
+        fun executionResult(executionResultBuilder: ExecutionResultImpl.Builder<*>) =
             apply { this.executionResult = executionResultBuilder.build() }
 
         var headers: HttpHeaders = HttpHeaders.EMPTY

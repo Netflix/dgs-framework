@@ -57,15 +57,14 @@ allprojects {
     // and suggest an upgrade. The only exception currently are those defined
     // in buildSrc, most likely because the variables are used in plugins as well
     // as dependencies. e.g. KOTLIN_VERSION
-    extra["sb.version"] = "3.2.5"
+    extra["sb.version"] = "3.3.0"
     extra["kotlin.version"] = Versions.KOTLIN_VERSION
-    val springBootVersion = extra["sb.version"] as String
 
-    configurations.all {
-        resolutionStrategy {
-            force("org.springframework.graphql:spring-graphql:1.2.6")
-        }
-    }
+//    configurations.all {
+//        resolutionStrategy {
+//            force("com.graphql-java:graphql-java:21.5")
+//        }
+//    }
 }
 val internalBomModules by extra(
     listOf(
@@ -84,22 +83,8 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         plugin("io.spring.dependency-management")
     }
 
-    /**
-     * Remove once the following ticket is closed:
-     *  Kotlin-JVM: runtimeOnlyDependenciesMetadata, implementationDependenciesMetadata should be marked with isCanBeResolved=false
-     *  https://youtrack.jetbrains.com/issue/KT-34394
-     */
-//    tasks.named("generateLock") {
-//        doFirst {
-//            project.configurations.filter { it.name.contains("DependenciesMetadata") }.forEach {
-//                it.isCanBeResolved = false
-//            }
-//        }
-//    }
-
     val springBootVersion = extra["sb.version"] as String
     val jmhVersion = "1.37"
-
 
     dependencyManagement {
         imports {
@@ -138,15 +123,6 @@ configure(subprojects.filterNot { it in internalBomModules }) {
             languageVersion.set(JavaLanguageVersion.of(17))
         }
     }
-
-//    kapt {
-//        arguments {
-//            arg(
-//                "org.springframework.boot.configurationprocessor.additionalMetadataLocations",
-//                "$projectDir/src/main/resources"
-//            )
-//        }
-//    }
 
     jmh {
         includeTests.set(true)

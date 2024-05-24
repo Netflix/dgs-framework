@@ -25,6 +25,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 @SpringBootApplication(scanBasePackages = {"com.netflix.graphql.dgs.example.shared", "com.netflix.graphql.dgs.example"})
@@ -44,7 +45,7 @@ public class ReactiveSpringGraphQLExampleApp {
         public PreparsedDocumentProvider preparsedDocumentProvider() {
             return (executionInput, parseAndValidateFunction) -> {
                 Function<String, PreparsedDocumentEntry> mapCompute = key -> parseAndValidateFunction.apply(executionInput);
-                return cache.get(executionInput.getQuery(), mapCompute);
+                return CompletableFuture.completedFuture(cache.get(executionInput.getQuery(), mapCompute));
             };
         }
     }

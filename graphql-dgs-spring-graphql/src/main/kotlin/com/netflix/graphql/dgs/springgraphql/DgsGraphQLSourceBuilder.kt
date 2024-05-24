@@ -42,6 +42,9 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider) 
     @Nullable
     private var schemaReportConsumer: Consumer<SchemaReport>? = null
 
+    @Nullable
+    private var initializerConsumer: Consumer<SchemaMappingInspector.Initializer>? = null
+
     override fun initGraphQlSchema(): GraphQLSchema {
         val schema = dgsSchemaProvider.schema(schemaResources = schemaResources)
         setupSchemaReporter(schema)
@@ -70,6 +73,15 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider) 
 
     override fun inspectSchemaMappings(reportConsumer: Consumer<SchemaReport>): SchemaResourceBuilder {
         this.schemaReportConsumer = reportConsumer
+        return this
+    }
+
+    override fun inspectSchemaMappings(
+        initializerConsumer: Consumer<SchemaMappingInspector.Initializer>,
+        reportConsumer: Consumer<SchemaReport>
+    ): SchemaResourceBuilder {
+        this.schemaReportConsumer = reportConsumer
+        this.initializerConsumer = initializerConsumer
         return this
     }
 
