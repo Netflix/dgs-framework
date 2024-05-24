@@ -2287,7 +2287,6 @@
         "net.bytebuddy:byte-buddy": {
             "locked": "1.14.13",
             "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "io.mockk:mockk-agent-jvm",
                 "org.assertj:assertj-core",
                 "org.mockito:mockito-core"
@@ -3601,12 +3600,6 @@
             "locked": "6.0.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc-autoconfigure"
-            ]
-        },
-        "net.bytebuddy:byte-buddy": {
-            "locked": "1.14.13",
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ]
         },
         "net.datafaker:datafaker": {
@@ -6516,7 +6509,6 @@
         "net.bytebuddy:byte-buddy": {
             "locked": "1.14.13",
             "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "io.mockk:mockk-agent-jvm",
                 "org.assertj:assertj-core",
                 "org.mockito:mockito-core"
