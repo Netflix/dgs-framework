@@ -29,7 +29,7 @@ plugins {
     `java-library`
     id("nebula.dependency-recommender") version "11.0.0"
 
-    id("nebula.netflixoss") version "11.4.0"
+    id("nebula.netflixoss") version "11.5.0"
     id("org.jmailen.kotlinter") version "3.11.1"
     id("me.champeau.jmh") version "0.7.2"
     id("me.champeau.mrjar") version "0.1.1"
@@ -73,7 +73,6 @@ allprojects {
         mavenBom(mapOf("module" to "com.fasterxml.jackson:jackson-bom:2.15.+"))
     }
 }
-
 val internalBomModules by extra(
     listOf(
         project(":graphql-dgs-platform"),
@@ -96,13 +95,13 @@ configure(subprojects.filterNot { it in internalBomModules }) {
      *  Kotlin-JVM: runtimeOnlyDependenciesMetadata, implementationDependenciesMetadata should be marked with isCanBeResolved=false
      *  https://youtrack.jetbrains.com/issue/KT-34394
      */
-    tasks.named("generateLock") {
-        doFirst {
-            project.configurations.filter { it.name.contains("DependenciesMetadata") }.forEach {
-                it.isCanBeResolved = false
-            }
-        }
-    }
+//    tasks.named("generateLock") {
+//        doFirst {
+//            project.configurations.filter { it.name.contains("DependenciesMetadata") }.forEach {
+//                it.isCanBeResolved = false
+//            }
+//        }
+//    }
 
     val springBootVersion = extra["sb.version"] as String
     val jmhVersion = "1.37"
