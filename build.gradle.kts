@@ -29,7 +29,9 @@ plugins {
     `java-library`
     id("nebula.dependency-recommender") version "11.0.0"
 
-    id("nebula.netflixoss") version "11.5.0"
+    id("nebula.netflixoss") version "11.4.0"
+    id("io.spring.dependency-management") version "1.1.5"
+
     id("org.jmailen.kotlinter") version "3.11.1"
     id("me.champeau.jmh") version "0.7.2"
     id("me.champeau.mrjar") version "0.1.1"
@@ -64,14 +66,6 @@ allprojects {
             force("org.springframework.graphql:spring-graphql:1.2.6")
         }
     }
-
-    dependencyRecommendations {
-        mavenBom(mapOf("module" to "org.jetbrains.kotlin:kotlin-bom:${Versions.KOTLIN_VERSION}"))
-
-        mavenBom(mapOf("module" to "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
-        mavenBom(mapOf("module" to "org.springframework.cloud:spring-cloud-dependencies:2023.0.+"))
-        mavenBom(mapOf("module" to "com.fasterxml.jackson:jackson-bom:2.15.+"))
-    }
 }
 val internalBomModules by extra(
     listOf(
@@ -85,9 +79,9 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     apply {
         plugin("java-library")
         plugin("kotlin")
-//        plugin("kotlin-kapt")
         plugin("org.jmailen.kotlinter")
         plugin("me.champeau.jmh")
+        plugin("io.spring.dependency-management")
     }
 
     /**
@@ -105,6 +99,17 @@ configure(subprojects.filterNot { it in internalBomModules }) {
 
     val springBootVersion = extra["sb.version"] as String
     val jmhVersion = "1.37"
+
+
+    dependencyManagement {
+        imports {
+            mavenBom("org.jetbrains.kotlin:kotlin-bom:${Versions.KOTLIN_VERSION}")
+
+            mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+            mavenBom("org.springframework.cloud:spring-cloud-dependencies:2023.0.+")
+            mavenBom("com.fasterxml.jackson:jackson-bom:2.15.+")
+        }
+    }
 
     dependencies {
         // Apply the BOM to applicable subprojects.
