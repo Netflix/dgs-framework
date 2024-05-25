@@ -18,7 +18,7 @@
             ]
         },
         "com.graphql-java:java-dataloader": {
-            "locked": "3.2.2",
+            "locked": "3.3.0",
             "transitive": [
                 "com.graphql-java:graphql-java",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -176,7 +176,7 @@
             ]
         },
         "com.graphql-java:java-dataloader": {
-            "locked": "3.2.2",
+            "locked": "3.3.0",
             "transitive": [
                 "com.graphql-java:graphql-java",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -606,7 +606,7 @@
             ]
         },
         "com.graphql-java:java-dataloader": {
-            "locked": "3.2.2",
+            "locked": "3.3.0",
             "transitive": [
                 "com.graphql-java:graphql-java",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -941,7 +941,7 @@
             ]
         },
         "com.graphql-java:java-dataloader": {
-            "locked": "3.2.2",
+            "locked": "3.3.0",
             "transitive": [
                 "com.graphql-java:graphql-java",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -1226,7 +1226,7 @@
             ]
         },
         "com.graphql-java:java-dataloader": {
-            "locked": "3.2.2",
+            "locked": "3.3.0",
             "transitive": [
                 "com.graphql-java:graphql-java",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -1803,7 +1803,7 @@
             ]
         },
         "com.graphql-java:java-dataloader": {
-            "locked": "3.2.2",
+            "locked": "3.3.0",
             "transitive": [
                 "com.graphql-java:graphql-java",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -3025,7 +3025,7 @@
             ]
         },
         "com.graphql-java:java-dataloader": {
-            "locked": "3.2.2",
+            "locked": "3.3.0",
             "transitive": [
                 "com.graphql-java:graphql-java",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -3409,7 +3409,7 @@
             ]
         },
         "com.graphql-java:java-dataloader": {
-            "locked": "3.2.2",
+            "locked": "3.3.0",
             "transitive": [
                 "com.graphql-java:graphql-java",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -4120,7 +4120,7 @@
             ]
         },
         "com.graphql-java:java-dataloader": {
-            "locked": "3.2.2",
+            "locked": "3.3.0",
             "transitive": [
                 "com.graphql-java:graphql-java",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -4808,7 +4808,7 @@
             ]
         },
         "com.graphql-java:java-dataloader": {
-            "locked": "3.2.2",
+            "locked": "3.3.0",
             "transitive": [
                 "com.graphql-java:graphql-java",
                 "com.netflix.graphql.dgs:graphql-dgs",
