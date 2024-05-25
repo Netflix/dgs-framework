@@ -59,12 +59,6 @@ allprojects {
     // as dependencies. e.g. KOTLIN_VERSION
     extra["sb.version"] = "3.3.0"
     extra["kotlin.version"] = Versions.KOTLIN_VERSION
-
-//    configurations.all {
-//        resolutionStrategy {
-//            force("com.graphql-java:graphql-java:21.5")
-//        }
-//    }
 }
 val internalBomModules by extra(
     listOf(
@@ -100,10 +94,6 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         annotationProcessor("org.springframework.boot:spring-boot-autoconfigure-processor")
         // Produce Config Metadata for properties used in Spring Boot
         annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-        // Speed up processing of AutoConfig's produced by Spring Boot for Kotlin
-//        kapt("org.springframework.boot:spring-boot-autoconfigure-processor:${springBootVersion}")
-        // Produce Config Metadata for properties used in Spring Boot for Kotlin
-//        kapt("org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}")
 
         // Sets the JMH version to use across modules.
         // Please refer to the following links for further reference.
