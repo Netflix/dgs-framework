@@ -23,6 +23,7 @@ import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObject
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithKotlinProperty
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithMap
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithSet
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputOptionalObject
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -46,6 +47,12 @@ internal class InputObjectMapperTest {
         "simpleString" to null,
         "someDate" to currentDate,
         "someObject" to mapOf("key1" to "value1", "key2" to currentDate, "key3" to null)
+    )
+
+    private val inputWithOptionals = mutableMapOf(
+        "simpleString" to "abcd",
+        "someDate" to currentDate,
+        "someObject" to mapOf("key1" to "value1", "key2" to currentDate, "key3" to mapOf("subkey1" to "hi"))
     )
 
     private val inputObjectMapper: InputObjectMapper = DefaultInputObjectMapper()
@@ -94,6 +101,15 @@ internal class InputObjectMapperTest {
         assertThat(mapToObject.someObject.key1).isEqualTo("value1")
         assertThat(mapToObject.someObject.key2).isEqualTo(currentDate)
         assertThat(mapToObject.someObject.key3).isNull()
+    }
+    @Test
+    fun mapToJavaClassWithOptionals() {
+        val mapToObject = inputObjectMapper.mapToJavaObject(inputWithOptionals, JInputOptionalObject::class.java)
+        assertThat(mapToObject.simpleString).isEqualTo("abcd")
+        assertThat(mapToObject.someDate).isEqualTo(currentDate)
+        assertThat(mapToObject.someObject.key1).isEqualTo("value1")
+        assertThat(mapToObject.someObject.key2).isEqualTo(currentDate)
+        assertThat(mapToObject.someObject.key3?.subkey1).isEqualTo("hi")
     }
 
     @Test

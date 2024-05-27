@@ -30,7 +30,9 @@ import org.springframework.core.convert.converter.GenericConverter
 import org.springframework.core.convert.support.DefaultConversionService
 import org.springframework.util.CollectionUtils
 import org.springframework.util.ReflectionUtils
+import java.lang.reflect.Array
 import java.lang.reflect.Type
+import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.primaryConstructor
@@ -67,6 +69,19 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
             if (KotlinDetector.isKotlinType(targetType.type)) {
                 return mapper.mapToKotlinObject(sourceMap, targetType.type.kotlin)
             }
+
+
+            if (targetType.resolvableType.hasGenerics()) {
+                val unwrappedTarget = TypeDescriptor(targetType.resolvableType.getGeneric(), null, targetType.annotations)
+                val target = mapper.mapToJavaObject(sourceMap, unwrappedTarget.type)
+                if (target == null || (target.javaClass.isArray && Array.getLength(target) == 0) ||
+                    (target is Collection<*> && target.isEmpty())
+                ) {
+                    return Optional.empty<Any>()
+                }
+                return Optional.of(target)
+            }
+
             return mapper.mapToJavaObject(sourceMap, targetType.type)
         }
     }
