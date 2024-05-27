@@ -70,7 +70,6 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
                 return mapper.mapToKotlinObject(sourceMap, targetType.type.kotlin)
             }
 
-
             if (targetType.resolvableType.hasGenerics()) {
                 val unwrappedTarget = TypeDescriptor(targetType.resolvableType.getGeneric(), null, targetType.annotations)
                 val target = mapper.mapToJavaObject(sourceMap, unwrappedTarget.type)

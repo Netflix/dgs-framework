@@ -102,6 +102,7 @@ internal class InputObjectMapperTest {
         assertThat(mapToObject.someObject.key2).isEqualTo(currentDate)
         assertThat(mapToObject.someObject.key3).isNull()
     }
+
     @Test
     fun mapToJavaClassWithOptionals() {
         val mapToObject = inputObjectMapper.mapToJavaObject(inputWithOptionals, JInputOptionalObject::class.java)
