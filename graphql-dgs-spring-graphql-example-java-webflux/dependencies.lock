@@ -453,7 +453,7 @@
             ]
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "1.2.2"
+            "locked": "1.4.1"
         },
         "org.apache.logging.log4j:log4j-api": {
             "locked": "2.21.1",
@@ -1102,7 +1102,7 @@
             ]
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "1.2.2"
+            "locked": "1.4.1"
         },
         "org.apache.logging.log4j:log4j-api": {
             "locked": "2.21.1",
@@ -1798,7 +1798,7 @@
             ]
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "1.2.2"
+            "locked": "1.4.1"
         },
         "net.sf.jopt-simple:jopt-simple": {
             "locked": "5.0.4",
@@ -2736,7 +2736,7 @@
             ]
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "1.2.2"
+            "locked": "1.4.1"
         },
         "net.bytebuddy:byte-buddy": {
             "locked": "1.14.13",
@@ -4171,7 +4171,7 @@
             ]
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "1.2.2"
+            "locked": "1.4.1"
         },
         "net.datafaker:datafaker": {
             "locked": "2.2.2",
@@ -5061,7 +5061,7 @@
             ]
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "1.2.2"
+            "locked": "1.4.1"
         },
         "net.bytebuddy:byte-buddy": {
             "locked": "1.14.13",
@@ -5959,7 +5959,7 @@
             ]
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "1.2.2"
+            "locked": "1.4.1"
         },
         "net.bytebuddy:byte-buddy": {
             "locked": "1.14.13",
@@ -6961,7 +6961,7 @@
             ]
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "1.2.2"
+            "locked": "1.4.1"
         },
         "net.bytebuddy:byte-buddy": {
             "locked": "1.14.13",
