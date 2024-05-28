@@ -63,7 +63,7 @@ allprojects {
 
     configurations.all {
         resolutionStrategy {
-            force("org.springframework.graphql:spring-graphql:1.2.6")
+            force("org.springframework.graphql:spring-graphql:1.3.0")
         }
     }
 }

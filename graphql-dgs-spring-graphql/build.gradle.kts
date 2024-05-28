@@ -21,7 +21,7 @@ dependencies {
     implementation("org.springframework:spring-web")
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("io.micrometer:context-propagation")
-    implementation("org.springframework.graphql:spring-graphql:1.2.6")
+    implementation("org.springframework.graphql:spring-graphql:1.3.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
