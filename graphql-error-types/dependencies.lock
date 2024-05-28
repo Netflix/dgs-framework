@@ -42,13 +42,13 @@
     },
     "compileClasspath": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.15.4",
+            "locked": "2.17.1",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom"
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.4",
+            "locked": "2.17.1",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations"
             ]
@@ -93,13 +93,13 @@
     },
     "compileOnlyDependenciesMetadata": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.15.4",
+            "locked": "2.17.1",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom"
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.4",
+            "locked": "2.17.1",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations"
             ]
@@ -193,13 +193,13 @@
     },
     "jmhCompileClasspath": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.15.4",
+            "locked": "2.17.1",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom"
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.15.4",
+            "locked": "2.17.1",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations"
             ]
