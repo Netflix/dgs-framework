@@ -104,10 +104,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     dependencyManagement {
         imports {
             mavenBom("org.jetbrains.kotlin:kotlin-bom:${Versions.KOTLIN_VERSION}")
-
             mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
-            mavenBom("org.springframework.cloud:spring-cloud-dependencies:2023.0.+")
-            mavenBom("com.fasterxml.jackson:jackson-bom:2.15.+")
         }
     }
 
