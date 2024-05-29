@@ -34,6 +34,8 @@ import org.springframework.boot.autoconfigure.graphql.GraphQlProperties
 import org.springframework.boot.autoconfigure.graphql.GraphQlSourceBuilderCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.graphql.execution.*
+import java.util.Optional
+import java.util.function.Consumer
 
 @AutoConfiguration
 @AutoConfigureBefore(name = ["org.springframework.boot.autoconfigure.graphql.GraphQlAutoConfiguration"])
@@ -52,7 +54,8 @@ open class DgsSpringGraphQLSourceAutoConfiguration {
         wiringConfigurers: ObjectProvider<RuntimeWiringConfigurer>,
         sourceCustomizers: ObjectProvider<GraphQlSourceBuilderCustomizer>,
         reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator,
-        defaultExceptionHandler: DataFetcherExceptionHandler
+        defaultExceptionHandler: DataFetcherExceptionHandler,
+        reportConsumer: Optional<Consumer<SchemaReport>>
     ): GraphQlSource {
         val dataFetcherExceptionResolvers: MutableList<DataFetcherExceptionResolver> = exceptionResolvers.orderedStream().toList().toMutableList()
         dataFetcherExceptionResolvers.add((ExceptionHandlerResolverAdapter(defaultExceptionHandler)))
@@ -63,7 +66,30 @@ open class DgsSpringGraphQLSourceAutoConfiguration {
             .instrumentation(instrumentations.orderedStream().toList())
 
         if (properties.schema.inspection.isEnabled) {
-            builder.inspectSchemaMappings { message: SchemaReport? -> logger.info(message) }
+            if(reportConsumer.isPresent) {
+                builder.inspectSchemaMappings(reportConsumer.get())
+            } else {
+                builder.inspectSchemaMappings { message: SchemaReport? ->
+                    val messageBuilder = StringBuilder("***Schema Report***\n")
+
+                    val arguments = message?.unmappedArguments()?.map {
+                        if(it.key is SelfDescribingDataFetcher) {
+                            val dataFetcher =
+                                (it.key as DgsGraphQLSourceBuilder.DgsSelfDescribingDataFetcher).dataFetcher
+                            return@map dataFetcher.method.declaringClass.name + "." + dataFetcher.method.name + " for arguments " + it.value
+                        } else {
+                            return@map it.toString()
+                        }
+                    }
+
+                    messageBuilder.append("Unmapped fields: ${message?.unmappedFields()}\n")
+                    messageBuilder.append("Unmapped registrations: ${message?.unmappedRegistrations()}\n")
+                    messageBuilder.append("Unmapped arguments: ${arguments}\n")
+                    messageBuilder.append("Skipped types: ${message?.skippedTypes()}\n")
+
+                    logger.info(messageBuilder.toString())
+                }
+            }
         }
 
         wiringConfigurers.orderedStream().forEach { configurer: RuntimeWiringConfigurer ->

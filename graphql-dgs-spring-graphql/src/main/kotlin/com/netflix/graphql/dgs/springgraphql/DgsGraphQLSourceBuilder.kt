@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.springgraphql
 
+import com.netflix.graphql.dgs.InputArgument
 import com.netflix.graphql.dgs.internal.DataFetcherReference
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.SchemaProviderResult
@@ -89,7 +90,7 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider) 
         throw IllegalStateException("Overriding the schema factory is not supported in this builder")
     }
 
-    class SpringGraphQlDataFetcher(private val dataFetcher: DataFetcherReference) : SelfDescribingDataFetcher<Any> {
+    class DgsSelfDescribingDataFetcher(val dataFetcher: DataFetcherReference) : SelfDescribingDataFetcher<Any> {
         override fun get(environment: DataFetchingEnvironment?): Any {
             TODO("Not yet implemented")
         }
@@ -99,12 +100,21 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider) 
         override fun getReturnType(): ResolvableType {
             return ResolvableType.forMethodReturnType(dataFetcher.method)
         }
+
+        override fun getArguments(): Map<String, ResolvableType> {
+            return dataFetcher.method.parameters
+                .filter { it.isAnnotationPresent(InputArgument::class.java) }
+                .associate {
+                    val name = it.getAnnotation(InputArgument::class.java).name.ifEmpty { it.name }
+                    return@associate name to ResolvableType.forClass(it.type)
+                }
+        }
     }
 
     private fun wrapDataFetchers(dataFetchers: List<DataFetcherReference>): Map<String, Map<String, SelfDescribingDataFetcher<Any>>> {
         val wrappedDataFetchers: MutableMap<String, MutableMap<String, SelfDescribingDataFetcher<Any>>> = mutableMapOf()
         dataFetchers.forEach {
-            val wrappedDataFetcher = SpringGraphQlDataFetcher(it)
+            val wrappedDataFetcher = DgsSelfDescribingDataFetcher(it)
             if (!wrappedDataFetchers.containsKey(it.parentType)) {
                 wrappedDataFetchers[it.parentType] = mutableMapOf()
             }

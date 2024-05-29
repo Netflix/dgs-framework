@@ -19,7 +19,9 @@ package com.netflix.graphql.dgs.springgraphql.autoconfig
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
+import com.netflix.graphql.dgs.InputArgument
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.graphql.GraphQlAutoConfiguration
@@ -29,10 +31,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.graphql.data.method.annotation.QueryMapping
+import org.springframework.graphql.execution.SchemaReport
 import org.springframework.http.MediaType
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Controller
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
+import java.util.function.Consumer
 
 @SpringBootTest(
     classes = [
@@ -45,13 +50,20 @@ import org.springframework.test.web.servlet.post
         WebMvcAutoConfiguration::class
     ],
 
-    properties = ["dgs.graphql.schema-locations=classpath:/dgs-spring-graphql-smoke-test.graphqls"]
+    properties = [
+        "dgs.graphql.schema-locations=classpath:/dgs-spring-graphql-smoke-test.graphqls",
+        "spring.graphql.schema.inspection.enabled=true",
+        "dgs.graphql.schema-wiring-validation-enabled=false"
+    ]
 )
 @AutoConfigureMockMvc
 class DgsSpringGraphQlSmokeTest {
 
     @Autowired
     lateinit var mockMvc: MockMvc
+
+    @Autowired
+    lateinit var testReportConsumer: TestApp.TestReportConsumer
 
     @Test
     fun testGraphQlRequest() {
@@ -84,6 +96,12 @@ class DgsSpringGraphQlSmokeTest {
         }
     }
 
+    @Test
+    fun testSchemaArgumentReporter() {
+        assertThat(testReportConsumer.schemaReport?.unmappedArguments()).hasSize(2)
+        assertThat(testReportConsumer.schemaReport?.unmappedArguments()?.values).containsExactly(listOf("someArg", "someOtherArg"), listOf("someArg"))
+    }
+
     @TestConfiguration
     open class TestApp {
         @DgsComponent
@@ -92,6 +110,21 @@ class DgsSpringGraphQlSmokeTest {
             fun dgsField(): String {
                 return "test from DGS"
             }
+
+            @DgsQuery
+            fun unmappedArgument(@InputArgument someArg: String, @InputArgument someOtherArg: Int): String {
+                return "unmapped argument test"
+            }
+
+            @DgsQuery
+            fun incorrectNamedArgument(@InputArgument(name = "someArg") somename: String): String {
+                return "unmapped argument test"
+            }
+
+            @DgsQuery
+            fun mappedArguments(@InputArgument firstParam: String, @InputArgument secondParam: Int): String {
+                return "mapped argument test"
+            }
         }
 
         @Controller
@@ -99,6 +132,15 @@ class DgsSpringGraphQlSmokeTest {
             @QueryMapping
             fun springControllerField(): String {
                 return "test from Spring Controller"
+            }
+        }
+
+        @Component
+        open class TestReportConsumer: Consumer<SchemaReport> {
+            var schemaReport: SchemaReport? = null
+
+            override fun accept(schemaReport: SchemaReport) {
+                this.schemaReport = schemaReport
             }
         }
     }
