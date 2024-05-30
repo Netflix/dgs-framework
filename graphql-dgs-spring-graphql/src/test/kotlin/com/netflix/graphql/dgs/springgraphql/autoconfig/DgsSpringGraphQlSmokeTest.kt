@@ -136,7 +136,7 @@ class DgsSpringGraphQlSmokeTest {
         }
 
         @Component
-        open class TestReportConsumer: Consumer<SchemaReport> {
+        open class TestReportConsumer : Consumer<SchemaReport> {
             var schemaReport: SchemaReport? = null
 
             override fun accept(schemaReport: SchemaReport) {

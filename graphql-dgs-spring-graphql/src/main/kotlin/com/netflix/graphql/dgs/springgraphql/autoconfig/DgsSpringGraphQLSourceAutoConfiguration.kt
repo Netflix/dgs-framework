@@ -66,14 +66,14 @@ open class DgsSpringGraphQLSourceAutoConfiguration {
             .instrumentation(instrumentations.orderedStream().toList())
 
         if (properties.schema.inspection.isEnabled) {
-            if(reportConsumer.isPresent) {
+            if (reportConsumer.isPresent) {
                 builder.inspectSchemaMappings(reportConsumer.get())
             } else {
                 builder.inspectSchemaMappings { message: SchemaReport? ->
                     val messageBuilder = StringBuilder("***Schema Report***\n")
 
                     val arguments = message?.unmappedArguments()?.map {
-                        if(it.key is SelfDescribingDataFetcher) {
+                        if (it.key is SelfDescribingDataFetcher) {
                             val dataFetcher =
                                 (it.key as DgsGraphQLSourceBuilder.DgsSelfDescribingDataFetcher).dataFetcher
                             return@map dataFetcher.method.declaringClass.name + "." + dataFetcher.method.name + " for arguments " + it.value
