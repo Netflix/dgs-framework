@@ -22,6 +22,7 @@ import graphql.ExecutionInput
 import graphql.execution.preparsed.PreparsedDocumentEntry
 import graphql.execution.preparsed.PreparsedDocumentProvider
 import java.time.Duration
+import java.util.concurrent.CompletableFuture
 import java.util.function.Function
 
 class DgsDefaultPreparsedDocumentProvider(maximumSize: Long, expireAfterAccess: Duration) : PreparsedDocumentProvider {
@@ -29,10 +30,11 @@ class DgsDefaultPreparsedDocumentProvider(maximumSize: Long, expireAfterAccess: 
         .maximumSize(maximumSize)
         .expireAfterAccess(expireAfterAccess)
         .build()
-    override fun getDocument(
+
+    override fun getDocumentAsync(
         executionInput: ExecutionInput,
         parseAndValidateFunction: Function<ExecutionInput, PreparsedDocumentEntry>
-    ): PreparsedDocumentEntry {
-        return cache.get(executionInput.query) { parseAndValidateFunction.apply(executionInput) }
+    ): CompletableFuture<PreparsedDocumentEntry> {
+        return CompletableFuture.completedFuture(cache.get(executionInput.query) { parseAndValidateFunction.apply(executionInput) })
     }
 }

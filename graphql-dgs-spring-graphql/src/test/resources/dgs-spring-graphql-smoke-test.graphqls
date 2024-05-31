@@ -1,4 +1,8 @@
 type Query {
     dgsField: String
     springControllerField: String
+    unmappedField: String
+    unmappedArgument: String
+    incorrectNamedArgument(somename: String): String
+    mappedArguments(firstParam: String, secondParam: Int): String
 }

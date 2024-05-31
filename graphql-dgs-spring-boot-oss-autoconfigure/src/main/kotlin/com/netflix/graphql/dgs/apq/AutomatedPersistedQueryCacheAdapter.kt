@@ -23,6 +23,7 @@ import graphql.execution.preparsed.persisted.PersistedQueryCacheMiss
 import graphql.execution.preparsed.persisted.PersistedQueryNotFound
 import graphql.execution.preparsed.persisted.PersistedQuerySupport
 import org.apache.commons.lang3.StringUtils
+import java.util.concurrent.CompletableFuture
 import java.util.function.Supplier
 
 /**
@@ -33,23 +34,25 @@ import java.util.function.Supplier
  */
 abstract class AutomatedPersistedQueryCacheAdapter : PersistedQueryCache {
 
-    override fun getPersistedQueryDocument(
+    override fun getPersistedQueryDocumentAsync(
         persistedQueryId: Any,
         executionInput: ExecutionInput,
         onCacheMiss: PersistedQueryCacheMiss
-    ): PreparsedDocumentEntry? {
+    ): CompletableFuture<PreparsedDocumentEntry> {
         val key = when (persistedQueryId) {
             is String -> persistedQueryId
             else -> persistedQueryId.toString()
         }
-        return getFromCache(key) {
-            // Get the query from the execution input. Make sure it's not null, empty or the APQ marker.
-            val queryText = executionInput.query
-            if (StringUtils.isBlank(queryText) || queryText.equals(PersistedQuerySupport.PERSISTED_QUERY_MARKER)) {
-                throw PersistedQueryNotFound(persistedQueryId)
+        return CompletableFuture.completedFuture(
+            getFromCache(key) {
+                // Get the query from the execution input. Make sure it's not null, empty or the APQ marker.
+                val queryText = executionInput.query
+                if (StringUtils.isBlank(queryText) || queryText.equals(PersistedQuerySupport.PERSISTED_QUERY_MARKER)) {
+                    throw PersistedQueryNotFound(persistedQueryId)
+                }
+                return@getFromCache onCacheMiss.apply(queryText)
             }
-            return@getFromCache onCacheMiss.apply(queryText)
-        }
+        )
     }
 
     /**
