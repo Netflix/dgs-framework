@@ -56,12 +56,28 @@ class DgsSpringGraphQLEnvironmentPostProcessorTest {
     }
 
     @Test
+    fun `Default for graphql-path`() {
+        DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
+
+        Assertions.assertThat(env.getProperty("spring.graphql.path")).isEqualTo("/graphql")
+    }
+
+    @Test
     fun `DGS setting should propagate to spring graphql for graphiql-path`() {
         env.setProperty("dgs.graphql.graphiql.path", "/somepath")
 
         DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
 
         Assertions.assertThat(env.getProperty("spring.graphql.graphiql.path")).isEqualTo("/somepath")
+    }
+
+    @Test
+    fun `DGS setting should propagate to spring graphql for graphql-path`() {
+        env.setProperty("dgs.graphql.path", "/somepath")
+
+        DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
+
+        Assertions.assertThat(env.getProperty("spring.graphql.path")).isEqualTo("/somepath")
     }
 
     @Test
