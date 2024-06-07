@@ -44,6 +44,7 @@ data class GraphQLErrorExtensions(
     @JsonProperty val classification: Any = ""
 )
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class GraphQLErrorDebugInfo(
     @JsonProperty val subquery: String = "",
     @JsonProperty val variables: Map<String, Any> = emptyMap(),
