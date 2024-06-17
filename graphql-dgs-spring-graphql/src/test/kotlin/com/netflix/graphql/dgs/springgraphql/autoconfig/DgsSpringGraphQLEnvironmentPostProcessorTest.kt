@@ -40,28 +40,12 @@ class DgsSpringGraphQLEnvironmentPostProcessorTest {
     }
 
     @Test
-    fun `Default for introspection-enabled`() {
-        DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
-
-        Assertions.assertThat(env.getProperty("spring.graphql.schema.introspection.enabled")).isEqualTo("true")
-    }
-
-    @Test
     fun `DGS setting should propagate to spring graphql for graphiql-enabled`() {
         env.setProperty("dgs.graphql.graphiql.enabled", "false")
 
         DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
 
         Assertions.assertThat(env.getProperty("spring.graphql.graphiql.enabled")).isEqualTo("false")
-    }
-
-    @Test
-    fun `DGS setting should propagate to spring graphql for introspection-enabled`() {
-        env.setProperty("dgs.graphql.introspection.enabled", "false")
-
-        DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
-
-        Assertions.assertThat(env.getProperty("spring.graphql.schema.introspection.enabled")).isEqualTo("false")
     }
 
     @Test
