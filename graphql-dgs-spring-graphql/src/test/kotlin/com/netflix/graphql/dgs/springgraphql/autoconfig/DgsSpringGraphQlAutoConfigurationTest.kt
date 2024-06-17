@@ -25,6 +25,7 @@ import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContex
 import com.netflix.graphql.dgs.reactive.internal.method.SyncHandlerMethodArgumentResolverAdapter
 import com.netflix.graphql.dgs.springgraphql.webflux.DgsWebFluxGraphQLInterceptor
 import com.netflix.graphql.dgs.springgraphql.webmvc.DgsWebMvcGraphQLInterceptor
+import graphql.ErrorClassification
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.AutoConfigurations
@@ -159,6 +160,159 @@ class DgsSpringGraphQlAutoConfigurationTest {
             .withPropertyValues("dgs.graphql.spring.webmvc.asyncdispatch.enabled=false")
             .run { context ->
                 assertThat(context.getBean(DgsSpringGraphQLConfigurationProperties::class.java).webmvc.asyncdispatch.enabled).isFalse()
+            }
+    }
+
+    @Test
+    fun introspectionDefaultPropertyTest() {
+        ApplicationContextRunner()
+            .withConfiguration(autoConfigurations)
+            .run { context ->
+                // Check expected config values. Config values are null in context.environment unless explicitly set.
+                assertThat(context.environment.getProperty("spring.graphql.schema.introspection.enabled")).isEqualTo(null)
+                assertThat(context.environment.getProperty("dgs.graphql.introspection.enabled")).isEqualTo(null)
+
+                // Check expected results.
+                assertThat(context).getBean(DgsQueryExecutor::class.java).extracting {
+                    val response = it.execute(
+                        " query availableQueries {\n" +
+                            "  __schema {\n" +
+                            "    queryType {\n" +
+                            "      fields {\n" +
+                            "        name\n" +
+                            "        description\n" +
+                            "      }\n" +
+                            "    }\n" +
+                            "  }\n" +
+                            "}"
+                    )
+                    assertThat(response.errors.size).isEqualTo(0)
+                    assertThat(response.isDataPresent).isTrue()
+                }
+            }
+    }
+
+    @Test
+    fun introspectionDisabledWithSpringPropertyTest() {
+        ApplicationContextRunner()
+            .withConfiguration(autoConfigurations)
+            .withPropertyValues("spring.graphql.schema.introspection.enabled=false")
+            .run { context ->
+                // Check expected config values.
+                assertThat(context.environment.getProperty("spring.graphql.schema.introspection.enabled")).isEqualTo("false")
+                assertThat(context.environment.getProperty("dgs.graphql.introspection.enabled")).isEqualTo(null)
+
+                // Check expected results.
+                assertThat(context).getBean(DgsQueryExecutor::class.java).extracting {
+                    val response = it.execute(
+                        " query availableQueries {\n" +
+                            "  __schema {\n" +
+                            "    queryType {\n" +
+                            "      fields {\n" +
+                            "        name\n" +
+                            "        description\n" +
+                            "      }\n" +
+                            "    }\n" +
+                            "  }\n" +
+                            "}"
+                    )
+                    assertThat(response.errors.size).isEqualTo(1)
+                    assertThat(response.isDataPresent).isFalse()
+                    assertThat(response.errors.first().errorType.toString())
+                        .isEqualTo(ErrorClassification.errorClassification("IntrospectionDisabled").toString())
+                }
+            }
+    }
+
+    @Test
+    fun introspectionDisabledWithDgsPropertyTest() {
+        ApplicationContextRunner()
+            .withConfiguration(autoConfigurations)
+            .withPropertyValues("dgs.graphql.introspection.enabled=false")
+            .run { context ->
+                // Check expected config values.
+                assertThat(context.environment.getProperty("spring.graphql.schema.introspection.enabled")).isEqualTo(null)
+                assertThat(context.environment.getProperty("dgs.graphql.introspection.enabled")).isEqualTo("false")
+
+                // Check expected results.
+                assertThat(context).getBean(DgsQueryExecutor::class.java).extracting {
+                    val response = it.execute(
+                        " query availableQueries {\n" +
+                            "  __schema {\n" +
+                            "    queryType {\n" +
+                            "      fields {\n" +
+                            "        name\n" +
+                            "        description\n" +
+                            "      }\n" +
+                            "    }\n" +
+                            "  }\n" +
+                            "}"
+                    )
+                    assertThat(response.errors.size).isEqualTo(1)
+                    assertThat(response.isDataPresent).isFalse()
+                    assertThat(response.errors.first().errorType.toString())
+                        .isEqualTo(ErrorClassification.errorClassification("IntrospectionDisabled").toString())
+                }
+            }
+    }
+
+    @Test
+    fun introspectionEnabledWithSpringPropertyTest() {
+        ApplicationContextRunner()
+            .withConfiguration(autoConfigurations)
+            .withPropertyValues("spring.graphql.schema.introspection.enabled=true")
+            .run { context ->
+                // Check expected config values.
+                assertThat(context.environment.getProperty("spring.graphql.schema.introspection.enabled")).isEqualTo("true")
+                assertThat(context.environment.getProperty("dgs.graphql.introspection.enabled")).isEqualTo(null)
+
+                // Check expected results.
+                assertThat(context).getBean(DgsQueryExecutor::class.java).extracting {
+                    val response = it.execute(
+                        " query availableQueries {\n" +
+                            "  __schema {\n" +
+                            "    queryType {\n" +
+                            "      fields {\n" +
+                            "        name\n" +
+                            "        description\n" +
+                            "      }\n" +
+                            "    }\n" +
+                            "  }\n" +
+                            "}"
+                    )
+                    assertThat(response.errors.size).isEqualTo(0)
+                    assertThat(response.isDataPresent).isTrue()
+                }
+            }
+    }
+
+    @Test
+    fun introspectionEnabledWithDgsPropertyTest() {
+        ApplicationContextRunner()
+            .withConfiguration(autoConfigurations)
+            .withPropertyValues("dgs.graphql.introspection.enabled=true")
+            .run { context ->
+                // Check expected config values.
+                assertThat(context.environment.getProperty("spring.graphql.schema.introspection.enabled")).isEqualTo(null)
+                assertThat(context.environment.getProperty("dgs.graphql.introspection.enabled")).isEqualTo("true")
+
+                // Check expected results.
+                assertThat(context).getBean(DgsQueryExecutor::class.java).extracting {
+                    val response = it.execute(
+                        " query availableQueries {\n" +
+                            "  __schema {\n" +
+                            "    queryType {\n" +
+                            "      fields {\n" +
+                            "        name\n" +
+                            "        description\n" +
+                            "      }\n" +
+                            "    }\n" +
+                            "  }\n" +
+                            "}"
+                    )
+                    assertThat(response.errors.size).isEqualTo(0)
+                    assertThat(response.isDataPresent).isTrue()
+                }
             }
     }
 }
