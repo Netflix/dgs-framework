@@ -57,7 +57,7 @@ allprojects {
     // and suggest an upgrade. The only exception currently are those defined
     // in buildSrc, most likely because the variables are used in plugins as well
     // as dependencies. e.g. KOTLIN_VERSION
-    extra["sb.version"] = "3.3.0"
+    extra["sb.version"] = "3.3.1"
     extra["kotlin.version"] = Versions.KOTLIN_VERSION
 }
 val internalBomModules by extra(
