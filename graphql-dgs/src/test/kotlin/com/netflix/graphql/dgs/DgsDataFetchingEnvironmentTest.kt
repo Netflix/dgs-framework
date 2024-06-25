@@ -73,6 +73,7 @@ internal class DgsDataFetchingEnvironmentTest {
         @DgsData(parentType = "Query", field = "hello")
         fun someFetcher(dfe: DgsDataFetchingEnvironment): CompletableFuture<String> {
             val loader = dfe.getDataLoader<String, String>("exampleMappedLoader")
+                ?: throw AssertionError("exampleMappedLoader not found")
             loader.load("a")
             loader.load("b")
             return loader.load("c")
@@ -95,6 +96,7 @@ internal class DgsDataFetchingEnvironmentTest {
         @DgsData(parentType = "Query", field = "hello")
         fun someFetcher(dfe: DataFetchingEnvironment): CompletableFuture<String> {
             val loader = dfe.getDataLoader<String, String>("exampleLoader")
+                ?: throw AssertionError("exampleLoader not found")
             loader.load("a")
             loader.load("b")
             return loader.load("c")

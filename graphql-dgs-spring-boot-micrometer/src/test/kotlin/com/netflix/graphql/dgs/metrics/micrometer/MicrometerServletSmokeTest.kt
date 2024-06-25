@@ -901,14 +901,16 @@ class MicrometerServletSmokeTest {
             @DgsData(parentType = "StringTransformation")
             fun upperCased(dfe: DataFetchingEnvironment): CompletableFuture<String>? {
                 val dataLoader = dfe.getDataLoader<String, String>("upperCaseLoader")
-                val input = dfe.getSource<Map<String, String>>()
+                    ?: throw AssertionError("upperCaseLoader not found")
+                val input = dfe.getSource<Map<String, String>>().orEmpty()
                 return dataLoader.load(input.getOrDefault("value", ""))
             }
 
             @DgsData(parentType = "StringTransformation")
             fun reversed(dfe: DataFetchingEnvironment): CompletableFuture<String>? {
                 val dataLoader = dfe.getDataLoader<String, String>("reverser")
-                val input = dfe.getSource<Map<String, String>>()
+                    ?: throw AssertionError("reverser not found")
+                val input = dfe.getSource<Map<String, String>>().orEmpty()
                 return dataLoader.load(input.getOrDefault("value", ""))
             }
 

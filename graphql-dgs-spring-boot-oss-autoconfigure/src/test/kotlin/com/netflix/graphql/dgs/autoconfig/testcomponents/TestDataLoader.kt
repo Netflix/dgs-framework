@@ -41,6 +41,7 @@ class FetcherUsingDataLoader {
     @DgsData(parentType = "Query", field = "names")
     fun hello(dfe: DataFetchingEnvironment): CompletableFuture<List<String>> {
         val dataLoader = dfe.getDataLoader<String, String>("testloader")
+            ?: throw AssertionError("testloader not found")
         return dataLoader.loadMany(listOf("a", "b", "c"))
     }
 }
@@ -57,6 +58,7 @@ class FetcherUsingMappedDataLoader {
     @DgsData(parentType = "Query", field = "namesFromMapped")
     fun hello(dfe: DataFetchingEnvironment): CompletableFuture<List<String>> {
         val dataLoader = dfe.getDataLoader<String, String>("testMappedLoader")
+            ?: throw AssertionError("testMappedLoader not found")
         return dataLoader.loadMany(listOf("a", "b", "c"))
     }
 }

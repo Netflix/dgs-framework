@@ -59,6 +59,10 @@ allprojects {
     // as dependencies. e.g. KOTLIN_VERSION
     extra["sb.version"] = "3.3.1"
     extra["kotlin.version"] = Versions.KOTLIN_VERSION
+    // Use graphql-java 22.1, which is the version used by spring-graphql. Once
+    // the Spring Boot BOM depends on this version, we can remove this override.
+    // See: https://github.com/spring-projects/spring-boot/issues/41219
+    extra["graphql-java.version"] = "22.1"
 }
 val internalBomModules by extra(
     listOf(

@@ -9,7 +9,7 @@
     },
     "apiDependenciesMetadata": {
         "com.graphql-java:graphql-java": {
-            "locked": "22.0",
+            "locked": "22.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
@@ -83,7 +83,7 @@
     },
     "compileClasspath": {
         "com.graphql-java:graphql-java": {
-            "locked": "22.0",
+            "locked": "22.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
@@ -225,7 +225,7 @@
     },
     "implementationDependenciesMetadata": {
         "com.graphql-java:graphql-java": {
-            "locked": "22.0",
+            "locked": "22.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
@@ -414,7 +414,7 @@
     },
     "jmhCompileClasspath": {
         "com.graphql-java:graphql-java": {
-            "locked": "22.0",
+            "locked": "22.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
@@ -733,7 +733,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "22.0",
+            "locked": "22.1",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -1736,7 +1736,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "22.0",
+            "locked": "22.1",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -2000,7 +2000,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "22.0",
+            "locked": "22.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
@@ -2478,7 +2478,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "22.0",
+            "locked": "22.1",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
@@ -2960,7 +2960,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "22.0",
+            "locked": "22.1",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.netflix.graphql.dgs:graphql-dgs",
