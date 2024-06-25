@@ -967,7 +967,7 @@ internal class InputArgumentTest {
                 @InputArgument("capitalize") capitalize: Boolean,
                 @InputArgument("person") person: Person
             ): String {
-                val otherArg: String = dfe.getArgument("otherArg")
+                val otherArg: String? = dfe.getArgument("otherArg")
 
                 assertThat(capitalize).isTrue
                 assertThat(person).isNotNull.extracting { it.name }.isEqualTo("tester")
@@ -1015,7 +1015,7 @@ internal class InputArgumentTest {
                 @InputArgument("person") person: Person,
                 dfe: DataFetchingEnvironment
             ): String {
-                val otherArg: String = dfe.getArgument("otherArg")
+                val otherArg: String? = dfe.getArgument("otherArg")
 
                 val msg = if (capitalize) {
                     "Hello, ${person.name}"
