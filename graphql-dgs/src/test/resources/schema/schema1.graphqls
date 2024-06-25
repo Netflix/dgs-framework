@@ -1,5 +1,7 @@
+#SDL Comment
 type Query {
     hello(name:String): String
+    #SDL Comment
     character: Character
 }
 
@@ -11,8 +13,14 @@ extend interface Character {
     age: Int
 }
 
+"""
+Description Comment
+"""
 type Droid implements Character {
     name: String
+    """
+    Description Comment
+    """
     age: Int
 }
 

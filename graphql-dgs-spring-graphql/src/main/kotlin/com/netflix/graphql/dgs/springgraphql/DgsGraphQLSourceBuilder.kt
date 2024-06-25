@@ -31,7 +31,10 @@ import org.springframework.lang.Nullable
 import java.util.function.BiFunction
 import java.util.function.Consumer
 
-class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider) : AbstractGraphQlSourceBuilder<SchemaResourceBuilder>(), SchemaResourceBuilder {
+class DgsGraphQLSourceBuilder(
+    private val dgsSchemaProvider: DgsSchemaProvider,
+    private val showSdlComments: Boolean
+) : AbstractGraphQlSourceBuilder<SchemaResourceBuilder>(), SchemaResourceBuilder {
     private val typeDefinitionConfigurers = mutableListOf<TypeDefinitionConfigurer>()
     private val runtimeWiringConfigurers = mutableListOf<RuntimeWiringConfigurer>()
 
@@ -47,7 +50,7 @@ class DgsGraphQLSourceBuilder(private val dgsSchemaProvider: DgsSchemaProvider) 
     private var initializerConsumer: Consumer<SchemaMappingInspector.Initializer>? = null
 
     override fun initGraphQlSchema(): GraphQLSchema {
-        val schema = dgsSchemaProvider.schema(schemaResources = schemaResources)
+        val schema = dgsSchemaProvider.schema(schemaResources = schemaResources, showSdlComments = showSdlComments)
         setupSchemaReporter(schema)
         return schema.graphQLSchema
     }

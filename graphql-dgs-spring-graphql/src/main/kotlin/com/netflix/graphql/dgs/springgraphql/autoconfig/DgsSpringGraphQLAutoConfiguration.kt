@@ -77,7 +77,7 @@ import java.util.*
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @AutoConfiguration
 @AutoConfigureBefore(name = ["com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration"])
-@EnableConfigurationProperties(DgsSpringGraphQLConfigurationProperties::class)
+@EnableConfigurationProperties(DgsSpringGraphQLConfigurationProperties::class, DgsGraphQLConfigurationProperties::class)
 open class DgsSpringGraphQLAutoConfiguration {
     @Bean
     @DgsComponent
