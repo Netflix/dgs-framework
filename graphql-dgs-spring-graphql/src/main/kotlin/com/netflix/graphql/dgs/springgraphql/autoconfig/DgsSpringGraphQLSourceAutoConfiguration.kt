@@ -40,7 +40,7 @@ import java.util.function.Consumer
 @AutoConfiguration
 @AutoConfigureBefore(name = ["org.springframework.boot.autoconfigure.graphql.GraphQlAutoConfiguration"])
 @AutoConfigureAfter(name = ["com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration"])
-open class DgsSpringGraphQLSourceAutoConfiguration {
+open class DgsSpringGraphQLSourceAutoConfiguration(private val dgsGraphQLConfigProps: DgsGraphQLConfigurationProperties) {
 
     private val logger = LogFactory.getLog(DgsSpringGraphQLAutoConfiguration::class.java)
 
@@ -60,7 +60,7 @@ open class DgsSpringGraphQLSourceAutoConfiguration {
         val dataFetcherExceptionResolvers: MutableList<DataFetcherExceptionResolver> = exceptionResolvers.orderedStream().toList().toMutableList()
         dataFetcherExceptionResolvers.add((ExceptionHandlerResolverAdapter(defaultExceptionHandler)))
 
-        val builder = DgsGraphQLSourceBuilder(dgsSchemaProvider)
+        val builder = DgsGraphQLSourceBuilder(dgsSchemaProvider, dgsGraphQLConfigProps.introspection.showSdlComments)
             .exceptionResolvers(dataFetcherExceptionResolvers)
             .subscriptionExceptionResolvers(subscriptionExceptionResolvers.orderedStream().toList())
             .instrumentation(instrumentations.orderedStream().toList())
