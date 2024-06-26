@@ -32,6 +32,15 @@ class DgsDataFetchingEnvironment(private val dfe: DataFetchingEnvironment) : Dat
         return DgsContext.from(this)
     }
 
+    /**
+     * Get the value of the current object to be queried.
+     *
+     * @throws IllegalStateException if called on the root query
+     */
+    fun <T> getSourceOrThrow(): T {
+        return getSource() ?: throw IllegalStateException("source is null")
+    }
+
     fun <K, V> getDataLoader(loaderClass: Class<*>): DataLoader<K, V> {
         val annotation = loaderClass.getAnnotation(DgsDataLoader::class.java)
         val loaderName = if (annotation != null) {
