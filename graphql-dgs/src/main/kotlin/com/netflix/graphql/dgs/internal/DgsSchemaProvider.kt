@@ -74,7 +74,6 @@ import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.locks.ReentrantReadWriteLock
-import java.util.stream.Collectors
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
@@ -454,6 +453,7 @@ class DgsSchemaProvider(
     ): FieldDefinition {
         return type.fieldDefinitions.firstOrNull { it.name == field }
             ?: typeDefinitionRegistry.objectTypeExtensions().getOrDefault(parentType, emptyList())
+                .asSequence()
                 .flatMap { it.fieldDefinitions.filter { f -> f.name == field } }
                 .firstOrNull()
             ?: throw DataFetcherSchemaMismatchException(
@@ -532,27 +532,24 @@ class DgsSchemaProvider(
                     if (enableEntityFetcherCustomScalarParsing) {
                         type.ifPresent {
                             val typeDefinition = it as? ImplementingTypeDefinition
-                            val keyDirective = it.directives.stream()
-                                .filter { it.name.equals("key") }
-                                .findAny()
+                            val keyDirective = it.directives.find { directive -> directive.name == "key" }
 
-                            keyDirective.ifPresent {
-                                val fields = it.argumentsByName["fields"]
+                            keyDirective?.let { directive ->
+                                val fields = directive.argumentsByName["fields"]
 
                                 if (fields != null && fields.value is StringValue) {
                                     val fieldsSelection = (fields.value as StringValue).value
                                     val paths = SelectionSetUtil.toPaths(fieldsSelection)
 
                                     entityFetcherRegistry.entityFetcherInputMappings[dgsEntityFetcherAnnotation.name] =
-                                        paths.stream()
-                                            .map {
-                                                Pair(
-                                                    it,
-                                                    traverseType(it.iterator(), typeDefinition, registry, runtimeWiring)
-                                                )
+                                        paths.asSequence().mapNotNull { path ->
+                                            val coercing = traverseType(path.iterator(), typeDefinition, registry, runtimeWiring)
+                                            if (coercing != null) {
+                                                path to coercing
+                                            } else {
+                                                null
                                             }
-                                            .filter { it.second != null }
-                                            .collect(Collectors.toMap({ it.first }, { it.second!! }))
+                                        }.toMap()
                                 }
                             }
                         }
@@ -576,7 +573,7 @@ class DgsSchemaProvider(
             if (fieldType.isPresent) {
                 return when (val unwrappedFieldType = fieldType.get()) {
                     is ObjectTypeDefinition -> traverseType(path, unwrappedFieldType, registry, runtimeWiring)
-                    is ScalarTypeDefinition -> runtimeWiring.scalars.get(unwrappedFieldType.name)?.coercing
+                    is ScalarTypeDefinition -> runtimeWiring.scalars[unwrappedFieldType.name]?.coercing
                     else -> null
                 }
             }

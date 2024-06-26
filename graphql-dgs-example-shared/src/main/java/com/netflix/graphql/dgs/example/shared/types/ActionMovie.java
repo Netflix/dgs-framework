@@ -63,12 +63,12 @@ public class ActionMovie implements Movie {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ActionMovie that = (ActionMovie) o;
-        return java.util.Objects.equals(title, that.title) &&
-                            java.util.Objects.equals(director, that.director) &&
-                            nrOfExplosions == that.nrOfExplosions;
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      ActionMovie that = (ActionMovie) o;
+      return java.util.Objects.equals(title, that.title) &&
+              java.util.Objects.equals(director, that.director) &&
+              nrOfExplosions == that.nrOfExplosions;
   }
 
   @Override
