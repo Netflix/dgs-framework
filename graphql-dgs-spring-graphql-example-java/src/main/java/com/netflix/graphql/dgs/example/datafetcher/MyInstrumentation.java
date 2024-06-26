@@ -19,7 +19,7 @@ package com.netflix.graphql.dgs.example.datafetcher;
 import com.netflix.graphql.dgs.DgsExecutionResult;
 import graphql.ExecutionResult;
 import graphql.execution.instrumentation.InstrumentationState;
-import graphql.execution.instrumentation.SimpleInstrumentation;
+import graphql.execution.instrumentation.SimplePerformantInstrumentation;
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.CompletableFuture;
 
 @Component
-public class MyInstrumentation extends SimpleInstrumentation {
+public class MyInstrumentation extends SimplePerformantInstrumentation {
     @NotNull
     @Override
     public CompletableFuture<ExecutionResult> instrumentExecutionResult(ExecutionResult executionResult,

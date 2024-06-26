@@ -42,7 +42,7 @@ class SpringGraphQLDgsReactiveQueryExecutor(
     private val dgsDataLoaderProvider: DgsDataLoaderProvider
 ) : DgsReactiveQueryExecutor {
     override fun execute(
-        query: String?,
+        @Language("graphql") query: String,
         variables: Map<String, Any>?,
         extensions: Map<String, Any>?,
         headers: HttpHeaders?,
@@ -73,7 +73,7 @@ class SpringGraphQLDgsReactiveQueryExecutor(
 
                 executionService.execute(
                     request
-                ) ?: Mono.error(IllegalStateException("Unexpected null response from Spring GraphQL client"))
+                )
             }.map { response ->
                 response.executionResult
             }
