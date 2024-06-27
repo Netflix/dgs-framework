@@ -31,6 +31,7 @@ import org.springframework.core.convert.support.DefaultConversionService
 import org.springframework.util.CollectionUtils
 import org.springframework.util.ReflectionUtils
 import java.lang.reflect.Type
+import java.util.Optional
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.primaryConstructor
@@ -54,6 +55,10 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
         }
 
         override fun matches(sourceType: TypeDescriptor, targetType: TypeDescriptor): Boolean {
+            if (targetType.type == Optional::class.java) {
+                // Let Spring's ObjectToOptionalConverter handle it
+                return false
+            }
             if (sourceType.isMap) {
                 val keyDescriptor = sourceType.mapKeyTypeDescriptor
                 return keyDescriptor == null || keyDescriptor.type == String::class.java
