@@ -22,7 +22,9 @@ import com.netflix.graphql.dgs.internal.java.test.inputobjects.JGenericSubInputO
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObject
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithKotlinProperty
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithMap
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithOptional
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithSet
+import org.assertj.core.api.Assertions.COLLECTION
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -255,6 +257,17 @@ internal class InputObjectMapperTest {
         assertThat(result.bar).get().isEqualTo(KotlinSubObject("subkey1-value"))
 
         result = inputObjectMapper.mapToKotlinObject(mapOf<String, Any?>("foo" to "foo-value", "bar" to null), InputWithOptional::class)
+        assertThat(result.foo).get().isEqualTo("foo-value")
+        assertThat(result.bar).isNotPresent
+    }
+
+    @Test
+    fun `mapping to a Java object with Optional fields works`() {
+        var result = inputObjectMapper.mapToJavaObject(mapOf<String, Any?>("foo" to null, "bar" to mapOf("items" to listOf(1, 2, 3, 4))), JInputObjectWithOptional::class.java)
+        assertThat(result.foo).isNotPresent
+        assertThat(result.bar).get().extracting("items").asInstanceOf(COLLECTION).containsExactly(1, 2, 3, 4)
+
+        result = inputObjectMapper.mapToJavaObject(mapOf<String, Any?>("foo" to "foo-value", "bar" to null), JInputObjectWithOptional::class.java)
         assertThat(result.foo).get().isEqualTo("foo-value")
         assertThat(result.bar).isNotPresent
     }
