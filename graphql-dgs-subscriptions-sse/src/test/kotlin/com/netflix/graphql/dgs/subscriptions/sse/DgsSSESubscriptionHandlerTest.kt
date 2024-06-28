@@ -44,6 +44,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import reactor.core.publisher.Flux
 import java.util.Base64
+import java.util.Optional
 
 @Disabled("Avoiding stuck builds")
 @WebMvcTest(DgsSSESubscriptionHandler::class, DgsSSESubscriptionHandlerTest.App::class)
@@ -171,5 +172,39 @@ internal class DgsSSESubscriptionHandlerTest {
         assertEquals(2, messages.size)
         assertEquals("message 1", messages[0].data)
         assertEquals("message 2", messages[1].data)
+    }
+
+    @Test
+    fun `success with Optional types`() {
+        val query = "subscription { stocks { name, price }}"
+        val queryPayload = QueryPayload(operationName = "MySubscription", query = query)
+        val encodedQuery = Base64.getEncoder().encodeToString(mapper.writeValueAsBytes(queryPayload))
+
+        val publisher = Flux.just(
+            ExecutionResultImpl.newExecutionResult().data(Optional.of("optional message")).build(),
+            ExecutionResultImpl.newExecutionResult().data(Optional.empty<String>()).build()
+        )
+        val executionResult = ExecutionResultImpl.newExecutionResult().data(publisher).build()
+
+        `when`(dgsQueryExecutor.execute(eq(query), any())).thenReturn(executionResult)
+
+        val result = mockMvc.perform(get("/subscriptions").param("query", encodedQuery))
+            .andExpect(request().asyncStarted())
+            .andExpect(status().is2xxSuccessful)
+            .andReturn()
+
+        mockMvc.perform(asyncDispatch(result))
+            .andExpect(content().contentType(MediaType.TEXT_EVENT_STREAM))
+            .andReturn()
+
+        val messages = result.response.contentAsString.lineSequence()
+            .filter { line -> line.startsWith("data:") }
+            .map { line -> line.substring("data:".length) }
+            .map { line -> mapper.readValue<SSEDataPayload>(line) }
+            .toList()
+
+        assertEquals(2, messages.size)
+        assertEquals("optional message", messages[0].data)
+        assertEquals(null, messages[1].data)
     }
 }
