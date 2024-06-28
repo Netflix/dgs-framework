@@ -17,6 +17,7 @@
 dependencies {
     implementation(project(":graphql-dgs"))
     implementation(project(":graphql-dgs-subscription-types"))
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework:spring-web")
     implementation("org.springframework:spring-webmvc")
