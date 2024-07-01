@@ -694,6 +694,7 @@
             "locked": "2.17.1",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
+                "com.fasterxml.jackson.datatype:jackson-datatype-jdk8",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson:jackson-bom"
             ]
@@ -701,9 +702,17 @@
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.17.1",
             "transitive": [
+                "com.fasterxml.jackson.datatype:jackson-datatype-jdk8",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
                 "com.fasterxml.jackson:jackson-bom"
+            ]
+        },
+        "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
+            "locked": "2.17.1",
+            "transitive": [
+                "com.fasterxml.jackson:jackson-bom",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
@@ -727,6 +736,7 @@
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
                 "com.fasterxml.jackson.core:jackson-databind",
+                "com.fasterxml.jackson.datatype:jackson-datatype-jdk8",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson.module:jackson-module-kotlin"
             ]
@@ -741,6 +751,12 @@
             "locked": "4.26.1",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support"
+            ]
+        },
+        "com.googlecode.libphonenumber:libphonenumber": {
+            "locked": "8.13.40",
+            "transitive": [
+                "net.datafaker:datafaker"
             ]
         },
         "com.graphql-java:graphql-java": {
@@ -948,7 +964,7 @@
             ]
         },
         "net.datafaker:datafaker": {
-            "locked": "2.2.2",
+            "locked": "2.3.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ]
@@ -1741,6 +1757,7 @@
             "locked": "2.17.1",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
+                "com.fasterxml.jackson.datatype:jackson-datatype-jdk8",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson:jackson-bom"
             ]
@@ -1748,9 +1765,17 @@
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.17.1",
             "transitive": [
+                "com.fasterxml.jackson.datatype:jackson-datatype-jdk8",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
                 "com.fasterxml.jackson:jackson-bom"
+            ]
+        },
+        "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
+            "locked": "2.17.1",
+            "transitive": [
+                "com.fasterxml.jackson:jackson-bom",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
@@ -1774,6 +1799,7 @@
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
                 "com.fasterxml.jackson.core:jackson-databind",
+                "com.fasterxml.jackson.datatype:jackson-datatype-jdk8",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson.module:jackson-module-kotlin"
             ]
@@ -1788,6 +1814,12 @@
             "locked": "4.26.1",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support"
+            ]
+        },
+        "com.googlecode.libphonenumber:libphonenumber": {
+            "locked": "8.13.40",
+            "transitive": [
+                "net.datafaker:datafaker"
             ]
         },
         "com.graphql-java:graphql-java": {
@@ -1889,7 +1921,7 @@
             ]
         },
         "net.datafaker:datafaker": {
-            "locked": "2.2.2",
+            "locked": "2.3.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ]
@@ -3059,6 +3091,7 @@
             "locked": "2.17.1",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
+                "com.fasterxml.jackson.datatype:jackson-datatype-jdk8",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson:jackson-bom"
             ]
@@ -3066,9 +3099,17 @@
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.17.1",
             "transitive": [
+                "com.fasterxml.jackson.datatype:jackson-datatype-jdk8",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
                 "com.fasterxml.jackson:jackson-bom"
+            ]
+        },
+        "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
+            "locked": "2.17.1",
+            "transitive": [
+                "com.fasterxml.jackson:jackson-bom",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse"
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
@@ -3092,6 +3133,7 @@
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
                 "com.fasterxml.jackson.core:jackson-databind",
+                "com.fasterxml.jackson.datatype:jackson-datatype-jdk8",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson.module:jackson-module-kotlin"
             ]
@@ -3106,6 +3148,12 @@
             "locked": "4.26.1",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support"
+            ]
+        },
+        "com.googlecode.libphonenumber:libphonenumber": {
+            "locked": "8.13.40",
+            "transitive": [
+                "net.datafaker:datafaker"
             ]
         },
         "com.graphql-java:graphql-java": {
@@ -3313,7 +3361,7 @@
             ]
         },
         "net.datafaker:datafaker": {
-            "locked": "2.2.2",
+            "locked": "2.3.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ]

@@ -743,6 +743,12 @@
                 "com.apollographql.federation:federation-graphql-java-support"
             ]
         },
+        "com.googlecode.libphonenumber:libphonenumber": {
+            "locked": "8.13.40",
+            "transitive": [
+                "net.datafaker:datafaker"
+            ]
+        },
         "com.graphql-java:graphql-java": {
             "locked": "22.1",
             "transitive": [
@@ -948,7 +954,7 @@
             ]
         },
         "net.datafaker:datafaker": {
-            "locked": "2.2.2",
+            "locked": "2.3.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ]
@@ -1790,6 +1796,12 @@
                 "com.apollographql.federation:federation-graphql-java-support"
             ]
         },
+        "com.googlecode.libphonenumber:libphonenumber": {
+            "locked": "8.13.40",
+            "transitive": [
+                "net.datafaker:datafaker"
+            ]
+        },
         "com.graphql-java:graphql-java": {
             "locked": "22.1",
             "transitive": [
@@ -1889,7 +1901,7 @@
             ]
         },
         "net.datafaker:datafaker": {
-            "locked": "2.2.2",
+            "locked": "2.3.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ]
@@ -3108,6 +3120,12 @@
                 "com.apollographql.federation:federation-graphql-java-support"
             ]
         },
+        "com.googlecode.libphonenumber:libphonenumber": {
+            "locked": "8.13.40",
+            "transitive": [
+                "net.datafaker:datafaker"
+            ]
+        },
         "com.graphql-java:graphql-java": {
             "locked": "22.1",
             "transitive": [
@@ -3313,7 +3331,7 @@
             ]
         },
         "net.datafaker:datafaker": {
-            "locked": "2.2.2",
+            "locked": "2.3.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ]
