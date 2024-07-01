@@ -32,7 +32,7 @@ plugins {
     id("nebula.netflixoss") version "11.4.0"
     id("io.spring.dependency-management") version "1.1.5"
 
-    id("org.jmailen.kotlinter") version "3.11.1"
+    id("org.jmailen.kotlinter") version "4.4.0"
     id("me.champeau.jmh") version "0.7.2"
     id("me.champeau.mrjar") version "0.1.1"
 
