@@ -53,6 +53,7 @@ import graphql.scalars.ExtendedScalars
 import graphql.scalars.country.code.CountryCode
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.idl.RuntimeWiring
+import org.assertj.core.api.Assertions.LIST
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.InstanceOfAssertFactories
 import org.junit.jupiter.api.Assertions
@@ -967,7 +968,7 @@ internal class InputArgumentTest {
                 @InputArgument("capitalize") capitalize: Boolean,
                 @InputArgument("person") person: Person
             ): String {
-                val otherArg: String = dfe.getArgument("otherArg")
+                val otherArg: String? = dfe.getArgument("otherArg")
 
                 assertThat(capitalize).isTrue
                 assertThat(person).isNotNull.extracting { it.name }.isEqualTo("tester")
@@ -1015,7 +1016,7 @@ internal class InputArgumentTest {
                 @InputArgument("person") person: Person,
                 dfe: DataFetchingEnvironment
             ): String {
-                val otherArg: String = dfe.getArgument("otherArg")
+                val otherArg: String? = dfe.getArgument("otherArg")
 
                 val msg = if (capitalize) {
                     "Hello, ${person.name}"
@@ -1260,7 +1261,7 @@ internal class InputArgumentTest {
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
             val data = executionResult.getData<Map<String, *>>()
-            assertThat(data).extracting("setRatings").asList().containsOnly(1, 2, 3)
+            assertThat(data).extracting("setRatings").asInstanceOf(LIST).containsOnly(1, 2, 3)
         }
     }
 

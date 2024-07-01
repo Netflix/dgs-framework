@@ -16,4 +16,6 @@
 
 package com.netflix.graphql.dgs.exceptions
 
-class NoDataLoaderFoundException(clazz: Class<*>) : RuntimeException("No data loader found. Missing @DgsDataLoader for ${clazz.name}.")
+class NoDataLoaderFoundException(message: String) : RuntimeException(message) {
+    constructor(dataLoaderClass: Class<*>) : this("No data loader found. Missing @DgsDataLoader for ${dataLoaderClass.name}.")
+}

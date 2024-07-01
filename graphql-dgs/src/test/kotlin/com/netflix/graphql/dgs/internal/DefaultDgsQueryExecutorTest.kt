@@ -39,6 +39,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.LIST
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.InstanceOfAssertFactory
 import org.dataloader.DataLoaderRegistry
@@ -199,7 +200,7 @@ internal class DefaultDgsQueryExecutorTest {
         assertThat(result)
             .isNotNull
             .extracting { it.errors }
-            .asList()
+            .asInstanceOf(LIST)
             .singleElement()
             .isInstanceOf(InvalidSyntaxError::class.java)
     }
@@ -210,7 +211,7 @@ internal class DefaultDgsQueryExecutorTest {
         assertThat(result)
             .isNotNull
             .extracting { it.errors }
-            .asList()
+            .asInstanceOf(LIST)
             .singleElement()
             .isInstanceOf(UnknownOperationException::class.java)
 

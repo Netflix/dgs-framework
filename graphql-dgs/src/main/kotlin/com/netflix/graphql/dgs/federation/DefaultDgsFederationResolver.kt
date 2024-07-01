@@ -105,6 +105,7 @@ open class DefaultDgsFederationResolver() :
 
     private fun dgsEntityFetchers(env: DataFetchingEnvironment): CompletableFuture<DataFetcherResult<List<Any?>>> {
         val resultList = env.getArgument<List<Map<String, Any>>>(_Entity.argumentName)
+            .orEmpty()
             .map { values ->
                 Try.tryCall {
                     val typename = values["__typename"]

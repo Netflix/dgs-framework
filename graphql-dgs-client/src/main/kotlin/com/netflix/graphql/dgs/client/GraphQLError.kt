@@ -47,8 +47,8 @@ data class GraphQLErrorExtensions(
 data class GraphQLErrorDebugInfo(
     @JsonProperty val subquery: String = "",
     @JsonProperty val variables: Map<String, Any> = emptyMap(),
-    @JsonAnySetter @get:JsonAnyGetter
-    val additionalInformation: Map<String, Any> = hashMapOf()
+    @field:JsonAnySetter @get:JsonAnyGetter
+    val additionalInformation: Map<String, Any?> = hashMapOf()
 )
 
 /**

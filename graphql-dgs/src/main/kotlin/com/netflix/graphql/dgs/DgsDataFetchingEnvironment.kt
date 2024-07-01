@@ -32,18 +32,26 @@ class DgsDataFetchingEnvironment(private val dfe: DataFetchingEnvironment) : Dat
         return DgsContext.from(this)
     }
 
+    /**
+     * Get the value of the current object to be queried.
+     *
+     * @throws IllegalStateException if called on the root query
+     */
+    fun <T> getSourceOrThrow(): T {
+        return getSource() ?: throw IllegalStateException("source is null")
+    }
+
     fun <K, V> getDataLoader(loaderClass: Class<*>): DataLoader<K, V> {
         val annotation = loaderClass.getAnnotation(DgsDataLoader::class.java)
-        return if (annotation != null) {
-            dfe.getDataLoader(DataLoaderNameUtil.getDataLoaderName(loaderClass, annotation))
+        val loaderName = if (annotation != null) {
+            DataLoaderNameUtil.getDataLoaderName(loaderClass, annotation)
         } else {
             val loaders = loaderClass.fields.filter { it.isAnnotationPresent(DgsDataLoader::class.java) }
             if (loaders.size > 1) throw MultipleDataLoadersDefinedException(loaderClass)
-            val loaderField: java.lang.reflect.Field = loaders
-                .firstOrNull() ?: throw NoDataLoaderFoundException(loaderClass)
+            val loaderField = loaders.firstOrNull() ?: throw NoDataLoaderFoundException(loaderClass)
             val theAnnotation = loaderField.getAnnotation(DgsDataLoader::class.java)
-            val loaderName = theAnnotation.name
-            dfe.getDataLoader(loaderName)
+            theAnnotation.name
         }
+        return getDataLoader(loaderName) ?: throw NoDataLoaderFoundException("DataLoader with name $loaderName not found")
     }
 }

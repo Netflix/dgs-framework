@@ -1156,4 +1156,86 @@ internal class DgsSchemaProviderTest {
         }
         return context
     }
+
+    @Test
+    fun `When showSdlComments is set to true, SDL # comments should be present in introspection query results`() {
+        contextRunner.run { context ->
+            val gqlSchema = schemaProvider(
+                applicationContext = context
+            ).schema(showSdlComments = true).graphQLSchema
+            val executableSchema = GraphQL.newGraphQL(gqlSchema).build()
+
+            // Execute introspection query.
+            val executionResult = executableSchema.execute(
+                """
+                    query {
+                        __schema {
+                            types {
+                                name
+                                description
+                                fields {
+                                    name
+                                    description
+                                }
+                            }
+                        }
+                    }
+                """.trimIndent()
+            )
+            assertTrue(executionResult.isDataPresent)
+            val introspectedSchemaResult = executionResult.getData<Map<String, *>>()["__schema"] as Map<*, *>
+            val introspectedTypesResult = introspectedSchemaResult["types"] as ArrayList<*>
+
+            // Assert that SDL comments are present in the result. Description comments are always present.
+            val sdlCommentKey = "SDL Comment"
+            val descriptionCommentKey = "Description Comment"
+            assertThat(introspectedTypesResult).isNotNull
+            val descriptionCommentsInResult = introspectedTypesResult.filter { (it as LinkedHashMap<*, *>)["description"] == descriptionCommentKey }
+            val sdlCommentsInResult = introspectedTypesResult.filter { (it as LinkedHashMap<*, *>)["description"] == sdlCommentKey }
+
+            assert(descriptionCommentsInResult.isNotEmpty())
+            assert(sdlCommentsInResult.isNotEmpty())
+        }
+    }
+
+    @Test
+    fun `When showSdlComments is set to false, SDL # comments should not be present in introspection query results`() {
+        contextRunner.run { context ->
+            val gqlSchema = schemaProvider(
+                applicationContext = context
+            ).schema(showSdlComments = false).graphQLSchema
+            val executableSchema = GraphQL.newGraphQL(gqlSchema).build()
+
+            // Execute introspection query.
+            val executionResult = executableSchema.execute(
+                """
+                    query {
+                        __schema {
+                            types {
+                                name
+                                description
+                                fields {
+                                    name
+                                    description
+                                }
+                            }
+                        }
+                    }
+                """.trimIndent()
+            )
+            assertTrue(executionResult.isDataPresent)
+            val introspectedSchemaResult = executionResult.getData<Map<String, *>>()["__schema"] as Map<*, *>
+            val introspectedTypesResult = introspectedSchemaResult["types"] as ArrayList<*>
+
+            // Assert that SDL comments are not present in the result. Description comments are always present.
+            val sdlCommentKey = "SDL Comment"
+            val descriptionCommentKey = "Description Comment"
+            assertThat(introspectedTypesResult).isNotNull
+            val descriptionCommentsInResult = introspectedTypesResult.filter { (it as LinkedHashMap<*, *>)["description"] == descriptionCommentKey }
+            val sdlCommentsInResult = introspectedTypesResult.filter { (it as LinkedHashMap<*, *>)["description"] == sdlCommentKey }
+
+            assert(descriptionCommentsInResult.isNotEmpty())
+            assert(sdlCommentsInResult.isEmpty())
+        }
+    }
 }
