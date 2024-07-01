@@ -871,6 +871,7 @@
             "locked": "2.17.1",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse",
                 "org.springframework.boot:spring-boot-starter-json"
             ]
         },
@@ -926,6 +927,12 @@
             "locked": "4.26.1",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support"
+            ]
+        },
+        "com.googlecode.libphonenumber:libphonenumber": {
+            "locked": "8.13.40",
+            "transitive": [
+                "net.datafaker:datafaker"
             ]
         },
         "com.graphql-java:graphql-java": {
@@ -1400,7 +1407,7 @@
             ]
         },
         "net.datafaker:datafaker": {
-            "locked": "2.2.2",
+            "locked": "2.3.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ]
@@ -4263,6 +4270,7 @@
             "locked": "2.17.1",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom",
+                "com.netflix.graphql.dgs:graphql-dgs-subscriptions-sse",
                 "org.springframework.boot:spring-boot-starter-json"
             ]
         },
@@ -4318,6 +4326,12 @@
             "locked": "4.26.1",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support"
+            ]
+        },
+        "com.googlecode.libphonenumber:libphonenumber": {
+            "locked": "8.13.40",
+            "transitive": [
+                "net.datafaker:datafaker"
             ]
         },
         "com.graphql-java:graphql-java": {
@@ -4792,7 +4806,7 @@
             ]
         },
         "net.datafaker:datafaker": {
-            "locked": "2.2.2",
+            "locked": "2.3.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-mocking"
             ]
