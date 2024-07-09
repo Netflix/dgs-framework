@@ -27,4 +27,14 @@ import java.lang.annotation.*;
 public @interface DgsQuery {
     @AliasFor(annotation = DgsData.class)
     String field() default "";
+
+    /**
+     * Indicates whether the generated DataFetcher for this method should be considered trivial.
+     * For instance, if a method is simply pulling data from an object and not doing any I/O,
+     * there may be some performance benefits to marking it as trivial.
+     *
+     * @see graphql.TrivialDataFetcher
+     */
+    @AliasFor(annotation = DgsData.class)
+    boolean trivial() default false;
 }
