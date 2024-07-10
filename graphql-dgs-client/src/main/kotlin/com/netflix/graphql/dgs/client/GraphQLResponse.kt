@@ -128,7 +128,7 @@ data class GraphQLResponse(
      * Extracts RequestDetails from the response if available.
      * Returns null otherwise.
      */
-    fun getRequestDetails(): RequestDetails {
+    fun getRequestDetails(): RequestDetails? {
         return extractValueAsObject("gatewayRequestDetails", RequestDetails::class.java)
     }
 
