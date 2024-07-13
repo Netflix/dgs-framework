@@ -35,6 +35,7 @@ import com.netflix.graphql.dgs.internal.method.ArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import com.netflix.graphql.mocking.MockProvider
+import graphql.GraphQLContext
 import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
 import graphql.execution.DataFetcherExceptionHandler
@@ -48,6 +49,8 @@ import graphql.schema.DataFetcherFactory
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.GraphQLSchema
 import graphql.schema.idl.TypeDefinitionRegistry
+import graphql.schema.visibility.DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
+import graphql.schema.visibility.GraphqlFieldVisibility
 import io.micrometer.context.ContextRegistry
 import io.micrometer.context.ContextSnapshotFactory
 import io.micrometer.context.integration.Slf4jThreadLocalAccessor
@@ -279,8 +282,8 @@ open class DgsAutoConfiguration(
 
     @Bean
     @ConditionalOnMissingBean
-    open fun schema(dgsSchemaProvider: DgsSchemaProvider): GraphQLSchema {
-        return dgsSchemaProvider.schema(null).graphQLSchema
+    open fun schema(dgsSchemaProvider: DgsSchemaProvider, fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
+        return dgsSchemaProvider.schema(null, fieldVisibility).graphQLSchema
     }
 
     @Bean
@@ -305,8 +308,22 @@ open class DgsAutoConfiguration(
         havingValue = "false",
         matchIfMissing = false
     )
-    open fun noIntrospectionFieldVisibility() {
-        Introspection.enabledJvmWide(false)
+    open fun disableIntrospectionContextContributor(): GraphQLContextContributor {
+        return object : GraphQLContextContributor {
+            override fun contribute(
+                builder: GraphQLContext.Builder,
+                extensions: Map<String, Any>?,
+                requestData: DgsRequestData?
+            ) {
+                builder.put(Introspection.INTROSPECTION_DISABLED, true)
+            }
+        }
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun defaultFieldVisibility(): GraphqlFieldVisibility {
+        return DEFAULT_FIELD_VISIBILITY
     }
 
     @Bean

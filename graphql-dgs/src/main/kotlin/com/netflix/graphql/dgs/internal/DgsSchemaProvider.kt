@@ -52,6 +52,8 @@ import graphql.schema.idl.SchemaGenerator
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.idl.TypeRuntimeWiring
+import graphql.schema.visibility.DefaultGraphqlFieldVisibility
+import graphql.schema.visibility.GraphqlFieldVisibility
 import org.intellij.lang.annotations.Language
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -139,6 +141,7 @@ class DgsSchemaProvider(
 
     fun schema(
         @Language("GraphQL") schema: String? = null,
+        fieldVisibility: GraphqlFieldVisibility = DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY,
         schemaResources: Set<Resource> = emptySet(),
         showSdlComments: Boolean = true
     ): SchemaProviderResult {
@@ -146,12 +149,13 @@ class DgsSchemaProvider(
             dataFetchers.clear()
             dataFetcherTracingInstrumentationEnabled.clear()
             dataFetcherMetricsInstrumentationEnabled.clear()
-            return computeSchema(schema, schemaResources, showSdlComments)
+            return computeSchema(schema, fieldVisibility, schemaResources, showSdlComments)
         }
     }
 
     private fun computeSchema(
         schema: String? = null,
+        fieldVisibility: GraphqlFieldVisibility,
         schemaResources: Set<Resource> = emptySet(),
         showSdlComments: Boolean
     ): SchemaProviderResult {
@@ -184,13 +188,13 @@ class DgsSchemaProvider(
             mergedRegistry = mergedRegistry.merge(existingTypeDefinitionRegistry.get())
         }
 
-        val codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry()
+        val codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry().fieldVisibility(fieldVisibility)
         if (defaultDataFetcherFactory.isPresent) {
             codeRegistryBuilder.defaultDataFetcher(defaultDataFetcherFactory.get())
         }
 
         val runtimeWiringBuilder =
-            RuntimeWiring.newRuntimeWiring().codeRegistry(codeRegistryBuilder)
+            RuntimeWiring.newRuntimeWiring().codeRegistry(codeRegistryBuilder).fieldVisibility(fieldVisibility)
 
         val dgsCodeRegistryBuilder = DgsCodeRegistryBuilder(dataFetcherResultProcessors, codeRegistryBuilder)
 

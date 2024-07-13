@@ -24,7 +24,6 @@ import graphql.GraphQLError
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherExceptionHandlerParameters
 import graphql.execution.instrumentation.Instrumentation
-import graphql.introspection.Introspection
 import graphql.schema.DataFetchingEnvironment
 import org.apache.commons.logging.LogFactory
 import org.springframework.beans.factory.ObjectProvider
@@ -65,8 +64,6 @@ open class DgsSpringGraphQLSourceAutoConfiguration(private val dgsGraphQLConfigP
             .exceptionResolvers(dataFetcherExceptionResolvers)
             .subscriptionExceptionResolvers(subscriptionExceptionResolvers.orderedStream().toList())
             .instrumentation(instrumentations.orderedStream().toList())
-
-        Introspection.enabledJvmWide(properties.schema.introspection.isEnabled)
 
         if (properties.schema.inspection.isEnabled) {
             if (reportConsumer.isPresent) {
