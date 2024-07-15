@@ -29,7 +29,7 @@ plugins {
     `java-library`
     id("nebula.dependency-recommender") version "11.0.0"
 
-    id("nebula.netflixoss") version "11.4.0"
+    id("nebula.netflixoss") version "11.5.0"
     id("io.spring.dependency-management") version "1.1.5"
 
     id("org.jmailen.kotlinter") version "3.11.1"
