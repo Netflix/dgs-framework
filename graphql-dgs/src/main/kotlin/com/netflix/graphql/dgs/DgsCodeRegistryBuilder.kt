@@ -16,7 +16,13 @@
 package com.netflix.graphql.dgs
 
 import com.netflix.graphql.dgs.internal.DataFetcherResultProcessor
-import graphql.schema.*
+import graphql.TrivialDataFetcher
+import graphql.schema.DataFetcher
+import graphql.schema.DataFetcherFactories
+import graphql.schema.DataFetchingEnvironment
+import graphql.schema.FieldCoordinates
+import graphql.schema.GraphQLCodeRegistry
+import graphql.schema.GraphQLFieldDefinition
 
 /**
  * Utility wrapper for [GraphQLCodeRegistry.Builder] which provides
@@ -29,14 +35,13 @@ class DgsCodeRegistryBuilder(
 ) {
 
     fun dataFetcher(coordinates: FieldCoordinates, dataFetcher: DataFetcher<*>): DgsCodeRegistryBuilder {
-        val wrapped = DataFetcherFactories.wrapDataFetcher(dataFetcher) { dfe, result ->
-            result?.let {
-                val env = DgsDataFetchingEnvironment(dfe)
-                dataFetcherResultProcessors.find { it.supportsType(result) }?.process(result, env) ?: result
-            }
+        val fetcher = if (dataFetcherResultProcessors.isNotEmpty() && dataFetcher !is TrivialDataFetcher) {
+            DataFetcherFactories.wrapDataFetcher(dataFetcher) { dfe, result -> convertResult(dfe, result) }
+        } else {
+            dataFetcher
         }
 
-        graphQLCodeRegistry.dataFetcher(coordinates, wrapped)
+        graphQLCodeRegistry.dataFetcher(coordinates, fetcher)
         return this
     }
 
@@ -46,5 +51,18 @@ class DgsCodeRegistryBuilder(
 
     fun getDataFetcher(coordinates: FieldCoordinates, fieldDefinition: GraphQLFieldDefinition): DataFetcher<*> {
         return graphQLCodeRegistry.getDataFetcher(coordinates, fieldDefinition)
+    }
+
+    private fun convertResult(dfe: DataFetchingEnvironment, result: Any?): Any? {
+        if (result == null) {
+            return null
+        }
+        val processor = dataFetcherResultProcessors.find { it.supportsType(result) } ?: return result
+        val env = if (dfe is DgsDataFetchingEnvironment) {
+            dfe
+        } else {
+            DgsDataFetchingEnvironment(dfe)
+        }
+        return processor.process(result, env)
     }
 }

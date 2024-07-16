@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 @DgsComponent
 public class WithHeader {
-    @DgsQuery
+    @DgsQuery(trivial = true)
     public String helloWithHeaders(@InputArgument String name, @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
         return "hello, " + authorization + "!";
     }
