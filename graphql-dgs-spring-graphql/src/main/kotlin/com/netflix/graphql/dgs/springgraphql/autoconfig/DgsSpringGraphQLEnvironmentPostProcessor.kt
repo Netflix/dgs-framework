@@ -29,6 +29,7 @@ class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
     override fun postProcessEnvironment(environment: ConfigurableEnvironment, application: SpringApplication) {
         val properties = mutableMapOf<String, Any>()
 
+        properties["spring.graphql.schema.introspection.enabled"] = environment.getProperty("dgs.graphql.introspection.enabled") ?: true
         properties["spring.graphql.graphiql.enabled"] = environment.getProperty("dgs.graphql.graphiql.enabled") ?: true
         properties["spring.graphql.graphiql.path"] = environment.getProperty("dgs.graphql.graphiql.path") ?: "/graphiql"
         properties["spring.graphql.path"] = environment.getProperty("dgs.graphql.path") ?: "/graphql"

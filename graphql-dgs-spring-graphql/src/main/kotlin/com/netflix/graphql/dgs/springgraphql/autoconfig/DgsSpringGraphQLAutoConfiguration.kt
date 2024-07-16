@@ -20,6 +20,7 @@ import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.DgsRuntimeWiring
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
+import com.netflix.graphql.dgs.context.GraphQLContextContributor
 import com.netflix.graphql.dgs.internal.*
 import com.netflix.graphql.dgs.internal.method.ArgumentResolver
 import com.netflix.graphql.dgs.mvc.internal.method.HandlerMethodArgumentResolverAdapter
@@ -31,11 +32,13 @@ import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.webflux.DgsWebFluxGraphQLInterceptor
 import com.netflix.graphql.dgs.springgraphql.webmvc.DgsWebMvcGraphQLInterceptor
+import graphql.GraphQLContext
 import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.ExecutionStrategy
 import graphql.execution.preparsed.PreparsedDocumentProvider
+import graphql.introspection.Introspection
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.reactivestreams.Publisher
@@ -131,6 +134,25 @@ open class DgsSpringGraphQLAutoConfiguration {
                         .queryExecutionStrategy(queryExecutionStrategy)
                         .mutationExecutionStrategy(mutationExecutionStrategy)
                 }
+            }
+        }
+    }
+
+    @Bean
+    @ConditionalOnProperty(
+        prefix = "spring.graphql.schema.introspection",
+        name = ["enabled"],
+        havingValue = "false",
+        matchIfMissing = false
+    )
+    open fun disableIntrospectionContextContributor(): GraphQLContextContributor {
+        return object : GraphQLContextContributor {
+            override fun contribute(
+                builder: GraphQLContext.Builder,
+                extensions: Map<String, Any>?,
+                requestData: DgsRequestData?
+            ) {
+                builder.put(Introspection.INTROSPECTION_DISABLED, true)
             }
         }
     }

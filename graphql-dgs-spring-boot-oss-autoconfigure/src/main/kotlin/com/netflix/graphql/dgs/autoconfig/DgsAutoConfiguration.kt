@@ -35,6 +35,7 @@ import com.netflix.graphql.dgs.internal.method.ArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import com.netflix.graphql.dgs.scalars.UploadScalar
 import com.netflix.graphql.mocking.MockProvider
+import graphql.GraphQLContext
 import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
 import graphql.execution.DataFetcherExceptionHandler
@@ -43,13 +44,13 @@ import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.preparsed.PreparsedDocumentProvider
+import graphql.introspection.Introspection
 import graphql.schema.DataFetcherFactory
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.GraphQLSchema
 import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.visibility.DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
 import graphql.schema.visibility.GraphqlFieldVisibility
-import graphql.schema.visibility.NoIntrospectionGraphqlFieldVisibility.NO_INTROSPECTION_FIELD_VISIBILITY
 import io.micrometer.context.ContextRegistry
 import io.micrometer.context.ContextSnapshotFactory
 import io.micrometer.context.integration.Slf4jThreadLocalAccessor
@@ -307,8 +308,16 @@ open class DgsAutoConfiguration(
         havingValue = "false",
         matchIfMissing = false
     )
-    open fun noIntrospectionFieldVisibility(): GraphqlFieldVisibility {
-        return NO_INTROSPECTION_FIELD_VISIBILITY
+    open fun disableIntrospectionContextContributor(): GraphQLContextContributor {
+        return object : GraphQLContextContributor {
+            override fun contribute(
+                builder: GraphQLContext.Builder,
+                extensions: Map<String, Any>?,
+                requestData: DgsRequestData?
+            ) {
+                builder.put(Introspection.INTROSPECTION_DISABLED, true)
+            }
+        }
     }
 
     @Bean
