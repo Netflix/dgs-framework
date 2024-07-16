@@ -81,6 +81,15 @@ class DgsSpringGraphQLEnvironmentPostProcessorTest {
     }
 
     @Test
+    fun `DGS setting should propagate to spring graphql for introspection-enabled`() {
+        env.setProperty("dgs.graphql.introspection.enabled", "false")
+
+        DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
+
+        Assertions.assertThat(env.getProperty("spring.graphql.schema.introspection.enabled")).isEqualTo("false")
+    }
+
+    @Test
     fun `Default for websocket-connection-timeout`() {
         DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
 
