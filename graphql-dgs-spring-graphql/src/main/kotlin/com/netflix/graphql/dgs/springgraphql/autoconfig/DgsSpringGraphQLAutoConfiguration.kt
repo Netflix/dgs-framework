@@ -32,7 +32,6 @@ import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.webflux.DgsWebFluxGraphQLInterceptor
 import com.netflix.graphql.dgs.springgraphql.webmvc.DgsWebMvcGraphQLInterceptor
-import graphql.GraphQLContext
 import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
 import graphql.execution.DataFetcherExceptionHandler
@@ -71,7 +70,7 @@ import org.springframework.web.reactive.result.method.annotation.CookieValueMeth
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
 import org.springframework.web.servlet.mvc.method.annotation.ServletCookieValueMethodArgumentResolver
 import org.springframework.web.servlet.mvc.method.annotation.ServletRequestDataBinderFactory
-import java.util.*
+import java.util.Optional
 
 /**
  * Framework auto configuration based on open source Spring only, without Netflix integrations.
@@ -105,7 +104,7 @@ open class DgsSpringGraphQLAutoConfiguration {
         return DgsTypeDefinitionConfigurerBridge()
     }
 
-    class DgsTypeDefinitionConfigurerBridge() {
+    class DgsTypeDefinitionConfigurerBridge {
         @DgsTypeDefinitionRegistry
         fun typeDefinitionRegistry(typeDefinitionRegistry: TypeDefinitionRegistry): TypeDefinitionRegistry {
             val newTypeDefinitionRegistry = TypeDefinitionRegistry()
@@ -146,15 +145,7 @@ open class DgsSpringGraphQLAutoConfiguration {
         matchIfMissing = false
     )
     open fun disableIntrospectionContextContributor(): GraphQLContextContributor {
-        return object : GraphQLContextContributor {
-            override fun contribute(
-                builder: GraphQLContext.Builder,
-                extensions: Map<String, Any>?,
-                requestData: DgsRequestData?
-            ) {
-                builder.put(Introspection.INTROSPECTION_DISABLED, true)
-            }
-        }
+        return GraphQLContextContributor { builder, _, _ -> builder.put(Introspection.INTROSPECTION_DISABLED, true) }
     }
 
     @Bean
