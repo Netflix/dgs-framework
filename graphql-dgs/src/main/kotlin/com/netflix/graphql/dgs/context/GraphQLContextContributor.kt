@@ -23,7 +23,7 @@ import graphql.GraphQLContext
  * For each bean implementing this interface found, the framework will call the [contribute] method for every request.
  * The [contribute] method is then able to use the [GraphQLContext.Builder] to provide additional entries to place in the context.
  */
-interface GraphQLContextContributor {
+fun interface GraphQLContextContributor {
     fun contribute(
         builder: GraphQLContext.Builder,
         extensions: Map<String, Any>?,

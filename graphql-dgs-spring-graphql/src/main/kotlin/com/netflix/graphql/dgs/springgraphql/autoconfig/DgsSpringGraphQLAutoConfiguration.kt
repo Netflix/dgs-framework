@@ -20,6 +20,7 @@ import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.DgsRuntimeWiring
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
+import com.netflix.graphql.dgs.context.GraphQLContextContributor
 import com.netflix.graphql.dgs.internal.*
 import com.netflix.graphql.dgs.internal.method.ArgumentResolver
 import com.netflix.graphql.dgs.mvc.internal.method.HandlerMethodArgumentResolverAdapter
@@ -36,6 +37,7 @@ import graphql.execution.AsyncSerialExecutionStrategy
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.ExecutionStrategy
 import graphql.execution.preparsed.PreparsedDocumentProvider
+import graphql.introspection.Introspection
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.reactivestreams.Publisher
@@ -68,7 +70,7 @@ import org.springframework.web.reactive.result.method.annotation.CookieValueMeth
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
 import org.springframework.web.servlet.mvc.method.annotation.ServletCookieValueMethodArgumentResolver
 import org.springframework.web.servlet.mvc.method.annotation.ServletRequestDataBinderFactory
-import java.util.*
+import java.util.Optional
 
 /**
  * Framework auto configuration based on open source Spring only, without Netflix integrations.
@@ -102,7 +104,7 @@ open class DgsSpringGraphQLAutoConfiguration {
         return DgsTypeDefinitionConfigurerBridge()
     }
 
-    class DgsTypeDefinitionConfigurerBridge() {
+    class DgsTypeDefinitionConfigurerBridge {
         @DgsTypeDefinitionRegistry
         fun typeDefinitionRegistry(typeDefinitionRegistry: TypeDefinitionRegistry): TypeDefinitionRegistry {
             val newTypeDefinitionRegistry = TypeDefinitionRegistry()
@@ -133,6 +135,17 @@ open class DgsSpringGraphQLAutoConfiguration {
                 }
             }
         }
+    }
+
+    @Bean
+    @ConditionalOnProperty(
+        prefix = "spring.graphql.schema.introspection",
+        name = ["enabled"],
+        havingValue = "false",
+        matchIfMissing = false
+    )
+    open fun disableIntrospectionContextContributor(): GraphQLContextContributor {
+        return GraphQLContextContributor { builder, _, _ -> builder.put(Introspection.INTROSPECTION_DISABLED, true) }
     }
 
     @Bean

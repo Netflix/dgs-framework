@@ -43,13 +43,12 @@ import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.preparsed.PreparsedDocumentProvider
+import graphql.introspection.Introspection
 import graphql.schema.DataFetcherFactory
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.GraphQLSchema
 import graphql.schema.idl.TypeDefinitionRegistry
-import graphql.schema.visibility.DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
 import graphql.schema.visibility.GraphqlFieldVisibility
-import graphql.schema.visibility.NoIntrospectionGraphqlFieldVisibility.NO_INTROSPECTION_FIELD_VISIBILITY
 import io.micrometer.context.ContextRegistry
 import io.micrometer.context.ContextSnapshotFactory
 import io.micrometer.context.integration.Slf4jThreadLocalAccessor
@@ -77,7 +76,7 @@ import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.context.request.WebRequest
 import java.time.Duration
-import java.util.*
+import java.util.Optional
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 
@@ -281,8 +280,13 @@ open class DgsAutoConfiguration(
 
     @Bean
     @ConditionalOnMissingBean
-    open fun schema(dgsSchemaProvider: DgsSchemaProvider, fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
-        return dgsSchemaProvider.schema(null, fieldVisibility).graphQLSchema
+    open fun schema(dgsSchemaProvider: DgsSchemaProvider, fieldVisibility: GraphqlFieldVisibility?): GraphQLSchema {
+        val result = if (fieldVisibility == null) {
+            dgsSchemaProvider.schema(schema = null)
+        } else {
+            dgsSchemaProvider.schema(schema = null, fieldVisibility = fieldVisibility)
+        }
+        return result.graphQLSchema
     }
 
     @Bean
@@ -307,14 +311,8 @@ open class DgsAutoConfiguration(
         havingValue = "false",
         matchIfMissing = false
     )
-    open fun noIntrospectionFieldVisibility(): GraphqlFieldVisibility {
-        return NO_INTROSPECTION_FIELD_VISIBILITY
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    open fun defaultFieldVisibility(): GraphqlFieldVisibility {
-        return DEFAULT_FIELD_VISIBILITY
+    open fun disableIntrospectionContextContributor(): GraphQLContextContributor {
+        return GraphQLContextContributor { builder, _, _ -> builder.put(Introspection.INTROSPECTION_DISABLED, true) }
     }
 
     @Bean
