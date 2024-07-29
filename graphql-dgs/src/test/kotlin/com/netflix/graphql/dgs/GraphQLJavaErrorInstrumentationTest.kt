@@ -18,7 +18,11 @@ package com.netflix.graphql.dgs
 
 import com.netflix.graphql.dgs.internal.GraphQLJavaErrorInstrumentation
 import graphql.GraphQL
+import graphql.GraphQLContext
 import graphql.execution.instrumentation.Instrumentation
+import graphql.schema.Coercing
+import graphql.schema.CoercingSerializeException
+import graphql.schema.GraphQLScalarType
 import graphql.schema.StaticDataFetcher
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.SchemaGenerator
@@ -27,14 +31,17 @@ import graphql.schema.idl.TypeRuntimeWiring
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.Locale
 
 class GraphQLJavaErrorInstrumentationTest {
 
     private lateinit var graphqlJavaErrorInstrumentation: Instrumentation
 
     private val schema = """
+                scalar IPv4
                 type Query{
                     hello(name: String!): String
+                    ip: IPv4
                 }
     """.trimMargin()
 
@@ -157,12 +164,49 @@ class GraphQLJavaErrorInstrumentationTest {
         Assertions.assertThat(result.errors[1].extensions["errorDetail"]).isEqualTo("FIELD_NOT_FOUND")
     }
 
+    @Test
+    fun `Error contains errorDetail and errorType in the extensions for serialization error`() {
+        val graphQL: GraphQL = buildGraphQL(schema)
+        val result = graphQL.execute(
+            """
+            {
+                ip
+            }
+            """.trimIndent()
+        )
+
+        Assertions.assertThat(result.errors.size).isEqualTo(1)
+        Assertions.assertThat(result.errors[0].extensions.keys.containsAll(listOf("errorDetail", "errorType")))
+        Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("INTERNAL")
+        Assertions.assertThat(result.errors[0].extensions["errorDetail"]).isEqualTo("SERIALIZATION_ERROR")
+    }
+
     private fun buildGraphQL(schema: String): GraphQL {
         val schemaParser = SchemaParser()
         val typeDefinitionRegistry = schemaParser.parse(schema)
-        val runtimeWiring = RuntimeWiring.newRuntimeWiring()
+        val runtimeWiring = RuntimeWiring.newRuntimeWiring().scalar(
+            GraphQLScalarType.newScalar().name("IPv4").description("A custom scalar that handles IPv4 address")
+                .coercing(object :
+                    Coercing<String, String> {
+                    override fun serialize(dataFetcherResult: Any, graphQLContext: GraphQLContext, locale: Locale): String {
+                        if (dataFetcherResult is String) {
+                            val ipAddress = dataFetcherResult
+                            if (ipAddress.matches(
+                                    "^((25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$"
+                                        .toRegex()
+                                )
+                            ) {
+                                return ipAddress
+                            }
+                        }
+                        throw CoercingSerializeException("Invalid IPv4 address")
+                    }
+                })
+                .build()
+        )
             .type("Query") { builder: TypeRuntimeWiring.Builder ->
                 builder.dataFetcher("hello", StaticDataFetcher("hello there!"))
+                    .dataFetcher("ip", StaticDataFetcher("Invalid IPv4 value"))
             }
             .build()
         val schemaGenerator = SchemaGenerator()
