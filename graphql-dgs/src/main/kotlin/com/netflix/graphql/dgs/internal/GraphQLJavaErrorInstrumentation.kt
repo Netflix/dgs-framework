@@ -5,6 +5,7 @@ import com.netflix.graphql.types.errors.ErrorType
 import com.netflix.graphql.types.errors.TypedGraphQLError
 import graphql.ExecutionResult
 import graphql.GraphQLError
+import graphql.SerializationError
 import graphql.execution.instrumentation.InstrumentationState
 import graphql.execution.instrumentation.SimplePerformantInstrumentation
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
@@ -58,6 +59,9 @@ class GraphQLJavaErrorInstrumentation : SimplePerformantInstrumentation() {
                         .locations(error.locations)
                         .message(error.message)
                         .extensions(error.extensions)
+                    if (error is SerializationError) {
+                        graphqlErrorBuilder.errorDetail(ErrorDetail.Common.SERIALIZATION_ERROR)
+                    }
                     if (error.path != null) {
                         graphqlErrorBuilder.path(error.path)
                     }

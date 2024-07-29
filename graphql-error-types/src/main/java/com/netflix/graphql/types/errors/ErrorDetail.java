@@ -134,6 +134,17 @@ public interface ErrorDetail extends ErrorClassification {
         CONFLICT(FAILED_PRECONDITION),
 
         /**
+         * Indicates a field requested could not be serialized properly by the server
+         * <p>
+         * For example, you may get a SERIALIZATION_ERROR when the server tries to serialize a custom scalar
+         * and fails to serialize retrieved values
+         * <p>
+         * HTTP Mapping: 500 Internal Server Error
+         * Error Type: SERIALIZATION_ERROR
+         */
+        SERIALIZATION_ERROR(INTERNAL),
+
+        /**
          * Service Error.
          * <p>
          * There is a problem with an upstream service.
