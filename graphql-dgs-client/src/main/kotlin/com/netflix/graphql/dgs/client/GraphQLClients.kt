@@ -50,4 +50,12 @@ internal object GraphQLClients {
 
         return GraphQLResponse(body ?: "", headers)
     }
+
+    internal fun toRequestMap(query: String, operationName: String?, variables: Map<String, Any?>): Map<String, Any?> {
+        return mapOf(
+            "query" to query,
+            "operationName" to operationName,
+            "variables" to variables
+        )
+    }
 }
