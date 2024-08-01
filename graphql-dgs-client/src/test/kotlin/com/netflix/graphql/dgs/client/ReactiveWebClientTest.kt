@@ -16,6 +16,8 @@
 
 package com.netflix.graphql.dgs.client
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.Test
@@ -23,8 +25,9 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import java.time.Duration
+import java.time.LocalDate
 
-@Suppress("DEPRECATION")
 class ReactiveWebClientTest {
     private val url = "http://test"
 
@@ -42,14 +45,26 @@ class ReactiveWebClientTest {
             .uri(url)
             .headers { consumer -> headers.forEach { consumer.addAll(it.key, it.value) } }
             .bodyValue(body)
-            .exchange()
-            .flatMap { cr -> cr.bodyToMono(String::class.java).map { json -> HttpResponse(cr.statusCode().value(), json) } }
+            .retrieve()
+            .toEntity(String::class.java)
+            .map { response -> HttpResponse(response.statusCode.value(), response.body) }
     }
 
     @Test
-    fun testMono() {
-        val mono = DefaultGraphQLClient(url).reactiveExecuteQuery("{ hello }", emptyMap(), requestExecutor)
-        val graphQLResponse = mono.block() ?: fail("Expected non-null response")
+    fun testReactiveExecuteQuery() {
+        val responseMono = CustomMonoGraphQLClient(url, requestExecutor).reactiveExecuteQuery("{ hello }", emptyMap())
+        val graphQLResponse = responseMono.block(Duration.ZERO) ?: fail("Expected non-null response")
+        assertThat(graphQLResponse.data["hello"]).isEqualTo("Hi!")
+    }
+
+    @Test
+    fun testCustomObjectMapper() {
+        val mapper = ObjectMapper().registerModules(JavaTimeModule())
+        val responseMono = CustomMonoGraphQLClient(url, requestExecutor, mapper).reactiveExecuteQuery(
+            "{ hello(${'$'}input: HelloInput!) }",
+            mapOf("foo" to LocalDate.now())
+        )
+        val graphQLResponse = responseMono.block(Duration.ZERO) ?: fail("Expected non-null response")
         assertThat(graphQLResponse.data["hello"]).isEqualTo("Hi!")
     }
 }
