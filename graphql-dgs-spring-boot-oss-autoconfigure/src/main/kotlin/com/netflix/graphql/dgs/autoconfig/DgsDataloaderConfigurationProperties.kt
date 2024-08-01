@@ -24,7 +24,6 @@ import java.time.Duration
  * Configuration properties for DGS framework.
  */
 @ConfigurationProperties(prefix = DgsDataloaderConfigurationProperties.DATALOADER_PREFIX)
-@Suppress("ConfigurationProperties")
 data class DgsDataloaderConfigurationProperties(
     @DefaultValue("false") val tickerModeEnabled: Boolean,
     @DefaultValue(DATALOADER_DEFAULT_SCHEDULE_DURATION) val scheduleDuration: Duration
