@@ -13,14 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-plugins {
-    id("me.champeau.mrjar")
-}
-
-multiRelease {
-    targetVersions(17, 21)
-}
-
 dependencies {
 
     api(project(":graphql-error-types"))
@@ -34,7 +26,6 @@ dependencies {
 
     implementation("org.springframework:spring-web")
     implementation("org.springframework:spring-context")
-    "java21Implementation"("org.springframework:spring-context")
 
     compileOnly("org.springframework.security:spring-security-core")
     compileOnly("io.projectreactor:reactor-core")
@@ -47,8 +38,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("io.micrometer:context-propagation")
-    "java21Implementation"("io.micrometer:context-propagation:1.1.1") //Version should come from our BOM, but this doesn't work with the multi release JAR plugin.
-
 
     testImplementation("org.springframework.security:spring-security-core")
     testImplementation("io.projectreactor:reactor-core")

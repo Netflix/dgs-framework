@@ -29,7 +29,6 @@ import org.springframework.test.web.client.match.MockRestRequestMatchers.request
 import org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess
 import org.springframework.web.client.RestTemplate
 
-@Suppress("DEPRECATION")
 class ErrorsTest {
 
     private val restTemplate = RestTemplate()
@@ -40,11 +39,11 @@ class ErrorsTest {
         headers.forEach { httpHeaders.addAll(it.key, it.value) }
 
         val exchange = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
-        HttpResponse(exchange.statusCodeValue, exchange.body)
+        HttpResponse(statusCode = exchange.statusCode.value(), body = exchange.body)
     }
 
     private val url = "http://localhost:8080/graphql"
-    private val client = DefaultGraphQLClient(url)
+    private val client = CustomGraphQLClient(url, requestExecutor)
 
     @Test
     fun unknownErrorType() {
@@ -73,7 +72,7 @@ class ErrorsTest {
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
 
-        val graphQLResponse = client.executeQuery("""{ hello }""", emptyMap(), requestExecutor)
+        val graphQLResponse = client.executeQuery("""{ hello }""", emptyMap())
         assertThat(graphQLResponse.errors[0].extensions?.errorType).isEqualTo(ErrorType.UNKNOWN)
 
         server.verify()
@@ -106,7 +105,7 @@ class ErrorsTest {
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
 
-        val graphQLResponse = client.executeQuery("""{ hello }""", emptyMap(), requestExecutor)
+        val graphQLResponse = client.executeQuery("""{ hello }""", emptyMap())
         assertThat(graphQLResponse.errors[0].extensions?.errorType).isEqualTo(ErrorType.BAD_REQUEST)
 
         server.verify()
@@ -140,7 +139,7 @@ class ErrorsTest {
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
 
-        val graphQLResponse = client.executeQuery("""{ hello }""", emptyMap(), requestExecutor)
+        val graphQLResponse = client.executeQuery("""{ hello }""", emptyMap())
         assertThat(graphQLResponse.errors[0].extensions?.errorType).isEqualTo(ErrorType.BAD_REQUEST)
         assertThat(graphQLResponse.errors[0].extensions?.errorDetail).isEqualTo("FIELD_NOT_FOUND")
 
@@ -171,7 +170,7 @@ class ErrorsTest {
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
 
-        val graphQLResponse = client.executeQuery("""{ hello }""", emptyMap(), requestExecutor)
+        val graphQLResponse = client.executeQuery("""{ hello }""", emptyMap())
         assertThat(graphQLResponse.errors[0].extensions).isNull()
 
         server.verify()
@@ -212,7 +211,7 @@ class ErrorsTest {
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
 
-        val graphQLResponse = client.executeQuery("""{ hello }""", emptyMap(), requestExecutor)
+        val graphQLResponse = client.executeQuery("""{ hello }""", emptyMap())
         assertThat(graphQLResponse.errors[0].extensions?.debugInfo?.subquery).isEqualTo("test sub-query")
         assertThat(graphQLResponse.errors[0].extensions?.debugInfo?.variables?.get("variableKey1")).isEqualTo("variableValue1")
         assertThat(graphQLResponse.errors[0].extensions?.debugInfo?.variables?.get("variableKey2")).isEqualTo("variableValue2")

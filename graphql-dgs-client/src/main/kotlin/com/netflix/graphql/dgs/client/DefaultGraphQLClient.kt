@@ -61,7 +61,9 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
         operationName: String?,
         requestExecutor: RequestExecutor
     ): GraphQLResponse {
-        val serializedRequest = GraphQLClients.objectMapper.writeValueAsString(Request(query, variables, operationName))
+        val serializedRequest = GraphQLClients.objectMapper.writeValueAsString(
+            GraphQLClients.toRequestMap(query = query, operationName = operationName, variables = variables)
+        )
         val response = requestExecutor.execute(url, GraphQLClients.defaultHeaders, serializedRequest)
         return GraphQLClients.handleResponse(response, serializedRequest, url)
     }
@@ -155,8 +157,9 @@ class DefaultGraphQLClient(private val url: String) : GraphQLClient, MonoGraphQL
         operationName: String?,
         requestExecutor: MonoRequestExecutor
     ): Mono<GraphQLResponse> {
-        @Suppress("BlockingMethodInNonBlockingContext")
-        val serializedRequest = GraphQLClients.objectMapper.writeValueAsString(Request(query, variables, operationName))
+        val serializedRequest = GraphQLClients.objectMapper.writeValueAsString(
+            GraphQLClients.toRequestMap(query = query, operationName = operationName, variables = variables)
+        )
         return requestExecutor.execute(url, GraphQLClients.defaultHeaders, serializedRequest).map { response ->
             GraphQLClients.handleResponse(response, serializedRequest, url)
         }
