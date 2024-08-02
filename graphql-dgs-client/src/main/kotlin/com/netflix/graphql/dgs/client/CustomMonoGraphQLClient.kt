@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.client
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.intellij.lang.annotations.Language
 import reactor.core.publisher.Mono
 
@@ -26,8 +27,12 @@ import reactor.core.publisher.Mono
  */
 class CustomMonoGraphQLClient(
     private val url: String,
-    private val monoRequestExecutor: MonoRequestExecutor
+    private val monoRequestExecutor: MonoRequestExecutor,
+    private val mapper: ObjectMapper
 ) : MonoGraphQLClient {
+
+    constructor(url: String, monoRequestExecutor: MonoRequestExecutor) : this (url, monoRequestExecutor, GraphQLClients.objectMapper)
+
     override fun reactiveExecuteQuery(@Language("graphql") query: String): Mono<GraphQLResponse> {
         return reactiveExecuteQuery(query, emptyMap(), null)
     }
@@ -41,12 +46,8 @@ class CustomMonoGraphQLClient(
         variables: Map<String, Any>,
         operationName: String?
     ): Mono<GraphQLResponse> {
-        val serializedRequest = GraphQLClients.objectMapper.writeValueAsString(
-            Request(
-                query,
-                variables,
-                operationName
-            )
+        val serializedRequest = mapper.writeValueAsString(
+            GraphQLClients.toRequestMap(query = query, operationName = operationName, variables = variables)
         )
         return monoRequestExecutor.execute(url, GraphQLClients.defaultHeaders, serializedRequest).map { response ->
             GraphQLClients.handleResponse(response, serializedRequest, url)
