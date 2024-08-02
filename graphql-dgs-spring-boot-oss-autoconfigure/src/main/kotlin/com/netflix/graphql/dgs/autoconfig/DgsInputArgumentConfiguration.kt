@@ -18,14 +18,18 @@ package com.netflix.graphql.dgs.autoconfig
 
 import com.netflix.graphql.dgs.internal.DefaultInputObjectMapper
 import com.netflix.graphql.dgs.internal.InputObjectMapper
-import com.netflix.graphql.dgs.internal.method.*
+import com.netflix.graphql.dgs.internal.method.ArgumentResolver
+import com.netflix.graphql.dgs.internal.method.ContinuationArgumentResolver
+import com.netflix.graphql.dgs.internal.method.DataFetchingEnvironmentArgumentResolver
+import com.netflix.graphql.dgs.internal.method.FallbackEnvironmentArgumentResolver
+import com.netflix.graphql.dgs.internal.method.InputArgumentResolver
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 open class DgsInputArgumentConfiguration {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
