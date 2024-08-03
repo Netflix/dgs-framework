@@ -356,7 +356,7 @@ class DgsSchemaProvider(
         val parentType = dgsDataAnnotation.getString("parentType")
 
         if (dataFetchers.any { it.parentType == parentType && it.field == field }) {
-            logger.error("Duplicate data fetchers registered for $parentType.$field")
+            logger.error("Duplicate data fetchers registered for {}.{}", parentType, field)
             throw InvalidDgsConfigurationException("Duplicate data fetchers registered for $parentType.$field")
         }
 
@@ -381,7 +381,7 @@ class DgsSchemaProvider(
         val methodClassName = method.declaringClass.name
         try {
             if (!typeDefinitionRegistry.getType(parentType).isPresent) {
-                logger.error("Parent type $parentType not found, but it was referenced in $methodClassName in @DgsData annotation for field $field")
+                logger.error("Parent type {} not found, but it was referenced in {} in @DgsData annotation for field {}", parentType, methodClassName, field)
                 throw InvalidDgsConfigurationException("Parent type $parentType not found, but it was referenced on $methodClassName in @DgsData annotation for field $field")
             }
             when (val type = typeDefinitionRegistry.getType(parentType).get()) {
@@ -398,9 +398,10 @@ class DgsSchemaProvider(
                     implementationsOf.forEach { implType ->
                         // if we have a datafetcher explicitly defined for a parentType/field, use that and do not
                         // register the base implementation for interfaces
-                        if (!codeRegistryBuilder.hasDataFetcher(FieldCoordinates.coordinates(implType.name, field))) {
-                            val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent.instance, method)
-                            codeRegistryBuilder.dataFetcher(FieldCoordinates.coordinates(implType.name, field), dataFetcher)
+                        val coordinates = FieldCoordinates.coordinates(implType.name, field)
+                        if (!codeRegistryBuilder.hasDataFetcher(coordinates)) {
+                            val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent.instance, method, coordinates)
+                            codeRegistryBuilder.dataFetcher(coordinates, dataFetcher)
 
                             dataFetcherTracingInstrumentationEnabled["${implType.name}.$field"] =
                                 enableTracingInstrumentation
@@ -411,8 +412,9 @@ class DgsSchemaProvider(
                 }
                 is UnionTypeDefinition -> {
                     type.memberTypes.asSequence().filterIsInstance<TypeName>().forEach { memberType ->
-                        val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent.instance, method)
-                        codeRegistryBuilder.dataFetcher(FieldCoordinates.coordinates(memberType.name, field), dataFetcher)
+                        val coordinates = FieldCoordinates.coordinates(memberType.name, field)
+                        val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent.instance, method, coordinates)
+                        codeRegistryBuilder.dataFetcher(coordinates, dataFetcher)
 
                         dataFetcherTracingInstrumentationEnabled["${memberType.name}.$field"] = enableTracingInstrumentation
                         dataFetcherMetricsInstrumentationEnabled["${memberType.name}.$field"] = enableMetricsInstrumentation
@@ -428,8 +430,9 @@ class DgsSchemaProvider(
                         )
                     }
 
-                    val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent.instance, method)
-                    codeRegistryBuilder.dataFetcher(FieldCoordinates.coordinates(parentType, field), dataFetcher)
+                    val coordinates = FieldCoordinates.coordinates(parentType, field)
+                    val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent.instance, method, coordinates)
+                    codeRegistryBuilder.dataFetcher(coordinates, dataFetcher)
                 }
                 else -> {
                     throw InvalidDgsConfigurationException(
@@ -439,7 +442,7 @@ class DgsSchemaProvider(
                 }
             }
         } catch (ex: Exception) {
-            logger.error("Invalid parent type $parentType")
+            logger.error("Invalid parent type {}", parentType)
             throw ex
         }
     }
@@ -710,7 +713,7 @@ class DgsSchemaProvider(
             if (existingTypeDefinitionRegistry.isPresent || hasDynamicTypeRegistry) {
                 logger.info("No schema files found, but a schema was provided as an TypeDefinitionRegistry")
             } else {
-                logger.error("No schema files found in $schemaLocations. Define schema locations with property dgs.graphql.schema-locations")
+                logger.error("No schema files found in {}. Define schema locations with property dgs.graphql.schema-locations", schemaLocations)
                 throw NoSchemaFoundException()
             }
         }

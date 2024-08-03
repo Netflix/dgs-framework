@@ -23,7 +23,6 @@ import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
 import com.netflix.graphql.dgs.DgsDefaultPreparsedDocumentProvider
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.dgs.conditionals.ConditionalOnJava21
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.context.GraphQLContextContributor
@@ -43,13 +42,12 @@ import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.preparsed.PreparsedDocumentProvider
+import graphql.introspection.Introspection
 import graphql.schema.DataFetcherFactory
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.GraphQLSchema
 import graphql.schema.idl.TypeDefinitionRegistry
-import graphql.schema.visibility.DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY
 import graphql.schema.visibility.GraphqlFieldVisibility
-import graphql.schema.visibility.NoIntrospectionGraphqlFieldVisibility.NO_INTROSPECTION_FIELD_VISIBILITY
 import io.micrometer.context.ContextRegistry
 import io.micrometer.context.ContextSnapshotFactory
 import io.micrometer.context.integration.Slf4jThreadLocalAccessor
@@ -60,11 +58,13 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
+import org.springframework.boot.autoconfigure.condition.ConditionalOnJava
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.boot.system.JavaVersion
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.core.DefaultParameterNameDiscoverer
@@ -72,12 +72,13 @@ import org.springframework.core.PriorityOrdered
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 import org.springframework.core.task.AsyncTaskExecutor
+import org.springframework.core.task.VirtualThreadTaskExecutor
 import org.springframework.http.HttpHeaders
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.context.request.WebRequest
 import java.time.Duration
-import java.util.*
+import java.util.Optional
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 
@@ -85,7 +86,6 @@ import java.util.concurrent.ScheduledExecutorService
  * Framework auto configuration based on open source Spring only, without Netflix integrations.
  * This does NOT have logging, tracing, metrics and security integration.
  */
-@Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @AutoConfiguration(afterName = ["org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration"])
 @EnableConfigurationProperties(DgsConfigurationProperties::class, DgsDataloaderConfigurationProperties::class)
 @ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class, DgsInputArgumentConfiguration::class])
@@ -281,8 +281,13 @@ open class DgsAutoConfiguration(
 
     @Bean
     @ConditionalOnMissingBean
-    open fun schema(dgsSchemaProvider: DgsSchemaProvider, fieldVisibility: GraphqlFieldVisibility): GraphQLSchema {
-        return dgsSchemaProvider.schema(null, fieldVisibility).graphQLSchema
+    open fun schema(dgsSchemaProvider: DgsSchemaProvider, fieldVisibility: GraphqlFieldVisibility?): GraphQLSchema {
+        val result = if (fieldVisibility == null) {
+            dgsSchemaProvider.schema(schema = null)
+        } else {
+            dgsSchemaProvider.schema(schema = null, fieldVisibility = fieldVisibility)
+        }
+        return result.graphQLSchema
     }
 
     @Bean
@@ -307,14 +312,8 @@ open class DgsAutoConfiguration(
         havingValue = "false",
         matchIfMissing = false
     )
-    open fun noIntrospectionFieldVisibility(): GraphqlFieldVisibility {
-        return NO_INTROSPECTION_FIELD_VISIBILITY
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    open fun defaultFieldVisibility(): GraphqlFieldVisibility {
-        return DEFAULT_FIELD_VISIBILITY
+    open fun disableIntrospectionContextContributor(): GraphQLContextContributor {
+        return GraphQLContextContributor { builder, _, _ -> builder.put(Introspection.INTROSPECTION_DISABLED, true) }
     }
 
     @Bean
@@ -366,13 +365,16 @@ open class DgsAutoConfiguration(
      */
     @Bean
     @Qualifier("dgsAsyncTaskExecutor")
-    @ConditionalOnJava21
+    @ConditionalOnJava(JavaVersion.TWENTY_ONE)
     @ConditionalOnMissingBean(name = ["dgsAsyncTaskExecutor"])
     @ConditionalOnProperty(name = ["dgs.graphql.virtualthreads.enabled"], havingValue = "true", matchIfMissing = false)
     open fun virtualThreadsTaskExecutor(contextRegistry: ContextRegistry): AsyncTaskExecutor {
         LOG.info("Enabling virtual threads for DGS")
         val contextSnapshotFactory = ContextSnapshotFactory.builder().contextRegistry(contextRegistry).build()
-        return VirtualThreadTaskExecutor(contextSnapshotFactory)
+        val executor = VirtualThreadTaskExecutor("dgs-virtual-thread-")
+        return AsyncTaskExecutor { task ->
+            executor.submit(contextSnapshotFactory.captureAll().wrap(task))
+        }
     }
 
     @Bean

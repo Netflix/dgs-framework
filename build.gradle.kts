@@ -30,7 +30,7 @@ plugins {
     id("nebula.dependency-recommender") version "11.0.0"
 
     id("nebula.netflixoss") version "11.4.0"
-    id("io.spring.dependency-management") version "1.1.5"
+    id("io.spring.dependency-management") version "1.1.6"
 
     id("org.jmailen.kotlinter") version "3.11.1"
     id("me.champeau.jmh") version "0.7.2"
@@ -57,12 +57,8 @@ allprojects {
     // and suggest an upgrade. The only exception currently are those defined
     // in buildSrc, most likely because the variables are used in plugins as well
     // as dependencies. e.g. KOTLIN_VERSION
-    extra["sb.version"] = "3.3.1"
+    extra["sb.version"] = "3.3.2"
     extra["kotlin.version"] = Versions.KOTLIN_VERSION
-    // Use graphql-java 22.1, which is the version used by spring-graphql. Once
-    // the Spring Boot BOM depends on this version, we can remove this override.
-    // See: https://github.com/spring-projects/spring-boot/issues/41219
-    extra["graphql-java.version"] = "22.1"
 }
 val internalBomModules by extra(
     listOf(

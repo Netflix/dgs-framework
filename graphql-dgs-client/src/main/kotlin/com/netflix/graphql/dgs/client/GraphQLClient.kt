@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.client
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.intellij.lang.annotations.Language
 
 /**
@@ -66,5 +67,8 @@ interface GraphQLClient {
     companion object {
         @JvmStatic
         fun createCustom(url: String, requestExecutor: RequestExecutor) = CustomGraphQLClient(url, requestExecutor)
+
+        @JvmStatic
+        fun createCustom(url: String, requestExecutor: RequestExecutor, mapper: ObjectMapper) = CustomGraphQLClient(url, requestExecutor, mapper)
     }
 }

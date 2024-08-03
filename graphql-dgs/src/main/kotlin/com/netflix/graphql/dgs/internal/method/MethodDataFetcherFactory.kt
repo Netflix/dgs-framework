@@ -18,12 +18,17 @@ package com.netflix.graphql.dgs.internal.method
 
 import com.netflix.graphql.dgs.DgsData
 import com.netflix.graphql.dgs.internal.DataFetcherInvoker
+import graphql.TrivialDataFetcher
 import graphql.schema.DataFetcher
+import graphql.schema.DataFetchingEnvironment
+import graphql.schema.FieldCoordinates
 import org.springframework.core.DefaultParameterNameDiscoverer
 import org.springframework.core.MethodParameter
 import org.springframework.core.ParameterNameDiscoverer
+import org.springframework.core.annotation.MergedAnnotations
 import org.springframework.core.task.AsyncTaskExecutor
 import java.lang.reflect.Method
+import kotlin.jvm.optionals.getOrNull
 
 /**
  * Factory for constructing a [DataFetcher] given a [DgsData] annotated method.
@@ -38,17 +43,44 @@ class MethodDataFetcherFactory(
 
     private val resolvers = ArgumentResolverComposite(argumentResolvers)
 
-    fun createDataFetcher(bean: Any, method: Method): DataFetcher<Any?> {
+    fun createDataFetcher(bean: Any, method: Method, fieldCoordinates: FieldCoordinates): DataFetcher<Any?> {
+        if (isTrivial(method, fieldCoordinates)) {
+            val methodDataFetcher = DataFetcherInvoker(
+                dgsComponent = bean,
+                method = method,
+                resolvers = resolvers,
+                parameterNameDiscoverer = parameterNameDiscoverer,
+                taskExecutor = null
+            )
+            return object : TrivialDataFetcher<Any?> {
+                override fun get(environment: DataFetchingEnvironment): Any? {
+                    return methodDataFetcher.get(environment)
+                }
+
+                override fun toString(): String {
+                    return "TrivialMethodDataFetcher{field=$fieldCoordinates}"
+                }
+            }
+        }
+
         return DataFetcherInvoker(
             dgsComponent = bean,
             method = method,
             resolvers = resolvers,
             parameterNameDiscoverer = parameterNameDiscoverer,
-            asyncTaskExecutor
+            taskExecutor = asyncTaskExecutor
         )
     }
 
     internal fun getSelectedArgumentResolver(methodParameter: MethodParameter): ArgumentResolver? {
         return resolvers.getArgumentResolver(methodParameter)
+    }
+
+    private fun isTrivial(method: Method, coordinates: FieldCoordinates): Boolean {
+        val annotation = MergedAnnotations.from(method).stream(DgsData::class.java).filter { annotation ->
+            annotation.getString("parentType") == coordinates.typeName &&
+                annotation.getString("field") == coordinates.fieldName
+        }.findFirst().getOrNull()
+        return annotation?.getBoolean("trivial") ?: false
     }
 }

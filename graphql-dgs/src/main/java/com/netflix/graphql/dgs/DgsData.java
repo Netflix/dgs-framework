@@ -35,6 +35,14 @@ public @interface DgsData {
 
     String field() default "";
 
+    /**
+     * Indicates whether the generated DataFetcher for this method should be considered trivial.
+     * For instance, if a method is simply pulling data from an object and not doing any I/O,
+     * there may be some performance benefits to marking it as trivial.
+     *
+     * @see graphql.TrivialDataFetcher
+     */
+    boolean trivial() default false;
 
     /**
      * Container annotation that aggregates several {@link DgsData @DgsData} annotations.
