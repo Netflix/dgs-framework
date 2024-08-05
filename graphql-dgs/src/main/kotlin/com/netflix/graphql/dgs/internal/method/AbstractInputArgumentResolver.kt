@@ -26,6 +26,9 @@ import org.springframework.core.convert.TypeDescriptor
 import org.springframework.core.convert.support.DefaultConversionService
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
+import kotlin.reflect.KParameter
+import kotlin.reflect.jvm.jvmErasure
+import kotlin.reflect.jvm.kotlinFunction
 
 abstract class AbstractInputArgumentResolver(inputObjectMapper: InputObjectMapper) : ArgumentResolver {
 
@@ -43,6 +46,19 @@ abstract class AbstractInputArgumentResolver(inputObjectMapper: InputObjectMappe
     override fun resolveArgument(parameter: MethodParameter, dfe: DataFetchingEnvironment): Any? {
         val argumentName = getArgumentName(parameter)
         val value = dfe.getArgument<Any?>(argumentName)
+
+        val kfunc = parameter.method?.kotlinFunction
+        if (kfunc != null) {
+            val parameterIdx = if (kfunc.parameters.first().kind == KParameter.Kind.INSTANCE) {
+                parameter.parameterIndex + 1
+            } else {
+                parameter.parameterIndex
+            }
+            val param = kfunc.parameters[parameterIdx]
+            if (param.type.arguments.isEmpty() && param.type.jvmErasure.isInstance(value)) {
+                return value
+            }
+        }
 
         val typeDescriptor = TypeDescriptor(parameter)
         val convertedValue = convertValue(value, typeDescriptor)
