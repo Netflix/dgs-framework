@@ -20,6 +20,7 @@ import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsData
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.DgsRuntimeWiring
+import com.netflix.graphql.dgs.DgsScalar
 import com.netflix.graphql.dgs.InputArgument
 import com.netflix.graphql.dgs.LocalDateTimeScalar
 import com.netflix.graphql.dgs.exceptions.DataFetcherInputArgumentSchemaMismatchException
@@ -49,8 +50,12 @@ import com.netflix.graphql.dgs.scalars.UploadScalar
 import graphql.ExceptionWhileDataFetching
 import graphql.ExecutionInput
 import graphql.GraphQL
+import graphql.GraphQLContext
+import graphql.execution.CoercedVariables
+import graphql.language.StringValue
 import graphql.scalars.ExtendedScalars
 import graphql.scalars.country.code.CountryCode
+import graphql.schema.Coercing
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.idl.RuntimeWiring
 import org.assertj.core.api.Assertions.LIST
@@ -67,6 +72,7 @@ import org.springframework.mock.web.MockMultipartFile
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import java.util.Optional
 import kotlin.reflect.KClass
 
@@ -2294,6 +2300,56 @@ internal class InputArgumentTest {
             assertThat(executionResult.isDataPresent).isTrue
             val data = executionResult.getData<Map<String, *>>()
             assertThat(data).extracting("hello").isEqualTo("Hello, this is a ZW greeting")
+        }
+    }
+
+    @JvmInline value class ValueClass(val value: String) {
+        override fun toString(): String {
+            return value
+        }
+    }
+
+    @Test
+    fun `@InputArgument mapping works for kotlin value class parameters`() {
+        @DgsComponent
+        class Component {
+            @DgsQuery(field = "foo")
+            fun fooFetcher(@InputArgument input: ValueClass): String {
+                return input.toString()
+            }
+        }
+
+        @DgsScalar(name = "Value")
+        class ValueScalar : Coercing<ValueClass, String> {
+            override fun parseValue(input: Any, graphQLContext: GraphQLContext, locale: Locale): ValueClass {
+                return ValueClass(input.toString())
+            }
+
+            override fun parseLiteral(
+                input: graphql.language.Value<*>,
+                variables: CoercedVariables,
+                graphQLContext: GraphQLContext,
+                locale: Locale
+            ): ValueClass {
+                return ValueClass((input as StringValue).value)
+            }
+        }
+
+        contextRunner.withBeans(Component::class, ValueScalar::class).run { applicationContext ->
+            val schemaProvider = schemaProvider(applicationContext = applicationContext)
+            val schema = schemaProvider.schema(
+                """
+                scalar Value
+                type Query {
+                  foo(input: Value!): String!
+                }
+                """.trimIndent()
+            ).graphQLSchema
+
+            val graphql = GraphQL.newGraphQL(schema).build()
+            val result = graphql.execute("{ foo(input: \"input-value\") }")
+            assertThat(result.errors).isEmpty()
+            assertThat(result.getData<Map<String, String>>()).containsEntry("foo", "input-value")
         }
     }
 
