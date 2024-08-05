@@ -42,12 +42,12 @@ class TrivialDataFetcherTest {
         @DgsComponent
         class Component {
             @DgsData(parentType = "Foo", field = "bar", trivial = true)
-            fun trivialDataFetcher(dfe: DgsDataFetchingEnvironment): String {
+            fun trivialDataFetcher(): String {
                 return "bar"
             }
 
             @DgsData(parentType = "Foo", field = "baz", trivial = false)
-            fun nonTrivialDataFetcher(dfe: DgsDataFetchingEnvironment): String {
+            fun nonTrivialDataFetcher(): String {
                 return "baz"
             }
         }
@@ -82,12 +82,12 @@ class TrivialDataFetcherTest {
         @DgsComponent
         class Component {
             @DgsQuery(field = "foo", trivial = true)
-            fun trivialDataFetcher(dfe: DgsDataFetchingEnvironment): String {
+            fun trivialDataFetcher(): String {
                 return "foo"
             }
 
             @DgsQuery(field = "bar", trivial = false)
-            fun nonTrivialDataFetcher(dfe: DgsDataFetchingEnvironment): String {
+            fun nonTrivialDataFetcher(): String {
                 return "bar"
             }
         }
@@ -122,7 +122,7 @@ class TrivialDataFetcherTest {
                 DgsData(parentType = "Query", field = "foo", trivial = true),
                 DgsData(parentType = "Query", field = "bar", trivial = false)
             )
-            fun dataFetcher(dfe: DgsDataFetchingEnvironment): String {
+            fun dataFetcher(): String {
                 return "foo"
             }
         }
