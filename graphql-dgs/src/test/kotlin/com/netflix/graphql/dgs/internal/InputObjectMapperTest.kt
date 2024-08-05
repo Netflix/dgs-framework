@@ -272,6 +272,13 @@ internal class InputObjectMapperTest {
         assertThat(result.bar).isNotPresent
     }
 
+    @Test
+    fun `mapping to a Kotlin class with a value class field works`() {
+        val result = inputObjectMapper.mapToKotlinObject(mapOf("foo" to ValueClass("the-value"), "bar" to 12345), InputWithValueClass::class)
+        assertThat(result.foo).isEqualTo(ValueClass("the-value"))
+        assertThat(result.bar).isEqualTo(12345)
+    }
+
     data class KotlinInputObject(val simpleString: String?, val someDate: LocalDateTime, val someObject: KotlinSomeObject)
     data class KotlinNestedInputObject(val input: KotlinInputObject)
     data class KotlinDoubleNestedInputObject(val inputL1: KotlinNestedInputObject)
@@ -286,4 +293,9 @@ internal class InputObjectMapperTest {
     data class KotlinObjectWithEnumField(val name: String, val type: FieldType)
 
     data class InputWithOptional(val foo: Optional<String>, val bar: Optional<KotlinSubObject>)
+
+    data class InputWithValueClass(val foo: ValueClass, val bar: Int?)
+
+    @JvmInline
+    value class ValueClass(val value: String)
 }
