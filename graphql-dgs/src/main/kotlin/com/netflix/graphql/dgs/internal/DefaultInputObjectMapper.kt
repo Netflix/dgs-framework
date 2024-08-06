@@ -34,8 +34,10 @@ import java.lang.reflect.Type
 import java.util.Optional
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
+import kotlin.reflect.KType
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.javaType
+import kotlin.reflect.jvm.jvmErasure
 
 class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = null) : InputObjectMapper {
 
@@ -95,8 +97,7 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
             }
 
             val input = inputMap[parameter.name]
-            val parameterType = parameter.type.javaType
-            parametersByName[parameter] = maybeConvert(input, parameterType)
+            parametersByName[parameter] = maybeConvert(input, parameter.type)
         }
 
         return try {
@@ -104,6 +105,15 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
         } catch (ex: Exception) {
             throw DgsInvalidInputArgumentException("Provided input arguments do not match arguments of data class `$targetClass`", ex)
         }
+    }
+
+    private fun maybeConvert(input: Any?, parameterType: KType): Any? {
+        // Check if input is already an instance of the parameter type; we check against the KType / KClass
+        // to support inline value classes.
+        if (parameterType.arguments.isEmpty() && parameterType.jvmErasure.isInstance(input)) {
+            return input
+        }
+        return maybeConvert(input, parameterType.javaType)
     }
 
     private fun maybeConvert(input: Any?, parameterType: Type): Any? {

@@ -16,14 +16,10 @@
 
 package com.netflix.graphql.dgs.springgraphql.autoconfig
 
-import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.env.EnvironmentPostProcessor
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.MapPropertySource
-import kotlin.collections.MutableMap
-import kotlin.collections.mutableMapOf
-import kotlin.collections.set
 
 class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
     override fun postProcessEnvironment(environment: ConfigurableEnvironment, application: SpringApplication) {
@@ -35,8 +31,8 @@ class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
         properties["spring.graphql.path"] = environment.getProperty("dgs.graphql.path") ?: "/graphql"
         properties["spring.graphql.websocket.connection-init-timeout"] = environment.getProperty("dgs.graphql.websocket.connection-init-timeout") ?: "10s"
 
-        environment.getProperty("dgs.graphql.websocket.path")?.let {
-            properties["spring.graphql.websocket.path"] = environment.getProperty("dgs.graphql.websocket.path")!!
+        environment.getProperty("dgs.graphql.websocket.path")?.let { websocketPath ->
+            properties["spring.graphql.websocket.path"] = websocketPath
         }
 
         environment.propertySources.addLast(
@@ -45,15 +41,5 @@ class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
                 properties
             )
         )
-    }
-
-    private fun defaultSchemaLocation(environment: ConfigurableEnvironment, properties: MutableMap<String, Any>) {
-        environment.getProperty("spring.graphql.schema.locations")?.let {
-            throw InvalidDgsConfigurationException("Do not set spring.graphql.schema.locations, instead use dgs.graphql.schema-locations")
-        }
-
-        environment.getProperty("spring.graphql.schema.fileExtensions")?.let {
-            throw InvalidDgsConfigurationException("Do not set spring.graphql.schema.fileExtensions, instead use dgs.graphql.schema-locations")
-        }
     }
 }
