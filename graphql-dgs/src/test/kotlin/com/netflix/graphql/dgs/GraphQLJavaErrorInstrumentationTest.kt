@@ -211,66 +211,66 @@ class GraphQLJavaErrorInstrumentationTest {
         val runtimeWiring = RuntimeWiring.newRuntimeWiring().scalar(
             GraphQLScalarType.newScalar().name("IPv4").description("A custom scalar that handles IPv4 address")
                 .coercing(object :
-                    Coercing<String, String> {
-                    override fun serialize(dataFetcherResult: Any, graphQLContext: GraphQLContext, locale: Locale): String {
-                        if (dataFetcherResult is String) {
-                            val ipAddress = dataFetcherResult
-                            if (ipAddress.matches(
-                                    "^((25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$"
-                                        .toRegex()
-                                )
-                            ) {
-                                return ipAddress
+                        Coercing<String, String> {
+                        override fun serialize(dataFetcherResult: Any, graphQLContext: GraphQLContext, locale: Locale): String {
+                            if (dataFetcherResult is String) {
+                                val ipAddress = dataFetcherResult
+                                if (ipAddress.matches(
+                                        "^((25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$"
+                                            .toRegex()
+                                    )
+                                ) {
+                                    return ipAddress
+                                }
                             }
+                            throw CoercingSerializeException("Invalid IPv4 address")
                         }
-                        throw CoercingSerializeException("Invalid IPv4 address")
-                    }
-                })
+                    })
                 .build()
         ).scalar(
             GraphQLScalarType.newScalar().name("Domain").description("A custom scalar that handles Domain names")
                 .coercing(object :
-                    Coercing<String, String> {
+                        Coercing<String, String> {
 
-                    override fun serialize(dataFetcherResult: Any, graphQLContext: GraphQLContext, locale: Locale): String {
-                        if (dataFetcherResult is String) {
-                            val domainName = dataFetcherResult
-                            if (Pattern.compile(
-                                    "^(https?://)?(www\\.)?([a-zA-Z0-9-]{1,63}\\.)+[a-zA-Z]{2,}$|^(https?://)?(www\\.)?xn--([a-zA-Z0-9-]{1,59}\\.)+[a-zA-Z]{2,}$"
-                                ).matcher(domainName).matches()
-                            ) {
-                                return domainName
+                        override fun serialize(dataFetcherResult: Any, graphQLContext: GraphQLContext, locale: Locale): String {
+                            if (dataFetcherResult is String) {
+                                val domainName = dataFetcherResult
+                                if (Pattern.compile(
+                                        "^(https?://)?(www\\.)?([a-zA-Z0-9-]{1,63}\\.)+[a-zA-Z]{2,}$|^(https?://)?(www\\.)?xn--([a-zA-Z0-9-]{1,59}\\.)+[a-zA-Z]{2,}$"
+                                    ).matcher(domainName).matches()
+                                ) {
+                                    return domainName
+                                }
                             }
+                            throw CoercingSerializeException("Invalid domain name")
                         }
-                        throw CoercingSerializeException("Invalid domain name")
-                    }
 
-                    override fun parseLiteral(input: Value<*>, variables: CoercedVariables, graphQLContext: GraphQLContext, locale: Locale): String? {
-                        if (input is StringValue) {
-                            val domainName = input.value
-                            if (Pattern.compile(
-                                    "^(https?://)?(www\\.)?([a-zA-Z0-9-]{1,63}\\.)+[a-zA-Z]{2,}$|^(https?://)?(www\\.)?xn--([a-zA-Z0-9-]{1,59}\\.)+[a-zA-Z]{2,}$"
-                                ).matcher(domainName).matches()
-                            ) {
-                                return domainName
+                        override fun parseLiteral(input: Value<*>, variables: CoercedVariables, graphQLContext: GraphQLContext, locale: Locale): String? {
+                            if (input is StringValue) {
+                                val domainName = input.value
+                                if (Pattern.compile(
+                                        "^(https?://)?(www\\.)?([a-zA-Z0-9-]{1,63}\\.)+[a-zA-Z]{2,}$|^(https?://)?(www\\.)?xn--([a-zA-Z0-9-]{1,59}\\.)+[a-zA-Z]{2,}$"
+                                    ).matcher(domainName).matches()
+                                ) {
+                                    return domainName
+                                }
                             }
+                            throw CoercingParseLiteralException("Invalid domain name")
                         }
-                        throw CoercingParseLiteralException("Invalid domain name")
-                    }
 
-                    override fun parseValue(input: Any, graphQLContext: GraphQLContext, locale: Locale): String? {
-                        if (input is String) {
-                            val domainName = input
-                            if (Pattern.compile(
-                                    "^(https?://)?(www\\.)?([a-zA-Z0-9-]{1,63}\\.)+[a-zA-Z]{2,}$|^(https?://)?(www\\.)?xn--([a-zA-Z0-9-]{1,59}\\.)+[a-zA-Z]{2,}$"
-                                ).matcher(domainName).matches()
-                            ) {
-                                return domainName
+                        override fun parseValue(input: Any, graphQLContext: GraphQLContext, locale: Locale): String? {
+                            if (input is String) {
+                                val domainName = input
+                                if (Pattern.compile(
+                                        "^(https?://)?(www\\.)?([a-zA-Z0-9-]{1,63}\\.)+[a-zA-Z]{2,}$|^(https?://)?(www\\.)?xn--([a-zA-Z0-9-]{1,59}\\.)+[a-zA-Z]{2,}$"
+                                    ).matcher(domainName).matches()
+                                ) {
+                                    return domainName
+                                }
                             }
+                            throw CoercingParseValueException("Invalid domain name")
                         }
-                        throw CoercingParseValueException("Invalid domain name")
-                    }
-                })
+                    })
                 .build()
         )
             .type("Query") { builder: TypeRuntimeWiring.Builder ->
