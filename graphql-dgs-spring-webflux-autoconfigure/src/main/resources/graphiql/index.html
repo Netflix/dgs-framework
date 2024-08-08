@@ -14,125 +14,119 @@
   ~ limitations under the License.
   -->
 
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title><DGS_GRAPHIQL_TITLE></title>
-    <link href="https://cdn.jsdelivr.net/npm/graphiql@2.4.1/graphiql.min.css" rel="stylesheet" />
+    <title>
+        <DGS_GRAPHIQL_TITLE>
+    </title>
+    <style>
+        body {
+            height: 100%;
+            margin: 0;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        #graphiql {
+            height: 100vh;
+        }
+    </style>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"
+            integrity="sha512-Vf2xGDzpqUOEIKO+X2rgTLWPY+65++WPwCHkX2nFMu9IcstumPsf/uKKRd5prX3wOu8Q0GBylRpsDB26R6ExOg=="
+            crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
+            integrity="sha512-Wr9OKCTtq1anK0hq5bY3X/AvDI5EflDSAh0mE9gma+4hl+kXdTJPKZ3TwLMBcrgUeoY0s3dq9JjhCQc7vddtFg=="
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://unpkg.com/graphiql/graphiql.min.css" />
 </head>
-<body style="margin: 0;">
-<div id="graphiql" style="height: 100vh;"></div>
-<script
-        crossorigin
-        src="https://cdn.jsdelivr.net/npm/react/umd/react.production.min.js"
-></script>
-<script
-        crossorigin
-        src="https://cdn.jsdelivr.net/npm/react-dom/umd/react-dom.production.min.js"
-></script>
-<script
-        crossorigin
-        src="https://cdn.jsdelivr.net/npm/graphiql@2.4.1/graphiql.min.js"
-></script>
 
+<body>
+<div id="graphiql">Loading...</div>
+<script src="https://unpkg.com/graphiql/graphiql.min.js" type="application/javascript"></script>
 <script>
-      // Parse the search string to get url parameters.
-      var search = window.location.search;
-      var parameters = {};
-      search.substr(1).split('&').forEach(function (entry) {
-        var eq = entry.indexOf('=');
-        if (eq >= 0) {
-          parameters[decodeURIComponent(entry.slice(0, eq))] =
-            decodeURIComponent(entry.slice(eq + 1));
+
+    function getParameter(name, defaultValue) {
+        const parameters = new URLSearchParams(window.location.search);
+        const value = parameters.get(name);
+        if (value) {
+            return decodeURIComponent(value);
         }
-      });
-      // if variables was provided, try to format it.
-      if (parameters.variables) {
-        try {
-          parameters.variables =
-            JSON.stringify(JSON.parse(parameters.variables), null, 2);
-        } catch (e) {
-          // Do nothing, we want to display the invalid JSON as a string, rather
-          // than present an error.
-        }
-      }
-      // When the query and variables string is edited, update the URL bar so
-      // that it can be easily shared
-      function onEditQuery(newQuery) {
-        parameters.query = newQuery;
-        updateURL();
-      }
+        return defaultValue;
+    }
 
-      function onEditVariables(newVariables) {
-        parameters.variables = newVariables;
-        updateURL();
-      }
-
-      function onEditHeaders(newHeaders) {
-        parameters.headers = newHeaders;
-        updateURL();
-      }
-
-      function onEditOperationName(newOperationName) {
-        parameters.operationName = newOperationName;
-        updateURL();
-      }
-
-      function updateURL() {
-        var newSearch = '?' + Object.keys(parameters).filter(function (key) {
-          return Boolean(parameters[key]);
-        }).map(function (key) {
-          return encodeURIComponent(key) + '=' +
-            encodeURIComponent(parameters[key]);
-        }).join('&');
+    function setParameter(name, value) {
+        const parameters = new URLSearchParams(window.location.search);
+        parameters.set(name, encodeURIComponent(value));
+        const newSearch = `?${parameters.toString()}`;
         history.replaceState(null, null, newSearch);
-      }
-      function graphQLFetcher(graphQLParams) {
-        var headers = {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-        };
+    }
 
-        if (parameters.headers) {
-          var extraHeaders = JSON.parse(parameters.headers);
-          for (var headerName in extraHeaders) {
-            if (extraHeaders.hasOwnProperty(headerName)) {
-              headers[headerName] = extraHeaders[headerName];
-            }
-          }
+    function hocSetParameter(name) {
+        return function (event) {
+            setParameter(name, event);
         }
-        var origin = location.origin;
-        return fetch(origin + '<DGS_GRAPHQL_PATH>', {
-          method: 'post',
-          headers: headers,
-          body: JSON.stringify(graphQLParams),
-        }).then(function (response) {
-          return response.text();
-        }).then(function (responseBody) {
-          try {
-            return JSON.parse(responseBody);
-          } catch (error) {
-            return responseBody;
-          }
-        });
-      }
-      ReactDOM.render(
+    }
+
+
+    const path = getParameter("path", "/graphql");
+    const url = `${location.protocol}//${location.host}${path}`;
+
+    const wsPath = getParameter("wsPath", "/subscriptions");
+    const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const subscriptionUrl = `${wsProtocol}//${location.host}${wsPath}`;
+
+    const gqlFetcher = GraphiQL.createFetcher({
+        url,
+        subscriptionUrl,
+    });
+
+    function onEditQuery(newQuery) {
+        parameters.set("query", newQuery);
+        updateURL();
+    }
+
+    function onEditVariables(newVariables) {
+        parameters.set("variables", newVariables);
+        updateURL();
+    }
+
+    function onEditHeaders(newHeaders) {
+        parameters.set("headers", newHeaders);
+        updateURL();
+    }
+
+    function onEditOperationName(newOperationName) {
+        parameters.set("operationName", newOperationName)
+        updateURL();
+    }
+
+    function updateURL() {
+        const newSearch = `?${parameters.toString()}`;
+        history.replaceState(null, null, newSearch);
+    }
+
+
+    ReactDOM.render(
         React.createElement(GraphiQL, {
-          fetcher: graphQLFetcher,
-          query: parameters.query,
-          variables: parameters.variables,
-          headers: parameters.headers,
-          operationName: parameters.operationName,
-          onEditQuery: onEditQuery,
-          onEditVariables: onEditVariables,
-          onEditHeaders: onEditHeaders,
-          onEditOperationName: onEditOperationName,
-          defaultSecondaryEditorOpen: true,
-          headerEditorEnabled: true,
-          shouldPersistHeaders: true,
-          docExplorerOpen: true,
+            fetcher: gqlFetcher,
+            query: getParameter("query", ""),
+            variables: getParameter("variables", ""),
+            headers: getParameter("headers", ""),
+            operationName: getParameter("operationName", ""),
+            onEditQuery: hocSetParameter("query"),
+            onEditVariables: hocSetParameter("variables"),
+            onEditHeaders: hocSetParameter("headers"),
+            onEditOperationName: hocSetParameter("operationName"),
+            defaultSecondaryEditorOpen: true,
+            headerEditorEnabled: true,
+            shouldPersistHeaders: true,
+            docExplorerOpen: true,
+            defaultVariableEditorOpen: true,
         }),
-        document.getElementById('graphiql')
-      );
+        document.getElementById('graphiql'),
+    );
 </script>
 </body>
+
 </html>
