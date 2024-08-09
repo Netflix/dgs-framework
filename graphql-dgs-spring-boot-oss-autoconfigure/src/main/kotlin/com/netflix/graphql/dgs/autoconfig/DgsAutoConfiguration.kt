@@ -72,7 +72,8 @@ import org.springframework.core.PriorityOrdered
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 import org.springframework.core.task.AsyncTaskExecutor
-import org.springframework.core.task.VirtualThreadTaskExecutor
+import org.springframework.core.task.SimpleAsyncTaskExecutor
+import org.springframework.core.task.support.ContextPropagatingTaskDecorator
 import org.springframework.http.HttpHeaders
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.context.request.NativeWebRequest
@@ -348,11 +349,12 @@ open class DgsAutoConfiguration(
     @ConditionalOnProperty(name = ["dgs.graphql.virtualthreads.enabled"], havingValue = "true", matchIfMissing = false)
     open fun virtualThreadsTaskExecutor(contextRegistry: ContextRegistry): AsyncTaskExecutor {
         LOG.info("Enabling virtual threads for DGS")
-        val contextSnapshotFactory = ContextSnapshotFactory.builder().contextRegistry(contextRegistry).build()
-        val executor = VirtualThreadTaskExecutor("dgs-virtual-thread-")
-        return AsyncTaskExecutor { task ->
-            executor.submit(contextSnapshotFactory.captureAll().wrap(task))
-        }
+        val executor = SimpleAsyncTaskExecutor("dgs-virtual-thread-")
+        executor.setVirtualThreads(true)
+        executor.setTaskDecorator(
+            ContextPropagatingTaskDecorator(ContextSnapshotFactory.builder().contextRegistry(contextRegistry).build()),
+        )
+        return executor
     }
 
     @Bean
