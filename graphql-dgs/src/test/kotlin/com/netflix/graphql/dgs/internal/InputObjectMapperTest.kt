@@ -24,6 +24,7 @@ import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithK
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithMap
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithOptional
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithSet
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.RecordInput
 import org.assertj.core.api.Assertions.COLLECTION
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -274,9 +275,24 @@ internal class InputObjectMapperTest {
 
     @Test
     fun `mapping to a Kotlin class with a value class field works`() {
-        val result = inputObjectMapper.mapToKotlinObject(mapOf("foo" to ValueClass("the-value"), "bar" to 12345), InputWithValueClass::class)
+        val result = inputObjectMapper.mapToKotlinObject(
+            mapOf("foo" to ValueClass("the-value"), "bar" to 12345),
+            InputWithValueClass::class
+        )
         assertThat(result.foo).isEqualTo(ValueClass("the-value"))
         assertThat(result.bar).isEqualTo(12345)
+    }
+
+    @Test
+    fun `The mapper supports mapping to records`() {
+        val result = inputObjectMapper.mapToJavaObject(mapOf("foo" to "foo-value", "bar" to true, "baz" to 12345), RecordInput::class.java)
+        assertThat(result).isEqualTo(RecordInput("foo-value", true, 12345))
+    }
+
+    @Test
+    fun `The mapper supports mapping to classes with record fields`() {
+        val result = inputObjectMapper.mapToKotlinObject(mapOf("record" to mapOf("foo" to "foo-value", "bar" to true, "baz" to 12345)), KotlinClassWithRecord::class)
+        assertThat(result).isEqualTo(KotlinClassWithRecord(record = RecordInput("foo-value", true, 12345)))
     }
 
     data class KotlinInputObject(val simpleString: String?, val someDate: LocalDateTime, val someObject: KotlinSomeObject)
@@ -298,4 +314,6 @@ internal class InputObjectMapperTest {
 
     @JvmInline
     value class ValueClass(val value: String)
+
+    data class KotlinClassWithRecord(val record: RecordInput)
 }
