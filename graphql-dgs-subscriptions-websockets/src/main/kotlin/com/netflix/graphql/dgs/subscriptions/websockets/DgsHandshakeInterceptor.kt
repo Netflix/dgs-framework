@@ -28,11 +28,12 @@ import java.lang.Exception
 
 class DgsHandshakeInterceptor : HttpSessionHandshakeInterceptor() {
     private val logger = LoggerFactory.getLogger(DgsHandshakeInterceptor::class.java)
+
     override fun beforeHandshake(
         request: ServerHttpRequest,
         response: ServerHttpResponse,
         wsHandler: WebSocketHandler,
-        attributes: MutableMap<String, Any>
+        attributes: MutableMap<String, Any>,
     ): Boolean {
         if (request.headers[WebSocketHttpHeaders.SEC_WEBSOCKET_PROTOCOL].isNullOrEmpty()) {
             request.headers.set(WebSocketHttpHeaders.SEC_WEBSOCKET_PROTOCOL, GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL)
@@ -45,7 +46,7 @@ class DgsHandshakeInterceptor : HttpSessionHandshakeInterceptor() {
         request: ServerHttpRequest,
         response: ServerHttpResponse,
         wsHandler: WebSocketHandler,
-        exception: Exception?
+        exception: Exception?,
     ) {
     }
 }

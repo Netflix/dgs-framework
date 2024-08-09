@@ -34,16 +34,15 @@ import java.util.function.Consumer
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(
     properties = [
-        "management.metrics.dgs-graphql.caching.enabled: false"
+        "management.metrics.dgs-graphql.caching.enabled: false",
     ],
     classes = [
         DgsGraphQLMicrometerAutoConfiguration.MetricsPropertiesConfiguration::class,
         DgsGraphQLMicrometerAutoConfiguration.MeterRegistryConfiguration::class,
-        DgsGraphQLMicrometerAutoConfiguration.QuerySignatureRepositoryConfiguration::class
-    ]
+        DgsGraphQLMicrometerAutoConfiguration.QuerySignatureRepositoryConfiguration::class,
+    ],
 )
 internal class SimpleQuerySignatureRepositoryTest {
-
     @Autowired
     private lateinit var repository: QuerySignatureRepository
 
@@ -66,9 +65,10 @@ internal class SimpleQuerySignatureRepositoryTest {
 
         val optQuerySignature = repository.get(document, parameters)
         val sig = assertThat(optQuerySignature).get()
-        sig.extracting { it.value }
+        sig
+            .extracting { it.value }
             .satisfies(Consumer { assertThat(it).isEqualToNormalizingWhitespace(expectedFooDoc) })
-        sig.extracting { it.hash }.isEqualTo(expectedFooSigHash)
+        sig.extracting { it.hash }.isEqualTo(EXPECTED_FOO_SIG_HASH)
     }
 
     @Test
@@ -79,30 +79,33 @@ internal class SimpleQuerySignatureRepositoryTest {
 
         val optQuerySignature = repository.get(document, parameters)
         val sig = assertThat(optQuerySignature).get()
-        sig.extracting { it.value }
+        sig
+            .extracting { it.value }
             .satisfies(Consumer { assertThat(it).isEqualToNormalizingWhitespace(expectedAnonDoc) })
-        sig.extracting { it.hash }.isEqualTo(expectedAnonSigHash)
+        sig.extracting { it.hash }.isEqualTo(EXPECTED_NON_SIG_HASH)
     }
 
     internal companion object {
-        val QUERY = """
-          query Foo(${'$'}secretVariable : String) {
-                fieldA
-                fieldB(name: "a name", someVar: ${'$'}secretVariable )
-                fieldC {
-                    innerFieldA
-                    innerFieldB
-                    innerFieldC
-                } 
-                ... X
-            }
-            query {
-                fieldA
-                fieldB
-            }
-        """.trimIndent()
+        val QUERY =
+            """
+            query Foo(${'$'}secretVariable : String) {
+                  fieldA
+                  fieldB(name: "a name", someVar: ${'$'}secretVariable )
+                  fieldC {
+                      innerFieldA
+                      innerFieldB
+                      innerFieldC
+                  } 
+                  ... X
+              }
+              query {
+                  fieldA
+                  fieldB
+              }
+            """.trimIndent()
 
-        val expectedFooDoc = """
+        val expectedFooDoc =
+            """
             query Foo(${'$'}var1: String) {
               fieldA
               fieldB(name: "", someVar: ${'$'}var1)
@@ -113,21 +116,20 @@ internal class SimpleQuerySignatureRepositoryTest {
               }
               ...X
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        const val expectedFooSigHash = "ab279c4a18bcffc1a5d646dd0295d4cd08f11ff0aaec76db2cc4dab7e7fefb07"
+        const val EXPECTED_FOO_SIG_HASH = "ab279c4a18bcffc1a5d646dd0295d4cd08f11ff0aaec76db2cc4dab7e7fefb07"
 
-        val expectedAnonDoc = """
+        val expectedAnonDoc =
+            """
             {
                 fieldA
                 fieldB
             }  
-        """.trimIndent()
+            """.trimIndent()
 
-        const val expectedAnonSigHash = "967715990c3c9157c58070a3a7911c7827e9d30ea60b55e3bd0a10f6c5bf480c"
+        const val EXPECTED_NON_SIG_HASH = "967715990c3c9157c58070a3a7911c7827e9d30ea60b55e3bd0a10f6c5bf480c"
 
-        fun parseQuery(query: String): Document {
-            return Parser().parseDocument(query)
-        }
+        fun parseQuery(query: String): Document = Parser().parseDocument(query)
     }
 }

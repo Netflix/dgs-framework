@@ -36,7 +36,6 @@ import org.springframework.test.web.servlet.post
 
 @WebMvcTest(DgsRestController::class)
 class DgsRestControllerTest {
-
     @SpringBootApplication
     open class App
 
@@ -54,26 +53,27 @@ class DgsRestControllerTest {
         val queryString = "query { hello }"
 
         `when`(dgsQueryExecutor.execute(eq(queryString), eq(emptyMap()), any(), any(), any(), any())).thenReturn(
-            ExecutionResultImpl.newExecutionResult().data(mapOf("hello" to "hello")).build()
+            ExecutionResultImpl.newExecutionResult().data(mapOf("hello" to "hello")).build(),
         )
 
-        mvc.post("/graphql") {
-            contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(mapOf("query" to queryString))
-        }.andExpect {
-            status { isOk() }
-            content {
-                jsonPath("errors") {
-                    doesNotExist()
-                }
-                jsonPath("data") {
-                    isMap()
-                }
-                jsonPath("data.hello") {
-                    value("hello")
+        mvc
+            .post("/graphql") {
+                contentType = MediaType.APPLICATION_JSON
+                content = objectMapper.writeValueAsString(mapOf("query" to queryString))
+            }.andExpect {
+                status { isOk() }
+                content {
+                    jsonPath("errors") {
+                        doesNotExist()
+                    }
+                    jsonPath("data") {
+                        isMap()
+                    }
+                    jsonPath("data.hello") {
+                        value("hello")
+                    }
                 }
             }
-        }
     }
 
     @Test
@@ -87,29 +87,30 @@ class DgsRestControllerTest {
                 any(),
                 any(),
                 any(),
-                any()
-            )
+                any(),
+            ),
         ).thenReturn(
-            ExecutionResultImpl.newExecutionResult().data(mapOf("hello" to "hello")).build()
+            ExecutionResultImpl.newExecutionResult().data(mapOf("hello" to "hello")).build(),
         )
 
-        mvc.post("/graphql") {
-            contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(mapOf("query" to queryString, "variables" to null))
-        }.andExpect {
-            status { isOk() }
-            content {
-                jsonPath("errors") {
-                    doesNotExist()
-                }
-                jsonPath("data") {
-                    isMap()
-                }
-                jsonPath("data.hello") {
-                    value("hello")
+        mvc
+            .post("/graphql") {
+                contentType = MediaType.APPLICATION_JSON
+                content = objectMapper.writeValueAsString(mapOf("query" to queryString, "variables" to null))
+            }.andExpect {
+                status { isOk() }
+                content {
+                    jsonPath("errors") {
+                        doesNotExist()
+                    }
+                    jsonPath("data") {
+                        isMap()
+                    }
+                    jsonPath("data.hello") {
+                        value("hello")
+                    }
                 }
             }
-        }
     }
 
     @Test
@@ -117,26 +118,27 @@ class DgsRestControllerTest {
         val queryString = "query operationA{ hello } query operationB{ hi }"
         val captor = ArgumentCaptor.forClass(String::class.java)
         `when`(dgsQueryExecutor.execute(eq(queryString), eq(emptyMap()), any(), any(), captor.capture(), any())).thenReturn(
-            ExecutionResultImpl.newExecutionResult().data(mapOf("hi" to "there")).build()
+            ExecutionResultImpl.newExecutionResult().data(mapOf("hi" to "there")).build(),
         )
 
-        mvc.post("/graphql") {
-            contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(mapOf("query" to queryString, "operationName" to "operationB"))
-        }.andExpect {
-            status { isOk() }
-            content {
-                jsonPath("errors") {
-                    doesNotExist()
-                }
-                jsonPath("data") {
-                    isMap()
-                }
-                jsonPath("data.hi") {
-                    value("there")
+        mvc
+            .post("/graphql") {
+                contentType = MediaType.APPLICATION_JSON
+                content = objectMapper.writeValueAsString(mapOf("query" to queryString, "operationName" to "operationB"))
+            }.andExpect {
+                status { isOk() }
+                content {
+                    jsonPath("errors") {
+                        doesNotExist()
+                    }
+                    jsonPath("data") {
+                        isMap()
+                    }
+                    jsonPath("data.hi") {
+                        value("there")
+                    }
                 }
             }
-        }
         assertEquals("operationB", captor.value)
     }
 
@@ -145,26 +147,27 @@ class DgsRestControllerTest {
         val queryString = "{ hello }"
 
         `when`(dgsQueryExecutor.execute(eq(queryString), eq(emptyMap()), any(), any(), any(), any())).thenReturn(
-            ExecutionResultImpl.newExecutionResult().data(mapOf("hello" to "hello")).build()
+            ExecutionResultImpl.newExecutionResult().data(mapOf("hello" to "hello")).build(),
         )
 
-        mvc.post("/graphql") {
-            contentType = MediaType.parseMediaType("application/graphql")
-            content = queryString
-        }.andExpect {
-            status { isOk() }
-            content {
-                jsonPath("errors") {
-                    doesNotExist()
-                }
-                jsonPath("data") {
-                    isMap()
-                }
-                jsonPath("data.hello") {
-                    value("hello")
+        mvc
+            .post("/graphql") {
+                contentType = MediaType.parseMediaType("application/graphql")
+                content = queryString
+            }.andExpect {
+                status { isOk() }
+                content {
+                    jsonPath("errors") {
+                        doesNotExist()
+                    }
+                    jsonPath("data") {
+                        isMap()
+                    }
+                    jsonPath("data.hello") {
+                        value("hello")
+                    }
                 }
             }
-        }
     }
 
     @Test
@@ -172,27 +175,29 @@ class DgsRestControllerTest {
         val queryString = "subscription { stocks { name } }"
 
         `when`(dgsQueryExecutor.execute(eq(queryString), eq(emptyMap()), any(), any(), any(), any())).thenReturn(
-            ExecutionResultImpl.newExecutionResult().data(SubscriptionPublisher(null, null)).build()
+            ExecutionResultImpl.newExecutionResult().data(SubscriptionPublisher(null, null)).build(),
         )
 
-        mvc.post("/graphql") {
-            contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(mapOf("query" to queryString))
-        }.andExpect {
-            status { isBadRequest() }
-            content {
-                string("Trying to execute subscription on /graphql. Use /subscriptions instead!")
+        mvc
+            .post("/graphql") {
+                contentType = MediaType.APPLICATION_JSON
+                content = objectMapper.writeValueAsString(mapOf("query" to queryString))
+            }.andExpect {
+                status { isBadRequest() }
+                content {
+                    string("Trying to execute subscription on /graphql. Use /subscriptions instead!")
+                }
             }
-        }
     }
 
     @Test
     fun `Returns a request error if the no body is present`() {
-        mvc.post("/graphql") {
-            contentType = MediaType.APPLICATION_JSON
-        }.andExpect {
-            status { isBadRequest() }
-        }
+        mvc
+            .post("/graphql") {
+                contentType = MediaType.APPLICATION_JSON
+            }.andExpect {
+                status { isBadRequest() }
+            }
     }
 
     @Test
@@ -200,34 +205,37 @@ class DgsRestControllerTest {
         val queryString = "query { hello }"
 
         `when`(dgsQueryExecutor.execute(eq(queryString), eq(emptyMap()), any(), any(), any(), any())).thenReturn(
-            ExecutionResultImpl.newExecutionResult().data(mapOf("hello" to "hello"))
+            ExecutionResultImpl
+                .newExecutionResult()
+                .data(mapOf("hello" to "hello"))
                 .extensions(mapOf(DgsRestController.DGS_RESPONSE_HEADERS_KEY to mapOf("myHeader" to "hello")))
-                .build()
+                .build(),
         )
 
-        mvc.post("/graphql") {
-            contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(mapOf("query" to queryString))
-        }.andExpect {
-            status { isOk() }
-            header {
-                string("myHeader", "hello")
+        mvc
+            .post("/graphql") {
+                contentType = MediaType.APPLICATION_JSON
+                content = objectMapper.writeValueAsString(mapOf("query" to queryString))
+            }.andExpect {
+                status { isOk() }
+                header {
+                    string("myHeader", "hello")
+                }
+                content {
+                    jsonPath("errors") {
+                        doesNotExist()
+                    }
+                    jsonPath("extensions") {
+                        doesNotExist()
+                    }
+                    jsonPath("data") {
+                        isMap()
+                    }
+                    jsonPath("data.hello") {
+                        value("hello")
+                    }
+                }
             }
-            content {
-                jsonPath("errors") {
-                    doesNotExist()
-                }
-                jsonPath("extensions") {
-                    doesNotExist()
-                }
-                jsonPath("data") {
-                    isMap()
-                }
-                jsonPath("data.hello") {
-                    value("hello")
-                }
-            }
-        }
     }
 
     @Test
@@ -235,36 +243,39 @@ class DgsRestControllerTest {
         val queryString = "query { hello }"
 
         `when`(dgsQueryExecutor.execute(eq(queryString), eq(emptyMap()), any(), any(), any(), any())).thenReturn(
-            ExecutionResultImpl.newExecutionResult().data(mapOf("hello" to "hello"))
+            ExecutionResultImpl
+                .newExecutionResult()
+                .data(mapOf("hello" to "hello"))
                 .extensions(mapOf("foo" to "bar", DgsRestController.DGS_RESPONSE_HEADERS_KEY to mapOf("myHeader" to "hello")))
-                .build()
+                .build(),
         )
 
-        mvc.post("/graphql") {
-            contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(mapOf("query" to queryString))
-        }.andExpect {
-            status { isOk() }
-            header {
-                string("myHeader", "hello")
+        mvc
+            .post("/graphql") {
+                contentType = MediaType.APPLICATION_JSON
+                content = objectMapper.writeValueAsString(mapOf("query" to queryString))
+            }.andExpect {
+                status { isOk() }
+                header {
+                    string("myHeader", "hello")
+                }
+                content {
+                    jsonPath("errors") {
+                        doesNotExist()
+                    }
+                    jsonPath("extensions") {
+                        isMap()
+                    }
+                    jsonPath("extensions.foo") {
+                        value("bar")
+                    }
+                    jsonPath("data") {
+                        isMap()
+                    }
+                    jsonPath("data.hello") {
+                        value("hello")
+                    }
+                }
             }
-            content {
-                jsonPath("errors") {
-                    doesNotExist()
-                }
-                jsonPath("extensions") {
-                    isMap()
-                }
-                jsonPath("extensions.foo") {
-                    value("bar")
-                }
-                jsonPath("data") {
-                    isMap()
-                }
-                jsonPath("data.hello") {
-                    value("hello")
-                }
-            }
-        }
     }
 }

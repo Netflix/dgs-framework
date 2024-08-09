@@ -29,13 +29,14 @@ data class DgsConfigurationProperties(
     @DefaultValue(DEFAULT_SCHEMA_LOCATION) val schemaLocations: List<String>,
     @DefaultValue("true") val schemaWiringValidationEnabled: Boolean,
     @DefaultValue("false") val enableEntityFetcherCustomScalarParsing: Boolean,
-    val preparsedDocumentProvider: DgsPreparsedDocumentProviderConfigurationProperties = DgsPreparsedDocumentProviderConfigurationProperties()
+    val preparsedDocumentProvider: DgsPreparsedDocumentProviderConfigurationProperties =
+        DgsPreparsedDocumentProviderConfigurationProperties(),
 ) {
     data class DgsPreparsedDocumentProviderConfigurationProperties(
         val enabled: Boolean = false,
         val maximumCacheSize: Long = 2000,
         /** How long cache entries are valid for since creation, replacement or last access, specified with an ISO-8601 duration string. **/
-        val cacheValidityDuration: String = "PT1H"
+        val cacheValidityDuration: String = "PT1H",
     )
 
     companion object {

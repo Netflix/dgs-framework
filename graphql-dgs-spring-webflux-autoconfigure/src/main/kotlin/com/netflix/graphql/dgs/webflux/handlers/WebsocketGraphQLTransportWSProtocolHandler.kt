@@ -40,8 +40,10 @@ import reactor.core.publisher.Mono
 import java.time.Duration
 import java.util.concurrent.ConcurrentHashMap
 
-class WebsocketGraphQLTransportWSProtocolHandler(private val dgsReactiveQueryExecutor: DgsReactiveQueryExecutor, private val connectionInitTimeout: Duration) : WebsocketReactiveProtocolHandler {
-
+class WebsocketGraphQLTransportWSProtocolHandler(
+    private val dgsReactiveQueryExecutor: DgsReactiveQueryExecutor,
+    private val connectionInitTimeout: Duration,
+) : WebsocketReactiveProtocolHandler {
     private val resolvableType = ResolvableType.forType(Message::class.java)
     private val sessions = ConcurrentHashMap<String, MutableMap<String, Subscription>>()
     private val connections = ConcurrentHashMap<String, Boolean>()
@@ -51,106 +53,141 @@ class WebsocketGraphQLTransportWSProtocolHandler(private val dgsReactiveQueryExe
     override fun handle(webSocketSession: WebSocketSession): Mono<Void> {
         connections[webSocketSession.id] = false
 
-        Mono.delay(connectionInitTimeout).then(
-            Mono.defer {
-                if (connections[webSocketSession.id] == false) {
-                    webSocketSession.close(CloseStatus(CloseCode.ConnectionInitialisationTimeout.code, "Did not receive a ConnectionInitMessage"))
-                } else Mono.empty()
-            }
-        )
-            .subscribe()
+        Mono
+            .delay(connectionInitTimeout)
+            .then(
+                Mono.defer {
+                    if (connections[webSocketSession.id] == false) {
+                        webSocketSession.close(
+                            CloseStatus(CloseCode.ConnectionInitialisationTimeout.code, "Did not receive a ConnectionInitMessage"),
+                        )
+                    } else {
+                        Mono.empty()
+                    }
+                },
+            ).subscribe()
 
         return webSocketSession.send(
-            webSocketSession.receive()
+            webSocketSession
+                .receive()
                 .flatMap outer@{ message ->
                     val buffer: DataBuffer = DataBufferUtils.retain(message.payload)
-                    val operationMessage: Message = decoder.decode(
-                        buffer,
-                        resolvableType,
-                        MimeTypeUtils.APPLICATION_JSON,
-                        null
-                    ) as Message
+                    val operationMessage: Message =
+                        decoder.decode(
+                            buffer,
+                            resolvableType,
+                            MimeTypeUtils.APPLICATION_JSON,
+                            null,
+                        ) as Message
 
                     when (operationMessage) {
                         is Message.ConnectionInitMessage -> {
                             if (connections[webSocketSession.id]!!) {
                                 // we've already received a connection request and this must be an error
-                                return@outer webSocketSession.close(CloseStatus(CloseCode.TooManyInitialisationRequests.code, "Too many connection initialisation requests")).thenMany(Mono.empty())
+                                return@outer webSocketSession
+                                    .close(
+                                        CloseStatus(
+                                            CloseCode.TooManyInitialisationRequests.code,
+                                            "Too many connection initialisation requests",
+                                        ),
+                                    ).thenMany(Mono.empty())
                             }
                             connections[webSocketSession.id] = true
                             Flux.just(
                                 toWebsocketMessage(
                                     Message.ConnectionAckMessage(),
-                                    webSocketSession
-                                )
+                                    webSocketSession,
+                                ),
                             )
                         }
                         is Message.SubscribeMessage -> {
-                            val queryPayload = decoder.objectMapper.convertValue<Message.SubscribeMessage.Payload>(
-                                operationMessage.payload
-                            )
+                            val queryPayload =
+                                decoder.objectMapper.convertValue<Message.SubscribeMessage.Payload>(
+                                    operationMessage.payload,
+                                )
                             if (sessions.containsKey(webSocketSession.id)) {
-                                return@outer webSocketSession.close(CloseStatus(CloseCode.SubscriberAlreadyExists.code, "Subscriber for ${webSocketSession.id} already exists")).thenMany(Mono.empty())
+                                return@outer webSocketSession
+                                    .close(
+                                        CloseStatus(
+                                            CloseCode.SubscriberAlreadyExists.code,
+                                            "Subscriber for ${webSocketSession.id} already exists",
+                                        ),
+                                    ).thenMany(Mono.empty())
                             }
                             logger.debug("Starting subscription {} for session {}", queryPayload, webSocketSession.id)
-                            dgsReactiveQueryExecutor.execute(queryPayload.query, queryPayload.variables)
+                            dgsReactiveQueryExecutor
+                                .execute(queryPayload.query, queryPayload.variables)
                                 .flatMapMany { executionResult ->
                                     val publisher: Publisher<ExecutionResult> = executionResult.getData()
-                                    Flux.from(publisher).map { er ->
-                                        toWebsocketMessage(
-                                            Message.NextMessage(
-                                                payload = com.netflix.graphql.types.subscription.websockets.ExecutionResult(er.getData(), er.errors),
-                                                id = operationMessage.id
-                                            ),
+                                    Flux
+                                        .from(publisher)
+                                        .map { er ->
+                                            toWebsocketMessage(
+                                                Message.NextMessage(
+                                                    payload =
+                                                        com.netflix.graphql.types.subscription.websockets.ExecutionResult(
+                                                            er.getData(),
+                                                            er.errors,
+                                                        ),
+                                                    id = operationMessage.id,
+                                                ),
+                                                webSocketSession,
+                                            )
+                                        }.doOnSubscribe {
+                                            if (operationMessage.id != null) {
+                                                sessions[webSocketSession.id] = mutableMapOf(operationMessage.id to it)
+                                            }
+                                        }.doOnComplete {
                                             webSocketSession
-                                        )
-                                    }.doOnSubscribe {
-                                        if (operationMessage.id != null) {
-                                            sessions[webSocketSession.id] = mutableMapOf(operationMessage.id to it)
+                                                .send(
+                                                    Flux.just(
+                                                        toWebsocketMessage(
+                                                            Message.CompleteMessage(operationMessage.id),
+                                                            webSocketSession,
+                                                        ),
+                                                    ),
+                                                ).subscribe()
+
+                                            sessions[webSocketSession.id]?.remove(operationMessage.id)
+                                            logger.debug(
+                                                "Completing subscription {} for connection {}",
+                                                operationMessage.id,
+                                                webSocketSession.id,
+                                            )
+                                        }.doOnError {
+                                            webSocketSession
+                                                .send(
+                                                    Flux.just(
+                                                        toWebsocketMessage(
+                                                            Message.ErrorMessage(
+                                                                payload =
+                                                                    listOf(
+                                                                        GraphqlErrorBuilder.newError().message(it.message).build(),
+                                                                    ),
+                                                                id = operationMessage.id,
+                                                            ),
+                                                            webSocketSession,
+                                                        ),
+                                                    ),
+                                                ).subscribe()
+
+                                            sessions[webSocketSession.id]?.remove(operationMessage.id)
+                                            logger.debug(
+                                                "Subscription publisher error for input {} for subscription {} for connection {}",
+                                                queryPayload,
+                                                operationMessage.id,
+                                                webSocketSession.id,
+                                                it,
+                                            )
                                         }
-                                    }.doOnComplete {
-                                        webSocketSession.send(
-                                            Flux.just(
-                                                toWebsocketMessage(
-                                                    Message.CompleteMessage(operationMessage.id),
-                                                    webSocketSession
-                                                )
-                                            )
-                                        ).subscribe()
-
-                                        sessions[webSocketSession.id]?.remove(operationMessage.id)
-                                        logger.debug(
-                                            "Completing subscription {} for connection {}",
-                                            operationMessage.id,
-                                            webSocketSession.id
-                                        )
-                                    }.doOnError {
-                                        webSocketSession.send(
-                                            Flux.just(
-                                                toWebsocketMessage(
-                                                    Message.ErrorMessage(payload = listOf(GraphqlErrorBuilder.newError().message(it.message).build()), id = operationMessage.id),
-                                                    webSocketSession
-                                                )
-                                            )
-                                        ).subscribe()
-
-                                        sessions[webSocketSession.id]?.remove(operationMessage.id)
-                                        logger.debug(
-                                            "Subscription publisher error for input {} for subscription {} for connection {}",
-                                            queryPayload,
-                                            operationMessage.id,
-                                            webSocketSession.id,
-                                            it
-                                        )
-                                    }
                                 }
                         }
                         is Message.PingMessage ->
                             Flux.just(
                                 toWebsocketMessage(
                                     Message.PongMessage(),
-                                    webSocketSession
-                                )
+                                    webSocketSession,
+                                ),
                             )
                         is Message.PongMessage -> Flux.empty()
                         is Message.CompleteMessage -> {
@@ -158,16 +195,18 @@ class WebsocketGraphQLTransportWSProtocolHandler(private val dgsReactiveQueryExe
                             logger.debug(
                                 "Client stopped subscription {} for connection {}",
                                 operationMessage.id,
-                                webSocketSession.id
+                                webSocketSession.id,
                             )
                             Flux.empty()
                         }
                         else -> {
-                            return@outer webSocketSession.close(CloseStatus(CloseCode.BadRequest.code, "Unrecognized message")).thenMany(Mono.empty())
+                            return@outer webSocketSession
+                                .close(
+                                    CloseStatus(CloseCode.BadRequest.code, "Unrecognized message"),
+                                ).thenMany(Mono.empty())
                         }
                     }
-                }
-                .log()
+                }.log()
                 .doFinally {
                     logger.debug("Cleaning up subscriptions for session ${webSocketSession.id}")
                     sessions[webSocketSession.id]?.forEach {
@@ -175,22 +214,24 @@ class WebsocketGraphQLTransportWSProtocolHandler(private val dgsReactiveQueryExe
                     }
                     sessions.remove(webSocketSession.id)
                     connections.remove(webSocketSession.id)
-                }
+                },
         )
     }
 
-    private fun toWebsocketMessage(operationMessage: Message, session: WebSocketSession): WebSocketMessage {
-        return WebSocketMessage(
+    private fun toWebsocketMessage(
+        operationMessage: Message,
+        session: WebSocketSession,
+    ): WebSocketMessage =
+        WebSocketMessage(
             WebSocketMessage.Type.TEXT,
             encoder.encodeValue(
                 operationMessage,
                 session.bufferFactory(),
                 resolvableType,
                 MimeTypeUtils.APPLICATION_JSON,
-                null
-            )
+                null,
+            ),
         )
-    }
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(DgsReactiveQueryExecutor::class.java)

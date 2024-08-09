@@ -49,7 +49,6 @@ import reactor.core.publisher.Flux
 @Disabled("Avoiding stuck builds")
 @WebMvcTest(DgsGraphQLSSESubscriptionHandler::class, DgsGraphQLSSESubscriptionHandlerTest.App::class)
 internal class DgsGraphQLSSESubscriptionHandlerTest {
-
     @SpringBootApplication
     open class App
 
@@ -65,13 +64,16 @@ internal class DgsGraphQLSSESubscriptionHandlerTest {
     fun queryError() {
         val query = "subscription { stocks { name, price }}"
         val queryPayload = QueryPayload(operationName = "MySubscription", query = query)
-        val executionResult = ExecutionResultImpl.newExecutionResult()
-            .errors(listOf(GraphqlErrorBuilder.newError().message("broken").build()))
-            .build()
+        val executionResult =
+            ExecutionResultImpl
+                .newExecutionResult()
+                .errors(listOf(GraphqlErrorBuilder.newError().message("broken").build()))
+                .build()
 
         `when`(dgsQueryExecutor.execute(eq(query), any())).thenReturn(executionResult)
 
-        mockMvc.perform(post("/subscriptions").content(mapper.writeValueAsString(queryPayload)))
+        mockMvc
+            .perform(post("/subscriptions").content(mapper.writeValueAsString(queryPayload)))
             .andExpect(status().is4xxClientError)
     }
 
@@ -80,19 +82,23 @@ internal class DgsGraphQLSSESubscriptionHandlerTest {
         val query = "subscription { stocks { name, price }}"
         val queryPayload = QueryPayload(operationName = "MySubscription", query = query)
 
-        val executionResult = ExecutionResultImpl.newExecutionResult()
-            .errors(listOf(ValidationError.newValidationError().build()))
-            .build()
+        val executionResult =
+            ExecutionResultImpl
+                .newExecutionResult()
+                .errors(listOf(ValidationError.newValidationError().build()))
+                .build()
 
         `when`(dgsQueryExecutor.execute(eq(query), any())).thenReturn(executionResult)
 
-        mockMvc.perform(post("/subscriptions").content(mapper.writeValueAsString(queryPayload)))
+        mockMvc
+            .perform(post("/subscriptions").content(mapper.writeValueAsString(queryPayload)))
             .andExpect(status().is4xxClientError)
     }
 
     @Test
     fun invalidJson() {
-        mockMvc.perform(post("/subscriptions").content(mapper.writeValueAsString("not json")))
+        mockMvc
+            .perform(post("/subscriptions").content(mapper.writeValueAsString("not json")))
             .andExpect(status().is4xxClientError)
     }
 
@@ -101,13 +107,16 @@ internal class DgsGraphQLSSESubscriptionHandlerTest {
         val query = "subscription { stocks { name, price }}"
         val queryPayload = QueryPayload(operationName = "MySubscription", query = query)
 
-        val executionResult = ExecutionResultImpl.newExecutionResult()
-            .data("not a publisher")
-            .build()
+        val executionResult =
+            ExecutionResultImpl
+                .newExecutionResult()
+                .data("not a publisher")
+                .build()
 
         `when`(dgsQueryExecutor.execute(eq(query), any())).thenReturn(executionResult)
 
-        mockMvc.perform(post("/subscriptions").content(mapper.writeValueAsString(queryPayload)))
+        mockMvc
+            .perform(post("/subscriptions").content(mapper.writeValueAsString(queryPayload)))
             .andExpect(status().is5xxServerError)
     }
 
@@ -117,13 +126,16 @@ internal class DgsGraphQLSSESubscriptionHandlerTest {
         val query = "query { stocks { name, price }}"
         val queryPayload = QueryPayload(operationName = "MySubscription", query = query)
 
-        val executionResult = ExecutionResultImpl.newExecutionResult()
-            .data(mapOf("stocks" to listOf(mapOf("name" to "VTI", "price" to 200))))
-            .build()
+        val executionResult =
+            ExecutionResultImpl
+                .newExecutionResult()
+                .data(mapOf("stocks" to listOf(mapOf("name" to "VTI", "price" to 200))))
+                .build()
 
         `when`(dgsQueryExecutor.execute(eq(query), any())).thenReturn(executionResult)
 
-        mockMvc.perform(post("/subscriptions").content(mapper.writeValueAsString(queryPayload)))
+        mockMvc
+            .perform(post("/subscriptions").content(mapper.writeValueAsString(queryPayload)))
             .andExpect(status().is4xxClientError)
     }
 
@@ -132,36 +144,47 @@ internal class DgsGraphQLSSESubscriptionHandlerTest {
         val query = "subscription { stocks { name, price }}"
         val queryPayload = QueryPayload(operationName = "MySubscription", query = query)
 
-        val publisher = Flux.just(
-            ExecutionResultImpl.newExecutionResult().data("message 1").build(),
-            ExecutionResultImpl.newExecutionResult().data("message 2").build()
-        )
-        val executionResult = ExecutionResultImpl.newExecutionResult()
-            .data(publisher).build()
+        val publisher =
+            Flux.just(
+                ExecutionResultImpl.newExecutionResult().data("message 1").build(),
+                ExecutionResultImpl.newExecutionResult().data("message 2").build(),
+            )
+        val executionResult =
+            ExecutionResultImpl
+                .newExecutionResult()
+                .data(publisher)
+                .build()
 
         `when`(dgsQueryExecutor.execute(eq(query), any())).thenReturn(executionResult)
 
-        val result = mockMvc.perform(post("/subscriptions").content(mapper.writeValueAsString(queryPayload)))
-            .andExpect(request().asyncStarted())
-            .andExpect(status().is2xxSuccessful)
-            .andReturn()
+        val result =
+            mockMvc
+                .perform(post("/subscriptions").content(mapper.writeValueAsString(queryPayload)))
+                .andExpect(request().asyncStarted())
+                .andExpect(status().is2xxSuccessful)
+                .andReturn()
 
-        mockMvc.perform(asyncDispatch(result))
+        mockMvc
+            .perform(asyncDispatch(result))
             .andExpect(content().contentType(MediaType.TEXT_EVENT_STREAM))
             .andReturn()
-        val data = result.response.contentAsString.splitToSequence("\n\n")
-            .filter { line -> line.contains("event:next") }
-            .map { line -> line.substring("data:".length).substringAfter("data:") }
-            .map { line -> mapper.readValue<SSEDataPayload>(line) }
-            .toList()
+        val data =
+            result.response.contentAsString
+                .splitToSequence("\n\n")
+                .filter { line -> line.contains("event:next") }
+                .map { line -> line.substring("data:".length).substringAfter("data:") }
+                .map { line -> mapper.readValue<SSEDataPayload>(line) }
+                .toList()
 
         assertEquals(2, data.size)
         assertEquals("message 1", data[0].data)
         assertEquals("message 2", data[1].data)
-        val events = result.response.contentAsString.splitToSequence("\n\n")
-            .filter { line -> line.contains("event:") }
-            .map { line -> line.substringAfter("event:").substringBefore("\n") }
-            .toList()
+        val events =
+            result.response.contentAsString
+                .splitToSequence("\n\n")
+                .filter { line -> line.contains("event:") }
+                .map { line -> line.substringAfter("event:").substringBefore("\n") }
+                .toList()
         assertEquals(3, events.size)
         assertEquals("next", events[0])
         assertEquals("next", events[1])
@@ -176,32 +199,42 @@ internal class DgsGraphQLSSESubscriptionHandlerTest {
         val queryPayload = QueryPayload(operationName = "MySubscription", query = query)
 
         val publisher = Flux.just(1).map { throw RuntimeException("test") }
-        val executionResult = ExecutionResultImpl.newExecutionResult()
-            .data(publisher).build()
+        val executionResult =
+            ExecutionResultImpl
+                .newExecutionResult()
+                .data(publisher)
+                .build()
 
         `when`(dgsQueryExecutor.execute(eq(query), any())).thenReturn(executionResult)
 
-        val result = mockMvc.perform(post("/subscriptions").content(mapper.writeValueAsString(queryPayload)))
-            .andExpect(request().asyncStarted())
-            .andExpect(status().is2xxSuccessful)
-            .andReturn()
+        val result =
+            mockMvc
+                .perform(post("/subscriptions").content(mapper.writeValueAsString(queryPayload)))
+                .andExpect(request().asyncStarted())
+                .andExpect(status().is2xxSuccessful)
+                .andReturn()
 
-        mockMvc.perform(asyncDispatch(result))
+        mockMvc
+            .perform(asyncDispatch(result))
             .andExpect(content().contentType(MediaType.TEXT_EVENT_STREAM))
             .andReturn()
 
-        val data = result.response.contentAsString.splitToSequence("\n\n")
-            .filter { line -> line.contains("event:next") }
-            .map { line -> line.substring("data:".length).substringAfter("data:") }
-            .map { line -> mapper.readValue<SSEDataPayload>(line) }
-            .toList()
+        val data =
+            result.response.contentAsString
+                .splitToSequence("\n\n")
+                .filter { line -> line.contains("event:next") }
+                .map { line -> line.substring("data:".length).substringAfter("data:") }
+                .map { line -> mapper.readValue<SSEDataPayload>(line) }
+                .toList()
 
         assertEquals(1, data.size)
         assertEquals("{message=test}", data[0].errors?.get(0).toString())
-        val events = result.response.contentAsString.splitToSequence("\n\n")
-            .filter { line -> line.contains("event:") }
-            .map { line -> line.substringAfter("event:").substringBefore("\n") }
-            .toList()
+        val events =
+            result.response.contentAsString
+                .splitToSequence("\n\n")
+                .filter { line -> line.contains("event:") }
+                .map { line -> line.substringAfter("event:").substringBefore("\n") }
+                .toList()
         assertEquals(2, events.size)
         assertEquals("next", events[0])
         assertEquals("complete", events[1])

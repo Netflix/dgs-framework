@@ -32,60 +32,61 @@ import java.time.OffsetTime
 @SpringBootTest(classes = [TimeScalarsSmokeTest.LocalApp::class])
 @EnableAutoConfiguration
 internal class TimeScalarsSmokeTest {
-
     @Autowired
     lateinit var queryExecutor: DgsQueryExecutor
 
     @Test
     fun date() {
-        val data = executeQueryExtractingData<Map<String, String>>(
-            """query{ echoDate( date: "2021-07-12") }"""
-        )
+        val data =
+            executeQueryExtractingData<Map<String, String>>(
+                """query{ echoDate( date: "2021-07-12") }""",
+            )
         assertThat(data).extracting { it["echoDate"] }.isEqualTo("2021-07-12")
 
-        val mData = executeQueryExtractingData<Map<String, String>>(
-            """mutation{ echoDateMutation( date: "2021-07-12") }"""
-        )
+        val mData =
+            executeQueryExtractingData<Map<String, String>>(
+                """mutation{ echoDateMutation( date: "2021-07-12") }""",
+            )
         assertThat(mData).extracting { it["echoDateMutation"] }.isEqualTo("2021-07-12")
     }
 
     @Test
     fun time() {
-        val data = executeQueryExtractingData<Map<String, String>>(
-            """{ echoTime( time: "11:30:00.10+02:10") }"""
-        )
+        val data =
+            executeQueryExtractingData<Map<String, String>>(
+                """{ echoTime( time: "11:30:00.10+02:10") }""",
+            )
         assertThat(data).extracting { it["echoTime"] }.isEqualTo("11:30:00.1+02:10")
     }
 
     @Test
     fun dateTime() {
-        val data = executeQueryExtractingData<Map<String, String>>(
-            """{ echoDateTime( dateTime: "2021-07-12T11:30:00.10+02:10") }"""
-        )
+        val data =
+            executeQueryExtractingData<Map<String, String>>(
+                """{ echoDateTime( dateTime: "2021-07-12T11:30:00.10+02:10") }""",
+            )
         assertThat(data).extracting { it["echoDateTime"] }.isEqualTo("2021-07-12T11:30:00.100+02:10")
 
-        val mData = executeQueryExtractingData<Map<String, String>>(
-            """mutation{ echoDateTimeMutation( dateTime: "2021-07-12T11:30:00.10+02:10") }"""
-        )
+        val mData =
+            executeQueryExtractingData<Map<String, String>>(
+                """mutation{ echoDateTimeMutation( dateTime: "2021-07-12T11:30:00.10+02:10") }""",
+            )
         assertThat(mData).extracting { it["echoDateTimeMutation"] }.isEqualTo("2021-07-12T11:30:00.100+02:10")
     }
 
-    private fun <T> executeQueryExtractingData(query: String): T {
-        return queryExecutor.executeAndExtractJsonPath(query, "data")
-    }
+    private fun <T> executeQueryExtractingData(query: String): T = queryExecutor.executeAndExtractJsonPath(query, "data")
 
     @SpringBootConfiguration(proxyBeanMethods = false)
     @SuppressWarnings("unused")
     open class LocalApp {
-
         @DgsComponent
         class ExampleImplementation {
-
             @DgsTypeDefinitionRegistry
             fun typeDefinitionRegistry(): TypeDefinitionRegistry {
                 val schemaParser = SchemaParser()
 
-                val gqlSchema = """
+                val gqlSchema =
+                    """
                 |type Query{
                 |   echoDate(date: Date): Date
                 |   echoTime(time: Time): Time
@@ -101,27 +102,39 @@ internal class TimeScalarsSmokeTest {
                 | scalar Date
                 | scalar Time
                 | scalar DateTime
-                """.trimMargin()
+                    """.trimMargin()
                 return schemaParser.parse(gqlSchema)
             }
 
             @DgsQuery
-            fun echoDate(@InputArgument date: LocalDate): LocalDate = date
+            fun echoDate(
+                @InputArgument date: LocalDate,
+            ): LocalDate = date
 
             @DgsMutation
-            fun echoDateMutation(@InputArgument date: LocalDate): LocalDate = date
+            fun echoDateMutation(
+                @InputArgument date: LocalDate,
+            ): LocalDate = date
 
             @DgsQuery
-            fun echoTime(@InputArgument time: OffsetTime): OffsetTime = time
+            fun echoTime(
+                @InputArgument time: OffsetTime,
+            ): OffsetTime = time
 
             @DgsMutation
-            fun echoTimeMutation(@InputArgument time: OffsetTime): OffsetTime = time
+            fun echoTimeMutation(
+                @InputArgument time: OffsetTime,
+            ): OffsetTime = time
 
             @DgsQuery
-            fun echoDateTime(@InputArgument dateTime: OffsetDateTime): OffsetDateTime = dateTime
+            fun echoDateTime(
+                @InputArgument dateTime: OffsetDateTime,
+            ): OffsetDateTime = dateTime
 
             @DgsMutation
-            fun echoDateTimeMutation(@InputArgument dateTime: OffsetDateTime): OffsetDateTime = dateTime
+            fun echoDateTimeMutation(
+                @InputArgument dateTime: OffsetDateTime,
+            ): OffsetDateTime = dateTime
         }
     }
 }

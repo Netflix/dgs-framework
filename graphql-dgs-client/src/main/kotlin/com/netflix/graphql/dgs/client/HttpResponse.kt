@@ -19,7 +19,7 @@ package com.netflix.graphql.dgs.client
 data class HttpResponse(
     val statusCode: Int,
     val body: String?,
-    val headers: Map<String, List<String>>
+    val headers: Map<String, List<String>>,
 ) {
     constructor(statusCode: Int, body: String?) : this(statusCode, body, emptyMap())
 }

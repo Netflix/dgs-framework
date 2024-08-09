@@ -41,17 +41,16 @@ const val SSE_GQL_SUBSCRIPTION_DATA = "SUBSCRIPTION_DATA"
 data class OperationMessage(
     @JsonProperty("type")
     val type: String,
-
     @JsonProperty("payload")
     @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION, defaultImpl = EmptyPayload::class)
     @JsonSubTypes(
         JsonSubTypes.Type(value = EmptyPayload::class),
         JsonSubTypes.Type(value = DataPayload::class),
-        JsonSubTypes.Type(value = QueryPayload::class)
+        JsonSubTypes.Type(value = QueryPayload::class),
     )
     val payload: Any? = null,
     @JsonProperty("id", required = false)
-    val id: String? = ""
+    val id: String? = "",
 )
 
 sealed interface MessagePayload
@@ -60,16 +59,14 @@ object EmptyPayload : HashMap<String, Any?>(), MessagePayload {
     @JvmStatic
     @JsonCreator
     @SuppressWarnings("unused")
-    fun emptyPayload(): EmptyPayload {
-        return EmptyPayload
-    }
+    fun emptyPayload(): EmptyPayload = EmptyPayload
 }
 
 data class DataPayload(
     @JsonProperty("data")
     val data: Any?,
     @JsonProperty("errors")
-    val errors: List<Any>? = emptyList()
+    val errors: List<Any>? = emptyList(),
 ) : MessagePayload
 
 data class SSEDataPayload(
@@ -80,7 +77,7 @@ data class SSEDataPayload(
     @JsonProperty("subId")
     val subId: String,
     @JsonProperty("type")
-    val type: String = SSE_GQL_SUBSCRIPTION_DATA
+    val type: String = SSE_GQL_SUBSCRIPTION_DATA,
 ) : MessagePayload
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -95,7 +92,9 @@ data class QueryPayload(
     @Language("graphql")
     val query: String,
     @JsonProperty("key")
-    val key: String = ""
+    val key: String = "",
 ) : MessagePayload
 
-data class Error(@JsonProperty val message: String = "")
+data class Error(
+    @JsonProperty val message: String = "",
+)

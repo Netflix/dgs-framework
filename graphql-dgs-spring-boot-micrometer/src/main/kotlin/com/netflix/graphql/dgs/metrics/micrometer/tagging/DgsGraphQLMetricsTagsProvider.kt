@@ -23,19 +23,18 @@ import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchPar
 import io.micrometer.core.instrument.Tag
 
 interface DgsGraphQLMetricsTagsProvider {
-
     fun getContextualTags(): Iterable<Tag> = emptyList()
 
     fun getExecutionTags(
         state: DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState,
         parameters: InstrumentationExecutionParameters,
         result: ExecutionResult,
-        exception: Throwable?
+        exception: Throwable?,
     ): Iterable<Tag> = emptyList()
 
     fun getFieldFetchTags(
         state: DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState,
         parameters: InstrumentationFieldFetchParameters,
-        exception: Throwable?
+        exception: Throwable?,
     ): Iterable<Tag> = emptyList()
 }

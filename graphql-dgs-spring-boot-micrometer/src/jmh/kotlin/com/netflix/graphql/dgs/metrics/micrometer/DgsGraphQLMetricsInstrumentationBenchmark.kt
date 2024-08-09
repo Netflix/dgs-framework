@@ -54,7 +54,6 @@ import java.util.concurrent.TimeUnit
 @Warmup(iterations = 3, time = 5, timeUnit = TimeUnit.SECONDS)
 @Measurement(iterations = 3, time = 5, timeUnit = TimeUnit.SECONDS)
 open class DgsGraphQLMetricsInstrumentationBenchmark {
-
     private lateinit var applicationContext: AnnotationConfigApplicationContext
 
     private lateinit var graphql: GraphQL
@@ -70,28 +69,31 @@ open class DgsGraphQLMetricsInstrumentationBenchmark {
         applicationContext.refresh()
         applicationContext.start()
 
-        val provider = DgsSchemaProvider(
-            applicationContext = applicationContext,
-            federationResolver = Optional.empty(),
-            existingTypeDefinitionRegistry = Optional.empty(),
-            methodDataFetcherFactory = MethodDataFetcherFactory(
-                listOf(
-                    InputArgumentResolver(DefaultInputObjectMapper()),
-                    DataFetchingEnvironmentArgumentResolver(),
-                    FallbackEnvironmentArgumentResolver(DefaultInputObjectMapper())
-                )
+        val provider =
+            DgsSchemaProvider(
+                applicationContext = applicationContext,
+                federationResolver = Optional.empty(),
+                existingTypeDefinitionRegistry = Optional.empty(),
+                methodDataFetcherFactory =
+                    MethodDataFetcherFactory(
+                        listOf(
+                            InputArgumentResolver(DefaultInputObjectMapper()),
+                            DataFetchingEnvironmentArgumentResolver(),
+                            FallbackEnvironmentArgumentResolver(DefaultInputObjectMapper()),
+                        ),
+                    ),
             )
-        )
 
         val simpleMeter = SimpleMeterRegistry()
         val properties = DgsGraphQLMetricsProperties()
-        val metricsInstrumentation = DgsGraphQLMetricsInstrumentation(
-            schemaProvider = provider,
-            registrySupplier = { simpleMeter },
-            tagsProvider = DgsGraphQLCollatedMetricsTagsProvider(),
-            properties = properties,
-            limitedTagMetricResolver = SpectatorLimitedTagMetricResolver(properties.tags)
-        )
+        val metricsInstrumentation =
+            DgsGraphQLMetricsInstrumentation(
+                schemaProvider = provider,
+                registrySupplier = { simpleMeter },
+                tagsProvider = DgsGraphQLCollatedMetricsTagsProvider(),
+                properties = properties,
+                limitedTagMetricResolver = SpectatorLimitedTagMetricResolver(properties.tags),
+            )
 
         graphql = GraphQL.newGraphQL(provider.schema(schema)).instrumentation(metricsInstrumentation).build()
     }
@@ -128,18 +130,20 @@ open class DgsGraphQLMetricsInstrumentationBenchmark {
 
     companion object {
         @Language("GraphQL")
-        private val schema = """
+        private val schema =
+            """
             type Query {
                 hello(name: String): String
                 size(list: [Int]): Int
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @Language("GraphQL")
         private val simpleHelloQuery = """{ hello(name: "benchmark") }"""
 
         private val numbersExecutionInput: ExecutionInput =
-            ExecutionInput.newExecutionInput("""query CalcSize(${"$"}numbers: [Int]) { size(list: ${"$"}numbers) }""")!!
+            ExecutionInput
+                .newExecutionInput("""query CalcSize(${"$"}numbers: [Int]) { size(list: ${"$"}numbers) }""")!!
                 .variables(mapOf("numbers" to (0..200).toList()))
                 .operationName("CalcSize")
                 .build()
@@ -147,15 +151,14 @@ open class DgsGraphQLMetricsInstrumentationBenchmark {
 
     @DgsComponent
     open class BenchmarkedDataFetcher {
-
         @DgsQuery(field = "hello")
-        fun hello(@InputArgument name: String): String {
-            return "Hello, $name"
-        }
+        fun hello(
+            @InputArgument name: String,
+        ): String = "Hello, $name"
 
         @DgsQuery(field = "size")
-        fun size(@InputArgument list: List<Int>): Int {
-            return list.size
-        }
+        fun size(
+            @InputArgument list: List<Int>,
+        ): Int = list.size
     }
 }

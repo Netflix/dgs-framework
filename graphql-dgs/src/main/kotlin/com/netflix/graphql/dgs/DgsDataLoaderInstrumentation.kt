@@ -34,5 +34,9 @@ interface DgsDataLoaderInstrumentation {
      *
      * @return context object that also contains the other hooks
      */
-    fun onDispatch(name: String, keys: List<Any>, batchLoaderEnvironment: BatchLoaderEnvironment): DgsDataLoaderInstrumentationContext
+    fun onDispatch(
+        name: String,
+        keys: List<Any>,
+        batchLoaderEnvironment: BatchLoaderEnvironment,
+    ): DgsDataLoaderInstrumentationContext
 }

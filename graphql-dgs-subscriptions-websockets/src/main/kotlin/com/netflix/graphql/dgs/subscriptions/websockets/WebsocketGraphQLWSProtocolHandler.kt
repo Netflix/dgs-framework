@@ -40,9 +40,8 @@ import java.util.concurrent.CopyOnWriteArrayList
 class WebsocketGraphQLWSProtocolHandler(
     private val dgsQueryExecutor: DgsQueryExecutor,
     private val subscriptionErrorLogLevel: Level,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
 ) : TextWebSocketHandler() {
-
     internal val subscriptions = ConcurrentHashMap<String, MutableMap<String, Subscription>>()
     internal val sessions = CopyOnWriteArrayList<WebSocketSession>()
 
@@ -53,15 +52,16 @@ class WebsocketGraphQLWSProtocolHandler(
     fun setupCleanup() {
         val timer = Timer("dgs-graphql-ws-session-cleanup", true)
         this.timer = timer
-        val timerTask = object : TimerTask() {
-            override fun run() {
-                for (session in sessions) {
-                    if (!session.isOpen) {
-                        cleanupSubscriptionsForSession(session)
+        val timerTask =
+            object : TimerTask() {
+                override fun run() {
+                    for (session in sessions) {
+                        if (!session.isOpen) {
+                            cleanupSubscriptionsForSession(session)
+                        }
                     }
                 }
             }
-        }
         timer.scheduleAtFixedRate(timerTask, 0, 5000)
     }
 
@@ -72,7 +72,10 @@ class WebsocketGraphQLWSProtocolHandler(
         this.timer = null
     }
 
-    public override fun handleTextMessage(session: WebSocketSession, message: TextMessage) {
+    public override fun handleTextMessage(
+        session: WebSocketSession,
+        message: TextMessage,
+    ) {
         val (type, payload, id) = objectMapper.readValue(message.payload, OperationMessage::class.java)
         when (type) {
             GQL_CONNECTION_INIT -> {
@@ -82,10 +85,10 @@ class WebsocketGraphQLWSProtocolHandler(
                     TextMessage(
                         objectMapper.writeValueAsBytes(
                             OperationMessage(
-                                GQL_CONNECTION_ACK
-                            )
-                        )
-                    )
+                                GQL_CONNECTION_ACK,
+                            ),
+                        ),
+                    ),
                 )
             }
             GQL_START -> {
@@ -112,63 +115,70 @@ class WebsocketGraphQLWSProtocolHandler(
         sessions.remove(session)
     }
 
-    private fun handleSubscription(id: String, payload: QueryPayload, session: WebSocketSession) {
+    private fun handleSubscription(
+        id: String,
+        payload: QueryPayload,
+        session: WebSocketSession,
+    ) {
         val executionResult: ExecutionResult = dgsQueryExecutor.execute(payload.query, payload.variables.orEmpty())
         val subscriptionStream: Publisher<ExecutionResult> = executionResult.getData()
 
-        subscriptionStream.subscribe(object : Subscriber<ExecutionResult> {
-            override fun onSubscribe(s: Subscription) {
-                logger.info("Subscription started for {}", id)
-                subscriptions.putIfAbsent(session.id, mutableMapOf())
-                subscriptions[session.id]?.set(id, s)
+        subscriptionStream.subscribe(
+            object : Subscriber<ExecutionResult> {
+                override fun onSubscribe(s: Subscription) {
+                    logger.info("Subscription started for {}", id)
+                    subscriptions.putIfAbsent(session.id, mutableMapOf())
+                    subscriptions[session.id]?.set(id, s)
 
-                s.request(1)
-            }
-
-            override fun onNext(er: ExecutionResult) {
-                val message = OperationMessage(GQL_DATA, DataPayload(er.getData(), er.errors), id)
-                val jsonMessage = try {
-                    TextMessage(objectMapper.writeValueAsBytes(message))
-                } catch (exc: JsonProcessingException) {
-                    throw UncheckedIOException(exc)
-                }
-                logger.debug("Sending subscription data: {}", jsonMessage)
-
-                if (session.isOpen) {
-                    session.sendMessage(jsonMessage)
-                    subscriptions[session.id]?.get(id)?.request(1)
-                }
-            }
-
-            override fun onError(t: Throwable) {
-                when (subscriptionErrorLogLevel) {
-                    Level.ERROR -> logger.error("Error on subscription {}", id, t)
-                    Level.WARN -> logger.warn("Error on subscription {}", id, t)
-                    Level.INFO -> logger.info("Error on subscription {}: {}", id, t.message)
-                    Level.DEBUG -> logger.debug("Error on subscription {}", id, t)
-                    Level.TRACE -> logger.trace("Error on subscription {}", id, t)
-                }
-                val message = OperationMessage(GQL_ERROR, DataPayload(null, listOf(t.message!!)), id)
-                val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
-                logger.debug("Sending subscription error: {}", jsonMessage)
-
-                if (session.isOpen) {
-                    session.sendMessage(jsonMessage)
-                }
-            }
-
-            override fun onComplete() {
-                logger.info("Subscription completed for {}", id)
-                val message = OperationMessage(GQL_COMPLETE, null, id)
-                val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
-
-                if (session.isOpen) {
-                    session.sendMessage(jsonMessage)
+                    s.request(1)
                 }
 
-                subscriptions[session.id]?.remove(id)
-            }
-        })
+                override fun onNext(er: ExecutionResult) {
+                    val message = OperationMessage(GQL_DATA, DataPayload(er.getData(), er.errors), id)
+                    val jsonMessage =
+                        try {
+                            TextMessage(objectMapper.writeValueAsBytes(message))
+                        } catch (exc: JsonProcessingException) {
+                            throw UncheckedIOException(exc)
+                        }
+                    logger.debug("Sending subscription data: {}", jsonMessage)
+
+                    if (session.isOpen) {
+                        session.sendMessage(jsonMessage)
+                        subscriptions[session.id]?.get(id)?.request(1)
+                    }
+                }
+
+                override fun onError(t: Throwable) {
+                    when (subscriptionErrorLogLevel) {
+                        Level.ERROR -> logger.error("Error on subscription {}", id, t)
+                        Level.WARN -> logger.warn("Error on subscription {}", id, t)
+                        Level.INFO -> logger.info("Error on subscription {}: {}", id, t.message)
+                        Level.DEBUG -> logger.debug("Error on subscription {}", id, t)
+                        Level.TRACE -> logger.trace("Error on subscription {}", id, t)
+                    }
+                    val message = OperationMessage(GQL_ERROR, DataPayload(null, listOf(t.message!!)), id)
+                    val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
+                    logger.debug("Sending subscription error: {}", jsonMessage)
+
+                    if (session.isOpen) {
+                        session.sendMessage(jsonMessage)
+                    }
+                }
+
+                override fun onComplete() {
+                    logger.info("Subscription completed for {}", id)
+                    val message = OperationMessage(GQL_COMPLETE, null, id)
+                    val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
+
+                    if (session.isOpen) {
+                        session.sendMessage(jsonMessage)
+                    }
+
+                    subscriptions[session.id]?.remove(id)
+                }
+            },
+        )
     }
 
     private companion object {

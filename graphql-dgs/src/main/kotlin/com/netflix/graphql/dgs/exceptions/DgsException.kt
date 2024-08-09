@@ -25,31 +25,28 @@ abstract class DgsException(
     override val message: String,
     override val cause: Exception? = null,
     val errorType: ErrorType = ErrorType.UNKNOWN,
-    val logLevel: Level = Level.ERROR
+    val logLevel: Level = Level.ERROR,
 ) : RuntimeException(message, cause) {
-
     // Explicit constructor without logLevel for Java backward compatibility
     constructor(
         message: String,
         cause: Exception? = null,
-        errorType: ErrorType = ErrorType.UNKNOWN
+        errorType: ErrorType = ErrorType.UNKNOWN,
     ) : this(message, cause, errorType, Level.ERROR)
 
     companion object {
         const val EXTENSION_CLASS_KEY = "class"
     }
 
-    fun toGraphQlError(path: ResultPath? = null): TypedGraphQLError {
-        return TypedGraphQLError
+    fun toGraphQlError(path: ResultPath? = null): TypedGraphQLError =
+        TypedGraphQLError
             .newBuilder()
             .apply {
                 if (path != null) {
                     path(path)
                 }
-            }
-            .errorType(errorType)
+            }.errorType(errorType)
             .message(message)
             .extensions(mapOf(EXTENSION_CLASS_KEY to this::class.java.name))
             .build()
-    }
 }

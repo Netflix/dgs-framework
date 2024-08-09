@@ -18,5 +18,7 @@ package com.netflix.graphql.dgs.exceptions
 
 import com.netflix.graphql.types.errors.ErrorType
 
-class DgsInvalidInputArgumentException(override val message: String, override val cause: Exception? = null) :
-    DgsException(message = message, cause = cause, errorType = ErrorType.BAD_REQUEST)
+class DgsInvalidInputArgumentException(
+    override val message: String,
+    override val cause: Exception? = null,
+) : DgsException(message = message, cause = cause, errorType = ErrorType.BAD_REQUEST)

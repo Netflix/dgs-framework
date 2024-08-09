@@ -47,7 +47,7 @@ import reactor.test.StepVerifier
 
 @SpringBootTest(
     classes = [DgsWebSocketAutoConfig::class, TestApp::class],
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
 @EnableAutoConfiguration(exclude = [DgsSSEAutoConfig::class, DgsGraphQLSSEAutoConfig::class])
 internal class WebSocketGraphQLClientWithDGSServerTest {
@@ -69,7 +69,8 @@ internal class WebSocketGraphQLClientWithDGSServerTest {
         val reactiveExecuteQuery =
             client.reactiveExecuteQuery("subscription s {numbers}", emptyMap()).mapNotNull { r -> r.data["numbers"] }
 
-        StepVerifier.create(reactiveExecuteQuery)
+        StepVerifier
+            .create(reactiveExecuteQuery)
             .expectNext(1, 2, 3)
             .expectComplete()
             .verify()

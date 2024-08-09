@@ -26,14 +26,25 @@ import org.springframework.web.reactive.config.EnableWebFlux
 
 @AutoConfigureWebTestClient
 @EnableWebFlux
-@SpringBootTest(classes = [DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, WebRequestTestWithCustomEndpoint.ExampleImplementation::class], properties = ["dgs.graphql.graphiql.enabled=false"])
+@SpringBootTest(
+    classes = [
+        DgsWebFluxAutoConfiguration::class,
+        DgsAutoConfiguration::class,
+        WebRequestTestWithCustomEndpoint.ExampleImplementation::class,
+    ],
+    properties = ["dgs.graphql.graphiql.enabled=false"],
+)
 class GraphiQlUIDisabled {
     @Autowired
     lateinit var webTestClient: WebTestClient
 
     @Test
     fun `GraphiQL should not be available when disabled`() {
-        webTestClient.get().uri("/graphiql/index.html").exchange()
-            .expectStatus().isNotFound
+        webTestClient
+            .get()
+            .uri("/graphiql/index.html")
+            .exchange()
+            .expectStatus()
+            .isNotFound
     }
 }

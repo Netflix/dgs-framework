@@ -39,7 +39,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @AutoConfigureMockMvc
 @EnableAutoConfiguration
 class MalformedQueryContentTest {
-
     @Autowired
     lateinit var mvc: MockMvc
 
@@ -50,7 +49,8 @@ class MalformedQueryContentTest {
                 .post("/graphql")
                 .content("  ")
 
-        mvc.perform(uriBuilder)
+        mvc
+            .perform(uriBuilder)
             .andExpect(status().isUnsupportedMediaType)
     }
 
@@ -62,7 +62,8 @@ class MalformedQueryContentTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("  ")
 
-        mvc.perform(uriBuilder)
+        mvc
+            .perform(uriBuilder)
             .andExpect(status().isBadRequest)
             .andExpect(content().string("Invalid query - No content to map to input."))
     }
@@ -75,7 +76,8 @@ class MalformedQueryContentTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{")
 
-        mvc.perform(uriBuilder)
+        mvc
+            .perform(uriBuilder)
             .andExpect(status().isBadRequest)
             .andExpect(content().string(StringStartsWith.startsWith("Invalid query -")))
     }
@@ -88,7 +90,8 @@ class MalformedQueryContentTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{  }")
 
-        mvc.perform(uriBuilder)
+        mvc
+            .perform(uriBuilder)
             .andExpect(status().isBadRequest)
             .andExpect(
                 content().json(
@@ -104,24 +107,22 @@ class MalformedQueryContentTest {
                           }
                        ]
                     }
-                    """.trimIndent()
-                )
+                    """.trimIndent(),
+                ),
             )
     }
 
     @SpringBootApplication(proxyBeanMethods = false, scanBasePackages = [])
     @ComponentScan(
         useDefaultFilters = false,
-        includeFilters = [ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = [])]
+        includeFilters = [ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = [])],
     )
     @SuppressWarnings("unused")
     open class LocalApp {
         @DgsComponent
         class ExampleImplementation {
             @DgsTypeDefinitionRegistry
-            fun typeDefinitionRegistry(): TypeDefinitionRegistry {
-                return SchemaParser().parse("type Query{ } ")
-            }
+            fun typeDefinitionRegistry(): TypeDefinitionRegistry = SchemaParser().parse("type Query{ } ")
         }
     }
 }

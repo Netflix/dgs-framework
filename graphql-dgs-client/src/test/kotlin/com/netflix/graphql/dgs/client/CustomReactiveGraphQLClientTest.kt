@@ -38,11 +38,10 @@ import reactor.test.StepVerifier
 
 @SpringBootTest(
     classes = [DgsAutoConfiguration::class, DgsWebMvcAutoConfiguration::class, WebClientGraphQLClientTest.TestApp::class],
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
 @EnableAutoConfiguration(exclude = [DgsGraphQLSSEAutoConfig::class])
 class CustomReactiveGraphQLClientTest {
-
     @LocalServerPort
     var port: Int? = null
     lateinit var client: CustomMonoGraphQLClient
@@ -50,28 +49,31 @@ class CustomReactiveGraphQLClientTest {
     @BeforeEach
     fun setup() {
         requireNotNull(port) { "port not set" }
-        client = MonoGraphQLClient.createCustomReactive("http://localhost:$port/graphql") { url, _, body ->
-            WebClient.create(url)
-                .post()
-                .bodyValue(body)
-                .headers { headers -> headers.addAll(GraphQLClients.defaultHeaders) }
-                .retrieve()
-                .toEntity<String>()
-                .map { response ->
-                    HttpResponse(
-                        statusCode = response.statusCode.value(),
-                        body = response.body,
-                        headers = response.headers
-                    )
-                }
-        }
+        client =
+            MonoGraphQLClient.createCustomReactive("http://localhost:$port/graphql") { url, _, body ->
+                WebClient
+                    .create(url)
+                    .post()
+                    .bodyValue(body)
+                    .headers { headers -> headers.addAll(GraphQLClients.defaultHeaders) }
+                    .retrieve()
+                    .toEntity<String>()
+                    .map { response ->
+                        HttpResponse(
+                            statusCode = response.statusCode.value(),
+                            body = response.body,
+                            headers = response.headers,
+                        )
+                    }
+            }
     }
 
     @Test
     fun `Successful graphql response`() {
         val result = client.reactiveExecuteQuery("{hello}").map { r -> r.extractValue<String>("hello") }
 
-        StepVerifier.create(result)
+        StepVerifier
+            .create(result)
             .expectNext("Hi!")
             .verifyComplete()
     }
@@ -80,41 +82,42 @@ class CustomReactiveGraphQLClientTest {
     fun `Graphql errors should be handled`() {
         val errors = client.reactiveExecuteQuery("{error}").map { r -> r.errors }
 
-        StepVerifier.create(errors)
+        StepVerifier
+            .create(errors)
             .expectNextMatches { it.size == 1 && it[0].message.contains("Broken!") }
             .verifyComplete()
     }
 
     @SpringBootApplication
     internal open class TestApp {
-
         @DgsComponent
         class SubscriptionDataFetcher {
             @DgsQuery
-            fun hello(): String {
-                return "Hi!"
-            }
+            fun hello(): String = "Hi!"
 
             @DgsQuery
-            fun error(): String {
-                throw RuntimeException("Broken!")
-            }
+            fun error(): String = throw RuntimeException("Broken!")
 
             @DgsTypeDefinitionRegistry
             fun typeDefinitionRegistry(): TypeDefinitionRegistry {
                 val newRegistry = TypeDefinitionRegistry()
                 newRegistry.add(
-                    ObjectTypeDefinition.newObjectTypeDefinition().name("Query")
+                    ObjectTypeDefinition
+                        .newObjectTypeDefinition()
+                        .name("Query")
                         .fieldDefinition(
-                            FieldDefinition.newFieldDefinition()
+                            FieldDefinition
+                                .newFieldDefinition()
                                 .name("hello")
-                                .type(TypeName("String")).build()
+                                .type(TypeName("String"))
+                                .build(),
                         ).fieldDefinition(
-                            FieldDefinition.newFieldDefinition()
+                            FieldDefinition
+                                .newFieldDefinition()
                                 .name("error")
-                                .type(TypeName("String")).build()
-                        )
-                        .build()
+                                .type(TypeName("String"))
+                                .build(),
+                        ).build(),
                 )
                 return newRegistry
             }

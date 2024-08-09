@@ -25,7 +25,6 @@ import org.springframework.boot.context.properties.source.MapConfigurationProper
 import java.util.*
 
 class DgsWebSocketConfigurationPropertiesTest {
-
     @Test
     fun websocketPathDefault() {
         val properties = bind(Collections.emptyMap())
@@ -38,9 +37,10 @@ class DgsWebSocketConfigurationPropertiesTest {
         Assertions.assertThat(properties.path).isEqualTo("/private/subscriptions")
     }
 
-    private fun bind(name: String, value: String): DgsWebSocketConfigurationProperties {
-        return bind(Collections.singletonMap(name, value))
-    }
+    private fun bind(
+        name: String,
+        value: String,
+    ): DgsWebSocketConfigurationProperties = bind(Collections.singletonMap(name, value))
 
     private fun bind(map: Map<String?, String?>): DgsWebSocketConfigurationProperties {
         val source: ConfigurationPropertySource = MapConfigurationPropertySource(map)

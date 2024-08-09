@@ -40,13 +40,14 @@ class CustomDirectivesTest {
 
     @BeforeEach
     fun setupApplicationMockedContext() {
-        val fetcher = object {
-            @DgsData(parentType = "Query", field = "hello")
-            fun hello(): String = "hello"
+        val fetcher =
+            object {
+                @DgsData(parentType = "Query", field = "hello")
+                fun hello(): String = "hello"
 
-            @DgsData(parentType = "Query", field = "word")
-            fun word(): String = "abcefg"
-        }
+                @DgsData(parentType = "Query", field = "word")
+                fun word(): String = "abcefg"
+            }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf()
@@ -54,50 +55,56 @@ class CustomDirectivesTest {
 
     @Test
     fun testCustomDirectives() {
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns mapOf(
-            "uppercase" to UppercaseDirective(),
-            "wordfilter" to WordFilterDirective()
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns
+            mapOf(
+                "uppercase" to UppercaseDirective(),
+                "wordfilter" to WordFilterDirective(),
+            )
 
-        val provider = DgsSchemaProvider(
-            applicationContext = applicationContextMock,
-            federationResolver = Optional.empty(),
-            existingTypeDefinitionRegistry = Optional.empty(),
-            methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
-        )
+        val provider =
+            DgsSchemaProvider(
+                applicationContext = applicationContextMock,
+                federationResolver = Optional.empty(),
+                existingTypeDefinitionRegistry = Optional.empty(),
+                methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
+            )
 
-        val schema = provider.schema(
-            """
-            type Query {
-                hello: String @uppercase
-                word: String
-            }
-            
-            directive @uppercase on FIELD_DEFINITION
-            """.trimIndent()
-        ).graphQLSchema
+        val schema =
+            provider
+                .schema(
+                    """
+                    type Query {
+                        hello: String @uppercase
+                        word: String
+                    }
+                    
+                    directive @uppercase on FIELD_DEFINITION
+                    """.trimIndent(),
+                ).graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
-        val executionResult = build.execute(
-            """
-            {
-               hello
-            }
-            """.trimIndent()
-        )
+        val executionResult =
+            build.execute(
+                """
+                {
+                   hello
+                }
+                """.trimIndent(),
+            )
 
         assertEquals(0, executionResult.errors.size)
         val data = executionResult.getData<Map<String, String>>()
         assertThat(data["hello"]).isEqualTo("HELLO")
 
         // test global directive
-        val wordExecutionResult = build.execute(
-            """
-            {
-               word
-            }
-            """.trimIndent()
-        )
+        val wordExecutionResult =
+            build.execute(
+                """
+                {
+                   word
+                }
+                """.trimIndent(),
+            )
 
         assertEquals(0, wordExecutionResult.errors.size)
         val wordData = wordExecutionResult.getData<Map<String, String>>()
@@ -113,12 +120,13 @@ class CustomDirectivesTest {
 
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns mapOf("proxied" to proxiedDirective)
 
-        val provider = DgsSchemaProvider(
-            applicationContext = applicationContextMock,
-            federationResolver = Optional.empty(),
-            existingTypeDefinitionRegistry = Optional.empty(),
-            methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
-        )
+        val provider =
+            DgsSchemaProvider(
+                applicationContext = applicationContextMock,
+                federationResolver = Optional.empty(),
+                existingTypeDefinitionRegistry = Optional.empty(),
+                methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
+            )
 
         assertDoesNotThrow {
             provider.schema(
@@ -127,7 +135,7 @@ class CustomDirectivesTest {
                     hello: String
                     word: String
                 }
-                """.trimIndent()
+                """.trimIndent(),
             )
         }
     }

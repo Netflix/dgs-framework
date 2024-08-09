@@ -30,7 +30,6 @@ import java.util.Optional
 import kotlin.reflect.KClass
 
 class DgsTypeRegistryDefinitionTest {
-
     private val contextRunner = ApplicationContextRunner()
 
     /**
@@ -45,9 +44,16 @@ class DgsTypeRegistryDefinitionTest {
                 val newRegistry = TypeDefinitionRegistry()
 
                 val query =
-                    ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query").fieldDefinition(
-                        FieldDefinition.newFieldDefinition().name("dynamicField").type(TypeName("String")).build()
-                    ).build()
+                    ObjectTypeExtensionDefinition
+                        .newObjectTypeExtensionDefinition()
+                        .name("Query")
+                        .fieldDefinition(
+                            FieldDefinition
+                                .newFieldDefinition()
+                                .name("dynamicField")
+                                .type(TypeName("String"))
+                                .build(),
+                        ).build()
 
                 newRegistry.add(query)
 
@@ -58,28 +64,28 @@ class DgsTypeRegistryDefinitionTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "dynamicField")
-            fun dynamicField(): String {
-                return "hello from dgs"
-            }
+            fun dynamicField(): String = "hello from dgs"
         }
 
         contextRunner.withBeans(FetcherWithRegistry::class, Fetcher::class).run { context ->
-            val provider = DgsSchemaProvider(
-                applicationContext = context,
-                federationResolver = Optional.empty(),
-                existingTypeDefinitionRegistry = Optional.empty(),
-                methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
-            )
+            val provider =
+                DgsSchemaProvider(
+                    applicationContext = context,
+                    federationResolver = Optional.empty(),
+                    existingTypeDefinitionRegistry = Optional.empty(),
+                    methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
+                )
 
             val schema = provider.schema().graphQLSchema
             val graphql = GraphQL.newGraphQL(schema).build()
-            val result = graphql.execute(
-                """
-            {
-                dynamicField
-            }
-                """.trimIndent()
-            )
+            val result =
+                graphql.execute(
+                    """
+                    {
+                        dynamicField
+                    }
+                    """.trimIndent(),
+                )
 
             val data = result.getData<Map<String, Any>>()
             assertThat(data["dynamicField"]).isEqualTo("hello from dgs")
@@ -95,9 +101,16 @@ class DgsTypeRegistryDefinitionTest {
                 val newRegistry = TypeDefinitionRegistry()
 
                 val query =
-                    ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query").fieldDefinition(
-                        FieldDefinition.newFieldDefinition().name("dynamicField").type(TypeName("String")).build()
-                    ).build()
+                    ObjectTypeExtensionDefinition
+                        .newObjectTypeExtensionDefinition()
+                        .name("Query")
+                        .fieldDefinition(
+                            FieldDefinition
+                                .newFieldDefinition()
+                                .name("dynamicField")
+                                .type(TypeName("String"))
+                                .build(),
+                        ).build()
 
                 newRegistry.add(query)
 
@@ -112,9 +125,16 @@ class DgsTypeRegistryDefinitionTest {
                 val newRegistry = TypeDefinitionRegistry()
 
                 val query =
-                    ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition().name("Query").fieldDefinition(
-                        FieldDefinition.newFieldDefinition().name("number").type(TypeName("Int")).build()
-                    ).build()
+                    ObjectTypeExtensionDefinition
+                        .newObjectTypeExtensionDefinition()
+                        .name("Query")
+                        .fieldDefinition(
+                            FieldDefinition
+                                .newFieldDefinition()
+                                .name("number")
+                                .type(TypeName("Int"))
+                                .build(),
+                        ).build()
 
                 newRegistry.add(query)
 
@@ -125,42 +145,46 @@ class DgsTypeRegistryDefinitionTest {
         @DgsComponent
         class QueryFetcher {
             @DgsData(parentType = "Query", field = "dynamicField")
-            fun dynamicField(): String {
-                return "hello from dgs"
-            }
+            fun dynamicField(): String = "hello from dgs"
         }
 
         @DgsComponent
         class NumberFetcher {
             @DgsData(parentType = "Query", field = "number")
-            fun dynamicField(): Int {
-                return 1
-            }
+            fun dynamicField(): Int = 1
         }
 
-        contextRunner.withBeans(RegistryComponent::class, AnotherRegistryComponent::class, QueryFetcher::class, NumberFetcher::class).run { context ->
-            val provider = DgsSchemaProvider(
-                applicationContext = context,
-                federationResolver = Optional.empty(),
-                existingTypeDefinitionRegistry = Optional.empty(),
-                methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
-            )
+        contextRunner
+            .withBeans(
+                RegistryComponent::class,
+                AnotherRegistryComponent::class,
+                QueryFetcher::class,
+                NumberFetcher::class,
+            ).run { context ->
+                val provider =
+                    DgsSchemaProvider(
+                        applicationContext = context,
+                        federationResolver = Optional.empty(),
+                        existingTypeDefinitionRegistry = Optional.empty(),
+                        methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
+                    )
 
-            val schema = provider.schema().graphQLSchema
-            val graphql = GraphQL.newGraphQL(schema).build()
-            val result = graphql.execute(
-                """
-            {
-                dynamicField
-                number
+                val schema = provider.schema().graphQLSchema
+                val graphql = GraphQL.newGraphQL(schema).build()
+                val result =
+                    graphql.execute(
+                        """
+                        {
+                            dynamicField
+                            number
+                        }
+                        """.trimIndent(),
+                    )
+
+                val data = result.getData<Map<String, Any>>()
+                assertThat(data["dynamicField"]).isEqualTo("hello from dgs")
+                assertThat(data["number"]).isEqualTo(1)
             }
-                """.trimIndent()
-            )
-
-            val data = result.getData<Map<String, Any>>()
-            assertThat(data["dynamicField"]).isEqualTo("hello from dgs")
-            assertThat(data["number"]).isEqualTo(1)
-        }
     }
 
     private fun ApplicationContextRunner.withBeans(vararg beanClasses: KClass<*>): ApplicationContextRunner {

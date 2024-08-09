@@ -38,7 +38,10 @@ interface InputObjectMapper {
      * @param targetClass The class to convert to.
      * @return The converted object
      */
-    fun <T : Any> mapToKotlinObject(inputMap: Map<String, *>, targetClass: KClass<T>): T
+    fun <T : Any> mapToKotlinObject(
+        inputMap: Map<String, *>,
+        targetClass: KClass<T>,
+    ): T
 
     /**
      * Convert a map of input values to a Java object.
@@ -46,5 +49,8 @@ interface InputObjectMapper {
      * @param targetClass The class to convert to.
      * @return The converted object
      */
-    fun <T> mapToJavaObject(inputMap: Map<String, *>, targetClass: Class<T>): T
+    fun <T> mapToJavaObject(
+        inputMap: Map<String, *>,
+        targetClass: Class<T>,
+    ): T
 }

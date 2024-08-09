@@ -29,31 +29,39 @@ import org.dataloader.MappedBatchLoaderWithContext
 import java.util.concurrent.CompletionStage
 
 class DgsDataLoaderInstrumentationDataLoaderCustomizer(
-    private val instrumentations: List<DgsDataLoaderInstrumentation>
+    private val instrumentations: List<DgsDataLoaderInstrumentation>,
 ) : DgsDataLoaderCustomizer {
-    override fun provide(original: BatchLoader<*, *>, name: String): Any {
-        throw DgsDataLoaderInstrumentationException(name)
-    }
+    override fun provide(
+        original: BatchLoader<*, *>,
+        name: String,
+    ): Any = throw DgsDataLoaderInstrumentationException(name)
 
-    override fun provide(original: BatchLoaderWithContext<*, *>, name: String): Any {
-        return BatchLoaderWithContextInstrumentationDriver(original, name, instrumentations)
-    }
+    override fun provide(
+        original: BatchLoaderWithContext<*, *>,
+        name: String,
+    ): Any = BatchLoaderWithContextInstrumentationDriver(original, name, instrumentations)
 
-    override fun provide(original: MappedBatchLoader<*, *>, name: String): Any {
-        throw DgsDataLoaderInstrumentationException(name)
-    }
+    override fun provide(
+        original: MappedBatchLoader<*, *>,
+        name: String,
+    ): Any = throw DgsDataLoaderInstrumentationException(name)
 
-    override fun provide(original: MappedBatchLoaderWithContext<*, *>, name: String): Any {
-        return MappedBatchLoaderWithContextInstrumentationDriver(original, name, instrumentations)
-    }
+    override fun provide(
+        original: MappedBatchLoaderWithContext<*, *>,
+        name: String,
+    ): Any = MappedBatchLoaderWithContextInstrumentationDriver(original, name, instrumentations)
 }
 
 internal class BatchLoaderWithContextInstrumentationDriver<K : Any, V>(
     private val original: BatchLoaderWithContext<K, V>,
     private val name: String,
-    private val instrumentations: List<DgsDataLoaderInstrumentation>
-) : BatchLoaderWithContext<K, V>, DgsDataLoaderRegistryConsumer {
-    override fun load(keys: List<K>, environment: BatchLoaderEnvironment): CompletionStage<List<V>> {
+    private val instrumentations: List<DgsDataLoaderInstrumentation>,
+) : BatchLoaderWithContext<K, V>,
+    DgsDataLoaderRegistryConsumer {
+    override fun load(
+        keys: List<K>,
+        environment: BatchLoaderEnvironment,
+    ): CompletionStage<List<V>> {
         val contexts = instrumentations.map { it.onDispatch(name, keys, environment) }
         val future = original.load(keys, environment)
 
@@ -77,9 +85,13 @@ internal class BatchLoaderWithContextInstrumentationDriver<K : Any, V>(
 internal class MappedBatchLoaderWithContextInstrumentationDriver<K : Any, V>(
     private val original: MappedBatchLoaderWithContext<K, V>,
     private val name: String,
-    private val instrumentations: List<DgsDataLoaderInstrumentation>
-) : MappedBatchLoaderWithContext<K, V>, DgsDataLoaderRegistryConsumer {
-    override fun load(keys: Set<K>, environment: BatchLoaderEnvironment): CompletionStage<Map<K, V>> {
+    private val instrumentations: List<DgsDataLoaderInstrumentation>,
+) : MappedBatchLoaderWithContext<K, V>,
+    DgsDataLoaderRegistryConsumer {
+    override fun load(
+        keys: Set<K>,
+        environment: BatchLoaderEnvironment,
+    ): CompletionStage<Map<K, V>> {
         val keysList = keys.toList()
         val contexts = instrumentations.map { it.onDispatch(name, keysList, environment) }
 

@@ -58,293 +58,337 @@ internal class DefaultDgsReactiveQueryExecutorTest {
 
     @BeforeEach
     fun createExecutor() {
-        val fetcher = object : Any() {
-            @DgsData(parentType = "Query", field = "hello")
-            fun hello(): String {
-                return "hi!"
+        val fetcher =
+            object : Any() {
+                @DgsData(parentType = "Query", field = "hello")
+                fun hello(): String = "hi!"
             }
-        }
 
-        val numbersFetcher = object : Any() {
-            @DgsData(parentType = "Query", field = "numbers")
-            fun hello(): List<Int> {
-                return listOf(1, 2, 3)
+        val numbersFetcher =
+            object : Any() {
+                @DgsData(parentType = "Query", field = "numbers")
+                fun hello(): List<Int> = listOf(1, 2, 3)
             }
-        }
 
-        val moviesFetcher = object : Any() {
-            @DgsData(parentType = "Query", field = "movies")
-            fun movies(): List<Movie> {
-                return listOf(Movie("Extraction", LocalDateTime.MIN), Movie("Da 5 Bloods", LocalDateTime.MAX))
+        val moviesFetcher =
+            object : Any() {
+                @DgsData(parentType = "Query", field = "movies")
+                fun movies(): List<Movie> = listOf(Movie("Extraction", LocalDateTime.MIN), Movie("Da 5 Bloods", LocalDateTime.MAX))
             }
-        }
 
-        val fetcherWithError = object : Any() {
-            @DgsData(parentType = "Query", field = "withError")
-            fun withError(): String {
-                throw RuntimeException("Broken!")
+        val fetcherWithError =
+            object : Any() {
+                @DgsData(parentType = "Query", field = "withError")
+                fun withError(): String = throw RuntimeException("Broken!")
             }
-        }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "helloFetcher",
-                fetcher
-            ),
-            Pair("numbersFetcher", numbersFetcher),
-            Pair("moviesFetcher", moviesFetcher),
-            Pair("withErrorFetcher", fetcherWithError)
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(
-            Pair(
-                "DateTimeScalar",
-                LocalDateTimeScalar()
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+            mapOf(
+                Pair(
+                    "helloFetcher",
+                    fetcher,
+                ),
+                Pair("numbersFetcher", numbersFetcher),
+                Pair("moviesFetcher", moviesFetcher),
+                Pair("withErrorFetcher", fetcherWithError),
             )
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns
+            mapOf(
+                Pair(
+                    "DateTimeScalar",
+                    LocalDateTimeScalar(),
+                ),
+            )
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
         every { dgsDataLoaderProvider.buildRegistryWithContextSupplier(any<Supplier<Any>>()) } returns DataLoaderRegistry()
 
-        val provider = DgsSchemaProvider(
-            applicationContextMock,
-            federationResolver = Optional.empty(),
-            dataFetcherExceptionHandler = Optional.empty(),
-            existingTypeDefinitionRegistry = Optional.empty(),
-            methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
-        )
+        val provider =
+            DgsSchemaProvider(
+                applicationContextMock,
+                federationResolver = Optional.empty(),
+                dataFetcherExceptionHandler = Optional.empty(),
+                existingTypeDefinitionRegistry = Optional.empty(),
+                methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
+            )
 
-        val schema = provider.schema(
-            """
-            type Query {
-                hello: String
-                numbers: [Int]
-                movies: [Movie]
-                withError: String
-            }
+        val schema =
+            provider
+                .schema(
+                    """
+                    type Query {
+                        hello: String
+                        numbers: [Int]
+                        movies: [Movie]
+                        withError: String
+                    }
 
-            type Movie {
-                title: String
-                releaseDate: DateTime
-            }
+                    type Movie {
+                        title: String
+                        releaseDate: DateTime
+                    }
 
-            type Person {
-                name: String
-            }
+                    type Person {
+                        name: String
+                    }
 
-            scalar DateTime
-            """.trimIndent()
-        ).graphQLSchema
+                    scalar DateTime
+                    """.trimIndent(),
+                ).graphQLSchema
 
-        dgsQueryExecutor = DefaultDgsReactiveQueryExecutor(
-            defaultSchema = schema,
-            schemaProvider = provider,
-            dataLoaderProvider = dgsDataLoaderProvider,
-            contextBuilder = DefaultDgsReactiveGraphQLContextBuilder(Optional.empty()),
-            instrumentation = SimplePerformantInstrumentation.INSTANCE,
-            queryExecutionStrategy = AsyncExecutionStrategy(),
-            mutationExecutionStrategy = AsyncSerialExecutionStrategy(),
-            idProvider = Optional.empty()
-        )
+        dgsQueryExecutor =
+            DefaultDgsReactiveQueryExecutor(
+                defaultSchema = schema,
+                schemaProvider = provider,
+                dataLoaderProvider = dgsDataLoaderProvider,
+                contextBuilder = DefaultDgsReactiveGraphQLContextBuilder(Optional.empty()),
+                instrumentation = SimplePerformantInstrumentation.INSTANCE,
+                queryExecutionStrategy = AsyncExecutionStrategy(),
+                mutationExecutionStrategy = AsyncSerialExecutionStrategy(),
+                idProvider = Optional.empty(),
+            )
     }
 
     @Test
     fun extractJsonWithString() {
-        val helloResult = dgsQueryExecutor.executeAndExtractJsonPath<String>(
-            """
-            {
-                hello
-            }
-            """.trimIndent(),
-            "data.hello"
-        )
+        val helloResult =
+            dgsQueryExecutor.executeAndExtractJsonPath<String>(
+                """
+                {
+                    hello
+                }
+                """.trimIndent(),
+                "data.hello",
+            )
 
-        StepVerifier.create(helloResult).assertNext {
-            assertThat(it).isEqualTo("hi!")
-        }.verifyComplete()
+        StepVerifier
+            .create(helloResult)
+            .assertNext {
+                assertThat(it).isEqualTo("hi!")
+            }.verifyComplete()
     }
 
     @Test
     fun extractJsonWithListOfString() {
-        val numbers = dgsQueryExecutor.executeAndExtractJsonPath<List<Int>>(
-            """
-            {
-                numbers
-            }
-            """.trimIndent(),
-            "data.numbers"
-        )
+        val numbers =
+            dgsQueryExecutor.executeAndExtractJsonPath<List<Int>>(
+                """
+                {
+                    numbers
+                }
+                """.trimIndent(),
+                "data.numbers",
+            )
 
-        StepVerifier.create(numbers).assertNext {
-            assertThat(it).isEqualTo(listOf(1, 2, 3))
-        }.verifyComplete()
+        StepVerifier
+            .create(numbers)
+            .assertNext {
+                assertThat(it).isEqualTo(listOf(1, 2, 3))
+            }.verifyComplete()
     }
 
     @Test
     fun extractJsonWithObjectListAsMap() {
-        val movies = dgsQueryExecutor.executeAndExtractJsonPath<List<Map<String, Any>>>(
-            """
-            {
-                movies { title releaseDate }
-            }
-            """.trimIndent(),
-            "data.movies"
-        )
+        val movies =
+            dgsQueryExecutor.executeAndExtractJsonPath<List<Map<String, Any>>>(
+                """
+                {
+                    movies { title releaseDate }
+                }
+                """.trimIndent(),
+                "data.movies",
+            )
 
-        StepVerifier.create(movies).assertNext {
-            assertThat(it[0]["title"]).isEqualTo("Extraction")
-            assertThat(LocalDateTime.parse(it[0]["releaseDate"] as CharSequence))
-                .isEqualTo(LocalDateTime.MIN)
-        }.verifyComplete()
+        StepVerifier
+            .create(movies)
+            .assertNext {
+                assertThat(it[0]["title"]).isEqualTo("Extraction")
+                assertThat(LocalDateTime.parse(it[0]["releaseDate"] as CharSequence))
+                    .isEqualTo(LocalDateTime.MIN)
+            }.verifyComplete()
     }
 
     @Test
     fun extractJsonAsObjectAsMap() {
-        val movie = dgsQueryExecutor.executeAndExtractJsonPath<Map<String, Any>>(
-            """
-            {
-                movies { title releaseDate }
-            }
-            """.trimIndent(),
-            "data.movies[0]"
-        )
+        val movie =
+            dgsQueryExecutor.executeAndExtractJsonPath<Map<String, Any>>(
+                """
+                {
+                    movies { title releaseDate }
+                }
+                """.trimIndent(),
+                "data.movies[0]",
+            )
 
-        StepVerifier.create(movie).assertNext {
-            assertThat(it["title"]).isEqualTo("Extraction")
-            assertThat(LocalDateTime.parse(it["releaseDate"] as CharSequence)).isEqualTo(LocalDateTime.MIN)
-        }.verifyComplete()
+        StepVerifier
+            .create(movie)
+            .assertNext {
+                assertThat(it["title"]).isEqualTo("Extraction")
+                assertThat(LocalDateTime.parse(it["releaseDate"] as CharSequence)).isEqualTo(LocalDateTime.MIN)
+            }.verifyComplete()
     }
 
     @Test
     fun extractJsonAsObject() {
-        val movie = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
-            """
-            {
-                movies { title releaseDate }
-            }
-            """.trimIndent(),
-            "data.movies[0]",
-            Movie::class.java
-        )
+        val movie =
+            dgsQueryExecutor.executeAndExtractJsonPathAsObject(
+                """
+                {
+                    movies { title releaseDate }
+                }
+                """.trimIndent(),
+                "data.movies[0]",
+                Movie::class.java,
+            )
 
-        StepVerifier.create(movie).assertNext {
-            assertThat(it.title).isEqualTo("Extraction")
-            assertThat(it.releaseDate).isEqualTo(LocalDateTime.MIN)
-        }.verifyComplete()
+        StepVerifier
+            .create(movie)
+            .assertNext {
+                assertThat(it.title).isEqualTo("Extraction")
+                assertThat(it.releaseDate).isEqualTo(LocalDateTime.MIN)
+            }.verifyComplete()
     }
 
     @Test
     fun extractJsonAsObjectWithTypeRef() {
-        val person = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
-            """
-            {
-                movies { title releaseDate }
-            }
-            """.trimIndent(),
-            "data.movies",
-            object : TypeRef<List<Movie>>() {}
-        )
+        val person =
+            dgsQueryExecutor.executeAndExtractJsonPathAsObject(
+                """
+                {
+                    movies { title releaseDate }
+                }
+                """.trimIndent(),
+                "data.movies",
+                object : TypeRef<List<Movie>>() {},
+            )
 
-        StepVerifier.create(person).assertNext {
-            assertThat(it).isInstanceOf(List::class.java)
-            assertThat(it[0]).isExactlyInstanceOf(Movie::class.java)
-        }.verifyComplete()
+        StepVerifier
+            .create(person)
+            .assertNext {
+                assertThat(it).isInstanceOf(List::class.java)
+                assertThat(it[0]).isExactlyInstanceOf(Movie::class.java)
+            }.verifyComplete()
     }
 
     @Test
     fun extractError() {
-        val withError = dgsQueryExecutor.executeAndExtractJsonPath<String>(
-            """
-            {
-                withError
-            }
-            """.trimIndent(),
-            "data.withError"
-        )
+        val withError =
+            dgsQueryExecutor.executeAndExtractJsonPath<String>(
+                """
+                {
+                    withError
+                }
+                """.trimIndent(),
+                "data.withError",
+            )
 
         StepVerifier.create(withError).verifyError(QueryException::class.java)
     }
 
     @Test
     fun extractJsonAsObjectError() {
-        val withError = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
-            """
-            {
-                movies { title }
-            }
-            """.trimIndent(),
-            "data.movies[0]",
-            String::class.java
-        )
+        val withError =
+            dgsQueryExecutor.executeAndExtractJsonPathAsObject(
+                """
+                {
+                    movies { title }
+                }
+                """.trimIndent(),
+                "data.movies[0]",
+                String::class.java,
+            )
 
-        StepVerifier.create(withError).consumeErrorWith {
-            assertThat(it).isInstanceOf(DgsQueryExecutionDataExtractionException::class.java)
-            if (it is DgsQueryExecutionDataExtractionException) {
-                assertThat(it.message).isEqualTo("Error deserializing data from '{\"data\":{\"movies\":[{\"title\":\"Extraction\"},{\"title\":\"Da 5 Bloods\"}]}}' with JsonPath 'data.movies[0]' and target class java.lang.String")
-                assertThat(it.cause).isInstanceOf(MappingException::class.java)
+        StepVerifier
+            .create(withError)
+            .consumeErrorWith {
+                assertThat(it).isInstanceOf(DgsQueryExecutionDataExtractionException::class.java)
+                if (it is DgsQueryExecutionDataExtractionException) {
+                    assertThat(
+                        it.message,
+                    ).isEqualTo(
+                        "Error deserializing data from '{\"data\":{\"movies\":[{\"title\":\"Extraction\"},{\"title\":\"Da 5 Bloods\"}]}}' with JsonPath 'data.movies[0]' and target class java.lang.String",
+                    )
+                    assertThat(it.cause).isInstanceOf(MappingException::class.java)
 
-                assertThat(it.jsonResult).isEqualTo("{\"data\":{\"movies\":[{\"title\":\"Extraction\"},{\"title\":\"Da 5 Bloods\"}]}}")
-                assertThat(it.jsonPath).isEqualTo("data.movies[0]")
-                assertThat(it.targetClass).isEqualTo(String::class.java.name)
-            }
-        }.verify()
+                    assertThat(it.jsonResult).isEqualTo("{\"data\":{\"movies\":[{\"title\":\"Extraction\"},{\"title\":\"Da 5 Bloods\"}]}}")
+                    assertThat(it.jsonPath).isEqualTo("data.movies[0]")
+                    assertThat(it.targetClass).isEqualTo(String::class.java.name)
+                }
+            }.verify()
     }
 
     @Test
     fun extractJsonAsTypeRefError() {
-        val withError = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
-            """
-            {
-                movies { title }
-            }
-            """.trimIndent(),
-            "data.movies[0]",
-            object : TypeRef<List<String>>() {}
-        )
+        val withError =
+            dgsQueryExecutor.executeAndExtractJsonPathAsObject(
+                """
+                {
+                    movies { title }
+                }
+                """.trimIndent(),
+                "data.movies[0]",
+                object : TypeRef<List<String>>() {},
+            )
 
-        StepVerifier.create(withError).consumeErrorWith {
-            assertThat(it).isInstanceOf(DgsQueryExecutionDataExtractionException::class.java)
-            if (it is DgsQueryExecutionDataExtractionException) {
-                assertThat(it.message).isEqualTo("Error deserializing data from '{\"data\":{\"movies\":[{\"title\":\"Extraction\"},{\"title\":\"Da 5 Bloods\"}]}}' with JsonPath 'data.movies[0]' and target class java.util.List<? extends java.lang.String>")
-                assertThat(it.cause).isInstanceOf(MappingException::class.java)
-                assertThat(it.jsonResult).isEqualTo("{\"data\":{\"movies\":[{\"title\":\"Extraction\"},{\"title\":\"Da 5 Bloods\"}]}}")
-                assertThat(it.jsonPath).isEqualTo("data.movies[0]")
-                assertThat(it.targetClass).isEqualTo("java.util.List<? extends java.lang.String>")
-            }
-        }.verify()
+        StepVerifier
+            .create(withError)
+            .consumeErrorWith {
+                assertThat(it).isInstanceOf(DgsQueryExecutionDataExtractionException::class.java)
+                if (it is DgsQueryExecutionDataExtractionException) {
+                    assertThat(
+                        it.message,
+                    ).isEqualTo(
+                        "Error deserializing data from '{\"data\":{\"movies\":[{\"title\":\"Extraction\"},{\"title\":\"Da 5 Bloods\"}]}}' with JsonPath 'data.movies[0]' and target class java.util.List<? extends java.lang.String>",
+                    )
+                    assertThat(it.cause).isInstanceOf(MappingException::class.java)
+                    assertThat(it.jsonResult).isEqualTo("{\"data\":{\"movies\":[{\"title\":\"Extraction\"},{\"title\":\"Da 5 Bloods\"}]}}")
+                    assertThat(it.jsonPath).isEqualTo("data.movies[0]")
+                    assertThat(it.targetClass).isEqualTo("java.util.List<? extends java.lang.String>")
+                }
+            }.verify()
     }
 
     @Test
     fun documentContext() {
-        val context = dgsQueryExecutor.executeAndGetDocumentContext(
-            """
-            {
-                movies { title releaseDate }
-            }
-            """.trimIndent()
-        )
+        val context =
+            dgsQueryExecutor.executeAndGetDocumentContext(
+                """
+                {
+                    movies { title releaseDate }
+                }
+                """.trimIndent(),
+            )
 
-        StepVerifier.create(context).assertNext {
-            val movieList = it.read("data.movies", object : TypeRef<List<Movie>>() {})
-            assertThat(movieList.size).isEqualTo(2)
-            val movie = it.read("data.movies[0]", Movie::class.java)
-            assertThat(movie).isNotNull
-        }.verifyComplete()
+        StepVerifier
+            .create(context)
+            .assertNext {
+                val movieList = it.read("data.movies", object : TypeRef<List<Movie>>() {})
+                assertThat(movieList.size).isEqualTo(2)
+                val movie = it.read("data.movies[0]", Movie::class.java)
+                assertThat(movie).isNotNull
+            }.verifyComplete()
     }
 
     @Test
     fun documentContextWithTypename() {
-        val context = dgsQueryExecutor.executeAndGetDocumentContext(
-            """
-            {
-                movies { title __typename }
-            }
-            """.trimIndent()
-        )
+        val context =
+            dgsQueryExecutor.executeAndGetDocumentContext(
+                """
+                {
+                    movies { title __typename }
+                }
+                """.trimIndent(),
+            )
 
-        StepVerifier.create(context).assertNext {
-            val movie = it.read("data.movies[0]", Movie::class.java)
-            assertThat(movie).isNotNull
-        }.verifyComplete()
+        StepVerifier
+            .create(context)
+            .assertNext {
+                val movie = it.read("data.movies[0]", Movie::class.java)
+                assertThat(movie).isNotNull
+            }.verifyComplete()
     }
 
-    private data class Movie(val title: String, val releaseDate: LocalDateTime?)
+    private data class Movie(
+        val title: String,
+        val releaseDate: LocalDateTime?,
+    )
 }

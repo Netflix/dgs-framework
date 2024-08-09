@@ -24,7 +24,6 @@ import graphql.schema.idl.TypeDefinitionRegistry
 
 @DgsComponent
 class DgsPaginationTypeDefinitionRegistry {
-
     companion object {
         private const val CONNECTION_DIRECTIVE_NAME = "connection"
         private const val PAGE_INFO_TYPE_NAME = "PageInfo"
@@ -37,13 +36,16 @@ class DgsPaginationTypeDefinitionRegistry {
         val typeDefinitionRegistry = TypeDefinitionRegistry()
         typeDefinitionRegistry.addAll(connectionTypes)
         if (schemaRegistry.getDirectiveDefinition(CONNECTION_DIRECTIVE_NAME).isEmpty) {
-            val directive = DirectiveDefinition.newDirectiveDefinition()
-                .name(CONNECTION_DIRECTIVE_NAME)
-                .description(createDescription("Connection"))
-                .directiveLocation(DirectiveLocation.newDirectiveLocation().name(Introspection.DirectiveLocation.OBJECT.name).build())
-                .directiveLocation(DirectiveLocation.newDirectiveLocation().name(Introspection.DirectiveLocation.INTERFACE.name).build())
-                .directiveLocation(DirectiveLocation.newDirectiveLocation().name(Introspection.DirectiveLocation.UNION.name).build())
-                .build()
+            val directive =
+                DirectiveDefinition
+                    .newDirectiveDefinition()
+                    .name(CONNECTION_DIRECTIVE_NAME)
+                    .description(createDescription("Connection"))
+                    .directiveLocation(DirectiveLocation.newDirectiveLocation().name(Introspection.DirectiveLocation.OBJECT.name).build())
+                    .directiveLocation(
+                        DirectiveLocation.newDirectiveLocation().name(Introspection.DirectiveLocation.INTERFACE.name).build(),
+                    ).directiveLocation(DirectiveLocation.newDirectiveLocation().name(Introspection.DirectiveLocation.UNION.name).build())
+                    .build()
             typeDefinitionRegistry.add(directive)
         }
 
@@ -69,26 +71,27 @@ class DgsPaginationTypeDefinitionRegistry {
         return definitions
     }
 
-    private fun createConnection(type: String): ObjectTypeDefinition {
-        return ObjectTypeDefinition.newObjectTypeDefinition()
+    private fun createConnection(type: String): ObjectTypeDefinition =
+        ObjectTypeDefinition
+            .newObjectTypeDefinition()
             .name(type + "Connection")
             .description(createDescription("$type Connection"))
             .fieldDefinition(createFieldDefinition("edges", ListType(TypeName(type + "Edge"))))
             .fieldDefinition(createFieldDefinition("pageInfo", NonNullType(TypeName("PageInfo"))))
             .build()
-    }
 
-    private fun createEdge(type: String): ObjectTypeDefinition {
-        return ObjectTypeDefinition.newObjectTypeDefinition()
+    private fun createEdge(type: String): ObjectTypeDefinition =
+        ObjectTypeDefinition
+            .newObjectTypeDefinition()
             .name(type + "Edge")
             .description(createDescription("$type Edge"))
             .fieldDefinition(createFieldDefinition("cursor", TypeName("String")))
             .fieldDefinition(createFieldDefinition("node", TypeName(type)))
             .build()
-    }
 
-    private fun createPageInfo(): ObjectTypeDefinition {
-        return ObjectTypeDefinition.newObjectTypeDefinition()
+    private fun createPageInfo(): ObjectTypeDefinition =
+        ObjectTypeDefinition
+            .newObjectTypeDefinition()
             .name(PAGE_INFO_TYPE_NAME)
             .description(createDescription(PAGE_INFO_TYPE_NAME))
             .fieldDefinition(createFieldDefinition("hasPreviousPage", NonNullType(TypeName("Boolean"))))
@@ -96,17 +99,17 @@ class DgsPaginationTypeDefinitionRegistry {
             .fieldDefinition(createFieldDefinition("startCursor", TypeName("String")))
             .fieldDefinition(createFieldDefinition("endCursor", TypeName("String")))
             .build()
-    }
 
-    private fun createFieldDefinition(name: String, type: Type<*>): FieldDefinition {
-        return FieldDefinition.newFieldDefinition()
+    private fun createFieldDefinition(
+        name: String,
+        type: Type<*>,
+    ): FieldDefinition =
+        FieldDefinition
+            .newFieldDefinition()
             .name(name)
             .type(type)
             .description(createDescription("Field $name"))
             .build()
-    }
 
-    private fun createDescription(content: String): Description {
-        return Description(content, SourceLocation.EMPTY, false)
-    }
+    private fun createDescription(content: String): Description = Description(content, SourceLocation.EMPTY, false)
 }

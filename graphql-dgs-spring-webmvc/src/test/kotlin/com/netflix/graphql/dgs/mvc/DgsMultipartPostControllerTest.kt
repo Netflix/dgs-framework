@@ -37,7 +37,6 @@ import org.springframework.web.multipart.MultipartFile
 
 @WebMvcTest(DgsRestController::class)
 class DgsMultipartPostControllerTest {
-
     @SpringBootApplication
     open class App
 
@@ -55,14 +54,15 @@ class DgsMultipartPostControllerTest {
         val queryString = "mutation(\$file: Upload!) {uploadFile(file: \$file)}"
 
         @Language("JSON")
-        val operation = """
+        val operation =
+            """
             { 
                 "query": "$queryString",
                 "variables": { 
                     "file": null
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @Language("JSON")
         val varParameters = """{"0": ["variables.file"]}"""
@@ -76,33 +76,35 @@ class DgsMultipartPostControllerTest {
                 any(),
                 any(),
                 any(),
-                any()
-            )
+                any(),
+            ),
         ).thenReturn(
-            ExecutionResultImpl.newExecutionResult().data(mapOf("Response" to "success")).build()
+            ExecutionResultImpl.newExecutionResult().data(mapOf("Response" to "success")).build(),
         )
 
-        mvc.multipart("/graphql") {
-            contentType = MediaType.MULTIPART_FORM_DATA
-            param("operations", operation)
-            param("map", varParameters)
-            file(file1)
-        }.andExpect {
-            status { is4xxClientError() }
-        }
+        mvc
+            .multipart("/graphql") {
+                contentType = MediaType.MULTIPART_FORM_DATA
+                param("operations", operation)
+                param("map", varParameters)
+                file(file1)
+            }.andExpect {
+                status { is4xxClientError() }
+            }
     }
 
     @Test
     fun singleFileUpload() {
         @Language("JSON")
-        val operation = """
+        val operation =
+            """
             { 
                 "query": "mutation(${'$'}file: Upload!) {uploadFile(file: ${'$'}file)}",
                 "variables": { 
                     "file": null
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @Language("JSON")
         val varParameters = """{"foo": ["variables.file"]}"""
@@ -116,36 +118,38 @@ class DgsMultipartPostControllerTest {
                 any(),
                 any(),
                 any(),
-                any()
-            )
+                any(),
+            ),
         ).thenReturn(
-            ExecutionResultImpl.newExecutionResult().data(mapOf("Response" to "success")).build()
+            ExecutionResultImpl.newExecutionResult().data(mapOf("Response" to "success")).build(),
         )
 
-        mvc.multipart("/graphql") {
-            contentType = MediaType.MULTIPART_FORM_DATA
-            header(GraphQLCSRFRequestHeaderValidationRule.HEADER_GRAPHQL_REQUIRE_PREFLIGHT, "true")
-            param("operations", operation)
-            param("map", varParameters)
-            file("foo", "Hello world".toByteArray())
-        }.andExpect {
-            status { isOk() }
-            jsonPath("errors") {
-                doesNotExist()
+        mvc
+            .multipart("/graphql") {
+                contentType = MediaType.MULTIPART_FORM_DATA
+                header(GraphQLCSRFRequestHeaderValidationRule.HEADER_GRAPHQL_REQUIRE_PREFLIGHT, "true")
+                param("operations", operation)
+                param("map", varParameters)
+                file("foo", "Hello world".toByteArray())
+            }.andExpect {
+                status { isOk() }
+                jsonPath("errors") {
+                    doesNotExist()
+                }
+                jsonPath("data") {
+                    isMap()
+                }
+                jsonPath("data.Response") {
+                    value("success")
+                }
             }
-            jsonPath("data") {
-                isMap()
-            }
-            jsonPath("data.Response") {
-                value("success")
-            }
-        }
     }
 
     @Test
     fun multipleFileUpload() {
         @Language("JSON")
-        val operation = """
+        val operation =
+            """
             {
                 "query": "mutation(${'$'}input: FileUploadInput!) {uploadFile(input: ${'$'}input)}",
                 "variables": {
@@ -155,7 +159,7 @@ class DgsMultipartPostControllerTest {
                     }
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @Language("JSON")
         val varParameters = """{"0": ["variables.input.files.0"], "1": ["variables.input.files.1"]}"""
@@ -173,44 +177,46 @@ class DgsMultipartPostControllerTest {
                 any(),
                 any(),
                 any(),
-                any()
-            )
+                any(),
+            ),
         ).thenReturn(
-            ExecutionResultImpl.newExecutionResult().data(mapOf("Response" to "success")).build()
+            ExecutionResultImpl.newExecutionResult().data(mapOf("Response" to "success")).build(),
         )
 
-        mvc.multipart("/graphql") {
-            contentType = MediaType.MULTIPART_FORM_DATA
-            header(GraphQLCSRFRequestHeaderValidationRule.HEADER_GRAPHQL_REQUIRE_PREFLIGHT, "true")
-            param("operations", operation)
-            param("map", varParameters)
-            file("0", "Hello world".toByteArray())
-            file("1", "This is an example".toByteArray())
-        }.andExpect {
-            status { isOk() }
-            jsonPath("errors") {
-                doesNotExist()
+        mvc
+            .multipart("/graphql") {
+                contentType = MediaType.MULTIPART_FORM_DATA
+                header(GraphQLCSRFRequestHeaderValidationRule.HEADER_GRAPHQL_REQUIRE_PREFLIGHT, "true")
+                param("operations", operation)
+                param("map", varParameters)
+                file("0", "Hello world".toByteArray())
+                file("1", "This is an example".toByteArray())
+            }.andExpect {
+                status { isOk() }
+                jsonPath("errors") {
+                    doesNotExist()
+                }
+                jsonPath("data") {
+                    isMap()
+                }
+                jsonPath("data.Response") {
+                    value("success")
+                }
             }
-            jsonPath("data") {
-                isMap()
-            }
-            jsonPath("data.Response") {
-                value("success")
-            }
-        }
     }
 
     @Test
     fun arrayOfFilesUpload() {
         @Language("JSON")
-        val operation = """
+        val operation =
+            """
             {
                 "query": "mutation(${'$'}files: [Upload!]!) {uploadFile(files: ${'$'}files)}",
                 "variables": {
                     "files": [null, null]
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @Language("JSON")
         val varParameters = """{"0": ["variables.files.0"], "1": ["variables.files.1"]}"""
@@ -227,90 +233,96 @@ class DgsMultipartPostControllerTest {
                 any(),
                 any(),
                 any(),
-                any()
-            )
+                any(),
+            ),
         ).thenReturn(
-            ExecutionResultImpl.newExecutionResult().data(mapOf("Response" to "success")).build()
+            ExecutionResultImpl.newExecutionResult().data(mapOf("Response" to "success")).build(),
         )
 
-        mvc.multipart("/graphql") {
-            contentType = MediaType.MULTIPART_FORM_DATA
-            header(GraphQLCSRFRequestHeaderValidationRule.HEADER_GRAPHQL_REQUIRE_PREFLIGHT, "true")
-            param("operations", operation)
-            param("map", varParameters)
-            file("0", "Hello world".toByteArray())
-            file("1", "This is an example".toByteArray())
-        }.andExpect {
-            status { isOk() }
-            jsonPath("errors") {
-                doesNotExist()
+        mvc
+            .multipart("/graphql") {
+                contentType = MediaType.MULTIPART_FORM_DATA
+                header(GraphQLCSRFRequestHeaderValidationRule.HEADER_GRAPHQL_REQUIRE_PREFLIGHT, "true")
+                param("operations", operation)
+                param("map", varParameters)
+                file("0", "Hello world".toByteArray())
+                file("1", "This is an example".toByteArray())
+            }.andExpect {
+                status { isOk() }
+                jsonPath("errors") {
+                    doesNotExist()
+                }
+                jsonPath("data") {
+                    isMap()
+                }
+                jsonPath("data.Response") {
+                    value("success")
+                }
             }
-            jsonPath("data") {
-                isMap()
-            }
-            jsonPath("data.Response") {
-                value("success")
-            }
-        }
     }
 
     @Test
     fun incorrectFileUploadWithMissingParts() {
         // Missing operations param
-        mvc.multipart("/graphql") {
-            contentType = MediaType.MULTIPART_FORM_DATA
-            header(GraphQLCSRFRequestHeaderValidationRule.HEADER_GRAPHQL_REQUIRE_PREFLIGHT, "true")
-            param("map", """{"0": ["variables.file"]}""")
-            file("0", "Hello world".toByteArray())
-        }.andExpect {
-            status { is4xxClientError() }
-        }
+        mvc
+            .multipart("/graphql") {
+                contentType = MediaType.MULTIPART_FORM_DATA
+                header(GraphQLCSRFRequestHeaderValidationRule.HEADER_GRAPHQL_REQUIRE_PREFLIGHT, "true")
+                param("map", """{"0": ["variables.file"]}""")
+                file("0", "Hello world".toByteArray())
+            }.andExpect {
+                status { is4xxClientError() }
+            }
 
         @Language("JSON")
-        val operation = """
+        val operation =
+            """
             {
                 "query": "mutation(${'$'}files: [Upload!]!) {uploadFile(files: ${'$'}files)}",
                 "variables": {
                     "files": [null, null]
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         // Missing map param
-        mvc.multipart("/graphql") {
-            contentType = MediaType.MULTIPART_FORM_DATA
-            header(GraphQLCSRFRequestHeaderValidationRule.HEADER_GRAPHQL_REQUIRE_PREFLIGHT, "true")
-            param("operations", operation)
-            file("0", "Hello world".toByteArray())
-        }.andExpect {
-            status { is4xxClientError() }
-        }
+        mvc
+            .multipart("/graphql") {
+                contentType = MediaType.MULTIPART_FORM_DATA
+                header(GraphQLCSRFRequestHeaderValidationRule.HEADER_GRAPHQL_REQUIRE_PREFLIGHT, "true")
+                param("operations", operation)
+                file("0", "Hello world".toByteArray())
+            }.andExpect {
+                status { is4xxClientError() }
+            }
     }
 
     @Test
     fun malformedFileUploadWithIncorrectMappedPath() {
         @Language("JSON")
-        val operation = """
+        val operation =
+            """
             {
                 "query": "mutation(${'$'}file: Upload!) {uploadFile(file: ${'$'}file)}",
                 "variables": {
                     "file": null
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         // set up incorrect object mapping path
         @Language("JSON")
         val varParameters = """{"0": ["variables.file.0"]}"""
 
-        mvc.multipart("/graphql") {
-            contentType = MediaType.MULTIPART_FORM_DATA
-            header(GraphQLCSRFRequestHeaderValidationRule.HEADER_GRAPHQL_REQUIRE_PREFLIGHT, "true")
-            param("operations", operation)
-            param("map", varParameters)
-            file("0", "Hello world".toByteArray())
-        }.andExpect {
-            status { is4xxClientError() }
-        }
+        mvc
+            .multipart("/graphql") {
+                contentType = MediaType.MULTIPART_FORM_DATA
+                header(GraphQLCSRFRequestHeaderValidationRule.HEADER_GRAPHQL_REQUIRE_PREFLIGHT, "true")
+                param("operations", operation)
+                param("map", varParameters)
+                file("0", "Hello world".toByteArray())
+            }.andExpect {
+                status { is4xxClientError() }
+            }
     }
 }

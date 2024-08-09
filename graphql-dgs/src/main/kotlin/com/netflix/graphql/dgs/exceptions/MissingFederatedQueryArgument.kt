@@ -16,4 +16,6 @@
 
 package com.netflix.graphql.dgs.exceptions
 
-class MissingFederatedQueryArgument(vararg fields: String) : DgsBadRequestException("The federated query is missing field(s) ${fields.joinToString()}")
+class MissingFederatedQueryArgument(
+    vararg fields: String,
+) : DgsBadRequestException("The federated query is missing field(s) ${fields.joinToString()}")

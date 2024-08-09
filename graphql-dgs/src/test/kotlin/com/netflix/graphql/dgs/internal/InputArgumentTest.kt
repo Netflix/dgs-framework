@@ -77,28 +77,31 @@ import java.util.Optional
 import kotlin.reflect.KClass
 
 internal class InputArgumentTest {
-
     private val contextRunner = ApplicationContextRunner()
 
-    private fun schemaProvider(applicationContext: ApplicationContext) = DgsSchemaProvider(
-        applicationContext = applicationContext,
-        federationResolver = Optional.empty(),
-        existingTypeDefinitionRegistry = Optional.empty(),
-        methodDataFetcherFactory = MethodDataFetcherFactory(
-            listOf(
-                InputArgumentResolver(DefaultInputObjectMapper()),
-                DataFetchingEnvironmentArgumentResolver(),
-                FallbackEnvironmentArgumentResolver(DefaultInputObjectMapper())
-            )
+    private fun schemaProvider(applicationContext: ApplicationContext) =
+        DgsSchemaProvider(
+            applicationContext = applicationContext,
+            federationResolver = Optional.empty(),
+            existingTypeDefinitionRegistry = Optional.empty(),
+            methodDataFetcherFactory =
+                MethodDataFetcherFactory(
+                    listOf(
+                        InputArgumentResolver(DefaultInputObjectMapper()),
+                        DataFetchingEnvironmentArgumentResolver(),
+                        FallbackEnvironmentArgumentResolver(DefaultInputObjectMapper()),
+                    ),
+                ),
         )
-    )
 
     @Test
     fun `@InputArgument with name specified, on String argument`() {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument("name") abc: String): String {
+            fun someFetcher(
+                @InputArgument("name") abc: String,
+            ): String {
                 assertThat(abc).isEqualTo("tester")
                 return "Hello, $abc"
             }
@@ -122,7 +125,9 @@ internal class InputArgumentTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument name: String): String {
+            fun someFetcher(
+                @InputArgument name: String,
+            ): String {
                 assertThat(name).isEqualTo("tester")
                 return "Hello, $name"
             }
@@ -146,7 +151,9 @@ internal class InputArgumentTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument abc: String?): String {
+            fun someFetcher(
+                @InputArgument abc: String?,
+            ): String {
                 assertThat(abc).isNull()
                 return "Hello, ${abc ?: "no name"}"
             }
@@ -154,12 +161,13 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val exc = assertThrows<DataFetcherInputArgumentSchemaMismatchException> {
-                provider.schema()
-            }
+            val exc =
+                assertThrows<DataFetcherInputArgumentSchemaMismatchException> {
+                    provider.schema()
+                }
             assertThat(exc).message().contains(
                 "on parameter named `abc` has no matching argument with name `abc` in the GraphQL schema. " +
-                    "Found the following argument(s) in the schema: [name]"
+                    "Found the following argument(s) in the schema: [name]",
             )
         }
     }
@@ -169,9 +177,9 @@ internal class InputArgumentTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument name: String?): String {
-                return "Hello, ${name ?: "no name"}"
-            }
+            fun someFetcher(
+                @InputArgument name: String?,
+            ): String = "Hello, ${name ?: "no name"}"
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -192,7 +200,9 @@ internal class InputArgumentTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument(name = "abc") name: String?): String {
+            fun someFetcher(
+                @InputArgument(name = "abc") name: String?,
+            ): String {
                 assertThat(name).isNull()
                 return "Hello, ${name ?: "no name"}"
             }
@@ -200,9 +210,10 @@ internal class InputArgumentTest {
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
-            val exc = assertThrows<DataFetcherInputArgumentSchemaMismatchException> {
-                provider.schema()
-            }
+            val exc =
+                assertThrows<DataFetcherInputArgumentSchemaMismatchException> {
+                    provider.schema()
+                }
             assertThat(exc).message().contains("on parameter named `name` has no matching argument with name `abc` in the GraphQL schema.")
         }
     }
@@ -212,9 +223,7 @@ internal class InputArgumentTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(name: String): String {
-                return "Hello, $name"
-            }
+            fun someFetcher(name: String): String = "Hello, $name"
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -233,7 +242,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `@InputArgument on an input type, with input argument name`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(person:Person): String
             }
@@ -241,12 +251,14 @@ internal class InputArgumentTest {
             input Person {
                 name:String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument("person") person: Person): String {
+            fun someFetcher(
+                @InputArgument("person") person: Person,
+            ): String {
                 assertThat(person).isNotNull.extracting { it.name }.isEqualTo("tester")
                 return "Hello, ${person.name}"
             }
@@ -265,7 +277,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `@InputArgument on an optional input type, with input argument name`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(person:Person): String
             }
@@ -273,13 +286,19 @@ internal class InputArgumentTest {
             input Person {
                 name:String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument("person") person: Optional<Person>): String {
-                assertThat(person).isNotNull.isNotEmpty.get().extracting { it.name }.isEqualTo("tester")
+            fun someFetcher(
+                @InputArgument("person") person: Optional<Person>,
+            ): String {
+                assertThat(person)
+                    .isNotNull.isNotEmpty
+                    .get()
+                    .extracting { it.name }
+                    .isEqualTo("tester")
                 return "Hello, ${person.get().name}"
             }
         }
@@ -297,7 +316,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `@InputArgument on an input type, with no name specified`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(person:Person): String
             }
@@ -305,12 +325,14 @@ internal class InputArgumentTest {
             input Person {
                 name:String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsQuery(field = "hello")
-            fun someFetcher(@InputArgument person: Person): String {
+            fun someFetcher(
+                @InputArgument person: Person,
+            ): String {
                 assertThat(person).isNotNull.extracting { it.name }.isEqualTo("tester")
                 return "Hello, ${person.name}"
             }
@@ -329,7 +351,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `@InputArgument on an optional input type, with no name specified`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(person:Person): String
             }
@@ -337,13 +360,19 @@ internal class InputArgumentTest {
             input Person {
                 name:String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsQuery(field = "hello")
-            fun someFetcher(@InputArgument person: Optional<Person>): String {
-                assertThat(person).isNotNull.isNotEmpty.get().extracting { it.name }.isEqualTo("tester")
+            fun someFetcher(
+                @InputArgument person: Optional<Person>,
+            ): String {
+                assertThat(person)
+                    .isNotNull.isNotEmpty
+                    .get()
+                    .extracting { it.name }
+                    .isEqualTo("tester")
                 return "Hello, ${person.get().name}"
             }
         }
@@ -361,16 +390,19 @@ internal class InputArgumentTest {
 
     @Test
     fun `@InputArgument on a list of strings, with input argument name`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(names: [String]): String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument("names") names: List<String>): String {
+            fun someFetcher(
+                @InputArgument("names") names: List<String>,
+            ): String {
                 assertThat(names).isNotEmpty.containsOnly("tester 1", "tester 2")
                 return "Hello, ${names.joinToString(", ")}"
             }
@@ -389,16 +421,19 @@ internal class InputArgumentTest {
 
     @Test
     fun `@InputArgument on an optional list of strings, with input argument name`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(names: [String]): String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument("names") names: Optional<List<String>>): String {
+            fun someFetcher(
+                @InputArgument("names") names: Optional<List<String>>,
+            ): String {
                 assertThat(names).isNotEmpty.get(InstanceOfAssertFactories.LIST).containsOnly("tester 1", "tester 2")
                 return "Hello, ${names.get().joinToString(", ")}"
             }
@@ -417,16 +452,19 @@ internal class InputArgumentTest {
 
     @Test
     fun `@InputArgument on a set of strings, with input argument name`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(names: [String]): String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument("names") names: Set<String>): String {
+            fun someFetcher(
+                @InputArgument("names") names: Set<String>,
+            ): String {
                 assertThat(names).isNotEmpty.containsOnly("tester 1", "tester 2")
                 return "Hello, ${names.joinToString(", ")}"
             }
@@ -445,16 +483,19 @@ internal class InputArgumentTest {
 
     @Test
     fun `@InputArgument on a set of strings, with no input argument name`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(names: [String]): String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument names: Set<String>): String {
+            fun someFetcher(
+                @InputArgument names: Set<String>,
+            ): String {
                 assertThat(names).isNotEmpty.containsOnly("tester 1", "tester 2")
                 return "Hello, ${names.joinToString(", ")}"
             }
@@ -473,7 +514,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `@InputArgument on a list of input types, with input argument name`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(person:[Person]): String
             }
@@ -481,12 +523,14 @@ internal class InputArgumentTest {
             input Person {
                 name:String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument("person") person: List<Person>): String {
+            fun someFetcher(
+                @InputArgument("person") person: List<Person>,
+            ): String {
                 assertThat(person).isNotEmpty.extracting("name").containsOnly("tester 1", "tester 2")
                 return "Hello, ${person.joinToString(", ") { it.name }}"
             }
@@ -505,7 +549,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `@InputArgument on a list of input types, with no input argument name`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(persons:[Person]): String
             }
@@ -513,12 +558,14 @@ internal class InputArgumentTest {
             input Person {
                 name:String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsQuery(field = "hello")
-            fun someFetcher(@InputArgument persons: List<Person>): String {
+            fun someFetcher(
+                @InputArgument persons: List<Person>,
+            ): String {
                 assertThat(persons).isNotEmpty
                 assertThat(persons.map { it.name }).isNotNull.containsOnly("tester", "tester 2")
                 return "Hello, ${persons.joinToString(", ") { it.name }}"
@@ -538,7 +585,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `@InputArgument on an optional list of input types, with input argument name`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(person:[Person]): String
             }
@@ -546,15 +594,18 @@ internal class InputArgumentTest {
             input Person {
                 name:String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument("person") person: Optional<List<Person>>): String {
-                val peopleNames = person
-                    .get()
-                    .map { it.name }
+            fun someFetcher(
+                @InputArgument("person") person: Optional<List<Person>>,
+            ): String {
+                val peopleNames =
+                    person
+                        .get()
+                        .map { it.name }
 
                 assertThat(peopleNames)
                     .isNotEmpty
@@ -580,7 +631,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `@InputArgument on an optional list of input types, with no input argument name`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(person:[Person]): String
             }
@@ -588,15 +640,18 @@ internal class InputArgumentTest {
             input Person {
                 name:String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument person: Optional<List<Person>>): String {
-                val peopleNames = person
-                    .get()
-                    .map { it.name }
+            fun someFetcher(
+                @InputArgument person: Optional<List<Person>>,
+            ): String {
+                val peopleNames =
+                    person
+                        .get()
+                        .map { it.name }
 
                 assertThat(peopleNames)
                     .isNotEmpty
@@ -624,16 +679,19 @@ internal class InputArgumentTest {
     fun `@InputArgument on an optional list of integers`() {
         // val expectedNumbers = listOf(1, 2, 3)
 
-        val schema = """
+        val schema =
+            """
             type Query {
                 numbers(list: [Int]): String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsQuery(field = "numbers")
-            fun numbers(@InputArgument("list") listOptional: Optional<List<Int>>): String {
+            fun numbers(
+                @InputArgument("list") listOptional: Optional<List<Int>>,
+            ): String {
                 assertThat(listOptional).isNotEmpty
                 assertThat(listOptional.get()).containsExactlyElementsOf(listOf(1, 2, 3))
                 return "Numbers are ${listOptional.map{ it.joinToString(", ") }.orElse("na")}"
@@ -654,7 +712,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `List of scalar in a nested input type`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 titles(filter: MovieFilter): String
             }
@@ -664,19 +723,17 @@ internal class InputArgumentTest {
             }
             
             scalar Object
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "titles")
-            fun someFetcher(@InputArgument("filter") filter: KMovieFilter): String {
-                return filter.movieIds.joinToString { "Title for $it" }
-            }
+            fun someFetcher(
+                @InputArgument("filter") filter: KMovieFilter,
+            ): String = filter.movieIds.joinToString { "Title for $it" }
 
             @DgsRuntimeWiring
-            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
-                return builder.scalar(ExtendedScalars.Object)
-            }
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder = builder.scalar(ExtendedScalars.Object)
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -692,34 +749,33 @@ internal class InputArgumentTest {
 
     @Test
     fun `Use scalar property inside a List of complex input type`() {
-        val schema = """
-            type Query {
-                titles(input: FooInput): String
-            }
-            
-           input FooInput {
-                bars: [BarInput!]
-            }
-            
-            input BarInput {
-                name: String!
-                value: Object!
-            }
-            
-            scalar Object
-        """.trimIndent()
+        val schema =
+            """
+             type Query {
+                 titles(input: FooInput): String
+             }
+             
+            input FooInput {
+                 bars: [BarInput!]
+             }
+             
+             input BarInput {
+                 name: String!
+                 value: Object!
+             }
+             
+             scalar Object
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "titles")
-            fun someFetcher(@InputArgument input: KFooInput): String {
-                return input.bars.joinToString { "${it.name}: ${it.value}" }
-            }
+            fun someFetcher(
+                @InputArgument input: KFooInput,
+            ): String = input.bars.joinToString { "${it.name}: ${it.value}" }
 
             @DgsRuntimeWiring
-            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
-                return builder.scalar(ExtendedScalars.Object)
-            }
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder = builder.scalar(ExtendedScalars.Object)
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -736,34 +792,33 @@ internal class InputArgumentTest {
 
     @Test
     fun `Use scalar property inside a List of complex Java input type`() {
-        val schema = """
-            type Query {
-                titles(input: JFooInput): String
-            }
-            
-           input JFooInput {
-                bars: [JBarInput!]
-            }
-            
-            input JBarInput {
-                name: String!
-                value: Object!
-            }
-            
-            scalar Object
-        """.trimIndent()
+        val schema =
+            """
+             type Query {
+                 titles(input: JFooInput): String
+             }
+             
+            input JFooInput {
+                 bars: [JBarInput!]
+             }
+             
+             input JBarInput {
+                 name: String!
+                 value: Object!
+             }
+             
+             scalar Object
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "titles")
-            fun someFetcher(@InputArgument input: JFooInput): String {
-                return input.bars.joinToString { "${it.name}: ${it.value}" }
-            }
+            fun someFetcher(
+                @InputArgument input: JFooInput,
+            ): String = input.bars.joinToString { "${it.name}: ${it.value}" }
 
             @DgsRuntimeWiring
-            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
-                return builder.scalar(ExtendedScalars.Object)
-            }
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder = builder.scalar(ExtendedScalars.Object)
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -780,7 +835,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `Input argument of type Set should result in a DgsInvalidInputArgumentException`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(person:[Person]): String
             }
@@ -788,14 +844,14 @@ internal class InputArgumentTest {
             input Person {
                 name:String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument("person") people: Set<Person>): String {
-                return "Hello, ${people.joinToString(", ") { it.name }}"
-            }
+            fun someFetcher(
+                @InputArgument("person") people: Set<Person>,
+            ): String = "Hello, ${people.joinToString(", ") { it.name }}"
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -815,7 +871,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `A DgsInvalidInputArgumentException should be thrown when the @InputArgument collectionType doesn't match the parameter type`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(person:[Person]): String
             }
@@ -823,14 +880,14 @@ internal class InputArgumentTest {
             input Person {
                 name:String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument("person") person: List<String>): String {
-                return "Hello, ${person.joinToString(", ") { it }}"
-            }
+            fun someFetcher(
+                @InputArgument("person") person: List<String>,
+            ): String = "Hello, ${person.joinToString(", ") { it }}"
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -842,13 +899,16 @@ internal class InputArgumentTest {
             val exceptionWhileDataFetching = executionResult.errors[0] as ExceptionWhileDataFetching
             assertThat(exceptionWhileDataFetching.exception).isInstanceOf(ConversionFailedException::class.java)
             assertThat(exceptionWhileDataFetching.exception.message)
-                .contains("Failed to convert from type [java.util.LinkedHashMap<?, ?>] to type [@com.netflix.graphql.dgs.InputArgument java.lang.String]")
+                .contains(
+                    "Failed to convert from type [java.util.LinkedHashMap<?, ?>] to type [@com.netflix.graphql.dgs.InputArgument java.lang.String]",
+                )
         }
     }
 
     @Test
     fun `An @InputArgument representing a complex type can be empty`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(person: Person): String
             }
@@ -856,12 +916,14 @@ internal class InputArgumentTest {
             input Person {
                 name:String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsQuery
-            fun hello(@InputArgument person: JPerson): String {
+            fun hello(
+                @InputArgument person: JPerson,
+            ): String {
                 assertThat(person).isNotNull.extracting { it.name }.isNull()
                 return "Hello, $person"
             }
@@ -880,7 +942,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `A null value for an input argument should not result in an error`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(person:Person): String
             }
@@ -888,12 +951,14 @@ internal class InputArgumentTest {
             input Person {
                 name:String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument("person") person: Person?): String {
+            fun someFetcher(
+                @InputArgument("person") person: Person?,
+            ): String {
                 if (person == null) {
                     return "Hello, Stranger"
                 }
@@ -915,7 +980,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `Multiple input arguments should be supported`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(person:Person, capitalize:Boolean): String
             }
@@ -923,14 +989,14 @@ internal class InputArgumentTest {
             input Person {
                 name:String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(
                 @InputArgument("capitalize") capitalize: Boolean,
-                @InputArgument("person") person: Person
+                @InputArgument("person") person: Person,
             ): String {
                 assertThat(capitalize).isTrue
                 assertThat(person).isNotNull.extracting { it.name }.isEqualTo("tester")
@@ -956,7 +1022,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `Multiple input argument in combination with a DataFetchingEnvironment argument should be supported`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(person:Person, capitalize:Boolean, otherArg:String): String
             }
@@ -964,7 +1031,7 @@ internal class InputArgumentTest {
             input Person {
                 name:String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
@@ -972,7 +1039,7 @@ internal class InputArgumentTest {
             fun someFetcher(
                 dfe: DataFetchingEnvironment,
                 @InputArgument("capitalize") capitalize: Boolean,
-                @InputArgument("person") person: Person
+                @InputArgument("person") person: Person,
             ): String {
                 val otherArg: String? = dfe.getArgument("otherArg")
 
@@ -980,11 +1047,12 @@ internal class InputArgumentTest {
                 assertThat(person).isNotNull.extracting { it.name }.isEqualTo("tester")
                 assertThat(otherArg).isEqualTo("!")
 
-                val msg = if (capitalize) {
-                    "Hello, ${person.name}"
-                } else {
-                    "hello, ${person.name}"
-                }
+                val msg =
+                    if (capitalize) {
+                        "Hello, ${person.name}"
+                    } else {
+                        "hello, ${person.name}"
+                    }
                 return msg + otherArg
             }
         }
@@ -1004,7 +1072,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `Multiple input argument in combination with a DataFetchingEnvironment argument should be supported in any order`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(person:Person, capitalize:Boolean, otherArg:String): String
             }
@@ -1012,7 +1081,7 @@ internal class InputArgumentTest {
             input Person {
                 name:String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
@@ -1020,15 +1089,16 @@ internal class InputArgumentTest {
             fun someFetcher(
                 @InputArgument("capitalize") capitalize: Boolean,
                 @InputArgument("person") person: Person,
-                dfe: DataFetchingEnvironment
+                dfe: DataFetchingEnvironment,
             ): String {
                 val otherArg: String? = dfe.getArgument("otherArg")
 
-                val msg = if (capitalize) {
-                    "Hello, ${person.name}"
-                } else {
-                    "hello, ${person.name}"
-                }
+                val msg =
+                    if (capitalize) {
+                        "Hello, ${person.name}"
+                    } else {
+                        "hello, ${person.name}"
+                    }
                 return msg + otherArg
             }
         }
@@ -1048,20 +1118,21 @@ internal class InputArgumentTest {
 
     @Test
     fun `Input arguments of type MultipartFile should be supported`() {
-        val schema = """
+        val schema =
+            """
             type Mutation {
                 upload(file: Upload): String
             }
 
             scalar Upload
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Mutation", field = "upload")
-            fun someFetcher(@InputArgument("file") file: MultipartFile): String {
-                return file.bytes.decodeToString()
-            }
+            fun someFetcher(
+                @InputArgument("file") file: MultipartFile,
+            ): String = file.bytes.decodeToString()
         }
 
         contextRunner.withBeans(Fetcher::class, UploadScalar::class).run { context ->
@@ -1069,10 +1140,13 @@ internal class InputArgumentTest {
             val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
 
             val file = MockMultipartFile("hello.txt", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".toByteArray())
-            val executionResult = build.execute(
-                ExecutionInput.newExecutionInput().query("mutation(\$input: Upload!)  { upload(file: \$input) }")
-                    .variables(mapOf("input" to file))
-            )
+            val executionResult =
+                build.execute(
+                    ExecutionInput
+                        .newExecutionInput()
+                        .query("mutation(\$input: Upload!)  { upload(file: \$input) }")
+                        .variables(mapOf("input" to file)),
+                )
 
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1084,11 +1158,12 @@ internal class InputArgumentTest {
 
     @Test
     fun `An unknown argument should be null, and not result in an error`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello: String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
@@ -1113,18 +1188,21 @@ internal class InputArgumentTest {
 
     @Test
     fun `Scalars should be supported as input arguments - testing with DateTime`() {
-        val schema = """
+        val schema =
+            """
             type Mutation {
                 setDate(date:DateTime): String
             }                     
             
             scalar DateTime
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Mutation", field = "setDate")
-            fun someFetcher(@InputArgument("date") date: LocalDateTime): String {
+            fun someFetcher(
+                @InputArgument("date") date: LocalDateTime,
+            ): String {
                 assertThat(date).isNotNull
                 return "The date is: ${date.format(DateTimeFormatter.ISO_DATE)}"
             }
@@ -1144,18 +1222,21 @@ internal class InputArgumentTest {
 
     @Test
     fun `null value Scalars should be supported as input arguments - testing with DateTime`() {
-        val schema = """
+        val schema =
+            """
             type Mutation {
                 setDate(date:DateTime): String
             }                     
             
             scalar DateTime
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Mutation", field = "setDate")
-            fun someFetcher(@InputArgument("date") date: LocalDateTime?): String {
+            fun someFetcher(
+                @InputArgument("date") date: LocalDateTime?,
+            ): String {
                 assertThat(date).isNull()
                 if (date == null) {
                     return "The future is now"
@@ -1178,18 +1259,21 @@ internal class InputArgumentTest {
 
     @Test
     fun `Lists of scalars should be supported - testing with list of DateTime`() {
-        val schema = """
+        val schema =
+            """
             type Mutation {
                 setDate(date:[DateTime]): String
             }                     
             
             scalar DateTime
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Mutation", field = "setDate")
-            fun someFetcher(@InputArgument("date") date: List<LocalDateTime>): String {
+            fun someFetcher(
+                @InputArgument("date") date: List<LocalDateTime>,
+            ): String {
                 assertThat(date).isNotEmpty.hasSize(1)
                 return "The date is: ${date[0].format(DateTimeFormatter.ISO_DATE)}"
             }
@@ -1209,7 +1293,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `Scalars should work even when nested in an input type`() {
-        val schema = """
+        val schema =
+            """
             type Mutation {
                 setDate(input:DateTimeInput): String
             }
@@ -1219,14 +1304,14 @@ internal class InputArgumentTest {
             }
             
             scalar DateTime
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Mutation", field = "setDate")
-            fun someFetcher(@InputArgument("input") input: DateTimeInput): String {
-                return "The date is: ${input.date.format(DateTimeFormatter.ISO_DATE)}"
-            }
+            fun someFetcher(
+                @InputArgument("input") input: DateTimeInput,
+            ): String = "The date is: ${input.date.format(DateTimeFormatter.ISO_DATE)}"
         }
 
         contextRunner.withBeans(Fetcher::class, LocalDateTimeScalar::class).run { context ->
@@ -1243,17 +1328,20 @@ internal class InputArgumentTest {
 
     @Test
     fun `Lists of primitive types should be supported`() {
-        val schema = """
+        val schema =
+            """
             type Mutation {
                 setRatings(ratings:[Int!]): [Int]
             }                     
             
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Mutation", field = "setRatings")
-            fun someFetcher(@InputArgument("ratings") ratings: List<Int>): List<Int> {
+            fun someFetcher(
+                @InputArgument("ratings") ratings: List<Int>,
+            ): List<Int> {
                 assertThat(ratings).isNotEmpty.containsOnly(1, 2, 3)
                 return listOf(1, 2, 3)
             }
@@ -1276,7 +1364,9 @@ internal class InputArgumentTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument name: Optional<String>): String {
+            fun someFetcher(
+                @InputArgument name: Optional<String>,
+            ): String {
                 assertThat(name).isNotEmpty.get().isEqualTo("tester")
                 return "Hello, ${name.orElse("default value")}"
             }
@@ -1297,7 +1387,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `An @InputArgument with a complex type could be wrapped in Optional`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(person:Person): String
             }
@@ -1305,13 +1396,19 @@ internal class InputArgumentTest {
             input Person {
                 name:String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument("person") person: Optional<Person>): String {
-                assertThat(person).isNotEmpty.get().extracting { it.name }.isEqualTo("tester")
+            fun someFetcher(
+                @InputArgument("person") person: Optional<Person>,
+            ): String {
+                assertThat(person)
+                    .isNotEmpty
+                    .get()
+                    .extracting { it.name }
+                    .isEqualTo("tester")
                 return "Hello, ${person.get().name}"
             }
         }
@@ -1333,7 +1430,9 @@ internal class InputArgumentTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument name: Optional<String>): String {
+            fun someFetcher(
+                @InputArgument name: Optional<String>,
+            ): String {
                 assertThat(name).isEmpty
                 return "Hello, ${name.orElse("default value")}"
             }
@@ -1355,7 +1454,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `Kotlin enum in @InputArgument`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(type:GreetingType): String
             }
@@ -1364,12 +1464,14 @@ internal class InputArgumentTest {
                 FRIENDLY
                 POLITE
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument type: KGreetingType): String {
+            fun someFetcher(
+                @InputArgument type: KGreetingType,
+            ): String {
                 assertThat(type).isInstanceOf(KGreetingType::class.java)
 
                 return "Hello, this is a $type greeting"
@@ -1390,7 +1492,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `Kotlin Optional enum in @InputArgument`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(type:GreetingType): String
             }
@@ -1399,12 +1502,14 @@ internal class InputArgumentTest {
                 FRIENDLY
                 POLITE
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument type: Optional<KGreetingType>): String {
+            fun someFetcher(
+                @InputArgument type: Optional<KGreetingType>,
+            ): String {
                 assertThat(type).isNotEmpty.get().isInstanceOf(KGreetingType::class.java)
 
                 return "Hello, this is a ${type.get()} greeting"
@@ -1425,7 +1530,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `List of enums as @InputArgument`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 khello(input: [GreetingType]): String
                 jhello(input: [GreetingType]): String
@@ -1435,19 +1541,22 @@ internal class InputArgumentTest {
                 FRIENDLY
                 POLITE
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
-
             @DgsQuery
-            fun khello(@InputArgument input: List<KGreetingType>): String {
+            fun khello(
+                @InputArgument input: List<KGreetingType>,
+            ): String {
                 assertThat(input).isNotEmpty.hasOnlyElementsOfType(KGreetingType::class.java)
                 return "Hello, this is a $input greeting"
             }
 
             @DgsQuery
-            fun jhello(@InputArgument input: List<JGreetingType>): String {
+            fun jhello(
+                @InputArgument input: List<JGreetingType>,
+            ): String {
                 assertThat(input).isNotEmpty.hasOnlyElementsOfType(JGreetingType::class.java)
                 return "Hello, this is a $input greeting"
             }
@@ -1456,13 +1565,14 @@ internal class InputArgumentTest {
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
             val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
-            val executionResult = build.execute(
-                """{
+            val executionResult =
+                build.execute(
+                    """{
             |   khello(input: [FRIENDLY POLITE])
             |   jhello(input: [FRIENDLY POLITE])
             |}
-                """.trimMargin()
-            )
+                    """.trimMargin(),
+                )
             assertThat(executionResult.errors.isEmpty()).isTrue
 
             assertThat(executionResult).isNotNull
@@ -1473,7 +1583,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `Kotlin Optional enum @InputArgument with null value`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(type:GreetingType): String
             }
@@ -1482,12 +1593,14 @@ internal class InputArgumentTest {
                 FRIENDLY
                 POLITE
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument type: Optional<KGreetingType>): String {
+            fun someFetcher(
+                @InputArgument type: Optional<KGreetingType>,
+            ): String {
                 assertThat(type).isEmpty
                 return "Hello, this is a default greeting"
             }
@@ -1507,7 +1620,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `Nullable enum @InputArgument`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(type:GreetingType): String
             }
@@ -1516,12 +1630,14 @@ internal class InputArgumentTest {
                 FRIENDLY
                 POLITE
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument type: KGreetingType?): String {
+            fun someFetcher(
+                @InputArgument type: KGreetingType?,
+            ): String {
                 assertThat(type).isNull()
                 return "Hello, this is a SAD greeting"
             }
@@ -1541,7 +1657,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `Java enum @InputArgument`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(type:GreetingType): String
             }
@@ -1550,12 +1667,14 @@ internal class InputArgumentTest {
                 FRIENDLY
                 POLITE
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument type: JGreetingType): String {
+            fun someFetcher(
+                @InputArgument type: JGreetingType,
+            ): String {
                 assertThat(type).isInstanceOf(JGreetingType::class.java)
                 return "Hello, this is a $type greeting"
             }
@@ -1575,7 +1694,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `Java optional enum @InputArgument`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(type:GreetingType): String
             }
@@ -1584,12 +1704,14 @@ internal class InputArgumentTest {
                 FRIENDLY
                 POLITE
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument type: Optional<JGreetingType>): String {
+            fun someFetcher(
+                @InputArgument type: Optional<JGreetingType>,
+            ): String {
                 assertThat(type).isNotEmpty.get().isInstanceOf(JGreetingType::class.java)
                 return "Hello, this is a ${type.get()} greeting"
             }
@@ -1609,7 +1731,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `Java optional enum @InputArgument with null value`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(type:GreetingType): String
             }
@@ -1618,12 +1741,14 @@ internal class InputArgumentTest {
                 FRIENDLY
                 POLITE
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument type: Optional<JGreetingType>): String {
+            fun someFetcher(
+                @InputArgument type: Optional<JGreetingType>,
+            ): String {
                 assertThat(type).isEmpty
                 return "Hello, this is a default greeting"
             }
@@ -1643,7 +1768,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `Nested Kotlin enum @InputArgument`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(input:InputMessage): String
             }
@@ -1657,12 +1783,14 @@ internal class InputArgumentTest {
                 FRIENDLY
                 POLITE
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun hello(@InputArgument input: KInputMessage): String {
+            fun hello(
+                @InputArgument input: KInputMessage,
+            ): String {
                 assertThat(input.type).isInstanceOf(KGreetingType::class.java)
                 assertThat(input.type).isEqualTo(KGreetingType.FRIENDLY)
                 assertThat(input.typeList).hasOnlyElementsOfType(KGreetingType::class.java)
@@ -1674,11 +1802,12 @@ internal class InputArgumentTest {
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
             val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
-            val executionResult = build.execute(
-                """
-                { hello(input: { type: FRIENDLY, typeList: [POLITE, FRIENDLY] }) }
-                """.trimIndent()
-            )
+            val executionResult =
+                build.execute(
+                    """
+                    { hello(input: { type: FRIENDLY, typeList: [POLITE, FRIENDLY] }) }
+                    """.trimIndent(),
+                )
 
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1690,7 +1819,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `Nested null enum @InputArgument`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(someInput:InputMessage!): String
             }
@@ -1703,12 +1833,14 @@ internal class InputArgumentTest {
                 FRIENDLY
                 POLITE
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument someInput: JInputMessage): String {
+            fun someFetcher(
+                @InputArgument someInput: JInputMessage,
+            ): String {
                 assertThat(someInput.type).isNull()
                 return "Hello, this is a SAD greeting"
             }
@@ -1728,7 +1860,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `Nested Java enum @InputArgument`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(input:InputMessage): String
             }
@@ -1742,12 +1875,14 @@ internal class InputArgumentTest {
                 FRIENDLY
                 POLITE
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun hello(@InputArgument input: JInputMessage): String {
+            fun hello(
+                @InputArgument input: JInputMessage,
+            ): String {
                 assertThat(input.type).isInstanceOf(JGreetingType::class.java)
                 assertThat(input.type).isEqualTo(JGreetingType.FRIENDLY)
                 assertThat(input.typeList).hasOnlyElementsOfType(JGreetingType::class.java)
@@ -1759,11 +1894,12 @@ internal class InputArgumentTest {
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
             val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
-            val executionResult = build.execute(
-                """
-                { hello(input: { type: FRIENDLY, typeList: [POLITE, FRIENDLY] }) }
-                """.trimIndent()
-            )
+            val executionResult =
+                build.execute(
+                    """
+                    { hello(input: { type: FRIENDLY, typeList: [POLITE, FRIENDLY] }) }
+                    """.trimIndent(),
+                )
 
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -1799,7 +1935,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `The Object scalar should be converted using the extended scalar`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(objects: [BarInput]): String
             }
@@ -1810,20 +1947,20 @@ internal class InputArgumentTest {
             }    
                   
             scalar Object
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument objects: List<KBarInput>): String {
+            fun someFetcher(
+                @InputArgument objects: List<KBarInput>,
+            ): String {
                 assertThat(objects).isNotEmpty
                 return objects.joinToString { a -> "${a.name}: ${a.value}" }
             }
 
             @DgsRuntimeWiring
-            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
-                return builder.scalar(ExtendedScalars.Object)
-            }
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder = builder.scalar(ExtendedScalars.Object)
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -1841,26 +1978,27 @@ internal class InputArgumentTest {
 
     @Test
     fun `The Object scalar as top level input argument should be passed into a Map of String to Any`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(json: Object): String
             }                          
                   
             scalar Object
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument json: Map<String, Any>): String {
+            fun someFetcher(
+                @InputArgument json: Map<String, Any>,
+            ): String {
                 assertThat(json).isNotEmpty.containsKeys("keyA", "keyB").containsValues("value A", "value B")
                 return json.map { a -> "${a.key}: ${a.value}" }.joinToString()
             }
 
             @DgsRuntimeWiring
-            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
-                return builder.scalar(ExtendedScalars.Object)
-            }
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder = builder.scalar(ExtendedScalars.Object)
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -1877,7 +2015,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `A field of an input type of type Any should be assigned the actual value and skip converting`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(filter: Filter): String
             }               
@@ -1887,20 +2026,20 @@ internal class InputArgumentTest {
             }
                   
             scalar Object
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument filter: KFilter): String {
+            fun someFetcher(
+                @InputArgument filter: KFilter,
+            ): String {
                 assertThat(filter).isNotNull.extracting { it.query }.isNotNull()
                 return filter.toString()
             }
 
             @DgsRuntimeWiring
-            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
-                return builder.scalar(ExtendedScalars.Object)
-            }
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder = builder.scalar(ExtendedScalars.Object)
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -1917,7 +2056,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `A field of an input type of type Object should be assigned the actual value and skip converting`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(filter: Filter): String
             }               
@@ -1927,12 +2067,14 @@ internal class InputArgumentTest {
             }
                   
             scalar Object
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument filter: JFilter): String {
+            fun someFetcher(
+                @InputArgument filter: JFilter,
+            ): String {
                 assertThat(filter).isNotNull.extracting { it.query }.isNotNull
                 @SuppressWarnings("unchecked")
                 val map = filter.query as? Map<*, *>
@@ -1940,9 +2082,7 @@ internal class InputArgumentTest {
             }
 
             @DgsRuntimeWiring
-            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
-                return builder.scalar(ExtendedScalars.Object)
-            }
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder = builder.scalar(ExtendedScalars.Object)
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -1959,7 +2099,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `Input object of a subclass with a generic typed field`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 movies(sortBy: [MovieSortBy]): String
             }
@@ -1978,12 +2119,14 @@ internal class InputArgumentTest {
                 ASC,
                 DESC
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsQuery
-            fun movies(@InputArgument sortBy: List<JMovieSortBy>): String {
+            fun movies(
+                @InputArgument sortBy: List<JMovieSortBy>,
+            ): String {
                 assertThat(sortBy).isNotEmpty.hasSize(2)
                 return "Sorted by: ${sortBy.joinToString { "${it.field}" }}"
             }
@@ -1992,18 +2135,19 @@ internal class InputArgumentTest {
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
             val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
-            val executionResult = build.execute(
-                """
-            {
-                movies(sortBy: 
-                    [
-                        {field: RELEASEDATE, direction: DESC}, 
-                        {field: TITLE, direction: ASC}
-                    ]
+            val executionResult =
+                build.execute(
+                    """
+                    {
+                        movies(sortBy: 
+                            [
+                                {field: RELEASEDATE, direction: DESC}, 
+                                {field: TITLE, direction: ASC}
+                            ]
+                        )
+                     }
+                    """.trimIndent(),
                 )
-             }
-                """.trimIndent()
-            )
 
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -2015,7 +2159,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `List of lists as @InputArgument on Java Types`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 lists(input: ListOfListsOfFilters!): String
                 enums(input: ListOfListsOfEnums!): String
@@ -2043,56 +2188,61 @@ internal class InputArgumentTest {
             }
             
             scalar Object
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsQuery
-            fun lists(@InputArgument input: JListOfListsOfLists.JListOfListOfFilters): String {
+            fun lists(
+                @InputArgument input: JListOfListsOfLists.JListOfListOfFilters,
+            ): String {
                 assertThat(input).isNotNull
                 assertThat(input.lists)
                     .contains(
                         listOf(
                             listOf(JFilter(mapOf("foo" to "bar")), JFilter(mapOf("baz" to "buz"))),
-                            listOf(JFilter(mapOf("bat" to "brat")))
-                        )
+                            listOf(JFilter(mapOf("bat" to "brat"))),
+                        ),
                     )
                 return "Ok"
             }
 
             @DgsQuery
-            fun enums(@InputArgument input: JListOfListsOfLists.JListOfListOfEnums): String {
+            fun enums(
+                @InputArgument input: JListOfListsOfLists.JListOfListOfEnums,
+            ): String {
                 assertThat(input).isNotNull
                 assertThat(input.lists).contains(listOf(listOf(JEnum.A, JEnum.B), listOf(JEnum.C)))
                 return "Ok"
             }
 
             @DgsQuery
-            fun strings(@InputArgument input: JListOfListsOfLists.JListOfListOfStrings): String {
+            fun strings(
+                @InputArgument input: JListOfListsOfLists.JListOfListOfStrings,
+            ): String {
                 assertThat(input).isNotNull
                 assertThat(input.lists).contains(listOf(listOf("Foo", "Bar"), listOf("Baz")))
                 return "Ok"
             }
 
             @DgsRuntimeWiring
-            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
-                return builder.scalar(ExtendedScalars.Object)
-            }
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder = builder.scalar(ExtendedScalars.Object)
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
             val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
 
-            val executionResult = build.execute(
-                """
-                {
-                    lists(input:{ lists: [[ [ {query: {foo: "bar"}} {query: {baz: "buz"}}] [ {query: {bat: "brat"}}] ]] })
-                    enums(input:{ lists: [[ [A B] [C] ]] })
-                    strings(input:{ lists: [[ ["Foo" "Bar"] ["Baz"] ]] })
-               }
-                """.trimIndent()
-            )
+            val executionResult =
+                build.execute(
+                    """
+                     {
+                         lists(input:{ lists: [[ [ {query: {foo: "bar"}} {query: {baz: "buz"}}] [ {query: {bat: "brat"}}] ]] })
+                         enums(input:{ lists: [[ [A B] [C] ]] })
+                         strings(input:{ lists: [[ ["Foo" "Bar"] ["Baz"] ]] })
+                    }
+                    """.trimIndent(),
+                )
 
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
@@ -2106,7 +2256,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `List of lists as @InputArgument on Kotlin Types`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 lists(input: ListOfListsOfFilters!): String
                 enums(input: ListOfListsOfEnums!): String
@@ -2134,56 +2285,60 @@ internal class InputArgumentTest {
             }
             
             scalar Object
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
-
             @DgsQuery
-            fun lists(@InputArgument input: KListOfListsOfLists.KListOfListOfFilters): String {
+            fun lists(
+                @InputArgument input: KListOfListsOfLists.KListOfListOfFilters,
+            ): String {
                 assertThat(input).isNotNull
                 assertThat(input.lists)
                     .contains(
                         listOf(
                             listOf(KFilter(mapOf("foo" to "bar")), KFilter(mapOf("baz" to "buz"))),
-                            listOf(KFilter(mapOf("bat" to "brat")))
-                        )
+                            listOf(KFilter(mapOf("bat" to "brat"))),
+                        ),
                     )
                 return "Ok"
             }
 
             @DgsQuery
-            fun enums(@InputArgument input: KListOfListsOfLists.KListOfListOfEnums): String {
+            fun enums(
+                @InputArgument input: KListOfListsOfLists.KListOfListOfEnums,
+            ): String {
                 assertThat(input).isNotNull
                 assertThat(input.lists).contains(listOf(listOf(KEnum.A, KEnum.B), listOf(KEnum.C)))
                 return "Ok"
             }
 
             @DgsQuery
-            fun strings(@InputArgument input: KListOfListsOfLists.KListOfListOfStrings): String {
+            fun strings(
+                @InputArgument input: KListOfListsOfLists.KListOfListOfStrings,
+            ): String {
                 assertThat(input).isNotNull
                 assertThat(input.lists).contains(listOf(listOf("Foo", "Bar"), listOf("Baz")))
                 return "Ok"
             }
 
             @DgsRuntimeWiring
-            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
-                return builder.scalar(ExtendedScalars.Object)
-            }
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder = builder.scalar(ExtendedScalars.Object)
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val provider = schemaProvider(context)
             val build = GraphQL.newGraphQL(provider.schema(schema).graphQLSchema).build()
-            val executionResult = build.execute(
-                """
-                {
-                    lists(input:{ lists: [[ [ {query: {foo: "bar"}} {query: {baz: "buz"}}] [ {query: {bat: "brat"}}] ]] })
-                    enums(input:{ lists: [[ [A B] [C] ]] })
-                    strings(input:{ lists: [[ ["Foo" "Bar"] ["Baz"] ]] })
-               }
-                """.trimIndent()
-            )
+            val executionResult =
+                build.execute(
+                    """
+                     {
+                         lists(input:{ lists: [[ [ {query: {foo: "bar"}} {query: {baz: "buz"}}] [ {query: {bat: "brat"}}] ]] })
+                         enums(input:{ lists: [[ [A B] [C] ]] })
+                         strings(input:{ lists: [[ ["Foo" "Bar"] ["Baz"] ]] })
+                    }
+                    """.trimIndent(),
+                )
 
             assertThat(executionResult.errors).isEmpty()
             val data = executionResult.getData<Map<String, *>>()
@@ -2195,7 +2350,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `@InputArgument on a list of input types with Kotlin default argument`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(person:[Person]): String
             }
@@ -2203,12 +2359,14 @@ internal class InputArgumentTest {
             input Person {
                 name:String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@InputArgument("person") person: List<Person> = emptyList()): String {
+            fun someFetcher(
+                @InputArgument("person") person: List<Person> = emptyList(),
+            ): String {
                 assertThat(person).isEmpty()
                 return "Hello, Nobody"
             }
@@ -2227,7 +2385,8 @@ internal class InputArgumentTest {
 
     @Test
     fun `The enum scalar in a nested input should be mapped`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(input:InputMessage): String
             }
@@ -2237,21 +2396,21 @@ internal class InputArgumentTest {
             }
                   
             scalar CountryCode
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun hello(@InputArgument input: JInputMessage): String {
+            fun hello(
+                @InputArgument input: JInputMessage,
+            ): String {
                 assertThat(input.countryCode).isInstanceOf(CountryCode::class.java)
                 assertThat(input.countryCode).isEqualTo(CountryCode.US)
                 return "Hello, this is a ${input.countryCode} greeting"
             }
 
             @DgsRuntimeWiring
-            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
-                return builder.scalar(ExtendedScalars.CountryCode)
-            }
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder = builder.scalar(ExtendedScalars.CountryCode)
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -2268,27 +2427,28 @@ internal class InputArgumentTest {
 
     @Test
     fun `The enum scalar in a non-nested input should be mapped`() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 hello(countryCode: CountryCode): String
             }
                   
             scalar CountryCode
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun hello(@InputArgument countryCode: CountryCode): String {
+            fun hello(
+                @InputArgument countryCode: CountryCode,
+            ): String {
                 assertThat(countryCode).isInstanceOf(CountryCode::class.java)
                 assertThat(countryCode).isEqualTo(CountryCode.ZW)
                 return "Hello, this is a $countryCode greeting"
             }
 
             @DgsRuntimeWiring
-            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
-                return builder.scalar(ExtendedScalars.CountryCode)
-            }
+            fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder = builder.scalar(ExtendedScalars.CountryCode)
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -2303,10 +2463,10 @@ internal class InputArgumentTest {
         }
     }
 
-    @JvmInline value class ValueClass(val value: String) {
-        override fun toString(): String {
-            return value
-        }
+    @JvmInline value class ValueClass(
+        val value: String,
+    ) {
+        override fun toString(): String = value
     }
 
     @Test
@@ -2314,37 +2474,39 @@ internal class InputArgumentTest {
         @DgsComponent
         class Component {
             @DgsQuery(field = "foo")
-            fun fooFetcher(@InputArgument input: ValueClass): String {
-                return input.toString()
-            }
+            fun fooFetcher(
+                @InputArgument input: ValueClass,
+            ): String = input.toString()
         }
 
         @DgsScalar(name = "Value")
         class ValueScalar : Coercing<ValueClass, String> {
-            override fun parseValue(input: Any, graphQLContext: GraphQLContext, locale: Locale): ValueClass {
-                return ValueClass(input.toString())
-            }
+            override fun parseValue(
+                input: Any,
+                graphQLContext: GraphQLContext,
+                locale: Locale,
+            ): ValueClass = ValueClass(input.toString())
 
             override fun parseLiteral(
                 input: graphql.language.Value<*>,
                 variables: CoercedVariables,
                 graphQLContext: GraphQLContext,
-                locale: Locale
-            ): ValueClass {
-                return ValueClass((input as StringValue).value)
-            }
+                locale: Locale,
+            ): ValueClass = ValueClass((input as StringValue).value)
         }
 
         contextRunner.withBeans(Component::class, ValueScalar::class).run { applicationContext ->
             val schemaProvider = schemaProvider(applicationContext = applicationContext)
-            val schema = schemaProvider.schema(
-                """
-                scalar Value
-                type Query {
-                  foo(input: Value!): String!
-                }
-                """.trimIndent()
-            ).graphQLSchema
+            val schema =
+                schemaProvider
+                    .schema(
+                        """
+                        scalar Value
+                        type Query {
+                          foo(input: Value!): String!
+                        }
+                        """.trimIndent(),
+                    ).graphQLSchema
 
             val graphql = GraphQL.newGraphQL(schema).build()
             val result = graphql.execute("{ foo(input: \"input-value\") }")

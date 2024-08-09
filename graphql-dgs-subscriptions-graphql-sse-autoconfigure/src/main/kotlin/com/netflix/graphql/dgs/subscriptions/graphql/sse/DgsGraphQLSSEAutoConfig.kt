@@ -27,9 +27,10 @@ import org.springframework.web.servlet.DispatcherServlet
 @AutoConfiguration
 @ConditionalOnWebApplication
 @ConditionalOnClass(DispatcherServlet::class)
-open class DgsGraphQLSSEAutoConfig(@Value("\${dgs.graphql.sse.pollPeriod:12000}") open val pollPeriod: Long) {
+open class DgsGraphQLSSEAutoConfig(
+    @Value("\${dgs.graphql.sse.pollPeriod:12000}") open val pollPeriod: Long,
+) {
     @Bean
-    open fun dgsGraphQlSseController(dgsQueryExecutor: DgsQueryExecutor): DgsGraphQLSSESubscriptionHandler {
-        return DgsGraphQLSSESubscriptionHandler(dgsQueryExecutor, pollPeriod)
-    }
+    open fun dgsGraphQlSseController(dgsQueryExecutor: DgsQueryExecutor): DgsGraphQLSSESubscriptionHandler =
+        DgsGraphQLSSESubscriptionHandler(dgsQueryExecutor, pollPeriod)
 }

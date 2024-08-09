@@ -19,23 +19,29 @@ package com.netflix.graphql.mocking
 import graphql.schema.*
 
 class DgsSchemaTransformer {
-
-    fun transformSchemaWithMockProviders(schema: GraphQLSchema, mockProviders: Set<MockProvider>): GraphQLSchema {
+    fun transformSchemaWithMockProviders(
+        schema: GraphQLSchema,
+        mockProviders: Set<MockProvider>,
+    ): GraphQLSchema {
         val mockConfig = mutableMapOf<String, Any>()
         mockProviders.forEach { p -> mockConfig.putAll(p.provide()) }
         return transformSchema(schema, mockConfig)
     }
 
-    fun transformSchema(schema: GraphQLSchema, mockConfig: Map<String, *>): GraphQLSchema {
+    fun transformSchema(
+        schema: GraphQLSchema,
+        mockConfig: Map<String, *>,
+    ): GraphQLSchema {
         val mockFetchers = mutableMapOf<FieldCoordinates, DataFetcher<*>>()
         val graphQLTypeVisitorStub = MockGraphQLVisitor(mockConfig, mockFetchers)
 
         SchemaTraverser().depthFirstFullSchema(graphQLTypeVisitorStub, schema)
 
         return schema.transform { schemaBuilder ->
-            val newCodeRegistry = schema.codeRegistry.transform { codeRegistryBuilder ->
-                mockFetchers.forEach { (coordinates, dataFetcher) -> codeRegistryBuilder.dataFetcher(coordinates, dataFetcher) }
-            }
+            val newCodeRegistry =
+                schema.codeRegistry.transform { codeRegistryBuilder ->
+                    mockFetchers.forEach { (coordinates, dataFetcher) -> codeRegistryBuilder.dataFetcher(coordinates, dataFetcher) }
+                }
             schemaBuilder.codeRegistry(newCodeRegistry)
         }
     }

@@ -19,5 +19,8 @@ package com.netflix.graphql.dgs
 import org.dataloader.DataLoaderOptions
 
 fun interface DgsDataLoaderOptionsProvider {
-    fun getOptions(dataLoaderName: String, annotation: DgsDataLoader): DataLoaderOptions
+    fun getOptions(
+        dataLoaderName: String,
+        annotation: DgsDataLoader,
+    ): DataLoaderOptions
 }

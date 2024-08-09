@@ -31,34 +31,33 @@ import java.util.concurrent.CompletionStage
 
 @DgsDataLoader(name = "testloader")
 class TestDataLoader : BatchLoader<String, String> {
-    override fun load(keys: List<String>): CompletionStage<List<String>> {
-        return CompletableFuture.supplyAsync { keys.map { it.uppercase() } }
-    }
+    override fun load(keys: List<String>): CompletionStage<List<String>> = CompletableFuture.supplyAsync { keys.map { it.uppercase() } }
 }
 
 @DgsComponent
 class FetcherUsingDataLoader {
     @DgsData(parentType = "Query", field = "names")
     fun hello(dfe: DataFetchingEnvironment): CompletableFuture<List<String>> {
-        val dataLoader = dfe.getDataLoader<String, String>("testloader")
-            ?: throw AssertionError("testloader not found")
+        val dataLoader =
+            dfe.getDataLoader<String, String>("testloader")
+                ?: throw AssertionError("testloader not found")
         return dataLoader.loadMany(listOf("a", "b", "c"))
     }
 }
 
 @DgsDataLoader(name = "testMappedLoader")
 class TestMappedDataLoader : MappedBatchLoader<String, String> {
-    override fun load(keys: Set<String>): CompletionStage<Map<String, String>> {
-        return CompletableFuture.supplyAsync { keys.associateWith { it.uppercase() } }
-    }
+    override fun load(keys: Set<String>): CompletionStage<Map<String, String>> =
+        CompletableFuture.supplyAsync { keys.associateWith { it.uppercase() } }
 }
 
 @DgsComponent
 class FetcherUsingMappedDataLoader {
     @DgsData(parentType = "Query", field = "namesFromMapped")
     fun hello(dfe: DataFetchingEnvironment): CompletableFuture<List<String>> {
-        val dataLoader = dfe.getDataLoader<String, String>("testMappedLoader")
-            ?: throw AssertionError("testMappedLoader not found")
+        val dataLoader =
+            dfe.getDataLoader<String, String>("testMappedLoader")
+                ?: throw AssertionError("testMappedLoader not found")
         return dataLoader.loadMany(listOf("a", "b", "c"))
     }
 }
@@ -66,36 +65,30 @@ class FetcherUsingMappedDataLoader {
 @Configuration
 open class DataLoaderConfig {
     @Bean
-    open fun createDataLoader(): BatchLoader<String, String> {
-        return TestDataLoader()
-    }
+    open fun createDataLoader(): BatchLoader<String, String> = TestDataLoader()
 
     @Bean
-    open fun createFetcher(): FetcherUsingDataLoader {
-        return FetcherUsingDataLoader()
-    }
+    open fun createFetcher(): FetcherUsingDataLoader = FetcherUsingDataLoader()
 
     @Bean
-    open fun createMappedDataLoader(): MappedBatchLoader<String, String> {
-        return TestMappedDataLoader()
-    }
+    open fun createMappedDataLoader(): MappedBatchLoader<String, String> = TestMappedDataLoader()
 
     @Bean
-    open fun createFetcherUsingMappedLoader(): FetcherUsingMappedDataLoader {
-        return FetcherUsingMappedDataLoader()
-    }
+    open fun createFetcherUsingMappedLoader(): FetcherUsingMappedDataLoader = FetcherUsingMappedDataLoader()
 
     @Bean
-    open fun dgsDataLoaderOptionsProvider(): DgsDataLoaderOptionsProvider {
-        return CustomDataLoaderOptionsProvider()
-    }
+    open fun dgsDataLoaderOptionsProvider(): DgsDataLoaderOptionsProvider = CustomDataLoaderOptionsProvider()
 }
 
 class CustomDataLoaderOptionsProvider : DgsDataLoaderOptionsProvider {
-    override fun getOptions(dataLoaderName: String, annotation: DgsDataLoader): DataLoaderOptions {
-        val options = DataLoaderOptions()
-            .setBatchingEnabled(false)
-            .setCachingEnabled(false)
+    override fun getOptions(
+        dataLoaderName: String,
+        annotation: DgsDataLoader,
+    ): DataLoaderOptions {
+        val options =
+            DataLoaderOptions()
+                .setBatchingEnabled(false)
+                .setCachingEnabled(false)
 
         options.setMaxBatchSize(50)
         return options

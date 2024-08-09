@@ -30,42 +30,41 @@ import java.util.function.Supplier
 
 class TrivialDataFetcherTest {
     private val application = GenericApplicationContext()
-    private val schemaProvider = DgsSchemaProvider(
-        applicationContext = application,
-        federationResolver = Optional.empty(),
-        existingTypeDefinitionRegistry = Optional.empty(),
-        methodDataFetcherFactory = MethodDataFetcherFactory(argumentResolvers = listOf())
-    )
+    private val schemaProvider =
+        DgsSchemaProvider(
+            applicationContext = application,
+            federationResolver = Optional.empty(),
+            existingTypeDefinitionRegistry = Optional.empty(),
+            methodDataFetcherFactory = MethodDataFetcherFactory(argumentResolvers = listOf()),
+        )
 
     @Test
     fun `DgsData annotated method with trivial field set to true is registered as TrivialDataFetcher`() {
         @DgsComponent
         class Component {
             @DgsData(parentType = "Foo", field = "bar", trivial = true)
-            fun trivialDataFetcher(): String {
-                return "bar"
-            }
+            fun trivialDataFetcher(): String = "bar"
 
             @DgsData(parentType = "Foo", field = "baz", trivial = false)
-            fun nonTrivialDataFetcher(): String {
-                return "baz"
-            }
+            fun nonTrivialDataFetcher(): String = "baz"
         }
 
         application.registerBean(Component::class.java, Supplier { Component() })
         application.refresh()
-        val schema = schemaProvider.schema(
-            """
-            type Query {
-              foo: Foo
-            }
+        val schema =
+            schemaProvider
+                .schema(
+                    """
+                    type Query {
+                      foo: Foo
+                    }
 
-            type Foo {
-              bar: String
-              baz: String
-            }
-            """.trimIndent()
-        ).graphQLSchema
+                    type Foo {
+                      bar: String
+                      baz: String
+                    }
+                    """.trimIndent(),
+                ).graphQLSchema
         val parentType = schema.getTypeAs<GraphQLObjectType>("Foo") ?: fail("Parent type not found")
         val definitions = parentType.children.filterIsInstance<GraphQLFieldDefinition>()
         val barDefinition = definitions.find { it.name == "bar" } ?: fail("bar definition not found")
@@ -82,26 +81,24 @@ class TrivialDataFetcherTest {
         @DgsComponent
         class Component {
             @DgsQuery(field = "foo", trivial = true)
-            fun trivialDataFetcher(): String {
-                return "foo"
-            }
+            fun trivialDataFetcher(): String = "foo"
 
             @DgsQuery(field = "bar", trivial = false)
-            fun nonTrivialDataFetcher(): String {
-                return "bar"
-            }
+            fun nonTrivialDataFetcher(): String = "bar"
         }
 
         application.registerBean(Component::class.java, Supplier { Component() })
         application.refresh()
-        val schema = schemaProvider.schema(
-            """
-            type Query {
-              foo: String!
-              bar: String!
-            }
-            """.trimIndent()
-        ).graphQLSchema
+        val schema =
+            schemaProvider
+                .schema(
+                    """
+                    type Query {
+                      foo: String!
+                      bar: String!
+                    }
+                    """.trimIndent(),
+                ).graphQLSchema
 
         val parentType = schema.queryType
         val definitions = parentType.children.filterIsInstance<GraphQLFieldDefinition>()
@@ -120,23 +117,23 @@ class TrivialDataFetcherTest {
         class Component {
             @DgsData.List(
                 DgsData(parentType = "Query", field = "foo", trivial = true),
-                DgsData(parentType = "Query", field = "bar", trivial = false)
+                DgsData(parentType = "Query", field = "bar", trivial = false),
             )
-            fun dataFetcher(): String {
-                return "foo"
-            }
+            fun dataFetcher(): String = "foo"
         }
 
         application.registerBean(Component::class.java, Supplier { Component() })
         application.refresh()
-        val schema = schemaProvider.schema(
-            """
-            type Query {
-              foo: String!
-              bar: String!
-            }
-            """.trimIndent()
-        ).graphQLSchema
+        val schema =
+            schemaProvider
+                .schema(
+                    """
+                    type Query {
+                      foo: String!
+                      bar: String!
+                    }
+                    """.trimIndent(),
+                ).graphQLSchema
 
         val parentType = schema.queryType
         val definitions = parentType.children.filterIsInstance<GraphQLFieldDefinition>()

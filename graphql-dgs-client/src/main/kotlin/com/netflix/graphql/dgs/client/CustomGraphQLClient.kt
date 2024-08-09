@@ -24,29 +24,31 @@ import org.intellij.lang.annotations.Language
  * The user is responsible for doing the actual HTTP request, making this pluggable with any HTTP client.
  * For a more convenient option, use [WebClientGraphQLClient] instead.
  */
-class CustomGraphQLClient(private val url: String, private val requestExecutor: RequestExecutor, private val mapper: ObjectMapper) : GraphQLClient {
-
+class CustomGraphQLClient(
+    private val url: String,
+    private val requestExecutor: RequestExecutor,
+    private val mapper: ObjectMapper,
+) : GraphQLClient {
     constructor(url: String, requestExecutor: RequestExecutor) : this(url, requestExecutor, GraphQLClients.objectMapper)
-
-    override fun executeQuery(@Language("graphql") query: String): GraphQLResponse {
-        return executeQuery(query, emptyMap(), null)
-    }
 
     override fun executeQuery(
         @Language("graphql") query: String,
-        variables: Map<String, Any>
-    ): GraphQLResponse {
-        return executeQuery(query, variables, null)
-    }
+    ): GraphQLResponse = executeQuery(query, emptyMap(), null)
 
     override fun executeQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
-        operationName: String?
+    ): GraphQLResponse = executeQuery(query, variables, null)
+
+    override fun executeQuery(
+        @Language("graphql") query: String,
+        variables: Map<String, Any>,
+        operationName: String?,
     ): GraphQLResponse {
-        val serializedRequest = mapper.writeValueAsString(
-            GraphQLClients.toRequestMap(query = query, operationName = operationName, variables = variables)
-        )
+        val serializedRequest =
+            mapper.writeValueAsString(
+                GraphQLClients.toRequestMap(query = query, operationName = operationName, variables = variables),
+            )
 
         val response = requestExecutor.execute(url, GraphQLClients.defaultHeaders, serializedRequest)
         return GraphQLClients.handleResponse(response, serializedRequest, url)

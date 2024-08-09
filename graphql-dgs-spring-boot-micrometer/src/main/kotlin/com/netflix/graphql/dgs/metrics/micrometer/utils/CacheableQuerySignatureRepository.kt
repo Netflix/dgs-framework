@@ -55,9 +55,8 @@ import java.util.*
 open class CacheableQuerySignatureRepository(
     autoTimer: AutoTimer,
     meterRegistrySupplier: DgsMeterRegistrySupplier,
-    private val optionalCacheManager: Optional<CacheManager>
+    private val optionalCacheManager: Optional<CacheManager>,
 ) : SimpleQuerySignatureRepository(autoTimer, meterRegistrySupplier) {
-
     private lateinit var cache: Cache
 
     companion object {
@@ -69,7 +68,7 @@ open class CacheableQuerySignatureRepository(
     override fun computeQuerySignature(
         queryHash: String,
         queryName: String?,
-        document: Document
+        document: Document,
     ): QuerySignatureRepository.QuerySignature {
         val key = CacheKey(queryHash, queryName)
         log.debug("Computing query signature for query with cache key: {}.", key)
@@ -78,13 +77,14 @@ open class CacheableQuerySignatureRepository(
 
     override fun afterPropertiesSet() {
         super.afterPropertiesSet()
-        cache = Objects.requireNonNull(
-            optionalCacheManager
-                .filter { it !== null && it.cacheNames.contains(QUERY_SIG_CACHE) }
-                .flatMap { Optional.ofNullable(it.getCache(QUERY_SIG_CACHE)) }
-                .orElseGet { newMonitoredCaffeineCacheManager().getCache(QUERY_SIG_CACHE) },
-            "Expected to resolve named cache[$QUERY_SIG_CACHE] from either the internal cache manager or the optional!"
-        )
+        cache =
+            Objects.requireNonNull(
+                optionalCacheManager
+                    .filter { it !== null && it.cacheNames.contains(QUERY_SIG_CACHE) }
+                    .flatMap { Optional.ofNullable(it.getCache(QUERY_SIG_CACHE)) }
+                    .orElseGet { newMonitoredCaffeineCacheManager().getCache(QUERY_SIG_CACHE) },
+                "Expected to resolve named cache[$QUERY_SIG_CACHE] from either the internal cache manager or the optional!",
+            )
     }
 
     private fun newMonitoredCaffeineCacheManager(): CacheManager {
@@ -102,9 +102,13 @@ open class CacheableQuerySignatureRepository(
         return cacheManager
     }
 
-    internal fun fetchRawValueFromCache(key: CacheKey): Optional<QuerySignatureRepository.QuerySignature> {
-        return Optional.ofNullable(cache.get(key)).map { it.get() as QuerySignatureRepository.QuerySignature }
-    }
+    internal fun fetchRawValueFromCache(key: CacheKey): Optional<QuerySignatureRepository.QuerySignature> =
+        Optional.ofNullable(cache.get(key)).map {
+            it.get() as QuerySignatureRepository.QuerySignature
+        }
 
-    internal data class CacheKey(val hash: String, val name: String?)
+    internal data class CacheKey(
+        val hash: String,
+        val name: String?,
+    )
 }

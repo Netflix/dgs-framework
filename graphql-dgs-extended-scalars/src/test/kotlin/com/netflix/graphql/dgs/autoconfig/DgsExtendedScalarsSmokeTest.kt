@@ -40,7 +40,6 @@ import java.util.*
 @SpringBootTest(classes = [DgsExtendedScalarsSmokeTest.LocalApp::class])
 @EnableAutoConfiguration
 internal class DgsExtendedScalarsSmokeTest {
-
     @Autowired
     lateinit var queryExecutor: DgsQueryExecutor
 
@@ -51,8 +50,8 @@ internal class DgsExtendedScalarsSmokeTest {
             mapOf(
                 "aDate" to "1963-01-01",
                 "aTime" to "18:00:30Z",
-                "aDateTime" to "1963-01-01T18:00:30.000Z"
-            )
+                "aDateTime" to "1963-01-01T18:00:30.000Z",
+            ),
         )
     }
 
@@ -66,8 +65,8 @@ internal class DgsExtendedScalarsSmokeTest {
                 "aJSONObject" to mapOf("name" to "json"),
                 "anObject" to mapOf("name" to "object"),
                 "aURL" to "http://localhost:8080",
-                "aLocale" to "en-US"
-            )
+                "aLocale" to "en-US",
+            ),
         )
     }
 
@@ -91,7 +90,7 @@ internal class DgsExtendedScalarsSmokeTest {
                 |   aBigDecimal
                 |   aBigInteger
                 |}
-                """.trimMargin()
+                """.trimMargin(),
             )
         assertThat(data).containsAllEntriesOf(
             mapOf(
@@ -107,8 +106,8 @@ internal class DgsExtendedScalarsSmokeTest {
                 "aShort" to 32767,
                 "aByte" to 127,
                 "aBigDecimal" to 10,
-                "aBigInteger" to 10
-            )
+                "aBigInteger" to 10,
+            ),
         )
     }
 
@@ -119,22 +118,19 @@ internal class DgsExtendedScalarsSmokeTest {
         assertThat(data).containsAllEntriesOf(mapOf("aChar" to "A"))
     }
 
-    private fun <T> executeQueryExtractingData(query: String): T {
-        return queryExecutor.executeAndExtractJsonPath(query, "data")
-    }
+    private fun <T> executeQueryExtractingData(query: String): T = queryExecutor.executeAndExtractJsonPath(query, "data")
 
     @SpringBootConfiguration(proxyBeanMethods = false)
     @SuppressWarnings("unused")
     open class LocalApp {
-
         @DgsComponent
         class ExampleImplementation {
-
             @DgsTypeDefinitionRegistry
             fun typeDefinitionRegistry(): TypeDefinitionRegistry {
                 val schemaParser = SchemaParser()
 
-                val gqlSchema = """
+                val gqlSchema =
+                    """
                 |type Query{
                 |   aDate: Date
                 |   aTime: Time
@@ -180,21 +176,18 @@ internal class DgsExtendedScalarsSmokeTest {
                 | scalar BigDecimal
                 | scalar BigInteger
                 | scalar Char
-                """.trimMargin()
+                    """.trimMargin()
                 return schemaParser.parse(gqlSchema)
             }
 
             @DgsQuery
-            fun aDate(): LocalDate =
-                LocalDate.of(1963, 1, 1)
+            fun aDate(): LocalDate = LocalDate.of(1963, 1, 1)
 
             @DgsQuery
-            fun aTime(): OffsetTime =
-                OffsetTime.of(18, 0, 30, 0, ZoneOffset.UTC)
+            fun aTime(): OffsetTime = OffsetTime.of(18, 0, 30, 0, ZoneOffset.UTC)
 
             @DgsQuery
-            fun aDateTime(): OffsetDateTime =
-                OffsetDateTime.of(1963, 1, 1, 18, 0, 30, 0, ZoneOffset.UTC)
+            fun aDateTime(): OffsetDateTime = OffsetDateTime.of(1963, 1, 1, 18, 0, 30, 0, ZoneOffset.UTC)
 
             @DgsQuery
             fun aJSONObject(): SomeData = SomeData("json")
@@ -250,7 +243,9 @@ internal class DgsExtendedScalarsSmokeTest {
             @DgsQuery
             fun aChar(): Char = 'A'
 
-            data class SomeData(val name: String)
+            data class SomeData(
+                val name: String,
+            )
         }
     }
 }

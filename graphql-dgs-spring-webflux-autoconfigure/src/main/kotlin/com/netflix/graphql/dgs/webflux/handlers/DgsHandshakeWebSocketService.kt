@@ -24,12 +24,14 @@ import org.springframework.web.server.ServerWebExchange
 import reactor.core.publisher.Mono
 
 class DgsHandshakeWebSocketService : HandshakeWebSocketService {
-
     constructor() : super()
 
     constructor (upgradeStrategy: RequestUpgradeStrategy) : super(upgradeStrategy)
 
-    override fun handleRequest(exchange: ServerWebExchange, handler: WebSocketHandler): Mono<Void> {
+    override fun handleRequest(
+        exchange: ServerWebExchange,
+        handler: WebSocketHandler,
+    ): Mono<Void> {
         var newExchange = exchange
         var request = exchange.request
         val headers = request.headers

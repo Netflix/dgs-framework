@@ -52,12 +52,11 @@ class TypeResolverTest {
         var nrOfExplosions = 0
     }
 
-    val queryFetcher = object : Any() {
-        @DgsData(parentType = "Query", field = "movies")
-        fun moviesFetcher(): List<Movie> {
-            return listOf(ScaryMovie(), ActionMovie())
+    val queryFetcher =
+        object : Any() {
+            @DgsData(parentType = "Query", field = "movies")
+            fun moviesFetcher(): List<Movie> = listOf(ScaryMovie(), ActionMovie())
         }
-    }
 
     @Test
     fun testFallbackTypeResolver() {
@@ -65,50 +64,54 @@ class TypeResolverTest {
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
-        val provider = DgsSchemaProvider(
-            applicationContext = applicationContextMock,
-            federationResolver = Optional.empty(),
-            existingTypeDefinitionRegistry = Optional.empty(),
-            methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
-        )
-        val schema = provider.schema(
-            """
-            type Query {
-                movies: [Movie]            
-            }
-            
-            interface Movie {
-                title: String
-                director: String
-            }
-            
-            type ScaryMovie implements Movie {
-                title: String
-                director: String
-                gory: Boolean
-            }
-            
-            type ActionMovie implements Movie {
-                title: String
-                director: String
-                nrOfExplosions: Int
-            }
-            """.trimIndent()
-        ).graphQLSchema
+        val provider =
+            DgsSchemaProvider(
+                applicationContext = applicationContextMock,
+                federationResolver = Optional.empty(),
+                existingTypeDefinitionRegistry = Optional.empty(),
+                methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
+            )
+        val schema =
+            provider
+                .schema(
+                    """
+                    type Query {
+                        movies: [Movie]            
+                    }
+                    
+                    interface Movie {
+                        title: String
+                        director: String
+                    }
+                    
+                    type ScaryMovie implements Movie {
+                        title: String
+                        director: String
+                        gory: Boolean
+                    }
+                    
+                    type ActionMovie implements Movie {
+                        title: String
+                        director: String
+                        nrOfExplosions: Int
+                    }
+                    """.trimIndent(),
+                ).graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
-        val executionResult = build.execute(
-            """
-            {
-                movies { 
-                    title 
-                    ...on ScaryMovie { 
-                        gory
+        val executionResult =
+            build.execute(
+                """
+                {
+                    movies { 
+                        title 
+                        ...on ScaryMovie { 
+                            gory
+                        }
                     }
                 }
-            }
-            """.trimIndent()
-        )
+                """.trimIndent(),
+            )
         Assertions.assertEquals(0, executionResult.errors.size)
     }
 
@@ -121,36 +124,39 @@ class TypeResolverTest {
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
-        val provider = DgsSchemaProvider(
-            applicationContext = applicationContextMock,
-            federationResolver = Optional.empty(),
-            existingTypeDefinitionRegistry = Optional.empty(),
-            methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
-        )
-        val schema = provider.schema(
-            """
-            type Query {
-                movies: [Movie]            
-            }
-            
-            interface Movie {
-                title: String
-                director: String
-            }
-            
-            type ScaryMovie implements Movie {
-                title: String
-                director: String
-                gory: Boolean
-            }
-            
-            type ActionMovieWithSpecialName implements Movie {
-                title: String
-                director: String
-                nrOfExplosions: Int
-            }
-            """.trimIndent()
-        ).graphQLSchema
+        val provider =
+            DgsSchemaProvider(
+                applicationContext = applicationContextMock,
+                federationResolver = Optional.empty(),
+                existingTypeDefinitionRegistry = Optional.empty(),
+                methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
+            )
+        val schema =
+            provider
+                .schema(
+                    """
+                    type Query {
+                        movies: [Movie]            
+                    }
+                    
+                    interface Movie {
+                        title: String
+                        director: String
+                    }
+                    
+                    type ScaryMovie implements Movie {
+                        title: String
+                        director: String
+                        gory: Boolean
+                    }
+                    
+                    type ActionMovieWithSpecialName implements Movie {
+                        title: String
+                        director: String
+                        nrOfExplosions: Int
+                    }
+                    """.trimIndent(),
+                ).graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
 
@@ -165,73 +171,78 @@ class TypeResolverTest {
                         }
                     }
                 }
-                """.trimIndent()
+                """.trimIndent(),
             )
         }
     }
 
     @Test
     fun testCustomTypeResolver() {
-        val movieTypeResolver = object : Any() {
-            @DgsTypeResolver(name = "Movie")
-            fun movieTypes(movie: Movie): String {
-                return when (movie) {
-                    is ScaryMovie -> "ScaryMovie"
-                    is ActionMovie -> "ActionMovie"
-                    else -> throw RuntimeException("Unknown movie type")
-                }
+        val movieTypeResolver =
+            object : Any() {
+                @DgsTypeResolver(name = "Movie")
+                fun movieTypes(movie: Movie): String =
+                    when (movie) {
+                        is ScaryMovie -> "ScaryMovie"
+                        is ActionMovie -> "ActionMovie"
+                        else -> throw RuntimeException("Unknown movie type")
+                    }
             }
-        }
 
         val typeResolverSpy = spyk(movieTypeResolver)
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("MovieTypeResolver", typeResolverSpy), Pair("queryResolver", queryFetcher))
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+            mapOf(Pair("MovieTypeResolver", typeResolverSpy), Pair("queryResolver", queryFetcher))
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
-        val provider = DgsSchemaProvider(
-            applicationContext = applicationContextMock,
-            federationResolver = Optional.empty(),
-            existingTypeDefinitionRegistry = Optional.empty(),
-            methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
-        )
-        val schema = provider.schema(
-            """
-            type Query {
-                movies: [Movie]            
-            }
-            
-            interface Movie {
-                title: String
-                director: String
-            }
-            
-            type ScaryMovie implements Movie {
-                title: String
-                director: String
-                gory: Boolean
-            }
-            
-            type ActionMovie implements Movie {
-                title: String
-                director: String
-                nrOfExplosions: Int
-            }
-            """.trimIndent()
-        ).graphQLSchema
+        val provider =
+            DgsSchemaProvider(
+                applicationContext = applicationContextMock,
+                federationResolver = Optional.empty(),
+                existingTypeDefinitionRegistry = Optional.empty(),
+                methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
+            )
+        val schema =
+            provider
+                .schema(
+                    """
+                    type Query {
+                        movies: [Movie]            
+                    }
+                    
+                    interface Movie {
+                        title: String
+                        director: String
+                    }
+                    
+                    type ScaryMovie implements Movie {
+                        title: String
+                        director: String
+                        gory: Boolean
+                    }
+                    
+                    type ActionMovie implements Movie {
+                        title: String
+                        director: String
+                        nrOfExplosions: Int
+                    }
+                    """.trimIndent(),
+                ).graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
-        val executionResult = build.execute(
-            """
-            {
-                movies { 
-                    title 
-                    ...on ScaryMovie { 
-                        gory
+        val executionResult =
+            build.execute(
+                """
+                {
+                    movies { 
+                        title 
+                        ...on ScaryMovie { 
+                            gory
+                        }
                     }
                 }
-            }
-            """.trimIndent()
-        )
+                """.trimIndent(),
+            )
         Assertions.assertEquals(0, executionResult.errors.size)
 
         verify { typeResolverSpy.movieTypes(any()) }

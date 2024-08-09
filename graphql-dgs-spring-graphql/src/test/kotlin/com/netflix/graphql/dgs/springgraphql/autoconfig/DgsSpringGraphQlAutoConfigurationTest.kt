@@ -42,17 +42,19 @@ import org.springframework.web.filter.reactive.ServerWebExchangeContextFilter
 import org.springframework.web.reactive.BindingContext
 
 class DgsSpringGraphQlAutoConfigurationTest {
-    private val autoConfigurations = AutoConfigurations.of(
-        DgsSpringGraphQLAutoConfiguration::class.java,
-        DgsAutoConfiguration::class.java,
-        DgsSpringGraphQLSourceAutoConfiguration::class.java,
-        GraphQlAutoConfiguration::class.java
-    )
+    private val autoConfigurations =
+        AutoConfigurations.of(
+            DgsSpringGraphQLAutoConfiguration::class.java,
+            DgsAutoConfiguration::class.java,
+            DgsSpringGraphQLSourceAutoConfiguration::class.java,
+            GraphQlAutoConfiguration::class.java,
+        )
 
     @Test
     fun shouldContributeBeans() {
-        val contextRunner = ApplicationContextRunner()
-            .withConfiguration(autoConfigurations)
+        val contextRunner =
+            ApplicationContextRunner()
+                .withConfiguration(autoConfigurations)
 
         contextRunner.run { context ->
             assertThat(context)
@@ -67,8 +69,9 @@ class DgsSpringGraphQlAutoConfigurationTest {
 
     @Test
     fun shouldContributeWebMvcBeans() {
-        val webContextRunner = WebApplicationContextRunner()
-            .withConfiguration(autoConfigurations)
+        val webContextRunner =
+            WebApplicationContextRunner()
+                .withConfiguration(autoConfigurations)
 
         webContextRunner.run { context ->
             assertThat(context)
@@ -76,31 +79,33 @@ class DgsSpringGraphQlAutoConfigurationTest {
                 .hasSingleBean(WebDataBinderFactory::class.java)
 
             assertThat(context).getBean("requestHeaderMapResolver").isExactlyInstanceOf(
-                HandlerMethodArgumentResolverAdapter::class.java
+                HandlerMethodArgumentResolverAdapter::class.java,
             )
 
             assertThat(context).getBean("requestHeaderResolver").isExactlyInstanceOf(
-                HandlerMethodArgumentResolverAdapter::class.java
+                HandlerMethodArgumentResolverAdapter::class.java,
             )
 
             assertThat(context).getBean("requestParamResolver").isExactlyInstanceOf(
-                HandlerMethodArgumentResolverAdapter::class.java
+                HandlerMethodArgumentResolverAdapter::class.java,
             )
 
             assertThat(context).getBean("requestParamMapResolver").isExactlyInstanceOf(
-                HandlerMethodArgumentResolverAdapter::class.java
+                HandlerMethodArgumentResolverAdapter::class.java,
             )
 
             assertThat(context).getBean("cookieValueResolver").isExactlyInstanceOf(
-                HandlerMethodArgumentResolverAdapter::class.java
+                HandlerMethodArgumentResolverAdapter::class.java,
             )
         }
     }
 
     @Test
     fun shouldContributeWebfluxBeans() {
-        val reactiveContextRunner = ReactiveWebApplicationContextRunner()
-            .withConfiguration(autoConfigurations).withBean(ReactiveAdapterRegistry::class.java)
+        val reactiveContextRunner =
+            ReactiveWebApplicationContextRunner()
+                .withConfiguration(autoConfigurations)
+                .withBean(ReactiveAdapterRegistry::class.java)
 
         reactiveContextRunner.run { context ->
             assertThat(context)
@@ -110,27 +115,27 @@ class DgsSpringGraphQlAutoConfigurationTest {
                 .hasSingleBean(DgsWebFluxGraphQLInterceptor::class.java)
 
             assertThat(context).getBean("dgsBindingContext").isExactlyInstanceOf(
-                BindingContext::class.java
+                BindingContext::class.java,
             )
 
             assertThat(context).getBean("cookieValueArgumentResolver").isExactlyInstanceOf(
-                SyncHandlerMethodArgumentResolverAdapter::class.java
+                SyncHandlerMethodArgumentResolverAdapter::class.java,
             )
 
             assertThat(context).getBean("requestHeaderMapArgumentResolver").isExactlyInstanceOf(
-                SyncHandlerMethodArgumentResolverAdapter::class.java
+                SyncHandlerMethodArgumentResolverAdapter::class.java,
             )
 
             assertThat(context).getBean("requestHeaderArgumentResolver").isExactlyInstanceOf(
-                SyncHandlerMethodArgumentResolverAdapter::class.java
+                SyncHandlerMethodArgumentResolverAdapter::class.java,
             )
 
             assertThat(context).getBean("requestParamArgumentResolver").isExactlyInstanceOf(
-                SyncHandlerMethodArgumentResolverAdapter::class.java
+                SyncHandlerMethodArgumentResolverAdapter::class.java,
             )
 
             assertThat(context).getBean("requestParamMapArgumentResolver").isExactlyInstanceOf(
-                SyncHandlerMethodArgumentResolverAdapter::class.java
+                SyncHandlerMethodArgumentResolverAdapter::class.java,
             )
         }
     }
@@ -140,7 +145,11 @@ class DgsSpringGraphQlAutoConfigurationTest {
         ApplicationContextRunner()
             .withConfiguration(autoConfigurations)
             .run { context ->
-                assertThat(context.getBean(DgsSpringGraphQLConfigurationProperties::class.java).webmvc.asyncdispatch.enabled).isFalse()
+                assertThat(
+                    context
+                        .getBean(DgsSpringGraphQLConfigurationProperties::class.java)
+                        .webmvc.asyncdispatch.enabled,
+                ).isFalse()
             }
     }
 
@@ -150,7 +159,11 @@ class DgsSpringGraphQlAutoConfigurationTest {
             .withConfiguration(autoConfigurations)
             .withPropertyValues("dgs.graphql.spring.webmvc.asyncdispatch.enabled=true")
             .run { context ->
-                assertThat(context.getBean(DgsSpringGraphQLConfigurationProperties::class.java).webmvc.asyncdispatch.enabled).isTrue()
+                assertThat(
+                    context
+                        .getBean(DgsSpringGraphQLConfigurationProperties::class.java)
+                        .webmvc.asyncdispatch.enabled,
+                ).isTrue()
             }
     }
 
@@ -160,7 +173,11 @@ class DgsSpringGraphQlAutoConfigurationTest {
             .withConfiguration(autoConfigurations)
             .withPropertyValues("dgs.graphql.spring.webmvc.asyncdispatch.enabled=false")
             .run { context ->
-                assertThat(context.getBean(DgsSpringGraphQLConfigurationProperties::class.java).webmvc.asyncdispatch.enabled).isFalse()
+                assertThat(
+                    context
+                        .getBean(DgsSpringGraphQLConfigurationProperties::class.java)
+                        .webmvc.asyncdispatch.enabled,
+                ).isFalse()
             }
     }
 
@@ -172,7 +189,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
                 // Introspection enabled have default config values in a Spring EnvironmentPostProcessor.
                 DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(
                     context.environment,
-                    SpringApplication(context.sourceApplicationContext)
+                    SpringApplication(context.sourceApplicationContext),
                 )
 
                 // Check expected config values.
@@ -181,18 +198,19 @@ class DgsSpringGraphQlAutoConfigurationTest {
 
                 // Check expected results.
                 assertThat(context).getBean(DgsQueryExecutor::class.java).extracting {
-                    val response = it.execute(
-                        " query availableQueries {\n" +
-                            "  __schema {\n" +
-                            "    queryType {\n" +
-                            "      fields {\n" +
-                            "        name\n" +
-                            "        description\n" +
-                            "      }\n" +
-                            "    }\n" +
-                            "  }\n" +
-                            "}"
-                    )
+                    val response =
+                        it.execute(
+                            " query availableQueries {\n" +
+                                "  __schema {\n" +
+                                "    queryType {\n" +
+                                "      fields {\n" +
+                                "        name\n" +
+                                "        description\n" +
+                                "      }\n" +
+                                "    }\n" +
+                                "  }\n" +
+                                "}",
+                        )
                     assertThat(response.errors.size).isEqualTo(0)
                     assertThat(response.isDataPresent).isTrue()
                 }
@@ -208,7 +226,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
                 // Introspection enabled have default config values in a Spring EnvironmentPostProcessor.
                 DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(
                     context.environment,
-                    SpringApplication(context.sourceApplicationContext)
+                    SpringApplication(context.sourceApplicationContext),
                 )
 
                 // Check expected config values.
@@ -217,22 +235,27 @@ class DgsSpringGraphQlAutoConfigurationTest {
 
                 // Check expected results.
                 assertThat(context).getBean(DgsQueryExecutor::class.java).extracting {
-                    val response = it.execute(
-                        " query availableQueries {\n" +
-                            "  __schema {\n" +
-                            "    queryType {\n" +
-                            "      fields {\n" +
-                            "        name\n" +
-                            "        description\n" +
-                            "      }\n" +
-                            "    }\n" +
-                            "  }\n" +
-                            "}"
-                    )
+                    val response =
+                        it.execute(
+                            " query availableQueries {\n" +
+                                "  __schema {\n" +
+                                "    queryType {\n" +
+                                "      fields {\n" +
+                                "        name\n" +
+                                "        description\n" +
+                                "      }\n" +
+                                "    }\n" +
+                                "  }\n" +
+                                "}",
+                        )
                     assertThat(response.errors.size).isEqualTo(1)
                     assertThat(response.isDataPresent).isFalse()
-                    assertThat(response.errors.first().errorType.toString())
-                        .isEqualTo(ErrorClassification.errorClassification("IntrospectionDisabled").toString())
+                    assertThat(
+                        response.errors
+                            .first()
+                            .errorType
+                            .toString(),
+                    ).isEqualTo(ErrorClassification.errorClassification("IntrospectionDisabled").toString())
                 }
             }
     }
@@ -246,7 +269,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
                 // Introspection enabled have default config values in a Spring EnvironmentPostProcessor.
                 DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(
                     context.environment,
-                    SpringApplication(context.sourceApplicationContext)
+                    SpringApplication(context.sourceApplicationContext),
                 )
 
                 // Check expected config values.
@@ -255,22 +278,27 @@ class DgsSpringGraphQlAutoConfigurationTest {
 
                 // Check expected results.
                 assertThat(context).getBean(DgsQueryExecutor::class.java).extracting {
-                    val response = it.execute(
-                        " query availableQueries {\n" +
-                            "  __schema {\n" +
-                            "    queryType {\n" +
-                            "      fields {\n" +
-                            "        name\n" +
-                            "        description\n" +
-                            "      }\n" +
-                            "    }\n" +
-                            "  }\n" +
-                            "}"
-                    )
+                    val response =
+                        it.execute(
+                            " query availableQueries {\n" +
+                                "  __schema {\n" +
+                                "    queryType {\n" +
+                                "      fields {\n" +
+                                "        name\n" +
+                                "        description\n" +
+                                "      }\n" +
+                                "    }\n" +
+                                "  }\n" +
+                                "}",
+                        )
                     assertThat(response.errors.size).isEqualTo(1)
                     assertThat(response.isDataPresent).isFalse()
-                    assertThat(response.errors.first().errorType.toString())
-                        .isEqualTo(ErrorClassification.errorClassification("IntrospectionDisabled").toString())
+                    assertThat(
+                        response.errors
+                            .first()
+                            .errorType
+                            .toString(),
+                    ).isEqualTo(ErrorClassification.errorClassification("IntrospectionDisabled").toString())
                 }
             }
     }
@@ -284,7 +312,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
                 // Introspection enabled have default config values in a Spring EnvironmentPostProcessor.
                 DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(
                     context.environment,
-                    SpringApplication(context.sourceApplicationContext)
+                    SpringApplication(context.sourceApplicationContext),
                 )
 
                 // Check expected config values.
@@ -293,18 +321,19 @@ class DgsSpringGraphQlAutoConfigurationTest {
 
                 // Check expected results.
                 assertThat(context).getBean(DgsQueryExecutor::class.java).extracting {
-                    val response = it.execute(
-                        " query availableQueries {\n" +
-                            "  __schema {\n" +
-                            "    queryType {\n" +
-                            "      fields {\n" +
-                            "        name\n" +
-                            "        description\n" +
-                            "      }\n" +
-                            "    }\n" +
-                            "  }\n" +
-                            "}"
-                    )
+                    val response =
+                        it.execute(
+                            " query availableQueries {\n" +
+                                "  __schema {\n" +
+                                "    queryType {\n" +
+                                "      fields {\n" +
+                                "        name\n" +
+                                "        description\n" +
+                                "      }\n" +
+                                "    }\n" +
+                                "  }\n" +
+                                "}",
+                        )
                     assertThat(response.errors.size).isEqualTo(0)
                     assertThat(response.isDataPresent).isTrue()
                 }
@@ -320,7 +349,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
                 // Introspection enabled have default config values in a Spring EnvironmentPostProcessor.
                 DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(
                     context.environment,
-                    SpringApplication(context.sourceApplicationContext)
+                    SpringApplication(context.sourceApplicationContext),
                 )
 
                 // Check expected config values.
@@ -329,18 +358,19 @@ class DgsSpringGraphQlAutoConfigurationTest {
 
                 // Check expected results.
                 assertThat(context).getBean(DgsQueryExecutor::class.java).extracting {
-                    val response = it.execute(
-                        " query availableQueries {\n" +
-                            "  __schema {\n" +
-                            "    queryType {\n" +
-                            "      fields {\n" +
-                            "        name\n" +
-                            "        description\n" +
-                            "      }\n" +
-                            "    }\n" +
-                            "  }\n" +
-                            "}"
-                    )
+                    val response =
+                        it.execute(
+                            " query availableQueries {\n" +
+                                "  __schema {\n" +
+                                "    queryType {\n" +
+                                "      fields {\n" +
+                                "        name\n" +
+                                "        description\n" +
+                                "      }\n" +
+                                "    }\n" +
+                                "  }\n" +
+                                "}",
+                        )
                     assertThat(response.errors.size).isEqualTo(0)
                     assertThat(response.isDataPresent).isTrue()
                 }

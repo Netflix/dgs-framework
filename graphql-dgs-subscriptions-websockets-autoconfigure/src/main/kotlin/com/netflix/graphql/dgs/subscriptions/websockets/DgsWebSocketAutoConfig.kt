@@ -36,28 +36,30 @@ import org.springframework.web.socket.server.support.DefaultHandshakeHandler
 @EnableConfigurationProperties(DgsWebSocketConfigurationProperties::class)
 open class DgsWebSocketAutoConfig {
     @Bean
-    open fun webSocketHandler(@Suppress("SpringJavaInjectionPointsAutowiringInspection") dgsQueryExecutor: DgsQueryExecutor, configProps: DgsWebSocketConfigurationProperties, @Qualifier("dgsObjectMapper") objectMapper: ObjectMapper): WebSocketHandler {
-        return DgsWebSocketHandler(dgsQueryExecutor, configProps.connectionInitTimeout, configProps.subscriptionErrorLogLevel, objectMapper)
-    }
+    open fun webSocketHandler(
+        @Suppress("SpringJavaInjectionPointsAutowiringInspection") dgsQueryExecutor: DgsQueryExecutor,
+        configProps: DgsWebSocketConfigurationProperties,
+        @Qualifier("dgsObjectMapper") objectMapper: ObjectMapper,
+    ): WebSocketHandler =
+        DgsWebSocketHandler(dgsQueryExecutor, configProps.connectionInitTimeout, configProps.subscriptionErrorLogLevel, objectMapper)
 
     @Configuration
     @EnableWebSocket
     internal open class WebSocketConfig(
         @Suppress("SpringJavaInjectionPointsAutowiringInspection") private val webSocketHandler: WebSocketHandler,
         private val handshakeInterceptor: HandshakeInterceptor,
-        private val configProps: DgsWebSocketConfigurationProperties
+        private val configProps: DgsWebSocketConfigurationProperties,
     ) : WebSocketConfigurer {
-
         override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
             val handshakeHandler = DefaultHandshakeHandler()
-            registry.addHandler(webSocketHandler, configProps.path).setHandshakeHandler(handshakeHandler)
+            registry
+                .addHandler(webSocketHandler, configProps.path)
+                .setHandshakeHandler(handshakeHandler)
                 .addInterceptors(handshakeInterceptor)
                 .setAllowedOrigins("*")
         }
     }
 
     @Bean
-    open fun handshakeInterceptor(): HandshakeInterceptor {
-        return DgsHandshakeInterceptor()
-    }
+    open fun handshakeInterceptor(): HandshakeInterceptor = DgsHandshakeInterceptor()
 }

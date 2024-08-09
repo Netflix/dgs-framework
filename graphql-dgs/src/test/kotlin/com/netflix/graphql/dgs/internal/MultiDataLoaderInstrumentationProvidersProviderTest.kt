@@ -38,7 +38,6 @@ import org.springframework.util.MultiValueMap
 
 @SpringBootTest(classes = [MultiDataLoaderInstrumentationProvidersProviderTest.TestLocalConfiguration::class])
 internal class MultiDataLoaderInstrumentationProvidersProviderTest {
-
     @Autowired
     lateinit var testAcc: MultiValueMap<String, String>
 
@@ -60,97 +59,94 @@ internal class MultiDataLoaderInstrumentationProvidersProviderTest {
     }
 
     @Order(100)
-    class HeadDataLoaderInstrumentationExtensionProvider(acc: MultiValueMap<String, String>) :
-        BaseDataLoaderInstrumentationExtensionProvider(acc, "head")
+    class HeadDataLoaderInstrumentationExtensionProvider(
+        acc: MultiValueMap<String, String>,
+    ) : BaseDataLoaderInstrumentationExtensionProvider(acc, "head")
 
     @Order(200)
-    class MidDataLoaderInstrumentationExtensionProvider(acc: MultiValueMap<String, String>) :
-        BaseDataLoaderInstrumentationExtensionProvider(acc, "mid")
+    class MidDataLoaderInstrumentationExtensionProvider(
+        acc: MultiValueMap<String, String>,
+    ) : BaseDataLoaderInstrumentationExtensionProvider(acc, "mid")
 
     @Order(300)
-    class TailDataLoaderInstrumentationExtensionProvider(acc: MultiValueMap<String, String>) :
-        BaseDataLoaderInstrumentationExtensionProvider(acc, "tail")
+    class TailDataLoaderInstrumentationExtensionProvider(
+        acc: MultiValueMap<String, String>,
+    ) : BaseDataLoaderInstrumentationExtensionProvider(acc, "tail")
 
     @Configuration(proxyBeanMethods = false)
     open class TestLocalConfiguration {
-
         @Bean
-        open fun dgsDataLoaderProvider(applicationContext: ApplicationContext, extensionProviders: List<DataLoaderInstrumentationExtensionProvider>): DgsDataLoaderProvider {
-            return DgsDataLoaderProvider(
+        open fun dgsDataLoaderProvider(
+            applicationContext: ApplicationContext,
+            extensionProviders: List<DataLoaderInstrumentationExtensionProvider>,
+        ): DgsDataLoaderProvider =
+            DgsDataLoaderProvider(
                 applicationContext = applicationContext,
-                extensionProviders = extensionProviders
+                extensionProviders = extensionProviders,
             )
-        }
 
         @Bean
-        open fun testAcc(): MultiValueMap<String, String> {
-            return LinkedMultiValueMap()
-        }
+        open fun testAcc(): MultiValueMap<String, String> = LinkedMultiValueMap()
 
         @Bean
-        open fun exampleBatchLoader(): ExampleBatchLoader {
-            return ExampleBatchLoader()
-        }
+        open fun exampleBatchLoader(): ExampleBatchLoader = ExampleBatchLoader()
 
         @Bean
-        open fun exampleBatchLoaderWithContext(): ExampleBatchLoaderWithContext {
-            return ExampleBatchLoaderWithContext()
-        }
+        open fun exampleBatchLoaderWithContext(): ExampleBatchLoaderWithContext = ExampleBatchLoaderWithContext()
 
         @Bean
-        open fun exampleMappedBatchLoader(): ExampleMappedBatchLoader {
-            return ExampleMappedBatchLoader()
-        }
+        open fun exampleMappedBatchLoader(): ExampleMappedBatchLoader = ExampleMappedBatchLoader()
 
         @Bean
-        open fun exampleMappedBatchLoaderWithContext(): ExampleMappedBatchLoaderWithContext {
-            return ExampleMappedBatchLoaderWithContext()
-        }
+        open fun exampleMappedBatchLoaderWithContext(): ExampleMappedBatchLoaderWithContext = ExampleMappedBatchLoaderWithContext()
 
         @Bean
         open fun headDataLoaderInstrumentationExtensionProvider(
-            acc: MultiValueMap<String, String>
-        ): DataLoaderInstrumentationExtensionProvider {
-            return HeadDataLoaderInstrumentationExtensionProvider(acc)
-        }
+            acc: MultiValueMap<String, String>,
+        ): DataLoaderInstrumentationExtensionProvider = HeadDataLoaderInstrumentationExtensionProvider(acc)
 
         @Bean
         open fun midDataLoaderInstrumentationExtensionProvider(
-            acc: MultiValueMap<String, String>
-        ): DataLoaderInstrumentationExtensionProvider {
-            return MidDataLoaderInstrumentationExtensionProvider(acc)
-        }
+            acc: MultiValueMap<String, String>,
+        ): DataLoaderInstrumentationExtensionProvider = MidDataLoaderInstrumentationExtensionProvider(acc)
 
         @Bean
         open fun tailDataLoaderInstrumentationExtensionProvider(
-            acc: MultiValueMap<String, String>
-        ): DataLoaderInstrumentationExtensionProvider {
-            return TailDataLoaderInstrumentationExtensionProvider(acc)
-        }
+            acc: MultiValueMap<String, String>,
+        ): DataLoaderInstrumentationExtensionProvider = TailDataLoaderInstrumentationExtensionProvider(acc)
     }
 
     abstract class BaseDataLoaderInstrumentationExtensionProvider(
         private val acc: MultiValueMap<String, String>,
-        private val value: String
+        private val value: String,
     ) : DataLoaderInstrumentationExtensionProvider {
-        override fun provide(original: BatchLoader<*, *>, name: String): BatchLoader<*, *> {
+        override fun provide(
+            original: BatchLoader<*, *>,
+            name: String,
+        ): BatchLoader<*, *> {
             acc.add(name, value)
             return original
         }
 
-        override fun provide(original: BatchLoaderWithContext<*, *>, name: String): BatchLoaderWithContext<*, *> {
+        override fun provide(
+            original: BatchLoaderWithContext<*, *>,
+            name: String,
+        ): BatchLoaderWithContext<*, *> {
             acc.add(name, value)
             return original
         }
 
-        override fun provide(original: MappedBatchLoader<*, *>, name: String): MappedBatchLoader<*, *> {
+        override fun provide(
+            original: MappedBatchLoader<*, *>,
+            name: String,
+        ): MappedBatchLoader<*, *> {
             acc.add(name, value)
             return original
         }
 
         override fun provide(
             original: MappedBatchLoaderWithContext<*, *>,
-            name: String
+            name: String,
         ): MappedBatchLoaderWithContext<*, *> {
             acc.add(name, value)
             return original

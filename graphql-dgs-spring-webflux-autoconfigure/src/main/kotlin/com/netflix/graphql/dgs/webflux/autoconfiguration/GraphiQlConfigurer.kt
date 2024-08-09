@@ -29,7 +29,9 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 
-class GraphiQlConfigurer(private val configProps: DgsWebfluxConfigurationProperties) : WebFluxConfigurer {
+class GraphiQlConfigurer(
+    private val configProps: DgsWebfluxConfigurationProperties,
+) : WebFluxConfigurer {
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         val graphqlPath = configProps.path
         val graphiQLTitle = configProps.graphiql.title
@@ -38,31 +40,34 @@ class GraphiQlConfigurer(private val configProps: DgsWebfluxConfigurationPropert
             .addResourceLocations("classpath:/graphiql/")
             .resourceChain(true)
             .addResolver(PathResourceResolver())
-            .addTransformer(TokenReplacingTransformer(mapOf("<DGS_GRAPHQL_PATH>" to graphqlPath, "<DGS_GRAPHIQL_TITLE>" to graphiQLTitle), configProps))
+            .addTransformer(
+                TokenReplacingTransformer(mapOf("<DGS_GRAPHQL_PATH>" to graphqlPath, "<DGS_GRAPHIQL_TITLE>" to graphiQLTitle), configProps),
+            )
     }
 
     class TokenReplacingTransformer(
         private val replaceMap: Map<String, String>,
-        private val configProps: DgsWebfluxConfigurationProperties
-    ) :
-        ResourceTransformer {
+        private val configProps: DgsWebfluxConfigurationProperties,
+    ) : ResourceTransformer {
         @Throws(IOException::class)
-
         override fun transform(
             exchange: ServerWebExchange,
             resource: Resource,
-            transformerChain: ResourceTransformerChain
+            transformerChain: ResourceTransformerChain,
         ): Mono<Resource> {
-            if (exchange.request.uri.toASCIIString().endsWith(configProps.graphiql.path + "/index.html")) {
+            if (exchange.request.uri
+                    .toASCIIString()
+                    .endsWith(configProps.graphiql.path + "/index.html")
+            ) {
                 var content = resource.inputStream.bufferedReader().use(BufferedReader::readText)
                 replaceMap.forEach { content = content.replace(it.key, it.value) }
                 return Mono.just(
                     TransformedResource(
                         resource,
                         content.toByteArray(
-                            StandardCharsets.UTF_8
-                        )
-                    )
+                            StandardCharsets.UTF_8,
+                        ),
+                    ),
                 )
             }
             return Mono.just(resource)

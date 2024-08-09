@@ -37,24 +37,29 @@ import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
 
-class SpringGraphQLDgsQueryExecutor(private val executionService: ExecutionGraphQlService, private val dgsContextBuilder: DefaultDgsGraphQLContextBuilder, private val dgsDataLoaderProvider: DgsDataLoaderProvider, private val requestCustomizer: DgsQueryExecutorRequestCustomizer = DgsQueryExecutorRequestCustomizer.DEFAULT_REQUEST_CUSTOMIZER) : DgsQueryExecutor {
-
+class SpringGraphQLDgsQueryExecutor(
+    private val executionService: ExecutionGraphQlService,
+    private val dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
+    private val dgsDataLoaderProvider: DgsDataLoaderProvider,
+    private val requestCustomizer: DgsQueryExecutorRequestCustomizer = DgsQueryExecutorRequestCustomizer.DEFAULT_REQUEST_CUSTOMIZER,
+) : DgsQueryExecutor {
     override fun execute(
         query: String,
         variables: Map<String, Any>,
         extensions: Map<String, Any>?,
         headers: HttpHeaders?,
         operationName: String?,
-        webRequest: WebRequest?
+        webRequest: WebRequest?,
     ): ExecutionResult {
-        val request = DefaultExecutionGraphQlRequest(
-            query,
-            operationName,
-            variables,
-            extensions,
-            "",
-            null
-        )
+        val request =
+            DefaultExecutionGraphQlRequest(
+                query,
+                operationName,
+                variables,
+                extensions,
+                "",
+                null,
+            )
 
         val httpRequest = requestCustomizer.apply(webRequest ?: RequestContextHolder.getRequestAttributes() as? WebRequest, headers)
         val dgsContext = dgsContextBuilder.build(DgsWebMvcRequestData(request.extensions, headers, httpRequest))
@@ -65,12 +70,14 @@ class SpringGraphQLDgsQueryExecutor(private val executionService: ExecutionGraph
             builder
                 .context(dgsContext)
                 .graphQLContext(dgsContext)
-                .dataLoaderRegistry(dataLoaderRegistry).build()
+                .dataLoaderRegistry(dataLoaderRegistry)
+                .build()
         }
 
         graphQLContext = request.toExecutionInput().graphQLContext
 
-        val response = executionService.execute(request).block() ?: throw IllegalStateException("Unexpected null response from Spring GraphQL client")
+        val response =
+            executionService.execute(request).block() ?: throw IllegalStateException("Unexpected null response from Spring GraphQL client")
 
         return response.executionResult
     }
@@ -78,19 +85,19 @@ class SpringGraphQLDgsQueryExecutor(private val executionService: ExecutionGraph
     override fun <T : Any?> executeAndExtractJsonPath(
         query: String,
         jsonPath: String,
-        variables: MutableMap<String, Any>
-    ): T {
-        return JsonPath.read(getJsonResult(query, variables), jsonPath)
-    }
-
-    override fun <T : Any?> executeAndExtractJsonPath(query: String, jsonPath: String, headers: HttpHeaders): T {
-        return JsonPath.read(getJsonResult(query, emptyMap(), headers), jsonPath)
-    }
+        variables: MutableMap<String, Any>,
+    ): T = JsonPath.read(getJsonResult(query, variables), jsonPath)
 
     override fun <T : Any?> executeAndExtractJsonPath(
         query: String,
         jsonPath: String,
-        servletWebRequest: ServletWebRequest
+        headers: HttpHeaders,
+    ): T = JsonPath.read(getJsonResult(query, emptyMap(), headers), jsonPath)
+
+    override fun <T : Any?> executeAndExtractJsonPath(
+        query: String,
+        jsonPath: String,
+        servletWebRequest: ServletWebRequest,
     ): T {
         val httpHeaders = HttpHeaders()
         servletWebRequest.headerNames.forEach { name ->
@@ -100,24 +107,23 @@ class SpringGraphQLDgsQueryExecutor(private val executionService: ExecutionGraph
         return JsonPath.read(getJsonResult(query, emptyMap(), httpHeaders, servletWebRequest), jsonPath)
     }
 
-    override fun executeAndGetDocumentContext(query: String, variables: MutableMap<String, Any>): DocumentContext {
-        return BaseDgsQueryExecutor.parseContext.parse(getJsonResult(query, variables))
-    }
+    override fun executeAndGetDocumentContext(
+        query: String,
+        variables: MutableMap<String, Any>,
+    ): DocumentContext = BaseDgsQueryExecutor.parseContext.parse(getJsonResult(query, variables))
 
     override fun executeAndGetDocumentContext(
         query: String,
         variables: MutableMap<String, Any>,
-        headers: HttpHeaders?
-    ): DocumentContext {
-        return BaseDgsQueryExecutor.parseContext.parse(getJsonResult(query, variables, headers))
-    }
+        headers: HttpHeaders?,
+    ): DocumentContext = BaseDgsQueryExecutor.parseContext.parse(getJsonResult(query, variables, headers))
 
     override fun <T : Any?> executeAndExtractJsonPathAsObject(
         query: String,
         jsonPath: String,
         variables: MutableMap<String, Any>,
         clazz: Class<T>,
-        headers: HttpHeaders?
+        headers: HttpHeaders?,
     ): T {
         val jsonResult = getJsonResult(query, variables, headers)
         return try {
@@ -132,7 +138,7 @@ class SpringGraphQLDgsQueryExecutor(private val executionService: ExecutionGraph
         jsonPath: String,
         variables: MutableMap<String, Any>,
         typeRef: TypeRef<T>,
-        headers: HttpHeaders?
+        headers: HttpHeaders?,
     ): T {
         val jsonResult = getJsonResult(query, variables, headers)
         return try {
@@ -142,7 +148,12 @@ class SpringGraphQLDgsQueryExecutor(private val executionService: ExecutionGraph
         }
     }
 
-    private fun getJsonResult(query: String, variables: Map<String, Any>, headers: HttpHeaders? = null, servletWebRequest: ServletWebRequest? = null): String {
+    private fun getJsonResult(
+        query: String,
+        variables: Map<String, Any>,
+        headers: HttpHeaders? = null,
+        servletWebRequest: ServletWebRequest? = null,
+    ): String {
         val executionResult = execute(query, variables, null, headers, null, servletWebRequest)
 
         if (executionResult.errors.size > 0) {

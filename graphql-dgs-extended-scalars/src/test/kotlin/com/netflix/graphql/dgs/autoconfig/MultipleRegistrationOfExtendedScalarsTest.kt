@@ -30,11 +30,10 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 
 @SpringBootTest(
-    classes = [MultipleRegistrationOfExtendedScalarsTest.LocalApp::class]
+    classes = [MultipleRegistrationOfExtendedScalarsTest.LocalApp::class],
 )
 @EnableAutoConfiguration
 internal class MultipleRegistrationOfExtendedScalarsTest {
-
     @Autowired
     lateinit var queryExecutor: DgsQueryExecutor
 
@@ -51,16 +50,15 @@ internal class MultipleRegistrationOfExtendedScalarsTest {
 
     @SpringBootConfiguration(proxyBeanMethods = false)
     open class LocalApp {
-
         @DgsComponent
         open class ExampleImplementation {
-
             @DgsTypeDefinitionRegistry
             fun typeDefinitionRegistry(): TypeDefinitionRegistry {
-                val gqlSchema = """
+                val gqlSchema =
+                    """
                 |type Query{ aDate: Date }
                 |scalar Date
-                """.trimMargin()
+                    """.trimMargin()
                 return SchemaParser().parse(gqlSchema)
             }
 
@@ -68,9 +66,7 @@ internal class MultipleRegistrationOfExtendedScalarsTest {
             fun aDate(): LocalDate = LocalDate.of(1963, 1, 1)
 
             @DgsRuntimeWiring
-            fun manualScalarRegistration(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
-                return builder.scalar(ExtendedScalars.Date)
-            }
+            fun manualScalarRegistration(builder: RuntimeWiring.Builder): RuntimeWiring.Builder = builder.scalar(ExtendedScalars.Date)
         }
     }
 }

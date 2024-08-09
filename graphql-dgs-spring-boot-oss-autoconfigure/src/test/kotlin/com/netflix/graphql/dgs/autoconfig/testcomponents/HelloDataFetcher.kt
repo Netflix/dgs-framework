@@ -28,9 +28,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 open class HelloDataFetcherConfig {
     @Bean
-    open fun createDgsComponent(): HelloDataFetcher {
-        return HelloDataFetcher()
-    }
+    open fun createDgsComponent(): HelloDataFetcher = HelloDataFetcher()
 }
 
 @DgsComponent
@@ -45,12 +43,8 @@ class HelloDataFetcher {
     }
 
     @DgsData(parentType = "Query", field = "withNullableNull")
-    fun withNullableNull(): String? {
-        return null
-    }
+    fun withNullableNull(): String? = null
 
     @DgsData(parentType = "Query", field = "withNonNullableNull")
-    fun withNonNullableNull(): String? {
-        return null
-    }
+    fun withNonNullableNull(): String? = null
 }

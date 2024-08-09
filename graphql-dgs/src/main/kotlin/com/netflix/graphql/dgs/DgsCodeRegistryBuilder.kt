@@ -31,38 +31,44 @@ import graphql.schema.GraphQLFieldDefinition
  */
 class DgsCodeRegistryBuilder(
     private val dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
-    private val graphQLCodeRegistry: GraphQLCodeRegistry.Builder
+    private val graphQLCodeRegistry: GraphQLCodeRegistry.Builder,
 ) {
-
-    fun dataFetcher(coordinates: FieldCoordinates, dataFetcher: DataFetcher<*>): DgsCodeRegistryBuilder {
-        val fetcher = if (dataFetcherResultProcessors.isNotEmpty() && dataFetcher !is TrivialDataFetcher) {
-            DataFetcherFactories.wrapDataFetcher(dataFetcher) { dfe, result -> convertResult(dfe, result) }
-        } else {
-            dataFetcher
-        }
+    fun dataFetcher(
+        coordinates: FieldCoordinates,
+        dataFetcher: DataFetcher<*>,
+    ): DgsCodeRegistryBuilder {
+        val fetcher =
+            if (dataFetcherResultProcessors.isNotEmpty() && dataFetcher !is TrivialDataFetcher) {
+                DataFetcherFactories.wrapDataFetcher(dataFetcher) { dfe, result -> convertResult(dfe, result) }
+            } else {
+                dataFetcher
+            }
 
         graphQLCodeRegistry.dataFetcher(coordinates, fetcher)
         return this
     }
 
-    fun hasDataFetcher(coordinates: FieldCoordinates): Boolean {
-        return graphQLCodeRegistry.hasDataFetcher(coordinates)
-    }
+    fun hasDataFetcher(coordinates: FieldCoordinates): Boolean = graphQLCodeRegistry.hasDataFetcher(coordinates)
 
-    fun getDataFetcher(coordinates: FieldCoordinates, fieldDefinition: GraphQLFieldDefinition): DataFetcher<*> {
-        return graphQLCodeRegistry.getDataFetcher(coordinates, fieldDefinition)
-    }
+    fun getDataFetcher(
+        coordinates: FieldCoordinates,
+        fieldDefinition: GraphQLFieldDefinition,
+    ): DataFetcher<*> = graphQLCodeRegistry.getDataFetcher(coordinates, fieldDefinition)
 
-    private fun convertResult(dfe: DataFetchingEnvironment, result: Any?): Any? {
+    private fun convertResult(
+        dfe: DataFetchingEnvironment,
+        result: Any?,
+    ): Any? {
         if (result == null) {
             return null
         }
         val processor = dataFetcherResultProcessors.find { it.supportsType(result) } ?: return result
-        val env = if (dfe is DgsDataFetchingEnvironment) {
-            dfe
-        } else {
-            DgsDataFetchingEnvironment(dfe)
-        }
+        val env =
+            if (dfe is DgsDataFetchingEnvironment) {
+                dfe
+            } else {
+                DgsDataFetchingEnvironment(dfe)
+            }
         return processor.process(result, env)
     }
 }

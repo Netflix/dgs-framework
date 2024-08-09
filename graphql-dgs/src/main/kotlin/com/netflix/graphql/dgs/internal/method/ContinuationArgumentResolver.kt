@@ -29,11 +29,10 @@ import kotlin.coroutines.Continuation
  * argument.
  */
 class ContinuationArgumentResolver : ArgumentResolver {
-    override fun supportsParameter(parameter: MethodParameter): Boolean {
-        return parameter.parameterType == Continuation::class.java
-    }
+    override fun supportsParameter(parameter: MethodParameter): Boolean = parameter.parameterType == Continuation::class.java
 
-    override fun resolveArgument(parameter: MethodParameter, dfe: DataFetchingEnvironment): Any? {
-        return null
-    }
+    override fun resolveArgument(
+        parameter: MethodParameter,
+        dfe: DataFetchingEnvironment,
+    ): Any? = null
 }

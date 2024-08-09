@@ -23,7 +23,11 @@ object GraphQLMediaTypes {
     private val GRAPHQL_MEDIA_TYPE = MediaType("application", "graphql")
     val ACCEPTABLE_MEDIA_TYPES = listOf(GRAPHQL_MEDIA_TYPE, MediaType.APPLICATION_JSON)
 
-    fun isApplicationGraphQL(request: ServerRequest): Boolean {
-        return request.headers().contentType().map { GRAPHQL_MEDIA_TYPE.includes(it) }.orElse(false)
-    }
+    fun isApplicationGraphQL(request: ServerRequest): Boolean =
+        request
+            .headers()
+            .contentType()
+            .map {
+                GRAPHQL_MEDIA_TYPE.includes(it)
+            }.orElse(false)
 }

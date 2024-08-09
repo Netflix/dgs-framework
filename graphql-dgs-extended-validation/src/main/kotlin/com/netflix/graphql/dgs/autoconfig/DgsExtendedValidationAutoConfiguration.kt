@@ -32,15 +32,14 @@ import org.springframework.context.annotation.Bean
     prefix = "dgs.graphql.extensions.validation",
     name = ["enabled"],
     havingValue = "true",
-    matchIfMissing = true
+    matchIfMissing = true,
 )
 @AutoConfiguration
 open class DgsExtendedValidationAutoConfiguration {
-
     @Bean
-    open fun defaultExtendedValidationRegistrar(validationRulesCustomizerProvider: ObjectProvider<ValidationRulesBuilderCustomizer>): ExtendedValidationRegistrar {
-        return DefaultExtendedValidationRegistrar(validationRulesCustomizerProvider)
-    }
+    open fun defaultExtendedValidationRegistrar(
+        validationRulesCustomizerProvider: ObjectProvider<ValidationRulesBuilderCustomizer>,
+    ): ExtendedValidationRegistrar = DefaultExtendedValidationRegistrar(validationRulesCustomizerProvider)
 
     @DgsComponent
     @FunctionalInterface
@@ -48,9 +47,9 @@ open class DgsExtendedValidationAutoConfiguration {
         fun addValidationRules(builder: RuntimeWiring.Builder): RuntimeWiring.Builder
     }
 
-    open class DefaultExtendedValidationRegistrar(private val validationRulesCustomizerProvider: ObjectProvider<ValidationRulesBuilderCustomizer>) :
-        ExtendedValidationRegistrar {
-
+    open class DefaultExtendedValidationRegistrar(
+        private val validationRulesCustomizerProvider: ObjectProvider<ValidationRulesBuilderCustomizer>,
+    ) : ExtendedValidationRegistrar {
         @DgsRuntimeWiring
         override fun addValidationRules(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
             val validationRulesBuilder = ValidationRules.newValidationRules()

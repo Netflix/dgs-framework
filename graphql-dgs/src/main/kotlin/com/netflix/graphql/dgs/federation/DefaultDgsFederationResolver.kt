@@ -50,9 +50,7 @@ import java.util.concurrent.CompletionException
 import java.util.concurrent.CompletionStage
 
 @DgsComponent
-open class DefaultDgsFederationResolver() :
-    DgsFederationResolver {
-
+open class DefaultDgsFederationResolver() : DgsFederationResolver {
     /**
      * This constructor is used by DgsSchemaProvider when no custom DgsFederationResolver is provided.
      * This is the most common use case.
@@ -60,7 +58,7 @@ open class DefaultDgsFederationResolver() :
      */
     constructor(
         entityFetcherRegistry: EntityFetcherRegistry,
-        dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler>
+        dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler>,
     ) : this() {
         this.entityFetcherRegistry = entityFetcherRegistry
         dgsExceptionHandler = dataFetcherExceptionHandler
@@ -77,136 +75,154 @@ open class DefaultDgsFederationResolver() :
 
     private val entitiesDataFetcher: DataFetcher<Any?> = DataFetcher { env -> dgsEntityFetchers(env) }
 
-    override fun entitiesFetcher(): DataFetcher<Any?> {
-        return entitiesDataFetcher
-    }
+    override fun entitiesFetcher(): DataFetcher<Any?> = entitiesDataFetcher
 
-    private fun valuesWithMappedScalars(graphQLContext: GraphQLContext, values: Map<String, Any>, scalarMappings: Map<List<String>, Coercing<*, *>>, currentPath: MutableList<String> = mutableListOf()): Map<String, Any> {
-        return values.mapValues { (key, value) ->
+    private fun valuesWithMappedScalars(
+        graphQLContext: GraphQLContext,
+        values: Map<String, Any>,
+        scalarMappings: Map<List<String>, Coercing<*, *>>,
+        currentPath: MutableList<String> = mutableListOf(),
+    ): Map<String, Any> =
+        values.mapValues { (key, value) ->
             currentPath += key
 
             val converter = scalarMappings[currentPath]
 
-            val newValue = if (converter != null) {
-                converter.parseValue(value, graphQLContext, Locale.getDefault())
-            } else if (value is Map<*, *>) {
-                @Suppress("UNCHECKED_CAST")
-                value as Map<String, Any>
-                valuesWithMappedScalars(graphQLContext, value, scalarMappings, currentPath)
-            } else {
-                value
-            }
+            val newValue =
+                if (converter != null) {
+                    converter.parseValue(value, graphQLContext, Locale.getDefault())
+                } else if (value is Map<*, *>) {
+                    @Suppress("UNCHECKED_CAST")
+                    value as Map<String, Any>
+                    valuesWithMappedScalars(graphQLContext, value, scalarMappings, currentPath)
+                } else {
+                    value
+                }
 
             currentPath.removeLast()
 
             newValue!!
         }
-    }
 
     private fun dgsEntityFetchers(env: DataFetchingEnvironment): CompletableFuture<DataFetcherResult<List<Any?>>> {
-        val resultList = env.getArgument<List<Map<String, Any>>>(_Entity.argumentName)
-            .orEmpty()
-            .map { values ->
-                Try.tryCall {
-                    val typename = values["__typename"]
-                        ?: throw MissingFederatedQueryArgument("__typename")
-                    val (target, method) = entityFetcherRegistry.entityFetchers[typename]
-                        ?: throw MissingDgsEntityFetcherException(typename.toString())
+        val resultList =
+            env
+                .getArgument<List<Map<String, Any>>>(_Entity.argumentName)
+                .orEmpty()
+                .map { values ->
+                    Try
+                        .tryCall {
+                            val typename =
+                                values["__typename"]
+                                    ?: throw MissingFederatedQueryArgument("__typename")
+                            val (target, method) =
+                                entityFetcherRegistry.entityFetchers[typename]
+                                    ?: throw MissingDgsEntityFetcherException(typename.toString())
 
-                    val parameterTypes = method.parameterTypes
-                    if (!parameterTypes.any { it.isAssignableFrom(Map::class.java) }) {
-                        throw InvalidDgsEntityFetcher("@DgsEntityFetcher ${target::class.java.name}.${method.name} is invalid. A DgsEntityFetcher must accept an argument of type Map<String, Object>")
-                    }
+                            val parameterTypes = method.parameterTypes
+                            if (!parameterTypes.any { it.isAssignableFrom(Map::class.java) }) {
+                                throw InvalidDgsEntityFetcher(
+                                    "@DgsEntityFetcher ${target::class.java.name}.${method.name} is invalid. A DgsEntityFetcher must accept an argument of type Map<String, Object>",
+                                )
+                            }
 
-                    val coercedValues = if (entityFetcherRegistry.entityFetcherInputMappings[typename] != null) {
-                        valuesWithMappedScalars(env.graphQlContext, values, entityFetcherRegistry.entityFetcherInputMappings[typename]!!)
-                    } else {
-                        values
-                    }
+                            val coercedValues =
+                                if (entityFetcherRegistry.entityFetcherInputMappings[typename] != null) {
+                                    valuesWithMappedScalars(
+                                        env.graphQlContext,
+                                        values,
+                                        entityFetcherRegistry.entityFetcherInputMappings[typename]!!,
+                                    )
+                                } else {
+                                    values
+                                }
 
-                    val result =
-                        if (parameterTypes.last().isAssignableFrom(DgsDataFetchingEnvironment::class.java)) {
-                            ReflectionUtils.invokeMethod(method, target, coercedValues, DgsDataFetchingEnvironment(env))
-                        } else {
-                            ReflectionUtils.invokeMethod(method, target, coercedValues)
-                        }
+                            val result =
+                                if (parameterTypes.last().isAssignableFrom(DgsDataFetchingEnvironment::class.java)) {
+                                    ReflectionUtils.invokeMethod(method, target, coercedValues, DgsDataFetchingEnvironment(env))
+                                } else {
+                                    ReflectionUtils.invokeMethod(method, target, coercedValues)
+                                }
 
-                    if (result == null) {
-                        logger.error("@DgsEntityFetcher returned null for type: {}", typename)
-                        CompletableFuture.completedFuture(null)
-                    }
+                            if (result == null) {
+                                logger.error("@DgsEntityFetcher returned null for type: {}", typename)
+                                CompletableFuture.completedFuture(null)
+                            }
 
-                    when (result) {
-                        is CompletionStage<*> -> result.toCompletableFuture()
-                        is Mono<*> -> result.toFuture()
-                        else -> CompletableFuture.completedFuture(result)
-                    }
+                            when (result) {
+                                is CompletionStage<*> -> result.toCompletableFuture()
+                                is Mono<*> -> result.toFuture()
+                                else -> CompletableFuture.completedFuture(result)
+                            }
+                        }.map { tryFuture -> Try.tryFuture(tryFuture) }
+                        .recover { exception -> CompletableFuture.completedFuture(Try.failed(exception)) }
+                        .get()
                 }
-                    .map { tryFuture -> Try.tryFuture(tryFuture) }
-                    .recover { exception -> CompletableFuture.completedFuture(Try.failed(exception)) }
-                    .get()
-            }
 
         return CompletableFuture.allOf(*resultList.toTypedArray()).thenApply {
             val trySequence = resultList.asSequence().map { it.join() }
-            DataFetcherResult.newResult<List<Any?>>()
+            DataFetcherResult
+                .newResult<List<Any?>>()
                 .data(
                     trySequence
                         .map { tryResult -> tryResult.orElse(null) }
                         .flatMap { r -> if (r is Collection<*>) r.asSequence() else sequenceOf(r) }
-                        .toList()
-                )
-                .errors(
+                        .toList(),
+                ).errors(
                     trySequence
                         .mapIndexed { index, tryResult -> index to tryResult }
                         .filter { (_, tryResult) -> tryResult.isFailure }
                         .map { (index, tryResult) -> index to tryResult.throwable }
                         .flatMap { (idx, exc) ->
                             // extract exception from known wrapper types
-                            val exception = when {
-                                exc is InvocationTargetException -> exc.targetException
-                                exc is CompletionException && exc.cause != null -> exc.cause!!
-                                else -> exc
-                            }
+                            val exception =
+                                when {
+                                    exc is InvocationTargetException -> exc.targetException
+                                    exc is CompletionException && exc.cause != null -> exc.cause!!
+                                    else -> exc
+                                }
                             // handle the exception (using the custom handler if present)
                             if (dgsExceptionHandler.isPresent) {
                                 val dfeWithErrorPath = createDataFetchingEnvironmentWithPath(env, idx)
-                                val res = dgsExceptionHandler.get().handleException(
-                                    DataFetcherExceptionHandlerParameters
-                                        .newExceptionParameters()
-                                        .dataFetchingEnvironment(dfeWithErrorPath)
-                                        .exception(exception)
-                                        .build()
-                                )
+                                val res =
+                                    dgsExceptionHandler.get().handleException(
+                                        DataFetcherExceptionHandlerParameters
+                                            .newExceptionParameters()
+                                            .dataFetchingEnvironment(dfeWithErrorPath)
+                                            .exception(exception)
+                                            .build(),
+                                    )
                                 res.join().errors.asSequence()
                             } else {
                                 sequenceOf(
-                                    TypedGraphQLError.newInternalErrorBuilder()
+                                    TypedGraphQLError
+                                        .newInternalErrorBuilder()
                                         .message("${exception::class.java.name}: ${exception.message}")
                                         .path(ResultPath.fromList(listOf("/_entities", idx)))
-                                        .build()
+                                        .build(),
                                 )
                             }
-                        }
-                        .toList()
-                )
-                .build()
+                        }.toList(),
+                ).build()
         }
     }
 
-    open fun createDataFetchingEnvironmentWithPath(env: DataFetchingEnvironment, pathIndex: Int): DgsDataFetchingEnvironment {
+    open fun createDataFetchingEnvironmentWithPath(
+        env: DataFetchingEnvironment,
+        pathIndex: Int,
+    ): DgsDataFetchingEnvironment {
         val pathWithIndex = env.executionStepInfo.path.segment(pathIndex)
         val executionStepInfoWithPath = ExecutionStepInfo.newExecutionStepInfo(env.executionStepInfo).path(pathWithIndex).build()
         val dfe = if (env is DgsDataFetchingEnvironment) env.getDfe() else env
-        return DgsDataFetchingEnvironment(DataFetchingEnvironmentImpl.newDataFetchingEnvironment(dfe).executionStepInfo(executionStepInfoWithPath).build())
+        return DgsDataFetchingEnvironment(
+            DataFetchingEnvironmentImpl.newDataFetchingEnvironment(dfe).executionStepInfo(executionStepInfoWithPath).build(),
+        )
     }
 
-    open fun typeMapping(): Map<Class<*>, String> {
-        return emptyMap()
-    }
+    open fun typeMapping(): Map<Class<*>, String> = emptyMap()
 
-    override fun typeResolver(): TypeResolver {
-        return TypeResolver { env ->
+    override fun typeResolver(): TypeResolver =
+        TypeResolver { env ->
             val src: Any = env.getObject()
 
             val typeName =
@@ -222,13 +238,12 @@ open class DefaultDgsFederationResolver() :
                     "No type definition found for {}. You probably need to provide either a type mapping," +
                         "or override DefaultDgsFederationResolver.typeResolver()." +
                         "Alternatively make sure the type name in the schema and your Java model match",
-                    src::class.java.name
+                    src::class.java.name,
                 )
             }
 
             type
         }
-    }
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(DefaultDgsFederationResolver::class.java)

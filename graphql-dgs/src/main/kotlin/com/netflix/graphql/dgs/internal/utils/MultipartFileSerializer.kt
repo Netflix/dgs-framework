@@ -27,12 +27,11 @@ import java.io.IOException
  * This class is used only for logging purposes since we cannot serialize a MultipartFile to json otherwise.
  */
 class MultipartFileSerializer : StdSerializer<MultipartFile>(MultipartFile::class.java) {
-
     @Throws(IOException::class, JsonProcessingException::class)
     override fun serialize(
         value: MultipartFile,
         jgen: JsonGenerator,
-        provider: SerializerProvider
+        provider: SerializerProvider,
     ) {
         jgen.writeStartObject()
         jgen.writeStringField("name", value.originalFilename)

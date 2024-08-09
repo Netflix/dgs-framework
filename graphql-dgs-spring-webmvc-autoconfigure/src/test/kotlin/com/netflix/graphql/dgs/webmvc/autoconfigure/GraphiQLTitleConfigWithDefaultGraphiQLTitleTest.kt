@@ -24,16 +24,18 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 
 @SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
-class GraphiQLTitleConfigWithDefaultGraphiQLTitleTest(@Autowired val restTemplate: TestRestTemplate) {
-
+class GraphiQLTitleConfigWithDefaultGraphiQLTitleTest(
+    @Autowired val restTemplate: TestRestTemplate,
+) {
     @Test
     fun defaultGraphiQLTitle() {
-        val entity = restTemplate.getForEntity(
-            "/graphiql",
-            String::class.java
-        )
+        val entity =
+            restTemplate.getForEntity(
+                "/graphiql",
+                String::class.java,
+            )
         assertTrue(entity.statusCode.is2xxSuccessful)
         Assertions.assertThat(entity.body).isNotNull.contains("Simple GraphiQL Example")
     }

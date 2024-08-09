@@ -31,24 +31,27 @@ import java.time.LocalDate
 class ReactiveWebClientTest {
     private val url = "http://test"
 
-    private val requestExecutor = MonoRequestExecutor { url, headers, body ->
-        WebClient.builder()
-            .exchangeFunction {
-                Mono.just(
-                    ClientResponse.create(HttpStatus.OK)
-                        .header("content-type", "application/json")
-                        .body("""{ "data": { "hello": "Hi!"}}""")
-                        .build()
-                )
-            }.build()
-            .post()
-            .uri(url)
-            .headers { consumer -> headers.forEach { consumer.addAll(it.key, it.value) } }
-            .bodyValue(body)
-            .retrieve()
-            .toEntity(String::class.java)
-            .map { response -> HttpResponse(response.statusCode.value(), response.body) }
-    }
+    private val requestExecutor =
+        MonoRequestExecutor { url, headers, body ->
+            WebClient
+                .builder()
+                .exchangeFunction {
+                    Mono.just(
+                        ClientResponse
+                            .create(HttpStatus.OK)
+                            .header("content-type", "application/json")
+                            .body("""{ "data": { "hello": "Hi!"}}""")
+                            .build(),
+                    )
+                }.build()
+                .post()
+                .uri(url)
+                .headers { consumer -> headers.forEach { consumer.addAll(it.key, it.value) } }
+                .bodyValue(body)
+                .retrieve()
+                .toEntity(String::class.java)
+                .map { response -> HttpResponse(response.statusCode.value(), response.body) }
+        }
 
     @Test
     fun testReactiveExecuteQuery() {
@@ -60,10 +63,11 @@ class ReactiveWebClientTest {
     @Test
     fun testCustomObjectMapper() {
         val mapper = ObjectMapper().registerModules(JavaTimeModule())
-        val responseMono = CustomMonoGraphQLClient(url, requestExecutor, mapper).reactiveExecuteQuery(
-            "{ hello(${'$'}input: HelloInput!) }",
-            mapOf("foo" to LocalDate.now())
-        )
+        val responseMono =
+            CustomMonoGraphQLClient(url, requestExecutor, mapper).reactiveExecuteQuery(
+                "{ hello(${'$'}input: HelloInput!) }",
+                mapOf("foo" to LocalDate.now()),
+            )
         val graphQLResponse = responseMono.block(Duration.ZERO) ?: fail("Expected non-null response")
         assertThat(graphQLResponse.data["hello"]).isEqualTo("Hi!")
     }

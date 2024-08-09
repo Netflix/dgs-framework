@@ -22,10 +22,9 @@ import org.springframework.boot.autoconfigure.AutoConfigurations
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
 
 internal class DgsExtendedValidationAutoConfigurationTests {
-
     private val context =
         ApplicationContextRunner().withConfiguration(
-            AutoConfigurations.of(DgsExtendedValidationAutoConfiguration::class.java)
+            AutoConfigurations.of(DgsExtendedValidationAutoConfiguration::class.java),
         )
 
     @Test

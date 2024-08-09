@@ -25,16 +25,24 @@ import java.time.Duration
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function
 
-class DgsDefaultPreparsedDocumentProvider(maximumSize: Long, expireAfterAccess: Duration) : PreparsedDocumentProvider {
-    val cache: Cache<String, PreparsedDocumentEntry> = Caffeine.newBuilder()
-        .maximumSize(maximumSize)
-        .expireAfterAccess(expireAfterAccess)
-        .build()
+class DgsDefaultPreparsedDocumentProvider(
+    maximumSize: Long,
+    expireAfterAccess: Duration,
+) : PreparsedDocumentProvider {
+    val cache: Cache<String, PreparsedDocumentEntry> =
+        Caffeine
+            .newBuilder()
+            .maximumSize(maximumSize)
+            .expireAfterAccess(expireAfterAccess)
+            .build()
 
     override fun getDocumentAsync(
         executionInput: ExecutionInput,
-        parseAndValidateFunction: Function<ExecutionInput, PreparsedDocumentEntry>
-    ): CompletableFuture<PreparsedDocumentEntry> {
-        return CompletableFuture.completedFuture(cache.get(executionInput.query) { parseAndValidateFunction.apply(executionInput) })
-    }
+        parseAndValidateFunction: Function<ExecutionInput, PreparsedDocumentEntry>,
+    ): CompletableFuture<PreparsedDocumentEntry> =
+        CompletableFuture.completedFuture(
+            cache.get(executionInput.query) {
+                parseAndValidateFunction.apply(executionInput)
+            },
+        )
 }

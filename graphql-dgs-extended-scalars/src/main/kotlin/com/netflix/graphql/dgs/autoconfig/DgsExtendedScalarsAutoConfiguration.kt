@@ -35,70 +35,65 @@ import org.springframework.context.annotation.ConfigurationCondition
     prefix = "dgs.graphql.extensions.scalars",
     name = ["enabled"],
     havingValue = "true",
-    matchIfMissing = true
+    matchIfMissing = true,
 )
 @AutoConfiguration
 open class DgsExtendedScalarsAutoConfiguration {
-
     @ConditionalOnProperty(
         prefix = "dgs.graphql.extensions.scalars.time-dates",
         name = ["enabled"],
         havingValue = "true",
-        matchIfMissing = true
+        matchIfMissing = true,
     )
     @Configuration(proxyBeanMethods = false)
     open class TimeExtendedScalarsAutoConfiguration {
         @Bean
-        open fun timesExtendedScalarsRegistrar(): ExtendedScalarRegistrar {
-            return object : AbstractExtendedScalarRegistrar() {
-                override fun getScalars(): List<GraphQLScalarType> {
-                    return listOf(
+        open fun timesExtendedScalarsRegistrar(): ExtendedScalarRegistrar =
+            object : AbstractExtendedScalarRegistrar() {
+                override fun getScalars(): List<GraphQLScalarType> =
+                    listOf(
                         ExtendedScalars.DateTime,
                         ExtendedScalars.Date,
                         ExtendedScalars.Time,
-                        ExtendedScalars.LocalTime
+                        ExtendedScalars.LocalTime,
                     )
-                }
             }
-        }
     }
 
     @ConditionalOnProperty(
         prefix = "dgs.graphql.extensions.scalars.objects",
         name = ["enabled"],
         havingValue = "true",
-        matchIfMissing = true
+        matchIfMissing = true,
     )
     @Configuration(proxyBeanMethods = false)
     open class ObjectsExtendedScalarsAutoConfiguration {
         @Bean
-        open fun objectsExtendedScalarsRegistrar(): ExtendedScalarRegistrar {
-            return object : AbstractExtendedScalarRegistrar() {
-                override fun getScalars(): List<GraphQLScalarType> {
-                    return listOf(
+        open fun objectsExtendedScalarsRegistrar(): ExtendedScalarRegistrar =
+            object : AbstractExtendedScalarRegistrar() {
+                override fun getScalars(): List<GraphQLScalarType> =
+                    listOf(
                         ExtendedScalars.Object,
                         ExtendedScalars.Json,
                         ExtendedScalars.Url,
-                        ExtendedScalars.Locale
+                        ExtendedScalars.Locale,
                     )
-                }
             }
-        }
     }
 
     @ConditionalOnProperty(
         prefix = "dgs.graphql.extensions.scalars.numbers",
         name = ["enabled"],
         havingValue = "true",
-        matchIfMissing = true
+        matchIfMissing = true,
     )
     @Configuration(proxyBeanMethods = false)
     open class NumbersExtendedScalarsAutoConfiguration {
         @Bean
-        open fun numbersExtendedScalarsRegistrar(): ExtendedScalarRegistrar {
-            return object : AbstractExtendedScalarRegistrar() {
-                override fun getScalars(): List<GraphQLScalarType> {
-                    return listOf(
+        open fun numbersExtendedScalarsRegistrar(): ExtendedScalarRegistrar =
+            object : AbstractExtendedScalarRegistrar() {
+                override fun getScalars(): List<GraphQLScalarType> =
+                    listOf(
                         // Integers
                         ExtendedScalars.PositiveInt,
                         ExtendedScalars.NegativeInt,
@@ -112,35 +107,30 @@ open class DgsExtendedScalarsAutoConfiguration {
                         // Others
                         ExtendedScalars.GraphQLLong,
                         ExtendedScalars.GraphQLShort,
-                        ExtendedScalars.GraphQLByte
+                        ExtendedScalars.GraphQLByte,
                     )
-                }
             }
-        }
 
         @Conditional(OnBigDecimalAndNumbers::class)
         @Configuration(proxyBeanMethods = false)
         open class BigDecimalAutoConfiguration {
             @Bean
-            open fun bigDecimalExtendedScalarsRegistrar(): ExtendedScalarRegistrar {
-                return object : AbstractExtendedScalarRegistrar() {
-                    override fun getScalars(): List<GraphQLScalarType> {
-                        return listOf(
+            open fun bigDecimalExtendedScalarsRegistrar(): ExtendedScalarRegistrar =
+                object : AbstractExtendedScalarRegistrar() {
+                    override fun getScalars(): List<GraphQLScalarType> =
+                        listOf(
                             // Others
-                            ExtendedScalars.GraphQLBigDecimal
+                            ExtendedScalars.GraphQLBigDecimal,
                         )
-                    }
                 }
-            }
         }
 
-        open class OnBigDecimalAndNumbers :
-            AllNestedConditions(ConfigurationCondition.ConfigurationPhase.PARSE_CONFIGURATION) {
+        open class OnBigDecimalAndNumbers : AllNestedConditions(ConfigurationCondition.ConfigurationPhase.PARSE_CONFIGURATION) {
             @ConditionalOnProperty(
                 prefix = "dgs.graphql.extensions.scalars.numbers.",
                 name = ["enabled"],
                 havingValue = "true",
-                matchIfMissing = true
+                matchIfMissing = true,
             )
             open class OnNumbers
 
@@ -148,7 +138,7 @@ open class DgsExtendedScalarsAutoConfiguration {
                 prefix = "dgs.graphql.extensions.scalars.numbers.bigdecimal",
                 name = ["enabled"],
                 havingValue = "true",
-                matchIfMissing = true
+                matchIfMissing = true,
             )
             open class OnBigDecimal
         }
@@ -157,22 +147,18 @@ open class DgsExtendedScalarsAutoConfiguration {
         @Configuration(proxyBeanMethods = false)
         open class BigIntegerAutoConfiguration {
             @Bean
-            open fun bigIntegerExtendedScalarsRegistrar(): ExtendedScalarRegistrar {
-                return object : AbstractExtendedScalarRegistrar() {
-                    override fun getScalars(): List<GraphQLScalarType> {
-                        return listOf(ExtendedScalars.GraphQLBigInteger)
-                    }
+            open fun bigIntegerExtendedScalarsRegistrar(): ExtendedScalarRegistrar =
+                object : AbstractExtendedScalarRegistrar() {
+                    override fun getScalars(): List<GraphQLScalarType> = listOf(ExtendedScalars.GraphQLBigInteger)
                 }
-            }
         }
 
-        open class OnBigIntegerAndNumbers :
-            AllNestedConditions(ConfigurationCondition.ConfigurationPhase.PARSE_CONFIGURATION) {
+        open class OnBigIntegerAndNumbers : AllNestedConditions(ConfigurationCondition.ConfigurationPhase.PARSE_CONFIGURATION) {
             @ConditionalOnProperty(
                 prefix = "dgs.graphql.extensions.scalars.numbers.",
                 name = ["enabled"],
                 havingValue = "true",
-                matchIfMissing = true
+                matchIfMissing = true,
             )
             open class OnNumbers
 
@@ -180,7 +166,7 @@ open class DgsExtendedScalarsAutoConfiguration {
                 prefix = "dgs.graphql.extensions.scalars.numbers.biginteger",
                 name = ["enabled"],
                 havingValue = "true",
-                matchIfMissing = true
+                matchIfMissing = true,
             )
             open class OnBigInteger
         }
@@ -190,72 +176,60 @@ open class DgsExtendedScalarsAutoConfiguration {
         prefix = "dgs.graphql.extensions.scalars.currency",
         name = ["enabled"],
         havingValue = "true",
-        matchIfMissing = true
+        matchIfMissing = true,
     )
     @Configuration(proxyBeanMethods = false)
     open class CurrencyExtendedScalarsRegistrar {
         @Bean
-        open fun currencyExtendedScalarsRegistrar(): ExtendedScalarRegistrar {
-            return object : AbstractExtendedScalarRegistrar() {
-                override fun getScalars(): List<GraphQLScalarType> {
-                    return listOf(ExtendedScalars.Currency)
-                }
+        open fun currencyExtendedScalarsRegistrar(): ExtendedScalarRegistrar =
+            object : AbstractExtendedScalarRegistrar() {
+                override fun getScalars(): List<GraphQLScalarType> = listOf(ExtendedScalars.Currency)
             }
-        }
     }
 
     @ConditionalOnProperty(
         prefix = "dgs.graphql.extensions.scalars.country",
         name = ["enabled"],
         havingValue = "true",
-        matchIfMissing = true
+        matchIfMissing = true,
     )
     @Configuration(proxyBeanMethods = false)
     open class CountryExtendedScalarsRegistrar {
         @Bean
-        open fun countryCodeExtendedScalarsRegistrar(): ExtendedScalarRegistrar {
-            return object : AbstractExtendedScalarRegistrar() {
-                override fun getScalars(): List<GraphQLScalarType> {
-                    return listOf(ExtendedScalars.CountryCode)
-                }
+        open fun countryCodeExtendedScalarsRegistrar(): ExtendedScalarRegistrar =
+            object : AbstractExtendedScalarRegistrar() {
+                override fun getScalars(): List<GraphQLScalarType> = listOf(ExtendedScalars.CountryCode)
             }
-        }
     }
 
     @ConditionalOnProperty(
         prefix = "dgs.graphql.extensions.scalars.chars",
         name = ["enabled"],
         havingValue = "true",
-        matchIfMissing = true
+        matchIfMissing = true,
     )
     @Configuration(proxyBeanMethods = false)
     open class CharsExtendedScalarsAutoConfiguration {
         @Bean
-        open fun charsExtendedScalarsRegistrar(): ExtendedScalarRegistrar {
-            return object : AbstractExtendedScalarRegistrar() {
-                override fun getScalars(): List<GraphQLScalarType> {
-                    return listOf(ExtendedScalars.GraphQLChar)
-                }
+        open fun charsExtendedScalarsRegistrar(): ExtendedScalarRegistrar =
+            object : AbstractExtendedScalarRegistrar() {
+                override fun getScalars(): List<GraphQLScalarType> = listOf(ExtendedScalars.GraphQLChar)
             }
-        }
     }
 
     @ConditionalOnProperty(
         prefix = "dgs.graphql.extensions.scalars.ids",
         name = ["enabled"],
         havingValue = "true",
-        matchIfMissing = true
+        matchIfMissing = true,
     )
     @Configuration(proxyBeanMethods = false)
     open class IDsExtendedScalarsAutoConfiguration {
         @Bean
-        open fun idsExtendedScalarsRegistrar(): ExtendedScalarRegistrar {
-            return object : AbstractExtendedScalarRegistrar() {
-                override fun getScalars(): List<GraphQLScalarType> {
-                    return listOf(ExtendedScalars.UUID)
-                }
+        open fun idsExtendedScalarsRegistrar(): ExtendedScalarRegistrar =
+            object : AbstractExtendedScalarRegistrar() {
+                override fun getScalars(): List<GraphQLScalarType> = listOf(ExtendedScalars.UUID)
             }
-        }
     }
 
     @DgsComponent
@@ -265,10 +239,7 @@ open class DgsExtendedScalarsAutoConfiguration {
     }
 
     abstract class AbstractExtendedScalarRegistrar : ExtendedScalarRegistrar {
-
         @DgsRuntimeWiring
-        fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
-            return getScalars().foldRight(builder) { a, acc -> acc.scalar(a) }
-        }
+        fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder = getScalars().foldRight(builder) { a, acc -> acc.scalar(a) }
     }
 }

@@ -25,5 +25,9 @@ import org.springframework.web.context.request.WebRequest
  * or with one of the static methods on [DgsContext] given a DataFetchingEnvironment or batchLoaderEnvironment.
  */
 interface DgsCustomContextBuilderWithRequest<T> {
-    fun build(extensions: Map<String, Any>?, headers: HttpHeaders?, webRequest: WebRequest?): T
+    fun build(
+        extensions: Map<String, Any>?,
+        headers: HttpHeaders?,
+        webRequest: WebRequest?,
+    ): T
 }

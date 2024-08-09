@@ -48,7 +48,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 class DgsWebMvcAutoConfigurationTest {
-
     private val context =
         WebApplicationContextRunner()
             .withConfiguration(AutoConfigurations.of(DgsWebMvcAutoConfiguration::class.java))
@@ -60,8 +59,11 @@ class DgsWebMvcAutoConfigurationTest {
             assertThat(ctx).hasSingleBean(ObjectMapper::class.java)
             assertThat(ctx).getBeans(ObjectMapper::class.java).containsKey("dgsObjectMapper")
             // Expecting the JavaTimeModule from the dgsObjectMapper provided via MockUserConfiguration
-            val modules = ctx.getBeansOfType(ObjectMapper::class.java)["dgsObjectMapper"]
-                ?.registeredModuleIds?.contains(MockUserConfiguration.jacksonJavaTimeModule.moduleName)
+            val modules =
+                ctx
+                    .getBeansOfType(ObjectMapper::class.java)["dgsObjectMapper"]
+                    ?.registeredModuleIds
+                    ?.contains(MockUserConfiguration.jacksonJavaTimeModule.moduleName)
             assertThat(modules).isTrue()
         }
     }
@@ -120,120 +122,132 @@ class DgsWebMvcAutoConfigurationTest {
 
     @Test
     fun graphqlControllerMappedToDefaultPath() {
-        context.withConfiguration(
-            AutoConfigurations.of(
-                JacksonAutoConfiguration::class.java,
-                WebMvcAutoConfiguration::class.java,
-                DispatcherServletAutoConfiguration::class.java
-            )
-        )
-            .run { ctx ->
+        context
+            .withConfiguration(
+                AutoConfigurations.of(
+                    JacksonAutoConfiguration::class.java,
+                    WebMvcAutoConfiguration::class.java,
+                    DispatcherServletAutoConfiguration::class.java,
+                ),
+            ).run { ctx ->
                 val mockMvc = MockMvcBuilders.webAppContextSetup(ctx).build()
-                mockMvc.perform(
-                    MockMvcRequestBuilders.get("/graphql")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"query\": \"{ hello }\"}")
-                        .accept(MediaType.APPLICATION_JSON)
-                )
-                    .andExpect(MockMvcResultMatchers.status().isOk)
-                    .andExpect(
-                        MockMvcResultMatchers.content()
+                mockMvc
+                    .perform(
+                        MockMvcRequestBuilders
+                            .get("/graphql")
                             .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"query\": \"{ hello }\"}")
+                            .accept(MediaType.APPLICATION_JSON),
+                    ).andExpect(MockMvcResultMatchers.status().isOk)
+                    .andExpect(
+                        MockMvcResultMatchers
+                            .content()
+                            .contentType(MediaType.APPLICATION_JSON),
                     )
             }
     }
 
     @Test
     fun graphqlControllerMappedToCustomPath() {
-        context.withConfiguration(
-            AutoConfigurations.of(
-                JacksonAutoConfiguration::class.java,
-                WebMvcAutoConfiguration::class.java,
-                DispatcherServletAutoConfiguration::class.java
-            )
-        )
-            .withPropertyValues("dgs.graphql.path: /fooql")
+        context
+            .withConfiguration(
+                AutoConfigurations.of(
+                    JacksonAutoConfiguration::class.java,
+                    WebMvcAutoConfiguration::class.java,
+                    DispatcherServletAutoConfiguration::class.java,
+                ),
+            ).withPropertyValues("dgs.graphql.path: /fooql")
             .run { ctx ->
                 val mockMvc = MockMvcBuilders.webAppContextSetup(ctx).build()
-                mockMvc.perform(
-                    MockMvcRequestBuilders.get("/fooql")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"query\": \"{ hello }\"}")
-                        .accept(MediaType.APPLICATION_JSON)
-                )
-                    .andExpect(MockMvcResultMatchers.status().isOk)
-                    .andExpect(
-                        MockMvcResultMatchers.content()
+                mockMvc
+                    .perform(
+                        MockMvcRequestBuilders
+                            .get("/fooql")
                             .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"query\": \"{ hello }\"}")
+                            .accept(MediaType.APPLICATION_JSON),
+                    ).andExpect(MockMvcResultMatchers.status().isOk)
+                    .andExpect(
+                        MockMvcResultMatchers
+                            .content()
+                            .contentType(MediaType.APPLICATION_JSON),
                     )
             }
     }
 
     @Test
     fun schemaJsonControllerMappedToDefaultPath() {
-        context.withConfiguration(
-            AutoConfigurations.of(
-                JacksonAutoConfiguration::class.java,
-                WebMvcAutoConfiguration::class.java,
-                DispatcherServletAutoConfiguration::class.java
-            )
-        )
-            .run { ctx ->
+        context
+            .withConfiguration(
+                AutoConfigurations.of(
+                    JacksonAutoConfiguration::class.java,
+                    WebMvcAutoConfiguration::class.java,
+                    DispatcherServletAutoConfiguration::class.java,
+                ),
+            ).run { ctx ->
                 val mockMvc = MockMvcBuilders.webAppContextSetup(ctx).build()
-                mockMvc.perform(
-                    MockMvcRequestBuilders.get("/schema.json")
-                        .accept(MediaType.APPLICATION_JSON)
-                )
-                    .andExpect(MockMvcResultMatchers.status().isOk)
+                mockMvc
+                    .perform(
+                        MockMvcRequestBuilders
+                            .get("/schema.json")
+                            .accept(MediaType.APPLICATION_JSON),
+                    ).andExpect(MockMvcResultMatchers.status().isOk)
                     .andExpect(
-                        MockMvcResultMatchers.content()
-                            .contentType(MediaType.APPLICATION_JSON)
+                        MockMvcResultMatchers
+                            .content()
+                            .contentType(MediaType.APPLICATION_JSON),
                     )
             }
     }
 
     @Test
     fun schemaJsonControllerMappedToCustomPath() {
-        context.withConfiguration(
-            AutoConfigurations.of(
-                JacksonAutoConfiguration::class.java,
-                WebMvcAutoConfiguration::class.java,
-                DispatcherServletAutoConfiguration::class.java
-            )
-        )
-            .withPropertyValues("dgs.graphql.schema-json.path: /foo.json")
+        context
+            .withConfiguration(
+                AutoConfigurations.of(
+                    JacksonAutoConfiguration::class.java,
+                    WebMvcAutoConfiguration::class.java,
+                    DispatcherServletAutoConfiguration::class.java,
+                ),
+            ).withPropertyValues("dgs.graphql.schema-json.path: /foo.json")
             .run { ctx ->
                 val mockMvc = MockMvcBuilders.webAppContextSetup(ctx).build()
-                mockMvc.perform(
-                    MockMvcRequestBuilders.get("/foo.json")
-                        .accept(MediaType.APPLICATION_JSON)
-                )
-                    .andExpect(MockMvcResultMatchers.status().isOk)
+                mockMvc
+                    .perform(
+                        MockMvcRequestBuilders
+                            .get("/foo.json")
+                            .accept(MediaType.APPLICATION_JSON),
+                    ).andExpect(MockMvcResultMatchers.status().isOk)
                     .andExpect(
-                        MockMvcResultMatchers.content()
-                            .contentType(MediaType.APPLICATION_JSON)
+                        MockMvcResultMatchers
+                            .content()
+                            .contentType(MediaType.APPLICATION_JSON),
                     )
             }
     }
 
     @Configuration
     open class MockUserConfiguration {
-
         @Bean
         open fun dgsSchemaProvider(): DgsSchemaProvider {
-            val objectType: GraphQLObjectType = GraphQLObjectType.newObject()
-                .name("helloType")
-                .field(
-                    GraphQLFieldDefinition.newFieldDefinition()
-                        .name("hello")
-                        .type(Scalars.GraphQLString)
-                )
-                .build()
-            val schema = GraphQLSchema.newSchema()
-                .clearSchemaDirectives()
-                .clearAdditionalTypes()
-                .clearDirectives()
-                .query(objectType).build()
+            val objectType: GraphQLObjectType =
+                GraphQLObjectType
+                    .newObject()
+                    .name("helloType")
+                    .field(
+                        GraphQLFieldDefinition
+                            .newFieldDefinition()
+                            .name("hello")
+                            .type(Scalars.GraphQLString),
+                    ).build()
+            val schema =
+                GraphQLSchema
+                    .newSchema()
+                    .clearSchemaDirectives()
+                    .clearAdditionalTypes()
+                    .clearDirectives()
+                    .query(objectType)
+                    .build()
             val mockSchemaProvider = mockk<DgsSchemaProvider>()
             every { mockSchemaProvider.schema() } returns SchemaProviderResult(schema, RuntimeWiring.MOCKED_WIRING)
             return mockSchemaProvider
@@ -249,18 +263,19 @@ class DgsWebMvcAutoConfigurationTest {
                     any(),
                     any(),
                     null,
-                    any()
+                    any(),
                 )
-            } returns ExecutionResultImpl.newExecutionResult()
-                .data(mapOf(Pair("hi", "there"))).build()
+            } returns
+                ExecutionResultImpl
+                    .newExecutionResult()
+                    .data(mapOf(Pair("hi", "there")))
+                    .build()
             return mockExecutor
         }
 
         @Bean
         @Qualifier("dgsObjectMapper")
-        open fun dgsObjectMapper(): ObjectMapper {
-            return jacksonObjectMapper().registerModule(jacksonJavaTimeModule)
-        }
+        open fun dgsObjectMapper(): ObjectMapper = jacksonObjectMapper().registerModule(jacksonJavaTimeModule)
 
         companion object {
             val jacksonJavaTimeModule = JavaTimeModule()

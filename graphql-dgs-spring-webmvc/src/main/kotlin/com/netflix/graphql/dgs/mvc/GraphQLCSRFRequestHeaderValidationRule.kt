@@ -50,11 +50,12 @@ class GraphQLCSRFRequestHeaderValidationRule : GraphQLRequestHeaderValidationRul
          *
          * See [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS).
          */
-        val NON_PREFLIGHTED_CONTENT_TYPES = setOf(
-            MediaType.APPLICATION_FORM_URLENCODED,
-            MediaType.MULTIPART_FORM_DATA,
-            MediaType.TEXT_PLAIN
-        )
+        val NON_PREFLIGHTED_CONTENT_TYPES =
+            setOf(
+                MediaType.APPLICATION_FORM_URLENCODED,
+                MediaType.MULTIPART_FORM_DATA,
+                MediaType.TEXT_PLAIN,
+            )
 
         /**
          * Headers that should be available in case the request has either no `content-type` or one
@@ -66,11 +67,12 @@ class GraphQLCSRFRequestHeaderValidationRule : GraphQLRequestHeaderValidationRul
          *
          * See [](https://github.com/apollographql/apollo-server/blob/version-4/packages/server/src/preventCsrf.ts)
          */
-        val GRAPHQL_PREFLIGHT_REQUESTS_HEADERS = listOf(
-            HEADER_APOLLO_REQUIRE_PREFLIGHT,
-            HEADER_X_APOLLO_OPERATION_NAME,
-            HEADER_GRAPHQL_REQUIRE_PREFLIGHT
-        ).map { it.lowercase() }.toSet()
+        val GRAPHQL_PREFLIGHT_REQUESTS_HEADERS =
+            listOf(
+                HEADER_APOLLO_REQUIRE_PREFLIGHT,
+                HEADER_X_APOLLO_OPERATION_NAME,
+                HEADER_GRAPHQL_REQUIRE_PREFLIGHT,
+            ).map { it.lowercase() }.toSet()
 
         /**
          * > We don't want random websites to be able to execute actual GraphQL operations
@@ -113,13 +115,14 @@ class GraphQLCSRFRequestHeaderValidationRule : GraphQLRequestHeaderValidationRul
             }
             throw DgsGraphQLRequestHeaderValidator.GraphQLRequestHeaderRuleException(
                 "Expecting a CSRF Prevention Header but none was found, " +
-                    "supported headers are $GRAPHQL_PREFLIGHT_REQUESTS_HEADERS."
+                    "supported headers are $GRAPHQL_PREFLIGHT_REQUESTS_HEADERS.",
             )
         }
 
-        private fun isPreflightedContentType(mediaType: MediaType): Boolean {
-            return NON_PREFLIGHTED_CONTENT_TYPES.find { it.isCompatibleWith(mediaType) } == null
-        }
+        private fun isPreflightedContentType(mediaType: MediaType): Boolean =
+            NON_PREFLIGHTED_CONTENT_TYPES.find {
+                it.isCompatibleWith(mediaType)
+            } == null
 
         private fun containsCSRFinFlightHeader(headers: HttpHeaders): Boolean {
             val csrfInFlightHeader: String? =

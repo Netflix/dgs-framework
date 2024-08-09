@@ -40,8 +40,8 @@ import org.springframework.web.reactive.config.EnableWebFlux
 @SpringBootTest(
     properties = [
         "debug:true",
-        "dgs.graphql.apq.enabled:true"
-    ]
+        "dgs.graphql.apq.enabled:true",
+    ],
 )
 @EnableWebFlux
 @AutoConfigureWebTestClient
@@ -49,7 +49,6 @@ import org.springframework.web.reactive.config.EnableWebFlux
 @Execution(ExecutionMode.SAME_THREAD)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class DgsWebFluxAutomatedPersistedQueriesSmokeTest {
-
     @Autowired
     lateinit var webTestClient: WebTestClient
 
@@ -75,11 +74,12 @@ class DgsWebFluxAutomatedPersistedQueriesSmokeTest {
                   |    }
                   | }
                   |
-                """.trimMargin()
-            )
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody().json(
+                """.trimMargin(),
+            ).exchange()
+            .expectStatus()
+            .isOk()
+            .expectBody()
+            .json(
                 """
                   |{
                   |   "errors":[
@@ -95,7 +95,7 @@ class DgsWebFluxAutomatedPersistedQueriesSmokeTest {
                   |   ]
                   | }
                   |
-                """.trimMargin()
+                """.trimMargin(),
             )
     }
 
@@ -117,11 +117,12 @@ class DgsWebFluxAutomatedPersistedQueriesSmokeTest {
                   |    }
                   | }
                   |
-                """.trimMargin()
-            )
-            .exchange()
-            .expectStatus().isOk
-            .expectBody().json(
+                """.trimMargin(),
+            ).exchange()
+            .expectStatus()
+            .isOk
+            .expectBody()
+            .json(
                 """
                   | {
                   |    "data": {
@@ -129,7 +130,7 @@ class DgsWebFluxAutomatedPersistedQueriesSmokeTest {
                   |    }
                   | }
                   |
-                """.trimMargin()
+                """.trimMargin(),
             )
     }
 
@@ -150,11 +151,12 @@ class DgsWebFluxAutomatedPersistedQueriesSmokeTest {
                    |    }
                    | }
                    |
-                """.trimMargin()
-            )
-            .exchange()
-            .expectStatus().isOk
-            .expectBody().json(
+                """.trimMargin(),
+            ).exchange()
+            .expectStatus()
+            .isOk
+            .expectBody()
+            .json(
                 """
                   | {
                   |    "data": {
@@ -162,29 +164,28 @@ class DgsWebFluxAutomatedPersistedQueriesSmokeTest {
                   |    }
                   | }
                   |
-                """.trimMargin()
+                """.trimMargin(),
             )
     }
 
     @SpringBootApplication(proxyBeanMethods = false, scanBasePackages = [])
     @ComponentScan(
         useDefaultFilters = false,
-        includeFilters = [ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = [])]
+        includeFilters = [ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = [])],
     )
     @SuppressWarnings("unused")
     open class LocalApp {
-
         @DgsComponent
         class ExampleImplementation {
-
             @DgsTypeDefinitionRegistry
             fun typeDefinitionRegistry(): TypeDefinitionRegistry {
                 val schemaParser = SchemaParser()
 
-                val gqlSchema = """
+                val gqlSchema =
+                    """
                 |type Query{
                 |}
-                """.trimMargin()
+                    """.trimMargin()
                 return schemaParser.parse(gqlSchema)
             }
         }

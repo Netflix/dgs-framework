@@ -23,29 +23,32 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
 class RequestWithScalarTest {
-
     @Test
     fun `Creating a request with a date-time scalar as a variable should serialize correctly`() {
-        val variables = mapOf(
-            "currentDateTime" to DateRangeScalar().serialize(
-                DateRange(
-                    from = LocalDate.now(),
-                    to = LocalDate.now().plusDays(1)
-                )
+        val variables =
+            mapOf(
+                "currentDateTime" to
+                    DateRangeScalar().serialize(
+                        DateRange(
+                            from = LocalDate.now(),
+                            to = LocalDate.now().plusDays(1),
+                        ),
+                    ),
             )
-        )
-        val client = CustomGraphQLClient(
-            url = "",
-            requestExecutor = { _, _, _ -> HttpResponse(200, """{"data": null}""") }
-        )
-        val graphQLResponse = client.executeQuery(
-            """
-                   query Calendar(${'$'}timePeriod: DateRange) {
-                     getMeetings(timePeriod: ${'$'}timePeriod)
-                   }
-            """.trimIndent(),
-            variables
-        )
+        val client =
+            CustomGraphQLClient(
+                url = "",
+                requestExecutor = { _, _, _ -> HttpResponse(200, """{"data": null}""") },
+            )
+        val graphQLResponse =
+            client.executeQuery(
+                """
+                query Calendar(${'$'}timePeriod: DateRange) {
+                  getMeetings(timePeriod: ${'$'}timePeriod)
+                }
+                """.trimIndent(),
+                variables,
+            )
 
         assertThat(graphQLResponse).isNotNull
     }

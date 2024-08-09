@@ -24,13 +24,11 @@ import java.util.function.Supplier
 /**
  * Implementation of [PersistedQueryCache] backed by a Caffeine Cache.
  */
-class AutomatedPersistedQueryCaffeineCache(val cache: Cache<String, PreparsedDocumentEntry>) :
-    AutomatedPersistedQueryCacheAdapter() {
-
+class AutomatedPersistedQueryCaffeineCache(
+    val cache: Cache<String, PreparsedDocumentEntry>,
+) : AutomatedPersistedQueryCacheAdapter() {
     override fun getFromCache(
         key: String,
-        documentEntrySupplier: Supplier<PreparsedDocumentEntry>
-    ): PreparsedDocumentEntry? {
-        return cache.get(key) { documentEntrySupplier.get() }
-    }
+        documentEntrySupplier: Supplier<PreparsedDocumentEntry>,
+    ): PreparsedDocumentEntry? = cache.get(key) { documentEntrySupplier.get() }
 }

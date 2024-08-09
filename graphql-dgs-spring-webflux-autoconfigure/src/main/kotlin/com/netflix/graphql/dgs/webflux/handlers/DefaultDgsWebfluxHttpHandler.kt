@@ -32,38 +32,39 @@ import reactor.core.publisher.Mono
 
 class DefaultDgsWebfluxHttpHandler(
     private val dgsQueryExecutor: DgsReactiveQueryExecutor,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
 ) : DgsWebfluxHttpHandler {
-
     override fun graphql(request: ServerRequest): Mono<ServerResponse> {
         @Suppress("UNCHECKED_CAST")
         val executionResult: Mono<ExecutionResult> =
 
-            request.bodyToMono(String::class.java)
+            request
+                .bodyToMono(String::class.java)
                 .flatMap { body ->
                     if (GraphQLMediaTypes.isApplicationGraphQL(request)) {
                         Mono.just(QueryInput(body))
                     } else {
                         Mono.fromCallable {
                             val readValue = objectMapper.readValue<Map<String, Any>>(body)
-                            val query: String? = when (val iq = readValue["query"]) {
-                                is String -> iq
-                                else -> null
-                            }
-                            val operationName: String = when (val iq = readValue["operationName"]) {
-                                is String -> iq
-                                else -> ""
-                            }
+                            val query: String? =
+                                when (val iq = readValue["query"]) {
+                                    is String -> iq
+                                    else -> null
+                                }
+                            val operationName: String =
+                                when (val iq = readValue["operationName"]) {
+                                    is String -> iq
+                                    else -> ""
+                                }
                             QueryInput(
                                 query,
                                 (readValue["variables"] ?: emptyMap<String, Any>()) as Map<String, Any>,
                                 (readValue["extensions"] ?: emptyMap<String, Any>()) as Map<String, Any>,
-                                operationName
+                                operationName,
                             )
                         }
                     }
-                }
-                .flatMap { queryInput ->
+                }.flatMap { queryInput ->
                     logger.debug("Parsed variables: {}", queryInput.queryVariables)
                     dgsQueryExecutor.execute(
                         queryInput.query,
@@ -71,33 +72,38 @@ class DefaultDgsWebfluxHttpHandler(
                         queryInput.extensions,
                         request.headers().asHttpHeaders(),
                         queryInput.operationName,
-                        request
+                        request,
                     )
                 }
 
-        return executionResult.flatMap { result ->
-            val dgsExecutionResult = when (result) {
-                is DgsExecutionResult -> result
-                else -> DgsExecutionResult.builder().executionResult(result).build()
-            }
+        return executionResult
+            .flatMap { result ->
+                val dgsExecutionResult =
+                    when (result) {
+                        is DgsExecutionResult -> result
+                        else -> DgsExecutionResult.builder().executionResult(result).build()
+                    }
 
-            ServerResponse
-                .status(dgsExecutionResult.status)
-                .headers { it.addAll(dgsExecutionResult.headers()) }
-                .bodyValue(dgsExecutionResult.toSpecification())
-        }.onErrorResume { ex ->
-            when (ex) {
-                is JsonParseException ->
-                    ServerResponse.badRequest()
-                        .bodyValue("Invalid query - ${ex.message ?: "no details found in the error message"}.")
-                is MismatchedInputException ->
-                    ServerResponse.badRequest()
-                        .bodyValue("Invalid query - No content to map to input.")
-                else ->
-                    ServerResponse.badRequest()
-                        .bodyValue("Invalid query - ${ex.message ?: "no additional details found"}.")
+                ServerResponse
+                    .status(dgsExecutionResult.status)
+                    .headers { it.addAll(dgsExecutionResult.headers()) }
+                    .bodyValue(dgsExecutionResult.toSpecification())
+            }.onErrorResume { ex ->
+                when (ex) {
+                    is JsonParseException ->
+                        ServerResponse
+                            .badRequest()
+                            .bodyValue("Invalid query - ${ex.message ?: "no details found in the error message"}.")
+                    is MismatchedInputException ->
+                        ServerResponse
+                            .badRequest()
+                            .bodyValue("Invalid query - No content to map to input.")
+                    else ->
+                        ServerResponse
+                            .badRequest()
+                            .bodyValue("Invalid query - ${ex.message ?: "no additional details found"}.")
+                }
             }
-        }
     }
 
     companion object {
@@ -109,5 +115,5 @@ private data class QueryInput(
     @Language("graphql") val query: String?,
     val queryVariables: Map<String, Any> = emptyMap(),
     val extensions: Map<String, Any> = emptyMap(),
-    val operationName: String = ""
+    val operationName: String = "",
 )

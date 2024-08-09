@@ -27,6 +27,8 @@ class LegacyStarterWarning : ApplicationListener<ApplicationStartedEvent> {
     }
 
     override fun onApplicationEvent(event: ApplicationStartedEvent) {
-        LOGGER.warn("DEPRECATION WARNING - This project is using the deprecated 'graphql-dgs-spring-boot-starter'. Please switch to 'graphql-dgs-spring-graphql-starter'. For more context: https://netflix.github.io/dgs/spring-graphql-integration")
+        LOGGER.warn(
+            "DEPRECATION WARNING - This project is using the deprecated 'graphql-dgs-spring-boot-starter'. Please switch to 'graphql-dgs-spring-graphql-starter'. For more context: https://netflix.github.io/dgs/spring-graphql-integration",
+        )
     }
 }

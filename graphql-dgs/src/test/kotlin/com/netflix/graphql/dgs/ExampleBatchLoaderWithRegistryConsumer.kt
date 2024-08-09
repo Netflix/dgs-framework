@@ -22,8 +22,9 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
 @DgsDataLoader(name = "exampleBatchLoaderWithRegistryConsumer")
-class ExampleBatchLoaderWithRegistryConsumer : BatchLoader<String, String>, DgsDataLoaderRegistryConsumer {
-
+class ExampleBatchLoaderWithRegistryConsumer :
+    BatchLoader<String, String>,
+    DgsDataLoaderRegistryConsumer {
     private var dataLoaderRegistry: DataLoaderRegistry? = null
 
     override fun load(keys: MutableList<String>?): CompletionStage<MutableList<String>> {

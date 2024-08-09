@@ -24,10 +24,13 @@ import org.springframework.web.reactive.socket.WebSocketSession
 import reactor.core.publisher.Mono
 import java.time.Duration
 
-class DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor: DgsReactiveQueryExecutor, connectionInitTimeout: Duration) : WebSocketHandler {
-
+class DgsReactiveWebsocketHandler(
+    dgsReactiveQueryExecutor: DgsReactiveQueryExecutor,
+    connectionInitTimeout: Duration,
+) : WebSocketHandler {
     private val graphqlWSHandler = WebsocketGraphQLWSProtocolHandler(dgsReactiveQueryExecutor)
     private val graphqlTransportWSHandler = WebsocketGraphQLTransportWSProtocolHandler(dgsReactiveQueryExecutor, connectionInitTimeout)
+
     override fun getSubProtocols(): List<String> = listOf(GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL, GRAPHQL_SUBSCRIPTIONS_TRANSPORT_WS_PROTOCOL)
 
     override fun handle(webSocketSession: WebSocketSession): Mono<Void> {

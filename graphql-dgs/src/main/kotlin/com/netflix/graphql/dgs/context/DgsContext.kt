@@ -35,74 +35,53 @@ import java.util.function.Consumer
  * Context class that is created per request, and is added to both DataFetchingEnvironment and BatchLoaderEnvironment.
  * Custom data can be added by providing a [DgsCustomContextBuilder].
  */
-open class DgsContext(val customContext: Any? = null, val requestData: DgsRequestData?) : Consumer<GraphQLContext.Builder> {
-
+open class DgsContext(
+    val customContext: Any? = null,
+    val requestData: DgsRequestData?,
+) : Consumer<GraphQLContext.Builder> {
     private enum class GraphQLContextKey { DGS_CONTEXT_KEY }
 
     companion object {
         @JvmStatic
-        fun from(graphQLContext: GraphQLContext): DgsContext {
-            return graphQLContext[GraphQLContextKey.DGS_CONTEXT_KEY]
-        }
+        fun from(graphQLContext: GraphQLContext): DgsContext = graphQLContext[GraphQLContextKey.DGS_CONTEXT_KEY]
 
         @JvmStatic
-        fun from(dfe: DataFetchingEnvironment): DgsContext {
-            return from(dfe.graphQlContext)
-        }
+        fun from(dfe: DataFetchingEnvironment): DgsContext = from(dfe.graphQlContext)
 
         @JvmStatic
-        fun from(ei: ExecutionInput): DgsContext {
-            return from(ei.graphQLContext)
-        }
+        fun from(ei: ExecutionInput): DgsContext = from(ei.graphQLContext)
 
         @JvmStatic
-        fun from(p: InstrumentationCreateStateParameters): DgsContext {
-            return from(p.executionInput.graphQLContext)
-        }
+        fun from(p: InstrumentationCreateStateParameters): DgsContext = from(p.executionInput.graphQLContext)
 
         @JvmStatic
-        fun from(p: InstrumentationExecuteOperationParameters): DgsContext {
-            return from(p.executionContext.graphQLContext)
-        }
+        fun from(p: InstrumentationExecuteOperationParameters): DgsContext = from(p.executionContext.graphQLContext)
 
         @JvmStatic
-        fun from(p: InstrumentationExecutionParameters): DgsContext {
-            return from(p.graphQLContext)
-        }
+        fun from(p: InstrumentationExecutionParameters): DgsContext = from(p.graphQLContext)
 
         @JvmStatic
-        fun from(p: InstrumentationExecutionStrategyParameters): DgsContext {
-            return from(p.executionContext.graphQLContext)
-        }
+        fun from(p: InstrumentationExecutionStrategyParameters): DgsContext = from(p.executionContext.graphQLContext)
 
         @JvmStatic
-        fun from(p: InstrumentationFieldCompleteParameters): DgsContext {
-            return from(p.executionContext.graphQLContext)
-        }
+        fun from(p: InstrumentationFieldCompleteParameters): DgsContext = from(p.executionContext.graphQLContext)
 
         @JvmStatic
-        fun from(p: InstrumentationFieldFetchParameters): DgsContext {
-            return from(p.executionContext.graphQLContext)
-        }
+        fun from(p: InstrumentationFieldFetchParameters): DgsContext = from(p.executionContext.graphQLContext)
 
         @JvmStatic
-        fun from(p: InstrumentationFieldParameters): DgsContext {
-            return from(p.executionContext.graphQLContext)
-        }
+        fun from(p: InstrumentationFieldParameters): DgsContext = from(p.executionContext.graphQLContext)
 
         @JvmStatic
-        fun from(p: InstrumentationValidationParameters): DgsContext {
-            return from(p.graphQLContext)
-        }
+        fun from(p: InstrumentationValidationParameters): DgsContext = from(p.graphQLContext)
 
         @JvmStatic
-        fun from(batchLoaderEnvironment: BatchLoaderEnvironment): DgsContext {
-            return when (val context = batchLoaderEnvironment.getContext<Any>()) {
+        fun from(batchLoaderEnvironment: BatchLoaderEnvironment): DgsContext =
+            when (val context = batchLoaderEnvironment.getContext<Any>()) {
                 is GraphQLContext -> from(context)
                 is DgsContext -> context
                 else -> throw RuntimeException("Cannot resolve DgsContext from ${context::class.java.name}.")
             }
-        }
 
         @JvmStatic
         fun <T> getCustomContext(context: Any): T {
@@ -110,7 +89,9 @@ open class DgsContext(val customContext: Any? = null, val requestData: DgsReques
             return when (context) {
                 is DgsContext -> context.customContext as T
                 is GraphQLContext -> getCustomContext(from(context))
-                else -> throw RuntimeException("The context object passed to getCustomContext is not a DgsContext. It is a ${context::class.java.name} instead.")
+                else -> throw RuntimeException(
+                    "The context object passed to getCustomContext is not a DgsContext. It is a ${context::class.java.name} instead.",
+                )
             }
         }
 

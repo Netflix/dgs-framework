@@ -24,16 +24,18 @@ import org.springframework.boot.diagnostics.FailureAnalysis
  * Spring failure analyzer that reports schema problems at startup in a more readable way.
  */
 class SchemaFailureAnalyzer : AbstractFailureAnalyzer<SchemaProblem>() {
-    override fun analyze(rootFailure: Throwable, cause: SchemaProblem): FailureAnalysis {
-        return FailureAnalysis(
+    override fun analyze(
+        rootFailure: Throwable,
+        cause: SchemaProblem,
+    ): FailureAnalysis =
+        FailureAnalysis(
             "There are problems with the GraphQL Schema:\n" +
                 cause.errors.joinToString(
                     separator = "\n\t * ",
                     prefix = "\t * ",
-                    postfix = "\n"
+                    postfix = "\n",
                 ),
             null,
-            cause
+            cause,
         )
-    }
 }

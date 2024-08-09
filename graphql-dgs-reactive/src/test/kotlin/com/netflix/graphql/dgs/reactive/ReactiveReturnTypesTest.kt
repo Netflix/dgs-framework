@@ -76,175 +76,190 @@ internal class ReactiveReturnTypesTest {
 
     @BeforeEach
     fun createExecutor() {
-        val fetcher = object {
-            @DgsData(parentType = "Query", field = "hello")
-            fun hello(): Mono<String> {
-                return Mono.deferContextual { context ->
-                    stubContextConsumer.accept(context)
-                    Mono.just("hi!")
-                }
+        val fetcher =
+            object {
+                @DgsData(parentType = "Query", field = "hello")
+                fun hello(): Mono<String> =
+                    Mono.deferContextual { context ->
+                        stubContextConsumer.accept(context)
+                        Mono.just("hi!")
+                    }
             }
-        }
 
-        val numbersFetcher = object {
-            @DgsData(parentType = "Query", field = "numbers")
-            fun numbers(): Flux<Int> {
-                return Flux.deferContextual { context ->
-                    stubContextConsumer.accept(context)
-                    Flux.interval(Duration.ofMillis(1)).map { it.toInt() }.take(5)
-                }
+        val numbersFetcher =
+            object {
+                @DgsData(parentType = "Query", field = "numbers")
+                fun numbers(): Flux<Int> =
+                    Flux.deferContextual { context ->
+                        stubContextConsumer.accept(context)
+                        Flux.interval(Duration.ofMillis(1)).map { it.toInt() }.take(5)
+                    }
             }
-        }
 
-        val moviesFetcher = object {
-            @DgsData(parentType = "Query", field = "movies")
-            fun movies(): Flux<Movie> {
-                return Flux.just(Movie("Extraction", LocalDateTime.MIN), Movie("Da 5 Bloods", LocalDateTime.MAX))
+        val moviesFetcher =
+            object {
+                @DgsData(parentType = "Query", field = "movies")
+                fun movies(): Flux<Movie> = Flux.just(Movie("Extraction", LocalDateTime.MIN), Movie("Da 5 Bloods", LocalDateTime.MAX))
             }
-        }
 
-        val fetcherWithError = object {
-            @DgsData(parentType = "Query", field = "withError")
-            fun withError(): Mono<String> {
-                return Mono.error { throw RuntimeException("Broken!") }
+        val fetcherWithError =
+            object {
+                @DgsData(parentType = "Query", field = "withError")
+                fun withError(): Mono<String> = Mono.error { throw RuntimeException("Broken!") }
             }
-        }
 
-        val fetcherWithFlow = object {
-            @DgsData(parentType = "Query", field = "flow")
-            fun withFlow(): Flow<String> {
-                return flow {
-                    emit("one")
-                    emit("two")
-                    emit("three")
-                }
+        val fetcherWithFlow =
+            object {
+                @DgsData(parentType = "Query", field = "flow")
+                fun withFlow(): Flow<String> =
+                    flow {
+                        emit("one")
+                        emit("two")
+                        emit("three")
+                    }
             }
-        }
 
-        val subscriptionFetcherWithFlow = object {
-            @DgsSubscription
-            fun flowSubscription(): Flow<Int> {
-                return flow {
-                    emit(0)
-                    emit(2)
-                    emit(4)
-                    emit(6)
-                }
+        val subscriptionFetcherWithFlow =
+            object {
+                @DgsSubscription
+                fun flowSubscription(): Flow<Int> =
+                    flow {
+                        emit(0)
+                        emit(2)
+                        emit(4)
+                        emit(6)
+                    }
             }
-        }
 
         every { stubContextConsumer.accept(any()) } just Runs
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            "helloFetcher" to fetcher,
-            "numbersFetcher" to numbersFetcher,
-            "moviesFetcher" to moviesFetcher,
-            "withErrorFetcher" to fetcherWithError,
-            "flowFetcher" to fetcherWithFlow,
-            "flowSubscription" to subscriptionFetcherWithFlow
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(
-            "DateTimeScalar" to LocalDateTimeScalar()
-        )
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+            mapOf(
+                "helloFetcher" to fetcher,
+                "numbersFetcher" to numbersFetcher,
+                "moviesFetcher" to moviesFetcher,
+                "withErrorFetcher" to fetcherWithError,
+                "flowFetcher" to fetcherWithFlow,
+                "flowSubscription" to subscriptionFetcherWithFlow,
+            )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns
+            mapOf(
+                "DateTimeScalar" to LocalDateTimeScalar(),
+            )
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
         every { dgsDataLoaderProvider.buildRegistryWithContextSupplier(any<Supplier<Any>>()) } returns DataLoaderRegistry()
 
-        val provider = DgsSchemaProvider(
-            applicationContextMock,
-            federationResolver = Optional.empty(),
-            existingTypeDefinitionRegistry = Optional.empty(),
-            schemaLocations = listOf(DgsSchemaProvider.DEFAULT_SCHEMA_LOCATION),
-            dataFetcherResultProcessors = listOf(
-                MonoDataFetcherResultProcessor(),
-                FluxDataFetcherResultProcessor(),
-                FlowDataFetcherResultProcessor()
-            ),
-            methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
-        )
+        val provider =
+            DgsSchemaProvider(
+                applicationContextMock,
+                federationResolver = Optional.empty(),
+                existingTypeDefinitionRegistry = Optional.empty(),
+                schemaLocations = listOf(DgsSchemaProvider.DEFAULT_SCHEMA_LOCATION),
+                dataFetcherResultProcessors =
+                    listOf(
+                        MonoDataFetcherResultProcessor(),
+                        FluxDataFetcherResultProcessor(),
+                        FlowDataFetcherResultProcessor(),
+                    ),
+                methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
+            )
 
-        val schema = provider.schema(
-            """
-            type Query {
-                hello: String
-                numbers: [Int]
-                movies: [Movie]
-                withError: String
-                flow: [String]
-            }
+        val schema =
+            provider
+                .schema(
+                    """
+                    type Query {
+                        hello: String
+                        numbers: [Int]
+                        movies: [Movie]
+                        withError: String
+                        flow: [String]
+                    }
 
-            type Subscription {
-                flowSubscription: Int
-            }
+                    type Subscription {
+                        flowSubscription: Int
+                    }
 
-            type Movie {
-                title: String
-                releaseDate: DateTime
-            }
+                    type Movie {
+                        title: String
+                        releaseDate: DateTime
+                    }
 
-            type Person {
-                name: String
-            }
+                    type Person {
+                        name: String
+                    }
 
-            scalar DateTime
-            """.trimIndent()
-        ).graphQLSchema
+                    scalar DateTime
+                    """.trimIndent(),
+                ).graphQLSchema
 
-        dgsQueryExecutor = DefaultDgsReactiveQueryExecutor(
-            defaultSchema = schema,
-            schemaProvider = provider,
-            dataLoaderProvider = dgsDataLoaderProvider,
-            contextBuilder = DefaultDgsReactiveGraphQLContextBuilder(Optional.empty()),
-            instrumentation = SimplePerformantInstrumentation.INSTANCE,
-            queryExecutionStrategy = AsyncExecutionStrategy(),
-            mutationExecutionStrategy = AsyncSerialExecutionStrategy(),
-            idProvider = Optional.empty()
-        )
+        dgsQueryExecutor =
+            DefaultDgsReactiveQueryExecutor(
+                defaultSchema = schema,
+                schemaProvider = provider,
+                dataLoaderProvider = dgsDataLoaderProvider,
+                contextBuilder = DefaultDgsReactiveGraphQLContextBuilder(Optional.empty()),
+                instrumentation = SimplePerformantInstrumentation.INSTANCE,
+                queryExecutionStrategy = AsyncExecutionStrategy(),
+                mutationExecutionStrategy = AsyncSerialExecutionStrategy(),
+                idProvider = Optional.empty(),
+            )
     }
 
     @Test
     fun extractJsonWithMonoString() {
-        val helloResult = dgsQueryExecutor.executeAndExtractJsonPath<String>(
-            """
-            {
-                hello
-            }
-            """.trimIndent(),
-            "data.hello"
-        ).contextWrite(dummyContext())
+        val helloResult =
+            dgsQueryExecutor
+                .executeAndExtractJsonPath<String>(
+                    """
+                    {
+                        hello
+                    }
+                    """.trimIndent(),
+                    "data.hello",
+                ).contextWrite(dummyContext())
 
-        StepVerifier.create(helloResult).assertNext {
-            assertThat(it).isEqualTo("hi!")
-        }.verifyComplete()
+        StepVerifier
+            .create(helloResult)
+            .assertNext {
+                assertThat(it).isEqualTo("hi!")
+            }.verifyComplete()
         verify { stubContextConsumer.accept(match(comparingDummyContext())) }
     }
 
     @Test
     fun `extract json with flow`() {
-        val flowResult = dgsQueryExecutor.executeAndExtractJsonPath<List<String>>(
-            """
-            {
-                flow
-            }
-            """.trimIndent(),
-            "data.flow"
-        ).contextWrite(dummyContext())
+        val flowResult =
+            dgsQueryExecutor
+                .executeAndExtractJsonPath<List<String>>(
+                    """
+                    {
+                        flow
+                    }
+                    """.trimIndent(),
+                    "data.flow",
+                ).contextWrite(dummyContext())
 
         val step = StepVerifier.create(flowResult)
-        step.assertNext {
-            assertThat(it).isEqualTo(listOf("one", "two", "three"))
-        }.verifyComplete()
+        step
+            .assertNext {
+                assertThat(it).isEqualTo(listOf("one", "two", "three"))
+            }.verifyComplete()
     }
 
     @Test
     fun `Execute subscription query against Flow datafetcher`() {
-        val executionResult = dgsQueryExecutor.execute("subscription { flowSubscription }").block()
-            ?: fail("ExecutionResult was null")
+        val executionResult =
+            dgsQueryExecutor.execute("subscription { flowSubscription }").block()
+                ?: fail("ExecutionResult was null")
         val publisher = executionResult.getData<Publisher<ExecutionResult>>()
-        val flux = Flux.from(publisher).map { result ->
-            result.getData<Map<String, Int>>()["flowSubscription"] ?: fail("Got null value: $result")
-        }
+        val flux =
+            Flux.from(publisher).map { result ->
+                result.getData<Map<String, Int>>()["flowSubscription"] ?: fail("Got null value: $result")
+            }
 
-        StepVerifier.create(flux)
+        StepVerifier
+            .create(flux)
             .expectNext(0, 2, 4, 6)
             .expectComplete()
             .verify()
@@ -252,59 +267,70 @@ internal class ReactiveReturnTypesTest {
 
     @Test
     fun extractJsonWithFlux() {
-        val numbers = dgsQueryExecutor.executeAndExtractJsonPath<List<Int>>(
-            """
-            {
-                numbers
-            }
-            """.trimIndent(),
-            "data.numbers"
-        ).contextWrite(dummyContext())
+        val numbers =
+            dgsQueryExecutor
+                .executeAndExtractJsonPath<List<Int>>(
+                    """
+                    {
+                        numbers
+                    }
+                    """.trimIndent(),
+                    "data.numbers",
+                ).contextWrite(dummyContext())
 
         val step = StepVerifier.create(numbers)
-        step.assertNext {
-            assertThat(it).isEqualTo(listOf(0, 1, 2, 3, 4))
-        }.verifyComplete()
+        step
+            .assertNext {
+                assertThat(it).isEqualTo(listOf(0, 1, 2, 3, 4))
+            }.verifyComplete()
         verify { stubContextConsumer.accept(match(comparingDummyContext())) }
     }
 
     @Test
     fun extractJsonWithMonoOfObjects() {
-        val movies = dgsQueryExecutor.executeAndExtractJsonPath<List<Map<String, Any>>>(
-            """
-            {
-                movies { title releaseDate }
-            }
-            """.trimIndent(),
-            "data.movies"
-        )
+        val movies =
+            dgsQueryExecutor.executeAndExtractJsonPath<List<Map<String, Any>>>(
+                """
+                {
+                    movies { title releaseDate }
+                }
+                """.trimIndent(),
+                "data.movies",
+            )
 
-        StepVerifier.create(movies).assertNext {
-            assertThat(it[0]["title"]).isEqualTo("Extraction")
-            assertThat(LocalDateTime.parse(it[0]["releaseDate"] as CharSequence))
-                .isEqualTo(LocalDateTime.MIN)
-        }.verifyComplete()
+        StepVerifier
+            .create(movies)
+            .assertNext {
+                assertThat(it[0]["title"]).isEqualTo("Extraction")
+                assertThat(LocalDateTime.parse(it[0]["releaseDate"] as CharSequence))
+                    .isEqualTo(LocalDateTime.MIN)
+            }.verifyComplete()
     }
 
     @Test
     fun extractError() {
-        val withError = dgsQueryExecutor.executeAndExtractJsonPath<String>(
-            """
-            {
-                withError
-            }
-            """.trimIndent(),
-            "data.withError"
-        )
+        val withError =
+            dgsQueryExecutor.executeAndExtractJsonPath<String>(
+                """
+                {
+                    withError
+                }
+                """.trimIndent(),
+                "data.withError",
+            )
 
         StepVerifier.create(withError).verifyError(QueryException::class.java)
     }
 
     private fun dummyContext() = Context.of("some-key", "some context value")
 
-    private fun comparingDummyContext() = { context: ContextView ->
-        context.size() == 1 && context.get<String>("some-key") == "some context value"
-    }
+    private fun comparingDummyContext() =
+        { context: ContextView ->
+            context.size() == 1 && context.get<String>("some-key") == "some context value"
+        }
 
-    private data class Movie(val title: String, val releaseDate: LocalDateTime?)
+    private data class Movie(
+        val title: String,
+        val releaseDate: LocalDateTime?,
+    )
 }

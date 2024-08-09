@@ -30,32 +30,36 @@ import java.util.concurrent.CompletableFuture
 
 class DgsWebFluxGraphQLInterceptor(
     private val dgsDataLoaderProvider: DgsDataLoaderProvider,
-    private val dgsReactiveGraphQLContextBuilder: DefaultDgsReactiveGraphQLContextBuilder
+    private val dgsReactiveGraphQLContextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
 ) : WebGraphQlInterceptor {
-    override fun intercept(request: WebGraphQlRequest, chain: WebGraphQlInterceptor.Chain): Mono<WebGraphQlResponse> {
-        return Mono.deferContextual { ctx ->
-            val webExchange = ServerWebExchangeContextFilter.getExchange(ctx).get()
-            val serverRequest = ServerRequest.create(webExchange, emptyList())
-            dgsReactiveGraphQLContextBuilder.build(
-                DgsReactiveRequestData(
-                    request.extensions,
-                    request.headers,
-                    serverRequest
+    override fun intercept(
+        request: WebGraphQlRequest,
+        chain: WebGraphQlInterceptor.Chain,
+    ): Mono<WebGraphQlResponse> =
+        Mono
+            .deferContextual { ctx ->
+                val webExchange = ServerWebExchangeContextFilter.getExchange(ctx).get()
+                val serverRequest = ServerRequest.create(webExchange, emptyList())
+                dgsReactiveGraphQLContextBuilder.build(
+                    DgsReactiveRequestData(
+                        request.extensions,
+                        request.headers,
+                        serverRequest,
+                    ),
                 )
-            )
-        }.flatMap { dgsContext ->
-            val graphQLContextFuture = CompletableFuture<GraphQLContext>()
-            val dataLoaderRegistry =
-                dgsDataLoaderProvider.buildRegistryWithContextSupplier { graphQLContextFuture.get() }
+            }.flatMap { dgsContext ->
+                val graphQLContextFuture = CompletableFuture<GraphQLContext>()
+                val dataLoaderRegistry =
+                    dgsDataLoaderProvider.buildRegistryWithContextSupplier { graphQLContextFuture.get() }
 
-            request.configureExecutionInput { _, builder ->
-                builder
-                    .context(dgsContext)
-                    .graphQLContext(dgsContext)
-                    .dataLoaderRegistry(dataLoaderRegistry).build()
+                request.configureExecutionInput { _, builder ->
+                    builder
+                        .context(dgsContext)
+                        .graphQLContext(dgsContext)
+                        .dataLoaderRegistry(dataLoaderRegistry)
+                        .build()
+                }
+                graphQLContextFuture.complete(request.toExecutionInput().graphQLContext)
+                chain.next(request)
             }
-            graphQLContextFuture.complete(request.toExecutionInput().graphQLContext)
-            chain.next(request)
-        }
-    }
 }

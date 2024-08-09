@@ -31,15 +31,18 @@ import org.springframework.http.HttpHeaders
 import org.springframework.util.LinkedMultiValueMap
 
 class QueryExecutorTest {
-    private val context = WebApplicationContextRunner()
-        .withConfiguration(AutoConfigurations.of(DgsAutoConfiguration::class.java))
+    private val context =
+        WebApplicationContextRunner()
+            .withConfiguration(AutoConfigurations.of(DgsAutoConfiguration::class.java))
 
     @Test
     fun query() {
         context.withUserConfiguration(HelloDataFetcherConfig::class.java).run { ctx ->
-            assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                it.executeAndExtractJsonPath<String>("{ hello }", "data.hello")
-            }.isEqualTo("Hello!")
+            assertThat(ctx)
+                .getBean(DgsQueryExecutor::class.java)
+                .extracting {
+                    it.executeAndExtractJsonPath<String>("{ hello }", "data.hello")
+                }.isEqualTo("Hello!")
         }
     }
 
@@ -57,18 +60,26 @@ class QueryExecutorTest {
     @Test
     fun queryWithArgument() {
         context.withUserConfiguration(HelloDataFetcherConfig::class.java).run { ctx ->
-            assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                it.executeAndExtractJsonPath<String>("{ hello(name: \"DGS\") }", "data.hello")
-            }.isEqualTo("Hello, DGS!")
+            assertThat(ctx)
+                .getBean(DgsQueryExecutor::class.java)
+                .extracting {
+                    it.executeAndExtractJsonPath<String>("{ hello(name: \"DGS\") }", "data.hello")
+                }.isEqualTo("Hello, DGS!")
         }
     }
 
     @Test
     fun queryWithVariables() {
         context.withUserConfiguration(HelloDataFetcherConfig::class.java).run { ctx ->
-            assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                it.executeAndExtractJsonPath<String>("query(\$name: String) {  hello(name: \$name) }", "data.hello", mapOf(Pair("name", "DGS")))
-            }.isEqualTo("Hello, DGS!")
+            assertThat(ctx)
+                .getBean(DgsQueryExecutor::class.java)
+                .extracting {
+                    it.executeAndExtractJsonPath<String>(
+                        "query(\$name: String) {  hello(name: \$name) }",
+                        "data.hello",
+                        mapOf(Pair("name", "DGS")),
+                    )
+                }.isEqualTo("Hello, DGS!")
         }
     }
 
@@ -93,70 +104,89 @@ class QueryExecutorTest {
     @Test
     fun queryDocumentWithArgument() {
         context.withUserConfiguration(HelloDataFetcherConfig::class.java).run { ctx ->
-            assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                it.executeAndGetDocumentContext("{ hello(name: \"DGS\") }").read<String>("data.hello")
-            }.isEqualTo("Hello, DGS!")
+            assertThat(ctx)
+                .getBean(DgsQueryExecutor::class.java)
+                .extracting {
+                    it.executeAndGetDocumentContext("{ hello(name: \"DGS\") }").read<String>("data.hello")
+                }.isEqualTo("Hello, DGS!")
         }
     }
 
     @Test
     fun queryDocumentWithVariables() {
         context.withUserConfiguration(HelloDataFetcherConfig::class.java).run { ctx ->
-            assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                it.executeAndGetDocumentContext("query(\$name: String) {  hello(name: \$name) }", mapOf(Pair("name", "DGS"))).read<String>("data.hello")
-            }.isEqualTo("Hello, DGS!")
+            assertThat(ctx)
+                .getBean(DgsQueryExecutor::class.java)
+                .extracting {
+                    it
+                        .executeAndGetDocumentContext(
+                            "query(\$name: String) {  hello(name: \$name) }",
+                            mapOf(Pair("name", "DGS")),
+                        ).read<String>("data.hello")
+                }.isEqualTo("Hello, DGS!")
         }
     }
 
     @Test
     fun queryDocumentWithError() {
-        val error: QueryException = assertThrows {
-            context.withUserConfiguration(HelloDataFetcherConfig::class.java).run { ctx ->
-                assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                    it.executeAndGetDocumentContext("{ unknown }")
+        val error: QueryException =
+            assertThrows {
+                context.withUserConfiguration(HelloDataFetcherConfig::class.java).run { ctx ->
+                    assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
+                        it.executeAndGetDocumentContext("{ unknown }")
+                    }
                 }
             }
-        }
 
         assertThat(error.errors.size).isEqualTo(1)
-        assertThat(error.errors[0].message).isEqualTo("Validation error (FieldUndefined@[unknown]) : Field 'unknown' in type 'Query' is undefined")
+        assertThat(
+            error.errors[0].message,
+        ).isEqualTo("Validation error (FieldUndefined@[unknown]) : Field 'unknown' in type 'Query' is undefined")
     }
 
     @Test
     fun queryBasicExecute() {
         context.withUserConfiguration(HelloDataFetcherConfig::class.java).run { ctx ->
-            assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                it.execute("{hello}").isDataPresent
-            }.isEqualTo(true)
+            assertThat(ctx)
+                .getBean(DgsQueryExecutor::class.java)
+                .extracting {
+                    it.execute("{hello}").isDataPresent
+                }.isEqualTo(true)
         }
     }
 
     @Test
     fun queryBasicExecuteWithError() {
         context.withUserConfiguration(HelloDataFetcherConfig::class.java).run { ctx ->
-            assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                it.execute("{unknown}").errors?.size
-            }.isEqualTo(1)
+            assertThat(ctx)
+                .getBean(DgsQueryExecutor::class.java)
+                .extracting {
+                    it.execute("{unknown}").errors?.size
+                }.isEqualTo(1)
         }
     }
 
     @Test
     fun queryReturnsNullForField() {
         context.withUserConfiguration(HelloDataFetcherConfig::class.java).run { ctx ->
-            assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                val execute: ExecutionResult = it.execute("{withNullableNull}")
-                tuple(execute.getData<Map<String, String>>()?.get("withNulableNull"), execute.errors?.size)
-            }.isEqualTo(tuple(null, 0))
+            assertThat(ctx)
+                .getBean(DgsQueryExecutor::class.java)
+                .extracting {
+                    val execute: ExecutionResult = it.execute("{withNullableNull}")
+                    tuple(execute.getData<Map<String, String>>()?.get("withNulableNull"), execute.errors?.size)
+                }.isEqualTo(tuple(null, 0))
         }
     }
 
     @Test
     fun queryReturnsErrorForNonNullableField() {
         context.withUserConfiguration(HelloDataFetcherConfig::class.java).run { ctx ->
-            assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                val execute = it.execute("{withNonNullableNull}")
-                tuple(execute.getData<Map<String, String>>()?.get("withNonNullableNull"), execute.errors?.size)
-            }.isEqualTo(tuple(null, 1))
+            assertThat(ctx)
+                .getBean(DgsQueryExecutor::class.java)
+                .extracting {
+                    val execute = it.execute("{withNonNullableNull}")
+                    tuple(execute.getData<Map<String, String>>()?.get("withNonNullableNull"), execute.errors?.size)
+                }.isEqualTo(tuple(null, 1))
         }
     }
 }

@@ -42,8 +42,9 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 
 class DgsDataLoaderInstrumentationTest {
-    private val applicationContextRunner: ApplicationContextRunner = ApplicationContextRunner()
-        .withBean(DgsDataLoaderProvider::class.java)
+    private val applicationContextRunner: ApplicationContextRunner =
+        ApplicationContextRunner()
+            .withBean(DgsDataLoaderProvider::class.java)
 
     @Test
     fun instrumentationIsCorrectlyCalled() {
@@ -51,20 +52,24 @@ class DgsDataLoaderInstrumentationTest {
         val afterCounter = AtomicInteger(0)
         val exceptionCounter = AtomicInteger(0)
 
-        applicationContextRunner.withBean(ExampleBatchLoaderWithoutName::class.java)
+        applicationContextRunner
+            .withBean(ExampleBatchLoaderWithoutName::class.java)
             .withBean(DgsWrapWithContextDataLoaderCustomizer::class.java)
             .withBean(DgsDataLoaderInstrumentationDataLoaderCustomizer::class.java)
-            .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter).run { context ->
+            .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter)
+            .run { context ->
                 val provider = context.getBean(DgsDataLoaderProvider::class.java)
                 val dataLoaderRegistry = provider.buildRegistry()
 
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("ExampleBatchLoaderWithoutName")
                 dataLoader.load("test")
-                dataLoader.dispatch().whenComplete { _, _ ->
-                    assertThat(beforeCounter.get()).isEqualTo(1)
-                    assertThat(afterCounter.get()).isEqualTo(1)
-                    assertThat(exceptionCounter.get()).isEqualTo(0)
-                }.join()
+                dataLoader
+                    .dispatch()
+                    .whenComplete { _, _ ->
+                        assertThat(beforeCounter.get()).isEqualTo(1)
+                        assertThat(afterCounter.get()).isEqualTo(1)
+                        assertThat(exceptionCounter.get()).isEqualTo(0)
+                    }.join()
             }
     }
 
@@ -74,20 +79,24 @@ class DgsDataLoaderInstrumentationTest {
         val afterCounter = AtomicInteger(0)
         val exceptionCounter = AtomicInteger(0)
 
-        applicationContextRunner.withBean(ExampleBatchLoaderWithRegistryConsumer::class.java)
+        applicationContextRunner
+            .withBean(ExampleBatchLoaderWithRegistryConsumer::class.java)
             .withBean(DgsWrapWithContextDataLoaderCustomizer::class.java)
             .withBean(DgsDataLoaderInstrumentationDataLoaderCustomizer::class.java)
-            .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter).run { context ->
+            .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter)
+            .run { context ->
                 val provider = context.getBean(DgsDataLoaderProvider::class.java)
                 val dataLoaderRegistry = provider.buildRegistry()
 
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleBatchLoaderWithRegistryConsumer")
                 dataLoader.load("test")
-                dataLoader.dispatch().whenComplete { _, _ ->
-                    assertThat(beforeCounter.get()).isEqualTo(1)
-                    assertThat(afterCounter.get()).isEqualTo(1)
-                    assertThat(exceptionCounter.get()).isEqualTo(0)
-                }.join()
+                dataLoader
+                    .dispatch()
+                    .whenComplete { _, _ ->
+                        assertThat(beforeCounter.get()).isEqualTo(1)
+                        assertThat(afterCounter.get()).isEqualTo(1)
+                        assertThat(exceptionCounter.get()).isEqualTo(0)
+                    }.join()
             }
     }
 
@@ -97,27 +106,41 @@ class DgsDataLoaderInstrumentationTest {
         val afterCounter = AtomicInteger(0)
         val exceptionCounter = AtomicInteger(0)
 
-        applicationContextRunner.withBean(ExampleBatchLoaderThatThrows::class.java)
+        applicationContextRunner
+            .withBean(ExampleBatchLoaderThatThrows::class.java)
             .withBean(DgsWrapWithContextDataLoaderCustomizer::class.java)
             .withBean(DgsDataLoaderInstrumentationDataLoaderCustomizer::class.java)
-            .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter).run { context ->
+            .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter)
+            .run { context ->
                 val provider = context.getBean(DgsDataLoaderProvider::class.java)
                 val dataLoaderRegistry = provider.buildRegistry()
 
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleLoaderThatThrows")
                 dataLoader.load("test")
-                dataLoader.dispatch().whenComplete { _, _ ->
-                    assertThat(beforeCounter.get()).isEqualTo(1)
-                    assertThat(afterCounter.get()).isEqualTo(0)
-                    assertThat(exceptionCounter.get()).isEqualTo(1)
-                }.join()
+                dataLoader
+                    .dispatch()
+                    .whenComplete { _, _ ->
+                        assertThat(beforeCounter.get()).isEqualTo(1)
+                        assertThat(afterCounter.get()).isEqualTo(0)
+                        assertThat(exceptionCounter.get()).isEqualTo(1)
+                    }.join()
             }
     }
 }
 
-class TestDataLoaderInstrumentation(private val beforeCounter: AtomicInteger, private val afterCounter: AtomicInteger, private val exceptionCounter: AtomicInteger) : DgsDataLoaderInstrumentation {
-    class TestDataLoaderInstrumentationContext(private val afterCounter: AtomicInteger, private val exceptionCounter: AtomicInteger) : DgsDataLoaderInstrumentationContext {
-        override fun onComplete(result: Any?, exception: Any?) {
+class TestDataLoaderInstrumentation(
+    private val beforeCounter: AtomicInteger,
+    private val afterCounter: AtomicInteger,
+    private val exceptionCounter: AtomicInteger,
+) : DgsDataLoaderInstrumentation {
+    class TestDataLoaderInstrumentationContext(
+        private val afterCounter: AtomicInteger,
+        private val exceptionCounter: AtomicInteger,
+    ) : DgsDataLoaderInstrumentationContext {
+        override fun onComplete(
+            result: Any?,
+            exception: Any?,
+        ) {
             if (result != null) {
                 afterCounter.addAndGet(1)
             }
@@ -128,7 +151,11 @@ class TestDataLoaderInstrumentation(private val beforeCounter: AtomicInteger, pr
         }
     }
 
-    override fun onDispatch(name: String, keys: List<Any>, batchLoaderEnvironment: BatchLoaderEnvironment): TestDataLoaderInstrumentationContext {
+    override fun onDispatch(
+        name: String,
+        keys: List<Any>,
+        batchLoaderEnvironment: BatchLoaderEnvironment,
+    ): TestDataLoaderInstrumentationContext {
         beforeCounter.addAndGet(1)
         return TestDataLoaderInstrumentationContext(afterCounter, exceptionCounter)
     }

@@ -26,16 +26,22 @@ import java.util.concurrent.ConcurrentMap
  * [argument resolvers][ArgumentResolver].
  * Previously resolved method parameters are cached.
  */
-class ArgumentResolverComposite(private val argumentResolvers: List<ArgumentResolver>) : ArgumentResolver {
+class ArgumentResolverComposite(
+    private val argumentResolvers: List<ArgumentResolver>,
+) : ArgumentResolver {
     private val argumentResolverCache: ConcurrentMap<MethodParameter, ArgumentResolver> = ConcurrentHashMap()
 
-    override fun supportsParameter(parameter: MethodParameter): Boolean {
-        return getArgumentResolver(parameter) != null
-    }
+    override fun supportsParameter(parameter: MethodParameter): Boolean = getArgumentResolver(parameter) != null
 
-    override fun resolveArgument(parameter: MethodParameter, dfe: DataFetchingEnvironment): Any? {
-        val resolver = getArgumentResolver(parameter)
-            ?: throw IllegalArgumentException("Unsupported parameter type [${parameter.parameterType.name}]. supportsParameter should be called first.")
+    override fun resolveArgument(
+        parameter: MethodParameter,
+        dfe: DataFetchingEnvironment,
+    ): Any? {
+        val resolver =
+            getArgumentResolver(parameter)
+                ?: throw IllegalArgumentException(
+                    "Unsupported parameter type [${parameter.parameterType.name}]. supportsParameter should be called first.",
+                )
         return resolver.resolveArgument(parameter, dfe)
     }
 

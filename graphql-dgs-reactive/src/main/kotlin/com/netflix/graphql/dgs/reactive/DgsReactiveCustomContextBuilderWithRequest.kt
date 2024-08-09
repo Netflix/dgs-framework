@@ -21,5 +21,9 @@ import org.springframework.web.reactive.function.server.ServerRequest
 import reactor.core.publisher.Mono
 
 interface DgsReactiveCustomContextBuilderWithRequest<T> {
-    fun build(extensions: Map<String, Any>?, headers: HttpHeaders?, serverRequest: ServerRequest?): Mono<T>
+    fun build(
+        extensions: Map<String, Any>?,
+        headers: HttpHeaders?,
+        serverRequest: ServerRequest?,
+    ): Mono<T>
 }

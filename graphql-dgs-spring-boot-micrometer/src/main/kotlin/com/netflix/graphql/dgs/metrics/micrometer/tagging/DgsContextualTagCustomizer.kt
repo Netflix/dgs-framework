@@ -20,6 +20,5 @@ import io.micrometer.core.instrument.Tag
 
 @FunctionalInterface
 fun interface DgsContextualTagCustomizer {
-
     fun getContextualTags(): Iterable<Tag>
 }

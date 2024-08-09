@@ -72,9 +72,8 @@ import kotlin.time.measureTimedValue
 open class DgsRestController(
     open val dgsQueryExecutor: DgsQueryExecutor,
     open val mapper: ObjectMapper = jacksonObjectMapper(),
-    open val dgsGraphQLRequestHeaderValidator: DgsGraphQLRequestHeaderValidator = DefaultDgsGraphQLRequestHeaderValidator()
+    open val dgsGraphQLRequestHeaderValidator: DgsGraphQLRequestHeaderValidator = DefaultDgsGraphQLRequestHeaderValidator(),
 ) {
-
     companion object {
         // defined in here and DgsExecutionResult, for backwards compatibility.
         // keep these two variables synced.
@@ -86,7 +85,7 @@ open class DgsRestController(
             @Language("graphql") val query: String?,
             val operationName: String? = null,
             val variables: Map<String, Any>? = mapOf(),
-            val extensions: Map<String, Any>? = mapOf()
+            val extensions: Map<String, Any>? = mapOf(),
         )
     }
 
@@ -95,12 +94,12 @@ open class DgsRestController(
     @RequestMapping(
         "#{ environment['dgs.graphql.path'] ?: '/graphql' }",
         consumes = [MediaType.APPLICATION_JSON_VALUE, GraphQLMediaTypes.GRAPHQL_MEDIA_TYPE_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
+        produces = [MediaType.APPLICATION_JSON_VALUE],
     )
     fun graphql(
         body: InputStream,
         @RequestHeader headers: HttpHeaders,
-        webRequest: WebRequest
+        webRequest: WebRequest,
     ): ResponseEntity<Any> {
         val result = errorResponseForInvalid(headers)
         if (result != null) {
@@ -119,14 +118,17 @@ open class DgsRestController(
             } catch (ex: Exception) {
                 return when (ex) {
                     is JsonParseException ->
-                        ResponseEntity.badRequest()
+                        ResponseEntity
+                            .badRequest()
                             .body("Invalid query - ${ex.message ?: "no details found in the error message"}.")
                     is MismatchedInputException ->
-                        ResponseEntity.badRequest()
+                        ResponseEntity
+                            .badRequest()
                             .body("Invalid query - No content to map to input.")
 
                     else ->
-                        ResponseEntity.badRequest()
+                        ResponseEntity
+                            .badRequest()
                             .body("Invalid query - ${ex.message ?: "no additional details found"}.")
                 }
             }
@@ -138,14 +140,14 @@ open class DgsRestController(
     @RequestMapping(
         "#{ environment['dgs.graphql.path'] ?: '/graphql' }",
         consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
+        produces = [MediaType.APPLICATION_JSON_VALUE],
     )
     fun graphQlMultipart(
         @RequestParam fileParams: Map<String, MultipartFile>,
         @RequestParam(name = "operations") operation: String,
         @RequestParam(name = "map") mapParam: String,
         @RequestHeader headers: HttpHeaders,
-        webRequest: WebRequest
+        webRequest: WebRequest,
     ): ResponseEntity<Any> {
         val result = errorResponseForInvalid(headers)
         if (result != null) {
@@ -155,8 +157,9 @@ open class DgsRestController(
         val inputQuery: InputQuery = mapper.readValue(operation)
 
         // parse the '-F map' of MultipartFile(s) containing object paths
-        val variables = inputQuery.variables?.toMutableMap()
-            ?: return ResponseEntity.badRequest().body("No variables specified as part of multipart request")
+        val variables =
+            inputQuery.variables?.toMutableMap()
+                ?: return ResponseEntity.badRequest().body("No variables specified as part of multipart request")
         val fileMapInput: Map<String, List<String>> = mapper.readValue(mapParam)
         try {
             fileMapInput.forEach { (fileKey, objectPaths) ->
@@ -167,20 +170,21 @@ open class DgsRestController(
                         MultipartVariableMapper.mapVariable(
                             objectPath,
                             variables,
-                            file
+                            file,
                         )
                     }
                 }
             }
         } catch (exc: VariableMappingException) {
-            return ResponseEntity.badRequest()
+            return ResponseEntity
+                .badRequest()
                 .body("Failed mapping file upload to variable: ${exc.message}")
         }
 
         return executeQuery(
             inputQuery = inputQuery.copy(variables = variables),
             headers = headers,
-            webRequest = webRequest
+            webRequest = webRequest,
         )
     }
 
@@ -190,7 +194,8 @@ open class DgsRestController(
             dgsGraphQLRequestHeaderValidator.assert(headers)
         } catch (e: DgsGraphQLRequestHeaderValidator.GraphqlRequestContentTypePredicateException) {
             logger.debug("Unsupported Media-Type {}.", headers.contentType, e)
-            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+            return ResponseEntity
+                .status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
                 .body("Unsupported media type.")
         } catch (e: DgsGraphQLRequestHeaderValidator.GraphQLRequestHeaderRuleException) {
             logger.debug("The Request Headers failed a DGS Header validation rule.", e)
@@ -208,33 +213,40 @@ open class DgsRestController(
     private fun executeQuery(
         inputQuery: InputQuery,
         headers: HttpHeaders,
-        webRequest: WebRequest
+        webRequest: WebRequest,
     ): ResponseEntity<Any> {
-        val (executionResult, elapsed) = measureTimedValue {
-            dgsQueryExecutor.execute(
-                inputQuery.query,
-                inputQuery.variables.orEmpty(),
-                inputQuery.extensions,
-                headers,
-                inputQuery.operationName,
-                webRequest
-            )
-        }
+        val (executionResult, elapsed) =
+            measureTimedValue {
+                dgsQueryExecutor.execute(
+                    inputQuery.query,
+                    inputQuery.variables.orEmpty(),
+                    inputQuery.extensions,
+                    headers,
+                    inputQuery.operationName,
+                    webRequest,
+                )
+            }
         logger.debug("Executed query in {}ms", elapsed.inWholeMilliseconds)
         logger.debug(
             "Execution result - Contains data: '{}' - Number of errors: {}",
             executionResult.isDataPresent,
-            executionResult.errors.size
+            executionResult.errors.size,
         )
 
         if (executionResult.isDataPresent && executionResult.getData<Any>() is SubscriptionPublisher) {
-            return ResponseEntity.badRequest()
+            return ResponseEntity
+                .badRequest()
                 .body("Trying to execute subscription on /graphql. Use /subscriptions instead!")
         }
 
         return when (executionResult) {
             is DgsExecutionResult -> executionResult.toSpringResponse()
-            else -> DgsExecutionResult.builder().executionResult(executionResult).build().toSpringResponse()
+            else ->
+                DgsExecutionResult
+                    .builder()
+                    .executionResult(executionResult)
+                    .build()
+                    .toSpringResponse()
         }
     }
 }

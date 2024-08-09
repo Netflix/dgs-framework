@@ -26,9 +26,8 @@ class GraphQLClientException(
     statusCode: Int,
     url: String,
     response: String,
-    request: String
-) :
-    ResponseStatusException(
+    request: String,
+) : ResponseStatusException(
         HttpStatus.valueOf(statusCode),
-        "GraphQL server $url responded with status code $statusCode: '$response'. The request sent to the server was \n$request"
+        "GraphQL server $url responded with status code $statusCode: '$response'. The request sent to the server was \n$request",
     )

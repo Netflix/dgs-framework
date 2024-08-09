@@ -80,7 +80,8 @@ class WebSocketGraphQLClientTest {
         val timeout = Duration.ofSeconds(10)
         val client = WebSocketGraphQLClient(subscriptionsClient, timeout)
         val responses = client.reactiveExecuteQuery("", emptyMap())
-        StepVerifier.withVirtualTime { responses }
+        StepVerifier
+            .withVirtualTime { responses }
             .thenAwait(timeout.plusSeconds(1))
             .expectError(TimeoutException::class.java)
             .verify(VERIFY_TIMEOUT)
@@ -91,7 +92,8 @@ class WebSocketGraphQLClientTest {
         server.next(dataMessage(TEST_DATA_A, "1"))
 
         val responses = client.reactiveExecuteQuery("", emptyMap())
-        StepVerifier.create(responses)
+        StepVerifier
+            .create(responses)
             .expectError(GraphQLException::class.java)
             .verify(VERIFY_TIMEOUT)
     }
@@ -120,14 +122,14 @@ class WebSocketGraphQLClientTest {
         server.next(dataMessage(TEST_DATA_A, "1"))
 
         val responses = client.reactiveExecuteQuery("", emptyMap())
-        StepVerifier.create(responses.take(1))
+        StepVerifier
+            .create(responses.take(1))
             .expectSubscription()
             .expectNextMatches {
                 it.extractValue<Int>("a") == 1 &&
                     it.extractValue<String>("b") == "hello" &&
                     !it.extractValue<Boolean>("c")
-            }
-            .expectComplete()
+            }.expectComplete()
             .verify(VERIFY_TIMEOUT)
     }
 
@@ -138,19 +140,18 @@ class WebSocketGraphQLClientTest {
         server.next(dataMessage(TEST_DATA_B, "1"))
 
         val responses = client.reactiveExecuteQuery("", emptyMap())
-        StepVerifier.create(responses.take(2))
+        StepVerifier
+            .create(responses.take(2))
             .expectSubscription()
             .expectNextMatches {
                 it.extractValue<Int>("a") == 1 &&
                     it.extractValue<String?>("b") == "hello" &&
                     !it.extractValue<Boolean>("c")
-            }
-            .expectNextMatches {
+            }.expectNextMatches {
                 it.extractValue<Int>("a") == 2 &&
                     it.extractValue<String?>("b") == null &&
                     it.extractValue("c")
-            }
-            .expectComplete()
+            }.expectComplete()
             .verify(VERIFY_TIMEOUT)
     }
 
@@ -161,7 +162,8 @@ class WebSocketGraphQLClientTest {
         server.next(completeMessage("1"))
 
         val responses = client.reactiveExecuteQuery("", emptyMap())
-        StepVerifier.create(responses)
+        StepVerifier
+            .create(responses)
             .expectSubscription()
             .expectNextMatches { it.extractValue<Int>("a") == 1 }
             .expectComplete()
@@ -174,7 +176,8 @@ class WebSocketGraphQLClientTest {
         server.next(dataMessage(TEST_DATA_A, "1"))
 
         val responses = client.reactiveExecuteQuery("", emptyMap())
-        StepVerifier.create(responses)
+        StepVerifier
+            .create(responses)
             .expectSubscription()
             .expectNextMatches {
                 if (it.extractValue<Int>("a") == 1) {
@@ -183,8 +186,7 @@ class WebSocketGraphQLClientTest {
                 } else {
                     false
                 }
-            }
-            .expectError()
+            }.expectError()
             .verify(VERIFY_TIMEOUT)
     }
 
@@ -194,7 +196,8 @@ class WebSocketGraphQLClientTest {
         server.next(OperationMessage(GQL_ERROR, "An error occurred", "1"))
 
         val responses = client.reactiveExecuteQuery("", emptyMap())
-        StepVerifier.create(responses)
+        StepVerifier
+            .create(responses)
             .expectSubscription()
             .expectError(GraphQLException::class.java)
             .verify(VERIFY_TIMEOUT)
@@ -205,7 +208,8 @@ class WebSocketGraphQLClientTest {
         server.next(CONNECTION_ACK_MESSAGE)
 
         val responses = client.reactiveExecuteQuery("", emptyMap())
-        StepVerifier.create(responses)
+        StepVerifier
+            .create(responses)
             .expectSubscription()
             .thenAwait()
             .thenCancel()
@@ -227,7 +231,8 @@ class WebSocketGraphQLClientTest {
         val responses1 = client.reactiveExecuteQuery("", emptyMap())
         val responses2 = client.reactiveExecuteQuery("", emptyMap())
 
-        StepVerifier.create(responses1.map { it.extractValue<Int>("a") })
+        StepVerifier
+            .create(responses1.map { it.extractValue<Int>("a") })
             .expectSubscription()
             .expectNext(1)
             .expectComplete()
@@ -236,7 +241,8 @@ class WebSocketGraphQLClientTest {
         server.next(dataMessage(TEST_DATA_B, "2"))
         server.next(completeMessage("2"))
 
-        StepVerifier.create(responses2.map { it.extractValue<Int>("a") })
+        StepVerifier
+            .create(responses2.map { it.extractValue<Int>("a") })
             .expectSubscription()
             .expectNext(2)
             .expectComplete()
@@ -255,22 +261,23 @@ class WebSocketGraphQLClientTest {
         val responses1 = client.reactiveExecuteQuery("", emptyMap())
         val responses2 = client.reactiveExecuteQuery("", emptyMap())
 
-        val responses = Flux.merge(
-            responses1
-                .map { it.extractValue<Int>("a") }
-                .collect(Collectors.toList()),
-            responses2
-                .map { it.extractValue<Int>("a") }
-                .collect(Collectors.toList())
-        )
-            .collect(Collectors.toList())
-            .block()
+        val responses =
+            Flux
+                .merge(
+                    responses1
+                        .map { it.extractValue<Int>("a") }
+                        .collect(Collectors.toList()),
+                    responses2
+                        .map { it.extractValue<Int>("a") }
+                        .collect(Collectors.toList()),
+                ).collect(Collectors.toList())
+                .block()
 
         assertThat(responses).hasSameElementsAs(
             listOf(
                 listOf(1, 3),
-                listOf(2)
-            )
+                listOf(2),
+            ),
         )
 
         // connect -> send handshake -> receive ack -> send query 1 -> receive query 1 data ->
@@ -287,7 +294,8 @@ class WebSocketGraphQLClientTest {
         server.next(completeMessage("1"))
 
         val responses = client.reactiveExecuteQuery("", emptyMap()).repeat(1)
-        StepVerifier.create(responses.map { it.extractValue<Int>("a") })
+        StepVerifier
+            .create(responses.map { it.extractValue<Int>("a") })
             .expectSubscription()
             .expectNext(1)
             .expectNext(1)
@@ -302,7 +310,8 @@ class WebSocketGraphQLClientTest {
         server.error(Exception())
 
         val responses = client.reactiveExecuteQuery("", emptyMap()).retry(1)
-        StepVerifier.create(responses.map { it.extractValue<Int>("a") })
+        StepVerifier
+            .create(responses.map { it.extractValue<Int>("a") })
             .expectSubscription()
             .expectNext(1)
             .expectNext(1)
@@ -317,7 +326,8 @@ class WebSocketGraphQLClientTest {
         server.next(completeMessage("1"))
 
         val responses = client.reactiveExecuteQuery("", emptyMap()).repeat(1)
-        StepVerifier.create(responses.map { it.extractValue<Int>("a") })
+        StepVerifier
+            .create(responses.map { it.extractValue<Int>("a") })
             .expectSubscription()
             .expectNextMatches {
                 // Have to do this instead of .then() because of this issue:
@@ -329,8 +339,7 @@ class WebSocketGraphQLClientTest {
                 } else {
                     false
                 }
-            }
-            .expectNext(1)
+            }.expectNext(1)
             .expectComplete()
             .verify(VERIFY_TIMEOUT)
 
@@ -347,7 +356,8 @@ class WebSocketGraphQLClientTest {
 
         val messageClient = OperationMessageWebSocketClient("", websocketClient)
         messageClient.connect().subscribe()
-        StepVerifier.create(messageClient.receive())
+        StepVerifier
+            .create(messageClient.receive())
             .expectSubscription()
             .expectError()
             .verify(VERIFY_TIMEOUT)
@@ -359,7 +369,8 @@ class WebSocketGraphQLClientTest {
 
         val messageClient = OperationMessageWebSocketClient("", websocketClient)
         val conn = messageClient.connect().subscribe()
-        StepVerifier.create(messageClient.receive())
+        StepVerifier
+            .create(messageClient.receive())
             .expectSubscription()
             .expectError()
             .verify(VERIFY_TIMEOUT)
@@ -374,14 +385,16 @@ class WebSocketGraphQLClientTest {
         val messageClient = OperationMessageWebSocketClient("", websocketClient)
 
         val conn1 = messageClient.connect().subscribe()
-        StepVerifier.create(messageClient.receive())
+        StepVerifier
+            .create(messageClient.receive())
             .expectSubscription()
             .expectError()
             .verify(VERIFY_TIMEOUT)
         assert(conn1.isDisposed)
 
         val conn2 = messageClient.connect().subscribe()
-        StepVerifier.create(messageClient.receive())
+        StepVerifier
+            .create(messageClient.receive())
             .expectSubscription()
             .expectError()
             .verify(VERIFY_TIMEOUT)
@@ -402,9 +415,10 @@ class WebSocketGraphQLClientTest {
         return websocketClient
     }
 
-    private fun dataMessage(data: Map<String, Any?>, id: String) =
-        OperationMessage(GQL_DATA, DataPayload(data, null), id)
+    private fun dataMessage(
+        data: Map<String, Any?>,
+        id: String,
+    ) = OperationMessage(GQL_DATA, DataPayload(data, null), id)
 
-    private fun completeMessage(subscriptionId: String) =
-        OperationMessage(GQL_COMPLETE, null, subscriptionId)
+    private fun completeMessage(subscriptionId: String) = OperationMessage(GQL_COMPLETE, null, subscriptionId)
 }

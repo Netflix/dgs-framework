@@ -22,7 +22,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class SchemaFailureAnalyzerTest {
-
     private val analyzer = SchemaFailureAnalyzer()
 
     @Test
@@ -32,10 +31,11 @@ class SchemaFailureAnalyzerTest {
         assertThat(analysis.description).contains("InvalidSyntaxError")
     }
 
-    private fun createFailure(): SchemaProblem = try {
-        SchemaParser().parse("bad schema")
-        error("Expected failure did not occur")
-    } catch (exc: SchemaProblem) {
-        exc
-    }
+    private fun createFailure(): SchemaProblem =
+        try {
+            SchemaParser().parse("bad schema")
+            error("Expected failure did not occur")
+        } catch (exc: SchemaProblem) {
+            exc
+        }
 }

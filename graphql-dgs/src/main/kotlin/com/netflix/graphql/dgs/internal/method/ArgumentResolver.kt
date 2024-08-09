@@ -45,5 +45,8 @@ interface ArgumentResolver {
      * @param dfe the associated [DataFetchingEnvironment] for the current request
      * @return the resolved argument value
      */
-    fun resolveArgument(parameter: MethodParameter, dfe: DataFetchingEnvironment): Any?
+    fun resolveArgument(
+        parameter: MethodParameter,
+        dfe: DataFetchingEnvironment,
+    ): Any?
 }

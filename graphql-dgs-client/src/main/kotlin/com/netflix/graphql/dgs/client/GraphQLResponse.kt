@@ -43,18 +43,21 @@ import org.slf4j.LoggerFactory
 data class GraphQLResponse(
     @Language("json") val json: String,
     val headers: Map<String, List<String>>,
-    private val mapper: ObjectMapper
+    private val mapper: ObjectMapper,
 ) {
-
     /**
      * A JsonPath DocumentContext. Typically, only used internally.
      */
-    val parsed: DocumentContext = JsonPath.using(
-        Configuration.builder()
-            .jsonProvider(JacksonJsonProvider(mapper))
-            .mappingProvider(JacksonMappingProvider(mapper)).build()
-            .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)
-    ).parse(json)
+    val parsed: DocumentContext =
+        JsonPath
+            .using(
+                Configuration
+                    .builder()
+                    .jsonProvider(JacksonJsonProvider(mapper))
+                    .mappingProvider(JacksonMappingProvider(mapper))
+                    .build()
+                    .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL),
+            ).parse(json)
 
     /**
      * Map representation of data
@@ -63,21 +66,24 @@ data class GraphQLResponse(
     val data: Map<String, Any> = parsed.read("data") ?: emptyMap()
     val errors: List<GraphQLError> = parsed.read("errors", jsonTypeRef<List<GraphQLError>>()) ?: emptyList()
 
-    constructor(@Language("json") json: String) : this(json, emptyMap())
-    constructor(@Language("json") json: String, headers: Map<String, List<String>>) : this(
+    constructor(
+        @Language("json") json: String,
+    ) : this(json, emptyMap())
+    constructor(
+        @Language("json") json: String,
+        headers: Map<String, List<String>>,
+    ) : this(
         json,
         headers,
         // default object mapper instead no instance is passed in the constructor
-        DEFAULT_MAPPER
+        DEFAULT_MAPPER,
     )
 
     /**
      * Deserialize data into the given class.
      * The class may need Jackson annotations for correct mapping.
      */
-    fun <T> dataAsObject(clazz: Class<T>): T {
-        return mapper.convertValue(data, clazz)
-    }
+    fun <T> dataAsObject(clazz: Class<T>): T = mapper.convertValue(data, clazz)
 
     /**
      * Extract values given a JsonPath. The return type will be whatever type you expect.
@@ -98,7 +104,10 @@ data class GraphQLResponse(
     /**
      * Extract values given a JsonPath and deserialize into the given class.
      */
-    fun <T> extractValueAsObject(path: String, clazz: Class<T>): T {
+    fun <T> extractValueAsObject(
+        path: String,
+        clazz: Class<T>,
+    ): T {
         val dataPath = getDataPath(path)
 
         try {
@@ -113,7 +122,10 @@ data class GraphQLResponse(
      * Extract values given a JsonPath and deserialize into the given TypeRef.
      * Use this for Lists of a specific type.
      */
-    fun <T> extractValueAsObject(path: String, typeRef: TypeRef<T>): T {
+    fun <T> extractValueAsObject(
+        path: String,
+        typeRef: TypeRef<T>,
+    ): T {
         val dataPath = getDataPath(path)
 
         try {
@@ -128,34 +140,35 @@ data class GraphQLResponse(
      * Extracts RequestDetails from the response if available.
      * Returns null otherwise.
      */
-    fun getRequestDetails(): RequestDetails? {
-        return extractValueAsObject("gatewayRequestDetails", RequestDetails::class.java)
-    }
+    fun getRequestDetails(): RequestDetails? = extractValueAsObject("gatewayRequestDetails", RequestDetails::class.java)
 
     fun hasErrors(): Boolean = errors.isNotEmpty()
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(GraphQLResponse::class.java)
 
-        internal val DEFAULT_MAPPER: ObjectMapper = jsonMapper {
-            addModule(kotlinModule { enable(KotlinFeature.NullIsSameAsDefault) })
-            addModule(JavaTimeModule())
-            addModule(ParameterNamesModule())
-            addModule(Jdk8Module())
-            enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
-        }
+        internal val DEFAULT_MAPPER: ObjectMapper =
+            jsonMapper {
+                addModule(kotlinModule { enable(KotlinFeature.NullIsSameAsDefault) })
+                addModule(JavaTimeModule())
+                addModule(ParameterNamesModule())
+                addModule(Jdk8Module())
+                enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+            }
 
-        fun getDataPath(path: String): String {
-            return if (path == "data" || path.startsWith("data.")) {
+        fun getDataPath(path: String): String =
+            if (path == "data" || path.startsWith("data.")) {
                 path
             } else {
                 "data.$path"
             }
-        }
     }
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class RequestDetails(val requestId: String?, val edgarLink: String?)
+data class RequestDetails(
+    val requestId: String?,
+    val edgarLink: String?,
+)
 
 inline fun <reified T> jsonTypeRef(): TypeRef<T> = object : TypeRef<T>() {}

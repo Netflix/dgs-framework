@@ -55,9 +55,8 @@ class DefaultDgsReactiveQueryExecutor(
     private val idProvider: Optional<ExecutionIdProvider>,
     private val reloadIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator = DefaultDgsQueryExecutor.ReloadSchemaIndicator { false },
     private val preparsedDocumentProvider: PreparsedDocumentProvider? = null,
-    private val queryValueCustomizer: QueryValueCustomizer = QueryValueCustomizer { query -> query }
+    private val queryValueCustomizer: QueryValueCustomizer = QueryValueCustomizer { query -> query },
 ) : com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor {
-
     private val schema = AtomicReference(defaultSchema)
 
     override fun execute(
@@ -66,67 +65,62 @@ class DefaultDgsReactiveQueryExecutor(
         extensions: Map<String, Any>?,
         headers: HttpHeaders?,
         operationName: String?,
-        serverHttpRequest: ServerRequest?
-    ): Mono<ExecutionResult> {
-        return Mono
+        serverHttpRequest: ServerRequest?,
+    ): Mono<ExecutionResult> =
+        Mono
             .fromCallable {
                 if (reloadIndicator.reloadSchema()) {
                     schema.updateAndGet { schemaProvider.schema().graphQLSchema }
                 } else {
                     schema.get()
                 }
-            }
-            .zipWith(contextBuilder.build(DgsReactiveRequestData(extensions, headers, serverHttpRequest)))
+            }.zipWith(contextBuilder.build(DgsReactiveRequestData(extensions, headers, serverHttpRequest)))
             .flatMap { (gqlSchema, dgsContext) ->
-                Mono.fromCompletionStage(
-                    BaseDgsQueryExecutor.baseExecute(
-                        query = queryValueCustomizer.apply(query),
-                        variables = variables,
-                        extensions = extensions,
-                        operationName = operationName,
-                        dgsContext = dgsContext,
-                        graphQLSchema = gqlSchema,
-                        dataLoaderProvider = dataLoaderProvider,
-                        instrumentation = instrumentation,
-                        queryExecutionStrategy = queryExecutionStrategy,
-                        mutationExecutionStrategy = mutationExecutionStrategy,
-                        idProvider = idProvider,
-                        preparsedDocumentProvider = preparsedDocumentProvider
-                    )
-                ).doOnEach { result ->
-                    if (result.hasValue()) {
-                        val nullValueError = result.get()?.errors?.find { it is NonNullableFieldWasNullError }
-                        if (nullValueError != null) {
-                            logger.error(nullValueError.message)
+                Mono
+                    .fromCompletionStage(
+                        BaseDgsQueryExecutor.baseExecute(
+                            query = queryValueCustomizer.apply(query),
+                            variables = variables,
+                            extensions = extensions,
+                            operationName = operationName,
+                            dgsContext = dgsContext,
+                            graphQLSchema = gqlSchema,
+                            dataLoaderProvider = dataLoaderProvider,
+                            instrumentation = instrumentation,
+                            queryExecutionStrategy = queryExecutionStrategy,
+                            mutationExecutionStrategy = mutationExecutionStrategy,
+                            idProvider = idProvider,
+                            preparsedDocumentProvider = preparsedDocumentProvider,
+                        ),
+                    ).doOnEach { result ->
+                        if (result.hasValue()) {
+                            val nullValueError = result.get()?.errors?.find { it is NonNullableFieldWasNullError }
+                            if (nullValueError != null) {
+                                logger.error(nullValueError.message)
+                            }
                         }
                     }
-                }
             }
-    }
 
     override fun <T : Any> executeAndExtractJsonPath(
         @Language("graphql") query: String,
         jsonPath: String,
         variables: Map<String, Any>?,
-        serverRequest: ServerRequest?
-    ): Mono<T> {
-        return getJsonResult(query, variables, serverRequest).map { JsonPath.read(it, jsonPath) }
-    }
+        serverRequest: ServerRequest?,
+    ): Mono<T> = getJsonResult(query, variables, serverRequest).map { JsonPath.read(it, jsonPath) }
 
     override fun executeAndGetDocumentContext(
         @Language("graphql") query: String,
-        variables: Map<String, Any>
-    ): Mono<DocumentContext> {
-        return getJsonResult(query, variables, null).map(BaseDgsQueryExecutor.parseContext::parse)
-    }
+        variables: Map<String, Any>,
+    ): Mono<DocumentContext> = getJsonResult(query, variables, null).map(BaseDgsQueryExecutor.parseContext::parse)
 
     override fun <T : Any?> executeAndExtractJsonPathAsObject(
         @Language("graphql") query: String,
         jsonPath: String,
         variables: Map<String, Any>,
-        clazz: Class<T>
-    ): Mono<T> {
-        return getJsonResult(query, variables, null)
+        clazz: Class<T>,
+    ): Mono<T> =
+        getJsonResult(query, variables, null)
             .map(BaseDgsQueryExecutor.parseContext::parse)
             .map {
                 try {
@@ -135,15 +129,14 @@ class DefaultDgsReactiveQueryExecutor(
                     throw DgsQueryExecutionDataExtractionException(ex, it.jsonString(), jsonPath, clazz)
                 }
             }
-    }
 
     override fun <T : Any?> executeAndExtractJsonPathAsObject(
         @Language("graphql") query: String,
         jsonPath: String,
         variables: Map<String, Any>,
-        typeRef: TypeRef<T>
-    ): Mono<T> {
-        return getJsonResult(query, variables, null)
+        typeRef: TypeRef<T>,
+    ): Mono<T> =
+        getJsonResult(query, variables, null)
             .map(BaseDgsQueryExecutor.parseContext::parse)
             .map {
                 try {
@@ -152,9 +145,12 @@ class DefaultDgsReactiveQueryExecutor(
                     throw DgsQueryExecutionDataExtractionException(ex, it.jsonString(), jsonPath, typeRef)
                 }
             }
-    }
 
-    private fun getJsonResult(@Language("graphql") query: String, variables: Map<String, Any>?, serverRequest: ServerRequest?): Mono<String> {
+    private fun getJsonResult(
+        @Language("graphql") query: String,
+        variables: Map<String, Any>?,
+        serverRequest: ServerRequest?,
+    ): Mono<String> {
         val httpHeaders = serverRequest?.headers()?.asHttpHeaders()
         return execute(query, variables, null, httpHeaders, null, serverRequest).map { executionResult ->
             if (executionResult.errors.size > 0) {

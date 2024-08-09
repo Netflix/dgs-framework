@@ -27,9 +27,10 @@ import graphql.schema.idl.SchemaDirectiveWiringEnvironment
 @DgsDirective(name = "uppercase")
 class UppercaseDirective : SchemaDirectiveWiring {
     override fun onField(env: SchemaDirectiveWiringEnvironment<GraphQLFieldDefinition>): GraphQLFieldDefinition {
-        val dataFetcher = DataFetcherFactories.wrapDataFetcher(env.fieldDataFetcher) { _, value ->
-            if (value is String) value.uppercase() else value
-        }
+        val dataFetcher =
+            DataFetcherFactories.wrapDataFetcher(env.fieldDataFetcher) { _, value ->
+                if (value is String) value.uppercase() else value
+            }
         env.fieldDataFetcher = dataFetcher
         return env.element
     }

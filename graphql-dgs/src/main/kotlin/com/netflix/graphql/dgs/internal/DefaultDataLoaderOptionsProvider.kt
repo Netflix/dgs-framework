@@ -21,10 +21,14 @@ import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
 import org.dataloader.DataLoaderOptions
 
 class DefaultDataLoaderOptionsProvider : DgsDataLoaderOptionsProvider {
-    override fun getOptions(dataLoaderName: String, annotation: DgsDataLoader): DataLoaderOptions {
-        val options = DataLoaderOptions()
-            .setBatchingEnabled(annotation.batching)
-            .setCachingEnabled(annotation.caching)
+    override fun getOptions(
+        dataLoaderName: String,
+        annotation: DgsDataLoader,
+    ): DataLoaderOptions {
+        val options =
+            DataLoaderOptions()
+                .setBatchingEnabled(annotation.batching)
+                .setCachingEnabled(annotation.caching)
         if (annotation.maxBatchSize > 0) {
             options.setMaxBatchSize(annotation.maxBatchSize)
         }

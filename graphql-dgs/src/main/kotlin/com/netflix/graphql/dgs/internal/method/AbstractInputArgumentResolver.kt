@@ -30,8 +30,9 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.kotlinFunction
 
-abstract class AbstractInputArgumentResolver(inputObjectMapper: InputObjectMapper) : ArgumentResolver {
-
+abstract class AbstractInputArgumentResolver(
+    inputObjectMapper: InputObjectMapper,
+) : ArgumentResolver {
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(AbstractInputArgumentResolver::class.java)
     }
@@ -43,17 +44,21 @@ abstract class AbstractInputArgumentResolver(inputObjectMapper: InputObjectMappe
         conversionService.addConverter(InputObjectMapperConverter(inputObjectMapper))
     }
 
-    override fun resolveArgument(parameter: MethodParameter, dfe: DataFetchingEnvironment): Any? {
+    override fun resolveArgument(
+        parameter: MethodParameter,
+        dfe: DataFetchingEnvironment,
+    ): Any? {
         val argumentName = getArgumentName(parameter)
         val value = dfe.getArgument<Any?>(argumentName)
 
         val kfunc = parameter.method?.kotlinFunction
         if (kfunc != null) {
-            val parameterIdx = if (kfunc.parameters.first().kind == KParameter.Kind.INSTANCE) {
-                parameter.parameterIndex + 1
-            } else {
-                parameter.parameterIndex
-            }
+            val parameterIdx =
+                if (kfunc.parameters.first().kind == KParameter.Kind.INSTANCE) {
+                    parameter.parameterIndex + 1
+                } else {
+                    parameter.parameterIndex
+                }
             val param = kfunc.parameters[parameterIdx]
             if (param.type.arguments.isEmpty() && param.type.jvmErasure.isInstance(value)) {
                 return value
@@ -66,7 +71,7 @@ abstract class AbstractInputArgumentResolver(inputObjectMapper: InputObjectMappe
         if (convertedValue == null && dfe.fieldDefinition.arguments.none { it.name == argumentName }) {
             logger.warn(
                 "Unknown argument '{}'",
-                argumentName
+                argumentName,
             )
         }
 
@@ -85,7 +90,10 @@ abstract class AbstractInputArgumentResolver(inputObjectMapper: InputObjectMappe
         return name
     }
 
-    private fun convertValue(source: Any?, target: TypeDescriptor): Any? {
+    private fun convertValue(
+        source: Any?,
+        target: TypeDescriptor,
+    ): Any? {
         if (target.resolvableType.isInstance(source)) {
             return source
         }

@@ -30,7 +30,7 @@ data class DgsWebMvcConfigurationProperties(
     /** Path to the GraphQL endpoint without trailing slash. */
     @DefaultValue("/graphql") var path: String = "/graphql",
     @NestedConfigurationProperty var graphiql: DgsGraphiQLConfigurationProperties = DgsGraphiQLConfigurationProperties(),
-    @NestedConfigurationProperty var schemaJson: DgsSchemaJsonConfigurationProperties = DgsSchemaJsonConfigurationProperties()
+    @NestedConfigurationProperty var schemaJson: DgsSchemaJsonConfigurationProperties = DgsSchemaJsonConfigurationProperties(),
 ) {
     /**
      * Configuration properties for the GraphiQL endpoint.
@@ -39,7 +39,7 @@ data class DgsWebMvcConfigurationProperties(
         /** Path to the GraphiQL endpoint without trailing slash. */
         @DefaultValue("/graphiql") var path: String = "/graphiql",
         /** GraphiQL title */
-        @DefaultValue("Simple GraphiQL Example") var title: String = "Simple GraphiQL Example"
+        @DefaultValue("Simple GraphiQL Example") var title: String = "Simple GraphiQL Example",
     )
 
     /**
@@ -47,7 +47,7 @@ data class DgsWebMvcConfigurationProperties(
      */
     data class DgsSchemaJsonConfigurationProperties(
         /** Path to the schema-json endpoint without trailing slash. */
-        @DefaultValue("/schema.json") var path: String = "/schema.json"
+        @DefaultValue("/schema.json") var path: String = "/schema.json",
     )
 
     @PostConstruct
@@ -57,7 +57,10 @@ data class DgsWebMvcConfigurationProperties(
         validatePath(this.schemaJson.path, "dgs.graphql.schema-json.path")
     }
 
-    private fun validatePath(path: String, pathProperty: String) {
+    private fun validatePath(
+        path: String,
+        pathProperty: String,
+    ) {
         if (path != "/" && (!path.startsWith("/") || path.endsWith("/"))) {
             throw IllegalArgumentException("$pathProperty must start with '/' and not end with '/' but was '$path'")
         }

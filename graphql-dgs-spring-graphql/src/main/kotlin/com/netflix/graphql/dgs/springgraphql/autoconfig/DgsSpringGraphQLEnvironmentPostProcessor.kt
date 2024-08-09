@@ -22,14 +22,18 @@ import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.MapPropertySource
 
 class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
-    override fun postProcessEnvironment(environment: ConfigurableEnvironment, application: SpringApplication) {
+    override fun postProcessEnvironment(
+        environment: ConfigurableEnvironment,
+        application: SpringApplication,
+    ) {
         val properties = mutableMapOf<String, Any>()
 
         properties["spring.graphql.schema.introspection.enabled"] = environment.getProperty("dgs.graphql.introspection.enabled") ?: true
         properties["spring.graphql.graphiql.enabled"] = environment.getProperty("dgs.graphql.graphiql.enabled") ?: true
         properties["spring.graphql.graphiql.path"] = environment.getProperty("dgs.graphql.graphiql.path") ?: "/graphiql"
         properties["spring.graphql.path"] = environment.getProperty("dgs.graphql.path") ?: "/graphql"
-        properties["spring.graphql.websocket.connection-init-timeout"] = environment.getProperty("dgs.graphql.websocket.connection-init-timeout") ?: "10s"
+        properties["spring.graphql.websocket.connection-init-timeout"] =
+            environment.getProperty("dgs.graphql.websocket.connection-init-timeout") ?: "10s"
 
         environment.getProperty("dgs.graphql.websocket.path")?.let { websocketPath ->
             properties["spring.graphql.websocket.path"] = websocketPath
@@ -38,8 +42,8 @@ class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
         environment.propertySources.addLast(
             MapPropertySource(
                 "dgs-spring-graphql-defaults",
-                properties
-            )
+                properties,
+            ),
         )
     }
 }

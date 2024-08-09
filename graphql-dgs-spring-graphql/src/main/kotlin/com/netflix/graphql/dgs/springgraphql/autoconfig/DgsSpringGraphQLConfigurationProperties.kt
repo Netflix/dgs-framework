@@ -22,12 +22,17 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 
 @ConfigurationProperties(prefix = PREFIX)
 data class DgsSpringGraphQLConfigurationProperties(
-    val webmvc: WebMvc = WebMvc(Asyncdispatch(false))
+    val webmvc: WebMvc = WebMvc(Asyncdispatch(false)),
 ) {
     companion object {
         const val PREFIX: String = "dgs.graphql.spring"
     }
 
-    data class WebMvc(val asyncdispatch: Asyncdispatch)
-    data class Asyncdispatch(@DefaultValue("false") val enabled: Boolean)
+    data class WebMvc(
+        val asyncdispatch: Asyncdispatch,
+    )
+
+    data class Asyncdispatch(
+        @DefaultValue("false") val enabled: Boolean,
+    )
 }

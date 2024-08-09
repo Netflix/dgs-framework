@@ -28,7 +28,6 @@ import org.springframework.http.MediaType
  */
 @Order
 fun interface GraphQLRequestContentTypePredicate {
-
     fun accept(contentType: MediaType?): Boolean
 
     companion object {
@@ -40,9 +39,10 @@ fun interface GraphQLRequestContentTypePredicate {
          * Implementation of a content type predicate that will accept none-null content-types that match any of the
          * media-types defined by [STRICT_GRAPHQL_CONTENT_TYPES]
          */
-        val STRICT_GRAPHQL_CONTENT_TYPES_PREDICATE = GraphQLRequestContentTypePredicate { mediaType ->
-            mediaType != null && STRICT_GRAPHQL_CONTENT_TYPES.find { it.isCompatibleWith(mediaType) } != null
-        }
+        val STRICT_GRAPHQL_CONTENT_TYPES_PREDICATE =
+            GraphQLRequestContentTypePredicate { mediaType ->
+                mediaType != null && STRICT_GRAPHQL_CONTENT_TYPES.find { it.isCompatibleWith(mediaType) } != null
+            }
 
         val RECOMMENDED_GRAPHQL_CONTENT_TYPE_PREDICATES = listOf(STRICT_GRAPHQL_CONTENT_TYPES_PREDICATE)
     }

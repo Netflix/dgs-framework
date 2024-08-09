@@ -17,8 +17,9 @@
 package com.netflix.graphql.dgs.exceptions
 import com.netflix.graphql.types.errors.ErrorType
 
-open class DgsBadRequestException(override val message: String = "Malformed or incorrect request") :
-    DgsException(message = message, errorType = ErrorType.BAD_REQUEST) {
+open class DgsBadRequestException(
+    override val message: String = "Malformed or incorrect request",
+) : DgsException(message = message, errorType = ErrorType.BAD_REQUEST) {
     companion object {
         val NULL_OR_EMPTY_QUERY_EXCEPTION = DgsBadRequestException("GraphQL operations must contain a non-empty `query`.")
     }

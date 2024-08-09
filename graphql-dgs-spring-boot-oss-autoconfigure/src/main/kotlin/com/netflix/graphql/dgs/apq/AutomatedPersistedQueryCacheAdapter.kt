@@ -33,16 +33,16 @@ import java.util.function.Supplier
  * @see DgsAPQSupportAutoConfiguration
  */
 abstract class AutomatedPersistedQueryCacheAdapter : PersistedQueryCache {
-
     override fun getPersistedQueryDocumentAsync(
         persistedQueryId: Any,
         executionInput: ExecutionInput,
-        onCacheMiss: PersistedQueryCacheMiss
+        onCacheMiss: PersistedQueryCacheMiss,
     ): CompletableFuture<PreparsedDocumentEntry> {
-        val key = when (persistedQueryId) {
-            is String -> persistedQueryId
-            else -> persistedQueryId.toString()
-        }
+        val key =
+            when (persistedQueryId) {
+                is String -> persistedQueryId
+                else -> persistedQueryId.toString()
+            }
         return CompletableFuture.completedFuture(
             getFromCache(key) {
                 // Get the query from the execution input. Make sure it's not null, empty or the APQ marker.
@@ -51,7 +51,7 @@ abstract class AutomatedPersistedQueryCacheAdapter : PersistedQueryCache {
                     throw PersistedQueryNotFound(persistedQueryId)
                 }
                 return@getFromCache onCacheMiss.apply(queryText)
-            }
+            },
         )
     }
 
@@ -65,6 +65,6 @@ abstract class AutomatedPersistedQueryCacheAdapter : PersistedQueryCache {
      */
     protected abstract fun getFromCache(
         key: String,
-        documentEntrySupplier: Supplier<PreparsedDocumentEntry>
+        documentEntrySupplier: Supplier<PreparsedDocumentEntry>,
     ): PreparsedDocumentEntry?
 }

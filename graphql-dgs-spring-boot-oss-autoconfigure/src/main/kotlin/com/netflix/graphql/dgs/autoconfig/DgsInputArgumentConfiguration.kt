@@ -33,28 +33,19 @@ import org.springframework.core.annotation.Order
 open class DgsInputArgumentConfiguration {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    open fun inputArgumentResolver(inputObjectMapper: InputObjectMapper): ArgumentResolver {
-        return InputArgumentResolver(inputObjectMapper)
-    }
+    open fun inputArgumentResolver(inputObjectMapper: InputObjectMapper): ArgumentResolver = InputArgumentResolver(inputObjectMapper)
 
     @Bean
-    open fun dataFetchingEnvironmentArgumentResolver(): ArgumentResolver {
-        return DataFetchingEnvironmentArgumentResolver()
-    }
+    open fun dataFetchingEnvironmentArgumentResolver(): ArgumentResolver = DataFetchingEnvironmentArgumentResolver()
 
     @Bean
-    open fun coroutineArgumentResolver(): ArgumentResolver {
-        return ContinuationArgumentResolver()
-    }
+    open fun coroutineArgumentResolver(): ArgumentResolver = ContinuationArgumentResolver()
 
     @Bean
-    open fun fallbackEnvironmentArgumentResolver(inputObjectMapper: InputObjectMapper): ArgumentResolver {
-        return FallbackEnvironmentArgumentResolver(inputObjectMapper)
-    }
+    open fun fallbackEnvironmentArgumentResolver(inputObjectMapper: InputObjectMapper): ArgumentResolver =
+        FallbackEnvironmentArgumentResolver(inputObjectMapper)
 
     @Bean
     @ConditionalOnMissingBean
-    open fun defaultInputObjectMapper(): InputObjectMapper {
-        return DefaultInputObjectMapper()
-    }
+    open fun defaultInputObjectMapper(): InputObjectMapper = DefaultInputObjectMapper()
 }

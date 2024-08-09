@@ -39,7 +39,6 @@ import org.springframework.web.reactive.config.EnableWebFlux
 @AutoConfigureWebTestClient
 @Import(DgsWebFluxAutoConfiguration::class)
 class MalformedQueryContentTest {
-
     @Autowired
     lateinit var webTestClient: WebTestClient
 
@@ -92,23 +91,21 @@ class MalformedQueryContentTest {
                     }
                   ]
                 }    
-                """.trimIndent()
+                """.trimIndent(),
             )
     }
 
     @SpringBootApplication(proxyBeanMethods = false, scanBasePackages = [])
     @ComponentScan(
         useDefaultFilters = false,
-        includeFilters = [ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = [])]
+        includeFilters = [ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = [])],
     )
     @SuppressWarnings("unused")
     open class LocalApp {
         @DgsComponent
         class ExampleImplementation {
             @DgsTypeDefinitionRegistry
-            fun typeDefinitionRegistry(): TypeDefinitionRegistry {
-                return SchemaParser().parse("type Query{ }")
-            }
+            fun typeDefinitionRegistry(): TypeDefinitionRegistry = SchemaParser().parse("type Query{ }")
         }
     }
 }

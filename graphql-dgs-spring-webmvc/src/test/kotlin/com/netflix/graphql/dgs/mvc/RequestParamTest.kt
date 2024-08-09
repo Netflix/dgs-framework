@@ -39,19 +39,19 @@ import org.springframework.web.method.annotation.RequestParamMethodArgumentResol
 import java.util.*
 
 class RequestParamTest {
-
     private val applicationContext = GenericApplicationContext()
     private val provider: DgsSchemaProvider by lazy {
         DgsSchemaProvider(
             applicationContext = applicationContext,
             federationResolver = Optional.empty(),
             existingTypeDefinitionRegistry = Optional.empty(),
-            methodDataFetcherFactory = MethodDataFetcherFactory(
-                listOf(
-                    HandlerMethodArgumentResolverAdapter(RequestParamMapMethodArgumentResolver()),
-                    HandlerMethodArgumentResolverAdapter(RequestParamMethodArgumentResolver(false))
-                )
-            )
+            methodDataFetcherFactory =
+                MethodDataFetcherFactory(
+                    listOf(
+                        HandlerMethodArgumentResolverAdapter(RequestParamMapMethodArgumentResolver()),
+                        HandlerMethodArgumentResolverAdapter(RequestParamMethodArgumentResolver(false)),
+                    ),
+                ),
         )
     }
 
@@ -60,14 +60,12 @@ class RequestParamTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@RequestParam("message") input: String): String {
-                return input
-            }
+            fun someFetcher(
+                @RequestParam("message") input: String,
+            ): String = input
 
             @DgsTypeDefinitionRegistry
-            fun typeDefinitionRegistry(): TypeDefinitionRegistry {
-                return SchemaParser().parse("type Query { hello(name: String): String }")
-            }
+            fun typeDefinitionRegistry(): TypeDefinitionRegistry = SchemaParser().parse("type Query { hello(name: String): String }")
         }
 
         applicationContext.registerBean("helloFetcher", Fetcher::class.java, *emptyArray())
@@ -77,16 +75,19 @@ class RequestParamTest {
 
         val build = GraphQL.newGraphQL(schema).build()
 
-        val request = ServletWebRequest(
-            MockHttpServletRequest().apply {
-                addParameter("message", "My param")
-            }
-        )
+        val request =
+            ServletWebRequest(
+                MockHttpServletRequest().apply {
+                    addParameter("message", "My param")
+                },
+            )
 
-        val executionResult = build.execute(
-            ExecutionInput.newExecutionInput("""{hello}""")
-                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, request)))
-        )
+        val executionResult =
+            build.execute(
+                ExecutionInput
+                    .newExecutionInput("""{hello}""")
+                    .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, request))),
+            )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("My param", data["hello"])
@@ -97,14 +98,12 @@ class RequestParamTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@RequestParam(name = "message") input: String): String {
-                return input
-            }
+            fun someFetcher(
+                @RequestParam(name = "message") input: String,
+            ): String = input
 
             @DgsTypeDefinitionRegistry
-            fun typeDefinitionRegistry(): TypeDefinitionRegistry {
-                return SchemaParser().parse("type Query { hello(name: String): String }")
-            }
+            fun typeDefinitionRegistry(): TypeDefinitionRegistry = SchemaParser().parse("type Query { hello(name: String): String }")
         }
 
         applicationContext.registerBean("helloFetcher", Fetcher::class.java, *emptyArray())
@@ -114,16 +113,19 @@ class RequestParamTest {
 
         val build = GraphQL.newGraphQL(schema).build()
 
-        val request = ServletWebRequest(
-            MockHttpServletRequest().apply {
-                addParameter("message", "My param")
-            }
-        )
+        val request =
+            ServletWebRequest(
+                MockHttpServletRequest().apply {
+                    addParameter("message", "My param")
+                },
+            )
 
-        val executionResult = build.execute(
-            ExecutionInput.newExecutionInput("""{hello}""")
-                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, request)))
-        )
+        val executionResult =
+            build.execute(
+                ExecutionInput
+                    .newExecutionInput("""{hello}""")
+                    .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, request))),
+            )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("My param", data["hello"])
@@ -134,14 +136,12 @@ class RequestParamTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@RequestParam message: String): String {
-                return message
-            }
+            fun someFetcher(
+                @RequestParam message: String,
+            ): String = message
 
             @DgsTypeDefinitionRegistry
-            fun typeDefinitionRegistry(): TypeDefinitionRegistry {
-                return SchemaParser().parse("type Query { hello(name: String): String }")
-            }
+            fun typeDefinitionRegistry(): TypeDefinitionRegistry = SchemaParser().parse("type Query { hello(name: String): String }")
         }
 
         applicationContext.registerBean("helloFetcher", Fetcher::class.java, *emptyArray())
@@ -151,16 +151,19 @@ class RequestParamTest {
 
         val build = GraphQL.newGraphQL(schema).build()
 
-        val request = ServletWebRequest(
-            MockHttpServletRequest().apply {
-                addParameter("message", "My param")
-            }
-        )
+        val request =
+            ServletWebRequest(
+                MockHttpServletRequest().apply {
+                    addParameter("message", "My param")
+                },
+            )
 
-        val executionResult = build.execute(
-            ExecutionInput.newExecutionInput("""{hello}""")
-                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, request)))
-        )
+        val executionResult =
+            build.execute(
+                ExecutionInput
+                    .newExecutionInput("""{hello}""")
+                    .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), null, request))),
+            )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("My param", data["hello"])

@@ -30,17 +30,20 @@ import org.springframework.web.reactive.result.method.SyncHandlerMethodArgumentR
  */
 class SyncHandlerMethodArgumentResolverAdapter(
     private val delegate: SyncHandlerMethodArgumentResolver,
-    private val bindingContext: BindingContext
+    private val bindingContext: BindingContext,
 ) : ArgumentResolver {
-    override fun supportsParameter(parameter: MethodParameter): Boolean {
-        return delegate.supportsParameter(parameter)
-    }
+    override fun supportsParameter(parameter: MethodParameter): Boolean = delegate.supportsParameter(parameter)
 
-    override fun resolveArgument(parameter: MethodParameter, dfe: DataFetchingEnvironment): Any? {
-        val requestData = DgsContext.getRequestData(dfe) as? DgsReactiveRequestData
-            ?: throw IllegalStateException("DgsReactiveRequestData not found")
-        val request = requestData.serverRequest
-            ?: throw IllegalStateException("serverRequest is not set")
+    override fun resolveArgument(
+        parameter: MethodParameter,
+        dfe: DataFetchingEnvironment,
+    ): Any? {
+        val requestData =
+            DgsContext.getRequestData(dfe) as? DgsReactiveRequestData
+                ?: throw IllegalStateException("DgsReactiveRequestData not found")
+        val request =
+            requestData.serverRequest
+                ?: throw IllegalStateException("serverRequest is not set")
         val exchange = request.exchange()
 
         return delegate.resolveArgument(parameter, bindingContext, exchange).share().block()

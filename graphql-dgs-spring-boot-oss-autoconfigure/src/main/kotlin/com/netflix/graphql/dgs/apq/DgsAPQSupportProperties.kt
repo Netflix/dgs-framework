@@ -26,7 +26,7 @@ data class DgsAPQSupportProperties(
     @DefaultValue("$DEFAULT_ENABLED")
     var enabled: Boolean = DEFAULT_ENABLED,
     @NestedConfigurationProperty
-    var defaultCache: DgsAPQDefaultCaffeineCacheProperties = DgsAPQDefaultCaffeineCacheProperties()
+    var defaultCache: DgsAPQDefaultCaffeineCacheProperties = DgsAPQDefaultCaffeineCacheProperties(),
 ) {
     data class DgsAPQDefaultCaffeineCacheProperties(
         /** Enables/Disables the APQ default cache, backed by a Caffeine Cache.*/
@@ -34,7 +34,7 @@ data class DgsAPQSupportProperties(
         var enabled: Boolean = DEFAULT_CACHE_CAFFEINE_ENABLED,
         /** Defines the Caffeine Spec used by the default cache.*/
         @DefaultValue(DEFAULT_CACHE_CAFFEINE_SPEC)
-        var caffeineSpec: String = DEFAULT_CACHE_CAFFEINE_SPEC
+        var caffeineSpec: String = DEFAULT_CACHE_CAFFEINE_SPEC,
     )
 
     companion object {

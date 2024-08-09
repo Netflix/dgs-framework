@@ -57,7 +57,6 @@ import java.util.function.Supplier
 @Suppress("GraphQLUnresolvedReference")
 @ExtendWith(MockKExtension::class)
 internal class DefaultDgsQueryExecutorTest {
-
     companion object {
         private val DGS_RESULT = InstanceOfAssertFactory(DgsExecutionResult::class.java, Assertions::assertThat)
     }
@@ -72,92 +71,95 @@ internal class DefaultDgsQueryExecutorTest {
 
     @BeforeEach
     fun createExecutor() {
-        val fetcher = object {
-            @DgsData(parentType = "Query", field = "hello")
-            fun hello(): String {
-                return "hi!"
+        val fetcher =
+            object {
+                @DgsData(parentType = "Query", field = "hello")
+                fun hello(): String = "hi!"
             }
-        }
 
-        val numbersFetcher = object {
-            @DgsData(parentType = "Query", field = "numbers")
-            fun hello(): List<Int> {
-                return listOf(1, 2, 3)
+        val numbersFetcher =
+            object {
+                @DgsData(parentType = "Query", field = "numbers")
+                fun hello(): List<Int> = listOf(1, 2, 3)
             }
-        }
 
-        val moviesFetcher = object {
-            @DgsData(parentType = "Query", field = "movies")
-            fun movies(): List<Movie> {
-                return listOf(Movie("Extraction", LocalDateTime.MIN), Movie("Da 5 Bloods", LocalDateTime.MAX))
+        val moviesFetcher =
+            object {
+                @DgsData(parentType = "Query", field = "movies")
+                fun movies(): List<Movie> = listOf(Movie("Extraction", LocalDateTime.MIN), Movie("Da 5 Bloods", LocalDateTime.MAX))
             }
-        }
 
-        val fetcherWithError = object {
-            @DgsData(parentType = "Query", field = "withError")
-            fun withError(): String {
-                throw RuntimeException("Broken!")
+        val fetcherWithError =
+            object {
+                @DgsData(parentType = "Query", field = "withError")
+                fun withError(): String = throw RuntimeException("Broken!")
             }
-        }
 
-        val echoFetcher = object {
-            @DgsData(parentType = "Query", field = "echo")
-            fun echo(@InputArgument("message") message: String): String {
-                return message
+        val echoFetcher =
+            object {
+                @DgsData(parentType = "Query", field = "echo")
+                fun echo(
+                    @InputArgument("message") message: String,
+                ): String = message
             }
-        }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            "helloFetcher" to fetcher,
-            "numbersFetcher" to numbersFetcher,
-            "moviesFetcher" to moviesFetcher,
-            "withErrorFetcher" to fetcherWithError,
-            "echoFetcher" to echoFetcher
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf("DateTimeScalar" to LocalDateTimeScalar())
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+            mapOf(
+                "helloFetcher" to fetcher,
+                "numbersFetcher" to numbersFetcher,
+                "moviesFetcher" to moviesFetcher,
+                "withErrorFetcher" to fetcherWithError,
+                "echoFetcher" to echoFetcher,
+            )
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns
+            mapOf("DateTimeScalar" to LocalDateTimeScalar())
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
         every { dgsDataLoaderProvider.buildRegistryWithContextSupplier(any<Supplier<Any>>()) } returns DataLoaderRegistry()
 
-        val provider = DgsSchemaProvider(
-            applicationContext = applicationContextMock,
-            federationResolver = Optional.empty(),
-            existingTypeDefinitionRegistry = Optional.empty(),
-            methodDataFetcherFactory = MethodDataFetcherFactory(listOf(InputArgumentResolver(DefaultInputObjectMapper())))
-        )
+        val provider =
+            DgsSchemaProvider(
+                applicationContext = applicationContextMock,
+                federationResolver = Optional.empty(),
+                existingTypeDefinitionRegistry = Optional.empty(),
+                methodDataFetcherFactory = MethodDataFetcherFactory(listOf(InputArgumentResolver(DefaultInputObjectMapper()))),
+            )
 
-        val schema = provider.schema(
-            """
-            type Query {
-                hello: String
-                numbers: [Int]
-                movies: [Movie]
-                withError: String
-                echo(message: String): String
-            }
-            
-            type Movie { 
-                title: String
-                releaseDate: DateTime
-            }
-            
-            type Person {
-                name: String
-            }
+        val schema =
+            provider
+                .schema(
+                    """
+                    type Query {
+                        hello: String
+                        numbers: [Int]
+                        movies: [Movie]
+                        withError: String
+                        echo(message: String): String
+                    }
+                    
+                    type Movie { 
+                        title: String
+                        releaseDate: DateTime
+                    }
+                    
+                    type Person {
+                        name: String
+                    }
 
-            scalar DateTime
-            """.trimIndent()
-        ).graphQLSchema
+                    scalar DateTime
+                    """.trimIndent(),
+                ).graphQLSchema
 
-        dgsQueryExecutor = DefaultDgsQueryExecutor(
-            defaultSchema = schema,
-            schemaProvider = provider,
-            dataLoaderProvider = dgsDataLoaderProvider,
-            contextBuilder = DefaultDgsGraphQLContextBuilder(Optional.empty()),
-            instrumentation = SimplePerformantInstrumentation.INSTANCE,
-            queryExecutionStrategy = AsyncExecutionStrategy(),
-            mutationExecutionStrategy = AsyncSerialExecutionStrategy(),
-            idProvider = Optional.empty()
-        )
+        dgsQueryExecutor =
+            DefaultDgsQueryExecutor(
+                defaultSchema = schema,
+                schemaProvider = provider,
+                dataLoaderProvider = dgsDataLoaderProvider,
+                contextBuilder = DefaultDgsGraphQLContextBuilder(Optional.empty()),
+                instrumentation = SimplePerformantInstrumentation.INSTANCE,
+                queryExecutionStrategy = AsyncExecutionStrategy(),
+                mutationExecutionStrategy = AsyncSerialExecutionStrategy(),
+                idProvider = Optional.empty(),
+            )
     }
 
     @Test
@@ -172,19 +174,19 @@ internal class DefaultDgsQueryExecutorTest {
             result
                 .errors
                 .first()
-                .extensions["errorType"]
+                .extensions["errorType"],
             // default bad request error type
         ).isEqualTo(
             DgsBadRequestException()
                 .errorType
-                .name
+                .name,
         )
 
         assertThat(
             result
                 .errors
                 .first()
-                .message
+                .message,
         ).isEqualTo(DgsBadRequestException.NULL_OR_EMPTY_QUERY_EXCEPTION.message)
 
         assertThat(result)
@@ -224,42 +226,45 @@ internal class DefaultDgsQueryExecutorTest {
 
     @Test
     fun extractJsonWithString() {
-        val helloResult = dgsQueryExecutor.executeAndExtractJsonPath<String>(
-            """
-            {
-                hello
-            }
-            """.trimIndent(),
-            "data.hello"
-        )
+        val helloResult =
+            dgsQueryExecutor.executeAndExtractJsonPath<String>(
+                """
+                {
+                    hello
+                }
+                """.trimIndent(),
+                "data.hello",
+            )
 
         assertThat(helloResult).isEqualTo("hi!")
     }
 
     @Test
     fun extractJsonWithListOfString() {
-        val numbers = dgsQueryExecutor.executeAndExtractJsonPath<List<Int>>(
-            """
-            {
-                numbers
-            }
-            """.trimIndent(),
-            "data.numbers"
-        )
+        val numbers =
+            dgsQueryExecutor.executeAndExtractJsonPath<List<Int>>(
+                """
+                {
+                    numbers
+                }
+                """.trimIndent(),
+                "data.numbers",
+            )
 
         assertThat(numbers).isEqualTo(listOf(1, 2, 3))
     }
 
     @Test
     fun extractJsonWithObjectListAsMap() {
-        val movies = dgsQueryExecutor.executeAndExtractJsonPath<List<Map<String, Any>>>(
-            """
-            {
-                movies { title releaseDate }
-            }
-            """.trimIndent(),
-            "data.movies"
-        )
+        val movies =
+            dgsQueryExecutor.executeAndExtractJsonPath<List<Map<String, Any>>>(
+                """
+                {
+                    movies { title releaseDate }
+                }
+                """.trimIndent(),
+                "data.movies",
+            )
 
         assertThat(movies[0]["title"]).isEqualTo("Extraction")
         assertThat(LocalDateTime.parse(movies[0]["releaseDate"] as CharSequence)).isEqualTo(LocalDateTime.MIN)
@@ -267,14 +272,15 @@ internal class DefaultDgsQueryExecutorTest {
 
     @Test
     fun extractJsonAsObjectAsMap() {
-        val movie = dgsQueryExecutor.executeAndExtractJsonPath<Map<String, Any>>(
-            """
-            {
-                movies { title releaseDate }
-            }
-            """.trimIndent(),
-            "data.movies[0]"
-        )
+        val movie =
+            dgsQueryExecutor.executeAndExtractJsonPath<Map<String, Any>>(
+                """
+                {
+                    movies { title releaseDate }
+                }
+                """.trimIndent(),
+                "data.movies[0]",
+            )
 
         assertThat(movie["title"]).isEqualTo("Extraction")
         assertThat(LocalDateTime.parse(movie["releaseDate"] as CharSequence)).isEqualTo(LocalDateTime.MIN)
@@ -282,15 +288,16 @@ internal class DefaultDgsQueryExecutorTest {
 
     @Test
     fun extractJsonAsObject() {
-        val movie = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
-            """
-            {
-                movies { title releaseDate }
-            }
-            """.trimIndent(),
-            "data.movies[0]",
-            Movie::class.java
-        )
+        val movie =
+            dgsQueryExecutor.executeAndExtractJsonPathAsObject(
+                """
+                {
+                    movies { title releaseDate }
+                }
+                """.trimIndent(),
+                "data.movies[0]",
+                Movie::class.java,
+            )
 
         assertThat(movie.title).isEqualTo("Extraction")
         assertThat(movie.releaseDate).isEqualTo(LocalDateTime.MIN)
@@ -298,15 +305,16 @@ internal class DefaultDgsQueryExecutorTest {
 
     @Test
     fun extractJsonAsObjectWithTypeRef() {
-        val person = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
-            """
-            {
-                movies { title releaseDate }
-            }
-            """.trimIndent(),
-            "data.movies",
-            object : TypeRef<List<Movie>>() {}
-        )
+        val person =
+            dgsQueryExecutor.executeAndExtractJsonPathAsObject(
+                """
+                {
+                    movies { title releaseDate }
+                }
+                """.trimIndent(),
+                "data.movies",
+                object : TypeRef<List<Movie>>() {},
+            )
 
         assertThat(person).isInstanceOf(List::class.java)
         assertThat(person[0]).isExactlyInstanceOf(Movie::class.java)
@@ -315,12 +323,13 @@ internal class DefaultDgsQueryExecutorTest {
     @Test
     fun extractJsonAsObjectTypeRefWithVariables() {
         val expectedMessage = "hello dgs"
-        val message = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
-            "query echo(\$message: String) { echo(message: \$message)}",
-            "data.echo",
-            mapOf("message" to expectedMessage),
-            object : TypeRef<String>() {}
-        )
+        val message =
+            dgsQueryExecutor.executeAndExtractJsonPathAsObject(
+                "query echo(\$message: String) { echo(message: \$message)}",
+                "data.echo",
+                mapOf("message" to expectedMessage),
+                object : TypeRef<String>() {},
+            )
 
         assertThat(message).isEqualTo(expectedMessage)
     }
@@ -331,13 +340,14 @@ internal class DefaultDgsQueryExecutorTest {
         httpHeaders.add("test", "headerValue")
 
         val expectedMessage = "hello dgs"
-        val message = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
-            "query echo(\$message: String) { echo(message: \$message)}",
-            "data.echo",
-            mapOf("message" to expectedMessage),
-            object : TypeRef<String>() {},
-            httpHeaders
-        )
+        val message =
+            dgsQueryExecutor.executeAndExtractJsonPathAsObject(
+                "query echo(\$message: String) { echo(message: \$message)}",
+                "data.echo",
+                mapOf("message" to expectedMessage),
+                object : TypeRef<String>() {},
+                httpHeaders,
+            )
 
         assertThat(message).isEqualTo(expectedMessage)
     }
@@ -345,12 +355,13 @@ internal class DefaultDgsQueryExecutorTest {
     @Test
     fun extractJsonAsObjectClazzWithVariables() {
         val expectedMessage = "hello dgs"
-        val message = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
-            "query echo(\$message: String) { echo(message: \$message)}",
-            "data.echo",
-            mapOf("message" to expectedMessage),
-            String::class.java
-        )
+        val message =
+            dgsQueryExecutor.executeAndExtractJsonPathAsObject(
+                "query echo(\$message: String) { echo(message: \$message)}",
+                "data.echo",
+                mapOf("message" to expectedMessage),
+                String::class.java,
+            )
 
         assertThat(message).isEqualTo(expectedMessage)
     }
@@ -361,48 +372,55 @@ internal class DefaultDgsQueryExecutorTest {
         httpHeaders.add("test", "headerValue")
 
         val expectedMessage = "hello dgs"
-        val message = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
-            "query echo(\$message: String) { echo(message: \$message)}",
-            "data.echo",
-            mapOf("message" to expectedMessage),
-            String::class.java,
-            httpHeaders
-        )
+        val message =
+            dgsQueryExecutor.executeAndExtractJsonPathAsObject(
+                "query echo(\$message: String) { echo(message: \$message)}",
+                "data.echo",
+                mapOf("message" to expectedMessage),
+                String::class.java,
+                httpHeaders,
+            )
 
         assertThat(message).isEqualTo(expectedMessage)
     }
 
     @Test
     fun extractError() {
-        val queryException = assertThrows<QueryException> {
-            dgsQueryExecutor.executeAndExtractJsonPath<String>(
-                """
-            {
-                withError            
+        val queryException =
+            assertThrows<QueryException> {
+                dgsQueryExecutor.executeAndExtractJsonPath<String>(
+                    """
+                    {
+                        withError            
+                    }
+                    """.trimIndent(),
+                    "data.withError",
+                )
             }
-                """.trimIndent(),
-                "data.withError"
-            )
-        }
 
         assertThat(queryException.message).contains("Broken!")
     }
 
     @Test
     fun extractJsonAsObjectError() {
-        val assertThrows = assertThrows<DgsQueryExecutionDataExtractionException> {
-            dgsQueryExecutor.executeAndExtractJsonPathAsObject(
-                """
-            {
-                movies { title } 
+        val assertThrows =
+            assertThrows<DgsQueryExecutionDataExtractionException> {
+                dgsQueryExecutor.executeAndExtractJsonPathAsObject(
+                    """
+                    {
+                        movies { title } 
+                    }
+                    """.trimIndent(),
+                    "data.movies[0]",
+                    String::class.java,
+                )
             }
-                """.trimIndent(),
-                "data.movies[0]",
-                String::class.java
-            )
-        }
 
-        assertThat(assertThrows.message).isEqualTo("Error deserializing data from '{\"data\":{\"movies\":[{\"title\":\"Extraction\"},{\"title\":\"Da 5 Bloods\"}]}}' with JsonPath 'data.movies[0]' and target class java.lang.String")
+        assertThat(
+            assertThrows.message,
+        ).isEqualTo(
+            "Error deserializing data from '{\"data\":{\"movies\":[{\"title\":\"Extraction\"},{\"title\":\"Da 5 Bloods\"}]}}' with JsonPath 'data.movies[0]' and target class java.lang.String",
+        )
         assertThat(assertThrows.cause).isInstanceOf(MappingException::class.java)
         assertThat(assertThrows.jsonResult).isEqualTo("{\"data\":{\"movies\":[{\"title\":\"Extraction\"},{\"title\":\"Da 5 Bloods\"}]}}")
         assertThat(assertThrows.jsonPath).isEqualTo("data.movies[0]")
@@ -411,19 +429,24 @@ internal class DefaultDgsQueryExecutorTest {
 
     @Test
     fun extractJsonAsTypeRefError() {
-        val assertThrows = assertThrows<DgsQueryExecutionDataExtractionException> {
-            dgsQueryExecutor.executeAndExtractJsonPathAsObject(
-                """
-            {
-                movies { title } 
+        val assertThrows =
+            assertThrows<DgsQueryExecutionDataExtractionException> {
+                dgsQueryExecutor.executeAndExtractJsonPathAsObject(
+                    """
+                    {
+                        movies { title } 
+                    }
+                    """.trimIndent(),
+                    "data.movies[0]",
+                    object : TypeRef<List<String>>() {},
+                )
             }
-                """.trimIndent(),
-                "data.movies[0]",
-                object : TypeRef<List<String>>() {}
-            )
-        }
 
-        assertThat(assertThrows.message).isEqualTo("Error deserializing data from '{\"data\":{\"movies\":[{\"title\":\"Extraction\"},{\"title\":\"Da 5 Bloods\"}]}}' with JsonPath 'data.movies[0]' and target class java.util.List<? extends java.lang.String>")
+        assertThat(
+            assertThrows.message,
+        ).isEqualTo(
+            "Error deserializing data from '{\"data\":{\"movies\":[{\"title\":\"Extraction\"},{\"title\":\"Da 5 Bloods\"}]}}' with JsonPath 'data.movies[0]' and target class java.util.List<? extends java.lang.String>",
+        )
         assertThat(assertThrows.cause).isInstanceOf(MappingException::class.java)
         assertThat(assertThrows.jsonResult).isEqualTo("{\"data\":{\"movies\":[{\"title\":\"Extraction\"},{\"title\":\"Da 5 Bloods\"}]}}")
         assertThat(assertThrows.jsonPath).isEqualTo("data.movies[0]")
@@ -432,13 +455,14 @@ internal class DefaultDgsQueryExecutorTest {
 
     @Test
     fun documentContext() {
-        val context = dgsQueryExecutor.executeAndGetDocumentContext(
-            """
-            {
-                movies { title releaseDate }
-            }
-            """.trimIndent()
-        )
+        val context =
+            dgsQueryExecutor.executeAndGetDocumentContext(
+                """
+                {
+                    movies { title releaseDate }
+                }
+                """.trimIndent(),
+            )
 
         val movieList = context.read("data.movies", object : TypeRef<List<Movie>>() {})
         assertThat(movieList.size).isEqualTo(2)
@@ -448,13 +472,14 @@ internal class DefaultDgsQueryExecutorTest {
 
     @Test
     fun documentContextWithTypename() {
-        val context = dgsQueryExecutor.executeAndGetDocumentContext(
-            """
-            {
-                movies { title __typename }
-            }
-            """.trimIndent()
-        )
+        val context =
+            dgsQueryExecutor.executeAndGetDocumentContext(
+                """
+                {
+                    movies { title __typename }
+                }
+                """.trimIndent(),
+            )
 
         val movie = context.read("data.movies[0]", Movie::class.java)
         assertThat(movie).isNotNull
@@ -462,17 +487,21 @@ internal class DefaultDgsQueryExecutorTest {
 
     @Test
     fun withFieldNamedErrors() {
-        val context = dgsQueryExecutor.executeAndGetDocumentContext(
-            """
-            {
-                movies { title __typename }
-            }
-            """.trimIndent()
-        )
+        val context =
+            dgsQueryExecutor.executeAndGetDocumentContext(
+                """
+                {
+                    movies { title __typename }
+                }
+                """.trimIndent(),
+            )
 
         val movie = context.read("data.movies[0]", Movie::class.java)
         assertThat(movie).isNotNull
     }
 }
 
-data class Movie(val title: String, val releaseDate: LocalDateTime?)
+data class Movie(
+    val title: String,
+    val releaseDate: LocalDateTime?,
+)

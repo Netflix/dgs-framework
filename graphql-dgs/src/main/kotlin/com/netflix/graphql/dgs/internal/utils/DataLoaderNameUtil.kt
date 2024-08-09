@@ -21,7 +21,6 @@ import com.netflix.graphql.dgs.Internal
 
 @Internal
 object DataLoaderNameUtil {
-
     /**
      * When the [annotation]'s [DgsDataLoader.name] is equal to [DgsDataLoader.GENERATE_DATA_LOADER_NAME],
      * the [clazz]'s [Class.getSimpleName] will be used.
@@ -29,7 +28,8 @@ object DataLoaderNameUtil {
      *
      * This method does not verify that [annotation] belongs to [clazz] for performance reasons.
      */
-    fun getDataLoaderName(clazz: Class<*>, annotation: DgsDataLoader): String {
-        return if (annotation.name == DgsDataLoader.GENERATE_DATA_LOADER_NAME) clazz.simpleName else annotation.name
-    }
+    fun getDataLoaderName(
+        clazz: Class<*>,
+        annotation: DgsDataLoader,
+    ): String = if (annotation.name == DgsDataLoader.GENERATE_DATA_LOADER_NAME) clazz.simpleName else annotation.name
 }

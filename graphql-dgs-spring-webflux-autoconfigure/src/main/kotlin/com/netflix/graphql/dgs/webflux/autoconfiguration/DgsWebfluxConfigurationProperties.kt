@@ -26,13 +26,14 @@ import java.time.Duration
 @Suppress("ConfigurationProperties")
 class DgsWebfluxConfigurationProperties(
     /** Websocket configuration. */
-    @NestedConfigurationProperty var websocket: DgsWebsocketConfigurationProperties = DgsWebsocketConfigurationProperties(
-        DEFAULT_CONNECTION_INIT_TIMEOUT_DURATION
-    ),
+    @NestedConfigurationProperty var websocket: DgsWebsocketConfigurationProperties =
+        DgsWebsocketConfigurationProperties(
+            DEFAULT_CONNECTION_INIT_TIMEOUT_DURATION,
+        ),
     /** Path to the endpoint that will serve GraphQL requests. */
     @DefaultValue("/graphql") var path: String = "/graphql",
     @NestedConfigurationProperty var graphiql: DgsGraphiQLConfigurationProperties = DgsGraphiQLConfigurationProperties(),
-    @NestedConfigurationProperty var schemaJson: DgsSchemaJsonConfigurationProperties = DgsSchemaJsonConfigurationProperties()
+    @NestedConfigurationProperty var schemaJson: DgsSchemaJsonConfigurationProperties = DgsSchemaJsonConfigurationProperties(),
 ) {
     /**
      *  Configuration properties for websockets.
@@ -41,7 +42,7 @@ class DgsWebfluxConfigurationProperties(
         /** Connection Initialization timeout for graphql-transport-ws. */
         @DefaultValue(DEFAULT_CONNECTION_INIT_TIMEOUT) var connectionInitTimeout: Duration,
         /** Path to the Subscriptions endpoint without trailing slash. */
-        @DefaultValue("/subscriptions") var path: String = "/subscriptions"
+        @DefaultValue("/subscriptions") var path: String = "/subscriptions",
     )
 
     /**
@@ -52,7 +53,7 @@ class DgsWebfluxConfigurationProperties(
         /** Path to the GraphiQL endpoint without trailing slash. */
         @DefaultValue("/graphiql") var path: String = "/graphiql",
         /** GraphiQL title */
-        @DefaultValue("Simple GraphiQL Example") var title: String = "Simple GraphiQL Example"
+        @DefaultValue("Simple GraphiQL Example") var title: String = "Simple GraphiQL Example",
     )
 
     /**
@@ -60,7 +61,7 @@ class DgsWebfluxConfigurationProperties(
      */
     data class DgsSchemaJsonConfigurationProperties(
         /** Path to the schema-json endpoint without trailing slash. */
-        @DefaultValue("/schema.json") var path: String = "/schema.json"
+        @DefaultValue("/schema.json") var path: String = "/schema.json",
     )
 
     @PostConstruct
@@ -71,7 +72,10 @@ class DgsWebfluxConfigurationProperties(
         validatePath(this.websocket.path, "dgs.graphql.websocket.path")
     }
 
-    private fun validatePath(path: String, pathProperty: String) {
+    private fun validatePath(
+        path: String,
+        pathProperty: String,
+    ) {
         if (path != "/" && (!path.startsWith("/") || path.endsWith("/"))) {
             throw IllegalArgumentException("$pathProperty must start with '/' and not end with '/' but was '$path'")
         }

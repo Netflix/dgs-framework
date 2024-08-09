@@ -16,7 +16,7 @@ import org.springframework.web.server.ResponseStatusException
 class DgsGraphQLCSRFInstrumentation : SimplePerformantInstrumentation() {
     override fun beginExecuteOperation(
         parameters: InstrumentationExecuteOperationParameters,
-        state: InstrumentationState?
+        state: InstrumentationState?,
     ): InstrumentationContext<ExecutionResult>? {
         if (parameters.executionContext.operationDefinition.operation == OperationDefinition.Operation.MUTATION) {
             val httpRequest = (DgsContext.from(parameters.executionContext.graphQLContext).requestData as DgsWebMvcRequestData).webRequest

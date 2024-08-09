@@ -18,5 +18,8 @@ package com.netflix.graphql.dgs.exceptions
 
 import java.lang.reflect.Field
 
-class DgsUnnamedDataLoaderOnFieldException(field: Field) :
-    RuntimeException("Field `${field.name}` in class `${field.declaringClass.name}` was annotated with @DgsDataLoader, but the data loader was not given a proper name")
+class DgsUnnamedDataLoaderOnFieldException(
+    field: Field,
+) : RuntimeException(
+        "Field `${field.name}` in class `${field.declaringClass.name}` was annotated with @DgsDataLoader, but the data loader was not given a proper name",
+    )

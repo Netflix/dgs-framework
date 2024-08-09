@@ -43,12 +43,15 @@ import java.util.function.Consumer
 class WebClientGraphQLClient(
     private val webclient: WebClient,
     private val headersConsumer: Consumer<HttpHeaders>,
-    private val mapper: ObjectMapper
+    private val mapper: ObjectMapper,
 ) : MonoGraphQLClient {
-
     constructor(webclient: WebClient) : this(webclient, Consumer {})
 
-    constructor(webclient: WebClient, headersConsumer: Consumer<HttpHeaders>) : this(webclient, headersConsumer, GraphQLClients.objectMapper)
+    constructor(webclient: WebClient, headersConsumer: Consumer<HttpHeaders>) : this(
+        webclient,
+        headersConsumer,
+        GraphQLClients.objectMapper,
+    )
 
     constructor(webclient: WebClient, mapper: ObjectMapper) : this(webclient, Consumer {}, mapper)
 
@@ -57,10 +60,8 @@ class WebClientGraphQLClient(
      * @return A [Mono] of [GraphQLResponse]. [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
     override fun reactiveExecuteQuery(
-        @Language("graphql") query: String
-    ): Mono<GraphQLResponse> {
-        return reactiveExecuteQuery(query, emptyMap(), null)
-    }
+        @Language("graphql") query: String,
+    ): Mono<GraphQLResponse> = reactiveExecuteQuery(query, emptyMap(), null)
 
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
@@ -69,10 +70,8 @@ class WebClientGraphQLClient(
      */
     override fun reactiveExecuteQuery(
         @Language("graphql") query: String,
-        variables: Map<String, Any>
-    ): Mono<GraphQLResponse> {
-        return reactiveExecuteQuery(query, variables, null)
-    }
+        variables: Map<String, Any>,
+    ): Mono<GraphQLResponse> = reactiveExecuteQuery(query, variables, null)
 
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
@@ -83,10 +82,8 @@ class WebClientGraphQLClient(
     override fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
-        operationName: String?
-    ): Mono<GraphQLResponse> {
-        return reactiveExecuteQuery(query, variables, operationName, REQUEST_BODY_URI_CUSTOMIZER_IDENTITY)
-    }
+        operationName: String?,
+    ): Mono<GraphQLResponse> = reactiveExecuteQuery(query, variables, operationName, REQUEST_BODY_URI_CUSTOMIZER_IDENTITY)
 
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
@@ -97,10 +94,8 @@ class WebClientGraphQLClient(
      */
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
-        requestBodyUriCustomizer: RequestBodyUriCustomizer
-    ): Mono<GraphQLResponse> {
-        return reactiveExecuteQuery(query, emptyMap(), null, requestBodyUriCustomizer)
-    }
+        requestBodyUriCustomizer: RequestBodyUriCustomizer,
+    ): Mono<GraphQLResponse> = reactiveExecuteQuery(query, emptyMap(), null, requestBodyUriCustomizer)
 
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
@@ -115,13 +110,15 @@ class WebClientGraphQLClient(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?,
-        requestBodyUriCustomizer: RequestBodyUriCustomizer
+        requestBodyUriCustomizer: RequestBodyUriCustomizer,
     ): Mono<GraphQLResponse> {
-        val serializedRequest = mapper.writeValueAsString(
-            GraphQLClients.toRequestMap(query = query, operationName = operationName, variables = variables)
-        )
+        val serializedRequest =
+            mapper.writeValueAsString(
+                GraphQLClients.toRequestMap(query = query, operationName = operationName, variables = variables),
+            )
 
-        return requestBodyUriCustomizer.apply(webclient.post())
+        return requestBodyUriCustomizer
+            .apply(webclient.post())
             .headers { headers -> headers.addAll(GraphQLClients.defaultHeaders) }
             .headers(this.headersConsumer)
             .bodyValue(serializedRequest)
@@ -130,13 +127,16 @@ class WebClientGraphQLClient(
             .map { httpResponse -> handleResponse(httpResponse, serializedRequest) }
     }
 
-    private fun handleResponse(response: ResponseEntity<String>, requestBody: String): GraphQLResponse {
+    private fun handleResponse(
+        response: ResponseEntity<String>,
+        requestBody: String,
+    ): GraphQLResponse {
         if (!response.statusCode.is2xxSuccessful) {
             throw GraphQLClientException(
                 statusCode = response.statusCode.value(),
                 url = webclient.toString(),
                 response = response.body ?: "",
-                request = requestBody
+                request = requestBody,
             )
         }
 

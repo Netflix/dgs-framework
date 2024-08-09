@@ -26,8 +26,7 @@ internal class Context<T>(
      * `true`, the client wont be kicked off after
      * the wait timeout has passed.
      */
-    private var connectionInitReceived: Boolean = false
-
+    private var connectionInitReceived: Boolean = false,
 ) {
     /**
      * Indicates that the connection was acknowledged
@@ -60,7 +59,5 @@ internal class Context<T>(
     }
 
     @Synchronized
-    fun getConnectionInitReceived(): Boolean {
-        return this.connectionInitReceived
-    }
+    fun getConnectionInitReceived(): Boolean = this.connectionInitReceived
 }

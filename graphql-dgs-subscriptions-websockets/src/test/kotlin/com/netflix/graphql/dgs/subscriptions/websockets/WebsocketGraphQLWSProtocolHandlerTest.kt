@@ -53,7 +53,6 @@ import reactor.core.publisher.Mono
 
 @ExtendWith(MockKExtension::class)
 class WebsocketGraphQLWSProtocolHandlerTest {
-
     private val objectMapper = jacksonObjectMapper()
     private lateinit var dgsWebsocketHandler: WebsocketGraphQLWSProtocolHandler
 
@@ -77,8 +76,10 @@ class WebsocketGraphQLWSProtocolHandlerTest {
     @MockK
     lateinit var executionResult: ExecutionResult
 
-    private val queryMessage = TextMessage(
-        """{
+    private val queryMessage =
+        TextMessage(
+            """
+            {
                 "type": "$GQL_START",
                 "payload": {
                    "query": "{ hello }",
@@ -87,11 +88,13 @@ class WebsocketGraphQLWSProtocolHandlerTest {
                 },
                 "id": "123"
             }
-        """.trimIndent()
-    )
+            """.trimIndent(),
+        )
 
-    private val queryMessageWithVariable = TextMessage(
-        """{
+    private val queryMessageWithVariable =
+        TextMessage(
+            """
+            {
                 "type": "$GQL_START",
                 "payload": {
                    "query": "query HELLO(${'$'}name: String){ hello(name:${'$'}name) }",
@@ -100,11 +103,13 @@ class WebsocketGraphQLWSProtocolHandlerTest {
                 },
                 "id": "222"
             }
-        """.trimIndent()
-    )
+            """.trimIndent(),
+        )
 
-    private val queryMessageWithNullVariable = TextMessage(
-        """{
+    private val queryMessageWithNullVariable =
+        TextMessage(
+            """
+            {
                 "type": "$GQL_START",
                 "payload": {
                    "query": "query HELLO(${'$'}name: String){ hello(name:${'$'}name) }",
@@ -113,8 +118,8 @@ class WebsocketGraphQLWSProtocolHandlerTest {
                 },
                 "id": "123"
             }
-        """.trimIndent()
-    )
+            """.trimIndent(),
+        )
 
     @Test
     fun testMultipleClients() {
@@ -218,12 +223,14 @@ class WebsocketGraphQLWSProtocolHandlerTest {
         val slot = slot<TextMessage>()
         every { webSocketSession.sendMessage(capture(slot)) } just Runs
 
-        val textMessage = TextMessage(
-            """{
-                "type": "$GQL_CONNECTION_INIT"
-            }
-            """.trimIndent()
-        )
+        val textMessage =
+            TextMessage(
+                """
+                {
+                    "type": "$GQL_CONNECTION_INIT"
+                }
+                """.trimIndent(),
+            )
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, textMessage)
 
@@ -237,12 +244,14 @@ class WebsocketGraphQLWSProtocolHandlerTest {
         val currentNrOfSessions = dgsWebsocketHandler.sessions.size
         every { webSocketSession.close() } just Runs
 
-        val textMessage = TextMessage(
-            """{
-                "type": "$GQL_CONNECTION_TERMINATE"
-            }
-            """.trimIndent()
-        )
+        val textMessage =
+            TextMessage(
+                """
+                {
+                    "type": "$GQL_CONNECTION_TERMINATE"
+                }
+                """.trimIndent(),
+            )
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, textMessage)
 
@@ -251,15 +260,19 @@ class WebsocketGraphQLWSProtocolHandlerTest {
         verify { webSocketSession.close() }
     }
 
-    private fun start(webSocketSession: WebSocketSession, nrOfResults: Int) {
+    private fun start(
+        webSocketSession: WebSocketSession,
+        nrOfResults: Int,
+    ) {
         every { webSocketSession.isOpen } returns true
 
-        val results = (1..nrOfResults).map {
-            val result1 = mockkClass(ExecutionResult::class)
-            every { result1.getData<Any>() } returns it
-            every { result1.errors } returns emptyList()
-            result1
-        }
+        val results =
+            (1..nrOfResults).map {
+                val result1 = mockkClass(ExecutionResult::class)
+                every { result1.getData<Any>() } returns it
+                every { result1.errors } returns emptyList()
+                result1
+            }
 
         every { executionResult.getData<Publisher<ExecutionResult>>() } returns
             Mono.just(results).flatMapMany { Flux.fromIterable(results) }
@@ -269,34 +282,45 @@ class WebsocketGraphQLWSProtocolHandlerTest {
         dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessage)
     }
 
-    private fun startWithVariable(webSocketSession: WebSocketSession, nrOfResults: Int) {
+    private fun startWithVariable(
+        webSocketSession: WebSocketSession,
+        nrOfResults: Int,
+    ) {
         every { webSocketSession.isOpen } returns true
 
-        val results = (1..nrOfResults).map {
-            val result1 = mockkClass(ExecutionResult::class)
-            every { result1.getData<Any>() } returns it
-            every { result1.errors } returns emptyList()
-            result1
-        }
+        val results =
+            (1..nrOfResults).map {
+                val result1 = mockkClass(ExecutionResult::class)
+                every { result1.getData<Any>() } returns it
+                every { result1.errors } returns emptyList()
+                result1
+            }
 
-        every { executionResult.getData<Publisher<ExecutionResult>>() } returns Mono.just(results).flatMapMany { Flux.fromIterable(results) }
+        every { executionResult.getData<Publisher<ExecutionResult>>() } returns
+            Mono.just(results).flatMapMany { Flux.fromIterable(results) }
 
-        every { dgsQueryExecutor.execute("query HELLO(\$name: String){ hello(name:\$name) }", mapOf("name" to "Stranger")) } returns executionResult
+        every { dgsQueryExecutor.execute("query HELLO(\$name: String){ hello(name:\$name) }", mapOf("name" to "Stranger")) } returns
+            executionResult
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, queryMessageWithVariable)
     }
 
-    private fun startWithNullVariable(webSocketSession: WebSocketSession, nrOfResults: Int) {
+    private fun startWithNullVariable(
+        webSocketSession: WebSocketSession,
+        nrOfResults: Int,
+    ) {
         every { webSocketSession.isOpen } returns true
 
-        val results = (1..nrOfResults).map {
-            val result1 = mockkClass(ExecutionResult::class)
-            every { result1.getData<Any>() } returns it
-            every { result1.errors } returns emptyList()
-            result1
-        }
+        val results =
+            (1..nrOfResults).map {
+                val result1 = mockkClass(ExecutionResult::class)
+                every { result1.getData<Any>() } returns it
+                every { result1.errors } returns emptyList()
+                result1
+            }
 
-        every { executionResult.getData<Publisher<ExecutionResult>>() } returns Mono.just(results).flatMapMany { Flux.fromIterable(results) }
+        every { executionResult.getData<Publisher<ExecutionResult>>() } returns
+            Mono.just(results).flatMapMany { Flux.fromIterable(results) }
 
         every { dgsQueryExecutor.execute("query HELLO(\$name: String){ hello(name:\$name) }", emptyMap()) } returns executionResult
 
@@ -319,15 +343,21 @@ class WebsocketGraphQLWSProtocolHandlerTest {
         assertThat((returnMessage.payload as DataPayload).errors?.get(0)).isEqualTo("That's wrong!")
     }
 
-    private fun nextWithError(webSocketSession: WebSocketSession, nrOfResults: Int) {
-        val results = (1..nrOfResults).map {
-            val result1 = mockkClass(ExecutionResult::class)
-            every { result1.getData<Any>() } returns null
-            every { result1.errors } returns listOf(ExceptionWhileDataFetching(ResultPath.rootPath(), RuntimeException("Error in data fetcher"), null))
-            result1
-        }
+    private fun nextWithError(
+        webSocketSession: WebSocketSession,
+        nrOfResults: Int,
+    ) {
+        val results =
+            (1..nrOfResults).map {
+                val result1 = mockkClass(ExecutionResult::class)
+                every { result1.getData<Any>() } returns null
+                every { result1.errors } returns
+                    listOf(ExceptionWhileDataFetching(ResultPath.rootPath(), RuntimeException("Error in data fetcher"), null))
+                result1
+            }
         every { webSocketSession.isOpen } returns true
-        every { executionResult.getData<Publisher<ExecutionResult>>() } returns Mono.just(results).flatMapMany { Flux.fromIterable(results) }
+        every { executionResult.getData<Publisher<ExecutionResult>>() } returns
+            Mono.just(results).flatMapMany { Flux.fromIterable(results) }
         every { dgsQueryExecutor.execute("{ hello }", emptyMap()) } returns executionResult
 
         val slotList = mutableListOf<TextMessage>()
@@ -353,13 +383,15 @@ class WebsocketGraphQLWSProtocolHandlerTest {
         val currentNrOfSessions = dgsWebsocketHandler.sessions.size
         every { webSocketSession.close() } just Runs
 
-        val textMessage = TextMessage(
-            """{
-            "type": "$GQL_STOP",
-            "id": "123"
-        }
-            """.trimIndent()
-        )
+        val textMessage =
+            TextMessage(
+                """
+                {
+                    "type": "$GQL_STOP",
+                    "id": "123"
+                }
+                """.trimIndent(),
+            )
 
         dgsWebsocketHandler.handleTextMessage(webSocketSession, textMessage)
 

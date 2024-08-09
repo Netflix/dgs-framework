@@ -42,18 +42,26 @@ class DataFetcherInvoker internal constructor(
     method: Method,
     private val resolvers: ArgumentResolverComposite,
     parameterNameDiscoverer: ParameterNameDiscoverer,
-    taskExecutor: AsyncTaskExecutor?
+    taskExecutor: AsyncTaskExecutor?,
 ) : DataFetcher<Any?> {
-
     private val bridgedMethod: Method = BridgeMethodResolver.findBridgedMethod(method)
-    private val kotlinFunction: KFunction<*>? = if (KotlinDetector.isKotlinType(bridgedMethod.declaringClass)) bridgedMethod.kotlinFunction else null
+    private val kotlinFunction: KFunction<*>? =
+        if (KotlinDetector.isKotlinType(
+                bridgedMethod.declaringClass,
+            )
+        ) {
+            bridgedMethod.kotlinFunction
+        } else {
+            null
+        }
     private val completableFutureWrapper = CompletableFutureWrapper(taskExecutor)
 
-    private val methodParameters: List<MethodParameter> = bridgedMethod.parameters.map { parameter ->
-        val methodParameter = SynthesizingMethodParameter.forParameter(parameter)
-        methodParameter.initParameterNameDiscovery(parameterNameDiscoverer)
-        methodParameter
-    }
+    private val methodParameters: List<MethodParameter> =
+        bridgedMethod.parameters.map { parameter ->
+            val methodParameter = SynthesizingMethodParameter.forParameter(parameter)
+            methodParameter.initParameterNameDiscovery(parameterNameDiscoverer)
+            methodParameter
+        }
 
     init {
         ReflectionUtils.makeAccessible(bridgedMethod)
@@ -96,16 +104,20 @@ class DataFetcherInvoker internal constructor(
         }
     }
 
-    private fun invokeKotlinMethod(kFunc: KFunction<*>, dfe: DataFetchingEnvironment): Any? {
+    private fun invokeKotlinMethod(
+        kFunc: KFunction<*>,
+        dfe: DataFetchingEnvironment,
+    ): Any? {
         val parameters = kFunc.parameters
         val argsByName = CollectionUtils.newLinkedHashMap<KParameter, Any?>(parameters.size)
 
-        val paramSeq = if (parameters[0].kind == KParameter.Kind.INSTANCE) {
-            argsByName[parameters[0]] = dgsComponent
-            parameters.asSequence().drop(1)
-        } else {
-            parameters.asSequence()
-        }
+        val paramSeq =
+            if (parameters[0].kind == KParameter.Kind.INSTANCE) {
+                argsByName[parameters[0]] = dgsComponent
+                parameters.asSequence().drop(1)
+            } else {
+                parameters.asSequence()
+            }
 
         for ((kParameter, parameter) in paramSeq.zip(methodParameters.asSequence())) {
             if (!resolvers.supportsParameter(parameter)) {
@@ -134,10 +146,12 @@ class DataFetcherInvoker internal constructor(
         }
     }
 
-    private fun formatArgumentError(param: MethodParameter, message: String): String {
-        return "Could not resolve parameter [${param.parameterIndex}] in " +
+    private fun formatArgumentError(
+        param: MethodParameter,
+        message: String,
+    ): String =
+        "Could not resolve parameter [${param.parameterIndex}] in " +
             param.executable.toGenericString() + if (message.isNotEmpty()) ": $message" else ""
-    }
 
     /**
      * Handle the given reflection exception.

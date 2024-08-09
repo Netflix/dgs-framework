@@ -23,30 +23,29 @@ import graphql.execution.instrumentation.parameters.InstrumentationExecutionPara
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import io.micrometer.core.instrument.Tag
 
-class SimpleGqlOutcomeTagCustomizer : DgsExecutionTagCustomizer, DgsFieldFetchTagCustomizer {
-
+class SimpleGqlOutcomeTagCustomizer :
+    DgsExecutionTagCustomizer,
+    DgsFieldFetchTagCustomizer {
     override fun getExecutionTags(
         state: DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState,
         parameters: InstrumentationExecutionParameters,
         result: ExecutionResult,
-        exception: Throwable?
-    ): Iterable<Tag> {
-        return if (result.errors.isNotEmpty() || exception != null) {
+        exception: Throwable?,
+    ): Iterable<Tag> =
+        if (result.errors.isNotEmpty() || exception != null) {
             listOf(FAILURE.tag)
         } else {
             listOf(SUCCESS.tag)
         }
-    }
 
     override fun getFieldFetchTags(
         state: DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState,
         parameters: InstrumentationFieldFetchParameters,
-        error: Throwable?
-    ): Iterable<Tag> {
-        return if (error == null) {
+        error: Throwable?,
+    ): Iterable<Tag> =
+        if (error == null) {
             listOf(SUCCESS.tag)
         } else {
             listOf(FAILURE.tag)
         }
-    }
 }

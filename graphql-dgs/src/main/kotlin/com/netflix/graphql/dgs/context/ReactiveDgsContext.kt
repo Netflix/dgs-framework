@@ -26,17 +26,13 @@ import kotlin.reflect.safeCast
 class ReactiveDgsContext(
     customContext: Any? = null,
     requestData: DgsRequestData?,
-    val reactorContext: ContextView? = Context.empty()
+    val reactorContext: ContextView? = Context.empty(),
 ) : DgsContext(customContext, requestData) {
     companion object {
         @JvmStatic
-        fun from(graphQLContext: GraphQLContext): ReactiveDgsContext? {
-            return ReactiveDgsContext::class.safeCast(DgsContext.from(graphQLContext))
-        }
+        fun from(graphQLContext: GraphQLContext): ReactiveDgsContext? = ReactiveDgsContext::class.safeCast(DgsContext.from(graphQLContext))
 
         @JvmStatic
-        fun from(dfe: DataFetchingEnvironment): ReactiveDgsContext? {
-            return from(dfe.graphQlContext)
-        }
+        fun from(dfe: DataFetchingEnvironment): ReactiveDgsContext? = from(dfe.graphQlContext)
     }
 }

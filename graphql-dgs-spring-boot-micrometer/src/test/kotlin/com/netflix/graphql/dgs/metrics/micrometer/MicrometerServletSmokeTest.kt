@@ -111,14 +111,15 @@ class MicrometerServletSmokeTest {
 
     @Test
     fun `Metrics for a successful query`() {
-        mvc.perform(
-            // Note that the query below uses an aliased field, aliasing `ping` to `op_name`.
-            // We will also assert that the tag reflected by the metric is not affected by the alias.
-            MockMvcRequestBuilders
-                .post("/graphql")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{ "query": "query my_op_1{ping}" }""")
-        ).andExpect(status().isOk)
+        mvc
+            .perform(
+                // Note that the query below uses an aliased field, aliasing `ping` to `op_name`.
+                // We will also assert that the tag reflected by the metric is not affected by the alias.
+                MockMvcRequestBuilders
+                    .post("/graphql")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{ "query": "query my_op_1{ping}" }"""),
+            ).andExpect(status().isOk)
             .andExpect(content().json("""{"data":{"ping":"pong"}}""", false))
 
         val meters = fetchMeters()
@@ -128,39 +129,42 @@ class MicrometerServletSmokeTest {
         assertThat(meters["gql.query"]).isNotNull.hasSize(1)
         assertThat(meters["gql.query"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("execution-tag", "foo")
+                Tags
+                    .of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("outcome", "success")
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "my_op_1")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
 
         assertThat(meters["gql.resolver"]).isNotNull.hasSize(1)
         assertThat(meters["gql.resolver"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("field-fetch-tag", "foo")
+                Tags
+                    .of("field-fetch-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("gql.field", "Query.ping")
                     .and("outcome", "success")
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "my_op_1")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
     }
 
     @Test
     fun `Metrics for a successful mutation`() {
-        mvc.perform(
-            // Note that the query below uses an aliased field, aliasing `ping` to `op_name`.
-            // We will also assert that the tag reflected by the metric is not affected by the alias.
-            MockMvcRequestBuilders
-                .post("/graphql")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{ "query": " mutation my_op_1{buzz}" }""".trimMargin())
-        ).andExpect(status().isOk)
+        mvc
+            .perform(
+                // Note that the query below uses an aliased field, aliasing `ping` to `op_name`.
+                // We will also assert that the tag reflected by the metric is not affected by the alias.
+                MockMvcRequestBuilders
+                    .post("/graphql")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{ "query": " mutation my_op_1{buzz}" }""".trimMargin()),
+            ).andExpect(status().isOk)
             .andExpect(content().json("""{"data":{"buzz":"buzz"}}""", false))
 
         val meters = fetchMeters()
@@ -170,46 +174,49 @@ class MicrometerServletSmokeTest {
         assertThat(meters["gql.query"]).isNotNull.hasSize(1)
         assertThat(meters["gql.query"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("execution-tag", "foo")
+                Tags
+                    .of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("outcome", "success")
                     .and("gql.operation", "MUTATION")
                     .and("gql.operation.name", "my_op_1")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
 
         assertThat(meters["gql.resolver"]).isNotNull.hasSize(1)
         assertThat(meters["gql.resolver"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("field-fetch-tag", "foo")
+                Tags
+                    .of("field-fetch-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("gql.field", "Mutation.buzz")
                     .and("outcome", "success")
                     .and("gql.operation", "MUTATION")
                     .and("gql.operation.name", "my_op_1")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
     }
 
     @Test
     fun `Metrics for a successful request with explicit operation name`() {
-        mvc.perform(
-            // Note that the query below uses an aliased field, aliasing `ping` to `op_name`.
-            // We will also assert that the tag reflected by the metric is not affected by the alias.
-            MockMvcRequestBuilders
-                .post("/graphql")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    """
+        mvc
+            .perform(
+                // Note that the query below uses an aliased field, aliasing `ping` to `op_name`.
+                // We will also assert that the tag reflected by the metric is not affected by the alias.
+                MockMvcRequestBuilders
+                    .post("/graphql")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """
                     | {
                     |     "query": "mutation my_m_1{buzz} query my_q_1{ping}",
                     |     "operationName": "my_q_1"
                     | }
-                    """.trimMargin()
-                )
-        ).andExpect(status().isOk)
+                        """.trimMargin(),
+                    ),
+            ).andExpect(status().isOk)
             .andExpect(content().json("""{"data":{"ping":"pong"}}""", false))
 
         val meters = fetchMeters()
@@ -219,42 +226,45 @@ class MicrometerServletSmokeTest {
         assertThat(meters["gql.query"]).isNotNull.hasSize(1)
         assertThat(meters["gql.query"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("execution-tag", "foo")
+                Tags
+                    .of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("outcome", "success")
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "my_q_1")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
 
         assertThat(meters["gql.resolver"]).isNotNull.hasSize(1)
         assertThat(meters["gql.resolver"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("field-fetch-tag", "foo")
+                Tags
+                    .of("field-fetch-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("gql.field", "Query.ping")
                     .and("outcome", "success")
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "my_q_1")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
     }
 
     @Test
     @Disabled
     fun `Metrics for a successful request with data loaders`() {
-        mvc.perform(
-            MockMvcRequestBuilders
-                .post("/graphql")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    """{"query": 
+        mvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post("/graphql")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """{"query": 
                     |   "{transform(input: [\"A madam in a racecar.\", \"A man, a plan, a canal - Panama\" ]){ index value upperCased reversed } }" }
-                    """.trimMargin()
-                )
-        ).andExpect(status().isOk)
+                        """.trimMargin(),
+                    ),
+            ).andExpect(status().isOk)
             .andExpect(
                 content().json(
                     """
@@ -277,8 +287,8 @@ class MicrometerServletSmokeTest {
                     |   }
                     |}
                     """.trimMargin(),
-                    false
-                )
+                    false,
+                ),
             )
 
         val meters = fetchMeters()
@@ -290,56 +300,61 @@ class MicrometerServletSmokeTest {
             .containsAll(
                 listOf(
                     Tags.of("gql.loaderBatchSize", "2").and("gql.loaderName", "reverser").toList(),
-                    Tags.of("gql.loaderBatchSize", "2").and("gql.loaderName", "upperCaseLoader").toList()
-                )
+                    Tags.of("gql.loaderBatchSize", "2").and("gql.loaderName", "upperCaseLoader").toList(),
+                ),
             )
 
         assertThat(meters["gql.query"]).isNotNull.hasSize(1)
         assertThat(meters["gql.query"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("execution-tag", "foo")
+                Tags
+                    .of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("outcome", "success")
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "10")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
 
         assertThat(meters["gql.resolver"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("gql.field", "Query.transform")
+                Tags
+                    .of("gql.field", "Query.transform")
                     .and("field-fetch-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("outcome", "success")
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "10")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
 
         assertThat(meters["gql.dataLoader"]).isNotNull.hasSize(2)
         assertThat(meters["gql.dataLoader"]?.map { it.id.tags })
             .containsAll(
                 listOf(
-                    Tags.of("gql.loaderBatchSize", "2")
+                    Tags
+                        .of("gql.loaderBatchSize", "2")
                         .and("gql.loaderName", "reverser")
                         .toList(),
-                    Tags.of("gql.loaderBatchSize", "2")
+                    Tags
+                        .of("gql.loaderBatchSize", "2")
                         .and("gql.loaderName", "upperCaseLoader")
-                        .toList()
-                )
+                        .toList(),
+                ),
             )
     }
 
     @Test
     fun `Assert metrics for a syntax error`() {
-        mvc.perform(
-            MockMvcRequestBuilders
-                .post("/graphql")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{ "query": "fail" }""")
-        ).andExpect(status().isOk)
+        mvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post("/graphql")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{ "query": "fail" }"""),
+            ).andExpect(status().isOk)
             .andExpect(
                 content().json(
                     """
@@ -357,8 +372,8 @@ class MicrometerServletSmokeTest {
                     |     ]
                     |   }
                     """.trimMargin(),
-                    false
-                )
+                    false,
+                ),
             )
         val meters = fetchMeters("gql.")
 
@@ -368,7 +383,8 @@ class MicrometerServletSmokeTest {
         assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("execution-tag", "foo")
+                Tags
+                    .of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("gql.operation", "none")
                     .and("gql.operation.name", "anonymous")
@@ -377,30 +393,32 @@ class MicrometerServletSmokeTest {
                     .and("gql.errorDetail", "none")
                     .and("gql.errorCode", "BAD_REQUEST")
                     .and("gql.path", "[]")
-                    .and("outcome", "failure")
+                    .and("outcome", "failure"),
             )
 
         assertThat(meters["gql.query"]).isNotNull.hasSize(1)
         assertThat(meters["gql.query"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("execution-tag", "foo")
+                Tags
+                    .of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("outcome", "failure")
                     .and("gql.operation", "none")
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "none")
-                    .and("gql.query.sig.hash", "none")
+                    .and("gql.query.sig.hash", "none"),
             )
     }
 
     @Test
     fun `Metrics for a query with a data fetcher with disabled instrumentation`() {
-        mvc.perform(
-            MockMvcRequestBuilders
-                .post("/graphql")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{ "query": "{someTrivialThings}" }""")
-        ).andExpect(status().isOk)
+        mvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post("/graphql")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{ "query": "{someTrivialThings}" }"""),
+            ).andExpect(status().isOk)
             .andExpect(content().json("""{"data":{"someTrivialThings":"some insignificance"}}""", false))
 
         val meters = fetchMeters()
@@ -410,24 +428,26 @@ class MicrometerServletSmokeTest {
         assertThat(meters["gql.query"]).isNotNull.hasSize(1)
         assertThat(meters["gql.query"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("execution-tag", "foo")
+                Tags
+                    .of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("outcome", "success")
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
     }
 
     @Test
     fun `Assert metrics for a bad input error`() {
-        mvc.perform(
-            MockMvcRequestBuilders
-                .post("/graphql")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{ "query": "{ hello }" }""")
-        ).andExpect(status().isOk)
+        mvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post("/graphql")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{ "query": "{ hello }" }"""),
+            ).andExpect(status().isOk)
             .andExpect(
                 content().json(
                     """
@@ -445,8 +465,8 @@ class MicrometerServletSmokeTest {
                     |     ]
                     |   }
                     """.trimMargin(),
-                    false
-                )
+                    false,
+                ),
             )
         val meters = fetchMeters("gql.")
 
@@ -456,7 +476,8 @@ class MicrometerServletSmokeTest {
         assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("execution-tag", "foo")
+                Tags
+                    .of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("gql.operation", "none")
                     .and("gql.operation.name", "anonymous")
@@ -465,30 +486,32 @@ class MicrometerServletSmokeTest {
                     .and("gql.errorDetail", "INVALID_ARGUMENT")
                     .and("gql.errorCode", "BAD_REQUEST")
                     .and("gql.path", "[hello]")
-                    .and("outcome", "failure")
+                    .and("outcome", "failure"),
             )
 
         assertThat(meters["gql.query"]).isNotNull.hasSize(1)
         assertThat(meters["gql.query"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("execution-tag", "foo")
+                Tags
+                    .of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("outcome", "failure")
                     .and("gql.operation", "none")
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "none")
-                    .and("gql.query.sig.hash", "none")
+                    .and("gql.query.sig.hash", "none"),
             )
     }
 
     @Test
     fun `Assert metrics for internal error`() {
-        mvc.perform(
-            MockMvcRequestBuilders
-                .post("/graphql")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{ "query": "{triggerInternalFailure}" }""")
-        ).andExpect(status().isOk)
+        mvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post("/graphql")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{ "query": "{triggerInternalFailure}" }"""),
+            ).andExpect(status().isOk)
             .andExpect(
                 content().json(
                     """
@@ -504,8 +527,8 @@ class MicrometerServletSmokeTest {
                        |    "data":{"triggerInternalFailure":null}
                        |}
                     """.trimMargin(),
-                    false
-                )
+                    false,
+                ),
             )
 
         val meters = fetchMeters("gql.")
@@ -517,7 +540,8 @@ class MicrometerServletSmokeTest {
         assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("execution-tag", "foo")
+                Tags
+                    .of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("gql.errorCode", "INTERNAL")
                     .and("gql.errorDetail", "none")
@@ -526,45 +550,48 @@ class MicrometerServletSmokeTest {
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
 
         logMeters(meters["gql.query"])
         assertThat(meters["gql.query"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
         assertThat(meters["gql.query"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("execution-tag", "foo")
+                Tags
+                    .of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("outcome", "failure")
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
 
         logMeters(meters["gql.resolver"])
         assertThat(meters["gql.resolver"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
         assertThat(meters["gql.resolver"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("field-fetch-tag", "foo")
+                Tags
+                    .of("field-fetch-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("gql.field", "Query.triggerInternalFailure")
                     .and("outcome", "failure")
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
     }
 
     @Test
     fun `Assert metrics for a bad-request error`() {
-        mvc.perform(
-            MockMvcRequestBuilders
-                .post("/graphql")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{ "query": "{triggerBadRequestFailure}" }""")
-        ).andExpect(status().isOk)
+        mvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post("/graphql")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{ "query": "{triggerBadRequestFailure}" }"""),
+            ).andExpect(status().isOk)
             .andExpect(
                 content().json(
                     """
@@ -577,8 +604,8 @@ class MicrometerServletSmokeTest {
                         |   "data":{"triggerBadRequestFailure":null}
                         |}
                     """.trimMargin(),
-                    false
-                )
+                    false,
+                ),
             )
 
         val meters = fetchMeters("gql.")
@@ -589,7 +616,8 @@ class MicrometerServletSmokeTest {
         assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("execution-tag", "foo")
+                Tags
+                    .of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("gql.errorCode", "BAD_REQUEST")
                     .and("gql.errorDetail", "none")
@@ -598,43 +626,46 @@ class MicrometerServletSmokeTest {
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
 
         assertThat(meters["gql.query"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
         assertThat(meters["gql.query"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("execution-tag", "foo")
+                Tags
+                    .of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("outcome", "failure")
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
 
         assertThat(meters["gql.resolver"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
         assertThat(meters["gql.resolver"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("field-fetch-tag", "foo")
+                Tags
+                    .of("field-fetch-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("gql.field", "Query.triggerBadRequestFailure")
                     .and("outcome", "failure")
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
     }
 
     @Test
     fun `Assert metrics for custom error`() {
-        mvc.perform(
-            MockMvcRequestBuilders
-                .post("/graphql")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{ "query": "{triggerCustomFailure}" }""")
-        ).andExpect(status().isOk)
+        mvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post("/graphql")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{ "query": "{triggerCustomFailure}" }"""),
+            ).andExpect(status().isOk)
             .andExpect(
                 content().json(
                     """
@@ -649,8 +680,8 @@ class MicrometerServletSmokeTest {
                     |   "data":{"triggerCustomFailure":null}
                     |}
                     """.trimMargin(),
-                    false
-                )
+                    false,
+                ),
             )
 
         val meters = fetchMeters()
@@ -661,7 +692,8 @@ class MicrometerServletSmokeTest {
         assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("execution-tag", "foo")
+                Tags
+                    .of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("gql.errorCode", "UNAVAILABLE")
                     .and("gql.errorDetail", "ENHANCE_YOUR_CALM")
@@ -670,43 +702,46 @@ class MicrometerServletSmokeTest {
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
 
         assertThat(meters["gql.query"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
         assertThat(meters["gql.query"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("execution-tag", "foo")
+                Tags
+                    .of("execution-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("outcome", "failure")
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
 
         assertThat(meters["gql.resolver"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
         assertThat(meters["gql.resolver"]?.first()?.id?.tags)
             .containsAll(
-                Tags.of("field-fetch-tag", "foo")
+                Tags
+                    .of("field-fetch-tag", "foo")
                     .and("contextual-tag", "foo")
                     .and("gql.field", "Query.triggerCustomFailure")
                     .and("outcome", "failure")
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
     }
 
     @Test
     fun `Assert metrics for request with multiple errors`() {
-        mvc.perform(
-            MockMvcRequestBuilders
-                .post("/graphql")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{ "query": "{ triggerInternalFailure triggerBadRequestFailure triggerCustomFailure }" }""")
-        ).andExpect(status().isOk)
+        mvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post("/graphql")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{ "query": "{ triggerInternalFailure triggerBadRequestFailure triggerCustomFailure }" }"""),
+            ).andExpect(status().isOk)
             .andExpect(
                 content().json(
                     """
@@ -717,8 +752,8 @@ class MicrometerServletSmokeTest {
                     |  ],
                     |  "data":{"triggerInternalFailure":null,"triggerBadRequestFailure":null,"triggerCustomFailure":null}}
                     """.trimMargin(),
-                    false
-                )
+                    false,
+                ),
             )
 
         val meters = fetchMeters()
@@ -731,7 +766,8 @@ class MicrometerServletSmokeTest {
 
         val errors = meters.getValue("gql.error").map { it.id.tags }
         assertThat(errors).contains(
-            Tags.of("execution-tag", "foo")
+            Tags
+                .of("execution-tag", "foo")
                 .and("contextual-tag", "foo")
                 .and("gql.errorCode", "BAD_REQUEST")
                 .and("gql.errorDetail", "none")
@@ -742,7 +778,8 @@ class MicrometerServletSmokeTest {
                 .and("gql.query.complexity", "5")
                 .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
                 .toList(),
-            Tags.of("execution-tag", "foo")
+            Tags
+                .of("execution-tag", "foo")
                 .and("contextual-tag", "foo")
                 .and("gql.errorCode", "INTERNAL")
                 .and("gql.errorDetail", "none")
@@ -753,7 +790,8 @@ class MicrometerServletSmokeTest {
                 .and("gql.query.complexity", "5")
                 .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
                 .toList(),
-            Tags.of("execution-tag", "foo")
+            Tags
+                .of("execution-tag", "foo")
                 .and("contextual-tag", "foo")
                 .and("gql.errorCode", "UNAVAILABLE")
                 .and("gql.errorDetail", "ENHANCE_YOUR_CALM")
@@ -763,76 +801,86 @@ class MicrometerServletSmokeTest {
                 .and("gql.operation.name", "anonymous")
                 .and("gql.query.complexity", "5")
                 .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
-                .toList()
+                .toList(),
         )
     }
 
-    private fun fetchMeters(prefix: String = "gql."): Map<String, List<Meter>> {
-        return meterRegistry.meters
+    private fun fetchMeters(prefix: String = "gql."): Map<String, List<Meter>> =
+        meterRegistry.meters
             .asSequence()
             .filter { it.id.name.startsWith(prefix) }
             .groupBy { it.id.name }
-    }
 
     private fun logMeters(meters: Collection<Meter>?) {
         if (CollectionUtils.isEmpty(meters)) {
             logger.info("No meters found.")
             return
         }
-        val meterData = meters?.map { it.id }?.joinToString(",\n", "{\n", "\n}") { id: Meter.Id ->
-            """
+        val meterData =
+            meters?.map { it.id }?.joinToString(",\n", "{\n", "\n}") { id: Meter.Id ->
+                """
             |Name: ${id.name}
             |Tags:
             |   ${id.tags.joinToString(",\n\t", "\t") { tag: Tag? -> "[${tag?.key} : ${tag?.value}]" }}
-            """.trimMargin()
-        }
+                """.trimMargin()
+            }
         logger.info("Meters:\n{}", meterData)
     }
 
     @TestConfiguration(proxyBeanMethods = false)
     open class LocalTestConfiguration {
         @Bean
-        open fun testMeterRegistry(): MeterRegistry {
-            return SimpleMeterRegistry()
-        }
+        open fun testMeterRegistry(): MeterRegistry = SimpleMeterRegistry()
 
         @Bean
-        open fun querySignatureRepository(): QuerySignatureRepository {
-            return QuerySignatureRepository { _, _ -> Optional.of(MOCKED_QUERY_SIGNATURE) }
-        }
+        open fun querySignatureRepository(): QuerySignatureRepository =
+            QuerySignatureRepository {
+                    _,
+                    _,
+                ->
+                Optional.of(MOCKED_QUERY_SIGNATURE)
+            }
 
         @Bean
-        open fun contextualTagProvider(): DgsContextualTagCustomizer {
-            return DgsContextualTagCustomizer { Tags.of("contextual-tag", "foo") }
-        }
+        open fun contextualTagProvider(): DgsContextualTagCustomizer = DgsContextualTagCustomizer { Tags.of("contextual-tag", "foo") }
 
         @Bean
-        open fun executionTagCustomizer(): DgsExecutionTagCustomizer {
-            return DgsExecutionTagCustomizer { _, _, _, _ -> Tags.of("execution-tag", "foo") }
-        }
+        open fun executionTagCustomizer(): DgsExecutionTagCustomizer =
+            DgsExecutionTagCustomizer {
+                    _,
+                    _,
+                    _,
+                    _,
+                ->
+                Tags.of("execution-tag", "foo")
+            }
 
         @Bean
-        open fun fieldFetchTagCustomizer(): DgsFieldFetchTagCustomizer {
-            return DgsFieldFetchTagCustomizer { _, _, _ -> Tags.of("field-fetch-tag", "foo") }
-        }
+        open fun fieldFetchTagCustomizer(): DgsFieldFetchTagCustomizer =
+            DgsFieldFetchTagCustomizer {
+                    _,
+                    _,
+                    _,
+                ->
+                Tags.of("field-fetch-tag", "foo")
+            }
     }
 
     @SpringBootApplication(proxyBeanMethods = false, scanBasePackages = [])
     @ComponentScan(
         useDefaultFilters = false,
-        includeFilters = [ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = [])]
+        includeFilters = [ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = [])],
     )
     @SuppressWarnings("unused")
     open class LocalApp {
-
         @DgsComponent
         class ExampleImplementation {
-
             @DgsTypeDefinitionRegistry
             fun typeDefinitionRegistry(): TypeDefinitionRegistry {
                 val schemaParser = SchemaParser()
 
-                val gqlSchema = """
+                val gqlSchema =
+                    """
                 |type Query{
                 |    ping:String
                 |    someTrivialThings: String 
@@ -853,85 +901,75 @@ class MicrometerServletSmokeTest {
                 |    upperCased: String
                 |    reversed: String
                 |}
-                """.trimMargin()
+                    """.trimMargin()
                 return schemaParser.parse(gqlSchema)
             }
 
             @DgsQuery
-            fun ping(): String {
-                return "pong"
-            }
+            fun ping(): String = "pong"
 
             @DgsQuery
-            fun hello(@InputArgument name: String): String {
-                return "Hello $name"
-            }
+            fun hello(
+                @InputArgument name: String,
+            ): String = "Hello $name"
 
             @DgsQuery
             @DgsEnableDataFetcherInstrumentation(false)
-            fun someTrivialThings(): String {
-                return "some insignificance"
-            }
+            fun someTrivialThings(): String = "some insignificance"
 
             @DgsMutation
-            fun buzz(): String {
-                return "buzz"
-            }
+            fun buzz(): String = "buzz"
 
             @DgsQuery
-            fun transform(@InputArgument input: List<String>): List<Map<String, String>> {
-                return input.mapIndexed { i, v -> mapOf("index" to "$i", "value" to v) }
-            }
+            fun transform(
+                @InputArgument input: List<String>,
+            ): List<Map<String, String>> = input.mapIndexed { i, v -> mapOf("index" to "$i", "value" to v) }
 
             @DgsQuery
-            fun triggerInternalFailure(): String {
-                throw IllegalStateException("Exception triggered.")
-            }
+            fun triggerInternalFailure(): String = throw IllegalStateException("Exception triggered.")
 
             @DgsQuery
-            fun triggerBadRequestFailure(): String {
-                throw DgsBadRequestException("Exception triggered.")
-            }
+            fun triggerBadRequestFailure(): String = throw DgsBadRequestException("Exception triggered.")
 
             @DgsQuery
-            fun triggerCustomFailure(): String {
-                throw CustomException("Exception triggered.")
-            }
+            fun triggerCustomFailure(): String = throw CustomException("Exception triggered.")
 
             @DgsData(parentType = "StringTransformation")
             fun upperCased(dfe: DataFetchingEnvironment): CompletableFuture<String>? {
-                val dataLoader = dfe.getDataLoader<String, String>("upperCaseLoader")
-                    ?: throw AssertionError("upperCaseLoader not found")
+                val dataLoader =
+                    dfe.getDataLoader<String, String>("upperCaseLoader")
+                        ?: throw AssertionError("upperCaseLoader not found")
                 val input = dfe.getSource<Map<String, String>>().orEmpty()
                 return dataLoader.load(input.getOrDefault("value", ""))
             }
 
             @DgsData(parentType = "StringTransformation")
             fun reversed(dfe: DataFetchingEnvironment): CompletableFuture<String>? {
-                val dataLoader = dfe.getDataLoader<String, String>("reverser")
-                    ?: throw AssertionError("reverser not found")
+                val dataLoader =
+                    dfe.getDataLoader<String, String>("reverser")
+                        ?: throw AssertionError("reverser not found")
                 val input = dfe.getSource<Map<String, String>>().orEmpty()
                 return dataLoader.load(input.getOrDefault("value", ""))
             }
 
             @DgsDataLoader(name = "upperCaseLoader")
-            var batchLoader = BatchLoader { keys: List<String> ->
-                CompletableFuture.supplyAsync { keys.map { it.uppercase() } }
-            }
+            var batchLoader =
+                BatchLoader { keys: List<String> ->
+                    CompletableFuture.supplyAsync { keys.map { it.uppercase() } }
+                }
 
             @DgsDataLoader(name = "reverser")
             class ReverseStringDataLoader(
-                @Qualifier("dataLoaderTaskExecutor") private val dataLoaderTaskExecutor: Executor
-            ) : MappedBatchLoader<String, String>, DgsDataLoaderRegistryConsumer {
-
+                @Qualifier("dataLoaderTaskExecutor") private val dataLoaderTaskExecutor: Executor,
+            ) : MappedBatchLoader<String, String>,
+                DgsDataLoaderRegistryConsumer {
                 var dataLoaderRegistry: Optional<DataLoaderRegistry> = Optional.empty()
 
-                override fun load(keys: Set<String>): CompletionStage<Map<String, String>> {
-                    return CompletableFuture.supplyAsync(
+                override fun load(keys: Set<String>): CompletionStage<Map<String, String>> =
+                    CompletableFuture.supplyAsync(
                         { keys.associateWith { it.reversed() } },
-                        dataLoaderTaskExecutor
+                        dataLoaderTaskExecutor,
                     )
-                }
 
                 override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry) {
                     this.dataLoaderRegistry = Optional.of(dataLoaderRegistry)
@@ -940,9 +978,7 @@ class MicrometerServletSmokeTest {
         }
 
         @Bean
-        open fun customDataFetchingExceptionHandler(): DataFetcherExceptionHandler {
-            return CustomDataFetchingExceptionHandler()
-        }
+        open fun customDataFetchingExceptionHandler(): DataFetcherExceptionHandler = CustomDataFetchingExceptionHandler()
 
         @Bean
         open fun dataLoaderTaskExecutor(): Executor {
@@ -957,11 +993,12 @@ class MicrometerServletSmokeTest {
     }
 
     class CustomDataFetchingExceptionHandler : DataFetcherExceptionHandler {
-
         private val defaultHandler: DefaultDataFetcherExceptionHandler = DefaultDataFetcherExceptionHandler()
 
-        override fun handleException(handlerParameters: DataFetcherExceptionHandlerParameters): CompletableFuture<DataFetcherExceptionHandlerResult> {
-            return if (handlerParameters.exception is CustomException) {
+        override fun handleException(
+            handlerParameters: DataFetcherExceptionHandlerParameters,
+        ): CompletableFuture<DataFetcherExceptionHandlerResult> =
+            if (handlerParameters.exception is CustomException) {
                 val exception = handlerParameters.exception
                 val graphqlError: GraphQLError =
                     TypedGraphQLError
@@ -971,15 +1008,17 @@ class MicrometerServletSmokeTest {
                         .path(handlerParameters.path)
                         .build()
                 CompletableFuture.completedFuture(
-                    DataFetcherExceptionHandlerResult.newResult()
+                    DataFetcherExceptionHandlerResult
+                        .newResult()
                         .error(graphqlError)
-                        .build()
+                        .build(),
                 )
             } else {
                 defaultHandler.handleException(handlerParameters)
             }
-        }
     }
 
-    class CustomException(message: String) : DgsException(message = message, errorType = ErrorType.INTERNAL)
+    class CustomException(
+        message: String,
+    ) : DgsException(message = message, errorType = ErrorType.INTERNAL)
 }

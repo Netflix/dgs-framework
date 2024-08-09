@@ -28,15 +28,17 @@ data class DgsWebSocketConfigurationProperties(
     @DefaultValue("/subscriptions") var path: String = "/subscriptions",
     /** Connection Initialization timeout. */
     @DefaultValue(CONNECTION_INIT_TIMEOUT) var connectionInitTimeout: Duration,
-    @DefaultValue("ERROR") var subscriptionErrorLogLevel: Level = Level.ERROR
+    @DefaultValue("ERROR") var subscriptionErrorLogLevel: Level = Level.ERROR,
 ) {
-
     @PostConstruct
     fun validatePaths() {
         validatePath(this.path, "dgs.graphql.websocket.path")
     }
 
-    private fun validatePath(path: String, pathProperty: String) {
+    private fun validatePath(
+        path: String,
+        pathProperty: String,
+    ) {
         if (path != "/" && (!path.startsWith("/") || path.endsWith("/"))) {
             throw IllegalArgumentException("$pathProperty must start with '/' and not end with '/' but was '$path'")
         }

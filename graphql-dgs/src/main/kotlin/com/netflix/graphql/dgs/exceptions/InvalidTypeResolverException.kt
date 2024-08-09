@@ -16,4 +16,6 @@
 
 package com.netflix.graphql.dgs.exceptions
 
-class InvalidTypeResolverException(msg: String) : RuntimeException(msg)
+class InvalidTypeResolverException(
+    msg: String,
+) : RuntimeException(msg)

@@ -24,19 +24,21 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import org.springframework.context.annotation.Configuration
 
 class DgsWebMvcConfigurationPropertiesValidationTest {
-
-    private val context = ApplicationContextRunner().withConfiguration(
-        AutoConfigurations.of(
-            MockConfigPropsAutoConfiguration::class.java
-        )
-    )!!
+    private val context =
+        ApplicationContextRunner().withConfiguration(
+            AutoConfigurations.of(
+                MockConfigPropsAutoConfiguration::class.java,
+            ),
+        )!!
 
     @Test
     fun graphqlControllerInvalidCustomPathEndsWithSlash() {
         context
             .withPropertyValues("dgs.graphql.path: /fooql/")
             .run { ctx ->
-                assertThat(ctx).hasFailed().failure.rootCause().hasMessageContaining("dgs.graphql.path must start with '/' and not end with '/'")
+                assertThat(
+                    ctx,
+                ).hasFailed().failure.rootCause().hasMessageContaining("dgs.graphql.path must start with '/' and not end with '/'")
             }
     }
 
@@ -45,7 +47,9 @@ class DgsWebMvcConfigurationPropertiesValidationTest {
         context
             .withPropertyValues("dgs.graphql.path: fooql")
             .run { ctx ->
-                assertThat(ctx).hasFailed().failure.rootCause().hasMessageContaining("dgs.graphql.path must start with '/' and not end with '/'")
+                assertThat(
+                    ctx,
+                ).hasFailed().failure.rootCause().hasMessageContaining("dgs.graphql.path must start with '/' and not end with '/'")
             }
     }
 
@@ -63,7 +67,9 @@ class DgsWebMvcConfigurationPropertiesValidationTest {
         context
             .withPropertyValues("dgs.graphql.graphiql.path: /fooql/")
             .run { ctx ->
-                assertThat(ctx).hasFailed().failure.rootCause().hasMessageContaining("dgs.graphql.graphiql.path must start with '/' and not end with '/'")
+                assertThat(
+                    ctx,
+                ).hasFailed().failure.rootCause().hasMessageContaining("dgs.graphql.graphiql.path must start with '/' and not end with '/'")
             }
     }
 
@@ -72,7 +78,9 @@ class DgsWebMvcConfigurationPropertiesValidationTest {
         context
             .withPropertyValues("dgs.graphql.graphiql.path: fooql")
             .run { ctx ->
-                assertThat(ctx).hasFailed().failure.rootCause().hasMessageContaining("dgs.graphql.graphiql.path must start with '/' and not end with '/'")
+                assertThat(
+                    ctx,
+                ).hasFailed().failure.rootCause().hasMessageContaining("dgs.graphql.graphiql.path must start with '/' and not end with '/'")
             }
     }
 
@@ -90,7 +98,11 @@ class DgsWebMvcConfigurationPropertiesValidationTest {
         context
             .withPropertyValues("dgs.graphql.schema-json.path: /fooql/")
             .run { ctx ->
-                assertThat(ctx).hasFailed().failure.rootCause().hasMessageContaining("dgs.graphql.schema-json.path must start with '/' and not end with '/'")
+                assertThat(
+                    ctx,
+                ).hasFailed().failure.rootCause().hasMessageContaining(
+                    "dgs.graphql.schema-json.path must start with '/' and not end with '/'",
+                )
             }
     }
 
@@ -99,7 +111,11 @@ class DgsWebMvcConfigurationPropertiesValidationTest {
         context
             .withPropertyValues("dgs.graphql.schema-json.path: fooql")
             .run { ctx ->
-                assertThat(ctx).hasFailed().failure.rootCause().hasMessageContaining("dgs.graphql.schema-json.path must start with '/' and not end with '/'")
+                assertThat(
+                    ctx,
+                ).hasFailed().failure.rootCause().hasMessageContaining(
+                    "dgs.graphql.schema-json.path must start with '/' and not end with '/'",
+                )
             }
     }
 

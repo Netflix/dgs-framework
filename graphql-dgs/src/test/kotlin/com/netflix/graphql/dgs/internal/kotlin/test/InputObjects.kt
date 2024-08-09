@@ -22,38 +22,65 @@ interface Video {
     val title: String
 }
 
-data class Show(override val title: String) : Video
+data class Show(
+    override val title: String,
+) : Video
 
-data class Person(val name: String)
+data class Person(
+    val name: String,
+)
 
-data class DateTimeInput(val date: LocalDateTime)
+data class DateTimeInput(
+    val date: LocalDateTime,
+)
 
 enum class KGreetingType {
     FRIENDLY,
-    POLITE
+    POLITE,
 }
 
-data class KInputMessage(val type: KGreetingType, val typeList: List<KGreetingType>)
+data class KInputMessage(
+    val type: KGreetingType,
+    val typeList: List<KGreetingType>,
+)
 
-data class KMovieFilter(val movieIds: List<Any>)
+data class KMovieFilter(
+    val movieIds: List<Any>,
+)
 
-data class KFooInput(val bars: List<KBarInput>)
+data class KFooInput(
+    val bars: List<KBarInput>,
+)
 
-data class KBarInput(val name: String, val value: Any)
+data class KBarInput(
+    val name: String,
+    val value: Any,
+)
 
-data class KFilter(val query: Any)
+data class KFilter(
+    val query: Any,
+)
 
 enum class KEnum {
-    A, B, C
+    A,
+    B,
+    C,
 }
 
 object KListOfListsOfLists {
+    class KListOfListOfFilters(
+        lists: List<List<List<KFilter>>>,
+    ) : KListOfListOfThings<KFilter>(lists)
 
-    class KListOfListOfFilters(lists: List<List<List<KFilter>>>) : KListOfListOfThings<KFilter>(lists)
+    class KListOfListOfEnums(
+        lists: List<List<List<KEnum>>>,
+    ) : KListOfListOfThings<KEnum>(lists)
 
-    class KListOfListOfEnums(lists: List<List<List<KEnum>>>) : KListOfListOfThings<KEnum>(lists)
+    class KListOfListOfStrings(
+        lists: List<List<List<String>>>,
+    ) : KListOfListOfThings<String>(lists)
 
-    class KListOfListOfStrings(lists: List<List<List<String>>>) : KListOfListOfThings<String>(lists)
-
-    abstract class KListOfListOfThings<T>(val lists: List<List<List<T>>> = emptyList())
+    abstract class KListOfListOfThings<T>(
+        val lists: List<List<List<T>>> = emptyList(),
+    )
 }

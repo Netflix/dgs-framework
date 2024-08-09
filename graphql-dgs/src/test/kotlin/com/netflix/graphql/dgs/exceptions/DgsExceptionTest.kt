@@ -34,7 +34,7 @@ class DgsExceptionTest {
             assertThat(
                 CustomDgsException()
                     .toGraphQlError() // no path
-                    .path
+                    .path,
             ).isNull()
         }
 
@@ -45,7 +45,7 @@ class DgsExceptionTest {
             assertThat(
                 CustomDgsException()
                     .toGraphQlError(path = ResultPath.fromList(pathSegments))
-                    .path
+                    .path,
             ).containsAll(pathSegments)
         }
 
@@ -54,17 +54,18 @@ class DgsExceptionTest {
             assertThat(
                 CustomDgsException()
                     .toGraphQlError()
-                    .extensions
+                    .extensions,
             ).contains(
                 entry(
                     DgsException.EXTENSION_CLASS_KEY,
-                    CustomDgsException::class.java.name
-                )
+                    CustomDgsException::class.java.name,
+                ),
             )
         }
     }
 
-    private inner class CustomDgsException : DgsException(
-        message = FAKE_ERROR_MESSAGE
-    )
+    private inner class CustomDgsException :
+        DgsException(
+            message = FAKE_ERROR_MESSAGE,
+        )
 }

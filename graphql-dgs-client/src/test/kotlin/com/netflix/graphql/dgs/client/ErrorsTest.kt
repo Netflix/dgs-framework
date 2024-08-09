@@ -30,24 +30,25 @@ import org.springframework.test.web.client.response.MockRestResponseCreators.wit
 import org.springframework.web.client.RestTemplate
 
 class ErrorsTest {
-
     private val restTemplate = RestTemplate()
     private val server = MockRestServiceServer.bindTo(restTemplate).build()
 
-    private val requestExecutor = RequestExecutor { url, headers, body ->
-        val httpHeaders = HttpHeaders()
-        headers.forEach { httpHeaders.addAll(it.key, it.value) }
+    private val requestExecutor =
+        RequestExecutor { url, headers, body ->
+            val httpHeaders = HttpHeaders()
+            headers.forEach { httpHeaders.addAll(it.key, it.value) }
 
-        val exchange = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
-        HttpResponse(statusCode = exchange.statusCode.value(), body = exchange.body)
-    }
+            val exchange = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
+            HttpResponse(statusCode = exchange.statusCode.value(), body = exchange.body)
+        }
 
     private val url = "http://localhost:8080/graphql"
     private val client = CustomGraphQLClient(url, requestExecutor)
 
     @Test
     fun unknownErrorType() {
-        val jsonResponse = """
+        val jsonResponse =
+            """
             {
               "errors": [
                 {
@@ -65,9 +66,10 @@ class ErrorsTest {
                 "hello": null
               }
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        server.expect(requestTo(url))
+        server
+            .expect(requestTo(url))
             .andExpect(method(HttpMethod.POST))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
@@ -80,7 +82,8 @@ class ErrorsTest {
 
     @Test
     fun errorType() {
-        val jsonResponse = """
+        val jsonResponse =
+            """
             {
               "errors": [
                 {
@@ -98,9 +101,10 @@ class ErrorsTest {
                 "hello": null
               }
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        server.expect(requestTo(url))
+        server
+            .expect(requestTo(url))
             .andExpect(method(HttpMethod.POST))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
@@ -113,7 +117,8 @@ class ErrorsTest {
 
     @Test
     fun errorDetails() {
-        val jsonResponse = """
+        val jsonResponse =
+            """
             {
               "errors": [
                 {
@@ -132,9 +137,10 @@ class ErrorsTest {
                 "hello": null
               }
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        server.expect(requestTo(url))
+        server
+            .expect(requestTo(url))
             .andExpect(method(HttpMethod.POST))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
@@ -148,7 +154,8 @@ class ErrorsTest {
 
     @Test
     fun errorWithoutExtensions() {
-        val jsonResponse = """
+        val jsonResponse =
+            """
             {
               "errors": [
                 {
@@ -163,9 +170,10 @@ class ErrorsTest {
                 "hello": null
               }
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        server.expect(requestTo(url))
+        server
+            .expect(requestTo(url))
             .andExpect(method(HttpMethod.POST))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
@@ -178,7 +186,8 @@ class ErrorsTest {
 
     @Test
     fun errorWithDebugInfo() {
-        val jsonResponse = """
+        val jsonResponse =
+            """
             {
               "errors": [
                 {
@@ -204,19 +213,49 @@ class ErrorsTest {
                 "hello": null
               }
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        server.expect(requestTo(url))
+        server
+            .expect(requestTo(url))
             .andExpect(method(HttpMethod.POST))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
 
         val graphQLResponse = client.executeQuery("""{ hello }""", emptyMap())
-        assertThat(graphQLResponse.errors[0].extensions?.debugInfo?.subquery).isEqualTo("test sub-query")
-        assertThat(graphQLResponse.errors[0].extensions?.debugInfo?.variables?.get("variableKey1")).isEqualTo("variableValue1")
-        assertThat(graphQLResponse.errors[0].extensions?.debugInfo?.variables?.get("variableKey2")).isEqualTo("variableValue2")
-        assertThat(graphQLResponse.errors[0].extensions?.debugInfo?.additionalInformation?.get("customKey1")).isEqualTo("customValue1")
-        assertThat(graphQLResponse.errors[0].extensions?.debugInfo?.additionalInformation?.get("customKey2")).isEqualTo("customValue2")
+        assertThat(
+            graphQLResponse.errors[0]
+                .extensions
+                ?.debugInfo
+                ?.subquery,
+        ).isEqualTo("test sub-query")
+        assertThat(
+            graphQLResponse.errors[0]
+                .extensions
+                ?.debugInfo
+                ?.variables
+                ?.get("variableKey1"),
+        ).isEqualTo("variableValue1")
+        assertThat(
+            graphQLResponse.errors[0]
+                .extensions
+                ?.debugInfo
+                ?.variables
+                ?.get("variableKey2"),
+        ).isEqualTo("variableValue2")
+        assertThat(
+            graphQLResponse.errors[0]
+                .extensions
+                ?.debugInfo
+                ?.additionalInformation
+                ?.get("customKey1"),
+        ).isEqualTo("customValue1")
+        assertThat(
+            graphQLResponse.errors[0]
+                .extensions
+                ?.debugInfo
+                ?.additionalInformation
+                ?.get("customKey2"),
+        ).isEqualTo("customValue2")
 
         server.verify()
     }

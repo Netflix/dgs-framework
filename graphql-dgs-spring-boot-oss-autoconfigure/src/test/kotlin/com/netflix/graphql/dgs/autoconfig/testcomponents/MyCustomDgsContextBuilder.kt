@@ -27,23 +27,19 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 open class CustomContextBuilderConfig {
     @Bean
-    open fun createCustomContextBuilder(): DgsCustomContextBuilder<*> {
-        return MyCustomDgsContextBuilder()
-    }
+    open fun createCustomContextBuilder(): DgsCustomContextBuilder<*> = MyCustomDgsContextBuilder()
 
     @Bean
-    open fun createDataFetcher(): CustomContextDataFetcher {
-        return CustomContextDataFetcher()
-    }
+    open fun createDataFetcher(): CustomContextDataFetcher = CustomContextDataFetcher()
 }
 
 class MyCustomDgsContextBuilder : DgsCustomContextBuilder<MyCustomContext> {
-    override fun build(): MyCustomContext {
-        return MyCustomContext("Hello custom context")
-    }
+    override fun build(): MyCustomContext = MyCustomContext("Hello custom context")
 }
 
-class MyCustomContext(val message: String)
+class MyCustomContext(
+    val message: String,
+)
 
 @DgsComponent
 class CustomContextDataFetcher {

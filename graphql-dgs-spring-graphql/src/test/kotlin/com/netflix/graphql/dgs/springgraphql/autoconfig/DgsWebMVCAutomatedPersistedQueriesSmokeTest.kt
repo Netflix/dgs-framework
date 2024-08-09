@@ -42,15 +42,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest(
     properties = [
         "debug:true",
-        "dgs.graphql.apq.enabled:true"
-    ]
+        "dgs.graphql.apq.enabled:true",
+    ],
 )
 @AutoConfigureMockMvc
 @EnableAutoConfiguration
 @Execution(ExecutionMode.SAME_THREAD)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
-
     @Autowired
     lateinit var mvc: MockMvc
 
@@ -77,9 +76,10 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                        |    }
                        | }
                        |
-                    """.trimMargin()
+                    """.trimMargin(),
                 )
-        mvc.perform(uriBuilder)
+        mvc
+            .perform(uriBuilder)
             .andExpect(status().isOk)
             .andExpect(
                 content().json(
@@ -98,8 +98,8 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                     |   ]
                     | }
                     |
-                    """.trimMargin()
-                )
+                    """.trimMargin(),
+                ),
             )
     }
 
@@ -122,9 +122,10 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                        |    }
                        | }
                        |
-                    """.trimMargin()
+                    """.trimMargin(),
                 )
-        mvc.perform(uriBuilder)
+        mvc
+            .perform(uriBuilder)
             .andExpect(status().isOk)
             .andExpect(
                 content().json(
@@ -135,8 +136,8 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                     |    }
                     | }
                     |
-                    """.trimMargin()
-                )
+                    """.trimMargin(),
+                ),
             )
     }
 
@@ -158,9 +159,10 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                        |    }
                        | }
                        |
-                    """.trimMargin()
+                    """.trimMargin(),
                 )
-        mvc.perform(uriBuilder)
+        mvc
+            .perform(uriBuilder)
             .andExpect(status().isOk)
             .andExpect(
                 content().json(
@@ -171,30 +173,29 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                     |    }
                     | }
                     |
-                    """.trimMargin()
-                )
+                    """.trimMargin(),
+                ),
             )
     }
 
     @SpringBootApplication(proxyBeanMethods = false, scanBasePackages = [])
     @ComponentScan(
         useDefaultFilters = false,
-        includeFilters = [ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = [])]
+        includeFilters = [ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = [])],
     )
     @SuppressWarnings("unused")
     open class LocalApp {
-
         @DgsComponent
         class ExampleImplementation {
-
             @DgsTypeDefinitionRegistry
             fun typeDefinitionRegistry(): TypeDefinitionRegistry {
                 val schemaParser = SchemaParser()
 
-                val gqlSchema = """
+                val gqlSchema =
+                    """
                 |type Query{
                 |}
-                """.trimMargin()
+                    """.trimMargin()
                 return schemaParser.parse(gqlSchema)
             }
         }

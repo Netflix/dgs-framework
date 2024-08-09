@@ -30,19 +30,20 @@ import java.util.*
 @SpringBootTest(classes = [BeanValidationSizeSmokeTest.LocalApp::class])
 @EnableAutoConfiguration
 internal class BeanValidationSizeSmokeTest {
-
     @Autowired
     lateinit var queryExecutor: DgsQueryExecutor
 
     @Test
     fun createPostWithInvalidInput() {
         val query = "mutation newPost(\$input: CreatePostInput!){ createPost(createPostInput: \$input) }"
-        val variables = mapOf(
-            "input" to mapOf(
-                "title" to "test", // conflict with @Size directive
-                "content" to "test content"
+        val variables =
+            mapOf(
+                "input" to
+                    mapOf(
+                        "title" to "test", // conflict with @Size directive
+                        "content" to "test content",
+                    ),
             )
-        )
         val executionResult = queryExecutor.execute(query, variables)
         assertThat(executionResult.errors).isNotEmpty()
         assertThat(executionResult.errors[0].message).isEqualTo("/createPost/createPostInput/title size must be between 5 and 50")
@@ -52,12 +53,14 @@ internal class BeanValidationSizeSmokeTest {
     @Test
     fun createPostWithValidInput() {
         val query = "mutation newPost(\$input: CreatePostInput!){ createPost(createPostInput: \$input) }"
-        val variables = mapOf(
-            "input" to mapOf(
-                "title" to "test title",
-                "content" to "test content"
+        val variables =
+            mapOf(
+                "input" to
+                    mapOf(
+                        "title" to "test title",
+                        "content" to "test content",
+                    ),
             )
-        )
         val executionResult = queryExecutor.execute(query, variables)
         assertThat(executionResult.errors).isEmpty()
         assertThat(executionResult.getData<Map<String, Any>>()).isNotNull()
@@ -67,15 +70,14 @@ internal class BeanValidationSizeSmokeTest {
     @SpringBootConfiguration(proxyBeanMethods = false)
     @SuppressWarnings("unused")
     open class LocalApp {
-
         @DgsComponent
         class ExampleImplementation {
-
             @DgsTypeDefinitionRegistry
             fun typeDefinitionRegistry(): TypeDefinitionRegistry {
                 val schemaParser = SchemaParser()
 
-                val gqlSchema = """
+                val gqlSchema =
+                    """
                 | type Mutation {
                 |    createPost(createPostInput: CreatePostInput!): String!
                 | }
@@ -87,17 +89,22 @@ internal class BeanValidationSizeSmokeTest {
                 | 
                 | directive @Size(min : Int = 0, max : Int = 2147483647, message : String = "graphql.validation.Size.message")
                 | on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
-                """.trimMargin()
+                    """.trimMargin()
                 return schemaParser.parse(gqlSchema)
             }
 
             @DgsMutation
-            fun createPost(@InputArgument createPostInput: CreatePostInput): String {
+            fun createPost(
+                @InputArgument createPostInput: CreatePostInput,
+            ): String {
                 println(createPostInput)
                 return UUID.randomUUID().toString()
             }
         }
 
-        data class CreatePostInput(val title: String, val content: String)
+        data class CreatePostInput(
+            val title: String,
+            val content: String,
+        )
     }
 }

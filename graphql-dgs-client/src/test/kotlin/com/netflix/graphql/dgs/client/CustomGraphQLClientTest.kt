@@ -40,11 +40,10 @@ import org.springframework.web.client.RestTemplate
 
 @SpringBootTest(
     classes = [DgsAutoConfiguration::class, DgsWebMvcAutoConfiguration::class, WebClientGraphQLClientTest.TestApp::class],
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
 @EnableAutoConfiguration(exclude = [DgsGraphQLSSEAutoConfig::class])
 class CustomGraphQLClientTest {
-
     @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
     @LocalServerPort
     lateinit var port: Integer
@@ -54,13 +53,14 @@ class CustomGraphQLClientTest {
 
     @BeforeEach
     fun before() {
-        client = GraphQLClient.createCustom("http://localhost:$port/graphql") { url, headers, body ->
-            val httpHeaders = HttpHeaders()
-            headers.forEach { httpHeaders.addAll(it.key, it.value) }
+        client =
+            GraphQLClient.createCustom("http://localhost:$port/graphql") { url, headers, body ->
+                val httpHeaders = HttpHeaders()
+                headers.forEach { httpHeaders.addAll(it.key, it.value) }
 
-            val exchange = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
-            HttpResponse(exchange.statusCode.value(), exchange.body)
-        }
+                val exchange = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
+                HttpResponse(exchange.statusCode.value(), exchange.body)
+            }
     }
 
     @Test
@@ -77,34 +77,34 @@ class CustomGraphQLClientTest {
 
     @SpringBootApplication
     internal open class TestApp {
-
         @DgsComponent
         class SubscriptionDataFetcher {
             @DgsQuery
-            fun hello(): String {
-                return "Hi!"
-            }
+            fun hello(): String = "Hi!"
 
             @DgsQuery
-            fun error(): String {
-                throw RuntimeException("Broken!")
-            }
+            fun error(): String = throw RuntimeException("Broken!")
 
             @DgsTypeDefinitionRegistry
             fun typeDefinitionRegistry(): TypeDefinitionRegistry {
                 val newRegistry = TypeDefinitionRegistry()
                 newRegistry.add(
-                    ObjectTypeDefinition.newObjectTypeDefinition().name("Query")
+                    ObjectTypeDefinition
+                        .newObjectTypeDefinition()
+                        .name("Query")
                         .fieldDefinition(
-                            FieldDefinition.newFieldDefinition()
+                            FieldDefinition
+                                .newFieldDefinition()
                                 .name("hello")
-                                .type(TypeName("String")).build()
+                                .type(TypeName("String"))
+                                .build(),
                         ).fieldDefinition(
-                            FieldDefinition.newFieldDefinition()
+                            FieldDefinition
+                                .newFieldDefinition()
                                 .name("error")
-                                .type(TypeName("String")).build()
-                        )
-                        .build()
+                                .type(TypeName("String"))
+                                .build(),
+                        ).build(),
                 )
                 return newRegistry
             }

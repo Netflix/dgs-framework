@@ -11,13 +11,23 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessorTest {
     fun `disables unwanted auto-configurations`() {
         val env = StandardEnvironment()
         ExcludeAutoConfigurationsEnvironmentPostProcessor().postProcessEnvironment(env, SpringApplication())
-        assertThat(env.getProperty("spring.autoconfigure.exclude")).contains("org.springframework.boot.actuate.autoconfigure.observation.graphql.GraphQlObservationAutoConfiguration", "org.springframework.boot.autoconfigure.graphql.security.GraphQlWebMvcSecurityAutoConfiguration")
+        assertThat(
+            env.getProperty("spring.autoconfigure.exclude"),
+        ).contains(
+            "org.springframework.boot.actuate.autoconfigure.observation.graphql.GraphQlObservationAutoConfiguration",
+            "org.springframework.boot.autoconfigure.graphql.security.GraphQlWebMvcSecurityAutoConfiguration",
+        )
     }
 
     @Test
     fun `Security autoconfig can be enabled`() {
         val env = StandardEnvironment()
-        env.propertySources.addLast(MapPropertySource("application-props", mapOf(Pair("dgs.springgraphql.autoconfiguration.graphqlwebmvcsecurity.enabled", "true"))))
+        env.propertySources.addLast(
+            MapPropertySource(
+                "application-props",
+                mapOf(Pair("dgs.springgraphql.autoconfiguration.graphqlwebmvcsecurity.enabled", "true")),
+            ),
+        )
 
         ExcludeAutoConfigurationsEnvironmentPostProcessor().postProcessEnvironment(env, SpringApplication())
         assertThat(env.getProperty("spring.autoconfigure.exclude"))
@@ -28,7 +38,9 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessorTest {
     @Test
     fun `Observation autoconfig can be enabled`() {
         val env = StandardEnvironment()
-        env.propertySources.addLast(MapPropertySource("application-props", mapOf(Pair("dgs.springgraphql.autoconfiguration.graphqlobservation.enabled", "true"))))
+        env.propertySources.addLast(
+            MapPropertySource("application-props", mapOf(Pair("dgs.springgraphql.autoconfiguration.graphqlobservation.enabled", "true"))),
+        )
 
         ExcludeAutoConfigurationsEnvironmentPostProcessor().postProcessEnvironment(env, SpringApplication())
         assertThat(env.getProperty("spring.autoconfigure.exclude"))
@@ -46,7 +58,7 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessorTest {
             .contains(
                 "someexclude",
                 "org.springframework.boot.actuate.autoconfigure.observation.graphql.GraphQlObservationAutoConfiguration",
-                "org.springframework.boot.autoconfigure.graphql.security.GraphQlWebMvcSecurityAutoConfiguration"
+                "org.springframework.boot.autoconfigure.graphql.security.GraphQlWebMvcSecurityAutoConfiguration",
             )
     }
 }

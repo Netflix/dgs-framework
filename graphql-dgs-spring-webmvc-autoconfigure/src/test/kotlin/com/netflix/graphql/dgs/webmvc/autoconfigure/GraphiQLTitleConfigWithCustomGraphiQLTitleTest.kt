@@ -25,16 +25,18 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = ["dgs.graphql.graphiql.title=Custom GraphiQL Title"]
+    properties = ["dgs.graphql.graphiql.title=Custom GraphiQL Title"],
 )
-class GraphiQLTitleConfigWithCustomGraphiQLTitleTest(@Autowired val restTemplate: TestRestTemplate) {
-
+class GraphiQLTitleConfigWithCustomGraphiQLTitleTest(
+    @Autowired val restTemplate: TestRestTemplate,
+) {
     @Test
     fun customGraphiQLTitle() {
-        val entity = restTemplate.getForEntity(
-            "/graphiql",
-            String::class.java
-        )
+        val entity =
+            restTemplate.getForEntity(
+                "/graphiql",
+                String::class.java,
+            )
         assertTrue(entity.statusCode.is2xxSuccessful)
         Assertions.assertThat(entity.body).isNotNull.contains("Custom GraphiQL Title")
     }
