@@ -30,6 +30,7 @@ import org.springframework.core.convert.converter.GenericConverter
 import org.springframework.core.convert.support.DefaultConversionService
 import org.springframework.util.CollectionUtils
 import org.springframework.util.ReflectionUtils
+import java.lang.reflect.Constructor
 import java.lang.reflect.Type
 import java.util.Optional
 import kotlin.reflect.KClass
@@ -142,6 +143,10 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
             return inputMap as T
         }
 
+        if (targetClass.isRecord) {
+            return handleRecordClass(inputMap, targetClass)
+        }
+
         val ctor = ReflectionUtils.accessibleConstructor(targetClass)
         val instance = ctor.newInstance()
         val setterAccessor = setterAccessor(instance)
@@ -173,6 +178,24 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
         }
 
         return instance
+    }
+
+    private fun <T> handleRecordClass(inputMap: Map<String, Any?>, targetClass: Class<T>): T {
+        val recordComponents = targetClass.recordComponents
+        val args = arrayOfNulls<Any?>(recordComponents.size)
+        for ((index, component) in recordComponents.withIndex()) {
+            if (component.name in inputMap) {
+                args[index] = maybeConvert(inputMap[component.name], component.genericType)
+            }
+        }
+        @Suppress("UNCHECKED_CAST")
+        val ctor = targetClass.declaredConstructors.first() as Constructor<T>
+        ctor.trySetAccessible()
+        try {
+            return ctor.newInstance(*args)
+        } catch (exc: ReflectiveOperationException) {
+            throw DgsInvalidInputArgumentException("Failed to construct record, class=${targetClass.simpleName}", exc)
+        }
     }
 
     private fun <T> fieldAccessor(instance: T?): ConfigurablePropertyAccessor {
