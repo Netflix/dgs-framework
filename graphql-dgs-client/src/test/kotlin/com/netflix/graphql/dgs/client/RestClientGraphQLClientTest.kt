@@ -54,13 +54,12 @@ import java.util.Locale
     classes = [
         DgsAutoConfiguration::class,
         DgsWebMvcAutoConfiguration::class,
-        RestClientGraphQLClientTest.TestApp::class
+        RestClientGraphQLClientTest.TestApp::class,
     ],
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
 @EnableAutoConfiguration(exclude = [DgsGraphQLSSEAutoConfig::class])
 class RestClientGraphQLClientTest {
-
     @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
     @LocalServerPort
     lateinit var port: Integer
@@ -85,9 +84,10 @@ class RestClientGraphQLClientTest {
 
     @Test
     fun `Extra header can be provided`() {
-        val client = RestClientGraphQLClient(restClient) { headers ->
-            headers.add("myheader", "test")
-        }
+        val client =
+            RestClientGraphQLClient(restClient) { headers ->
+                headers.add("myheader", "test")
+            }
 
         val result = client.executeQuery("{withHeader}").extractValue<String>("withHeader")
         assertThat(result).isEqualTo("Header value: test")
@@ -97,9 +97,11 @@ class RestClientGraphQLClientTest {
     fun `Request parameters can be added, per request`() {
         restClient = restClientBuilder.baseUrl("http://localhost:$port/graphql?q1=one").build()
         val client = RestClientGraphQLClient(restClient)
-        val result = client.executeQuery(
-            query = "{ withUriParam }"
-        ).extractValue<String>("withUriParam")
+        val result =
+            client
+                .executeQuery(
+                    query = "{ withUriParam }",
+                ).extractValue<String>("withUriParam")
 
         assertThat(result).isEqualTo("Parameter q1: one")
     }
@@ -115,73 +117,71 @@ class RestClientGraphQLClientTest {
 
     @Test
     fun `Custom ObjectMapper can be supplied to the client`() {
-        val mapper: ObjectMapper = Jackson2ObjectMapperBuilder.json()
-            .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            .build()
+        val mapper: ObjectMapper =
+            Jackson2ObjectMapperBuilder
+                .json()
+                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .build()
         val now = LocalDateTime.parse("2024-12-12T12:12:12.12")
         val client = RestClientGraphQLClient(restClient, mapper)
-        val result = client.executeQuery(
-            "query TimeQuery(${'$'}input: DateTime!) { echoTime(time: ${'$'}input) }",
-            mapOf("input" to now)
-        )
+        val result =
+            client.executeQuery(
+                "query TimeQuery(${'$'}input: DateTime!) { echoTime(time: ${'$'}input) }",
+                mapOf("input" to now),
+            )
         assertThat(result.extractValueAsObject("echoTime", LocalDateTime::class.java)).isEqualTo(now)
     }
 
     @SpringBootApplication
     internal open class TestApp {
-
         @DgsComponent
         class SubscriptionDataFetcher {
             @DgsQuery
-            fun hello(): String {
-                return "Hi!"
-            }
+            fun hello(): String = "Hi!"
 
             @DgsQuery
-            fun error(): String {
-                throw RuntimeException("Broken!")
-            }
+            fun error(): String = throw RuntimeException("Broken!")
 
             @DgsQuery
-            fun withHeader(@RequestHeader myheader: String): String {
-                return "Header value: $myheader"
-            }
+            fun withHeader(
+                @RequestHeader myheader: String,
+            ): String = "Header value: $myheader"
 
             @DgsQuery
-            fun withUriParam(@RequestParam("q1") param: String): String {
-                return "Parameter q1: $param"
-            }
+            fun withUriParam(
+                @RequestParam("q1") param: String,
+            ): String = "Parameter q1: $param"
 
             @DgsQuery
-            fun echoTime(@InputArgument time: LocalDateTime): LocalDateTime {
-                return time
-            }
+            fun echoTime(
+                @InputArgument time: LocalDateTime,
+            ): LocalDateTime = time
 
             @DgsRuntimeWiring
             fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
                 return builder.scalar(
                     ExtendedScalars.DateTime.transform {
-                        it.coercing(object : Coercing<LocalDateTime, String> {
-                            override fun parseValue(
-                                input: Any,
-                                graphQLContext: GraphQLContext,
-                                locale: Locale
-                            ): LocalDateTime? {
-                                return LocalDateTime.parse(input.toString(), DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-                            }
+                        it.coercing(
+                            object : Coercing<LocalDateTime, String> {
+                                override fun parseValue(
+                                    input: Any,
+                                    graphQLContext: GraphQLContext,
+                                    locale: Locale,
+                                ): LocalDateTime? = LocalDateTime.parse(input.toString(), DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
-                            override fun serialize(
-                                dataFetcherResult: Any,
-                                graphQLContext: GraphQLContext,
-                                locale: Locale
-                            ): String? {
-                                if (dataFetcherResult is LocalDateTime) {
-                                    return dataFetcherResult.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                                override fun serialize(
+                                    dataFetcherResult: Any,
+                                    graphQLContext: GraphQLContext,
+                                    locale: Locale,
+                                ): String? {
+                                    if (dataFetcherResult is LocalDateTime) {
+                                        return dataFetcherResult.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                                    }
+                                    throw CoercingSerializeException()
                                 }
-                                throw CoercingSerializeException()
-                            }
-                        })
-                    }
+                            },
+                        )
+                    },
                 )
             }
 
@@ -190,7 +190,8 @@ class RestClientGraphQLClientTest {
                 val schemaParser = SchemaParser()
 
                 @Language("graphql")
-                val gqlSchema = """
+                val gqlSchema =
+                    """
                 scalar DateTime
                 type Query {
                     hello: String 
@@ -199,7 +200,7 @@ class RestClientGraphQLClientTest {
                     error: String
                     echoTime(time: DateTime): DateTime
                 }
-                """.trimMargin()
+                    """.trimMargin()
                 return schemaParser.parse(gqlSchema)
             }
         }

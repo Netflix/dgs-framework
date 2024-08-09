@@ -32,12 +32,11 @@ import reactor.test.StepVerifier
 
 @SpringBootTest(
     classes = [DgsAutoConfiguration::class, DgsGraphQLSSEAutoConfig::class, TestApp::class],
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
 @EnableAutoConfiguration(exclude = [DgsSSEAutoConfig::class, DgsWebSocketAutoConfig::class])
 @Disabled("Suspecting this test class to be the root cause of hanging builds")
 internal class GraphqlSSESubscriptionGraphQLClientTest {
-
     @LocalServerPort
     var port: Int? = null
 
@@ -47,7 +46,8 @@ internal class GraphqlSSESubscriptionGraphQLClientTest {
         val reactiveExecuteQuery =
             client.reactiveExecuteQuery("subscription {numbers}", emptyMap()).mapNotNull { r -> r.data["numbers"] }
 
-        StepVerifier.create(reactiveExecuteQuery)
+        StepVerifier
+            .create(reactiveExecuteQuery)
             .expectNext(1, 2, 3)
             .expectComplete()
             .verify()
@@ -58,7 +58,8 @@ internal class GraphqlSSESubscriptionGraphQLClientTest {
         val client = GraphqlSSESubscriptionGraphQLClient("/subscriptions", WebClient.create("http://localhost:$port"))
         val reactiveExecuteQuery = client.reactiveExecuteQuery("subscription {withError}", emptyMap())
 
-        StepVerifier.create(reactiveExecuteQuery)
+        StepVerifier
+            .create(reactiveExecuteQuery)
             .consumeNextWith { r -> r.hasErrors() }
             .expectComplete()
             .verify()

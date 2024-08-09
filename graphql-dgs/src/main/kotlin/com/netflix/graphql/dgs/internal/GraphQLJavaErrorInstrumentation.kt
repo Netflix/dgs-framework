@@ -14,7 +14,11 @@ import graphql.validation.ValidationErrorType
 import java.util.concurrent.CompletableFuture
 
 class GraphQLJavaErrorInstrumentation : SimplePerformantInstrumentation() {
-    override fun instrumentExecutionResult(executionResult: ExecutionResult, parameters: InstrumentationExecutionParameters?, state: InstrumentationState?): CompletableFuture<ExecutionResult> {
+    override fun instrumentExecutionResult(
+        executionResult: ExecutionResult,
+        parameters: InstrumentationExecutionParameters?,
+        state: InstrumentationState?,
+    ): CompletableFuture<ExecutionResult> {
         if (executionResult.errors.isNotEmpty()) {
             val newExecutionResult = ExecutionResult.newExecutionResult().from(executionResult)
             val graphqlErrors: MutableList<GraphQLError> = mutableListOf()
@@ -27,17 +31,20 @@ class GraphQLJavaErrorInstrumentation : SimplePerformantInstrumentation() {
                     extensions["classification"] = errorClassification.toSpecification(error)
                 }
 
-                if (error.errorType == graphql.ErrorType.ValidationError || error.errorType == graphql.ErrorType.InvalidSyntax ||
-                    error.errorType == graphql.ErrorType.NullValueInNonNullableField || error.errorType == graphql.ErrorType.OperationNotSupported ||
+                if (error.errorType == graphql.ErrorType.ValidationError ||
+                    error.errorType == graphql.ErrorType.InvalidSyntax ||
+                    error.errorType == graphql.ErrorType.NullValueInNonNullableField ||
+                    error.errorType == graphql.ErrorType.OperationNotSupported ||
                     error.errorType == graphql.ErrorType.ExecutionAborted
                 ) {
                     val path = if (error is ValidationError) error.queryPath else error.path
-                    val graphqlErrorBuilder = TypedGraphQLError
-                        .newBadRequestBuilder()
-                        .locations(error.locations)
-                        .path(path)
-                        .message(error.message)
-                        .extensions(extensions)
+                    val graphqlErrorBuilder =
+                        TypedGraphQLError
+                            .newBadRequestBuilder()
+                            .locations(error.locations)
+                            .path(path)
+                            .message(error.message)
+                            .extensions(extensions)
 
                     if (error is ValidationError) {
                         if (error.validationErrorType == ValidationErrorType.FieldUndefined) {
@@ -52,13 +59,14 @@ class GraphQLJavaErrorInstrumentation : SimplePerformantInstrumentation() {
                     }
                     graphqlErrors.add(graphqlErrorBuilder.build())
                 } else if (error.errorType == graphql.ErrorType.DataFetchingException) {
-                    val graphqlErrorBuilder = TypedGraphQLError
-                        .newBuilder()
-                        .errorType(ErrorType.INTERNAL)
-                        .errorDetail(ErrorDetail.Common.SERVICE_ERROR)
-                        .locations(error.locations)
-                        .message(error.message)
-                        .extensions(error.extensions)
+                    val graphqlErrorBuilder =
+                        TypedGraphQLError
+                            .newBuilder()
+                            .errorType(ErrorType.INTERNAL)
+                            .errorDetail(ErrorDetail.Common.SERVICE_ERROR)
+                            .locations(error.locations)
+                            .message(error.message)
+                            .extensions(error.extensions)
                     if (error is SerializationError) {
                         graphqlErrorBuilder.errorDetail(ErrorDetail.Common.SERIALIZATION_ERROR)
                     }

@@ -3,7 +3,9 @@ package com.netflix.graphql.types.subscription.websockets
 /**
  * `graphql-ws` expected and standard close codes of the [GraphQL over WebSocket Protocol](https://github.com/enisdenjo/graphql-ws/blob/master/PROTOCOL.md).
  */
-enum class CloseCode(val code: Int) {
+enum class CloseCode(
+    val code: Int,
+) {
     InternalServerError(4500),
     BadRequest(4400),
 
@@ -16,5 +18,5 @@ enum class CloseCode(val code: Int) {
 
     /** Subscriber distinction is very important */
     SubscriberAlreadyExists(4409),
-    TooManyInitialisationRequests(4429);
+    TooManyInitialisationRequests(4429),
 }

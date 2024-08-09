@@ -24,28 +24,25 @@ import java.util.function.Function
 
 /** [LimitedTagMetricResolver] backed by Spectator's Cardinality Limiters. */
 class SpectatorLimitedTagMetricResolver(
-    private val tagsProperties: DgsGraphQLMetricsProperties.TagsProperties
+    private val tagsProperties: DgsGraphQLMetricsProperties.TagsProperties,
 ) : LimitedTagMetricResolver {
-
     private val dynamicTags = ConcurrentHashMap<String, Function<String, String>>()
 
-    override fun tag(key: String, value: String): Optional<Tag> {
+    override fun tag(
+        key: String,
+        value: String,
+    ): Optional<Tag> {
         val prop = tagsProperties.limiter
         val limiter = dynamicTags.getOrPut(key) { resolveCardinalityLimiter(prop) }
         return Optional.of(Tag.of(key, limiter.apply(value)))
     }
 
-    private fun resolveCardinalityLimiter(
-        properties: DgsGraphQLMetricsProperties.CardinalityLimiterProperties
-    ): Function<String, String> {
-        return when (properties.kind) {
+    private fun resolveCardinalityLimiter(properties: DgsGraphQLMetricsProperties.CardinalityLimiterProperties): Function<String, String> =
+        when (properties.kind) {
             DgsGraphQLMetricsProperties.CardinalityLimiterKind.FIRST -> CardinalityLimiters.first(properties.limit)
             DgsGraphQLMetricsProperties.CardinalityLimiterKind.FREQUENCY -> CardinalityLimiters.mostFrequent(properties.limit)
             DgsGraphQLMetricsProperties.CardinalityLimiterKind.ROLLUP -> CardinalityLimiters.rollup(properties.limit)
         }
-    }
 
-    override fun toString(): String {
-        return "SpectatorLimitedTagMetricResolver(tagsProperties=$tagsProperties, dynamicTags=$dynamicTags)"
-    }
+    override fun toString(): String = "SpectatorLimitedTagMetricResolver(tagsProperties=$tagsProperties, dynamicTags=$dynamicTags)"
 }

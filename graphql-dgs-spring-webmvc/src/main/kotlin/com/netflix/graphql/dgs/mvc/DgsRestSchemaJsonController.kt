@@ -34,19 +34,23 @@ import org.springframework.web.bind.annotation.RestController
  * Do not manually extend this class.
  */
 @RestController
-open class DgsRestSchemaJsonController(open val schemaProvider: DgsSchemaProvider) {
-
+open class DgsRestSchemaJsonController(
+    open val schemaProvider: DgsSchemaProvider,
+) {
     // The @ConfigurationProperties bean name is <prefix>-<fqn>
     @RequestMapping(
         "#{@'dgs.graphql-com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcConfigurationProperties'.schemaJson.path}",
-        produces = [ MediaType.APPLICATION_JSON_VALUE ]
+        produces = [ MediaType.APPLICATION_JSON_VALUE ],
     )
     fun schema(): String {
         val graphQLSchema: GraphQLSchema = schemaProvider.schema().graphQLSchema
         val graphQL = GraphQL.newGraphQL(graphQLSchema).build()
 
-        val executionInput: ExecutionInput = ExecutionInput.newExecutionInput().query(IntrospectionQuery.INTROSPECTION_QUERY)
-            .build()
+        val executionInput: ExecutionInput =
+            ExecutionInput
+                .newExecutionInput()
+                .query(IntrospectionQuery.INTROSPECTION_QUERY)
+                .build()
         val execute: ExecutionResult = graphQL.execute(executionInput)
 
         return mapper.writeValueAsString(execute.toSpecification())

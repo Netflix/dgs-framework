@@ -54,31 +54,42 @@ class DgsDataLoaderProvider(
     private val dataLoaderOptionsProvider: DgsDataLoaderOptionsProvider = DefaultDataLoaderOptionsProvider(),
     private val scheduledExecutorService: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
     private val scheduleDuration: Duration = Duration.ofMillis(10),
-    private val enableTickerMode: Boolean = false
+    private val enableTickerMode: Boolean = false,
 ) {
-
-    private data class LoaderHolder<T>(val theLoader: T, val annotation: DgsDataLoader, val name: String, val dispatchPredicate: DispatchPredicate? = null)
+    private data class LoaderHolder<T>(
+        val theLoader: T,
+        val annotation: DgsDataLoader,
+        val name: String,
+        val dispatchPredicate: DispatchPredicate? = null,
+    )
 
     private val batchLoaders = mutableListOf<LoaderHolder<BatchLoader<*, *>>>()
     private val batchLoadersWithContext = mutableListOf<LoaderHolder<BatchLoaderWithContext<*, *>>>()
     private val mappedBatchLoaders = mutableListOf<LoaderHolder<MappedBatchLoader<*, *>>>()
     private val mappedBatchLoadersWithContext = mutableListOf<LoaderHolder<MappedBatchLoaderWithContext<*, *>>>()
 
-    fun buildRegistry(): DataLoaderRegistry {
-        return buildRegistryWithContextSupplier { null }
-    }
+    fun buildRegistry(): DataLoaderRegistry = buildRegistryWithContextSupplier { null }
 
     fun <T> buildRegistryWithContextSupplier(contextSupplier: Supplier<T>): DataLoaderRegistry {
         // We need to set the default predicate to 20ms and individually override with DISPATCH_ALWAYS or the custom dispatch predicate, if specified
         // The data loader ends up applying the overall dispatch predicate when the custom dispatch predicate is not true otherwise.
-        val registry = ScheduledDataLoaderRegistry.newScheduledRegistry().scheduledExecutorService(scheduledExecutorService).tickerMode(enableTickerMode).schedule(scheduleDuration).dispatchPredicate(DispatchPredicate.DISPATCH_NEVER).build()
+        val registry =
+            ScheduledDataLoaderRegistry
+                .newScheduledRegistry()
+                .scheduledExecutorService(
+                    scheduledExecutorService,
+                ).tickerMode(enableTickerMode)
+                .schedule(scheduleDuration)
+                .dispatchPredicate(DispatchPredicate.DISPATCH_NEVER)
+                .build()
 
-        val totalTime = measureTimeMillis {
-            batchLoaders.forEach { registerDataLoader(it, registry, contextSupplier, extensionProviders) }
-            batchLoadersWithContext.forEach { registerDataLoader(it, registry, contextSupplier, extensionProviders) }
-            mappedBatchLoaders.forEach { registerDataLoader(it, registry, contextSupplier, extensionProviders) }
-            mappedBatchLoadersWithContext.forEach { registerDataLoader(it, registry, contextSupplier, extensionProviders) }
-        }
+        val totalTime =
+            measureTimeMillis {
+                batchLoaders.forEach { registerDataLoader(it, registry, contextSupplier, extensionProviders) }
+                batchLoadersWithContext.forEach { registerDataLoader(it, registry, contextSupplier, extensionProviders) }
+                mappedBatchLoaders.forEach { registerDataLoader(it, registry, contextSupplier, extensionProviders) }
+                mappedBatchLoadersWithContext.forEach { registerDataLoader(it, registry, contextSupplier, extensionProviders) }
+            }
         logger.debug("Created DGS dataloader registry in {}ms", totalTime)
         return registry
     }
@@ -94,7 +105,9 @@ class DgsDataLoaderProvider(
         dataLoaders.values.forEach { dgsComponent ->
             val javaClass = AopUtils.getTargetClass(dgsComponent)
 
-            javaClass.declaredFields.asSequence().filter { it.isAnnotationPresent(DgsDataLoader::class.java) }
+            javaClass.declaredFields
+                .asSequence()
+                .filter { it.isAnnotationPresent(DgsDataLoader::class.java) }
                 .forEach { field ->
                     if (AopUtils.isAopProxy(dgsComponent)) {
                         throw UnsupportedSecuredDataLoaderException(dgsComponent::class.java)
@@ -137,8 +150,14 @@ class DgsDataLoaderProvider(
         }
     }
 
-    private fun <T : Any> addDataLoaders(dgsComponent: T, targetClass: Class<*>, annotation: DgsDataLoader, dispatchPredicate: DispatchPredicate?) {
+    private fun <T : Any> addDataLoaders(
+        dgsComponent: T,
+        targetClass: Class<*>,
+        annotation: DgsDataLoader,
+        dispatchPredicate: DispatchPredicate?,
+    ) {
         val name = DataLoaderNameUtil.getDataLoaderName(targetClass, annotation)
+
         fun <T : Any> createHolder(t: T): LoaderHolder<T> =
             LoaderHolder(t, annotation, DataLoaderNameUtil.getDataLoaderName(targetClass, annotation), dispatchPredicate)
 
@@ -151,17 +170,22 @@ class DgsDataLoaderProvider(
         }
     }
 
-    private fun runCustomizers(originalDataLoader: Any, name: String, dgsComponentClass: Class<*>): Any {
+    private fun runCustomizers(
+        originalDataLoader: Any,
+        name: String,
+        dgsComponentClass: Class<*>,
+    ): Any {
         var dataLoader = originalDataLoader
 
         customizers.forEach {
-            dataLoader = when (dataLoader) {
-                is BatchLoader<*, *> -> it.provide(dataLoader as BatchLoader<*, *>, name)
-                is BatchLoaderWithContext<*, *> -> it.provide(dataLoader as BatchLoaderWithContext<*, *>, name)
-                is MappedBatchLoader<*, *> -> it.provide(dataLoader as MappedBatchLoader<*, *>, name)
-                is MappedBatchLoaderWithContext<*, *> -> it.provide(dataLoader as MappedBatchLoaderWithContext<*, *>, name)
-                else -> throw InvalidDataLoaderTypeException(dgsComponentClass)
-            }
+            dataLoader =
+                when (dataLoader) {
+                    is BatchLoader<*, *> -> it.provide(dataLoader as BatchLoader<*, *>, name)
+                    is BatchLoaderWithContext<*, *> -> it.provide(dataLoader as BatchLoaderWithContext<*, *>, name)
+                    is MappedBatchLoader<*, *> -> it.provide(dataLoader as MappedBatchLoader<*, *>, name)
+                    is MappedBatchLoaderWithContext<*, *> -> it.provide(dataLoader as MappedBatchLoaderWithContext<*, *>, name)
+                    else -> throw InvalidDataLoaderTypeException(dgsComponentClass)
+                }
         }
 
         return dataLoader
@@ -172,7 +196,7 @@ class DgsDataLoaderProvider(
         dgsDataLoader: DgsDataLoader,
         dataLoaderName: String,
         dataLoaderRegistry: DataLoaderRegistry,
-        extensionProviders: Iterable<DataLoaderInstrumentationExtensionProvider>
+        extensionProviders: Iterable<DataLoaderInstrumentationExtensionProvider>,
     ): DataLoader<*, *> {
         val options = dataLoaderOptionsProvider.getOptions(dataLoaderName, dgsDataLoader)
 
@@ -189,7 +213,7 @@ class DgsDataLoaderProvider(
         dgsDataLoader: DgsDataLoader,
         dataLoaderName: String,
         dataLoaderRegistry: DataLoaderRegistry,
-        extensionProviders: Iterable<DataLoaderInstrumentationExtensionProvider>
+        extensionProviders: Iterable<DataLoaderInstrumentationExtensionProvider>,
     ): DataLoader<*, *> {
         val options = dataLoaderOptionsProvider.getOptions(dataLoaderName, dgsDataLoader)
 
@@ -207,10 +231,12 @@ class DgsDataLoaderProvider(
         dataLoaderName: String,
         supplier: Supplier<T>,
         dataLoaderRegistry: DataLoaderRegistry,
-        extensionProviders: Iterable<DataLoaderInstrumentationExtensionProvider>
+        extensionProviders: Iterable<DataLoaderInstrumentationExtensionProvider>,
     ): DataLoader<*, *> {
-        val options = dataLoaderOptionsProvider.getOptions(dataLoaderName, dgsDataLoader)
-            .setBatchLoaderContextProvider(supplier::get)
+        val options =
+            dataLoaderOptionsProvider
+                .getOptions(dataLoaderName, dgsDataLoader)
+                .setBatchLoaderContextProvider(supplier::get)
 
         if (batchLoader is DgsDataLoaderRegistryConsumer) {
             batchLoader.setDataLoaderRegistry(dataLoaderRegistry)
@@ -226,10 +252,12 @@ class DgsDataLoaderProvider(
         dataLoaderName: String,
         supplier: Supplier<T>,
         dataLoaderRegistry: DataLoaderRegistry,
-        extensionProviders: Iterable<DataLoaderInstrumentationExtensionProvider>
+        extensionProviders: Iterable<DataLoaderInstrumentationExtensionProvider>,
     ): DataLoader<*, *> {
-        val options = dataLoaderOptionsProvider.getOptions(dataLoaderName, dgsDataLoader)
-            .setBatchLoaderContextProvider(supplier::get)
+        val options =
+            dataLoaderOptionsProvider
+                .getOptions(dataLoaderName, dgsDataLoader)
+                .setBatchLoaderContextProvider(supplier::get)
 
         if (batchLoader is DgsDataLoaderRegistryConsumer) {
             batchLoader.setDataLoaderRegistry(dataLoaderRegistry)
@@ -243,15 +271,39 @@ class DgsDataLoaderProvider(
         holder: LoaderHolder<*>,
         registry: ScheduledDataLoaderRegistry,
         contextSupplier: Supplier<*>,
-        extensionProviders: Iterable<DataLoaderInstrumentationExtensionProvider>
+        extensionProviders: Iterable<DataLoaderInstrumentationExtensionProvider>,
     ) {
-        val loader = when (holder.theLoader) {
-            is BatchLoader<*, *> -> createDataLoader(holder.theLoader, holder.annotation, holder.name, registry, extensionProviders)
-            is BatchLoaderWithContext<*, *> -> createDataLoader(holder.theLoader, holder.annotation, holder.name, contextSupplier, registry, extensionProviders)
-            is MappedBatchLoader<*, *> -> createDataLoader(holder.theLoader, holder.annotation, holder.name, registry, extensionProviders)
-            is MappedBatchLoaderWithContext<*, *> -> createDataLoader(holder.theLoader, holder.annotation, holder.name, contextSupplier, registry, extensionProviders)
-            else -> throw IllegalArgumentException("Data loader ${holder.name} has unknown type")
-        }
+        val loader =
+            when (holder.theLoader) {
+                is BatchLoader<*, *> -> createDataLoader(holder.theLoader, holder.annotation, holder.name, registry, extensionProviders)
+                is BatchLoaderWithContext<*, *> ->
+                    createDataLoader(
+                        holder.theLoader,
+                        holder.annotation,
+                        holder.name,
+                        contextSupplier,
+                        registry,
+                        extensionProviders,
+                    )
+                is MappedBatchLoader<*, *> ->
+                    createDataLoader(
+                        holder.theLoader,
+                        holder.annotation,
+                        holder.name,
+                        registry,
+                        extensionProviders,
+                    )
+                is MappedBatchLoaderWithContext<*, *> ->
+                    createDataLoader(
+                        holder.theLoader,
+                        holder.annotation,
+                        holder.name,
+                        contextSupplier,
+                        registry,
+                        extensionProviders,
+                    )
+                else -> throw IllegalArgumentException("Data loader ${holder.name} has unknown type")
+            }
         // detect and throw an exception if multiple data loaders use the same name
         if (registry.keys.contains(holder.name)) {
             throw MultipleDataLoadersDefinedException(holder.theLoader.javaClass)
@@ -267,7 +319,7 @@ class DgsDataLoaderProvider(
     private inline fun <reified T> wrappedDataLoader(
         loader: T,
         name: String,
-        extensionProviders: Iterable<DataLoaderInstrumentationExtensionProvider>
+        extensionProviders: Iterable<DataLoaderInstrumentationExtensionProvider>,
     ): T {
         try {
             when (loader) {

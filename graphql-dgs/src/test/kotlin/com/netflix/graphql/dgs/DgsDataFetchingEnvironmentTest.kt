@@ -32,7 +32,6 @@ import java.util.concurrent.CompletableFuture
 import kotlin.reflect.KClass
 
 internal class DgsDataFetchingEnvironmentTest {
-
     private val contextRunner = ApplicationContextRunner()
 
     @DgsComponent
@@ -72,8 +71,9 @@ internal class DgsDataFetchingEnvironmentTest {
     class HelloFetcherMapped {
         @DgsData(parentType = "Query", field = "hello")
         fun someFetcher(dfe: DgsDataFetchingEnvironment): CompletableFuture<String> {
-            val loader = dfe.getDataLoader<String, String>("exampleMappedLoader")
-                ?: throw AssertionError("exampleMappedLoader not found")
+            val loader =
+                dfe.getDataLoader<String, String>("exampleMappedLoader")
+                    ?: throw AssertionError("exampleMappedLoader not found")
             loader.load("a")
             loader.load("b")
             return loader.load("c")
@@ -95,8 +95,9 @@ internal class DgsDataFetchingEnvironmentTest {
     class HelloFetcherWithBasicDfe {
         @DgsData(parentType = "Query", field = "hello")
         fun someFetcher(dfe: DataFetchingEnvironment): CompletableFuture<String> {
-            val loader = dfe.getDataLoader<String, String>("exampleLoader")
-                ?: throw AssertionError("exampleLoader not found")
+            val loader =
+                dfe.getDataLoader<String, String>("exampleLoader")
+                    ?: throw AssertionError("exampleLoader not found")
             loader.load("a")
             loader.load("b")
             return loader.load("c")
@@ -110,19 +111,22 @@ internal class DgsDataFetchingEnvironmentTest {
             provider.findDataLoaders()
             val dataLoaderRegistry = provider.buildRegistry()
 
-            val schemaProvider = DgsSchemaProvider(
-                applicationContext = context,
-                federationResolver = Optional.empty(),
-                existingTypeDefinitionRegistry = Optional.empty(),
-                methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver()))
-            )
+            val schemaProvider =
+                DgsSchemaProvider(
+                    applicationContext = context,
+                    federationResolver = Optional.empty(),
+                    existingTypeDefinitionRegistry = Optional.empty(),
+                    methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver())),
+                )
             val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
 
-            val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
-                .query("{hello}")
-                .dataLoaderRegistry(dataLoaderRegistry)
-                .build()
+            val executionInput: ExecutionInput =
+                ExecutionInput
+                    .newExecutionInput()
+                    .query("{hello}")
+                    .dataLoaderRegistry(dataLoaderRegistry)
+                    .build()
             val executionResult = build.execute(executionInput)
             Assertions.assertTrue(executionResult.isDataPresent)
             val result = executionResult.getData() as Map<String, String>
@@ -137,19 +141,22 @@ internal class DgsDataFetchingEnvironmentTest {
             provider.findDataLoaders()
             val dataLoaderRegistry = provider.buildRegistry()
 
-            val schemaProvider = DgsSchemaProvider(
-                applicationContext = context,
-                federationResolver = Optional.empty(),
-                existingTypeDefinitionRegistry = Optional.empty(),
-                methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver()))
-            )
+            val schemaProvider =
+                DgsSchemaProvider(
+                    applicationContext = context,
+                    federationResolver = Optional.empty(),
+                    existingTypeDefinitionRegistry = Optional.empty(),
+                    methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver())),
+                )
             val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
 
-            val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
-                .query("{hello}")
-                .dataLoaderRegistry(dataLoaderRegistry)
-                .build()
+            val executionInput: ExecutionInput =
+                ExecutionInput
+                    .newExecutionInput()
+                    .query("{hello}")
+                    .dataLoaderRegistry(dataLoaderRegistry)
+                    .build()
             val executionResult = build.execute(executionInput)
             Assertions.assertTrue(executionResult.isDataPresent)
             val result = executionResult.getData() as Map<String, String>
@@ -164,19 +171,22 @@ internal class DgsDataFetchingEnvironmentTest {
             provider.findDataLoaders()
             val dataLoaderRegistry = provider.buildRegistry()
 
-            val schemaProvider = DgsSchemaProvider(
-                applicationContext = context,
-                federationResolver = Optional.empty(),
-                existingTypeDefinitionRegistry = Optional.empty(),
-                methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver()))
-            )
+            val schemaProvider =
+                DgsSchemaProvider(
+                    applicationContext = context,
+                    federationResolver = Optional.empty(),
+                    existingTypeDefinitionRegistry = Optional.empty(),
+                    methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver())),
+                )
             val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
 
-            val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
-                .query("{hello}")
-                .dataLoaderRegistry(dataLoaderRegistry)
-                .build()
+            val executionInput: ExecutionInput =
+                ExecutionInput
+                    .newExecutionInput()
+                    .query("{hello}")
+                    .dataLoaderRegistry(dataLoaderRegistry)
+                    .build()
             val executionResult = build.execute(executionInput)
             Assertions.assertTrue(executionResult.isDataPresent)
             val result = executionResult.getData() as Map<String, String>
@@ -191,20 +201,23 @@ internal class DgsDataFetchingEnvironmentTest {
             provider.findDataLoaders()
             val dataLoaderRegistry = provider.buildRegistry()
 
-            val schemaProvider = DgsSchemaProvider(
-                applicationContext = context,
-                federationResolver = Optional.empty(),
-                existingTypeDefinitionRegistry = Optional.empty(),
-                methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
-            )
+            val schemaProvider =
+                DgsSchemaProvider(
+                    applicationContext = context,
+                    federationResolver = Optional.empty(),
+                    existingTypeDefinitionRegistry = Optional.empty(),
+                    methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
+                )
 
             val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
 
-            val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
-                .query("{hello}")
-                .dataLoaderRegistry(dataLoaderRegistry)
-                .build()
+            val executionInput: ExecutionInput =
+                ExecutionInput
+                    .newExecutionInput()
+                    .query("{hello}")
+                    .dataLoaderRegistry(dataLoaderRegistry)
+                    .build()
             val executionResult = build.execute(executionInput)
             assert(executionResult.errors.size > 0)
         }
@@ -218,20 +231,23 @@ internal class DgsDataFetchingEnvironmentTest {
             provider.findDataLoaders()
             val dataLoaderRegistry = provider.buildRegistry()
 
-            val schemaProvider = DgsSchemaProvider(
-                applicationContext = context,
-                federationResolver = Optional.empty(),
-                existingTypeDefinitionRegistry = Optional.empty(),
-                methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver()))
-            )
+            val schemaProvider =
+                DgsSchemaProvider(
+                    applicationContext = context,
+                    federationResolver = Optional.empty(),
+                    existingTypeDefinitionRegistry = Optional.empty(),
+                    methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver())),
+                )
 
             val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
 
-            val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
-                .query("{hello}")
-                .dataLoaderRegistry(dataLoaderRegistry)
-                .build()
+            val executionInput: ExecutionInput =
+                ExecutionInput
+                    .newExecutionInput()
+                    .query("{hello}")
+                    .dataLoaderRegistry(dataLoaderRegistry)
+                    .build()
             val executionResult = build.execute(executionInput)
             Assertions.assertTrue(executionResult.isDataPresent)
             val result = executionResult.getData() as Map<String, String>
@@ -246,20 +262,23 @@ internal class DgsDataFetchingEnvironmentTest {
             provider.findDataLoaders()
             val dataLoaderRegistry = provider.buildRegistry()
 
-            val schemaProvider = DgsSchemaProvider(
-                applicationContext = context,
-                federationResolver = Optional.empty(),
-                existingTypeDefinitionRegistry = Optional.empty(),
-                methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver()))
-            )
+            val schemaProvider =
+                DgsSchemaProvider(
+                    applicationContext = context,
+                    federationResolver = Optional.empty(),
+                    existingTypeDefinitionRegistry = Optional.empty(),
+                    methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver())),
+                )
 
             val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
 
-            val executionInput: ExecutionInput = ExecutionInput.newExecutionInput()
-                .query("{hello}")
-                .dataLoaderRegistry(dataLoaderRegistry)
-                .build()
+            val executionInput: ExecutionInput =
+                ExecutionInput
+                    .newExecutionInput()
+                    .query("{hello}")
+                    .dataLoaderRegistry(dataLoaderRegistry)
+                    .build()
             val executionResult = build.execute(executionInput)
             Assertions.assertTrue(executionResult.isDataPresent)
             val result = executionResult.getData() as Map<String, String>

@@ -17,9 +17,9 @@
 package com.netflix.graphql.dgs.metrics.micrometer.utils
 
 import com.netflix.graphql.dgs.metrics.micrometer.DgsGraphQLMicrometerAutoConfiguration
+import com.netflix.graphql.dgs.metrics.micrometer.utils.SimpleQuerySignatureRepositoryTest.Companion.EXPECTED_FOO_SIG_HASH
 import com.netflix.graphql.dgs.metrics.micrometer.utils.SimpleQuerySignatureRepositoryTest.Companion.QUERY
 import com.netflix.graphql.dgs.metrics.micrometer.utils.SimpleQuerySignatureRepositoryTest.Companion.expectedFooDoc
-import com.netflix.graphql.dgs.metrics.micrometer.utils.SimpleQuerySignatureRepositoryTest.Companion.expectedFooSigHash
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -34,20 +34,19 @@ import org.springframework.cache.annotation.EnableCaching
 import java.util.*
 
 internal class CacheableQuerySignatureRepositoryTest {
-
     @Nested
     @SpringBootTest(
         classes = [
             DgsGraphQLMicrometerAutoConfiguration.MetricsPropertiesConfiguration::class,
             DgsGraphQLMicrometerAutoConfiguration.MeterRegistryConfiguration::class,
-            DgsGraphQLMicrometerAutoConfiguration.QuerySignatureRepositoryConfiguration::class
-        ]
+            DgsGraphQLMicrometerAutoConfiguration.QuerySignatureRepositoryConfiguration::class,
+        ],
     )
     inner class NoCacheManagerAvailable : BaseCacheableQuerySignatureRepositoryTest() {
         override fun assertCacheManager(
             expectedKey: CacheableQuerySignatureRepository.CacheKey,
             expectedValue: QuerySignatureRepository.QuerySignature,
-            optCacheManager: Optional<CacheManager>
+            optCacheManager: Optional<CacheManager>,
         ) {
             assertThat(optCacheManager).isEmpty
         }
@@ -57,24 +56,24 @@ internal class CacheableQuerySignatureRepositoryTest {
     @SpringBootTest(
         properties = [
             "spring.cache.cache-names=dgsQuerySignatureCache",
-            "spring.cache.caffeine.spec=maximumSize=500"
+            "spring.cache.caffeine.spec=maximumSize=500",
         ],
         classes = [
             CacheAutoConfiguration::class,
             DgsGraphQLMicrometerAutoConfiguration.MetricsPropertiesConfiguration::class,
             DgsGraphQLMicrometerAutoConfiguration.MeterRegistryConfiguration::class,
-            DgsGraphQLMicrometerAutoConfiguration.QuerySignatureRepositoryConfiguration::class
-        ]
+            DgsGraphQLMicrometerAutoConfiguration.QuerySignatureRepositoryConfiguration::class,
+        ],
     )
     @EnableCaching
-    inner class CacheManagerAvailableWithQuerySigCache :
-        BaseCacheableQuerySignatureRepositoryTest() {
+    inner class CacheManagerAvailableWithQuerySigCache : BaseCacheableQuerySignatureRepositoryTest() {
         override fun assertCacheManager(
             expectedKey: CacheableQuerySignatureRepository.CacheKey,
             expectedValue: QuerySignatureRepository.QuerySignature,
-            optCacheManager: Optional<CacheManager>
+            optCacheManager: Optional<CacheManager>,
         ) {
-            assertThat(optCacheManager).get()
+            assertThat(optCacheManager)
+                .get()
                 .extracting {
                     it.getCache(CacheableQuerySignatureRepository.QUERY_SIG_CACHE)?.get(expectedKey)?.get()
                 }.isEqualTo(expectedValue)
@@ -87,18 +86,18 @@ internal class CacheableQuerySignatureRepositoryTest {
             CacheAutoConfiguration::class,
             DgsGraphQLMicrometerAutoConfiguration.MetricsPropertiesConfiguration::class,
             DgsGraphQLMicrometerAutoConfiguration.MeterRegistryConfiguration::class,
-            DgsGraphQLMicrometerAutoConfiguration.QuerySignatureRepositoryConfiguration::class
-        ]
+            DgsGraphQLMicrometerAutoConfiguration.QuerySignatureRepositoryConfiguration::class,
+        ],
     )
     @EnableCaching
-    inner class CacheManagerAvailableWithNoQuerySigCache :
-        BaseCacheableQuerySignatureRepositoryTest() {
+    inner class CacheManagerAvailableWithNoQuerySigCache : BaseCacheableQuerySignatureRepositoryTest() {
         override fun assertCacheManager(
             expectedKey: CacheableQuerySignatureRepository.CacheKey,
             expectedValue: QuerySignatureRepository.QuerySignature,
-            optCacheManager: Optional<CacheManager>
+            optCacheManager: Optional<CacheManager>,
         ) {
-            assertThat(optCacheManager).get()
+            assertThat(optCacheManager)
+                .get()
                 .extracting {
                     it.getCache(CacheableQuerySignatureRepository.QUERY_SIG_CACHE)?.get(expectedKey)
                 }.isNull()
@@ -128,7 +127,7 @@ internal class CacheableQuerySignatureRepositoryTest {
             assertThat(optQuerySignature).isNotEmpty
             val sig = optQuerySignature.get()
             assertThat(sig.value).isEqualToNormalizingWhitespace(expectedFooDoc)
-            assertThat(sig.hash).isEqualTo(expectedFooSigHash)
+            assertThat(sig.hash).isEqualTo(EXPECTED_FOO_SIG_HASH)
 
             assertThat(repository.get(document, parameters)).isEqualTo(optQuerySignature)
 
@@ -142,7 +141,7 @@ internal class CacheableQuerySignatureRepositoryTest {
         abstract fun assertCacheManager(
             expectedKey: CacheableQuerySignatureRepository.CacheKey,
             expectedValue: QuerySignatureRepository.QuerySignature,
-            optCacheManager: Optional<CacheManager>
+            optCacheManager: Optional<CacheManager>,
         )
     }
 }

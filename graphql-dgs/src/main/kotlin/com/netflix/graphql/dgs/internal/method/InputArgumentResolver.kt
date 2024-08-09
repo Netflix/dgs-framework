@@ -27,23 +27,23 @@ import org.springframework.core.annotation.MergedAnnotation
  * Argument conversion responsibilities are handled by the supplied [InputObjectMapper].
  */
 class InputArgumentResolver(
-    inputObjectMapper: InputObjectMapper
+    inputObjectMapper: InputObjectMapper,
 ) : AbstractInputArgumentResolver(inputObjectMapper) {
-
-    override fun supportsParameter(parameter: MethodParameter): Boolean {
-        return parameter.hasParameterAnnotation(InputArgument::class.java)
-    }
+    override fun supportsParameter(parameter: MethodParameter): Boolean = parameter.hasParameterAnnotation(InputArgument::class.java)
 
     override fun resolveArgumentName(parameter: MethodParameter): String {
-        val annotation = parameter.getParameterAnnotation(InputArgument::class.java)
-            ?: throw IllegalArgumentException("Unsupported parameter type [${parameter.parameterType.name}]. supportsParameter should be called first.")
+        val annotation =
+            parameter.getParameterAnnotation(InputArgument::class.java)
+                ?: throw IllegalArgumentException(
+                    "Unsupported parameter type [${parameter.parameterType.name}]. supportsParameter should be called first.",
+                )
 
         val mergedAnnotation = MergedAnnotation.from(annotation).synthesize()
 
         return mergedAnnotation.name.ifBlank { parameter.parameterName }
             ?: throw IllegalArgumentException(
                 "Name for argument of type [${parameter.nestedParameterType.name}}" +
-                    " not specified, and parameter name information not found in class file either."
+                    " not specified, and parameter name information not found in class file either.",
             )
     }
 }

@@ -27,8 +27,12 @@ import org.springframework.web.reactive.config.EnableWebFlux
 @AutoConfigureWebTestClient
 @EnableWebFlux
 @SpringBootTest(
-    classes = [DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, WebRequestTestWithCustomEndpoint.ExampleImplementation::class],
-    properties = ["dgs.graphql.graphiql.title=Custom GraphiQL Title"]
+    classes = [
+        DgsWebFluxAutoConfiguration::class,
+        DgsAutoConfiguration::class,
+        WebRequestTestWithCustomEndpoint.ExampleImplementation::class,
+    ],
+    properties = ["dgs.graphql.graphiql.title=Custom GraphiQL Title"],
 )
 class GraphiQlCustomTitle {
     @Autowired
@@ -36,7 +40,9 @@ class GraphiQlCustomTitle {
 
     @Test
     fun customGraphiQlTitle() {
-        webTestClient.get().uri("/graphiql/index.html")
+        webTestClient
+            .get()
+            .uri("/graphiql/index.html")
             .exchange()
             .expectStatus()
             .isOk

@@ -34,89 +34,102 @@ class UnionDataFetcherTest {
     @MockK
     lateinit var applicationContextMock: ApplicationContext
 
-    data class MovieSearchResult(val title: String, val length: Int)
+    data class MovieSearchResult(
+        val title: String,
+        val length: Int,
+    )
 
-    data class SeriesSearchResult(val name: String, val episodes: Int)
+    data class SeriesSearchResult(
+        val name: String,
+        val episodes: Int,
+    )
 
-    val searchResultTypeResolver = object : Any() {
-        @DgsTypeResolver(name = "SearchResult")
-        fun searchResultTypes(result: Any): String {
-            return when (result) {
-                is MovieSearchResult -> "MovieSearchResult"
-                is SeriesSearchResult -> "SeriesSearchResult"
-                else -> throw RuntimeException("Unknown search result type")
-            }
+    val searchResultTypeResolver =
+        object : Any() {
+            @DgsTypeResolver(name = "SearchResult")
+            fun searchResultTypes(result: Any): String =
+                when (result) {
+                    is MovieSearchResult -> "MovieSearchResult"
+                    is SeriesSearchResult -> "SeriesSearchResult"
+                    else -> throw RuntimeException("Unknown search result type")
+                }
         }
-    }
 
-    val queryFetcher = object : Any() {
-        @DgsData(parentType = "Query", field = "search")
-        fun searchFetcher(): List<Any> {
-            return listOf(MovieSearchResult("Extraction", 90), SeriesSearchResult("The Witcher", 15))
+    val queryFetcher =
+        object : Any() {
+            @DgsData(parentType = "Query", field = "search")
+            fun searchFetcher(): List<Any> = listOf(MovieSearchResult("Extraction", 90), SeriesSearchResult("The Witcher", 15))
         }
-    }
 
-    val imdbFetcher = object : Any() {
-        @DgsData(parentType = "SearchResult", field = "imdbRating")
-        fun imdbRating(): Int {
-            return Random.nextInt(1, 5)
+    val imdbFetcher =
+        object : Any() {
+            @DgsData(parentType = "SearchResult", field = "imdbRating")
+            fun imdbRating(): Int = Random.nextInt(1, 5)
         }
-    }
 
     @Test
     fun testDataFetcherOnUnion() {
-        val provider = DgsSchemaProvider(
-            applicationContext = applicationContextMock,
-            federationResolver = Optional.empty(),
-            existingTypeDefinitionRegistry = Optional.empty(),
-            methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
-        )
+        val provider =
+            DgsSchemaProvider(
+                applicationContext = applicationContextMock,
+                federationResolver = Optional.empty(),
+                existingTypeDefinitionRegistry = Optional.empty(),
+                methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
+            )
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("queryResolver", queryFetcher), Pair("searchResultTypeResolver", searchResultTypeResolver), Pair("imdbFetcher", imdbFetcher))
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+            mapOf(
+                Pair("queryResolver", queryFetcher),
+                Pair("searchResultTypeResolver", searchResultTypeResolver),
+                Pair("imdbFetcher", imdbFetcher),
+            )
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
-        val schema = provider.schema(
-            """
-            type Query {
-                search: [SearchResult]
-            }
-            
-            union SearchResult = MovieSearchResult | SeriesSearchResult
-            
-            type MovieSearchResult {
-                title: String
-                length: Int
-                imdbRating: Int
-            }
-            
-            type SeriesSearchResult {
-                title: String
-                episodes: Int
-                imdbRating: Int
-            }
-            """.trimIndent()
-        ).graphQLSchema
+        val schema =
+            provider
+                .schema(
+                    """
+                    type Query {
+                        search: [SearchResult]
+                    }
+                    
+                    union SearchResult = MovieSearchResult | SeriesSearchResult
+                    
+                    type MovieSearchResult {
+                        title: String
+                        length: Int
+                        imdbRating: Int
+                    }
+                    
+                    type SeriesSearchResult {
+                        title: String
+                        episodes: Int
+                        imdbRating: Int
+                    }
+                    """.trimIndent(),
+                ).graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
-        val executionResult = build.execute(
-            """
-            query {
-                search {
-                    ...on MovieSearchResult {
-                        title
-                        length
-                        imdbRating
-                    }
-                    ...on SeriesSearchResult {
-                        title
-                        episodes
-                        imdbRating
+        val executionResult =
+            build.execute(
+                """
+                query {
+                    search {
+                        ...on MovieSearchResult {
+                            title
+                            length
+                            imdbRating
+                        }
+                        ...on SeriesSearchResult {
+                            title
+                            episodes
+                            imdbRating
+                        }
                     }
                 }
-            }
-            """.trimIndent()
-        )
+                """.trimIndent(),
+            )
         Assertions.assertEquals(0, executionResult.errors.size)
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, List<Map<String, *>>>>()

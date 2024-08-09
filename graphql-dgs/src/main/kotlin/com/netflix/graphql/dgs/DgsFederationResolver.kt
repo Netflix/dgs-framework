@@ -26,5 +26,6 @@ import graphql.schema.TypeResolver
  */
 interface DgsFederationResolver {
     fun entitiesFetcher(): DataFetcher<Any?>
+
     fun typeResolver(): TypeResolver
 }

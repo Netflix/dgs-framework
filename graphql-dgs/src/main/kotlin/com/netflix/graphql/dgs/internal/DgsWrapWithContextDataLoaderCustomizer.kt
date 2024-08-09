@@ -27,28 +27,35 @@ import org.dataloader.MappedBatchLoaderWithContext
 import java.util.concurrent.CompletionStage
 
 class DgsWrapWithContextDataLoaderCustomizer : DgsDataLoaderCustomizer {
-    override fun provide(original: BatchLoader<*, *>, name: String): Any {
-        return BatchLoaderWithContextWrapper(original)
-    }
+    override fun provide(
+        original: BatchLoader<*, *>,
+        name: String,
+    ): Any = BatchLoaderWithContextWrapper(original)
 
-    override fun provide(original: BatchLoaderWithContext<*, *>, name: String): Any {
-        return original
-    }
+    override fun provide(
+        original: BatchLoaderWithContext<*, *>,
+        name: String,
+    ): Any = original
 
-    override fun provide(original: MappedBatchLoader<*, *>, name: String): Any {
-        return MappedBatchLoaderWithContextWrapper(original)
-    }
+    override fun provide(
+        original: MappedBatchLoader<*, *>,
+        name: String,
+    ): Any = MappedBatchLoaderWithContextWrapper(original)
 
-    override fun provide(original: MappedBatchLoaderWithContext<*, *>, name: String): Any {
-        return original
-    }
+    override fun provide(
+        original: MappedBatchLoaderWithContext<*, *>,
+        name: String,
+    ): Any = original
 }
 
-internal class BatchLoaderWithContextWrapper<K, V>(private val original: BatchLoader<K, V>) :
-    BatchLoaderWithContext<K, V>, DgsDataLoaderRegistryConsumer {
-    override fun load(keys: List<K>, environment: BatchLoaderEnvironment): CompletionStage<List<V>> {
-        return original.load(keys)
-    }
+internal class BatchLoaderWithContextWrapper<K, V>(
+    private val original: BatchLoader<K, V>,
+) : BatchLoaderWithContext<K, V>,
+    DgsDataLoaderRegistryConsumer {
+    override fun load(
+        keys: List<K>,
+        environment: BatchLoaderEnvironment,
+    ): CompletionStage<List<V>> = original.load(keys)
 
     override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry?) {
         if (original is DgsDataLoaderRegistryConsumer) {
@@ -57,11 +64,14 @@ internal class BatchLoaderWithContextWrapper<K, V>(private val original: BatchLo
     }
 }
 
-internal class MappedBatchLoaderWithContextWrapper<K, V>(private val original: MappedBatchLoader<K, V>) :
-    MappedBatchLoaderWithContext<K, V>, DgsDataLoaderRegistryConsumer {
-    override fun load(keys: Set<K>, environment: BatchLoaderEnvironment): CompletionStage<Map<K, V>> {
-        return original.load(keys)
-    }
+internal class MappedBatchLoaderWithContextWrapper<K, V>(
+    private val original: MappedBatchLoader<K, V>,
+) : MappedBatchLoaderWithContext<K, V>,
+    DgsDataLoaderRegistryConsumer {
+    override fun load(
+        keys: Set<K>,
+        environment: BatchLoaderEnvironment,
+    ): CompletionStage<Map<K, V>> = original.load(keys)
 
     override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry?) {
         if (original is DgsDataLoaderRegistryConsumer) {

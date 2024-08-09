@@ -16,4 +16,6 @@
 
 package com.netflix.graphql.dgs.exceptions
 
-class DgsMissingCookieException(cookieName: String) : RuntimeException("Required cookie '$cookieName' was not provided")
+class DgsMissingCookieException(
+    cookieName: String,
+) : RuntimeException("Required cookie '$cookieName' was not provided")

@@ -29,14 +29,21 @@ import org.springframework.web.reactive.config.EnableWebFlux
 @AutoConfigureWebTestClient
 @EnableWebFlux
 @SpringBootTest(
-    classes = [DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, WebRequestTestWithCustomEndpoint.ExampleImplementation::class],
-    properties = ["dgs.graphql.path=/api/graphql"]
+    classes = [
+        DgsWebFluxAutoConfiguration::class,
+        DgsAutoConfiguration::class,
+        WebRequestTestWithCustomEndpoint.ExampleImplementation::class,
+    ],
+    properties = ["dgs.graphql.path=/api/graphql"],
 )
-class GraphQlCustomEndpoint(@Autowired private val webTestClient: WebTestClient) {
-
+class GraphQlCustomEndpoint(
+    @Autowired private val webTestClient: WebTestClient,
+) {
     @Test
     fun customGraphiQlPathRedirect() {
-        webTestClient.get().uri("/graphiql")
+        webTestClient
+            .get()
+            .uri("/graphiql")
             .exchange()
             .expectStatus()
             .is3xxRedirection
@@ -44,11 +51,15 @@ class GraphQlCustomEndpoint(@Autowired private val webTestClient: WebTestClient)
 
     @Test
     fun customGraphiQlPath() {
-        webTestClient.get().uri("/graphiql/index.html")
+        webTestClient
+            .get()
+            .uri("/graphiql/index.html")
             .exchange()
             .expectStatus()
             .is2xxSuccessful
             .expectBody<String>()
-            .consumeWith { Assertions.assertThat(it.responseBody).contains("fetch(origin + '/api/graphql"); }
+            .consumeWith {
+                Assertions.assertThat(it.responseBody).contains("fetch(origin + '/api/graphql")
+            }
     }
 }

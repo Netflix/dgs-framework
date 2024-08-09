@@ -28,8 +28,9 @@ import graphql.execution.instrumentation.parameters.InstrumentationCreateStatePa
  *
  * @see com.netflix.graphql.dgs.context.GraphQLContextContributor.contribute()
  */
-class GraphQLContextContributorInstrumentation(private val graphQLContextContributors: List<GraphQLContextContributor>) : SimplePerformantInstrumentation() {
-
+class GraphQLContextContributorInstrumentation(
+    private val graphQLContextContributors: List<GraphQLContextContributor>,
+) : SimplePerformantInstrumentation() {
     /**
      * createState is the very first method invoked in an Instrumentation, and thus is where this logic is placed to
      * contribute to the GraphQLContext as early as possible.

@@ -18,5 +18,6 @@ package com.netflix.graphql.dgs.exceptions
 
 import com.netflix.graphql.types.errors.ErrorType
 
-class DgsEntityNotFoundException(override val message: String = "Requested entity not found") :
-    DgsException(message = message, errorType = ErrorType.NOT_FOUND)
+class DgsEntityNotFoundException(
+    override val message: String = "Requested entity not found",
+) : DgsException(message = message, errorType = ErrorType.NOT_FOUND)

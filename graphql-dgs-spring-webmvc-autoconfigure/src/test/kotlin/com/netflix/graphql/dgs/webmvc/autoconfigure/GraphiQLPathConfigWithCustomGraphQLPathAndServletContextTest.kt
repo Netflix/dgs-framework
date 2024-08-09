@@ -29,19 +29,18 @@ import org.springframework.http.client.ClientHttpRequestInterceptor
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = ["dgs.graphql.path=/zuzu", "server.servlet.context-path=/foo"]
+    properties = ["dgs.graphql.path=/zuzu", "server.servlet.context-path=/foo"],
 )
 class GraphiQLPathConfigWithCustomGraphQLPathAndServletContextTest(
-    @Autowired private val testRestTemplate: TestRestTemplate
+    @Autowired private val testRestTemplate: TestRestTemplate,
 ) {
-
     @BeforeEach
     fun setRestTemplateHeaders() {
         testRestTemplate.restTemplate.interceptors.add(
             ClientHttpRequestInterceptor { request, body, execution ->
                 request.headers.contentType = MediaType.APPLICATION_JSON
                 return@ClientHttpRequestInterceptor execution.execute(request, body)
-            }
+            },
         )
     }
 
@@ -56,7 +55,7 @@ class GraphiQLPathConfigWithCustomGraphQLPathAndServletContextTest(
         Fact2: The graphql controller is NOT available at "/graphql"
         Fact3: The graphql controller IS available at "/foo/graphql"
         Fact4: The graphiql javascript has its fetch replaced w/ "foo/graphql"
-        */
+         */
 
         val rootUri = testRestTemplate.rootUri
         // server has been configured with context path
@@ -64,24 +63,27 @@ class GraphiQLPathConfigWithCustomGraphQLPathAndServletContextTest(
 
         // graphql not available without context path in uri
         val absPathWithoutContextPath = rootUri.substring(0, rootUri.length - "/foo".length) + "/zuzu"
-        var graphqlResponse = testRestTemplate.getForEntity(
-            absPathWithoutContextPath,
-            String::class.java
-        )
+        var graphqlResponse =
+            testRestTemplate.getForEntity(
+                absPathWithoutContextPath,
+                String::class.java,
+            )
         assertThat(graphqlResponse.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
 
         // graphql is available with context path in uri (400 expected as we don't sent proper request)
         val absPathWithContextPath = "$rootUri/zuzu"
-        graphqlResponse = testRestTemplate.getForEntity(
-            absPathWithContextPath,
-            String::class.java
-        )
+        graphqlResponse =
+            testRestTemplate.getForEntity(
+                absPathWithContextPath,
+                String::class.java,
+            )
         assertThat(graphqlResponse.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
 
-        val graphiqlResponse = testRestTemplate.getForEntity(
-            "/graphiql",
-            String::class.java
-        )
+        val graphiqlResponse =
+            testRestTemplate.getForEntity(
+                "/graphiql",
+                String::class.java,
+            )
         assertTrue(graphiqlResponse.statusCode.is2xxSuccessful)
         assertThat(graphiqlResponse.body).isNotNull.contains("fetch(origin + '/foo/zuzu'")
     }

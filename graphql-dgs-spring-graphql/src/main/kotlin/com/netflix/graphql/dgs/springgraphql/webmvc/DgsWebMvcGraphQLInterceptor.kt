@@ -34,20 +34,27 @@ import java.util.concurrent.CompletableFuture
 class DgsWebMvcGraphQLInterceptor(
     private val dgsDataLoaderProvider: DgsDataLoaderProvider,
     private val dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
-    private val dgsSpringConfigurationProperties: DgsSpringGraphQLConfigurationProperties
+    private val dgsSpringConfigurationProperties: DgsSpringGraphQLConfigurationProperties,
 ) : WebGraphQlInterceptor {
-    override fun intercept(request: WebGraphQlRequest, chain: WebGraphQlInterceptor.Chain): Mono<WebGraphQlResponse> {
+    override fun intercept(
+        request: WebGraphQlRequest,
+        chain: WebGraphQlInterceptor.Chain,
+    ): Mono<WebGraphQlResponse> {
         // We need to pass in the original server request for the dgs context
-        val servletRequestAttributes = if (RequestContextHolder.getRequestAttributes() is ServletRequestAttributes) {
-            (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes)
-        } else null
+        val servletRequestAttributes =
+            if (RequestContextHolder.getRequestAttributes() is ServletRequestAttributes) {
+                (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes)
+            } else {
+                null
+            }
 
-        val dgsContext = if (servletRequestAttributes != null) {
-            val webRequest: WebRequest = ServletWebRequest(servletRequestAttributes.request, servletRequestAttributes.response)
-            dgsContextBuilder.build(DgsWebMvcRequestData(request.extensions, request.headers, webRequest))
-        } else {
-            dgsContextBuilder.build(DgsWebMvcRequestData(request.extensions, request.headers))
-        }
+        val dgsContext =
+            if (servletRequestAttributes != null) {
+                val webRequest: WebRequest = ServletWebRequest(servletRequestAttributes.request, servletRequestAttributes.response)
+                dgsContextBuilder.build(DgsWebMvcRequestData(request.extensions, request.headers, webRequest))
+            } else {
+                dgsContextBuilder.build(DgsWebMvcRequestData(request.extensions, request.headers))
+            }
         val graphQLContextFuture = CompletableFuture<GraphQLContext>()
         val dataLoaderRegistry = dgsDataLoaderProvider.buildRegistryWithContextSupplier { graphQLContextFuture.get() }
 
@@ -55,7 +62,8 @@ class DgsWebMvcGraphQLInterceptor(
             builder
                 .context(dgsContext)
                 .graphQLContext(dgsContext)
-                .dataLoaderRegistry(dataLoaderRegistry).build()
+                .dataLoaderRegistry(dataLoaderRegistry)
+                .build()
         }
         graphQLContextFuture.complete(request.toExecutionInput().graphQLContext)
 

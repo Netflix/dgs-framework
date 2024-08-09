@@ -23,18 +23,25 @@ import org.springframework.core.convert.converter.ConditionalGenericConverter
 import org.springframework.core.convert.converter.GenericConverter
 import java.util.Optional
 
-internal class InputObjectMapperConverter(private val inputObjectMapper: InputObjectMapper) : ConditionalGenericConverter {
-    override fun getConvertibleTypes(): Set<GenericConverter.ConvertiblePair> {
-        return setOf(GenericConverter.ConvertiblePair(Map::class.java, Any::class.java))
-    }
+internal class InputObjectMapperConverter(
+    private val inputObjectMapper: InputObjectMapper,
+) : ConditionalGenericConverter {
+    override fun getConvertibleTypes(): Set<GenericConverter.ConvertiblePair> =
+        setOf(GenericConverter.ConvertiblePair(Map::class.java, Any::class.java))
 
-    override fun matches(sourceType: TypeDescriptor, targetType: TypeDescriptor): Boolean {
-        return sourceType.isMap &&
+    override fun matches(
+        sourceType: TypeDescriptor,
+        targetType: TypeDescriptor,
+    ): Boolean =
+        sourceType.isMap &&
             !targetType.isMap &&
             !targetType.type.isAssignableFrom(Optional::class.java)
-    }
 
-    override fun convert(source: Any?, sourceType: TypeDescriptor, targetType: TypeDescriptor): Any {
+    override fun convert(
+        source: Any?,
+        sourceType: TypeDescriptor,
+        targetType: TypeDescriptor,
+    ): Any {
         @Suppress("unchecked_cast")
         val mapInput = source as Map<String, *>
         return if (KotlinDetector.isKotlinType(targetType.type)) {

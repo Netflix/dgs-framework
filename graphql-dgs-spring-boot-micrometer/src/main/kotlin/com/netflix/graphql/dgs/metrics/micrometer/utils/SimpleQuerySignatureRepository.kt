@@ -39,9 +39,9 @@ import java.util.*
 @Internal
 open class SimpleQuerySignatureRepository(
     private val autoTimer: AutoTimer,
-    private val meterRegistrySupplier: DgsMeterRegistrySupplier
-) : QuerySignatureRepository, InitializingBean {
-
+    private val meterRegistrySupplier: DgsMeterRegistrySupplier,
+) : QuerySignatureRepository,
+    InitializingBean {
     companion object {
         private val log: Logger = LoggerFactory.getLogger(SimpleQuerySignatureRepository::class.java)
     }
@@ -50,19 +50,20 @@ open class SimpleQuerySignatureRepository(
 
     override fun get(
         document: Document,
-        parameters: InstrumentationExecutionParameters
+        parameters: InstrumentationExecutionParameters,
     ): Optional<QuerySignatureRepository.QuerySignature> {
         val timerSample = Timer.start(meterRegistry)
         val tags = mutableListOf<Tag>()
         val queryHash = QuerySignatureRepository.queryHash(parameters.query)
         return try {
-            val result = Optional.ofNullable(
-                computeQuerySignature(
-                    queryHash,
-                    parameters.operation,
-                    document
+            val result =
+                Optional.ofNullable(
+                    computeQuerySignature(
+                        queryHash,
+                        parameters.operation,
+                        document,
+                    ),
                 )
-            )
             tags += CommonTags.SUCCESS.tag
             return result
         } catch (error: Throwable) {
@@ -70,7 +71,7 @@ open class SimpleQuerySignatureRepository(
             log.error(
                 "Failed to fetch query signature from cache, query [hash:{}, name:{}].",
                 queryHash,
-                parameters.operation
+                parameters.operation,
             )
             Optional.empty()
         } finally {
@@ -80,7 +81,7 @@ open class SimpleQuerySignatureRepository(
                 autoTimer
                     .builder(InternalMetric.TIMED_METHOD.key)
                     .tags(tags)
-                    .register(meterRegistry)
+                    .register(meterRegistry),
             )
         }
     }
@@ -88,10 +89,8 @@ open class SimpleQuerySignatureRepository(
     protected open fun computeQuerySignature(
         queryHash: String,
         queryName: String?,
-        document: Document
-    ): QuerySignatureRepository.QuerySignature {
-        return QuerySignatureRepository.computeSignature(document, queryName)
-    }
+        document: Document,
+    ): QuerySignatureRepository.QuerySignature = QuerySignatureRepository.computeSignature(document, queryName)
 
     override fun afterPropertiesSet() {
         this.meterRegistry = meterRegistrySupplier.get()

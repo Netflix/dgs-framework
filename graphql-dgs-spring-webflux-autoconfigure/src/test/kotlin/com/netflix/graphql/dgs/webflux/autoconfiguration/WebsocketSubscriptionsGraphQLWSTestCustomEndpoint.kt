@@ -56,12 +56,20 @@ import java.time.Duration
 
 @EnableWebFlux
 @SpringBootTest(
-    classes = [HttpHandlerAutoConfiguration::class, ReactiveWebServerFactoryAutoConfiguration::class, WebFluxAutoConfiguration::class, DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, WebsocketSubscriptionsGraphQLWSTestCustomEndpoint.ExampleSubscriptionImplementation::class],
+    classes = [
+        HttpHandlerAutoConfiguration::class,
+        ReactiveWebServerFactoryAutoConfiguration::class,
+        WebFluxAutoConfiguration::class,
+        DgsWebFluxAutoConfiguration::class,
+        DgsAutoConfiguration::class,
+        WebsocketSubscriptionsGraphQLWSTestCustomEndpoint.ExampleSubscriptionImplementation::class,
+    ],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = ["dgs.graphql.websocket.path=/custom/subscriptions"]
+    properties = ["dgs.graphql.websocket.path=/custom/subscriptions"],
 )
-open class WebsocketSubscriptionsGraphQLWSTestCustomEndpoint(@param:LocalServerPort val port: Int) {
-
+open class WebsocketSubscriptionsGraphQLWSTestCustomEndpoint(
+    @param:LocalServerPort val port: Int,
+) {
     @Test
     fun `Basic subscription flow using a custom endpoint`() {
         val client: WebSocketClient = ReactorNettyWebSocketClient()
@@ -72,7 +80,8 @@ open class WebsocketSubscriptionsGraphQLWSTestCustomEndpoint(@param:LocalServerP
         val execute = clientExecute(client, url, output, query)
         StepVerifier.create(execute).expectComplete().verify()
 
-        StepVerifier.create(output.asFlux().map { it.payload.toString() })
+        StepVerifier
+            .create(output.asFlux().map { it.payload.toString() })
             .expectNext("DataPayload(data={ticker=1}, errors=[])")
             .expectNext("DataPayload(data={ticker=2}, errors=[])")
             .expectNext("DataPayload(data={ticker=3}, errors=[])")
@@ -90,7 +99,8 @@ open class WebsocketSubscriptionsGraphQLWSTestCustomEndpoint(@param:LocalServerP
 
         StepVerifier.create(execute).expectComplete().verify()
 
-        StepVerifier.create(output.asFlux().map { it.payload.toString() })
+        StepVerifier
+            .create(output.asFlux().map { it.payload.toString() })
             .expectNext("DataPayload(data={withError=1}, errors=[])")
             .expectNext("DataPayload(data={withError=2}, errors=[])")
             .expectNext("DataPayload(data={withError=3}, errors=[])")
@@ -103,118 +113,112 @@ open class WebsocketSubscriptionsGraphQLWSTestCustomEndpoint(@param:LocalServerP
         url: URI,
         output: Sinks.Many<OperationMessage>,
         query: String,
-        stopAfter: Int? = null
-    ) =
-        client.execute(
-            url,
-            object : WebSocketHandler {
-                override fun getSubProtocols(): List<String> {
-                    return listOf("graphql-ws")
-                }
+        stopAfter: Int? = null,
+    ) = client.execute(
+        url,
+        object : WebSocketHandler {
+            override fun getSubProtocols(): List<String> = listOf("graphql-ws")
 
-                override fun handle(session: WebSocketSession): Mono<Void> {
-                    var counter = 0
+            override fun handle(session: WebSocketSession): Mono<Void> {
+                var counter = 0
 
-                    return session.send(Mono.just(toWebsocketMessage(OperationMessage(GQL_CONNECTION_INIT), session)))
-                        .thenMany(
-                            session.receive().flatMap { message ->
-                                val buffer: DataBuffer = DataBufferUtils.retain(message.payload)
-                                val operationMessage: OperationMessage = decoder.decode(
+                return session
+                    .send(Mono.just(toWebsocketMessage(OperationMessage(GQL_CONNECTION_INIT), session)))
+                    .thenMany(
+                        session.receive().flatMap { message ->
+                            val buffer: DataBuffer = DataBufferUtils.retain(message.payload)
+                            val operationMessage: OperationMessage =
+                                decoder.decode(
                                     buffer,
                                     resolvableType,
                                     MimeTypeUtils.APPLICATION_JSON,
-                                    null
+                                    null,
                                 ) as OperationMessage
 
-                                when (operationMessage.type) {
-                                    GQL_CONNECTION_ACK -> {
-                                        session.send(
-                                            Mono.just(
-                                                toWebsocketMessage(
-                                                    OperationMessage(
-                                                        GQL_START,
-                                                        mapOf("query" to query),
-                                                        "1"
-                                                    ),
-                                                    session
-                                                )
-                                            )
-                                        )
-                                    }
-                                    GQL_COMPLETE -> {
-                                        output.emitComplete(Sinks.EmitFailureHandler.FAIL_FAST)
-                                        session.close()
-                                    }
-                                    GQL_ERROR -> {
-                                        output.emitNext(operationMessage, Sinks.EmitFailureHandler.FAIL_FAST)
-                                        output.emitError(RuntimeException(), Sinks.EmitFailureHandler.FAIL_FAST)
-                                        session.close()
-                                    }
-                                    else -> {
-                                        counter += 1
-                                        output.emitNext(operationMessage, Sinks.EmitFailureHandler.FAIL_FAST)
-                                        if (stopAfter != null && counter == stopAfter) {
-                                            Flux.just(operationMessage).flatMap {
-                                                output.emitComplete(Sinks.EmitFailureHandler.FAIL_FAST)
-                                                session.close()
-                                            }
-                                        } else {
-                                            Flux.just(operationMessage)
+                            when (operationMessage.type) {
+                                GQL_CONNECTION_ACK -> {
+                                    session.send(
+                                        Mono.just(
+                                            toWebsocketMessage(
+                                                OperationMessage(
+                                                    GQL_START,
+                                                    mapOf("query" to query),
+                                                    "1",
+                                                ),
+                                                session,
+                                            ),
+                                        ),
+                                    )
+                                }
+                                GQL_COMPLETE -> {
+                                    output.emitComplete(Sinks.EmitFailureHandler.FAIL_FAST)
+                                    session.close()
+                                }
+                                GQL_ERROR -> {
+                                    output.emitNext(operationMessage, Sinks.EmitFailureHandler.FAIL_FAST)
+                                    output.emitError(RuntimeException(), Sinks.EmitFailureHandler.FAIL_FAST)
+                                    session.close()
+                                }
+                                else -> {
+                                    counter += 1
+                                    output.emitNext(operationMessage, Sinks.EmitFailureHandler.FAIL_FAST)
+                                    if (stopAfter != null && counter == stopAfter) {
+                                        Flux.just(operationMessage).flatMap {
+                                            output.emitComplete(Sinks.EmitFailureHandler.FAIL_FAST)
+                                            session.close()
                                         }
+                                    } else {
+                                        Flux.just(operationMessage)
                                     }
                                 }
                             }
-                        ).log().then()
-                }
+                        },
+                    ).log()
+                    .then()
             }
-        )
+        },
+    )
 
     private val resolvableType = ResolvableType.forType(OperationMessage::class.java)
     private val decoder = Jackson2JsonDecoder()
     private val encoder = Jackson2JsonEncoder()
 
-    private fun toWebsocketMessage(operationMessage: OperationMessage, session: WebSocketSession): WebSocketMessage {
-        return WebSocketMessage(
+    private fun toWebsocketMessage(
+        operationMessage: OperationMessage,
+        session: WebSocketSession,
+    ): WebSocketMessage =
+        WebSocketMessage(
             WebSocketMessage.Type.TEXT,
             encoder.encodeValue(
                 operationMessage,
                 session.bufferFactory(),
                 resolvableType,
                 MimeTypeUtils.APPLICATION_JSON,
-                null
-            )
+                null,
+            ),
         )
-    }
 
     @DgsComponent
     class ExampleSubscriptionImplementation {
-
         @DgsTypeDefinitionRegistry
-        fun typeDefinitionRegistry(): TypeDefinitionRegistry {
-            return SchemaParser().parse(
+        fun typeDefinitionRegistry(): TypeDefinitionRegistry =
+            SchemaParser().parse(
                 """
                 type Subscription {
                     ticker: Int
                     withError: Int
                     withDelay: Int
                 }
-                """.trimIndent()
+                """.trimIndent(),
             )
-        }
 
         @DgsSubscription
-        fun ticker(): Publisher<Int> {
-            return Flux.just(1, 2, 3)
-        }
+        fun ticker(): Publisher<Int> = Flux.just(1, 2, 3)
 
         @DgsSubscription
-        fun withError(): Publisher<Int> {
-            return Flux.just(1, 2, 3).concatWith(Flux.error(RuntimeException("Broken producer")))
-        }
+        fun withError(): Publisher<Int> = Flux.just(1, 2, 3).concatWith(Flux.error(RuntimeException("Broken producer")))
 
         @DgsSubscription
-        fun withDelay(): Publisher<Int> {
-            return Flux.just(1, 2).concatWith(Mono.delay(Duration.ofSeconds(1)).map { it.toInt() })
-        }
+        fun withDelay(): Publisher<Int> = Flux.just(1, 2).concatWith(Mono.delay(Duration.ofSeconds(1)).map { it.toInt() })
     }
 }

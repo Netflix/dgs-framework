@@ -40,9 +40,9 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
 internal class DgsContextTest {
-
-    private val applicationContextRunner: ApplicationContextRunner = ApplicationContextRunner()
-        .withBean(DgsDataLoaderProvider::class.java)
+    private val applicationContextRunner: ApplicationContextRunner =
+        ApplicationContextRunner()
+            .withBean(DgsDataLoaderProvider::class.java)
 
     @Test
     fun `getRequestData should return request data with headers`() {
@@ -52,30 +52,36 @@ internal class DgsContextTest {
             val httpHeaders = HttpHeaders()
             httpHeaders.add("x-name-prefix", "Hello ")
 
-            val hello = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
-                """{hello(name: "World")}""",
-                "data.hello",
-                emptyMap(),
-                String::class.java,
-                httpHeaders
-            )
+            val hello =
+                dgsQueryExecutor.executeAndExtractJsonPathAsObject(
+                    """{hello(name: "World")}""",
+                    "data.hello",
+                    emptyMap(),
+                    String::class.java,
+                    httpHeaders,
+                )
 
             assertThat(hello).isEqualTo("Hello World")
         }
     }
 
-    private fun createQueryExecutor(context: ApplicationContext, schemaString: String): DefaultDgsQueryExecutor {
-        val provider = DgsSchemaProvider(
-            applicationContext = context,
-            federationResolver = Optional.empty(),
-            existingTypeDefinitionRegistry = Optional.empty(),
-            methodDataFetcherFactory = MethodDataFetcherFactory(
-                listOf(
-                    InputArgumentResolver(DefaultInputObjectMapper()),
-                    DataFetchingEnvironmentArgumentResolver()
-                )
+    private fun createQueryExecutor(
+        context: ApplicationContext,
+        schemaString: String,
+    ): DefaultDgsQueryExecutor {
+        val provider =
+            DgsSchemaProvider(
+                applicationContext = context,
+                federationResolver = Optional.empty(),
+                existingTypeDefinitionRegistry = Optional.empty(),
+                methodDataFetcherFactory =
+                    MethodDataFetcherFactory(
+                        listOf(
+                            InputArgumentResolver(DefaultInputObjectMapper()),
+                            DataFetchingEnvironmentArgumentResolver(),
+                        ),
+                    ),
             )
-        )
 
         return DefaultDgsQueryExecutor(
             defaultSchema = provider.schema(schemaString).graphQLSchema,
@@ -85,21 +91,27 @@ internal class DgsContextTest {
             instrumentation = SimplePerformantInstrumentation.INSTANCE,
             queryExecutionStrategy = AsyncExecutionStrategy(),
             mutationExecutionStrategy = AsyncSerialExecutionStrategy(),
-            idProvider = Optional.empty()
+            idProvider = Optional.empty(),
         )
     }
 
     @DgsComponent
     class DgsTestComponent {
         @DgsQuery
-        fun hello(@InputArgument name: String, dfe: DgsDataFetchingEnvironment): CompletableFuture<String> {
+        fun hello(
+            @InputArgument name: String,
+            dfe: DgsDataFetchingEnvironment,
+        ): CompletableFuture<String> {
             val loader = dfe.getDataLoader<String, String>(HelloLoader::class.java)
             return loader.load(name)
         }
 
         @DgsDataLoader
         class HelloLoader : BatchLoaderWithContext<String, String> {
-            override fun load(keys: List<String>, env: BatchLoaderEnvironment): CompletionStage<List<String>> {
+            override fun load(
+                keys: List<String>,
+                env: BatchLoaderEnvironment,
+            ): CompletionStage<List<String>> {
                 val prefix = DgsContext.getRequestData(env)?.headers?.getFirst("x-name-prefix") ?: ""
                 return CompletableFuture.completedFuture(keys.map { prefix + it })
             }

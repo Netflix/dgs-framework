@@ -18,5 +18,8 @@ package com.netflix.graphql.dgs.internal
 
 @Deprecated("Cookie resolving is now handled by ArgumentResolvers")
 interface CookieValueResolver {
-    fun getCookieValue(name: String, requestData: DgsRequestData?): String?
+    fun getCookieValue(
+        name: String,
+        requestData: DgsRequestData?,
+    ): String?
 }

@@ -17,17 +17,14 @@ data class DgsGraphQLMetricsProperties(
     @NestedConfigurationProperty
     var resolver: ResolverMetricProperties = ResolverMetricProperties(),
     @NestedConfigurationProperty
-    var query: QueryMetricProperties = QueryMetricProperties()
-
+    var query: QueryMetricProperties = QueryMetricProperties(),
 ) {
-
     data class TagsProperties(
         /** Cardinality limiter settings for this tag. */
         @NestedConfigurationProperty
         var limiter: CardinalityLimiterProperties = CardinalityLimiterProperties(),
-
         @NestedConfigurationProperty
-        var complexity: QueryComplexityProperties = QueryComplexityProperties()
+        var complexity: QueryComplexityProperties = QueryComplexityProperties(),
     )
 
     data class CardinalityLimiterProperties(
@@ -37,22 +34,22 @@ data class DgsGraphQLMetricsProperties(
         /** The limit that will apply for this tag.
          * The interpretation of this limit depends on the cardinality limiter itself. */
         @DefaultValue("100")
-        var limit: Int = 100
+        var limit: Int = 100,
     )
 
     data class QueryComplexityProperties(
         @DefaultValue("true")
-        var enabled: Boolean = true
+        var enabled: Boolean = true,
     )
 
     data class ResolverMetricProperties(
         @DefaultValue("true")
-        var enabled: Boolean = true
+        var enabled: Boolean = true,
     )
 
     data class QueryMetricProperties(
         @DefaultValue("true")
-        var enabled: Boolean = true
+        var enabled: Boolean = true,
     )
 
     enum class CardinalityLimiterKind {
@@ -64,6 +61,6 @@ data class DgsGraphQLMetricsProperties(
 
         /** Rollup the values if the cardinality exceeds n. This limiter will leave the values alone as long as the
          * cardinality stays within the limit. After that all values will get mapped to constant. */
-        ROLLUP
+        ROLLUP,
     }
 }

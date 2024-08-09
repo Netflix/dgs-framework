@@ -27,6 +27,6 @@ fun interface GraphQLContextContributor {
     fun contribute(
         builder: GraphQLContext.Builder,
         extensions: Map<String, Any>?,
-        requestData: DgsRequestData?
+        requestData: DgsRequestData?,
     )
 }

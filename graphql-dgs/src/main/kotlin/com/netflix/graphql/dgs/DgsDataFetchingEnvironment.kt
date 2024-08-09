@@ -23,35 +23,32 @@ import com.netflix.graphql.dgs.internal.utils.DataLoaderNameUtil
 import graphql.schema.DataFetchingEnvironment
 import org.dataloader.DataLoader
 
-class DgsDataFetchingEnvironment(private val dfe: DataFetchingEnvironment) : DataFetchingEnvironment by dfe {
-    fun getDfe(): DataFetchingEnvironment {
-        return this.dfe
-    }
+class DgsDataFetchingEnvironment(
+    private val dfe: DataFetchingEnvironment,
+) : DataFetchingEnvironment by dfe {
+    fun getDfe(): DataFetchingEnvironment = this.dfe
 
-    fun getDgsContext(): DgsContext {
-        return DgsContext.from(this)
-    }
+    fun getDgsContext(): DgsContext = DgsContext.from(this)
 
     /**
      * Get the value of the current object to be queried.
      *
      * @throws IllegalStateException if called on the root query
      */
-    fun <T> getSourceOrThrow(): T {
-        return getSource() ?: throw IllegalStateException("source is null")
-    }
+    fun <T> getSourceOrThrow(): T = getSource() ?: throw IllegalStateException("source is null")
 
     fun <K, V> getDataLoader(loaderClass: Class<*>): DataLoader<K, V> {
         val annotation = loaderClass.getAnnotation(DgsDataLoader::class.java)
-        val loaderName = if (annotation != null) {
-            DataLoaderNameUtil.getDataLoaderName(loaderClass, annotation)
-        } else {
-            val loaders = loaderClass.fields.filter { it.isAnnotationPresent(DgsDataLoader::class.java) }
-            if (loaders.size > 1) throw MultipleDataLoadersDefinedException(loaderClass)
-            val loaderField = loaders.firstOrNull() ?: throw NoDataLoaderFoundException(loaderClass)
-            val theAnnotation = loaderField.getAnnotation(DgsDataLoader::class.java)
-            theAnnotation.name
-        }
+        val loaderName =
+            if (annotation != null) {
+                DataLoaderNameUtil.getDataLoaderName(loaderClass, annotation)
+            } else {
+                val loaders = loaderClass.fields.filter { it.isAnnotationPresent(DgsDataLoader::class.java) }
+                if (loaders.size > 1) throw MultipleDataLoadersDefinedException(loaderClass)
+                val loaderField = loaders.firstOrNull() ?: throw NoDataLoaderFoundException(loaderClass)
+                val theAnnotation = loaderField.getAnnotation(DgsDataLoader::class.java)
+                theAnnotation.name
+            }
         return getDataLoader(loaderName) ?: throw NoDataLoaderFoundException("DataLoader with name $loaderName not found")
     }
 }

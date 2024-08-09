@@ -22,14 +22,17 @@ import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.MapPropertySource
 
 class DgsPaginationEnvironmentPostProcessor : EnvironmentPostProcessor {
-    override fun postProcessEnvironment(environment: ConfigurableEnvironment, application: SpringApplication) {
+    override fun postProcessEnvironment(
+        environment: ConfigurableEnvironment,
+        application: SpringApplication,
+    ) {
         val properties = mutableMapOf<String, Any>()
         properties["dgs.springgraphql.pagination.enabled"] = false
         environment.propertySources.addLast(
             MapPropertySource(
                 "dgs-pagination-defaults",
-                properties
-            )
+                properties,
+            ),
         )
     }
 }

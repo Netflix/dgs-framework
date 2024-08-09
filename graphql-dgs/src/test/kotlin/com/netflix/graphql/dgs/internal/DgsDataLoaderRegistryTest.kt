@@ -33,7 +33,6 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
 class DgsDataLoaderRegistryTest {
-
     private val dgsDataLoaderRegistry = DgsDataLoaderRegistry()
     private val dataLoaderA = ExampleDataLoaderA()
     private val dataLoaderB = ExampleDataLoaderB()
@@ -55,7 +54,7 @@ class DgsDataLoaderRegistryTest {
         dgsDataLoaderRegistry.registerWithDispatchPredicate(
             "exampleLoaderB",
             newLoader,
-            DispatchPredicate.dispatchIfDepthGreaterThan(1)
+            DispatchPredicate.dispatchIfDepthGreaterThan(1),
         )
         assertThat(dgsDataLoaderRegistry.dataLoaders.size).isEqualTo(1)
         val registeredLoader = dgsDataLoaderRegistry.getDataLoader<String, String>("exampleLoaderB")
@@ -69,7 +68,7 @@ class DgsDataLoaderRegistryTest {
         dgsDataLoaderRegistry.registerWithDispatchPredicate(
             "exampleLoaderB",
             DataLoaderFactory.newDataLoader(dataLoaderB),
-            DispatchPredicate.dispatchIfDepthGreaterThan(1)
+            DispatchPredicate.dispatchIfDepthGreaterThan(1),
         )
         assertThat(dgsDataLoaderRegistry.dataLoaders.size).isEqualTo(2)
         dgsDataLoaderRegistry.unregister("exampleLoaderA")
@@ -101,7 +100,7 @@ class DgsDataLoaderRegistryTest {
         dgsDataLoaderRegistry.registerWithDispatchPredicate(
             "exampleLoaderB",
             newLoaderB,
-            DispatchPredicate.dispatchIfDepthGreaterThan(1)
+            DispatchPredicate.dispatchIfDepthGreaterThan(1),
         )
         assertThat(dgsDataLoaderRegistry.dataLoaders.size).isEqualTo(2)
         val registeredLoaderA = dgsDataLoaderRegistry.getDataLoader<String, String>("exampleLoaderA")
@@ -119,7 +118,7 @@ class DgsDataLoaderRegistryTest {
         dgsDataLoaderRegistry.registerWithDispatchPredicate(
             "exampleLoaderB",
             newLoaderB,
-            DispatchPredicate.dispatchIfDepthGreaterThan(1)
+            DispatchPredicate.dispatchIfDepthGreaterThan(1),
         )
 
         assertThat(dgsDataLoaderRegistry.dataLoadersMap.size).isEqualTo(2)
@@ -139,7 +138,7 @@ class DgsDataLoaderRegistryTest {
         dgsDataLoaderRegistry.registerWithDispatchPredicate(
             "exampleLoaderB",
             mockDataLoaderB,
-            DispatchPredicate.dispatchIfDepthGreaterThan(1)
+            DispatchPredicate.dispatchIfDepthGreaterThan(1),
         )
         dgsDataLoaderRegistry.dispatchAll()
         verify { mockDataLoaderA.dispatch() }
@@ -154,7 +153,7 @@ class DgsDataLoaderRegistryTest {
         dgsDataLoaderRegistry.registerWithDispatchPredicate(
             "exampleLoaderB",
             mockDataLoaderB,
-            DispatchPredicate.dispatchIfDepthGreaterThan(1)
+            DispatchPredicate.dispatchIfDepthGreaterThan(1),
         )
         assertThat(dgsDataLoaderRegistry.dispatchDepth()).isEqualTo(3)
     }
@@ -169,7 +168,7 @@ class DgsDataLoaderRegistryTest {
         dgsDataLoaderRegistry.registerWithDispatchPredicate(
             "exampleLoaderB",
             mockDataLoaderB,
-            DispatchPredicate.dispatchIfDepthGreaterThan(1)
+            DispatchPredicate.dispatchIfDepthGreaterThan(1),
         )
         assertThat(dgsDataLoaderRegistry.dispatchAllWithCount()).isEqualTo(7)
     }
@@ -183,7 +182,7 @@ class DgsDataLoaderRegistryTest {
         dgsDataLoaderRegistry.registerWithDispatchPredicate(
             "exampleLoaderB",
             mockDataLoaderB,
-            DispatchPredicate.dispatchIfDepthGreaterThan(1)
+            DispatchPredicate.dispatchIfDepthGreaterThan(1),
         )
         assertThat(dgsDataLoaderRegistry.statistics).isNotNull
         assertThat(dgsDataLoaderRegistry.statistics.loadCount).isEqualTo(3)
@@ -204,7 +203,7 @@ class DgsDataLoaderRegistryTest {
         dgsDataLoaderRegistry.registerWithDispatchPredicate(
             "exampleLoaderB",
             mockDataLoaderB,
-            DispatchPredicate.dispatchIfDepthGreaterThan(1)
+            DispatchPredicate.dispatchIfDepthGreaterThan(1),
         )
         assertThat(dgsDataLoaderRegistry.keys).containsExactlyInAnyOrder("exampleLoaderA", "exampleLoaderB")
         dgsDataLoaderRegistry.unregister("exampleLoaderA")
@@ -213,15 +212,11 @@ class DgsDataLoaderRegistryTest {
 
     @DgsDataLoader(name = "exampleLoaderA")
     class ExampleDataLoaderA : BatchLoader<String, String> {
-        override fun load(keys: List<String>): CompletionStage<List<String>> {
-            return CompletableFuture.completedFuture(listOf("A", "B", "C"))
-        }
+        override fun load(keys: List<String>): CompletionStage<List<String>> = CompletableFuture.completedFuture(listOf("A", "B", "C"))
     }
 
     @DgsDataLoader(name = "exampleLoaderB")
     class ExampleDataLoaderB : BatchLoader<String, String> {
-        override fun load(keys: List<String>): CompletionStage<List<String>> {
-            return CompletableFuture.completedFuture(listOf("A", "B", "C"))
-        }
+        override fun load(keys: List<String>): CompletionStage<List<String>> = CompletableFuture.completedFuture(listOf("A", "B", "C"))
     }
 }

@@ -26,49 +26,44 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.typeOf
 
-internal class CompletableFutureWrapper(private val taskExecutor: AsyncTaskExecutor?) {
-    private val supportsReactor: Boolean = try {
-        Class.forName("org.reactivestreams.Publisher")
-        true
-    } catch (ex: Exception) {
-        false
-    }
+internal class CompletableFutureWrapper(
+    private val taskExecutor: AsyncTaskExecutor?,
+) {
+    private val supportsReactor: Boolean =
+        try {
+            Class.forName("org.reactivestreams.Publisher")
+            true
+        } catch (ex: Exception) {
+            false
+        }
 
     /**
      * Wrap the call to a data fetcher in CompletableFuture to enable parallel behavior.
      * Used when virtual threads are enabled.
      */
-    fun wrapInCompletableFuture(function: () -> Any?): CompletableFuture<Any?> {
-        return CompletableFuture.supplyAsync({ function() }, taskExecutor)
-    }
+    fun wrapInCompletableFuture(function: () -> Any?): CompletableFuture<Any?> = CompletableFuture.supplyAsync({ function() }, taskExecutor)
 
     /**
      * Decides if a data fetcher method should be wrapped in CompletableFuture automatically.
      * This is only done when a taskExecutor is available, and if the data fetcher doesn't explicitly return CompletableFuture already.
      * Used when virtual threads are enabled.
      */
-    fun shouldWrapInCompletableFuture(kFunc: KFunction<*>): Boolean {
-        return taskExecutor != null &&
+    fun shouldWrapInCompletableFuture(kFunc: KFunction<*>): Boolean =
+        taskExecutor != null &&
             !kFunc.returnType.isSubtypeOf(typeOf<CompletionStage<*>>()) &&
             !isReactive(kFunc.returnType)
-    }
 
-    private fun isReactive(returnType: KType): Boolean {
-        return supportsReactor && returnType.isSubtypeOf(typeOf<Publisher<*>>())
-    }
+    private fun isReactive(returnType: KType): Boolean = supportsReactor && returnType.isSubtypeOf(typeOf<Publisher<*>>())
 
     /**
      * Decides if a data fetcher method should be wrapped in CompletableFuture automatically.
      * This is only done when a taskExecutor is available, and if the data fetcher doesn't explicitly return CompletableFuture already.
      * Used when virtual threads are enabled.
      */
-    fun shouldWrapInCompletableFuture(method: Method): Boolean {
-        return taskExecutor != null &&
+    fun shouldWrapInCompletableFuture(method: Method): Boolean =
+        taskExecutor != null &&
             !CompletionStage::class.java.isAssignableFrom(method.returnType) &&
             !isReactive(method.returnType)
-    }
 
-    private fun isReactive(returnType: Class<*>): Boolean {
-        return supportsReactor && Publisher::class.java.isAssignableFrom(returnType)
-    }
+    private fun isReactive(returnType: Class<*>): Boolean = supportsReactor && Publisher::class.java.isAssignableFrom(returnType)
 }

@@ -26,7 +26,7 @@ import java.time.Duration
 @ConfigurationProperties(prefix = DgsDataloaderConfigurationProperties.DATALOADER_PREFIX)
 data class DgsDataloaderConfigurationProperties(
     @DefaultValue("false") val tickerModeEnabled: Boolean,
-    @DefaultValue(DATALOADER_DEFAULT_SCHEDULE_DURATION) val scheduleDuration: Duration
+    @DefaultValue(DATALOADER_DEFAULT_SCHEDULE_DURATION) val scheduleDuration: Duration,
 ) {
     companion object {
         const val DATALOADER_PREFIX: String = "dgs.graphql.dataloader"

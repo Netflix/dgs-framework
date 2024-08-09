@@ -25,16 +25,18 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = ["dgs.graphql.path=/zuzu"]
+    properties = ["dgs.graphql.path=/zuzu"],
 )
-class GraphiQLPathConfigWithCustomGraphQLPathTest(@Autowired val restTemplate: TestRestTemplate) {
-
+class GraphiQLPathConfigWithCustomGraphQLPathTest(
+    @Autowired val restTemplate: TestRestTemplate,
+) {
     @Test
     fun customGraphQLPath() {
-        val entity = restTemplate.getForEntity(
-            "/graphiql",
-            String::class.java
-        )
+        val entity =
+            restTemplate.getForEntity(
+                "/graphiql",
+                String::class.java,
+            )
         assertTrue(entity.statusCode.is2xxSuccessful)
         Assertions.assertThat(entity.body).isNotNull.contains("fetch(origin + '/zuzu'")
     }

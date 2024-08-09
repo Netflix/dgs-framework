@@ -27,9 +27,10 @@ import graphql.schema.idl.SchemaDirectiveWiringEnvironment
 @DgsDirective
 class WordFilterDirective : SchemaDirectiveWiring {
     override fun onField(env: SchemaDirectiveWiringEnvironment<GraphQLFieldDefinition>): GraphQLFieldDefinition {
-        val dataFetcher = DataFetcherFactories.wrapDataFetcher(env.fieldDataFetcher) { _, value ->
-            if (value is String) value.replace("abc", "xxx") else value
-        }
+        val dataFetcher =
+            DataFetcherFactories.wrapDataFetcher(env.fieldDataFetcher) { _, value ->
+                if (value is String) value.replace("abc", "xxx") else value
+            }
         env.fieldDataFetcher = dataFetcher
         return env.element
     }

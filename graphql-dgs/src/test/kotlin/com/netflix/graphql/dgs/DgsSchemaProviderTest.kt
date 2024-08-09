@@ -62,12 +62,17 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.hasAnnotation
 
 internal class DgsSchemaProviderTest {
-
     private val contextRunner = ApplicationContextRunner()
 
-    data class MovieSearch(val title: String, val length: Int)
+    data class MovieSearch(
+        val title: String,
+        val length: Int,
+    )
 
-    data class SeriesSearch(val name: String, val episodes: Int)
+    data class SeriesSearch(
+        val name: String,
+        val episodes: Int,
+    )
 
     private fun schemaProvider(
         applicationContext: ApplicationContext,
@@ -75,39 +80,35 @@ internal class DgsSchemaProviderTest {
         schemaLocations: List<String> = listOf(DgsSchemaProvider.DEFAULT_SCHEMA_LOCATION),
         componentFilter: ((Any) -> Boolean)? = null,
         schemaWiringValidationEnabled: Boolean = true,
-        dataFetcherResultProcessors: List<DataFetcherResultProcessor> = emptyList()
-    ): DgsSchemaProvider {
-        return DgsSchemaProvider(
+        dataFetcherResultProcessors: List<DataFetcherResultProcessor> = emptyList(),
+    ): DgsSchemaProvider =
+        DgsSchemaProvider(
             applicationContext = applicationContext,
             federationResolver = Optional.empty(),
             schemaLocations = schemaLocations,
             existingTypeDefinitionRegistry = Optional.ofNullable(typeDefinitionRegistry),
-            methodDataFetcherFactory = MethodDataFetcherFactory(
-                listOf(
-                    InputArgumentResolver(DefaultInputObjectMapper()),
-                    DataFetchingEnvironmentArgumentResolver()
-                )
-            ),
+            methodDataFetcherFactory =
+                MethodDataFetcherFactory(
+                    listOf(
+                        InputArgumentResolver(DefaultInputObjectMapper()),
+                        DataFetchingEnvironmentArgumentResolver(),
+                    ),
+                ),
             componentFilter = componentFilter,
             schemaWiringValidationEnabled = schemaWiringValidationEnabled,
-            dataFetcherResultProcessors = dataFetcherResultProcessors
+            dataFetcherResultProcessors = dataFetcherResultProcessors,
         )
-    }
 
     @DgsComponent
     class HelloFetcher {
         @DgsData(parentType = "Query", field = "hello")
-        fun someFetcher(): String {
-            return "Hello"
-        }
+        fun someFetcher(): String = "Hello"
     }
 
     @DgsComponent
     class VideoFetcher {
         @DgsData(parentType = "Query", field = "video")
-        fun someFetcher(): Video {
-            return Show("ShowA")
-        }
+        fun someFetcher(): Video = Show("ShowA")
     }
 
     private interface DefaultHelloFetcherInterface {
@@ -117,19 +118,17 @@ internal class DgsSchemaProviderTest {
 
     @DgsComponent
     class FetcherImplementingInterface : DefaultHelloFetcherInterface {
-        override fun someFetcher(): String =
-            "Hello"
+        override fun someFetcher(): String = "Hello"
     }
 
     @DgsComponent
     class SearchFetcher {
         @DgsData(parentType = "Query", field = "search")
-        fun someFetcher(): List<Any> {
-            return listOf(
+        fun someFetcher(): List<Any> =
+            listOf(
                 MovieSearch("Extraction", 90),
-                SeriesSearch("The Witcher", 15)
+                SeriesSearch("The Witcher", 15),
             )
-        }
     }
 
     @Test
@@ -144,8 +143,9 @@ internal class DgsSchemaProviderTest {
     @Test
     fun findMultipleSchemaFilesSingleLocation() {
         contextRunner.run { context ->
-            val schemaFiles = schemaProvider(applicationContext = context, schemaLocations = listOf("classpath*:location1/**/*.graphql*"))
-                .findSchemaFiles()
+            val schemaFiles =
+                schemaProvider(applicationContext = context, schemaLocations = listOf("classpath*:location1/**/*.graphql*"))
+                    .findSchemaFiles()
             assertThat(schemaFiles.size).isGreaterThan(2)
             assertEquals("location1-schema1.graphqls", schemaFiles[0].filename)
             assertEquals("location1-schema2.graphqls", schemaFiles[1].filename)
@@ -155,10 +155,11 @@ internal class DgsSchemaProviderTest {
     @Test
     fun findMultipleSchemaFilesMultipleLocations() {
         contextRunner.run { context ->
-            val schemaFiles = schemaProvider(
-                applicationContext = context,
-                schemaLocations = listOf("classpath*:location1/**/*.graphql*", "classpath*:location2/**/*.graphql*")
-            ).findSchemaFiles()
+            val schemaFiles =
+                schemaProvider(
+                    applicationContext = context,
+                    schemaLocations = listOf("classpath*:location1/**/*.graphql*", "classpath*:location2/**/*.graphql*"),
+                ).findSchemaFiles()
             assertThat(schemaFiles.size).isGreaterThan(4)
             assertEquals("location1-schema1.graphqls", schemaFiles[0].filename)
             assertEquals("location1-schema2.graphqls", schemaFiles[1].filename)
@@ -170,10 +171,11 @@ internal class DgsSchemaProviderTest {
     @Test
     fun `Should specify sourceName on SourceLocation`() {
         contextRunner.run { context ->
-            val schemaProvider = schemaProvider(
-                applicationContext = context,
-                schemaLocations = listOf("classpath*:schema/**/*.graphql*")
-            )
+            val schemaProvider =
+                schemaProvider(
+                    applicationContext = context,
+                    schemaLocations = listOf("classpath*:schema/**/*.graphql*"),
+                )
 
             val schema = schemaProvider.schema().graphQLSchema
 
@@ -191,7 +193,7 @@ internal class DgsSchemaProviderTest {
             assertThrows<NoSchemaFoundException> {
                 schemaProvider(
                     applicationContext = context,
-                    schemaLocations = listOf("classpath*:notexists/**/*.graphql*")
+                    schemaLocations = listOf("classpath*:notexists/**/*.graphql*"),
                 ).findSchemaFiles()
             }
         }
@@ -203,7 +205,7 @@ internal class DgsSchemaProviderTest {
             schemaProvider(
                 applicationContext = context,
                 typeDefinitionRegistry = TypeDefinitionRegistry(),
-                schemaLocations = listOf("classpath*:notexists/**/*.graphql*")
+                schemaLocations = listOf("classpath*:notexists/**/*.graphql*"),
             ).findSchemaFiles()
         }
     }
@@ -211,10 +213,11 @@ internal class DgsSchemaProviderTest {
     @Test
     fun findSchemaFilesIgnoreNonGraphQLFiles() {
         contextRunner.run { context ->
-            val schemaFiles = schemaProvider(
-                applicationContext = context,
-                schemaLocations = listOf("classpath*:location3/**/*.graphql*")
-            ).findSchemaFiles()
+            val schemaFiles =
+                schemaProvider(
+                    applicationContext = context,
+                    schemaLocations = listOf("classpath*:location3/**/*.graphql*"),
+                ).findSchemaFiles()
             assertEquals("location3-schema1.graphql", schemaFiles[0].filename)
             assertEquals("location3-schema2.graphqls", schemaFiles[1].filename)
 
@@ -232,9 +235,7 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(): String {
-                return "Hello"
-            }
+            fun someFetcher(): String = "Hello"
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -242,11 +243,14 @@ internal class DgsSchemaProviderTest {
             assertThat(schemaProvider.resolvedDataFetchers()).isEmpty()
             val schema = schemaProvider.schema().graphQLSchema
             assertThat(schemaProvider.resolvedDataFetchers())
-                .isNotEmpty.hasSize(1).first().satisfies(
+                .isNotEmpty
+                .hasSize(1)
+                .first()
+                .satisfies(
                     Consumer {
                         assertThat(it.parentType).isEqualTo("Query")
                         assertThat(it.field).isEqualTo("hello")
-                    }
+                    },
                 )
 
             val build = GraphQL.newGraphQL(schema).build()
@@ -259,9 +263,7 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            private fun someFetcher(): String {
-                return "Hello"
-            }
+            private fun someFetcher(): String = "Hello"
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -269,11 +271,14 @@ internal class DgsSchemaProviderTest {
             assertThat(schemaProvider.resolvedDataFetchers()).isEmpty()
             val schema = schemaProvider.schema().graphQLSchema
             assertThat(schemaProvider.resolvedDataFetchers())
-                .isNotEmpty.hasSize(1).first().satisfies(
+                .isNotEmpty
+                .hasSize(1)
+                .first()
+                .satisfies(
                     Consumer {
                         assertThat(it.parentType).isEqualTo("Query")
                         assertThat(it.field).isEqualTo("hello")
-                    }
+                    },
                 )
 
             val build = GraphQL.newGraphQL(schema).build()
@@ -286,29 +291,24 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun fetcher1(): String {
-                return "fetcher1"
-            }
+            fun fetcher1(): String = "fetcher1"
 
             @DgsData(parentType = "Query", field = "hello")
-            fun fetcher2(): String {
-                return "fetcher2"
-            }
+            fun fetcher2(): String = "fetcher2"
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
-            val exc = assertThrows<InvalidDgsConfigurationException> {
-                GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema().graphQLSchema).build()
-            }
+            val exc =
+                assertThrows<InvalidDgsConfigurationException> {
+                    GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema().graphQLSchema).build()
+                }
             assertThat(exc.message).isEqualTo("Duplicate data fetchers registered for Query.hello")
         }
     }
 
     open class BaseClassFetcher {
         @DgsData(parentType = "Query", field = "hello")
-        private fun someFetcher(): String {
-            return "Hello"
-        }
+        private fun someFetcher(): String = "Hello"
     }
 
     @Test
@@ -327,7 +327,8 @@ internal class DgsSchemaProviderTest {
 
     @Test
     fun withNoTypeResolversOfInterface() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 video: Video
             }
@@ -335,20 +336,26 @@ internal class DgsSchemaProviderTest {
             interface Video {
                 title: String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         contextRunner.withBeans(VideoFetcher::class).run { context ->
-            val error = assertThrows<InvalidTypeResolverException> {
-                val build = GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema(schema).graphQLSchema).build()
-                build.execute("{video{title}}")
-            }
-            assertThat(error.message).isEqualTo("The default type resolver could not find a suitable Java type for GraphQL interface type `Video`. Provide a @DgsTypeResolver for `Show`.")
+            val error =
+                assertThrows<InvalidTypeResolverException> {
+                    val build = GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema(schema).graphQLSchema).build()
+                    build.execute("{video{title}}")
+                }
+            assertThat(
+                error.message,
+            ).isEqualTo(
+                "The default type resolver could not find a suitable Java type for GraphQL interface type `Video`. Provide a @DgsTypeResolver for `Show`.",
+            )
         }
     }
 
     @Test
     fun withNoTypeResolversOfUnion() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 search: [SearchResult]
             }
@@ -364,35 +371,41 @@ internal class DgsSchemaProviderTest {
                 title: String
                 episodes: Int
             }
-        """.trimIndent()
+            """.trimIndent()
 
         contextRunner.withBean(SearchFetcher::class.java).run { context ->
-            val error = assertThrows<InvalidTypeResolverException> {
-                val build = GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema(schema).graphQLSchema).build()
-                build.execute(
-                    """
-                     query {
-                        search {
-                            ...on MovieSearchResult {
-                                title
-                                length
-                            }
-                            ...on SeriesSearchResult {
-                                title
-                                episodes
+            val error =
+                assertThrows<InvalidTypeResolverException> {
+                    val build = GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema(schema).graphQLSchema).build()
+                    build.execute(
+                        """
+                         query {
+                            search {
+                                ...on MovieSearchResult {
+                                    title
+                                    length
+                                }
+                                ...on SeriesSearchResult {
+                                    title
+                                    episodes
+                                }
                             }
                         }
-                    }
-                    """.trimIndent()
-                )
-            }
-            assertThat(error.message).isEqualTo("The default type resolver could not find a suitable Java type for GraphQL union type `SearchResult`. Provide a @DgsTypeResolver for `MovieSearch`.")
+                        """.trimIndent(),
+                    )
+                }
+            assertThat(
+                error.message,
+            ).isEqualTo(
+                "The default type resolver could not find a suitable Java type for GraphQL union type `SearchResult`. Provide a @DgsTypeResolver for `MovieSearch`.",
+            )
         }
     }
 
     @Test
     fun addDefaultTypeResolvers() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 video: Video
             }
@@ -400,15 +413,15 @@ internal class DgsSchemaProviderTest {
             interface Video {
                 title: String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class FetcherWithDefaultResolver {
             @DgsTypeResolver(name = "Video")
             @DgsDefaultTypeResolver
-            fun resolveType(@Suppress("unused_parameter") type: Any): String? {
-                return null
-            }
+            fun resolveType(
+                @Suppress("unused_parameter") type: Any,
+            ): String? = null
         }
 
         contextRunner.withBean(FetcherWithDefaultResolver::class.java).withBean(VideoFetcher::class.java).run { context ->
@@ -421,7 +434,8 @@ internal class DgsSchemaProviderTest {
 
     @Test
     fun addOverrideTypeResolvers() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 video: Video
             }
@@ -433,13 +447,15 @@ internal class DgsSchemaProviderTest {
             type Show implements Video {
                 title: String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class FetcherWithDefaultResolver {
             @DgsTypeResolver(name = "Video")
             @DgsDefaultTypeResolver
-            fun resolveType(@Suppress("unused_parameter") type: Any): String? {
+            fun resolveType(
+                @Suppress("unused_parameter") type: Any,
+            ): String? {
                 fail { "We are not expecting to resolve via the default resolver" }
             }
         }
@@ -447,9 +463,9 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class FetcherWithResolverOverride {
             @DgsTypeResolver(name = "Video")
-            fun resolveType(@Suppress("unused_parameter") type: Any): String {
-                return "Show"
-            }
+            fun resolveType(
+                @Suppress("unused_parameter") type: Any,
+            ): String = "Show"
         }
 
         contextRunner.withBeans(FetcherWithDefaultResolver::class, FetcherWithResolverOverride::class, VideoFetcher::class).run { context ->
@@ -475,7 +491,7 @@ internal class DgsSchemaProviderTest {
             @DgsCodeRegistry
             fun registry(
                 codeRegistryBuilder: GraphQLCodeRegistry.Builder,
-                @Suppress("unused_parameter") registry: TypeDefinitionRegistry?
+                @Suppress("unused_parameter") registry: TypeDefinitionRegistry?,
             ): GraphQLCodeRegistry.Builder {
                 val df = DataFetcher { "Runtime added field" }
                 val coordinates = FieldCoordinates.coordinates("Query", "myField")
@@ -486,7 +502,7 @@ internal class DgsSchemaProviderTest {
             @DgsCodeRegistry
             fun dgsProcessedRegistry(
                 codeRegistryBuilder: DgsCodeRegistryBuilder,
-                @Suppress("unused_parameter") registry: TypeDefinitionRegistry?
+                @Suppress("unused_parameter") registry: TypeDefinitionRegistry?,
             ): DgsCodeRegistryBuilder {
                 val df = DataFetcher { "Runtime added field" }
                 val coordinates = FieldCoordinates.coordinates("Query", "myProcessedField")
@@ -496,39 +512,48 @@ internal class DgsSchemaProviderTest {
 
         contextRunner.withBeans(HelloFetcher::class, CodeRegistryComponent::class).run { context ->
             val typeDefinitionRegistry = TypeDefinitionRegistry()
-            val objectTypeExtensionDefinition = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition()
-                .name("Query")
-                .fieldDefinitions(
-                    listOf(
-                        FieldDefinition.newFieldDefinition()
-                            .name("myField")
-                            .type(TypeName("String")).build(),
-                        FieldDefinition.newFieldDefinition()
-                            .name("myProcessedField")
-                            .type(TypeName("String")).build()
-                    )
-                ).build()
+            val objectTypeExtensionDefinition =
+                ObjectTypeExtensionDefinition
+                    .newObjectTypeExtensionDefinition()
+                    .name("Query")
+                    .fieldDefinitions(
+                        listOf(
+                            FieldDefinition
+                                .newFieldDefinition()
+                                .name("myField")
+                                .type(TypeName("String"))
+                                .build(),
+                            FieldDefinition
+                                .newFieldDefinition()
+                                .name("myProcessedField")
+                                .type(TypeName("String"))
+                                .build(),
+                        ),
+                    ).build()
 
-            val processor = object : DataFetcherResultProcessor {
-                override fun supportsType(originalResult: Any): Boolean {
-                    return true
-                }
+            val processor =
+                object : DataFetcherResultProcessor {
+                    override fun supportsType(originalResult: Any): Boolean = true
 
-                override fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any {
-                    // Avoid processing other results apart from the one for this test
-                    if (originalResult != "Runtime added field") {
-                        return originalResult
+                    override fun process(
+                        originalResult: Any,
+                        dfe: DgsDataFetchingEnvironment,
+                    ): Any {
+                        // Avoid processing other results apart from the one for this test
+                        if (originalResult != "Runtime added field") {
+                            return originalResult
+                        }
+                        return originalResult as String + " [suffixFromProcessor]"
                     }
-                    return originalResult as String + " [suffixFromProcessor]"
                 }
-            }
 
             typeDefinitionRegistry.add(objectTypeExtensionDefinition)
-            val schema = schemaProvider(
-                applicationContext = context,
-                typeDefinitionRegistry = typeDefinitionRegistry,
-                dataFetcherResultProcessors = listOf(processor)
-            ).schema().graphQLSchema
+            val schema =
+                schemaProvider(
+                    applicationContext = context,
+                    typeDefinitionRegistry = typeDefinitionRegistry,
+                    dataFetcherResultProcessors = listOf(processor),
+                ).schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertHello(build)
 
@@ -545,17 +570,24 @@ internal class DgsSchemaProviderTest {
 
         contextRunner.withBeans(HelloFetcher::class, CodeRegistryComponent::class).run { context ->
             val typeDefinitionRegistry = TypeDefinitionRegistry()
-            val objectTypeExtensionDefinition = ObjectTypeExtensionDefinition.newObjectTypeExtensionDefinition()
-                .name("Query")
-                .fieldDefinition(
-                    FieldDefinition.newFieldDefinition()
-                        .name("myField")
-                        .type(TypeName("String")).build()
-                )
-                .build()
+            val objectTypeExtensionDefinition =
+                ObjectTypeExtensionDefinition
+                    .newObjectTypeExtensionDefinition()
+                    .name("Query")
+                    .fieldDefinition(
+                        FieldDefinition
+                            .newFieldDefinition()
+                            .name("myField")
+                            .type(TypeName("String"))
+                            .build(),
+                    ).build()
 
             typeDefinitionRegistry.add(objectTypeExtensionDefinition)
-            val schema = schemaProvider(applicationContext = context, typeDefinitionRegistry = typeDefinitionRegistry).schema().graphQLSchema
+            val schema =
+                schemaProvider(
+                    applicationContext = context,
+                    typeDefinitionRegistry = typeDefinitionRegistry,
+                ).schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertHello(build)
 
@@ -569,12 +601,13 @@ internal class DgsSchemaProviderTest {
 
     @Test
     fun defaultEntitiesFetcher() {
-        val schema = """
-            type Movie @key(fields: "movieId") {
-            movieId: Int!
-            originalTitle: String
-        }
-        """.trimIndent()
+        val schema =
+            """
+                type Movie @key(fields: "movieId") {
+                movieId: Int!
+                originalTitle: String
+            }
+            """.trimIndent()
 
         contextRunner.run { context ->
             schemaProvider(applicationContext = context).schema(schema)
@@ -583,11 +616,12 @@ internal class DgsSchemaProviderTest {
 
     @Test
     fun notRequiredEntitiesFetcherWithoutFederation() {
-        val schema = """
+        val schema =
+            """
             type Movie {
                 movieId: Int!
             }
-        """.trimIndent()
+            """.trimIndent()
 
         contextRunner.run { context ->
             val dgsSchemaProvider = schemaProvider(applicationContext = context)
@@ -621,9 +655,7 @@ internal class DgsSchemaProviderTest {
         class NoTracingFetcher {
             @DgsEnableDataFetcherInstrumentation(false)
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(): String {
-                return "Hello"
-            }
+            fun someFetcher(): String = "Hello"
         }
 
         contextRunner.withBeans(NoTracingFetcher::class).run { context ->
@@ -639,9 +671,7 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class NoTracingDataFetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(): CompletableFuture<String> {
-                return CompletableFuture.supplyAsync { "hello" }
-            }
+            fun someFetcher(): CompletableFuture<String> = CompletableFuture.supplyAsync { "hello" }
         }
 
         contextRunner.withBeans(NoTracingDataFetcher::class).run { context ->
@@ -658,9 +688,7 @@ internal class DgsSchemaProviderTest {
         class NoTracingDataFetcher {
             @DgsEnableDataFetcherInstrumentation(true)
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(): CompletableFuture<String> {
-                return CompletableFuture.supplyAsync { "hello" }
-            }
+            fun someFetcher(): CompletableFuture<String> = CompletableFuture.supplyAsync { "hello" }
         }
 
         contextRunner.withBeans(NoTracingDataFetcher::class).run { context ->
@@ -673,7 +701,8 @@ internal class DgsSchemaProviderTest {
 
     @Test
     fun enableInstrumentationForInterfaceDataFetcher() {
-        val schema = """
+        val schema =
+            """
               type Query {
                 video: Video
             }
@@ -685,14 +714,12 @@ internal class DgsSchemaProviderTest {
             type Show implements Video {
                 title: String
             }                   
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class TitleFetcher {
             @DgsData(parentType = "Video", field = "title")
-            fun someFetcher(): String {
-                return "Title on Interface"
-            }
+            fun someFetcher(): String = "Title on Interface"
         }
 
         contextRunner.withBeans(TitleFetcher::class).run { context ->
@@ -705,7 +732,8 @@ internal class DgsSchemaProviderTest {
 
     @Test
     fun disableInstrumentationForInterfaceDataFetcherWithAnnotation() {
-        val schema = """
+        val schema =
+            """
               type Query {
                 video: Video
             }
@@ -717,15 +745,13 @@ internal class DgsSchemaProviderTest {
             type Show implements Video {
                 title: String
             }                   
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class TitleFetcher {
             @DgsEnableDataFetcherInstrumentation(false)
             @DgsData(parentType = "Video", field = "title")
-            fun someFetcher(): String {
-                return "Title on Interface"
-            }
+            fun someFetcher(): String = "Title on Interface"
         }
 
         contextRunner.withBeans(VideoFetcher::class, TitleFetcher::class).run { context ->
@@ -738,7 +764,8 @@ internal class DgsSchemaProviderTest {
 
     @Test
     fun disableTracingInstrumentationAndEnableMetricsForAsyncInterfaceDataFetcher() {
-        val schema = """
+        val schema =
+            """
               type Query {
                 video: Video
             }
@@ -750,14 +777,12 @@ internal class DgsSchemaProviderTest {
             type Show implements Video {
                 title: String
             }                   
-        """.trimIndent()
+            """.trimIndent()
 
         @DgsComponent
         class TitleFetcher {
             @DgsData(parentType = "Video", field = "title")
-            fun someFetcher(): CompletableFuture<String> {
-                return CompletableFuture.supplyAsync { "Title on Interface" }
-            }
+            fun someFetcher(): CompletableFuture<String> = CompletableFuture.supplyAsync { "Title on Interface" }
         }
 
         contextRunner.withBeans(VideoFetcher::class, TitleFetcher::class).run { context ->
@@ -773,9 +798,7 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class Fetcher {
             @DgsQuery
-            fun hello(): String {
-                return "Hello"
-            }
+            fun hello(): String = "Hello"
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -791,9 +814,7 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query")
-            fun hello(): String {
-                return "Hello"
-            }
+            fun hello(): String = "Hello"
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -809,9 +830,7 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class Fetcher {
             @DgsQuery(field = "hello")
-            fun someName(): String {
-                return "Hello"
-            }
+            fun someName(): String = "Hello"
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -826,19 +845,21 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class Fetcher {
             @DgsMutation
-            fun addMessage(@InputArgument message: String): String {
-                return message
-            }
+            fun addMessage(
+                @InputArgument message: String,
+            ): String = message
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
-            val schema = schemaProvider(applicationContext = context).schema(
-                """
-            type Mutation {
-                addMessage(message: String): String
-            }
-                """.trimIndent()
-            ).graphQLSchema
+            val schema =
+                schemaProvider(applicationContext = context)
+                    .schema(
+                        """
+                        type Mutation {
+                            addMessage(message: String): String
+                        }
+                        """.trimIndent(),
+                    ).graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertInputMessage(build)
         }
@@ -849,19 +870,21 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class Fetcher {
             @DgsMutation(field = "addMessage")
-            fun someName(@InputArgument message: String): String {
-                return message
-            }
+            fun someName(
+                @InputArgument message: String,
+            ): String = message
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
-            val schema = schemaProvider(applicationContext = context).schema(
-                """
-            type Mutation {
-                addMessage(message: String): String
-            }
-                """.trimIndent()
-            ).graphQLSchema
+            val schema =
+                schemaProvider(applicationContext = context)
+                    .schema(
+                        """
+                        type Mutation {
+                            addMessage(message: String): String
+                        }
+                        """.trimIndent(),
+                    ).graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertInputMessage(build)
         }
@@ -872,19 +895,19 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class Fetcher {
             @DgsSubscription
-            fun messages(): Publisher<String> {
-                return Flux.just("hello")
-            }
+            fun messages(): Publisher<String> = Flux.just("hello")
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
-            val schema = schemaProvider(applicationContext = context).schema(
-                """
-            type Subscription {
-                messages: String
-            }
-                """.trimIndent()
-            ).graphQLSchema
+            val schema =
+                schemaProvider(applicationContext = context)
+                    .schema(
+                        """
+                        type Subscription {
+                            messages: String
+                        }
+                        """.trimIndent(),
+                    ).graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertSubscription(build)
         }
@@ -895,26 +918,28 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class Fetcher {
             @DgsSubscription(field = "messages")
-            fun someMethod(): Publisher<String> {
-                return Flux.just("hello")
-            }
+            fun someMethod(): Publisher<String> = Flux.just("hello")
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
-            val schema = schemaProvider(applicationContext = context).schema(
-                """
-            type Subscription {
-                messages: String
-            }
-                """.trimIndent()
-            ).graphQLSchema
+            val schema =
+                schemaProvider(applicationContext = context)
+                    .schema(
+                        """
+                        type Subscription {
+                            messages: String
+                        }
+                        """.trimIndent(),
+                    ).graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertSubscription(build)
         }
     }
 
     @Test
-    fun `Schema provider works when a schema file is not terminated by a newline`(@TempDir tempDir: Path) {
+    fun `Schema provider works when a schema file is not terminated by a newline`(
+        @TempDir tempDir: Path,
+    ) {
         val path = createTempFile(directory = tempDir, prefix = "foo", suffix = ".graphql")
         val anotherPath = createTempFile(directory = tempDir, prefix = "bar", suffix = ".graphql")
 
@@ -936,24 +961,21 @@ internal class DgsSchemaProviderTest {
         @TestAnnotation
         class Fetcher1 {
             @DgsQuery(field = "hello")
-            fun someName(): String {
-                return "Goodbye"
-            }
+            fun someName(): String = "Goodbye"
         }
 
         @DgsComponent
         class Fetcher2 {
             @DgsQuery(field = "hello")
-            fun someName(): String {
-                return "Hello"
-            }
+            fun someName(): String = "Hello"
         }
 
         contextRunner.withBeans(Fetcher1::class, Fetcher2::class).run { context ->
-            val schema = schemaProvider(
-                applicationContext = context,
-                componentFilter = { !it::class.hasAnnotation<TestAnnotation>() }
-            ).schema().graphQLSchema
+            val schema =
+                schemaProvider(
+                    applicationContext = context,
+                    componentFilter = { !it::class.hasAnnotation<TestAnnotation>() },
+                ).schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertHello(build)
         }
@@ -964,9 +986,7 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query")
-            fun hell(): String {
-                return "Hello"
-            }
+            fun hell(): String = "Hello"
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -982,9 +1002,7 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query")
-            fun world(): String {
-                return "World"
-            }
+            fun world(): String = "World"
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -1003,9 +1021,7 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Character")
-            fun nam(): String {
-                return "Hello"
-            }
+            fun nam(): String = "Hello"
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -1021,23 +1037,19 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Character")
-            fun age(): Int {
-                return 42
-            }
+            fun age(): Int = 42
 
             @DgsData(parentType = "Query")
-            fun character(): Map<String, Any> {
-                return mapOf()
-            }
+            fun character(): Map<String, Any> = mapOf()
         }
 
         @DgsComponent
         class FetcherWithDefaultResolver {
             @DgsTypeResolver(name = "Character")
             @DgsDefaultTypeResolver
-            fun resolveType(@Suppress("unused_parameter") type: Any): String {
-                return "Human"
-            }
+            fun resolveType(
+                @Suppress("unused_parameter") type: Any,
+            ): String = "Human"
         }
 
         contextRunner.withBeans(Fetcher::class, FetcherWithDefaultResolver::class).run { context ->
@@ -1057,16 +1069,15 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class Fetcher {
             @DgsQuery
-            fun hell(): String {
-                return "Hello"
-            }
+            fun hell(): String = "Hello"
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val schemaProvider = schemaProvider(applicationContext = context)
-            val ex = assertThrows<DataFetcherSchemaMismatchException> {
-                schemaProvider.schema()
-            }
+            val ex =
+                assertThrows<DataFetcherSchemaMismatchException> {
+                    schemaProvider.schema()
+                }
             assertThat(ex).message().contains("a")
         }
     }
@@ -1076,9 +1087,7 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class Fetcher {
             @DgsQuery
-            fun world(): String {
-                return "World"
-            }
+            fun world(): String = "World"
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
@@ -1097,17 +1106,16 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class Fetcher {
             @DgsQuery
-            fun hell(): String {
-                return "Hello"
-            }
+            fun hell(): String = "Hello"
         }
 
         contextRunner.withBeans(Fetcher::class).run { context ->
             val schemaWiringValidationEnabled = false
-            val schemaProvider = schemaProvider(
-                applicationContext = context,
-                schemaWiringValidationEnabled = schemaWiringValidationEnabled
-            )
+            val schemaProvider =
+                schemaProvider(
+                    applicationContext = context,
+                    schemaWiringValidationEnabled = schemaWiringValidationEnabled,
+                )
             assertDoesNotThrow { schemaProvider.schema() }
         }
     }
@@ -1135,11 +1143,11 @@ internal class DgsSchemaProviderTest {
 
         StepVerifier
             .create(data)
-            .expectSubscription().assertNext { result ->
+            .expectSubscription()
+            .assertNext { result ->
                 assertThat(result.getData<Map<String, String>>())
                     .hasEntrySatisfying("messages") { value -> assertThat(value).isEqualTo("hello") }
-            }
-            .verifyComplete()
+            }.verifyComplete()
     }
 
     private fun assertInputMessage(build: GraphQL) {
@@ -1160,14 +1168,16 @@ internal class DgsSchemaProviderTest {
     @Test
     fun `When showSdlComments is set to true, SDL # comments should be present in introspection query results`() {
         contextRunner.run { context ->
-            val gqlSchema = schemaProvider(
-                applicationContext = context
-            ).schema(showSdlComments = true).graphQLSchema
+            val gqlSchema =
+                schemaProvider(
+                    applicationContext = context,
+                ).schema(showSdlComments = true).graphQLSchema
             val executableSchema = GraphQL.newGraphQL(gqlSchema).build()
 
             // Execute introspection query.
-            val executionResult = executableSchema.execute(
-                """
+            val executionResult =
+                executableSchema.execute(
+                    """
                     query {
                         __schema {
                             types {
@@ -1180,8 +1190,8 @@ internal class DgsSchemaProviderTest {
                             }
                         }
                     }
-                """.trimIndent()
-            )
+                    """.trimIndent(),
+                )
             assertTrue(executionResult.isDataPresent)
             val introspectedSchemaResult = executionResult.getData<Map<String, *>>()["__schema"] as Map<*, *>
             val introspectedTypesResult = introspectedSchemaResult["types"] as ArrayList<*>
@@ -1190,7 +1200,11 @@ internal class DgsSchemaProviderTest {
             val sdlCommentKey = "SDL Comment"
             val descriptionCommentKey = "Description Comment"
             assertThat(introspectedTypesResult).isNotNull
-            val descriptionCommentsInResult = introspectedTypesResult.filter { (it as LinkedHashMap<*, *>)["description"] == descriptionCommentKey }
+            val descriptionCommentsInResult =
+                introspectedTypesResult.filter {
+                    (it as LinkedHashMap<*, *>)["description"] ==
+                        descriptionCommentKey
+                }
             val sdlCommentsInResult = introspectedTypesResult.filter { (it as LinkedHashMap<*, *>)["description"] == sdlCommentKey }
 
             assert(descriptionCommentsInResult.isNotEmpty())
@@ -1201,14 +1215,16 @@ internal class DgsSchemaProviderTest {
     @Test
     fun `When showSdlComments is set to false, SDL # comments should not be present in introspection query results`() {
         contextRunner.run { context ->
-            val gqlSchema = schemaProvider(
-                applicationContext = context
-            ).schema(showSdlComments = false).graphQLSchema
+            val gqlSchema =
+                schemaProvider(
+                    applicationContext = context,
+                ).schema(showSdlComments = false).graphQLSchema
             val executableSchema = GraphQL.newGraphQL(gqlSchema).build()
 
             // Execute introspection query.
-            val executionResult = executableSchema.execute(
-                """
+            val executionResult =
+                executableSchema.execute(
+                    """
                     query {
                         __schema {
                             types {
@@ -1221,8 +1237,8 @@ internal class DgsSchemaProviderTest {
                             }
                         }
                     }
-                """.trimIndent()
-            )
+                    """.trimIndent(),
+                )
             assertTrue(executionResult.isDataPresent)
             val introspectedSchemaResult = executionResult.getData<Map<String, *>>()["__schema"] as Map<*, *>
             val introspectedTypesResult = introspectedSchemaResult["types"] as ArrayList<*>
@@ -1231,7 +1247,11 @@ internal class DgsSchemaProviderTest {
             val sdlCommentKey = "SDL Comment"
             val descriptionCommentKey = "Description Comment"
             assertThat(introspectedTypesResult).isNotNull
-            val descriptionCommentsInResult = introspectedTypesResult.filter { (it as LinkedHashMap<*, *>)["description"] == descriptionCommentKey }
+            val descriptionCommentsInResult =
+                introspectedTypesResult.filter {
+                    (it as LinkedHashMap<*, *>)["description"] ==
+                        descriptionCommentKey
+                }
             val sdlCommentsInResult = introspectedTypesResult.filter { (it as LinkedHashMap<*, *>)["description"] == sdlCommentKey }
 
             assert(descriptionCommentsInResult.isNotEmpty())

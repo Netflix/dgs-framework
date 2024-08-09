@@ -33,14 +33,14 @@ class DgsExecutionResultTest {
                 .builder()
                 .executionResult(ExecutionResultImpl.newExecutionResult().data(null))
                 .build()
-                .toSpecification()
+                .toSpecification(),
         ).contains(entry("data", null))
     }
 
     @Test
     fun `should default to not having data`() {
         assertThat(
-            DgsExecutionResult.builder().build().toSpecification()
+            DgsExecutionResult.builder().build().toSpecification(),
         ).doesNotContainKey("data")
     }
 
@@ -53,7 +53,7 @@ class DgsExecutionResultTest {
                 .builder()
                 .executionResult(ExecutionResultImpl.newExecutionResult().data(data))
                 .build()
-                .toSpecification()
+                .toSpecification(),
         ).contains(entry("data", data))
     }
 
@@ -65,8 +65,13 @@ class DgsExecutionResultTest {
             headers.add("We can add headers now??", "Yes we can")
 
             assertThat(
-                DgsExecutionResult.builder().headers(headers).build().toSpringResponse()
-                    .headers.toMap()
+                DgsExecutionResult
+                    .builder()
+                    .headers(headers)
+                    .build()
+                    .toSpringResponse()
+                    .headers
+                    .toMap(),
             ).containsAllEntriesOf(headers.toMap())
         }
 
@@ -75,8 +80,13 @@ class DgsExecutionResultTest {
             val httpStatusCode = HttpStatus.ALREADY_REPORTED
 
             assertThat(
-                DgsExecutionResult.builder().status(httpStatusCode).build().toSpringResponse()
-                    .statusCode.value()
+                DgsExecutionResult
+                    .builder()
+                    .status(httpStatusCode)
+                    .build()
+                    .toSpringResponse()
+                    .statusCode
+                    .value(),
             ).isEqualTo(httpStatusCode.value())
         }
     }

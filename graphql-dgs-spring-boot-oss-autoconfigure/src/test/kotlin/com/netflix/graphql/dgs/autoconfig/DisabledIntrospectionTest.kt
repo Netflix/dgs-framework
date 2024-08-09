@@ -25,25 +25,27 @@ import org.springframework.boot.test.context.runner.WebApplicationContextRunner
 
 class DisabledIntrospectionTest {
     private val context =
-        WebApplicationContextRunner().withConfiguration(AutoConfigurations.of(DgsAutoConfiguration::class.java))
+        WebApplicationContextRunner()
+            .withConfiguration(AutoConfigurations.of(DgsAutoConfiguration::class.java))
             .withPropertyValues("dgs.graphql.introspection.enabled=false")!!
 
     @Test
     fun disabledIntrospectionTest() {
         context.withUserConfiguration(CustomContextBuilderConfig::class.java).run { ctx ->
             assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                val json = it.execute(
-                    " query availableQueries {\n" +
-                        "  __schema {\n" +
-                        "    queryType {\n" +
-                        "      fields {\n" +
-                        "        name\n" +
-                        "        description\n" +
-                        "      }\n" +
-                        "    }\n" +
-                        "  }\n" +
-                        "}"
-                )
+                val json =
+                    it.execute(
+                        " query availableQueries {\n" +
+                            "  __schema {\n" +
+                            "    queryType {\n" +
+                            "      fields {\n" +
+                            "        name\n" +
+                            "        description\n" +
+                            "      }\n" +
+                            "    }\n" +
+                            "  }\n" +
+                            "}",
+                    )
                 assertThat(json.errors.size).isGreaterThan(0)
             }
         }

@@ -25,7 +25,6 @@ import java.util.stream.Stream
 
 @Internal
 class SelectionSetUtil {
-
     companion object {
         fun toPaths(selectionSet: String): List<List<String>> {
             val document = Parser.parse("{ $selectionSet }")
@@ -33,7 +32,10 @@ class SelectionSetUtil {
             return toPaths(operation.selectionSet, ArrayList())
         }
 
-        private fun toPaths(selectionSet: SelectionSet, nesting: MutableList<String>): List<List<String>> {
+        private fun toPaths(
+            selectionSet: SelectionSet,
+            nesting: MutableList<String>,
+        ): List<List<String>> {
             val results = ArrayList<List<String>>()
 
             for (selection in selectionSet.selections) {

@@ -27,9 +27,15 @@ fun interface DgsGraphQLRequestHeaderValidator {
     @kotlin.jvm.Throws(GraphqlRequestHeaderValidationException::class)
     fun assert(headers: HttpHeaders)
 
-    open class GraphqlRequestHeaderValidationException(s: String) : IllegalArgumentException(s)
+    open class GraphqlRequestHeaderValidationException(
+        s: String,
+    ) : IllegalArgumentException(s)
 
-    open class GraphqlRequestContentTypePredicateException(s: String) : GraphqlRequestHeaderValidationException(s)
+    open class GraphqlRequestContentTypePredicateException(
+        s: String,
+    ) : GraphqlRequestHeaderValidationException(s)
 
-    open class GraphQLRequestHeaderRuleException(s: String) : GraphqlRequestHeaderValidationException(s)
+    open class GraphQLRequestHeaderRuleException(
+        s: String,
+    ) : GraphqlRequestHeaderValidationException(s)
 }

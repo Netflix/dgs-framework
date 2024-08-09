@@ -19,15 +19,18 @@ package com.netflix.graphql.dgs.internal
 import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
 
 interface DataFetcherResultProcessor {
-
     fun supportsType(originalResult: Any): Boolean
 
-    fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any =
-        @Suppress("deprecation") process(originalResult)
+    fun process(
+        originalResult: Any,
+        dfe: DgsDataFetchingEnvironment,
+    ): Any =
+        @Suppress("deprecation")
+        process(originalResult)
 
     @Deprecated(
         "Replaced with process(originalResult, dfe)",
-        replaceWith = ReplaceWith("process(originalResult: Any, dfe: DgsDataFetchingEnvironment)")
+        replaceWith = ReplaceWith("process(originalResult: Any, dfe: DgsDataFetchingEnvironment)"),
     )
     fun process(originalResult: Any): Any = originalResult
 }

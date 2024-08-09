@@ -27,34 +27,37 @@ import reactor.core.publisher.Mono
 import java.util.*
 
 open class DefaultDgsReactiveGraphQLContextBuilder(
-    private val dgsReactiveCustomContextBuilderWithRequest: Optional<DgsReactiveCustomContextBuilderWithRequest<*>> = Optional.empty()
+    private val dgsReactiveCustomContextBuilderWithRequest: Optional<DgsReactiveCustomContextBuilderWithRequest<*>> = Optional.empty(),
 ) {
-
     fun build(dgsRequestData: DgsReactiveRequestData?): Mono<DgsContext> {
-        val customContext = if (dgsReactiveCustomContextBuilderWithRequest.isPresent) {
-            dgsReactiveCustomContextBuilderWithRequest.get().build(
-                dgsRequestData?.extensions ?: mapOf(),
-                HttpHeaders.readOnlyHttpHeaders(
-                    dgsRequestData?.headers
-                        ?: HttpHeaders()
-                ),
-                dgsRequestData?.serverRequest
-            )
-        } else Mono.empty()
+        val customContext =
+            if (dgsReactiveCustomContextBuilderWithRequest.isPresent) {
+                dgsReactiveCustomContextBuilderWithRequest.get().build(
+                    dgsRequestData?.extensions ?: mapOf(),
+                    HttpHeaders.readOnlyHttpHeaders(
+                        dgsRequestData?.headers
+                            ?: HttpHeaders(),
+                    ),
+                    dgsRequestData?.serverRequest,
+                )
+            } else {
+                Mono.empty()
+            }
 
         return Mono.deferContextual { context ->
-            customContext.map {
-                ReactiveDgsContext(
-                    it,
-                    dgsRequestData,
-                    context
+            customContext
+                .map {
+                    ReactiveDgsContext(
+                        it,
+                        dgsRequestData,
+                        context,
+                    )
+                }.defaultIfEmpty(
+                    ReactiveDgsContext(
+                        requestData = dgsRequestData,
+                        reactorContext = context,
+                    ),
                 )
-            }.defaultIfEmpty(
-                ReactiveDgsContext(
-                    requestData = dgsRequestData,
-                    reactorContext = context
-                )
-            )
         }
     }
 }
@@ -67,5 +70,5 @@ open class DefaultDgsReactiveGraphQLContextBuilder(
 data class DgsReactiveRequestData(
     override val extensions: Map<String, Any>? = emptyMap(),
     override val headers: HttpHeaders? = HttpHeaders.readOnlyHttpHeaders(HttpHeaders()),
-    val serverRequest: ServerRequest? = null
+    val serverRequest: ServerRequest? = null,
 ) : DgsRequestData

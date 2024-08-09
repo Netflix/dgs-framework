@@ -26,26 +26,42 @@ import org.springframework.web.reactive.config.EnableWebFlux
 
 @AutoConfigureWebTestClient
 @EnableWebFlux
-@SpringBootTest(classes = [DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, WebRequestTestWithCustomEndpoint.ExampleImplementation::class])
+@SpringBootTest(
+    classes = [
+        DgsWebFluxAutoConfiguration::class,
+        DgsAutoConfiguration::class,
+        WebRequestTestWithCustomEndpoint.ExampleImplementation::class,
+    ],
+)
 class GraphiQlUI {
     @Autowired
     lateinit var webTestClient: WebTestClient
 
     @Test
     fun `GraphiQL should be availble`() {
-        webTestClient.get().uri("/graphiql/index.html").exchange()
-            .expectStatus().isOk
+        webTestClient
+            .get()
+            .uri("/graphiql/index.html")
+            .exchange()
+            .expectStatus()
+            .isOk
     }
 
     @Test
     fun `graphiql should redirect to correct page`() {
-        webTestClient.get().uri("/graphiql").exchange()
-            .expectStatus().isPermanentRedirect
+        webTestClient
+            .get()
+            .uri("/graphiql")
+            .exchange()
+            .expectStatus()
+            .isPermanentRedirect
     }
 
     @Test
     fun `graphiql title should be default`() {
-        webTestClient.get().uri("/graphiql/index.html")
+        webTestClient
+            .get()
+            .uri("/graphiql/index.html")
             .exchange()
             .expectStatus()
             .isOk

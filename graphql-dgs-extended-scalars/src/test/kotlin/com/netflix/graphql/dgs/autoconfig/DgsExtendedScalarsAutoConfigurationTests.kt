@@ -22,10 +22,9 @@ import org.springframework.boot.autoconfigure.AutoConfigurations
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
 
 internal class DgsExtendedScalarsAutoConfigurationTests {
-
     private val context =
         ApplicationContextRunner().withConfiguration(
-            AutoConfigurations.of(DgsExtendedScalarsAutoConfiguration::class.java)
+            AutoConfigurations.of(DgsExtendedScalarsAutoConfiguration::class.java),
         )
 
     @Test
@@ -35,9 +34,11 @@ internal class DgsExtendedScalarsAutoConfigurationTests {
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration.CharsExtendedScalarsAutoConfiguration::class.java)
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration::class.java)
-                .hasSingleBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigDecimalAutoConfiguration::class.java)
-                .hasSingleBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigIntegerAutoConfiguration::class.java)
-                .hasSingleBean(DgsExtendedScalarsAutoConfiguration.ObjectsExtendedScalarsAutoConfiguration::class.java)
+                .hasSingleBean(
+                    DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigDecimalAutoConfiguration::class.java,
+                ).hasSingleBean(
+                    DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigIntegerAutoConfiguration::class.java,
+                ).hasSingleBean(DgsExtendedScalarsAutoConfiguration.ObjectsExtendedScalarsAutoConfiguration::class.java)
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration.TimeExtendedScalarsAutoConfiguration::class.java)
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration.IDsExtendedScalarsAutoConfiguration::class.java)
         }
@@ -45,125 +46,146 @@ internal class DgsExtendedScalarsAutoConfigurationTests {
 
     @Test
     fun `Scalars Autoconfiguration can be disabled`() {
-        context.withPropertyValues(
-            "dgs.graphql.extensions.scalars.enabled=false"
-        ).run { context ->
-            assertThat(context)
-                .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration::class.java)
-        }
+        context
+            .withPropertyValues(
+                "dgs.graphql.extensions.scalars.enabled=false",
+            ).run { context ->
+                assertThat(context)
+                    .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration::class.java)
+            }
     }
 
     @Test
     fun `Date & Time scalars can be disabled`() {
-        context.withPropertyValues(
-            "dgs.graphql.extensions.scalars.time-dates.enabled=false"
-        ).run { context ->
-            assertThat(context)
-                .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
-            assertThat(context)
-                .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.TimeExtendedScalarsAutoConfiguration::class.java)
-        }
+        context
+            .withPropertyValues(
+                "dgs.graphql.extensions.scalars.time-dates.enabled=false",
+            ).run { context ->
+                assertThat(context)
+                    .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
+                assertThat(context)
+                    .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.TimeExtendedScalarsAutoConfiguration::class.java)
+            }
     }
 
     @Test
     fun `Object, Json, Url, and Locale scalars can be disabled`() {
-        context.withPropertyValues(
-            "dgs.graphql.extensions.scalars.objects.enabled=false"
-        ).run { context ->
-            assertThat(context)
-                .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
-            assertThat(context)
-                .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.ObjectsExtendedScalarsAutoConfiguration::class.java)
-        }
+        context
+            .withPropertyValues(
+                "dgs.graphql.extensions.scalars.objects.enabled=false",
+            ).run { context ->
+                assertThat(context)
+                    .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
+                assertThat(context)
+                    .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.ObjectsExtendedScalarsAutoConfiguration::class.java)
+            }
     }
 
     @Test
     fun `Number scalars can be disabled`() {
-        context.withPropertyValues(
-            "dgs.graphql.extensions.scalars.numbers.enabled=false"
-        ).run { context ->
-            assertThat(context)
-                .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
-            assertThat(context)
-                .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration::class.java)
-                .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigDecimalAutoConfiguration::class.java)
-                .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigIntegerAutoConfiguration::class.java)
-        }
+        context
+            .withPropertyValues(
+                "dgs.graphql.extensions.scalars.numbers.enabled=false",
+            ).run { context ->
+                assertThat(context)
+                    .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
+                assertThat(context)
+                    .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration::class.java)
+                    .doesNotHaveBean(
+                        DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigDecimalAutoConfiguration::class.java,
+                    ).doesNotHaveBean(
+                        DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigIntegerAutoConfiguration::class.java,
+                    )
+            }
     }
 
     @Test
     fun `The BigDecimal scalar can be disabled`() {
-        context.withPropertyValues(
-            "dgs.graphql.extensions.scalars.numbers.bigdecimal.enabled=false"
-        ).run { context ->
-            assertThat(context)
-                .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
-                .hasSingleBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration::class.java)
-                .hasSingleBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigIntegerAutoConfiguration::class.java)
-            assertThat(context)
-                .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigDecimalAutoConfiguration::class.java)
-        }
+        context
+            .withPropertyValues(
+                "dgs.graphql.extensions.scalars.numbers.bigdecimal.enabled=false",
+            ).run { context ->
+                assertThat(context)
+                    .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
+                    .hasSingleBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration::class.java)
+                    .hasSingleBean(
+                        DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigIntegerAutoConfiguration::class.java,
+                    )
+                assertThat(context)
+                    .doesNotHaveBean(
+                        DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigDecimalAutoConfiguration::class.java,
+                    )
+            }
     }
 
     @Test
     fun `The BigInteger scalar can be disabled`() {
-        context.withPropertyValues(
-            "dgs.graphql.extensions.scalars.numbers.biginteger.enabled=false"
-        ).run { context ->
-            assertThat(context)
-                .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
-                .hasSingleBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration::class.java)
-                .hasSingleBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigDecimalAutoConfiguration::class.java)
-            assertThat(context)
-                .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigIntegerAutoConfiguration::class.java)
-        }
+        context
+            .withPropertyValues(
+                "dgs.graphql.extensions.scalars.numbers.biginteger.enabled=false",
+            ).run { context ->
+                assertThat(context)
+                    .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
+                    .hasSingleBean(DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration::class.java)
+                    .hasSingleBean(
+                        DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigDecimalAutoConfiguration::class.java,
+                    )
+                assertThat(context)
+                    .doesNotHaveBean(
+                        DgsExtendedScalarsAutoConfiguration.NumbersExtendedScalarsAutoConfiguration.BigIntegerAutoConfiguration::class.java,
+                    )
+            }
     }
 
     @Test
     fun `Chars scalars can be disabled`() {
-        context.withPropertyValues(
-            "dgs.graphql.extensions.scalars.chars.enabled=false"
-        ).run { context ->
-            assertThat(context)
-                .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
-            assertThat(context)
-                .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.CharsExtendedScalarsAutoConfiguration::class.java)
-        }
+        context
+            .withPropertyValues(
+                "dgs.graphql.extensions.scalars.chars.enabled=false",
+            ).run { context ->
+                assertThat(context)
+                    .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
+                assertThat(context)
+                    .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.CharsExtendedScalarsAutoConfiguration::class.java)
+            }
     }
 
     @Test
     fun `IDs scalars can be disabled`() {
-        context.withPropertyValues(
-            "dgs.graphql.extensions.scalars.ids.enabled=false"
-        ).run { context ->
-            assertThat(context)
-                .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
-            assertThat(context)
-                .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.IDsExtendedScalarsAutoConfiguration::class.java)
-        }
+        context
+            .withPropertyValues(
+                "dgs.graphql.extensions.scalars.ids.enabled=false",
+            ).run { context ->
+                assertThat(context)
+                    .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
+                assertThat(context)
+                    .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.IDsExtendedScalarsAutoConfiguration::class.java)
+            }
     }
 
     @Test
     fun `Country scalars can be disabled`() {
-        context.withPropertyValues(
-            "dgs.graphql.extensions.scalars.country.enabled=false"
-        ).run { context ->
-            assertThat(context)
-                .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
-            assertThat(context)
-                .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.CountryExtendedScalarsRegistrar::class.java)
-        }
+        context
+            .withPropertyValues(
+                "dgs.graphql.extensions.scalars.country.enabled=false",
+            ).run { context ->
+                assertThat(context)
+                    .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
+                assertThat(context)
+                    .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.CountryExtendedScalarsRegistrar::class.java)
+            }
     }
 
     @Test
     fun `Currency scalars can be disabled`() {
-        context.withPropertyValues(
-            "dgs.graphql.extensions.scalars.currency.enabled=false"
-        ).run { context ->
-            assertThat(context)
-                .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
-            assertThat(context)
-                .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.CurrencyExtendedScalarsRegistrar::class.java)
-        }
+        context
+            .withPropertyValues(
+                "dgs.graphql.extensions.scalars.currency.enabled=false",
+            ).run { context ->
+                assertThat(context)
+                    .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
+                assertThat(context)
+                    .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.CurrencyExtendedScalarsRegistrar::class.java)
+            }
     }
 }

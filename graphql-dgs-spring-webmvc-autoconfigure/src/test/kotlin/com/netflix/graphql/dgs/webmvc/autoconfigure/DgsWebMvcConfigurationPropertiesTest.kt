@@ -24,7 +24,6 @@ import org.springframework.boot.context.properties.source.MapConfigurationProper
 import java.util.*
 
 class DgsWebMvcConfigurationPropertiesTest {
-
     @Test
     fun graphQLPathDefault() {
         val properties = bind(Collections.emptyMap())
@@ -87,9 +86,10 @@ class DgsWebMvcConfigurationPropertiesTest {
         assertThat(properties.schemaJson.path).isEqualTo("/private/sj")
     }
 
-    private fun bind(name: String, value: String): DgsWebMvcConfigurationProperties {
-        return bind(Collections.singletonMap(name, value))
-    }
+    private fun bind(
+        name: String,
+        value: String,
+    ): DgsWebMvcConfigurationProperties = bind(Collections.singletonMap(name, value))
 
     private fun bind(map: Map<String?, String?>): DgsWebMvcConfigurationProperties {
         val source: ConfigurationPropertySource = MapConfigurationPropertySource(map)

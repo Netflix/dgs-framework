@@ -30,12 +30,18 @@ open class CustomInputObjectMapperConfig {
     @Bean
     open fun inputObjectMapper(): InputObjectMapper {
         return object : InputObjectMapper {
-            override fun <T : Any> mapToKotlinObject(inputMap: Map<String, *>, targetClass: KClass<T>): T {
+            override fun <T : Any> mapToKotlinObject(
+                inputMap: Map<String, *>,
+                targetClass: KClass<T>,
+            ): T {
                 val filteredInputMap = inputMap.filterKeys { !it.startsWith("ignore") }
                 return DefaultInputObjectMapper(this).mapToKotlinObject(filteredInputMap, targetClass)
             }
 
-            override fun <T> mapToJavaObject(inputMap: Map<String, *>, targetClass: Class<T>): T {
+            override fun <T> mapToJavaObject(
+                inputMap: Map<String, *>,
+                targetClass: Class<T>,
+            ): T {
                 val filteredInputMap = inputMap.filterKeys { !it.startsWith("ignore") }
                 return DefaultInputObjectMapper(this).mapToJavaObject(filteredInputMap, targetClass)
             }
@@ -43,23 +49,27 @@ open class CustomInputObjectMapperConfig {
     }
 
     @Bean
-    open fun dataFetcher(): DataFetcherWithInputObject {
-        return DataFetcherWithInputObject()
-    }
+    open fun dataFetcher(): DataFetcherWithInputObject = DataFetcherWithInputObject()
 }
 
 @DgsComponent
 class DataFetcherWithInputObject {
     @DgsQuery
-    fun withIgnoredField(@InputArgument input: Input): Input {
-        return input
-    }
+    fun withIgnoredField(
+        @InputArgument input: Input,
+    ): Input = input
 
     @DgsQuery
-    fun withIgnoredFieldNested(@InputArgument nestedInput: NestedInput): Input {
-        return nestedInput.input
-    }
+    fun withIgnoredFieldNested(
+        @InputArgument nestedInput: NestedInput,
+    ): Input = nestedInput.input
 
-    data class Input(val ignoredField: String?, val name: String)
-    data class NestedInput(val input: Input)
+    data class Input(
+        val ignoredField: String?,
+        val name: String,
+    )
+
+    data class NestedInput(
+        val input: Input,
+    )
 }

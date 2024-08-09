@@ -16,4 +16,6 @@
 
 package com.netflix.graphql.dgs.exceptions
 
-class DataFetcherSchemaMismatchException(message: String) : RuntimeException(message)
+class DataFetcherSchemaMismatchException(
+    message: String,
+) : RuntimeException(message)

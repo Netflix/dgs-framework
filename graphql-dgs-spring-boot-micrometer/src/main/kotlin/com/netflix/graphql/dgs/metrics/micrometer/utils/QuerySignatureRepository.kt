@@ -41,13 +41,14 @@ import java.util.*
 @FunctionalInterface
 @Internal
 fun interface QuerySignatureRepository {
-
     companion object {
-        internal fun queryHash(@Language("graphql") query: String): String = DigestUtils.sha256Hex(query)
+        internal fun queryHash(
+            @Language("graphql") query: String,
+        ): String = DigestUtils.sha256Hex(query)
 
         internal fun computeSignature(
             document: Document,
-            operationName: String?
+            operationName: String?,
         ): QuerySignature {
             val querySignatureDoc = AstSignature().signatureQuery(document, operationName)
             val querySignature = AstPrinter.printAst(querySignatureDoc)
@@ -58,8 +59,11 @@ fun interface QuerySignatureRepository {
 
     fun get(
         document: Document,
-        parameters: InstrumentationExecutionParameters
+        parameters: InstrumentationExecutionParameters,
     ): Optional<QuerySignature>
 
-    data class QuerySignature(val value: String, val hash: String)
+    data class QuerySignature(
+        val value: String,
+        val hash: String,
+    )
 }

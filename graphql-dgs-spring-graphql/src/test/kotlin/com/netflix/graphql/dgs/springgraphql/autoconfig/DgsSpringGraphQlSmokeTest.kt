@@ -47,18 +47,16 @@ import java.util.function.Consumer
         DgsSpringGraphQLSourceAutoConfiguration::class,
         GraphQlAutoConfiguration::class,
         GraphQlWebMvcAutoConfiguration::class,
-        WebMvcAutoConfiguration::class
+        WebMvcAutoConfiguration::class,
     ],
-
     properties = [
         "dgs.graphql.schema-locations=classpath:/dgs-spring-graphql-smoke-test.graphqls",
         "spring.graphql.schema.inspection.enabled=true",
-        "dgs.graphql.schema-wiring-validation-enabled=false"
-    ]
+        "dgs.graphql.schema-wiring-validation-enabled=false",
+    ],
 )
 @AutoConfigureMockMvc
 class DgsSpringGraphQlSmokeTest {
-
     @Autowired
     lateinit var mockMvc: MockMvc
 
@@ -67,39 +65,45 @@ class DgsSpringGraphQlSmokeTest {
 
     @Test
     fun testGraphQlRequest() {
-        val query = """
+        val query =
+            """
             query {
                 dgsField
                 springControllerField              
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        data class GraphQlRequest(val query: String)
+        data class GraphQlRequest(
+            val query: String,
+        )
 
-        mockMvc.post("/graphql") {
-            content = jacksonObjectMapper().writeValueAsString(GraphQlRequest(query))
-            accept = MediaType.APPLICATION_JSON
-            contentType = MediaType.APPLICATION_JSON
-        }.andExpect {
-            status { isOk() }
-            content {
-                json(
-                    """{
+        mockMvc
+            .post("/graphql") {
+                content = jacksonObjectMapper().writeValueAsString(GraphQlRequest(query))
+                accept = MediaType.APPLICATION_JSON
+                contentType = MediaType.APPLICATION_JSON
+            }.andExpect {
+                status { isOk() }
+                content {
+                    json(
+                        """{
                 |  "data": {
                 |    "dgsField": "test from DGS",
                 |    "springControllerField": "test from Spring Controller"
                 |  }
                 |}
-                    """.trimMargin()
-                )
+                        """.trimMargin(),
+                    )
+                }
             }
-        }
     }
 
     @Test
     fun testSchemaArgumentReporter() {
         assertThat(testReportConsumer.schemaReport?.unmappedArguments()).hasSize(2)
-        assertThat(testReportConsumer.schemaReport?.unmappedArguments()?.values).containsExactly(listOf("someArg", "someOtherArg"), listOf("someArg"))
+        assertThat(
+            testReportConsumer.schemaReport?.unmappedArguments()?.values,
+        ).containsExactly(listOf("someArg", "someOtherArg"), listOf("someArg"))
     }
 
     @TestConfiguration
@@ -107,32 +111,30 @@ class DgsSpringGraphQlSmokeTest {
         @DgsComponent
         open class DgsTestDatafetcher {
             @DgsQuery
-            fun dgsField(): String {
-                return "test from DGS"
-            }
+            fun dgsField(): String = "test from DGS"
 
             @DgsQuery
-            fun unmappedArgument(@InputArgument someArg: String, @InputArgument someOtherArg: Int): String {
-                return "unmapped argument test"
-            }
+            fun unmappedArgument(
+                @InputArgument someArg: String,
+                @InputArgument someOtherArg: Int,
+            ): String = "unmapped argument test"
 
             @DgsQuery
-            fun incorrectNamedArgument(@InputArgument(name = "someArg") somename: String): String {
-                return "unmapped argument test"
-            }
+            fun incorrectNamedArgument(
+                @InputArgument(name = "someArg") somename: String,
+            ): String = "unmapped argument test"
 
             @DgsQuery
-            fun mappedArguments(@InputArgument firstParam: String, @InputArgument secondParam: Int): String {
-                return "mapped argument test"
-            }
+            fun mappedArguments(
+                @InputArgument firstParam: String,
+                @InputArgument secondParam: Int,
+            ): String = "mapped argument test"
         }
 
         @Controller
         open class SpringDatafetcher {
             @QueryMapping
-            fun springControllerField(): String {
-                return "test from Spring Controller"
-            }
+            fun springControllerField(): String = "test from Spring Controller"
         }
 
         @Component

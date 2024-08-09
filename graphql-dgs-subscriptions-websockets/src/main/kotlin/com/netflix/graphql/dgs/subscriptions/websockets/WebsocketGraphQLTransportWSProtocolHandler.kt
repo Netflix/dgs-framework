@@ -48,9 +48,8 @@ class WebsocketGraphQLTransportWSProtocolHandler(
     private val dgsQueryExecutor: DgsQueryExecutor,
     private val connectionInitTimeout: Duration,
     private val subscriptionErrorLogLevel: Level,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
 ) : TextWebSocketHandler() {
-
     internal val sessions = CopyOnWriteArrayList<WebSocketSession>()
     internal val contexts = ConcurrentHashMap<String, Context<Any?>>()
 
@@ -62,15 +61,16 @@ class WebsocketGraphQLTransportWSProtocolHandler(
         val timer = Timer("dgs-graphql-ws-transport-session-cleanup", true)
         this.timer = timer
 
-        val timerTask = object : TimerTask() {
-            override fun run() {
-                for (session in sessions) {
-                    if (!session.isOpen) {
-                        cleanupSubscriptionsForSession(session)
+        val timerTask =
+            object : TimerTask() {
+                override fun run() {
+                    for (session in sessions) {
+                        if (!session.isOpen) {
+                            cleanupSubscriptionsForSession(session)
+                        }
                     }
                 }
             }
-        }
         timer.scheduleAtFixedRate(timerTask, 0, 5000)
     }
 
@@ -86,26 +86,33 @@ class WebsocketGraphQLTransportWSProtocolHandler(
         contexts[session.id] = context
         val timer = Timer("dgs-graphql-ws-transport-connection-timeout-watchdog-${session.id}", true)
 
-        val timerTask = object : TimerTask() {
-            override fun run() {
-                if (!context.getConnectionInitReceived()) {
-                    session.close(CloseStatus(CloseCode.ConnectionInitialisationTimeout.code))
-                    contexts.remove(session.id)
+        val timerTask =
+            object : TimerTask() {
+                override fun run() {
+                    if (!context.getConnectionInitReceived()) {
+                        session.close(CloseStatus(CloseCode.ConnectionInitialisationTimeout.code))
+                        contexts.remove(session.id)
+                    }
+                    timer.cancel()
                 }
-                timer.cancel()
             }
-        }
 
         timer.schedule(timerTask, connectionInitTimeout.toMillis())
     }
 
-    override fun afterConnectionClosed(session: WebSocketSession, status: CloseStatus) {
+    override fun afterConnectionClosed(
+        session: WebSocketSession,
+        status: CloseStatus,
+    ) {
         if (status == CloseStatus.NORMAL) {
             cleanupSubscriptionsForSession(session)
         }
     }
 
-    public override fun handleTextMessage(session: WebSocketSession, textMessage: TextMessage) {
+    public override fun handleTextMessage(
+        session: WebSocketSession,
+        textMessage: TextMessage,
+    ) {
         val message = objectMapper.readValue(textMessage.payload, Message::class.java)
         val context = contexts[session.id]!!
 
@@ -122,9 +129,9 @@ class WebsocketGraphQLTransportWSProtocolHandler(
                     session.sendMessage(
                         TextMessage(
                             objectMapper.writeValueAsBytes(
-                                Message.ConnectionAckMessage()
-                            )
-                        )
+                                Message.ConnectionAckMessage(),
+                            ),
+                        ),
                     )
                     context.acknowledged = true
                 } catch (e: Throwable) {
@@ -136,10 +143,10 @@ class WebsocketGraphQLTransportWSProtocolHandler(
                     TextMessage(
                         objectMapper.writeValueAsBytes(
                             Message.PongMessage(
-                                payload = message.payload
-                            )
-                        )
-                    )
+                                payload = message.payload,
+                            ),
+                        ),
+                    ),
                 )
             }
             is Message.PongMessage -> {
@@ -174,7 +181,7 @@ class WebsocketGraphQLTransportWSProtocolHandler(
     private fun handleSubscription(
         id: String,
         payload: Message.SubscribeMessage.Payload,
-        session: WebSocketSession
+        session: WebSocketSession,
     ) {
         val executionResult: ExecutionResult =
             dgsQueryExecutor.execute(
@@ -183,65 +190,70 @@ class WebsocketGraphQLTransportWSProtocolHandler(
                 payload.extensions,
                 null,
                 payload.operationName,
-                null
+                null,
             )
 
         val subscriptionStream: Publisher<ExecutionResult> = executionResult.getData()
 
-        subscriptionStream.subscribe(object : Subscriber<ExecutionResult> {
-            override fun onSubscribe(s: Subscription) {
-                logger.info("Subscription started for {}", id)
-                contexts[session.id]?.subscriptions?.set(id, s)
+        subscriptionStream.subscribe(
+            object : Subscriber<ExecutionResult> {
+                override fun onSubscribe(s: Subscription) {
+                    logger.info("Subscription started for {}", id)
+                    contexts[session.id]?.subscriptions?.set(id, s)
 
-                s.request(1)
-            }
-
-            override fun onNext(er: ExecutionResult) {
-                val message = Message.NextMessage(
-                    payload = com.netflix.graphql.types.subscription.websockets.ExecutionResult(er.getData(), er.errors),
-                    id = id
-                )
-                val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
-                logger.debug("Sending subscription data: {}", jsonMessage)
-
-                if (session.isOpen) {
-                    session.sendMessage(jsonMessage)
-                    contexts[session.id]?.subscriptions?.get(id)?.request(1)
+                    s.request(1)
                 }
-            }
 
-            override fun onError(t: Throwable) {
-                when (subscriptionErrorLogLevel) {
-                    Level.ERROR -> logger.error("Error on subscription {}", id, t)
-                    Level.WARN -> logger.warn("Error on subscription {}", id, t)
-                    Level.INFO -> logger.info("Error on subscription {}: {}", id, t.message)
-                    Level.DEBUG -> logger.debug("Error on subscription {}", id, t)
-                    Level.TRACE -> logger.trace("Error on subscription {}", id, t)
+                override fun onNext(er: ExecutionResult) {
+                    val message =
+                        Message.NextMessage(
+                            payload =
+                                com.netflix.graphql.types.subscription.websockets
+                                    .ExecutionResult(er.getData(), er.errors),
+                            id = id,
+                        )
+                    val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
+                    logger.debug("Sending subscription data: {}", jsonMessage)
+
+                    if (session.isOpen) {
+                        session.sendMessage(jsonMessage)
+                        contexts[session.id]?.subscriptions?.get(id)?.request(1)
+                    }
                 }
-                val message =
-                    Message.ErrorMessage(
-                        id = id,
-                        payload = listOf(GraphqlErrorBuilder.newError().message(t.message).build())
-                    )
-                val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
-                logger.debug("Sending subscription error: {}", jsonMessage)
 
-                if (session.isOpen) {
-                    session.sendMessage(jsonMessage)
+                override fun onError(t: Throwable) {
+                    when (subscriptionErrorLogLevel) {
+                        Level.ERROR -> logger.error("Error on subscription {}", id, t)
+                        Level.WARN -> logger.warn("Error on subscription {}", id, t)
+                        Level.INFO -> logger.info("Error on subscription {}: {}", id, t.message)
+                        Level.DEBUG -> logger.debug("Error on subscription {}", id, t)
+                        Level.TRACE -> logger.trace("Error on subscription {}", id, t)
+                    }
+                    val message =
+                        Message.ErrorMessage(
+                            id = id,
+                            payload = listOf(GraphqlErrorBuilder.newError().message(t.message).build()),
+                        )
+                    val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
+                    logger.debug("Sending subscription error: {}", jsonMessage)
+
+                    if (session.isOpen) {
+                        session.sendMessage(jsonMessage)
+                    }
                 }
-            }
 
-            override fun onComplete() {
-                logger.info("Subscription completed for {}", id)
-                val message = Message.CompleteMessage(id)
-                val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
+                override fun onComplete() {
+                    logger.info("Subscription completed for {}", id)
+                    val message = Message.CompleteMessage(id)
+                    val jsonMessage = TextMessage(objectMapper.writeValueAsBytes(message))
 
-                if (session.isOpen) {
-                    session.sendMessage(jsonMessage)
+                    if (session.isOpen) {
+                        session.sendMessage(jsonMessage)
+                    }
+                    contexts[session.id]?.subscriptions?.remove(id)
                 }
-                contexts[session.id]?.subscriptions?.remove(id)
-            }
-        })
+            },
+        )
     }
 
     private companion object {

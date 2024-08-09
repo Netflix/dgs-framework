@@ -54,11 +54,19 @@ import java.time.Duration
 
 @EnableWebFlux
 @SpringBootTest(
-    classes = [HttpHandlerAutoConfiguration::class, ReactiveWebServerFactoryAutoConfiguration::class, WebFluxAutoConfiguration::class, DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, WebsocketSubscriptionsGraphQLTransportWSTest.ExampleSubscriptionImplementation::class],
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+    classes = [
+        HttpHandlerAutoConfiguration::class,
+        ReactiveWebServerFactoryAutoConfiguration::class,
+        WebFluxAutoConfiguration::class,
+        DgsWebFluxAutoConfiguration::class,
+        DgsAutoConfiguration::class,
+        WebsocketSubscriptionsGraphQLTransportWSTest.ExampleSubscriptionImplementation::class,
+    ],
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
-open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort val port: Int) {
-
+open class WebsocketSubscriptionsGraphQLTransportWSTest(
+    @param:LocalServerPort val port: Int,
+) {
     @Test
     fun `Basic subscription flow`() {
         val client: WebSocketClient = ReactorNettyWebSocketClient()
@@ -69,7 +77,8 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
         val execute = clientExecute(client, url, output, query, null)
         StepVerifier.create(execute).expectComplete().verify()
 
-        StepVerifier.create(output.asFlux().map { (it as Message.NextMessage).payload.toString() })
+        StepVerifier
+            .create(output.asFlux().map { (it as Message.NextMessage).payload.toString() })
             .expectNext("ExecutionResult(data={ticker=1}, errors=[])")
             .expectNext("ExecutionResult(data={ticker=2}, errors=[])")
             .expectNext("ExecutionResult(data={ticker=3}, errors=[])")
@@ -87,12 +96,18 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
 
         StepVerifier.create(execute).expectComplete().verify()
 
-        StepVerifier.create(
-            output.asFlux().map {
-                if (it.type == MessageType.NEXT) { (it as Message.NextMessage).payload.toString() } else (it as Message.ErrorMessage).payload.toString()
-            }
-        )
-            .expectNext("ExecutionResult(data={withError=1}, errors=[])")
+        StepVerifier
+            .create(
+                output.asFlux().map {
+                    if (it.type ==
+                        MessageType.NEXT
+                    ) {
+                        (it as Message.NextMessage).payload.toString()
+                    } else {
+                        (it as Message.ErrorMessage).payload.toString()
+                    }
+                },
+            ).expectNext("ExecutionResult(data={withError=1}, errors=[])")
             .expectNext("ExecutionResult(data={withError=2}, errors=[])")
             .expectNext("ExecutionResult(data={withError=3}, errors=[])")
             .expectNext("[{message=Broken producer, locations=[], errorType=DataFetchingException, path=null, extensions=null}]")
@@ -110,7 +125,8 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
 
         StepVerifier.create(execute).expectComplete().verify()
 
-        StepVerifier.create(output.asFlux().map { (it as Message.NextMessage).payload.toString() })
+        StepVerifier
+            .create(output.asFlux().map { (it as Message.NextMessage).payload.toString() })
             .expectNext("ExecutionResult(data={withDelay=1}, errors=[])")
             .expectNext("ExecutionResult(data={withDelay=2}, errors=[])")
             .verifyComplete()
@@ -126,7 +142,8 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
         val execute = clientExecute(client, url, output, query, sendMultipleConnectionInit = true)
         StepVerifier.create(execute).expectComplete().verify()
 
-        StepVerifier.create(output.asFlux().map {})
+        StepVerifier
+            .create(output.asFlux().map {})
             .expectErrorMatches { e -> e is CustomCloseException && e.closeCode == CloseCode.TooManyInitialisationRequests.code }
             .verify()
     }
@@ -138,12 +155,14 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
         val output: Sinks.Many<Message> = Sinks.many().replay().all()
         val execute = clientExecuteDelayedConnectionInit(client, url, output)
         val timeout = DgsWebfluxConfigurationProperties.DEFAULT_CONNECTION_INIT_TIMEOUT.trimEnd('s').toLong() + 2
-        StepVerifier.withVirtualTime { execute }
+        StepVerifier
+            .withVirtualTime { execute }
             .thenAwait(Duration.ofSeconds(timeout))
             .expectComplete()
             .verify()
 
-        StepVerifier.create(output.asFlux().map {})
+        StepVerifier
+            .create(output.asFlux().map {})
             .expectErrorMatches { e -> e is CustomCloseException && e.closeCode == CloseCode.ConnectionInitialisationTimeout.code }
             .verify()
     }
@@ -158,52 +177,54 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
         val execute = clientExecute(client, url, output, query, sendDuplicateSubscriptionRequest = true)
         StepVerifier.create(execute).expectComplete().verify()
 
-        StepVerifier.create(output.asFlux().map {})
+        StepVerifier
+            .create(output.asFlux().map {})
             .expectErrorMatches { e -> e is CustomCloseException && e.closeCode == CloseCode.SubscriberAlreadyExists.code }
             .verify()
     }
 
-    private fun registerCloseHandler(session: WebSocketSession, output: Sinks.Many<Message>) {
-        session.closeStatus()
+    private fun registerCloseHandler(
+        session: WebSocketSession,
+        output: Sinks.Many<Message>,
+    ) {
+        session
+            .closeStatus()
             .defaultIfEmpty(CloseStatus.NO_STATUS_CODE)
             .doOnNext { closeStatus ->
                 if (!closeStatus.code.equals(CloseStatus.NORMAL)) {
                     output.emitError(
                         CustomCloseException(closeStatus.code),
-                        Sinks.EmitFailureHandler.FAIL_FAST
+                        Sinks.EmitFailureHandler.FAIL_FAST,
                     )
                 }
-            }
-            .doOnError {
+            }.doOnError {
                 output.emitError(RuntimeException(it.message), Sinks.EmitFailureHandler.FAIL_FAST)
-            }
-            .log()
+            }.log()
             .subscribe()
     }
 
     private fun clientExecuteDelayedConnectionInit(
         client: WebSocketClient,
         url: URI,
-        output: Sinks.Many<Message>
-    ) =
-        client.execute(
-            url,
-            object : WebSocketHandler {
-                override fun getSubProtocols(): List<String> {
-                    return listOf("graphql-transport-ws")
-                }
+        output: Sinks.Many<Message>,
+    ) = client.execute(
+        url,
+        object : WebSocketHandler {
+            override fun getSubProtocols(): List<String> = listOf("graphql-transport-ws")
 
-                override fun handle(session: WebSocketSession): Mono<Void> {
-                    registerCloseHandler(session, output)
-                    val pingMessage: Publisher<WebSocketMessage> = Mono.just(toWebsocketMessage(Message.PingMessage(), session))
-                    return session.send(pingMessage).thenMany(
+            override fun handle(session: WebSocketSession): Mono<Void> {
+                registerCloseHandler(session, output)
+                val pingMessage: Publisher<WebSocketMessage> = Mono.just(toWebsocketMessage(Message.PingMessage(), session))
+                return session
+                    .send(pingMessage)
+                    .thenMany(
                         session.receive().flatMap {
                             Flux.just(toWebsocketMessage(Message.PingMessage(), session))
-                        }
+                        },
                     ).then()
-                }
             }
-        )
+        },
+    )
 
     private fun clientExecute(
         client: WebSocketClient,
@@ -212,64 +233,70 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
         query: String,
         stopAfter: Int? = null,
         sendMultipleConnectionInit: Boolean = false,
-        sendDuplicateSubscriptionRequest: Boolean = false
-    ) =
-        client.execute(
-            url,
-            object : WebSocketHandler {
-                override fun getSubProtocols(): List<String> {
-                    return listOf("graphql-transport-ws")
-                }
+        sendDuplicateSubscriptionRequest: Boolean = false,
+    ) = client.execute(
+        url,
+        object : WebSocketHandler {
+            override fun getSubProtocols(): List<String> = listOf("graphql-transport-ws")
 
-                override fun handle(session: WebSocketSession): Mono<Void> {
-                    registerCloseHandler(session, output)
+            override fun handle(session: WebSocketSession): Mono<Void> {
+                registerCloseHandler(session, output)
 
-                    var counter = 0
-                    val clientConnectionInitRequest: Publisher<WebSocketMessage> = if (sendMultipleConnectionInit) {
-                        Flux.just(toWebsocketMessage(Message.ConnectionInitMessage(), session), toWebsocketMessage(Message.ConnectionInitMessage(), session))
+                var counter = 0
+                val clientConnectionInitRequest: Publisher<WebSocketMessage> =
+                    if (sendMultipleConnectionInit) {
+                        Flux.just(
+                            toWebsocketMessage(Message.ConnectionInitMessage(), session),
+                            toWebsocketMessage(Message.ConnectionInitMessage(), session),
+                        )
                     } else {
                         Mono.just(toWebsocketMessage(Message.ConnectionInitMessage(), session))
                     }
-                    return session.send(clientConnectionInitRequest).thenMany(
+                return session
+                    .send(clientConnectionInitRequest)
+                    .thenMany(
                         session.receive().flatMap { message ->
                             val buffer: DataBuffer = DataBufferUtils.retain(message.payload)
-                            val operationMessage: Message = decoder.decode(
-                                buffer,
-                                resolvableType,
-                                MimeTypeUtils.APPLICATION_JSON,
-                                null
-                            ) as Message
+                            val operationMessage: Message =
+                                decoder.decode(
+                                    buffer,
+                                    resolvableType,
+                                    MimeTypeUtils.APPLICATION_JSON,
+                                    null,
+                                ) as Message
 
                             when (operationMessage) {
                                 is Message.ConnectionAckMessage -> {
                                     val subscriptionRequest: Publisher<WebSocketMessage>
                                     if (sendDuplicateSubscriptionRequest) {
-                                        subscriptionRequest = Flux.just(
-                                            toWebsocketMessage(
-                                                Message.SubscribeMessage(
-                                                    id = "1",
-                                                    Message.SubscribeMessage.Payload(query = query)
+                                        subscriptionRequest =
+                                            Flux.just(
+                                                toWebsocketMessage(
+                                                    Message.SubscribeMessage(
+                                                        id = "1",
+                                                        Message.SubscribeMessage.Payload(query = query),
+                                                    ),
+                                                    session,
                                                 ),
-                                                session
-                                            ),
-                                            toWebsocketMessage(
-                                                Message.SubscribeMessage(
-                                                    id = "1",
-                                                    Message.SubscribeMessage.Payload(query = query)
+                                                toWebsocketMessage(
+                                                    Message.SubscribeMessage(
+                                                        id = "1",
+                                                        Message.SubscribeMessage.Payload(query = query),
+                                                    ),
+                                                    session,
                                                 ),
-                                                session
                                             )
-                                        )
                                     } else {
-                                        subscriptionRequest = Mono.just(
-                                            toWebsocketMessage(
-                                                Message.SubscribeMessage(
-                                                    id = "1",
-                                                    Message.SubscribeMessage.Payload(query = query)
+                                        subscriptionRequest =
+                                            Mono.just(
+                                                toWebsocketMessage(
+                                                    Message.SubscribeMessage(
+                                                        id = "1",
+                                                        Message.SubscribeMessage.Payload(query = query),
+                                                    ),
+                                                    session,
                                                 ),
-                                                session
                                             )
-                                        )
                                     }
                                     session.send(subscriptionRequest)
                                 }
@@ -298,37 +325,41 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
                                     Flux.empty()
                                 }
                             }
-                        }
-                    ).log().then()
-                }
+                        },
+                    ).log()
+                    .then()
             }
-        )
+        },
+    )
 
     private val resolvableType = ResolvableType.forType(Message::class.java)
     private val decoder = Jackson2JsonDecoder()
     private val encoder = Jackson2JsonEncoder(decoder.objectMapper)
 
-    private fun toWebsocketMessage(operationMessage: Message, session: WebSocketSession): WebSocketMessage {
-        return WebSocketMessage(
+    private fun toWebsocketMessage(
+        operationMessage: Message,
+        session: WebSocketSession,
+    ): WebSocketMessage =
+        WebSocketMessage(
             WebSocketMessage.Type.TEXT,
             encoder.encodeValue(
                 operationMessage,
                 session.bufferFactory(),
                 resolvableType,
                 MimeTypeUtils.APPLICATION_JSON,
-                null
-            )
+                null,
+            ),
         )
-    }
 
-    data class CustomCloseException(val closeCode: Int) : RuntimeException()
+    data class CustomCloseException(
+        val closeCode: Int,
+    ) : RuntimeException()
 
     @DgsComponent
     class ExampleSubscriptionImplementation {
-
         @DgsTypeDefinitionRegistry
-        fun typeDefinitionRegistry(): TypeDefinitionRegistry {
-            return SchemaParser().parse(
+        fun typeDefinitionRegistry(): TypeDefinitionRegistry =
+            SchemaParser().parse(
                 """
                 type Subscription {
                     ticker: Int
@@ -336,28 +367,19 @@ open class WebsocketSubscriptionsGraphQLTransportWSTest(@param:LocalServerPort v
                     withError: Int
                     withDelay: Int
                 }
-                """.trimIndent()
+                """.trimIndent(),
             )
-        }
 
         @DgsSubscription
-        fun tickerRunning(): Publisher<Int> {
-            return Flux.interval(Duration.ofSeconds(0), Duration.ofSeconds(1)).map { 100 }
-        }
+        fun tickerRunning(): Publisher<Int> = Flux.interval(Duration.ofSeconds(0), Duration.ofSeconds(1)).map { 100 }
 
         @DgsSubscription
-        fun ticker(): Publisher<Int> {
-            return Flux.just(1, 2, 3)
-        }
+        fun ticker(): Publisher<Int> = Flux.just(1, 2, 3)
 
         @DgsSubscription
-        fun withError(): Publisher<Int> {
-            return Flux.just(1, 2, 3).concatWith(Flux.error(RuntimeException("Broken producer")))
-        }
+        fun withError(): Publisher<Int> = Flux.just(1, 2, 3).concatWith(Flux.error(RuntimeException("Broken producer")))
 
         @DgsSubscription
-        fun withDelay(): Publisher<Int> {
-            return Flux.just(1, 2).concatWith(Mono.delay(Duration.ofSeconds(1)).map { it.toInt() })
-        }
+        fun withDelay(): Publisher<Int> = Flux.just(1, 2).concatWith(Mono.delay(Duration.ofSeconds(1)).map { it.toInt() })
     }
 }

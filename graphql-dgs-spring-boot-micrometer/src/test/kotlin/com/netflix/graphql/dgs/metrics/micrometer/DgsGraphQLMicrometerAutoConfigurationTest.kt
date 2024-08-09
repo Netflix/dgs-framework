@@ -36,18 +36,18 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import org.springframework.context.annotation.Bean
 
 internal class DgsGraphQLMicrometerAutoConfigurationTest {
-
-    private val contextRunner = ApplicationContextRunner()
-        .withConfiguration(
-            AutoConfigurations.of(
-                CompositeMeterRegistryAutoConfiguration::class.java,
-                MetricsAutoConfiguration::class.java,
-                DgsGraphQLMicrometerAutoConfiguration::class.java,
-                DgsAutoConfiguration::class.java
+    private val contextRunner =
+        ApplicationContextRunner()
+            .withConfiguration(
+                AutoConfigurations.of(
+                    CompositeMeterRegistryAutoConfiguration::class.java,
+                    MetricsAutoConfiguration::class.java,
+                    DgsGraphQLMicrometerAutoConfiguration::class.java,
+                    DgsAutoConfiguration::class.java,
+                ),
+            ).withConfiguration(
+                UserConfigurations.of(LocalTestConfiguration::class.java),
             )
-        ).withConfiguration(
-            UserConfigurations.of(LocalTestConfiguration::class.java)
-        )
 
     @Test
     fun `Default settings`() {
@@ -85,12 +85,14 @@ internal class DgsGraphQLMicrometerAutoConfigurationTest {
     @Test
     fun `Beans can be disabled`() {
         contextRunner
-            .withPropertyValues("management.metrics.dgs-graphql.enabled=false").run { ctx ->
+            .withPropertyValues("management.metrics.dgs-graphql.enabled=false")
+            .run { ctx ->
                 assertThat(ctx).doesNotHaveBean(DgsGraphQLMicrometerAutoConfiguration::class.java)
             }
 
         contextRunner
-            .withPropertyValues("management.metrics.dgs-graphql.instrumentation.enabled=false").run { ctx ->
+            .withPropertyValues("management.metrics.dgs-graphql.instrumentation.enabled=false")
+            .run { ctx ->
                 assertThat(ctx)
                     .doesNotHaveBean(DgsGraphQLMetricsInstrumentation::class.java)
 
@@ -100,7 +102,8 @@ internal class DgsGraphQLMicrometerAutoConfigurationTest {
             }
 
         contextRunner
-            .withPropertyValues("management.metrics.dgs-graphql.data-loader-instrumentation.enabled=false").run { ctx ->
+            .withPropertyValues("management.metrics.dgs-graphql.data-loader-instrumentation.enabled=false")
+            .run { ctx ->
                 assertThat(ctx)
                     .doesNotHaveBean(DgsDataLoaderInstrumentationProvider::class.java)
 
@@ -110,7 +113,8 @@ internal class DgsGraphQLMicrometerAutoConfigurationTest {
             }
 
         contextRunner
-            .withPropertyValues("management.metrics.dgs-graphql.query-signature.enabled=false").run { ctx ->
+            .withPropertyValues("management.metrics.dgs-graphql.query-signature.enabled=false")
+            .run { ctx ->
                 assertThat(ctx)
                     .doesNotHaveBean(DgsGraphQLMicrometerAutoConfiguration.QuerySignatureRepositoryConfiguration::class.java)
                 assertThat(ctx)
@@ -121,16 +125,12 @@ internal class DgsGraphQLMicrometerAutoConfigurationTest {
     @TestConfiguration(proxyBeanMethods = false)
     open class LocalTestConfiguration {
         @Bean
-        open fun exampleImplementation(): ExampleImplementation {
-            return ExampleImplementation()
-        }
+        open fun exampleImplementation(): ExampleImplementation = ExampleImplementation()
     }
 
     @DgsComponent
     open class ExampleImplementation {
         @DgsTypeDefinitionRegistry
-        fun typeDefinitionRegistry(): TypeDefinitionRegistry {
-            return SchemaParser().parse("type Query{ }")
-        }
+        fun typeDefinitionRegistry(): TypeDefinitionRegistry = SchemaParser().parse("type Query{ }")
     }
 }

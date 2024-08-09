@@ -26,27 +26,23 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 object CustomDataFetcherFactoryFixtures {
-
     @Configuration
     open class CustomDataFetcherFactoryConfiguration {
         @Bean
-        open fun customDataFetcherFactory(): DataFetcherFactory<*> {
-            return DataFetcherFactories.useDataFetcher(TestDataFetcher)
-        }
+        open fun customDataFetcherFactory(): DataFetcherFactory<*> = DataFetcherFactories.useDataFetcher(TestDataFetcher)
 
         object TestDataFetcher : DataFetcher<Any> {
-            override fun get(environment: DataFetchingEnvironment): Any {
-                return "not world"
-            }
+            override fun get(environment: DataFetchingEnvironment): Any = "not world"
         }
     }
 
     @DgsComponent
     class ExplicitDataFetcherComponent {
         @DgsData(parentType = "Query", field = "simpleNested")
-        fun hello(): SimpleNested {
-            return SimpleNested("world")
-        }
-        data class SimpleNested(val hello: String)
+        fun hello(): SimpleNested = SimpleNested("world")
+
+        data class SimpleNested(
+            val hello: String,
+        )
     }
 }

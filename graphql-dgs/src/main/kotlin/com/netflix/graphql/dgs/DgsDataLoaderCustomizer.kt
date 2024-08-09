@@ -35,16 +35,23 @@ import org.dataloader.MappedBatchLoaderWithContext
  *   into their "WithContext" versions, which can simplify certain types of DataLoader instrumentation.
  */
 interface DgsDataLoaderCustomizer {
-    fun provide(original: BatchLoader<*, *>, name: String): Any {
-        return original
-    }
-    fun provide(original: BatchLoaderWithContext<*, *>, name: String): Any {
-        return original
-    }
-    fun provide(original: MappedBatchLoader<*, *>, name: String): Any {
-        return original
-    }
-    fun provide(original: MappedBatchLoaderWithContext<*, *>, name: String): Any {
-        return original
-    }
+    fun provide(
+        original: BatchLoader<*, *>,
+        name: String,
+    ): Any = original
+
+    fun provide(
+        original: BatchLoaderWithContext<*, *>,
+        name: String,
+    ): Any = original
+
+    fun provide(
+        original: MappedBatchLoader<*, *>,
+        name: String,
+    ): Any = original
+
+    fun provide(
+        original: MappedBatchLoaderWithContext<*, *>,
+        name: String,
+    ): Any = original
 }

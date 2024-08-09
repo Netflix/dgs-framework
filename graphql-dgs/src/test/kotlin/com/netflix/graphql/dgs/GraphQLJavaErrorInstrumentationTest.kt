@@ -40,17 +40,17 @@ import java.util.Locale
 import java.util.regex.Pattern
 
 class GraphQLJavaErrorInstrumentationTest {
-
     private lateinit var graphqlJavaErrorInstrumentation: Instrumentation
 
-    private val schema = """
+    private val schema =
+        """
                 scalar IPv4
                 scalar Domain
                 type Query{
                     hello(name: String!): String
                     ip(domain: Domain): IPv4
                 }
-    """.trimMargin()
+        """.trimMargin()
 
     @BeforeEach
     fun setup() {
@@ -60,13 +60,14 @@ class GraphQLJavaErrorInstrumentationTest {
     @Test
     fun `Validation errors are not added for valid queries`() {
         val graphQL: GraphQL = buildGraphQL(schema)
-        val result = graphQL.execute(
-            """
-            {
-                hello(name: "xyz")
-            }
-            """.trimIndent()
-        )
+        val result =
+            graphQL.execute(
+                """
+                {
+                    hello(name: "xyz")
+                }
+                """.trimIndent(),
+            )
 
         Assertions.assertThat(result.isDataPresent).isTrue
         val data = result.getData<Map<String, String>>()
@@ -76,17 +77,23 @@ class GraphQLJavaErrorInstrumentationTest {
     @Test
     fun `Validation errors contain errorDetail and errorType in the extensions for invalid fields`() {
         val graphQL: GraphQL = buildGraphQL(schema)
-        val result = graphQL.execute(
-            """
-            {
-                InvalidField
-            }
-            """.trimIndent()
-        )
+        val result =
+            graphQL.execute(
+                """
+                {
+                    InvalidField
+                }
+                """.trimIndent(),
+            )
 
         Assertions.assertThat(result.isDataPresent).isFalse
         Assertions.assertThat(result.errors.size).isEqualTo(1)
-        Assertions.assertThat(result.errors[0].extensions.keys.containsAll(listOf("classification", "errorDetail", "errorType"))).isTrue()
+        Assertions
+            .assertThat(
+                result.errors[0]
+                    .extensions.keys
+                    .containsAll(listOf("classification", "errorDetail", "errorType")),
+            ).isTrue()
         Assertions.assertThat(result.errors[0].extensions["classification"]).isEqualTo("ValidationError")
         Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("BAD_REQUEST")
         Assertions.assertThat(result.errors[0].extensions["errorDetail"]).isEqualTo("FIELD_NOT_FOUND")
@@ -95,17 +102,23 @@ class GraphQLJavaErrorInstrumentationTest {
     @Test
     fun `Validation errors contain errorDetail and errorType in the extensions for invalid input`() {
         val graphQL: GraphQL = buildGraphQL(schema)
-        val result = graphQL.execute(
-            """
-            {
-                hello
-            }
-            """.trimIndent()
-        )
+        val result =
+            graphQL.execute(
+                """
+                {
+                    hello
+                }
+                """.trimIndent(),
+            )
 
         Assertions.assertThat(result.isDataPresent).isFalse
         Assertions.assertThat(result.errors.size).isEqualTo(1)
-        Assertions.assertThat(result.errors[0].extensions.keys.containsAll(listOf("classification", "errorType"))).isTrue()
+        Assertions
+            .assertThat(
+                result.errors[0]
+                    .extensions.keys
+                    .containsAll(listOf("classification", "errorType")),
+            ).isTrue()
         Assertions.assertThat(result.errors[0].extensions["classification"]).isEqualTo("ValidationError")
         Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("BAD_REQUEST")
     }
@@ -113,17 +126,23 @@ class GraphQLJavaErrorInstrumentationTest {
     @Test
     fun `Validation errors contain errorDetail and errorType in the extensions for invalid syntax`() {
         val graphQL: GraphQL = buildGraphQL(schema)
-        val result = graphQL.execute(
-            """
-            {
-                hello(
-            }
-            """.trimIndent()
-        )
+        val result =
+            graphQL.execute(
+                """
+                {
+                    hello(
+                }
+                """.trimIndent(),
+            )
 
         Assertions.assertThat(result.isDataPresent).isFalse
         Assertions.assertThat(result.errors.size).isEqualTo(1)
-        Assertions.assertThat(result.errors[0].extensions.keys.containsAll(listOf("classification", "errorType"))).isTrue()
+        Assertions
+            .assertThat(
+                result.errors[0]
+                    .extensions.keys
+                    .containsAll(listOf("classification", "errorType")),
+            ).isTrue()
         Assertions.assertThat(result.errors[0].extensions["classification"]).isEqualTo("InvalidSyntax")
         Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("BAD_REQUEST")
     }
@@ -131,17 +150,23 @@ class GraphQLJavaErrorInstrumentationTest {
     @Test
     fun `Error contains errorDetail and errorType in the extensions for invalid operation`() {
         val graphQL: GraphQL = buildGraphQL(schema)
-        val result = graphQL.execute(
-            """
-            mutation {
-                hell
-            }
-            """.trimIndent()
-        )
+        val result =
+            graphQL.execute(
+                """
+                mutation {
+                    hell
+                }
+                """.trimIndent(),
+            )
 
         Assertions.assertThat(result.isDataPresent).isFalse
         Assertions.assertThat(result.errors.size).isEqualTo(1)
-        Assertions.assertThat(result.errors[0].extensions.keys.containsAll(listOf("classification", "errorDetail", "errorType"))).isTrue()
+        Assertions
+            .assertThat(
+                result.errors[0]
+                    .extensions.keys
+                    .containsAll(listOf("classification", "errorDetail", "errorType")),
+            ).isTrue()
         Assertions.assertThat(result.errors[0].extensions["classification"]).isEqualTo("OperationNotSupported")
         Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("BAD_REQUEST")
         Assertions.assertThat(result.errors[0].extensions["errorDetail"]).isEqualTo("INVALID_ARGUMENT")
@@ -150,22 +175,32 @@ class GraphQLJavaErrorInstrumentationTest {
     @Test
     fun `Multiple validation errors contain errorDetail and errorType in the extensions for multiple invalid fields`() {
         val graphQL: GraphQL = buildGraphQL(schema)
-        val result = graphQL.execute(
-            """
-            {
-                InvalidField
-                helloInvalid
-            }
-            """.trimIndent()
-        )
+        val result =
+            graphQL.execute(
+                """
+                {
+                    InvalidField
+                    helloInvalid
+                }
+                """.trimIndent(),
+            )
 
         Assertions.assertThat(result.isDataPresent).isFalse
         Assertions.assertThat(result.errors.size).isEqualTo(2)
-        Assertions.assertThat(result.errors[0].extensions.keys.containsAll(listOf("classification", "errorDetail", "errorType"))).isTrue()
+        Assertions
+            .assertThat(
+                result.errors[0]
+                    .extensions.keys
+                    .containsAll(listOf("classification", "errorDetail", "errorType")),
+            ).isTrue()
         Assertions.assertThat(result.errors[0].extensions["classification"]).isEqualTo("ValidationError")
         Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("BAD_REQUEST")
         Assertions.assertThat(result.errors[0].extensions["errorDetail"]).isEqualTo("FIELD_NOT_FOUND")
-        Assertions.assertThat(result.errors[1].extensions.keys.containsAll(listOf("class", "errorDetail", "errorType")))
+        Assertions.assertThat(
+            result.errors[1]
+                .extensions.keys
+                .containsAll(listOf("class", "errorDetail", "errorType")),
+        )
         Assertions.assertThat(result.errors[1].extensions["classification"]).isEqualTo("ValidationError")
         Assertions.assertThat(result.errors[1].extensions["errorType"]).isEqualTo("BAD_REQUEST")
         Assertions.assertThat(result.errors[1].extensions["errorDetail"]).isEqualTo("FIELD_NOT_FOUND")
@@ -174,16 +209,22 @@ class GraphQLJavaErrorInstrumentationTest {
     @Test
     fun `Error contains errorDetail and errorType in the extensions for serialization error`() {
         val graphQL: GraphQL = buildGraphQL(schema)
-        val result = graphQL.execute(
-            """
-            {
-                ip
-            }
-            """.trimIndent()
-        )
+        val result =
+            graphQL.execute(
+                """
+                {
+                    ip
+                }
+                """.trimIndent(),
+            )
 
         Assertions.assertThat(result.errors.size).isEqualTo(1)
-        Assertions.assertThat(result.errors[0].extensions.keys.containsAll(listOf("errorDetail", "errorType"))).isTrue()
+        Assertions
+            .assertThat(
+                result.errors[0]
+                    .extensions.keys
+                    .containsAll(listOf("errorDetail", "errorType")),
+            ).isTrue()
         Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("INTERNAL")
         Assertions.assertThat(result.errors[0].extensions["errorDetail"]).isEqualTo("SERIALIZATION_ERROR")
     }
@@ -191,16 +232,21 @@ class GraphQLJavaErrorInstrumentationTest {
     @Test
     fun `Error contains errorDetail and errorType in the extensions for input arguments that cannot be parsed`() {
         val graphQL: GraphQL = buildGraphQL(schema)
-        val result = graphQL.execute(
-            """
-            {
-                ip(domain: "Wrong Domain Value")
-            }
-            """.trimIndent()
-        )
+        val result =
+            graphQL.execute(
+                """
+                {
+                    ip(domain: "Wrong Domain Value")
+                }
+                """.trimIndent(),
+            )
 
         Assertions.assertThat(result.errors.size).isEqualTo(1)
-        Assertions.assertThat(result.errors[0].extensions.keys.containsAll(listOf("errorDetail", "errorType")))
+        Assertions.assertThat(
+            result.errors[0]
+                .extensions.keys
+                .containsAll(listOf("errorDetail", "errorType")),
+        )
         Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("BAD_REQUEST")
         Assertions.assertThat(result.errors[0].extensions["errorDetail"]).isEqualTo("INVALID_ARGUMENT")
     }
@@ -208,76 +254,108 @@ class GraphQLJavaErrorInstrumentationTest {
     private fun buildGraphQL(schema: String): GraphQL {
         val schemaParser = SchemaParser()
         val typeDefinitionRegistry = schemaParser.parse(schema)
-        val runtimeWiring = RuntimeWiring.newRuntimeWiring().scalar(
-            GraphQLScalarType.newScalar().name("IPv4").description("A custom scalar that handles IPv4 address")
-                .coercing(object :
-                        Coercing<String, String> {
-                        override fun serialize(dataFetcherResult: Any, graphQLContext: GraphQLContext, locale: Locale): String {
-                            if (dataFetcherResult is String) {
-                                val ipAddress = dataFetcherResult
-                                if (ipAddress.matches(
-                                        "^((25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$"
-                                            .toRegex()
-                                    )
-                                ) {
-                                    return ipAddress
+        val runtimeWiring =
+            RuntimeWiring
+                .newRuntimeWiring()
+                .scalar(
+                    GraphQLScalarType
+                        .newScalar()
+                        .name("IPv4")
+                        .description("A custom scalar that handles IPv4 address")
+                        .coercing(
+                            object :
+                                Coercing<String, String> {
+                                override fun serialize(
+                                    dataFetcherResult: Any,
+                                    graphQLContext: GraphQLContext,
+                                    locale: Locale,
+                                ): String {
+                                    if (dataFetcherResult is String) {
+                                        val ipAddress = dataFetcherResult
+                                        if (ipAddress.matches(
+                                                "^((25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$"
+                                                    .toRegex(),
+                                            )
+                                        ) {
+                                            return ipAddress
+                                        }
+                                    }
+                                    throw CoercingSerializeException("Invalid IPv4 address")
                                 }
-                            }
-                            throw CoercingSerializeException("Invalid IPv4 address")
-                        }
-                    })
-                .build()
-        ).scalar(
-            GraphQLScalarType.newScalar().name("Domain").description("A custom scalar that handles Domain names")
-                .coercing(object :
-                        Coercing<String, String> {
+                            },
+                        ).build(),
+                ).scalar(
+                    GraphQLScalarType
+                        .newScalar()
+                        .name("Domain")
+                        .description("A custom scalar that handles Domain names")
+                        .coercing(
+                            object :
+                                Coercing<String, String> {
+                                override fun serialize(
+                                    dataFetcherResult: Any,
+                                    graphQLContext: GraphQLContext,
+                                    locale: Locale,
+                                ): String {
+                                    if (dataFetcherResult is String) {
+                                        val domainName = dataFetcherResult
+                                        if (Pattern
+                                                .compile(
+                                                    "^(https?://)?(www\\.)?([a-zA-Z0-9-]{1,63}\\.)+[a-zA-Z]{2,}$|^(https?://)?(www\\.)?xn--([a-zA-Z0-9-]{1,59}\\.)+[a-zA-Z]{2,}$",
+                                                ).matcher(domainName)
+                                                .matches()
+                                        ) {
+                                            return domainName
+                                        }
+                                    }
+                                    throw CoercingSerializeException("Invalid domain name")
+                                }
 
-                        override fun serialize(dataFetcherResult: Any, graphQLContext: GraphQLContext, locale: Locale): String {
-                            if (dataFetcherResult is String) {
-                                val domainName = dataFetcherResult
-                                if (Pattern.compile(
-                                        "^(https?://)?(www\\.)?([a-zA-Z0-9-]{1,63}\\.)+[a-zA-Z]{2,}$|^(https?://)?(www\\.)?xn--([a-zA-Z0-9-]{1,59}\\.)+[a-zA-Z]{2,}$"
-                                    ).matcher(domainName).matches()
-                                ) {
-                                    return domainName
+                                override fun parseLiteral(
+                                    input: Value<*>,
+                                    variables: CoercedVariables,
+                                    graphQLContext: GraphQLContext,
+                                    locale: Locale,
+                                ): String? {
+                                    if (input is StringValue) {
+                                        val domainName = input.value
+                                        if (Pattern
+                                                .compile(
+                                                    "^(https?://)?(www\\.)?([a-zA-Z0-9-]{1,63}\\.)+[a-zA-Z]{2,}$|^(https?://)?(www\\.)?xn--([a-zA-Z0-9-]{1,59}\\.)+[a-zA-Z]{2,}$",
+                                                ).matcher(domainName)
+                                                .matches()
+                                        ) {
+                                            return domainName
+                                        }
+                                    }
+                                    throw CoercingParseLiteralException("Invalid domain name")
                                 }
-                            }
-                            throw CoercingSerializeException("Invalid domain name")
-                        }
 
-                        override fun parseLiteral(input: Value<*>, variables: CoercedVariables, graphQLContext: GraphQLContext, locale: Locale): String? {
-                            if (input is StringValue) {
-                                val domainName = input.value
-                                if (Pattern.compile(
-                                        "^(https?://)?(www\\.)?([a-zA-Z0-9-]{1,63}\\.)+[a-zA-Z]{2,}$|^(https?://)?(www\\.)?xn--([a-zA-Z0-9-]{1,59}\\.)+[a-zA-Z]{2,}$"
-                                    ).matcher(domainName).matches()
-                                ) {
-                                    return domainName
+                                override fun parseValue(
+                                    input: Any,
+                                    graphQLContext: GraphQLContext,
+                                    locale: Locale,
+                                ): String? {
+                                    if (input is String) {
+                                        val domainName = input
+                                        if (Pattern
+                                                .compile(
+                                                    "^(https?://)?(www\\.)?([a-zA-Z0-9-]{1,63}\\.)+[a-zA-Z]{2,}$|^(https?://)?(www\\.)?xn--([a-zA-Z0-9-]{1,59}\\.)+[a-zA-Z]{2,}$",
+                                                ).matcher(domainName)
+                                                .matches()
+                                        ) {
+                                            return domainName
+                                        }
+                                    }
+                                    throw CoercingParseValueException("Invalid domain name")
                                 }
-                            }
-                            throw CoercingParseLiteralException("Invalid domain name")
-                        }
-
-                        override fun parseValue(input: Any, graphQLContext: GraphQLContext, locale: Locale): String? {
-                            if (input is String) {
-                                val domainName = input
-                                if (Pattern.compile(
-                                        "^(https?://)?(www\\.)?([a-zA-Z0-9-]{1,63}\\.)+[a-zA-Z]{2,}$|^(https?://)?(www\\.)?xn--([a-zA-Z0-9-]{1,59}\\.)+[a-zA-Z]{2,}$"
-                                    ).matcher(domainName).matches()
-                                ) {
-                                    return domainName
-                                }
-                            }
-                            throw CoercingParseValueException("Invalid domain name")
-                        }
-                    })
-                .build()
-        )
-            .type("Query") { builder: TypeRuntimeWiring.Builder ->
-                builder.dataFetcher("hello", StaticDataFetcher("hello there!"))
-                    .dataFetcher("ip", StaticDataFetcher("Invalid IPv4 value"))
-            }
-            .build()
+                            },
+                        ).build(),
+                ).type("Query") { builder: TypeRuntimeWiring.Builder ->
+                    builder
+                        .dataFetcher("hello", StaticDataFetcher("hello there!"))
+                        .dataFetcher("ip", StaticDataFetcher("Invalid IPv4 value"))
+                }.build()
         val schemaGenerator = SchemaGenerator()
         val graphQLSchema = schemaGenerator.makeExecutableSchema(typeDefinitionRegistry, runtimeWiring)
 

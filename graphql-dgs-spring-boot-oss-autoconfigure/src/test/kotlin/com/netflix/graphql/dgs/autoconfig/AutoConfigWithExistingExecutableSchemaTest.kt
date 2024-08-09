@@ -42,32 +42,39 @@ class AutoConfigWithExistingExecutableSchemaTest {
         open fun schema(): GraphQLSchema {
             val helloDataFetcher: DataFetcher<String> = DataFetcher { "Hello" }
 
-            val objectType: GraphQLObjectType = newObject()
-                .name("QueryType")
-                .field(
-                    newFieldDefinition()
-                        .name("hello")
-                        .type(GraphQLString)
-                )
-                .build()
+            val objectType: GraphQLObjectType =
+                newObject()
+                    .name("QueryType")
+                    .field(
+                        newFieldDefinition()
+                            .name("hello")
+                            .type(GraphQLString),
+                    ).build()
 
-            val codeRegistry: GraphQLCodeRegistry = newCodeRegistry()
-                .dataFetcher(
-                    coordinates("QueryType", "hello"),
-                    helloDataFetcher
-                )
-                .build()
+            val codeRegistry: GraphQLCodeRegistry =
+                newCodeRegistry()
+                    .dataFetcher(
+                        coordinates("QueryType", "hello"),
+                        helloDataFetcher,
+                    ).build()
 
-            return GraphQLSchema.newSchema().query(objectType).codeRegistry(codeRegistry).build()
+            return GraphQLSchema
+                .newSchema()
+                .query(objectType)
+                .codeRegistry(codeRegistry)
+                .build()
         }
     }
 
     @Test
     fun existingSchema() {
         context.withUserConfiguration(ConfigWithSchema::class.java).run { ctx ->
-            Assertions.assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                it.executeAndExtractJsonPath<String>("query {  hello }", "data.hello")
-            }.isEqualTo("Hello")
+            Assertions
+                .assertThat(ctx)
+                .getBean(DgsQueryExecutor::class.java)
+                .extracting {
+                    it.executeAndExtractJsonPath<String>("query {  hello }", "data.hello")
+                }.isEqualTo("Hello")
         }
     }
 }

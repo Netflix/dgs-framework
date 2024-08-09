@@ -22,10 +22,13 @@ import java.util.*
 
 @Internal
 interface LimitedTagMetricResolver {
+    fun tags(
+        key: String,
+        value: String,
+    ): Iterable<Tag> = tag(key, value).map { listOf(it) }.orElse(emptyList())
 
-    fun tags(key: String, value: String): Iterable<Tag> {
-        return tag(key, value).map { listOf(it) }.orElse(emptyList())
-    }
-
-    fun tag(key: String, value: String): Optional<Tag>
+    fun tag(
+        key: String,
+        value: String,
+    ): Optional<Tag>
 }

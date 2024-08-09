@@ -20,9 +20,10 @@ import com.netflix.graphql.dgs.Internal
 import io.micrometer.core.instrument.Tag
 
 object DgsMetrics {
-
     /** Defines the GQL Metrics emitted by the framework. */
-    enum class GqlMetric(val key: String) {
+    enum class GqlMetric(
+        val key: String,
+    ) {
         /** _Timer_ that captures the elapsed time of a GraphQL query execution..*/
         QUERY("gql.query"),
 
@@ -44,7 +45,9 @@ object DgsMetrics {
     }
 
     /** Defines the tags applied to the [GqlMetric] emitted by the framework. */
-    enum class GqlTag(val key: String) {
+    enum class GqlTag(
+        val key: String,
+    ) {
         /**
          * QUERY, MUTATION, SUBSCRIPTION are the possible values.
          * These represent the GraphQL operation that is executed.
@@ -91,21 +94,24 @@ object DgsMetrics {
     }
 
     @Internal
-    enum class InternalMetric(val key: String) {
+    enum class InternalMetric(
+        val key: String,
+    ) {
         /** _Timer_ that captures the elapsed time of a internal method execution.*/
         TIMED_METHOD("dgs.method.latency"),
     }
 
     @Internal
-    enum class CommonTags(val key: String, defaultValue: String) {
+    enum class CommonTags(
+        val key: String,
+        defaultValue: String,
+    ) {
         /**
          * Tag used to reflect as successful outcome.
          */
         SUCCESS(GqlTag.OUTCOME.key, "success") {
             /** Returns the success [tag] along with the [JAVA_CLASS] of the value.*/
-            override fun <T : Any> tags(v: T): Iterable<Tag> {
-                return JAVA_CLASS.tags(v) + tag
-            }
+            override fun <T : Any> tags(v: T): Iterable<Tag> = JAVA_CLASS.tags(v) + tag
         },
 
         /**
@@ -113,16 +119,12 @@ object DgsMetrics {
          */
         FAILURE(GqlTag.OUTCOME.key, "failure") {
             /** Returns failure [tag] along with the [JAVA_CLASS] of the value.*/
-            override fun <T : Any> tags(v: T): Iterable<Tag> {
-                return JAVA_CLASS.tags(v) + tag
-            }
+            override fun <T : Any> tags(v: T): Iterable<Tag> = JAVA_CLASS.tags(v) + tag
         },
 
         /** Tag that reflects the class associated with the metric. */
         JAVA_CLASS("class", "unknown") {
-            override fun <T : Any> tags(v: T): Iterable<Tag> {
-                return listOf(Tag.of(key, v::class.java.name))
-            }
+            override fun <T : Any> tags(v: T): Iterable<Tag> = listOf(Tag.of(key, v::class.java.name))
         },
 
         /**
@@ -130,10 +132,8 @@ object DgsMetrics {
          *The metric with this tag will normally be accompanied by the [JAVA_CLASS] tag as well.
          */
         JAVA_CLASS_METHOD("method", "unknown") {
-            override fun <T : Any> tags(v: T): Iterable<Tag> {
-                return listOf(Tag.of(key, "$v"))
-            }
-        };
+            override fun <T : Any> tags(v: T): Iterable<Tag> = listOf(Tag.of(key, "$v"))
+        }, ;
 
         val tag: Tag = Tag.of(key, defaultValue)
 

@@ -39,7 +39,7 @@ import reactor.core.publisher.Mono
 class SpringGraphQLDgsReactiveQueryExecutor(
     private val executionService: ExecutionGraphQlService,
     private val dgsContextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
-    private val dgsDataLoaderProvider: DgsDataLoaderProvider
+    private val dgsDataLoaderProvider: DgsDataLoaderProvider,
 ) : DgsReactiveQueryExecutor {
     override fun execute(
         @Language("graphql") query: String,
@@ -47,32 +47,35 @@ class SpringGraphQLDgsReactiveQueryExecutor(
         extensions: Map<String, Any>?,
         headers: HttpHeaders?,
         operationName: String?,
-        serverRequest: ServerRequest?
+        serverRequest: ServerRequest?,
     ): Mono<ExecutionResult> {
-        val request = DefaultExecutionGraphQlRequest(
-            query,
-            operationName,
-            variables,
-            extensions,
-            "",
-            null
-        )
+        val request =
+            DefaultExecutionGraphQlRequest(
+                query,
+                operationName,
+                variables,
+                extensions,
+                "",
+                null,
+            )
 
         lateinit var graphQLContext: GraphQLContext
         val dataLoaderRegistry = dgsDataLoaderProvider.buildRegistryWithContextSupplier { graphQLContext }
-        return dgsContextBuilder.build(DgsReactiveRequestData(request.extensions, headers, serverRequest))
+        return dgsContextBuilder
+            .build(DgsReactiveRequestData(request.extensions, headers, serverRequest))
             .flatMap { context ->
                 request.configureExecutionInput { _, builder ->
                     builder
                         .context(context)
                         .graphQLContext(context)
-                        .dataLoaderRegistry(dataLoaderRegistry).build()
+                        .dataLoaderRegistry(dataLoaderRegistry)
+                        .build()
                 }
 
                 graphQLContext = request.toExecutionInput().graphQLContext
 
                 executionService.execute(
-                    request
+                    request,
                 )
             }.map { response ->
                 response.executionResult
@@ -83,25 +86,21 @@ class SpringGraphQLDgsReactiveQueryExecutor(
         @Language("graphql") query: String,
         jsonPath: String,
         variables: Map<String, Any>?,
-        serverRequest: ServerRequest?
-    ): Mono<T> {
-        return getJsonResult(query, variables, serverRequest).map { JsonPath.read(it, jsonPath) }
-    }
+        serverRequest: ServerRequest?,
+    ): Mono<T> = getJsonResult(query, variables, serverRequest).map { JsonPath.read(it, jsonPath) }
 
     override fun executeAndGetDocumentContext(
         @Language("graphql") query: String,
-        variables: Map<String, Any>
-    ): Mono<DocumentContext> {
-        return getJsonResult(query, variables, null).map(BaseDgsQueryExecutor.parseContext::parse)
-    }
+        variables: Map<String, Any>,
+    ): Mono<DocumentContext> = getJsonResult(query, variables, null).map(BaseDgsQueryExecutor.parseContext::parse)
 
     override fun <T : Any?> executeAndExtractJsonPathAsObject(
         @Language("graphql") query: String,
         jsonPath: String,
         variables: Map<String, Any>,
-        clazz: Class<T>
-    ): Mono<T> {
-        return getJsonResult(query, variables, null)
+        clazz: Class<T>,
+    ): Mono<T> =
+        getJsonResult(query, variables, null)
             .map(BaseDgsQueryExecutor.parseContext::parse)
             .map {
                 try {
@@ -110,15 +109,14 @@ class SpringGraphQLDgsReactiveQueryExecutor(
                     throw DgsQueryExecutionDataExtractionException(ex, it.jsonString(), jsonPath, clazz)
                 }
             }
-    }
 
     override fun <T : Any?> executeAndExtractJsonPathAsObject(
         @Language("graphql") query: String,
         jsonPath: String,
         variables: Map<String, Any>,
-        typeRef: TypeRef<T>
-    ): Mono<T> {
-        return getJsonResult(query, variables, null)
+        typeRef: TypeRef<T>,
+    ): Mono<T> =
+        getJsonResult(query, variables, null)
             .map(BaseDgsQueryExecutor.parseContext::parse)
             .map {
                 try {
@@ -127,9 +125,12 @@ class SpringGraphQLDgsReactiveQueryExecutor(
                     throw DgsQueryExecutionDataExtractionException(ex, it.jsonString(), jsonPath, typeRef)
                 }
             }
-    }
 
-    private fun getJsonResult(@Language("graphql") query: String, variables: Map<String, Any>?, serverRequest: ServerRequest?): Mono<String> {
+    private fun getJsonResult(
+        @Language("graphql") query: String,
+        variables: Map<String, Any>?,
+        serverRequest: ServerRequest?,
+    ): Mono<String> {
         val httpHeaders = serverRequest?.headers()?.asHttpHeaders()
         return execute(query, variables, null, httpHeaders, null, serverRequest).map { executionResult ->
             if (executionResult.errors.size > 0) {

@@ -91,9 +91,8 @@ import java.util.concurrent.ScheduledExecutorService
 @ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class, DgsInputArgumentConfiguration::class])
 open class DgsAutoConfiguration(
     private val configProps: DgsConfigurationProperties,
-    private val dataloaderConfigProps: DgsDataloaderConfigurationProperties
+    private val dataloaderConfigProps: DgsDataloaderConfigurationProperties,
 ) {
-
     companion object {
         const val AUTO_CONF_PREFIX = "dgs.graphql"
         private val LOG: Logger = LoggerFactory.getLogger(DgsAutoConfiguration::class.java)
@@ -102,15 +101,11 @@ open class DgsAutoConfiguration(
     @Bean
     @Order(PriorityOrdered.HIGHEST_PRECEDENCE)
     open fun graphQLContextContributionInstrumentation(
-        graphQLContextContributors: ObjectProvider<GraphQLContextContributor>
-    ): Instrumentation {
-        return GraphQLContextContributorInstrumentation(graphQLContextContributors.orderedStream().toList())
-    }
+        graphQLContextContributors: ObjectProvider<GraphQLContextContributor>,
+    ): Instrumentation = GraphQLContextContributorInstrumentation(graphQLContextContributors.orderedStream().toList())
 
     @Bean
-    open fun graphqlJavaErrorInstrumentation(): Instrumentation {
-        return GraphQLJavaErrorInstrumentation()
-    }
+    open fun graphqlJavaErrorInstrumentation(): Instrumentation = GraphQLJavaErrorInstrumentation()
 
     @Bean
     @ConditionalOnMissingBean
@@ -129,7 +124,7 @@ open class DgsAutoConfiguration(
         reloadSchemaIndicator: ReloadSchemaIndicator,
         preparsedDocumentProvider: ObjectProvider<PreparsedDocumentProvider>,
         queryValueCustomizer: QueryValueCustomizer,
-        requestCustomizer: ObjectProvider<DgsQueryExecutorRequestCustomizer>
+        requestCustomizer: ObjectProvider<DgsQueryExecutorRequestCustomizer>,
     ): DgsQueryExecutor {
         val queryExecutionStrategy =
             providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
@@ -137,11 +132,12 @@ open class DgsAutoConfiguration(
             providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
 
         val instrumentationImpls = instrumentations.orderedStream().toList()
-        val instrumentation: Instrumentation? = when {
-            instrumentationImpls.size == 1 -> instrumentationImpls.single()
-            instrumentationImpls.isNotEmpty() -> ChainedInstrumentation(instrumentationImpls)
-            else -> null
-        }
+        val instrumentation: Instrumentation? =
+            when {
+                instrumentationImpls.size == 1 -> instrumentationImpls.single()
+                instrumentationImpls.isNotEmpty() -> ChainedInstrumentation(instrumentationImpls)
+                else -> null
+            }
 
         return DefaultDgsQueryExecutor(
             defaultSchema = schema,
@@ -155,48 +151,38 @@ open class DgsAutoConfiguration(
             reloadIndicator = reloadSchemaIndicator,
             preparsedDocumentProvider = preparsedDocumentProvider.ifAvailable,
             queryValueCustomizer = queryValueCustomizer,
-            requestCustomizer = requestCustomizer.getIfAvailable(DgsQueryExecutorRequestCustomizer::DEFAULT_REQUEST_CUSTOMIZER)
+            requestCustomizer = requestCustomizer.getIfAvailable(DgsQueryExecutorRequestCustomizer::DEFAULT_REQUEST_CUSTOMIZER),
         )
     }
 
     @Bean
     @ConditionalOnMissingBean
-    open fun defaultQueryValueCustomizer(): QueryValueCustomizer {
-        return QueryValueCustomizer { a -> a }
-    }
+    open fun defaultQueryValueCustomizer(): QueryValueCustomizer = QueryValueCustomizer { a -> a }
 
     @Bean
     @ConditionalOnMissingBean
-    open fun dgsDataLoaderOptionsProvider(): DgsDataLoaderOptionsProvider {
-        return DefaultDataLoaderOptionsProvider()
-    }
+    open fun dgsDataLoaderOptionsProvider(): DgsDataLoaderOptionsProvider = DefaultDataLoaderOptionsProvider()
 
     @Bean(destroyMethod = "shutdown")
     @ConditionalOnMissingBean(name = ["dgsScheduledExecutorService"])
     @Qualifier("dgsScheduledExecutorService")
-    open fun dgsScheduledExecutorService(): ScheduledExecutorService {
-        return Executors.newSingleThreadScheduledExecutor()
-    }
+    open fun dgsScheduledExecutorService(): ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
 
     @Bean
     @ConditionalOnProperty(
         prefix = "$AUTO_CONF_PREFIX.convertAllDataLoadersToWithContext",
         name = ["enabled"],
         havingValue = "true",
-        matchIfMissing = true
+        matchIfMissing = true,
     )
     @Order(0)
-    open fun dgsWrapWithContextDataLoaderCustomizer(): DgsWrapWithContextDataLoaderCustomizer {
-        return DgsWrapWithContextDataLoaderCustomizer()
-    }
+    open fun dgsWrapWithContextDataLoaderCustomizer(): DgsWrapWithContextDataLoaderCustomizer = DgsWrapWithContextDataLoaderCustomizer()
 
     @Bean
     @Order(100)
     open fun dgsDataLoaderInstrumentationDataLoaderCustomizer(
-        instrumentations: List<DgsDataLoaderInstrumentation>
-    ): DgsDataLoaderInstrumentationDataLoaderCustomizer {
-        return DgsDataLoaderInstrumentationDataLoaderCustomizer(instrumentations)
-    }
+        instrumentations: List<DgsDataLoaderInstrumentation>,
+    ): DgsDataLoaderInstrumentationDataLoaderCustomizer = DgsDataLoaderInstrumentationDataLoaderCustomizer(instrumentations)
 
     @Bean
     open fun dgsDataLoaderProvider(
@@ -204,18 +190,17 @@ open class DgsAutoConfiguration(
         dataloaderOptionProvider: DgsDataLoaderOptionsProvider,
         @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService,
         extensionProviders: List<DataLoaderInstrumentationExtensionProvider>,
-        customizers: List<DgsDataLoaderCustomizer>
-    ): DgsDataLoaderProvider {
-        return DgsDataLoaderProvider(
+        customizers: List<DgsDataLoaderCustomizer>,
+    ): DgsDataLoaderProvider =
+        DgsDataLoaderProvider(
             applicationContext = applicationContext,
             extensionProviders = extensionProviders,
             dataLoaderOptionsProvider = dataloaderOptionProvider,
             scheduledExecutorService = dgsScheduledExecutorService,
             scheduleDuration = dataloaderConfigProps.scheduleDuration,
             enableTickerMode = dataloaderConfigProps.tickerModeEnabled,
-            customizers = customizers
+            customizers = customizers,
         )
-    }
 
     /**
      * Used by the [DefaultDgsQueryExecutor], it controls if, and when, such executor should reload the schema.
@@ -250,9 +235,9 @@ open class DgsAutoConfiguration(
         dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
         entityFetcherRegistry: EntityFetcherRegistry,
         defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty(),
-        methodDataFetcherFactory: MethodDataFetcherFactory
-    ): DgsSchemaProvider {
-        return DgsSchemaProvider(
+        methodDataFetcherFactory: MethodDataFetcherFactory,
+    ): DgsSchemaProvider =
+        DgsSchemaProvider(
             applicationContext = applicationContext,
             federationResolver = federationResolver,
             existingTypeDefinitionRegistry = existingTypeDefinitionFactory,
@@ -264,29 +249,28 @@ open class DgsAutoConfiguration(
             defaultDataFetcherFactory = defaultDataFetcherFactory,
             methodDataFetcherFactory = methodDataFetcherFactory,
             schemaWiringValidationEnabled = configProps.schemaWiringValidationEnabled,
-            enableEntityFetcherCustomScalarParsing = configProps.enableEntityFetcherCustomScalarParsing
+            enableEntityFetcherCustomScalarParsing = configProps.enableEntityFetcherCustomScalarParsing,
         )
-    }
 
     @Bean
-    open fun entityFetcherRegistry(): EntityFetcherRegistry {
-        return EntityFetcherRegistry()
-    }
+    open fun entityFetcherRegistry(): EntityFetcherRegistry = EntityFetcherRegistry()
 
     @Bean
     @ConditionalOnMissingBean
-    open fun dataFetcherExceptionHandler(): DataFetcherExceptionHandler {
-        return DefaultDataFetcherExceptionHandler()
-    }
+    open fun dataFetcherExceptionHandler(): DataFetcherExceptionHandler = DefaultDataFetcherExceptionHandler()
 
     @Bean
     @ConditionalOnMissingBean
-    open fun schema(dgsSchemaProvider: DgsSchemaProvider, fieldVisibility: GraphqlFieldVisibility?): GraphQLSchema {
-        val result = if (fieldVisibility == null) {
-            dgsSchemaProvider.schema(schema = null)
-        } else {
-            dgsSchemaProvider.schema(schema = null, fieldVisibility = fieldVisibility)
-        }
+    open fun schema(
+        dgsSchemaProvider: DgsSchemaProvider,
+        fieldVisibility: GraphqlFieldVisibility?,
+    ): GraphQLSchema {
+        val result =
+            if (fieldVisibility == null) {
+                dgsSchemaProvider.schema(schema = null)
+            } else {
+                dgsSchemaProvider.schema(schema = null, fieldVisibility = fieldVisibility)
+            }
         return result.graphQLSchema
     }
 
@@ -295,69 +279,63 @@ open class DgsAutoConfiguration(
         prefix = "$AUTO_CONF_PREFIX.preparsedDocumentProvider",
         name = ["enabled"],
         havingValue = "true",
-        matchIfMissing = false
+        matchIfMissing = false,
     )
     @ConditionalOnMissingBean
-    open fun preparsedDocumentProvider(configProps: DgsConfigurationProperties): PreparsedDocumentProvider {
-        return DgsDefaultPreparsedDocumentProvider(
+    open fun preparsedDocumentProvider(configProps: DgsConfigurationProperties): PreparsedDocumentProvider =
+        DgsDefaultPreparsedDocumentProvider(
             configProps.preparsedDocumentProvider.maximumCacheSize,
-            Duration.parse(configProps.preparsedDocumentProvider.cacheValidityDuration)
+            Duration.parse(configProps.preparsedDocumentProvider.cacheValidityDuration),
         )
-    }
 
     @Bean
     @ConditionalOnProperty(
         prefix = "$AUTO_CONF_PREFIX.introspection",
         name = ["enabled"],
         havingValue = "false",
-        matchIfMissing = false
+        matchIfMissing = false,
     )
-    open fun disableIntrospectionContextContributor(): GraphQLContextContributor {
-        return GraphQLContextContributor { builder, _, _ -> builder.put(Introspection.INTROSPECTION_DISABLED, true) }
-    }
+    open fun disableIntrospectionContextContributor(): GraphQLContextContributor =
+        GraphQLContextContributor {
+                builder,
+                _,
+                _,
+            ->
+            builder.put(Introspection.INTROSPECTION_DISABLED, true)
+        }
 
     @Bean
     @ConditionalOnMissingBean
     open fun graphQLContextBuilder(
         dgsCustomContextBuilder: Optional<DgsCustomContextBuilder<*>>,
-        dgsCustomContextBuilderWithRequest: Optional<DgsCustomContextBuilderWithRequest<*>>
-    ): DefaultDgsGraphQLContextBuilder {
-        return DefaultDgsGraphQLContextBuilder(dgsCustomContextBuilder, dgsCustomContextBuilderWithRequest)
-    }
+        dgsCustomContextBuilderWithRequest: Optional<DgsCustomContextBuilderWithRequest<*>>,
+    ): DefaultDgsGraphQLContextBuilder = DefaultDgsGraphQLContextBuilder(dgsCustomContextBuilder, dgsCustomContextBuilderWithRequest)
 
     @Bean
     @ConditionalOnMissingClass("com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLAutoConfiguration")
-    open fun uploadScalar(): UploadScalar {
-        return UploadScalar()
-    }
+    open fun uploadScalar(): UploadScalar = UploadScalar()
 
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnClass(name = ["reactor.core.publisher.Mono"])
-    open fun monoReactiveDataFetcherResultProcessor(): MonoDataFetcherResultProcessor {
-        return MonoDataFetcherResultProcessor()
-    }
+    open fun monoReactiveDataFetcherResultProcessor(): MonoDataFetcherResultProcessor = MonoDataFetcherResultProcessor()
 
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnClass(name = ["kotlinx.coroutines.flow.Flow"])
-    open fun flowReactiveDataFetcherResultProcessor(): FlowDataFetcherResultProcessor {
-        return FlowDataFetcherResultProcessor()
-    }
+    open fun flowReactiveDataFetcherResultProcessor(): FlowDataFetcherResultProcessor = FlowDataFetcherResultProcessor()
 
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnClass(name = ["reactor.core.publisher.Flux"])
-    open fun fluxReactiveDataFetcherResultProcessor(): FluxDataFetcherResultProcessor {
-        return FluxDataFetcherResultProcessor()
-    }
+    open fun fluxReactiveDataFetcherResultProcessor(): FluxDataFetcherResultProcessor = FluxDataFetcherResultProcessor()
 
     @Bean
     @ConditionalOnMissingBean
-    open fun dgsMicrometerContextRegistry(): ContextRegistry {
-        return ContextRegistry.getInstance()
+    open fun dgsMicrometerContextRegistry(): ContextRegistry =
+        ContextRegistry
+            .getInstance()
             .registerThreadLocalAccessor(Slf4jThreadLocalAccessor())
-    }
 
     /**
      * JDK 21+ only - Creates the dgsAsyncTaskExecutor which is used to run data fetchers automatically wrapped in CompletableFuture.
@@ -378,12 +356,16 @@ open class DgsAutoConfiguration(
     }
 
     @Bean
-    open fun methodDataFetcherFactory(argumentResolvers: ObjectProvider<ArgumentResolver>, @Qualifier("dgsAsyncTaskExecutor") taskExecutorOptional: Optional<AsyncTaskExecutor>): MethodDataFetcherFactory {
-        val taskExecutor = if (taskExecutorOptional.isPresent) {
-            taskExecutorOptional.get()
-        } else {
-            null
-        }
+    open fun methodDataFetcherFactory(
+        argumentResolvers: ObjectProvider<ArgumentResolver>,
+        @Qualifier("dgsAsyncTaskExecutor") taskExecutorOptional: Optional<AsyncTaskExecutor>,
+    ): MethodDataFetcherFactory {
+        val taskExecutor =
+            if (taskExecutorOptional.isPresent) {
+                taskExecutorOptional.get()
+            } else {
+                null
+            }
 
         return MethodDataFetcherFactory(argumentResolvers.orderedStream().toList(), DefaultParameterNameDiscoverer(), taskExecutor)
     }
@@ -397,12 +379,16 @@ open class DgsAutoConfiguration(
          * test use cases.
          */
         return object : DgsQueryExecutorRequestCustomizer {
-            override fun apply(request: WebRequest?, headers: HttpHeaders?): WebRequest? {
+            override fun apply(
+                request: WebRequest?,
+                headers: HttpHeaders?,
+            ): WebRequest? {
                 if (headers.isNullOrEmpty() || request !is NativeWebRequest) {
                     return request
                 }
-                val mockRequest = request.nativeRequest as? MockHttpServletRequest
-                    ?: return request
+                val mockRequest =
+                    request.nativeRequest as? MockHttpServletRequest
+                        ?: return request
                 headers.forEach { key, value ->
                     if (mockRequest.getHeader(key) == null) {
                         mockRequest.addHeader(key, value)
@@ -411,9 +397,7 @@ open class DgsAutoConfiguration(
                 return request
             }
 
-            override fun toString(): String {
-                return "{MockRequestHeaderCustomizer}"
-            }
+            override fun toString(): String = "{MockRequestHeaderCustomizer}"
         }
     }
 }

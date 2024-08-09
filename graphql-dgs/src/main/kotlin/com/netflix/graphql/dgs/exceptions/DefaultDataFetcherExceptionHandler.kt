@@ -33,58 +33,66 @@ import java.util.concurrent.CompletionException
  * The default implementation uses the Common Errors library to return GraphQL errors.
  */
 open class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
-
-    override fun handleException(handlerParameters: DataFetcherExceptionHandlerParameters): CompletableFuture<DataFetcherExceptionHandlerResult> {
-        return CompletableFuture.completedFuture(doHandleException(handlerParameters))
-    }
+    override fun handleException(
+        handlerParameters: DataFetcherExceptionHandlerParameters,
+    ): CompletableFuture<DataFetcherExceptionHandlerResult> = CompletableFuture.completedFuture(doHandleException(handlerParameters))
 
     private fun doHandleException(handlerParameters: DataFetcherExceptionHandlerParameters): DataFetcherExceptionHandlerResult {
         val exception = unwrapCompletionException(handlerParameters.exception)
 
-        val graphqlError = when (exception) {
-            is DgsException -> exception.toGraphQlError(path = handlerParameters.path)
-            else -> {
-                val builder = when {
-                    springSecurityAvailable && isSpringSecurityAccessException(exception) -> TypedGraphQLError.newPermissionDeniedBuilder()
-                    else -> TypedGraphQLError.newInternalErrorBuilder()
+        val graphqlError =
+            when (exception) {
+                is DgsException -> exception.toGraphQlError(path = handlerParameters.path)
+                else -> {
+                    val builder =
+                        when {
+                            springSecurityAvailable &&
+                                isSpringSecurityAccessException(
+                                    exception,
+                                ) -> TypedGraphQLError.newPermissionDeniedBuilder()
+                            else -> TypedGraphQLError.newInternalErrorBuilder()
+                        }
+                    builder
+                        .message("${exception::class.java.name}: ${exception.message}")
+                        .path(handlerParameters.path)
+                    handlerParameters.sourceLocation?.let { builder.location(it) }
+                    builder.build()
                 }
-                builder.message("${exception::class.java.name}: ${exception.message}")
-                    .path(handlerParameters.path)
-                handlerParameters.sourceLocation?.let { builder.location(it) }
-                builder.build()
             }
-        }
 
         logException(handlerParameters, graphqlError, exception)
 
-        return DataFetcherExceptionHandlerResult.newResult()
+        return DataFetcherExceptionHandlerResult
+            .newResult()
             .error(graphqlError)
             .build()
     }
 
-    protected open fun logException(handlerParameters: DataFetcherExceptionHandlerParameters, error: GraphQLError, exception: Throwable) {
+    protected open fun logException(
+        handlerParameters: DataFetcherExceptionHandlerParameters,
+        error: GraphQLError,
+        exception: Throwable,
+    ) {
         val logLevel = if (exception is DgsException) exception.logLevel else Level.ERROR
 
         logger.atLevel(logLevel).setCause(exception).log(
             "Exception while executing data fetcher for {}: {}",
             handlerParameters.path,
-            exception.message
+            exception.message,
         )
     }
 
-    private fun unwrapCompletionException(e: Throwable): Throwable {
-        return if (e is CompletionException && e.cause != null) e.cause!! else e
-    }
+    private fun unwrapCompletionException(e: Throwable): Throwable = if (e is CompletionException && e.cause != null) e.cause!! else e
 
     protected val logger: Logger get() = DefaultDataFetcherExceptionHandler.logger
 
     companion object {
-
         private val logger: Logger = LoggerFactory.getLogger(DefaultDataFetcherExceptionHandler::class.java)
-        private val springSecurityAvailable = ClassUtils.isPresent(
-            "org.springframework.security.access.AccessDeniedException",
-            DefaultDataFetcherExceptionHandler::class.java.classLoader
-        )
+        private val springSecurityAvailable =
+            ClassUtils.isPresent(
+                "org.springframework.security.access.AccessDeniedException",
+                DefaultDataFetcherExceptionHandler::class.java.classLoader,
+            )
 
         private fun isSpringSecurityAccessException(exception: Throwable): Boolean {
             try {

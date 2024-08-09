@@ -1,6 +1,7 @@
 [{*.kt,*.kts}]
 ij_kotlin_code_style_defaults = KOTLIN_OFFICIAL
 indent_size = 4
+ktlint_standard_no-wildcard-imports = disabled
 
 [*.{java,kt}]
 ij_java_names_count_to_use_import_on_demand = 12

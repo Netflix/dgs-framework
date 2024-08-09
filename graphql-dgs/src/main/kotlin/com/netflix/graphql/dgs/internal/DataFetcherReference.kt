@@ -24,5 +24,5 @@ data class DataFetcherReference(
     val method: Method,
     val annotations: MergedAnnotations,
     val parentType: String,
-    val field: String
+    val field: String,
 )

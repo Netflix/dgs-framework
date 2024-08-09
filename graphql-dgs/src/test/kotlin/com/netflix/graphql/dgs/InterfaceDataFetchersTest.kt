@@ -54,83 +54,83 @@ class InterfaceDataFetchersTest {
 
     @Test
     fun testDataFetchersOnInterface() {
-        val movieTypeResolver = object : Any() {
-            @DgsTypeResolver(name = "Movie")
-            fun movieTypes(movie: Movie): String {
-                return when (movie) {
-                    is ScaryMovie -> "ScaryMovie"
-                    is ActionMovie -> "ActionMovie"
-                    else -> throw RuntimeException("Unknown movie type")
-                }
-            }
-        }
-
-        val fetcher = object : Any() {
-            @DgsData(parentType = "Movie", field = "director")
-            fun directorFetcher(dfe: DataFetchingEnvironment): String {
-                return "The Director"
+        val movieTypeResolver =
+            object : Any() {
+                @DgsTypeResolver(name = "Movie")
+                fun movieTypes(movie: Movie): String =
+                    when (movie) {
+                        is ScaryMovie -> "ScaryMovie"
+                        is ActionMovie -> "ActionMovie"
+                        else -> throw RuntimeException("Unknown movie type")
+                    }
             }
 
-            @DgsData.List(
-                DgsData(parentType = "Movie", field = "title"),
-                DgsData(parentType = "Movie", field = "description")
+        val fetcher =
+            object : Any() {
+                @DgsData(parentType = "Movie", field = "director")
+                fun directorFetcher(dfe: DataFetchingEnvironment): String = "The Director"
+
+                @DgsData.List(
+                    DgsData(parentType = "Movie", field = "title"),
+                    DgsData(parentType = "Movie", field = "description"),
+                )
+                fun dummyData(dfe: DataFetchingEnvironment): String = "Some dummy data for ${dfe.field.name}"
+            }
+
+        val queryFetcher =
+            object : Any() {
+                // Since the field is not explicit the name of the method will be used.
+                @DgsQuery
+                fun movies(dfe: DataFetchingEnvironment): List<Movie> = listOf(ScaryMovie(), ActionMovie())
+            }
+
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+            mapOf(
+                Pair("movieDirectorFetcher", fetcher),
+                Pair("movieTypeResolver", movieTypeResolver),
+                Pair("queryResolver", queryFetcher),
             )
-            fun dummyData(dfe: DataFetchingEnvironment): String {
-                return "Some dummy data for ${dfe.field.name}"
-            }
-        }
-
-        val queryFetcher = object : Any() {
-            // Since the field is not explicit the name of the method will be used.
-            @DgsQuery
-            fun movies(dfe: DataFetchingEnvironment): List<Movie> {
-                return listOf(ScaryMovie(), ActionMovie())
-            }
-        }
-
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair("movieDirectorFetcher", fetcher),
-            Pair("movieTypeResolver", movieTypeResolver),
-            Pair("queryResolver", queryFetcher)
-        )
 
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
-        val provider = DgsSchemaProvider(
-            applicationContext = applicationContextMock,
-            federationResolver = Optional.empty(),
-            existingTypeDefinitionRegistry = Optional.empty(),
-            methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver()))
-        )
-        val schema = provider.schema(
-            """
-            type Query {
-                movies: [Movie]
-                shows: [Movie]
-            }
-            
-            interface Movie {
-                title: String
-                description: String
-                director: String
-            }
-            
-            type ScaryMovie implements Movie {
-                title: String
-                description: String
-                director: String
-                gory: Boolean
-            }
-            
-            type ActionMovie implements Movie {
-                title: String
-                description: String
-                director: String
-                nrOfExplosions: Int
-            }
-            """.trimIndent()
-        ).graphQLSchema
+        val provider =
+            DgsSchemaProvider(
+                applicationContext = applicationContextMock,
+                federationResolver = Optional.empty(),
+                existingTypeDefinitionRegistry = Optional.empty(),
+                methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver())),
+            )
+        val schema =
+            provider
+                .schema(
+                    """
+                    type Query {
+                        movies: [Movie]
+                        shows: [Movie]
+                    }
+                    
+                    interface Movie {
+                        title: String
+                        description: String
+                        director: String
+                    }
+                    
+                    type ScaryMovie implements Movie {
+                        title: String
+                        description: String
+                        director: String
+                        gory: Boolean
+                    }
+                    
+                    type ActionMovie implements Movie {
+                        title: String
+                        description: String
+                        director: String
+                        nrOfExplosions: Int
+                    }
+                    """.trimIndent(),
+                ).graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
 
@@ -144,9 +144,9 @@ class InterfaceDataFetchersTest {
                     mapOf(
                         "director" to "The Director",
                         "title" to "Some dummy data for title",
-                        "description" to "Some dummy data for description"
-                    )
-                )
+                        "description" to "Some dummy data for description",
+                    ),
+                ),
             )
         }
     }

@@ -27,12 +27,12 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 
 class DgsPaginationTypeDefinitionRegistryTest {
-
     private val paginationTypeRegistry = DgsPaginationTypeDefinitionRegistry()
 
     @Test
     fun generatePaginatedTypes() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 something: MovieConnection
             }
@@ -41,7 +41,7 @@ class DgsPaginationTypeDefinitionRegistryTest {
                movieID: ID
                title: String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val typeRegistry = SchemaParser().parse(schema)
         val paginatedTypeRegistry = paginationTypeRegistry.registry(typeRegistry)
@@ -51,7 +51,13 @@ class DgsPaginationTypeDefinitionRegistryTest {
         val addedDirective = graphqlSchema.getDirective("connection")
         assertThat(addedDirective).isNotNull
         assertThat(addedDirective.validLocations())
-            .isEqualTo(setOf(Introspection.DirectiveLocation.OBJECT, Introspection.DirectiveLocation.UNION, Introspection.DirectiveLocation.INTERFACE))
+            .isEqualTo(
+                setOf(
+                    Introspection.DirectiveLocation.OBJECT,
+                    Introspection.DirectiveLocation.UNION,
+                    Introspection.DirectiveLocation.INTERFACE,
+                ),
+            )
 
         val movieConnectionType = graphqlSchema.getObjectType("MovieConnection")
         assertThat(movieConnectionType).isNotNull.extracting { it.description }.isNotNull
@@ -61,39 +67,48 @@ class DgsPaginationTypeDefinitionRegistryTest {
         assertThat(pageInfoType).isNotNull.extracting { it.description }.isNotNull
 
         val movieConnection = graphqlSchema.getObjectType("MovieConnection")
-        val edgesField = movieConnection.getFieldDefinition("edges")
-            ?: fail("edges field not found on $movieConnection")
+        val edgesField =
+            movieConnection.getFieldDefinition("edges")
+                ?: fail("edges field not found on $movieConnection")
         assertThat(simplePrint(edgesField.type)).isEqualTo("[MovieEdge]")
-        val pageInfoField = movieConnection.getFieldDefinition("pageInfo")
-            ?: fail("pageInfo field not found on $movieConnection")
+        val pageInfoField =
+            movieConnection.getFieldDefinition("pageInfo")
+                ?: fail("pageInfo field not found on $movieConnection")
         assertThat(simplePrint(pageInfoField.type)).isEqualTo("PageInfo!")
 
         val movieEdge = graphqlSchema.getObjectType("MovieEdge")
-        val cursorField = movieEdge.getFieldDefinition("cursor")
-            ?: fail("cursor field not found on $movieEdge")
+        val cursorField =
+            movieEdge.getFieldDefinition("cursor")
+                ?: fail("cursor field not found on $movieEdge")
         assertThat(simplePrint(cursorField.type)).isEqualTo("String")
-        val nodeField = movieEdge.getFieldDefinition("node")
-            ?: fail("node field not found on $movieEdge")
+        val nodeField =
+            movieEdge.getFieldDefinition("node")
+                ?: fail("node field not found on $movieEdge")
         assertThat(simplePrint(nodeField.type)).isEqualTo("Movie")
 
         val pageInfo = graphqlSchema.getObjectType("PageInfo")
-        val hasPreviousPageField = pageInfo.getFieldDefinition("hasPreviousPage")
-            ?: fail("hasPreviousPage field not found on $pageInfo")
+        val hasPreviousPageField =
+            pageInfo.getFieldDefinition("hasPreviousPage")
+                ?: fail("hasPreviousPage field not found on $pageInfo")
         assertThat(simplePrint(hasPreviousPageField.type)).isEqualTo("Boolean!")
-        val hasNextPageField = pageInfo.getFieldDefinition("hasNextPage")
-            ?: fail("hasNextPage field not found on $pageInfo")
+        val hasNextPageField =
+            pageInfo.getFieldDefinition("hasNextPage")
+                ?: fail("hasNextPage field not found on $pageInfo")
         assertThat(simplePrint(hasNextPageField.type)).isEqualTo("Boolean!")
-        val startCursorField = pageInfo.getFieldDefinition("startCursor")
-            ?: fail("startCursor field not found on $pageInfo")
+        val startCursorField =
+            pageInfo.getFieldDefinition("startCursor")
+                ?: fail("startCursor field not found on $pageInfo")
         assertThat(simplePrint(startCursorField.type)).isEqualTo("String")
-        val endCursorField = pageInfo.getFieldDefinition("endCursor")
-            ?: fail("endCursor field not found on $pageInfo")
+        val endCursorField =
+            pageInfo.getFieldDefinition("endCursor")
+                ?: fail("endCursor field not found on $pageInfo")
         assertThat(simplePrint(endCursorField.type)).isEqualTo("String")
     }
 
     @Test
     fun doesNotGeneratePagInfoIfExists() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 something: MovieConnection
             }
@@ -109,7 +124,7 @@ class DgsPaginationTypeDefinitionRegistryTest {
                 startCursor: String
                 endCursor: String
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val typeRegistry = SchemaParser().parse(schema)
         val paginatedTypeRegistry = paginationTypeRegistry.registry(typeRegistry)
@@ -125,7 +140,8 @@ class DgsPaginationTypeDefinitionRegistryTest {
 
     @Test
     fun generateForInterfaces() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 something: IMovieConnection
             }
@@ -140,7 +156,7 @@ class DgsPaginationTypeDefinitionRegistryTest {
                title: String
                rating: Int
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val typeRegistry = SchemaParser().parse(schema)
         val paginatedTypeRegistry = paginationTypeRegistry.registry(typeRegistry)
@@ -161,13 +177,14 @@ class DgsPaginationTypeDefinitionRegistryTest {
 
     @Test
     fun doesNotGenerateIfNotObjectOrInterfaceType() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 something: CustomScalarConnection
             }
             
             scalar CustomScalar @connection
-        """.trimIndent()
+            """.trimIndent()
 
         val typeRegistry = SchemaParser().parse(schema)
         val paginatedTypeRegistry = paginationTypeRegistry.registry(typeRegistry)
@@ -178,7 +195,8 @@ class DgsPaginationTypeDefinitionRegistryTest {
 
     @Test
     fun generateForUnions() {
-        val schema = """
+        val schema =
+            """
             type Query {
                 something: IMovieConnection
             }
@@ -190,7 +208,7 @@ class DgsPaginationTypeDefinitionRegistryTest {
                title: String
                rating: Int
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val typeRegistry = SchemaParser().parse(schema)
         val paginatedTypeRegistry = paginationTypeRegistry.registry(typeRegistry)

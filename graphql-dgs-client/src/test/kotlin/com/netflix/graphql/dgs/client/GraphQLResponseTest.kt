@@ -37,17 +37,17 @@ import org.springframework.web.client.RestTemplate
 import java.time.OffsetDateTime
 
 class GraphQLResponseTest {
-
     private val restTemplate = RestTemplate()
     private val server = MockRestServiceServer.bindTo(restTemplate).build()
 
-    private val requestExecutor = RequestExecutor { url, headers, body ->
-        val httpHeaders = HttpHeaders()
-        headers.forEach { httpHeaders.addAll(it.key, it.value) }
+    private val requestExecutor =
+        RequestExecutor { url, headers, body ->
+            val httpHeaders = HttpHeaders()
+            headers.forEach { httpHeaders.addAll(it.key, it.value) }
 
-        val response = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
-        HttpResponse(statusCode = response.statusCode.value(), body = response.body, headers = response.headers)
-    }
+            val response = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
+            HttpResponse(statusCode = response.statusCode.value(), body = response.body, headers = response.headers)
+        }
 
     private val url = "http://localhost:8080/graphql"
     private val client = CustomGraphQLClient(url = url, requestExecutor = requestExecutor)
@@ -58,17 +58,21 @@ class GraphQLResponseTest {
             "data, data",
             "foo, data.foo",
             "data.foo, data.foo",
-            "datafoo, data.datafoo"
-        ]
+            "datafoo, data.datafoo",
+        ],
     )
-    fun normalizeDataPath(path: String, expectedPath: String) {
+    fun normalizeDataPath(
+        path: String,
+        expectedPath: String,
+    ) {
         assertThat(GraphQLResponse.getDataPath(path)).isEqualTo(expectedPath)
     }
 
     @Test
     fun dateParse() {
         // language=json
-        val jsonResponse = """
+        val jsonResponse =
+            """
             {
               "data": {
                 "submitReview": {
@@ -89,29 +93,31 @@ class GraphQLResponseTest {
                 }
               }
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        server.expect(requestTo(url))
+        server
+            .expect(requestTo(url))
             .andExpect(method(HttpMethod.POST))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
 
-        val graphQLResponse = client.executeQuery(
-            // language=graphql
-            """
-            mutation {
-              submitReview(review:{movieId:1, starRating:5, description:""}) {
-                edges {
-                  node {
-                    submittedBy
-                    postedDate
+        val graphQLResponse =
+            client.executeQuery(
+                // language=graphql
+                """
+                mutation {
+                  submitReview(review:{movieId:1, starRating:5, description:""}) {
+                    edges {
+                      node {
+                        submittedBy
+                        postedDate
+                      }
+                    }
                   }
                 }
-              }
-            }
-            """.trimIndent(),
-            emptyMap()
-        )
+                """.trimIndent(),
+                emptyMap(),
+            )
 
         val offsetDateTime = graphQLResponse.extractValueAsObject("submitReview.edges[0].node.postedDate", OffsetDateTime::class.java)
         assertThat(offsetDateTime).isInstanceOf(OffsetDateTime::class.java)
@@ -122,7 +128,8 @@ class GraphQLResponseTest {
     @Test
     fun populateResponseHeaders() {
         // language=json
-        val jsonResponse = """
+        val jsonResponse =
+            """
             {
               "data": {
                 "submitReview": {
@@ -130,22 +137,25 @@ class GraphQLResponseTest {
                 }
               }
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        server.expect(requestTo(url))
+        server
+            .expect(requestTo(url))
             .andExpect(method(HttpMethod.POST))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
 
-        val graphQLResponse = client.executeQuery(
-            """query {
-              submitReview(review:{movieId:1, description:""}) {
-                submittedBy
-              }
-            }
-            """.trimIndent(),
-            emptyMap()
-        )
+        val graphQLResponse =
+            client.executeQuery(
+                """
+                query {
+                  submitReview(review:{movieId:1, description:""}) {
+                    submittedBy
+                  }
+                }
+                """.trimIndent(),
+                emptyMap(),
+            )
 
         val submittedBy = graphQLResponse.extractValueAsObject("submitReview.submittedBy", String::class.java)
         assertThat(submittedBy).isEqualTo("abc@netflix.com")
@@ -156,7 +166,8 @@ class GraphQLResponseTest {
     @Test
     fun listAsObject() {
         // language=json
-        val jsonResponse = """
+        val jsonResponse =
+            """
             {
               "data": {
                 "submitReview": {
@@ -177,32 +188,36 @@ class GraphQLResponseTest {
                 }
               }
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        server.expect(requestTo(url))
+        server
+            .expect(requestTo(url))
             .andExpect(method(HttpMethod.POST))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
 
-        val graphQLResponse = client.executeQuery(
-            """mutation {
-              submitReview(review:{movieId:1, starRating:5, description:""}) {
-                edges {
-                  node {
-                    submittedBy
-                    postedDate
+        val graphQLResponse =
+            client.executeQuery(
+                """
+                mutation {
+                  submitReview(review:{movieId:1, starRating:5, description:""}) {
+                    edges {
+                      node {
+                        submittedBy
+                        postedDate
+                      }
+                    }
                   }
                 }
-              }
-            }
-            """.trimIndent(),
-            emptyMap()
-        )
+                """.trimIndent(),
+                emptyMap(),
+            )
 
-        val listOfSubmittedBy = graphQLResponse.extractValueAsObject(
-            "submitReview.edges[*].node.submittedBy",
-            jsonTypeRef<List<String>>()
-        )
+        val listOfSubmittedBy =
+            graphQLResponse.extractValueAsObject(
+                "submitReview.edges[*].node.submittedBy",
+                jsonTypeRef<List<String>>(),
+            )
         assertThat(listOfSubmittedBy).isInstanceOf(ArrayList::class.java)
         assertThat(listOfSubmittedBy.size).isEqualTo(2)
         server.verify()
@@ -211,7 +226,8 @@ class GraphQLResponseTest {
     @Test
     fun useOperationName() {
         // language=json
-        val jsonResponse = """
+        val jsonResponse =
+            """
             {
               "data": {
                 "submitReview": {
@@ -219,24 +235,26 @@ class GraphQLResponseTest {
                 }
               }
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        server.expect(requestTo(url))
+        server
+            .expect(requestTo(url))
             .andExpect(method(HttpMethod.POST))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(content().json("""{"operationName":"SubmitUserReview"}"""))
             .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON))
 
-        val graphQLResponse = client.executeQuery(
-            // language=graphql
-            """
-            mutation SubmitUserReview {
-                submitReview(review:{movieId:1, starRating:5, description:""}) {}
-            }
-            """.trimIndent(),
-            emptyMap(),
-            "SubmitUserReview"
-        )
+        val graphQLResponse =
+            client.executeQuery(
+                // language=graphql
+                """
+                mutation SubmitUserReview {
+                    submitReview(review:{movieId:1, starRating:5, description:""}) {}
+                }
+                """.trimIndent(),
+                emptyMap(),
+                "SubmitUserReview",
+            )
         assertThat(graphQLResponse.hasErrors()).isFalse
 
         server.verify()
@@ -253,7 +271,9 @@ class GraphQLResponseTest {
 
     @Test
     fun testDataAsObject() {
-        data class Response(val submitReview: Map<String, String>)
+        data class Response(
+            val submitReview: Map<String, String>,
+        )
         val response = GraphQLResponse("""{"data": {"submitReview": {"submittedBy": "abc@netflix.com"}}}""")
         val result = response.dataAsObject(Response::class.java)
         assertEquals(Response(submitReview = mapOf("submittedBy" to "abc@netflix.com")), result)
@@ -261,51 +281,60 @@ class GraphQLResponseTest {
 
     @Test
     fun testObjectErrorClassification() {
-        val response = GraphQLResponse(
-            """{
-            "data":  null,
-            "errors": [{
-              "message": "Validation failed",
-              "path": ["shows", 12],
-              "extensions": {
-                "errorType": "INTERNAL",
-                "classification": {
-                  "type": "ExtendedValidationError",
-                  "validatedPath": ["shows", "title"]
+        val response =
+            GraphQLResponse(
+                """
+                {
+                    "data":  null,
+                    "errors": [{
+                      "message": "Validation failed",
+                      "path": ["shows", 12],
+                      "extensions": {
+                        "errorType": "INTERNAL",
+                        "classification": {
+                          "type": "ExtendedValidationError",
+                          "validatedPath": ["shows", "title"]
+                        }
+                      }
+                    }]
                 }
-              }
-            }]
-        }
-            """.trimIndent()
-        )
+                """.trimIndent(),
+            )
         val error = response.errors.singleOrNull() ?: fail("Expected single error on response: $response")
         assertThat(error.message).isEqualTo("Validation failed")
         assertThat(error.path).isEqualTo(listOf("shows", 12))
 
         val extensions = error.extensions ?: fail("Expected non-null extensions on error: $error")
         assertThat(extensions.errorType).isEqualTo(ErrorType.INTERNAL)
-        assertThat(extensions.classification).isEqualTo(mapOf("type" to "ExtendedValidationError", "validatedPath" to listOf("shows", "title")))
+        assertThat(extensions.classification).isEqualTo(
+            mapOf(
+                "type" to "ExtendedValidationError",
+                "validatedPath" to listOf("shows", "title"),
+            ),
+        )
     }
 
     @Test
     fun testExplicitNullPath() {
-        val response = GraphQLResponse(
-            """{
-            "data": null,
-            "errors": [{
-              "message": "Validation failed",
-              "path": null,
-              "extensions": {
-                "errorType": "INTERNAL",
-                "classification": {
-                  "type": "ExtendedValidationError",
-                  "validatedPath": ["shows", "title"]
+        val response =
+            GraphQLResponse(
+                """
+                {
+                    "data": null,
+                    "errors": [{
+                      "message": "Validation failed",
+                      "path": null,
+                      "extensions": {
+                        "errorType": "INTERNAL",
+                        "classification": {
+                          "type": "ExtendedValidationError",
+                          "validatedPath": ["shows", "title"]
+                        }
+                      }
+                    }]
                 }
-              }
-            }]
-        }
-            """.trimIndent()
-        )
+                """.trimIndent(),
+            )
         assertThat(response.data).isEmpty()
         assertThat(response.errors).hasSize(1)
         assertThat(response.errors[0].path).isEmpty()

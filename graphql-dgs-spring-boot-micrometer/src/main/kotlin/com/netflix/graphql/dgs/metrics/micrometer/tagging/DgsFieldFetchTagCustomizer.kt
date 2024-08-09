@@ -22,10 +22,9 @@ import io.micrometer.core.instrument.Tag
 
 @FunctionalInterface
 fun interface DgsFieldFetchTagCustomizer {
-
     fun getFieldFetchTags(
         state: DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState,
         parameters: InstrumentationFieldFetchParameters,
-        error: Throwable?
+        error: Throwable?,
     ): Iterable<Tag>
 }

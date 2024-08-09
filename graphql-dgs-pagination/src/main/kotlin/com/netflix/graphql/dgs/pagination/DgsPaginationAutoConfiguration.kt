@@ -22,7 +22,5 @@ import org.springframework.context.annotation.Bean
 @AutoConfiguration
 open class DgsPaginationAutoConfiguration {
     @Bean
-    open fun dgsPaginationTypeDefinitionRegistry(): DgsPaginationTypeDefinitionRegistry {
-        return DgsPaginationTypeDefinitionRegistry()
-    }
+    open fun dgsPaginationTypeDefinitionRegistry(): DgsPaginationTypeDefinitionRegistry = DgsPaginationTypeDefinitionRegistry()
 }

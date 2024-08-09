@@ -45,85 +45,103 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.util.concurrent.ConcurrentHashMap
 
-class WebsocketGraphQLWSProtocolHandler(private val dgsReactiveQueryExecutor: DgsReactiveQueryExecutor) : WebsocketReactiveProtocolHandler {
-
+class WebsocketGraphQLWSProtocolHandler(
+    private val dgsReactiveQueryExecutor: DgsReactiveQueryExecutor,
+) : WebsocketReactiveProtocolHandler {
     private val resolvableType = ResolvableType.forType(OperationMessage::class.java)
     private val sessions = ConcurrentHashMap<String, MutableMap<String, Subscription>>()
     private val decoder = Jackson2JsonDecoder()
     private val encoder = Jackson2JsonEncoder(decoder.objectMapper)
 
-    override fun handle(webSocketSession: WebSocketSession): Mono<Void> {
-        return webSocketSession.send(
-            webSocketSession.receive()
+    override fun handle(webSocketSession: WebSocketSession): Mono<Void> =
+        webSocketSession.send(
+            webSocketSession
+                .receive()
                 .flatMap { message ->
                     val buffer: DataBuffer = DataBufferUtils.retain(message.payload)
 
-                    val operationMessage: OperationMessage = decoder.decode(
-                        buffer,
-                        resolvableType,
-                        MimeTypeUtils.APPLICATION_JSON,
-                        null
-                    ) as OperationMessage
+                    val operationMessage: OperationMessage =
+                        decoder.decode(
+                            buffer,
+                            resolvableType,
+                            MimeTypeUtils.APPLICATION_JSON,
+                            null,
+                        ) as OperationMessage
 
                     when (operationMessage.type) {
-                        GQL_CONNECTION_INIT -> Flux.just(
-                            toWebsocketMessage(
-                                OperationMessage(GQL_CONNECTION_ACK),
-                                webSocketSession
+                        GQL_CONNECTION_INIT ->
+                            Flux.just(
+                                toWebsocketMessage(
+                                    OperationMessage(GQL_CONNECTION_ACK),
+                                    webSocketSession,
+                                ),
                             )
-                        )
                         GQL_START -> {
-                            val queryPayload = decoder.objectMapper.convertValue<QueryPayload>(
-                                operationMessage.payload ?: error("payload == null")
-                            )
+                            val queryPayload =
+                                decoder.objectMapper.convertValue<QueryPayload>(
+                                    operationMessage.payload ?: error("payload == null"),
+                                )
                             logger.debug("Starting subscription {} for session {}", queryPayload, webSocketSession.id)
-                            dgsReactiveQueryExecutor.execute(queryPayload.query, queryPayload.variables)
+                            dgsReactiveQueryExecutor
+                                .execute(queryPayload.query, queryPayload.variables)
                                 .flatMapMany { executionResult ->
                                     val publisher: Publisher<ExecutionResult> = executionResult.getData()
-                                    Flux.from(publisher).map { er ->
-                                        toWebsocketMessage(
-                                            OperationMessage(GQL_DATA, DataPayload(data = er.getData(), errors = er.errors), operationMessage.id),
+                                    Flux
+                                        .from(publisher)
+                                        .map { er ->
+                                            toWebsocketMessage(
+                                                OperationMessage(
+                                                    GQL_DATA,
+                                                    DataPayload(data = er.getData(), errors = er.errors),
+                                                    operationMessage.id,
+                                                ),
+                                                webSocketSession,
+                                            )
+                                        }.doOnSubscribe {
+                                            if (operationMessage.id != null) {
+                                                sessions[webSocketSession.id] = mutableMapOf(operationMessage.id!! to it)
+                                            }
+                                        }.doOnComplete {
                                             webSocketSession
-                                        )
-                                    }.doOnSubscribe {
-                                        if (operationMessage.id != null) {
-                                            sessions[webSocketSession.id] = mutableMapOf(operationMessage.id!! to it)
+                                                .send(
+                                                    Flux.just(
+                                                        toWebsocketMessage(
+                                                            OperationMessage(GQL_COMPLETE, null, operationMessage.id),
+                                                            webSocketSession,
+                                                        ),
+                                                    ),
+                                                ).subscribe()
+
+                                            sessions[webSocketSession.id]?.remove(operationMessage.id)
+                                            logger.debug(
+                                                "Completing subscription {} for connection {}",
+                                                operationMessage.id,
+                                                webSocketSession.id,
+                                            )
+                                        }.doOnError {
+                                            webSocketSession
+                                                .send(
+                                                    Flux.just(
+                                                        toWebsocketMessage(
+                                                            OperationMessage(
+                                                                GQL_ERROR,
+                                                                DataPayload(null, listOf(it.message!!)),
+                                                                operationMessage.id,
+                                                            ),
+                                                            webSocketSession,
+                                                        ),
+                                                    ),
+                                                ).subscribe()
+
+                                            sessions[webSocketSession.id]?.remove(operationMessage.id)
+                                            logger.debug(
+                                                "Subscription publisher error for input {} for subscription {} for connection {}",
+                                                queryPayload,
+                                                operationMessage.id,
+                                                webSocketSession.id,
+                                                it,
+                                            )
                                         }
-                                    }.doOnComplete {
-                                        webSocketSession.send(
-                                            Flux.just(
-                                                toWebsocketMessage(
-                                                    OperationMessage(GQL_COMPLETE, null, operationMessage.id),
-                                                    webSocketSession
-                                                )
-                                            )
-                                        ).subscribe()
-
-                                        sessions[webSocketSession.id]?.remove(operationMessage.id)
-                                        logger.debug(
-                                            "Completing subscription {} for connection {}",
-                                            operationMessage.id,
-                                            webSocketSession.id
-                                        )
-                                    }.doOnError {
-                                        webSocketSession.send(
-                                            Flux.just(
-                                                toWebsocketMessage(
-                                                    OperationMessage(GQL_ERROR, DataPayload(null, listOf(it.message!!)), operationMessage.id),
-                                                    webSocketSession
-                                                )
-                                            )
-                                        ).subscribe()
-
-                                        sessions[webSocketSession.id]?.remove(operationMessage.id)
-                                        logger.debug(
-                                            "Subscription publisher error for input {} for subscription {} for connection {}",
-                                            queryPayload,
-                                            operationMessage.id,
-                                            webSocketSession.id,
-                                            it
-                                        )
-                                    }
                                 }
                         }
 
@@ -132,7 +150,7 @@ class WebsocketGraphQLWSProtocolHandler(private val dgsReactiveQueryExecutor: Dg
                             logger.debug(
                                 "Client stopped subscription {} for connection {}",
                                 operationMessage.id,
-                                webSocketSession.id
+                                webSocketSession.id,
                             )
                             Flux.empty()
                         }
@@ -147,22 +165,23 @@ class WebsocketGraphQLWSProtocolHandler(private val dgsReactiveQueryExecutor: Dg
 
                         else -> Flux.empty()
                     }
-                }
+                },
         )
-    }
 
-    private fun toWebsocketMessage(operationMessage: OperationMessage, session: WebSocketSession): WebSocketMessage {
-        return WebSocketMessage(
+    private fun toWebsocketMessage(
+        operationMessage: OperationMessage,
+        session: WebSocketSession,
+    ): WebSocketMessage =
+        WebSocketMessage(
             WebSocketMessage.Type.TEXT,
             encoder.encodeValue(
                 operationMessage,
                 session.bufferFactory(),
                 resolvableType,
                 MimeTypeUtils.APPLICATION_JSON,
-                null
-            )
+                null,
+            ),
         )
-    }
 
     companion object {
         private val logger = LoggerFactory.getLogger(DgsReactiveQueryExecutor::class.java)

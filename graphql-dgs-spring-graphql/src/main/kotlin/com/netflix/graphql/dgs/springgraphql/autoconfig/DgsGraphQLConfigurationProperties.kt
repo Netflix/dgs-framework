@@ -21,12 +21,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties(prefix = PREFIX)
 data class DgsGraphQLConfigurationProperties(
-    val introspection: DgsIntrospectionConfigurationProperties = DgsIntrospectionConfigurationProperties()
+    val introspection: DgsIntrospectionConfigurationProperties = DgsIntrospectionConfigurationProperties(),
 ) {
     data class DgsIntrospectionConfigurationProperties(
         /** Due to legacy reasons, SDL comments (i.e. # comments) are shown in introspection queries by default.
          * This property toggles that visibility. */
-        val showSdlComments: Boolean = true
+        val showSdlComments: Boolean = true,
     )
 
     companion object {

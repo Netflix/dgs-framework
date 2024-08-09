@@ -20,7 +20,11 @@ import org.slf4j.Logger
 
 object TimeTracer {
     @Deprecated("Use kotlin.time.measureTimedValue")
-    fun <R> logTime(action: () -> R, logger: Logger, message: String): R {
+    fun <R> logTime(
+        action: () -> R,
+        logger: Logger,
+        message: String,
+    ): R {
         val startTime = System.currentTimeMillis()
         val result = action()
         val endTime = System.currentTimeMillis()

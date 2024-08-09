@@ -30,7 +30,7 @@ interface ReactiveGraphQLClient {
      */
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
-        variables: Map<String, Any>
+        variables: Map<String, Any>,
     ): Flux<GraphQLResponse>
 
     /**
@@ -42,6 +42,6 @@ interface ReactiveGraphQLClient {
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
-        operationName: String?
+        operationName: String?,
     ): Flux<GraphQLResponse>
 }

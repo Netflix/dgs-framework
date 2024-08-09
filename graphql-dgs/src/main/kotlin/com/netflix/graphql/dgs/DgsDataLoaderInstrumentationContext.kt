@@ -27,5 +27,8 @@ interface DgsDataLoaderInstrumentationContext {
      *  - the thread associated with the data loader's CompletableFuture
      *  - the thread that actually dispatched the data loader
      */
-    fun onComplete(result: Any?, exception: Any?)
+    fun onComplete(
+        result: Any?,
+        exception: Any?,
+    )
 }

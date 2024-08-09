@@ -44,7 +44,10 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      *
      * @return this registry
      */
-    override fun register(key: String, dataLoader: DataLoader<*, *>): DataLoaderRegistry {
+    override fun register(
+        key: String,
+        dataLoader: DataLoader<*, *>,
+    ): DataLoaderRegistry {
         super.register(key, dataLoader)
         return this
     }
@@ -60,12 +63,14 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
     fun registerWithDispatchPredicate(
         key: String,
         dataLoader: DataLoader<*, *>,
-        dispatchPredicate: DispatchPredicate
+        dispatchPredicate: DispatchPredicate,
     ): DataLoaderRegistry {
-        val registry = ScheduledDataLoaderRegistry.newScheduledRegistry()
-            .register(key, dataLoader)
-            .dispatchPredicate(dispatchPredicate)
-            .build()
+        val registry =
+            ScheduledDataLoaderRegistry
+                .newScheduledRegistry()
+                .register(key, dataLoader)
+                .dispatchPredicate(dispatchPredicate)
+                .build()
         scheduledDataLoaderRegistries.putIfAbsent(key, registry)
         return this
     }
@@ -87,7 +92,7 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      </V></K> */
     override fun <K, V> computeIfAbsent(
         key: String,
-        mappingFunction: Function<String, DataLoader<*, *>>
+        mappingFunction: Function<String, DataLoader<*, *>>,
     ): DataLoader<K, V> {
         // we do not support this method for registering with dispatch predicates
         return super.computeIfAbsent(key, mappingFunction)
@@ -96,16 +101,18 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
     /**
      *  This operation is not supported since we cannot store a dataloader registry without a key.
      */
-    override fun combine(registry: DataLoaderRegistry): DataLoaderRegistry? {
+    override fun combine(registry: DataLoaderRegistry): DataLoaderRegistry? =
         throw UnsupportedOperationException("Cannot combine a DgsDataLoaderRegistry with another registry")
-    }
 
     /**
      * @return the currently registered data loaders
      */
-    override fun getDataLoaders(): List<DataLoader<*, *>> {
-        return (scheduledDataLoaderRegistries.values.asSequence().flatMap { registry -> registry.dataLoaders } + dataLoaders.values).toList()
-    }
+    override fun getDataLoaders(): List<DataLoader<*, *>> =
+        (
+            scheduledDataLoaderRegistries.values.asSequence().flatMap { registry ->
+                registry.dataLoaders
+            } + dataLoaders.values
+        ).toList()
 
     /**
      * @return the currently registered data loaders as a map
@@ -141,13 +148,10 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      *
      * @return a data loader or null if its not present
      </V></K> */
-    override fun <K, V> getDataLoader(key: String): DataLoader<K, V>? {
-        return super.getDataLoader(key) ?: scheduledDataLoaderRegistries[key]?.getDataLoader(key)
-    }
+    override fun <K, V> getDataLoader(key: String): DataLoader<K, V>? =
+        super.getDataLoader(key) ?: scheduledDataLoaderRegistries[key]?.getDataLoader(key)
 
-    override fun getKeys(): Set<String> {
-        return scheduledDataLoaderRegistries.keys + dataLoaders.keys
-    }
+    override fun getKeys(): Set<String> = scheduledDataLoaderRegistries.keys + dataLoaders.keys
 
     /**
      * This will be called [org.dataloader.DataLoader.dispatch] on each of the registered
@@ -164,24 +168,23 @@ open class DgsDataLoaderRegistry : DataLoaderRegistry() {
      *
      * @return total number of entries that were dispatched from registered [org.dataloader.DataLoader]s.
      */
-    override fun dispatchAllWithCount(): Int {
-        return scheduledDataLoaderRegistries.values.sumOf { registry -> registry.dispatchAllWithCount() } +
+    override fun dispatchAllWithCount(): Int =
+        scheduledDataLoaderRegistries.values.sumOf { registry -> registry.dispatchAllWithCount() } +
             dataLoaders.values.sumOf { dataLoader -> dataLoader.dispatchWithCounts().keysCount }
-    }
 
     /**
      * @return The sum of all batched key loads that need to be dispatched from all registered
      * [org.dataloader.DataLoader]s
      */
-    override fun dispatchDepth(): Int {
-        return scheduledDataLoaderRegistries.values.sumOf { registry -> registry.dispatchDepth() } +
+    override fun dispatchDepth(): Int =
+        scheduledDataLoaderRegistries.values.sumOf { registry -> registry.dispatchDepth() } +
             dataLoaders.values.sumOf { dataLoader -> dataLoader.dispatchDepth() }
-    }
 
     override fun getStatistics(): Statistics {
-        val stats = scheduledDataLoaderRegistries.values.fold(Statistics()) { acc, registry ->
-            acc.combine(registry.statistics)
-        }
+        val stats =
+            scheduledDataLoaderRegistries.values.fold(Statistics()) { acc, registry ->
+                acc.combine(registry.statistics)
+            }
         return dataLoaders.values.fold(stats) { acc, dataLoader -> acc.combine(dataLoader.statistics) }
     }
 }

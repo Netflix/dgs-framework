@@ -23,51 +23,53 @@ import org.junit.jupiter.api.Test
 internal class SelectionSetUtilTest {
     @Test
     fun `toPaths handles nested structures`() {
-        val paths = SelectionSetUtil.toPaths(
-            """
-            outer {
-              fieldA
-              fieldB
-            }
-            fieldC
-            """.trimIndent()
-        )
+        val paths =
+            SelectionSetUtil.toPaths(
+                """
+                outer {
+                  fieldA
+                  fieldB
+                }
+                fieldC
+                """.trimIndent(),
+            )
 
         assertThat(paths).isEqualTo(
             listOf(
                 listOf("outer", "fieldA"),
                 listOf("outer", "fieldB"),
-                listOf("fieldC")
-            )
+                listOf("fieldC"),
+            ),
         )
     }
 
     @Test
     fun `ignores spread selections`() {
-        val paths = SelectionSetUtil.toPaths(
-            """
-            outer {
-              fieldA
-              fieldB
-              ... on SomeType {
-                hopefullyIgnored
-              }
-              ... on SomeOtherType {
-                alsoIgnored {
-                  nested
+        val paths =
+            SelectionSetUtil.toPaths(
+                """
+                outer {
+                  fieldA
+                  fieldB
+                  ... on SomeType {
+                    hopefullyIgnored
+                  }
+                  ... on SomeOtherType {
+                    alsoIgnored {
+                      nested
+                    }
+                  }
                 }
-              }
-            }
-            fieldC
-            """.trimIndent()
-        )
+                fieldC
+                """.trimIndent(),
+            )
 
         assertThat(paths).isEqualTo(
             listOf(
                 listOf("outer", "fieldA"),
                 listOf("outer", "fieldB"),
-                listOf("fieldC")
-            )
+                listOf("fieldC"),
+            ),
         )
     }
 }

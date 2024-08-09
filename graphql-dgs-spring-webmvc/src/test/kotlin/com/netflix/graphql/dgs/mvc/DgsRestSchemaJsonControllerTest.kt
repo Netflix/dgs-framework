@@ -40,19 +40,24 @@ class DgsRestSchemaJsonControllerTest {
 
     @Test
     fun normalFlow() {
-        val objectType: GraphQLObjectType = GraphQLObjectType.newObject()
-            .name("helloType")
-            .field(
-                GraphQLFieldDefinition.newFieldDefinition()
-                    .name("hello")
-                    .type(Scalars.GraphQLString)
-            )
-            .build()
-        val schema = GraphQLSchema.newSchema()
-            .clearSchemaDirectives()
-            .clearAdditionalTypes()
-            .clearDirectives()
-            .query(objectType).build()
+        val objectType: GraphQLObjectType =
+            GraphQLObjectType
+                .newObject()
+                .name("helloType")
+                .field(
+                    GraphQLFieldDefinition
+                        .newFieldDefinition()
+                        .name("hello")
+                        .type(Scalars.GraphQLString),
+                ).build()
+        val schema =
+            GraphQLSchema
+                .newSchema()
+                .clearSchemaDirectives()
+                .clearAdditionalTypes()
+                .clearDirectives()
+                .query(objectType)
+                .build()
 
         every { dgsSchemaProvider.schema() } returns SchemaProviderResult(schema, runtimeWiring = RuntimeWiring.MOCKED_WIRING)
 

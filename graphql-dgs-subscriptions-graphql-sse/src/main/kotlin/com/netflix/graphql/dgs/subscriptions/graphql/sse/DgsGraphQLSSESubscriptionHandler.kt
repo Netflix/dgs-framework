@@ -59,22 +59,22 @@ private const val EMPTY_STRING = ""
 @RestController
 open class DgsGraphQLSSESubscriptionHandler(
     open val dgsQueryExecutor: DgsQueryExecutor,
-    @Value("\${dgs.graphql.sse.pollPeriod:12000}") open val pollPeriod: Long
+    @Value("\${dgs.graphql.sse.pollPeriod:12000}") open val pollPeriod: Long,
 ) {
-
     @PostMapping("\${dgs.graphql.sse.path:/subscriptions}", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun subscriptionFromPost(
-        @RequestBody body: String
-    ): Flux<ServerSentEvent<String>> {
-        return handleSubscription(body)
-    }
+        @RequestBody body: String,
+    ): Flux<ServerSentEvent<String>> = handleSubscription(body)
 
-    private fun handleSubscription(@Language("graphql") query: String): Flux<ServerSentEvent<String>> {
-        val queryPayload = try {
-            mapper.readValue(query, QueryPayload::class.java)
-        } catch (ex: Exception) {
-            throw ServerWebInputException("Error parsing query: ${ex.message}")
-        }
+    private fun handleSubscription(
+        @Language("graphql") query: String,
+    ): Flux<ServerSentEvent<String>> {
+        val queryPayload =
+            try {
+                mapper.readValue(query, QueryPayload::class.java)
+            } catch (ex: Exception) {
+                throw ServerWebInputException("Error parsing query: ${ex.message}")
+            }
 
         if (!isSubscriptionQuery(queryPayload.query)) {
             throw ServerWebInputException("Invalid query. operation type is not a subscription")
@@ -92,63 +92,76 @@ open class DgsGraphQLSSESubscriptionHandler(
             throw ServerWebInputException(errorMessage)
         }
 
-        val publisher = try {
-            executionResult.getData<Publisher<ExecutionResult>>()
-        } catch (exc: ClassCastException) {
-            logger.error(
-                "Invalid return type for subscription datafetcher. A subscription datafetcher must return a Publisher<ExecutionResult>. The query was {}",
-                query,
-                exc
-            )
-            throw ServerErrorException(
-                "Invalid return type for subscription datafetcher. Was a non-subscription query send to the subscription endpoint?",
-                exc
-            )
-        }
+        val publisher =
+            try {
+                executionResult.getData<Publisher<ExecutionResult>>()
+            } catch (exc: ClassCastException) {
+                logger.error(
+                    "Invalid return type for subscription datafetcher. A subscription datafetcher must return a Publisher<ExecutionResult>. The query was {}",
+                    query,
+                    exc,
+                )
+                throw ServerErrorException(
+                    "Invalid return type for subscription datafetcher. Was a non-subscription query send to the subscription endpoint?",
+                    exc,
+                )
+            }
 
-        val subscriptionId = if (queryPayload.key == EMPTY_STRING) {
-            UUID.randomUUID().toString()
-        } else {
-            queryPayload.key
-        }
-        val resultPublisher = Flux.from(publisher)
-            .map {
-                val payload = SSEDataPayload(data = it.getData(), errors = it.errors, subId = subscriptionId)
-                ServerSentEvent.builder(mapper.writeValueAsString(payload))
-                    .id(UUID.randomUUID().toString())
-                    .event(NEXT_EVENT)
-                    .build()
-            }.onErrorResume { exc ->
-                logger.warn("An exception occurred on subscription {}", subscriptionId, exc)
-                val errorMessage = exc.message ?: "An exception occurred"
-                val payload =
-                    SSEDataPayload(data = null, errors = listOf(SseError(errorMessage)), subId = subscriptionId)
-                Flux.just(
-                    ServerSentEvent.builder(mapper.writeValueAsString(payload))
+        val subscriptionId =
+            if (queryPayload.key == EMPTY_STRING) {
+                UUID.randomUUID().toString()
+            } else {
+                queryPayload.key
+            }
+        val resultPublisher =
+            Flux
+                .from(publisher)
+                .map {
+                    val payload = SSEDataPayload(data = it.getData(), errors = it.errors, subId = subscriptionId)
+                    ServerSentEvent
+                        .builder(mapper.writeValueAsString(payload))
                         .id(UUID.randomUUID().toString())
                         .event(NEXT_EVENT)
                         .build()
-                )
-            }
+                }.onErrorResume { exc ->
+                    logger.warn("An exception occurred on subscription {}", subscriptionId, exc)
+                    val errorMessage = exc.message ?: "An exception occurred"
+                    val payload =
+                        SSEDataPayload(data = null, errors = listOf(SseError(errorMessage)), subId = subscriptionId)
+                    Flux.just(
+                        ServerSentEvent
+                            .builder(mapper.writeValueAsString(payload))
+                            .id(UUID.randomUUID().toString())
+                            .event(NEXT_EVENT)
+                            .build(),
+                    )
+                }
         val sink = Sinks.many().unicast().onBackpressureBuffer<ServerSentEvent<String>>()
         val disposables: MutableList<Disposable> = mutableListOf()
-        val dis = resultPublisher.map {
-            sink.tryEmitNext(it)
-        }.doFinally {
-            sink.tryEmitNext(
-                ServerSentEvent.builder(EMPTY_STRING)
-                    .id(UUID.randomUUID().toString())
-                    .event(COMPLETE_EVENT)
-                    .build()
-            )
-            sink.tryEmitComplete()
-        }.subscribeOn(Schedulers.boundedElastic()).subscribe()
+        val dis =
+            resultPublisher
+                .map {
+                    sink.tryEmitNext(it)
+                }.doFinally {
+                    sink.tryEmitNext(
+                        ServerSentEvent
+                            .builder(EMPTY_STRING)
+                            .id(UUID.randomUUID().toString())
+                            .event(COMPLETE_EVENT)
+                            .build(),
+                    )
+                    sink.tryEmitComplete()
+                }.subscribeOn(Schedulers.boundedElastic())
+                .subscribe()
         disposables.add(dis)
         if (pollPeriod.toInt() != 0) {
-            val pollDis = Flux.interval(Duration.ZERO, Duration.ofMillis(pollPeriod))
-                .map {
-                    sink.tryEmitNext(ServerSentEvent.builder<String>().comment("").build())
-                }.subscribeOn(Schedulers.boundedElastic()).subscribe()
+            val pollDis =
+                Flux
+                    .interval(Duration.ZERO, Duration.ofMillis(pollPeriod))
+                    .map {
+                        sink.tryEmitNext(ServerSentEvent.builder<String>().comment("").build())
+                    }.subscribeOn(Schedulers.boundedElastic())
+                    .subscribe()
             disposables.add(pollDis)
         }
         return sink.asFlux().doFinally {
@@ -156,12 +169,15 @@ open class DgsGraphQLSSESubscriptionHandler(
         }
     }
 
-    private fun isSubscriptionQuery(@Language("graphql") query: String): Boolean {
-        val document = try {
-            Parser().parseDocument(query)
-        } catch (exc: InvalidSyntaxException) {
-            return false
-        }
+    private fun isSubscriptionQuery(
+        @Language("graphql") query: String,
+    ): Boolean {
+        val document =
+            try {
+                Parser().parseDocument(query)
+            } catch (exc: InvalidSyntaxException) {
+                return false
+            }
         val definitions = document.getDefinitionsOfType(OperationDefinition::class.java)
         return definitions.isNotEmpty() &&
             definitions.all { def -> def.operation == OperationDefinition.Operation.SUBSCRIPTION }

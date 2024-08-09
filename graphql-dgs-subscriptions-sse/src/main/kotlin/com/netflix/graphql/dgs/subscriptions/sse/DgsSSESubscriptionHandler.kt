@@ -51,31 +51,36 @@ import com.netflix.graphql.types.subscription.Error as SseError
  * Do not manually extend this class.
  */
 @RestController
-open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor) {
-
+open class DgsSSESubscriptionHandler(
+    open val dgsQueryExecutor: DgsQueryExecutor,
+) {
     @GetMapping("\${dgs.graphql.sse.path:/subscriptions}", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun subscriptionWithId(@RequestParam("query") queryBase64: String): Flux<ServerSentEvent<String>> {
-        val query = try {
-            String(Base64.getDecoder().decode(queryBase64), StandardCharsets.UTF_8)
-        } catch (ex: IllegalArgumentException) {
-            throw ServerWebInputException("Error decoding base64-encoded query")
-        }
+    fun subscriptionWithId(
+        @RequestParam("query") queryBase64: String,
+    ): Flux<ServerSentEvent<String>> {
+        val query =
+            try {
+                String(Base64.getDecoder().decode(queryBase64), StandardCharsets.UTF_8)
+            } catch (ex: IllegalArgumentException) {
+                throw ServerWebInputException("Error decoding base64-encoded query")
+            }
         return handleSubscription(query)
     }
 
     @PostMapping("\${dgs.graphql.sse.path:/subscriptions}", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun subscriptionFromPost(
-        @RequestBody body: String
-    ): Flux<ServerSentEvent<String>> {
-        return handleSubscription(body)
-    }
+        @RequestBody body: String,
+    ): Flux<ServerSentEvent<String>> = handleSubscription(body)
 
-    private fun handleSubscription(@Language("graphql") query: String): Flux<ServerSentEvent<String>> {
-        val queryPayload = try {
-            mapper.readValue(query, QueryPayload::class.java)
-        } catch (ex: Exception) {
-            throw ServerWebInputException("Error parsing query: ${ex.message}")
-        }
+    private fun handleSubscription(
+        @Language("graphql") query: String,
+    ): Flux<ServerSentEvent<String>> {
+        val queryPayload =
+            try {
+                mapper.readValue(query, QueryPayload::class.java)
+            } catch (ex: Exception) {
+                throw ServerWebInputException("Error parsing query: ${ex.message}")
+            }
 
         if (!isSubscriptionQuery(queryPayload.query)) {
             throw ServerWebInputException("Invalid query. operation type is not a subscription")
@@ -83,35 +88,43 @@ open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor
 
         val executionResult: ExecutionResult = dgsQueryExecutor.execute(queryPayload.query, queryPayload.variables.orEmpty())
         if (executionResult.errors.isNotEmpty()) {
-            val errorMessage = if (executionResult.errors.any { error -> error is ValidationError || error is InvalidSyntaxError }) {
-                "Subscription query failed to validate: ${executionResult.errors.joinToString()}"
-            } else {
-                "Error executing subscription query: ${executionResult.errors.joinToString()}"
-            }
+            val errorMessage =
+                if (executionResult.errors.any { error -> error is ValidationError || error is InvalidSyntaxError }) {
+                    "Subscription query failed to validate: ${executionResult.errors.joinToString()}"
+                } else {
+                    "Error executing subscription query: ${executionResult.errors.joinToString()}"
+                }
             logger.error(errorMessage)
             throw ServerWebInputException(errorMessage)
         }
 
-        val publisher = try {
-            executionResult.getData<Publisher<ExecutionResult>>()
-        } catch (exc: ClassCastException) {
-            logger.error(
-                "Invalid return type for subscription datafetcher. A subscription datafetcher must return a Publisher<ExecutionResult>. The query was {}",
-                query,
-                exc
-            )
-            throw ServerErrorException("Invalid return type for subscription datafetcher. Was a non-subscription query send to the subscription endpoint?", exc)
-        }
+        val publisher =
+            try {
+                executionResult.getData<Publisher<ExecutionResult>>()
+            } catch (exc: ClassCastException) {
+                logger.error(
+                    "Invalid return type for subscription datafetcher. A subscription datafetcher must return a Publisher<ExecutionResult>. The query was {}",
+                    query,
+                    exc,
+                )
+                throw ServerErrorException(
+                    "Invalid return type for subscription datafetcher. Was a non-subscription query send to the subscription endpoint?",
+                    exc,
+                )
+            }
 
-        val subscriptionId = if (queryPayload.key == "") {
-            UUID.randomUUID().toString()
-        } else {
-            queryPayload.key
-        }
-        return Flux.from(publisher)
+        val subscriptionId =
+            if (queryPayload.key == "") {
+                UUID.randomUUID().toString()
+            } else {
+                queryPayload.key
+            }
+        return Flux
+            .from(publisher)
             .map {
                 val payload = SSEDataPayload(data = it.getData(), errors = it.errors, subId = subscriptionId)
-                ServerSentEvent.builder(mapper.writeValueAsString(payload))
+                ServerSentEvent
+                    .builder(mapper.writeValueAsString(payload))
                     .id(UUID.randomUUID().toString())
                     .event("next")
                     .build()
@@ -120,20 +133,24 @@ open class DgsSSESubscriptionHandler(open val dgsQueryExecutor: DgsQueryExecutor
                 val errorMessage = exc.message ?: "An exception occurred"
                 val payload = SSEDataPayload(data = null, errors = listOf(SseError(errorMessage)), subId = subscriptionId)
                 Flux.just(
-                    ServerSentEvent.builder(mapper.writeValueAsString(payload))
+                    ServerSentEvent
+                        .builder(mapper.writeValueAsString(payload))
                         .id(UUID.randomUUID().toString())
                         .event("error")
-                        .build()
+                        .build(),
                 )
             }
     }
 
-    private fun isSubscriptionQuery(@Language("graphql") query: String): Boolean {
-        val document = try {
-            Parser().parseDocument(query)
-        } catch (exc: InvalidSyntaxException) {
-            return false
-        }
+    private fun isSubscriptionQuery(
+        @Language("graphql") query: String,
+    ): Boolean {
+        val document =
+            try {
+                Parser().parseDocument(query)
+            } catch (exc: InvalidSyntaxException) {
+                return false
+            }
         val definitions = document.getDefinitionsOfType(OperationDefinition::class.java)
         return definitions.isNotEmpty() &&
             definitions.all { def -> def.operation == OperationDefinition.Operation.SUBSCRIPTION }

@@ -24,7 +24,5 @@ object GraphQLMediaTypes {
     val GRAPHQL_MEDIA_TYPE = MediaType("application", "graphql")
     const val GRAPHQL_MEDIA_TYPE_VALUE = "application/graphql"
 
-    fun includesApplicationGraphQL(headers: HttpHeaders): Boolean {
-        return GRAPHQL_MEDIA_TYPE.includes(headers.contentType)
-    }
+    fun includesApplicationGraphQL(headers: HttpHeaders): Boolean = GRAPHQL_MEDIA_TYPE.includes(headers.contentType)
 }

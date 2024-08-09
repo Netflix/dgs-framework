@@ -57,9 +57,8 @@ class DefaultDgsQueryExecutor(
     private val reloadIndicator: ReloadSchemaIndicator = ReloadSchemaIndicator { false },
     private val preparsedDocumentProvider: PreparsedDocumentProvider? = null,
     private val queryValueCustomizer: QueryValueCustomizer = QueryValueCustomizer { query -> query },
-    private val requestCustomizer: DgsQueryExecutorRequestCustomizer = DgsQueryExecutorRequestCustomizer.DEFAULT_REQUEST_CUSTOMIZER
+    private val requestCustomizer: DgsQueryExecutorRequestCustomizer = DgsQueryExecutorRequestCustomizer.DEFAULT_REQUEST_CUSTOMIZER,
 ) : DgsQueryExecutor {
-
     val schema = AtomicReference(defaultSchema)
 
     override fun execute(
@@ -68,7 +67,7 @@ class DefaultDgsQueryExecutor(
         extensions: Map<String, Any>?,
         headers: HttpHeaders?,
         operationName: String?,
-        webRequest: WebRequest?
+        webRequest: WebRequest?,
     ): ExecutionResult {
         val graphQLSchema: GraphQLSchema =
             if (reloadIndicator.reloadSchema()) {
@@ -93,7 +92,7 @@ class DefaultDgsQueryExecutor(
                 queryExecutionStrategy = queryExecutionStrategy,
                 mutationExecutionStrategy = mutationExecutionStrategy,
                 idProvider = idProvider,
-                preparsedDocumentProvider = preparsedDocumentProvider
+                preparsedDocumentProvider = preparsedDocumentProvider,
             )
 
         // Check for NonNullableFieldWasNull errors, and log them explicitly because they don't run through the exception handlers.
@@ -108,15 +107,23 @@ class DefaultDgsQueryExecutor(
         return result
     }
 
-    override fun <T> executeAndExtractJsonPath(@Language("graphql") query: String, jsonPath: String, variables: Map<String, Any>): T {
-        return JsonPath.read(getJsonResult(query, variables), jsonPath)
-    }
+    override fun <T> executeAndExtractJsonPath(
+        @Language("graphql") query: String,
+        jsonPath: String,
+        variables: Map<String, Any>,
+    ): T = JsonPath.read(getJsonResult(query, variables), jsonPath)
 
-    override fun <T : Any?> executeAndExtractJsonPath(@Language("graphql") query: String, jsonPath: String, headers: HttpHeaders): T {
-        return JsonPath.read(getJsonResult(query, emptyMap(), headers), jsonPath)
-    }
+    override fun <T : Any?> executeAndExtractJsonPath(
+        @Language("graphql") query: String,
+        jsonPath: String,
+        headers: HttpHeaders,
+    ): T = JsonPath.read(getJsonResult(query, emptyMap(), headers), jsonPath)
 
-    override fun <T : Any?> executeAndExtractJsonPath(@Language("graphql") query: String, jsonPath: String, servletWebRequest: ServletWebRequest): T {
+    override fun <T : Any?> executeAndExtractJsonPath(
+        @Language("graphql") query: String,
+        jsonPath: String,
+        servletWebRequest: ServletWebRequest,
+    ): T {
         val httpHeaders = HttpHeaders()
         servletWebRequest.headerNames.forEach { name ->
             httpHeaders.addAll(name, servletWebRequest.getHeaderValues(name).orEmpty().toList())
@@ -129,7 +136,7 @@ class DefaultDgsQueryExecutor(
         jsonPath: String,
         variables: Map<String, Any>,
         clazz: Class<T>,
-        headers: HttpHeaders?
+        headers: HttpHeaders?,
     ): T {
         val jsonResult = getJsonResult(query, variables, headers)
         return try {
@@ -144,7 +151,7 @@ class DefaultDgsQueryExecutor(
         jsonPath: String,
         variables: Map<String, Any>,
         typeRef: TypeRef<T>,
-        headers: HttpHeaders?
+        headers: HttpHeaders?,
     ): T {
         val jsonResult = getJsonResult(query, variables, headers)
         return try {
@@ -154,19 +161,23 @@ class DefaultDgsQueryExecutor(
         }
     }
 
-    override fun executeAndGetDocumentContext(@Language("graphql") query: String, variables: Map<String, Any>): DocumentContext {
-        return parseContext.parse(getJsonResult(query, variables))
-    }
+    override fun executeAndGetDocumentContext(
+        @Language("graphql") query: String,
+        variables: Map<String, Any>,
+    ): DocumentContext = parseContext.parse(getJsonResult(query, variables))
 
     override fun executeAndGetDocumentContext(
         @Language("graphql") query: String,
         variables: MutableMap<String, Any>,
-        headers: HttpHeaders?
-    ): DocumentContext {
-        return parseContext.parse(getJsonResult(query, variables, headers))
-    }
+        headers: HttpHeaders?,
+    ): DocumentContext = parseContext.parse(getJsonResult(query, variables, headers))
 
-    private fun getJsonResult(@Language("graphql") query: String, variables: Map<String, Any>, headers: HttpHeaders? = null, servletWebRequest: ServletWebRequest? = null): String {
+    private fun getJsonResult(
+        @Language("graphql") query: String,
+        variables: Map<String, Any>,
+        headers: HttpHeaders? = null,
+        servletWebRequest: ServletWebRequest? = null,
+    ): String {
         val executionResult = execute(query, variables, null, headers, null, servletWebRequest)
 
         if (executionResult.errors.size > 0) {

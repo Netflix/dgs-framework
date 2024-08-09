@@ -25,12 +25,12 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import org.springframework.context.annotation.Configuration
 
 class DgsWebSocketConfigurationPropertiesValidationTest {
-
-    private val context = ApplicationContextRunner().withConfiguration(
-        AutoConfigurations.of(
-            MockConfigPropsAutoConfiguration::class.java
-        )
-    )!!
+    private val context =
+        ApplicationContextRunner().withConfiguration(
+            AutoConfigurations.of(
+                MockConfigPropsAutoConfiguration::class.java,
+            ),
+        )!!
 
     @Test
     fun webSocketValidCustomPath() {
@@ -46,8 +46,12 @@ class DgsWebSocketConfigurationPropertiesValidationTest {
         context
             .withPropertyValues("dgs.graphql.websocket.path: /pws/")
             .run { ctx ->
-                Assertions.assertThat(ctx).hasFailed()
-                    .failure.rootCause().hasMessageContaining("dgs.graphql.websocket.path must start with '/' and not end with '/'")
+                Assertions
+                    .assertThat(ctx)
+                    .hasFailed()
+                    .failure
+                    .rootCause()
+                    .hasMessageContaining("dgs.graphql.websocket.path must start with '/' and not end with '/'")
             }
     }
 

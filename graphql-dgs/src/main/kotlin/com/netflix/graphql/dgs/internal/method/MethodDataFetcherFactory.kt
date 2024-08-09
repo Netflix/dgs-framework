@@ -38,28 +38,28 @@ import kotlin.jvm.optionals.getOrNull
 class MethodDataFetcherFactory(
     argumentResolvers: List<ArgumentResolver>,
     internal val parameterNameDiscoverer: ParameterNameDiscoverer = DefaultParameterNameDiscoverer(),
-    private val asyncTaskExecutor: AsyncTaskExecutor? = null
+    private val asyncTaskExecutor: AsyncTaskExecutor? = null,
 ) {
-
     private val resolvers = ArgumentResolverComposite(argumentResolvers)
 
-    fun createDataFetcher(bean: Any, method: Method, fieldCoordinates: FieldCoordinates): DataFetcher<Any?> {
+    fun createDataFetcher(
+        bean: Any,
+        method: Method,
+        fieldCoordinates: FieldCoordinates,
+    ): DataFetcher<Any?> {
         if (isTrivial(method, fieldCoordinates)) {
-            val methodDataFetcher = DataFetcherInvoker(
-                dgsComponent = bean,
-                method = method,
-                resolvers = resolvers,
-                parameterNameDiscoverer = parameterNameDiscoverer,
-                taskExecutor = null
-            )
+            val methodDataFetcher =
+                DataFetcherInvoker(
+                    dgsComponent = bean,
+                    method = method,
+                    resolvers = resolvers,
+                    parameterNameDiscoverer = parameterNameDiscoverer,
+                    taskExecutor = null,
+                )
             return object : TrivialDataFetcher<Any?> {
-                override fun get(environment: DataFetchingEnvironment): Any? {
-                    return methodDataFetcher.get(environment)
-                }
+                override fun get(environment: DataFetchingEnvironment): Any? = methodDataFetcher.get(environment)
 
-                override fun toString(): String {
-                    return "TrivialMethodDataFetcher{field=$fieldCoordinates}"
-                }
+                override fun toString(): String = "TrivialMethodDataFetcher{field=$fieldCoordinates}"
             }
         }
 
@@ -68,19 +68,26 @@ class MethodDataFetcherFactory(
             method = method,
             resolvers = resolvers,
             parameterNameDiscoverer = parameterNameDiscoverer,
-            taskExecutor = asyncTaskExecutor
+            taskExecutor = asyncTaskExecutor,
         )
     }
 
-    internal fun getSelectedArgumentResolver(methodParameter: MethodParameter): ArgumentResolver? {
-        return resolvers.getArgumentResolver(methodParameter)
-    }
+    internal fun getSelectedArgumentResolver(methodParameter: MethodParameter): ArgumentResolver? =
+        resolvers.getArgumentResolver(methodParameter)
 
-    private fun isTrivial(method: Method, coordinates: FieldCoordinates): Boolean {
-        val annotation = MergedAnnotations.from(method).stream(DgsData::class.java).filter { annotation ->
-            annotation.getString("parentType") == coordinates.typeName &&
-                annotation.getString("field") == coordinates.fieldName
-        }.findFirst().getOrNull()
+    private fun isTrivial(
+        method: Method,
+        coordinates: FieldCoordinates,
+    ): Boolean {
+        val annotation =
+            MergedAnnotations
+                .from(method)
+                .stream(DgsData::class.java)
+                .filter { annotation ->
+                    annotation.getString("parentType") == coordinates.typeName &&
+                        annotation.getString("field") == coordinates.fieldName
+                }.findFirst()
+                .getOrNull()
         return annotation?.getBoolean("trivial") ?: false
     }
 }

@@ -32,22 +32,21 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver
  */
 class HandlerMethodArgumentResolverAdapter(
     private val delegate: HandlerMethodArgumentResolver,
-    private val webDataBinderFactory: WebDataBinderFactory? = null
+    private val webDataBinderFactory: WebDataBinderFactory? = null,
 ) : ArgumentResolver {
+    override fun supportsParameter(parameter: MethodParameter): Boolean = delegate.supportsParameter(parameter)
 
-    override fun supportsParameter(parameter: MethodParameter): Boolean {
-        return delegate.supportsParameter(parameter)
-    }
-
-    override fun resolveArgument(parameter: MethodParameter, dfe: DataFetchingEnvironment): Any? {
-        return delegate.resolveArgument(parameter, null, getRequest(dfe), webDataBinderFactory)
-    }
+    override fun resolveArgument(
+        parameter: MethodParameter,
+        dfe: DataFetchingEnvironment,
+    ): Any? = delegate.resolveArgument(parameter, null, getRequest(dfe), webDataBinderFactory)
 
     private fun getRequest(dfe: DataFetchingEnvironment): NativeWebRequest {
-        val request = when (val requestData = DgsContext.getRequestData(dfe)) {
-            is DgsWebMvcRequestData -> requestData.webRequest
-            else -> throw AssertionError()
-        }
+        val request =
+            when (val requestData = DgsContext.getRequestData(dfe)) {
+                is DgsWebMvcRequestData -> requestData.webRequest
+                else -> throw AssertionError()
+            }
         return request as NativeWebRequest
     }
 }

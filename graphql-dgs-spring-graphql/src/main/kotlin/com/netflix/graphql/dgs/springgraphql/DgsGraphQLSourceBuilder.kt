@@ -33,8 +33,9 @@ import java.util.function.Consumer
 
 class DgsGraphQLSourceBuilder(
     private val dgsSchemaProvider: DgsSchemaProvider,
-    private val showSdlComments: Boolean
-) : AbstractGraphQlSourceBuilder<SchemaResourceBuilder>(), SchemaResourceBuilder {
+    private val showSdlComments: Boolean,
+) : AbstractGraphQlSourceBuilder<SchemaResourceBuilder>(),
+    SchemaResourceBuilder {
     private val typeDefinitionConfigurers = mutableListOf<TypeDefinitionConfigurer>()
     private val runtimeWiringConfigurers = mutableListOf<RuntimeWiringConfigurer>()
 
@@ -82,27 +83,26 @@ class DgsGraphQLSourceBuilder(
 
     override fun inspectSchemaMappings(
         initializerConsumer: Consumer<SchemaMappingInspector.Initializer>,
-        reportConsumer: Consumer<SchemaReport>
+        reportConsumer: Consumer<SchemaReport>,
     ): SchemaResourceBuilder {
         this.schemaReportConsumer = reportConsumer
         this.initializerConsumer = initializerConsumer
         return this
     }
 
-    override fun schemaFactory(schemaFactory: BiFunction<TypeDefinitionRegistry, RuntimeWiring, GraphQLSchema>): SchemaResourceBuilder {
+    override fun schemaFactory(schemaFactory: BiFunction<TypeDefinitionRegistry, RuntimeWiring, GraphQLSchema>): SchemaResourceBuilder =
         throw IllegalStateException("Overriding the schema factory is not supported in this builder")
-    }
 
-    class DgsSelfDescribingDataFetcher(val dataFetcher: DataFetcherReference) : SelfDescribingDataFetcher<Any> {
+    class DgsSelfDescribingDataFetcher(
+        val dataFetcher: DataFetcherReference,
+    ) : SelfDescribingDataFetcher<Any> {
         override fun get(environment: DataFetchingEnvironment?): Any {
             TODO("Not yet implemented")
         }
-        override fun getDescription(): String {
-            return dataFetcher.field
-        }
-        override fun getReturnType(): ResolvableType {
-            return ResolvableType.forMethodReturnType(dataFetcher.method)
-        }
+
+        override fun getDescription(): String = dataFetcher.field
+
+        override fun getReturnType(): ResolvableType = ResolvableType.forMethodReturnType(dataFetcher.method)
 
         override fun getArguments(): Map<String, ResolvableType> {
             return dataFetcher.method.parameters

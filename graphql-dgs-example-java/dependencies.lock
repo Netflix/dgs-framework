@@ -1955,7 +1955,7 @@
             ]
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.7.17",
+            "locked": "1.7.18",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ]
@@ -3514,7 +3514,7 @@
             ]
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.7.17",
+            "locked": "1.7.18",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ]
@@ -6105,7 +6105,7 @@
             ]
         },
         "com.netflix.spectator:spectator-api": {
-            "locked": "1.7.17",
+            "locked": "1.7.18",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ]

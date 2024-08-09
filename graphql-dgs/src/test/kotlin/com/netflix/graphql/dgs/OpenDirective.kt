@@ -25,7 +25,5 @@ import graphql.schema.idl.SchemaDirectiveWiringEnvironment
  */
 @DgsDirective
 open class OpenDirective : SchemaDirectiveWiring {
-    override fun onField(env: SchemaDirectiveWiringEnvironment<GraphQLFieldDefinition>): GraphQLFieldDefinition {
-        return env.element
-    }
+    override fun onField(env: SchemaDirectiveWiringEnvironment<GraphQLFieldDefinition>): GraphQLFieldDefinition = env.element
 }

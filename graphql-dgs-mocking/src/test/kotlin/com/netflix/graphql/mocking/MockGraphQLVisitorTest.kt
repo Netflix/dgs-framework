@@ -37,13 +37,13 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class MockGraphQLVisitorTest {
-
     @Test
     fun generateDataForStringScalar() {
         val mockConfig = mapOf("someObject.someKey" to null)
 
-        val schema = createSchema(
-            """
+        val schema =
+            createSchema(
+                """
             type Query {
                someObject: SomeObject
             }
@@ -51,8 +51,8 @@ class MockGraphQLVisitorTest {
             type SomeObject {
                 someKey: String
             }
-        """
-        )
+        """,
+            )
 
         val data = execute(schema, "query { someObject {someKey} }", mockConfig)
 
@@ -64,8 +64,9 @@ class MockGraphQLVisitorTest {
     fun generateDataForBooleanScalar() {
         val mockConfig = mapOf("someObject.someKey" to null)
 
-        val schema = createSchema(
-            """
+        val schema =
+            createSchema(
+                """
             type Query {
                someObject: SomeObject
             }
@@ -73,8 +74,8 @@ class MockGraphQLVisitorTest {
             type SomeObject {
                 someKey: Boolean
             }
-        """
-        )
+        """,
+            )
 
         val data = execute(schema, "query { someObject {someKey} }", mockConfig)
 
@@ -86,8 +87,9 @@ class MockGraphQLVisitorTest {
     fun generateDataForIntScalar() {
         val mockConfig = mapOf("someObject.someKey" to null)
 
-        val schema = createSchema(
-            """
+        val schema =
+            createSchema(
+                """
             type Query {
                someObject: SomeObject
             }
@@ -95,8 +97,8 @@ class MockGraphQLVisitorTest {
             type SomeObject {
                 someKey: Int
             }
-        """
-        )
+        """,
+            )
 
         val data = execute(schema, "query { someObject {someKey} }", mockConfig)
 
@@ -108,8 +110,9 @@ class MockGraphQLVisitorTest {
     fun generateDataForFloatScalar() {
         val mockConfig = mapOf("someObject.someKey" to null)
 
-        val schema = createSchema(
-            """
+        val schema =
+            createSchema(
+                """
             type Query {
                someObject: SomeObject
             }
@@ -117,8 +120,8 @@ class MockGraphQLVisitorTest {
             type SomeObject {
                 someKey: Float
             }
-        """
-        )
+        """,
+            )
 
         val data = execute(schema, "query { someObject {someKey} }", mockConfig)
 
@@ -130,8 +133,9 @@ class MockGraphQLVisitorTest {
     fun generateDataForIDScalar() {
         val mockConfig = mapOf("someObject.someKey" to null)
 
-        val schema = createSchema(
-            """
+        val schema =
+            createSchema(
+                """
             type Query {
                someObject: SomeObject
             }
@@ -139,8 +143,8 @@ class MockGraphQLVisitorTest {
             type SomeObject {
                 someKey: ID
             }
-        """
-        )
+        """,
+            )
 
         val data = execute(schema, "query { someObject {someKey} }", mockConfig)
 
@@ -152,8 +156,9 @@ class MockGraphQLVisitorTest {
     fun generateDataForNonNullableString() {
         val mockConfig = mapOf("someObject.someKey" to null)
 
-        val schema = createSchema(
-            """
+        val schema =
+            createSchema(
+                """
             type Query {
                someObject: SomeObject
             }
@@ -161,8 +166,8 @@ class MockGraphQLVisitorTest {
             type SomeObject {
                 someKey: String!
             }
-        """
-        )
+        """,
+            )
 
         val data = execute(schema, "query { someObject {someKey} }", mockConfig)
 
@@ -174,8 +179,9 @@ class MockGraphQLVisitorTest {
     fun generateDataForStringList() {
         val mockConfig = mapOf("someObject.someKey" to null)
 
-        val schema = createSchema(
-            """
+        val schema =
+            createSchema(
+                """
             type Query {
                someObject: SomeObject
             }
@@ -183,8 +189,8 @@ class MockGraphQLVisitorTest {
             type SomeObject {
                 someKey: [String]
             }
-        """
-        )
+        """,
+            )
 
         val data = execute(schema, "query { someObject {someKey} }", mockConfig)
 
@@ -200,8 +206,9 @@ class MockGraphQLVisitorTest {
     fun generateDataForObject() {
         val mockConfig = mapOf("someObject.someKey" to null)
 
-        val schema = createSchema(
-            """
+        val schema =
+            createSchema(
+                """
             type Query {
                someObject: SomeObject
             }
@@ -213,8 +220,8 @@ class MockGraphQLVisitorTest {
             type MyObject {
                 name: String
             }
-        """
-        )
+        """,
+            )
 
         val data = execute(schema, "query { someObject {someKey { name} } }", mockConfig)
 
@@ -227,8 +234,9 @@ class MockGraphQLVisitorTest {
     fun generateDataForObjectList() {
         val mockConfig = mapOf("someObject.someKey" to null)
 
-        val schema = createSchema(
-            """
+        val schema =
+            createSchema(
+                """
             type Query {
                someObject: SomeObject
             }
@@ -240,14 +248,15 @@ class MockGraphQLVisitorTest {
             type MyObject {
                 name: String
             }
-        """
-        )
+        """,
+            )
 
         val data = execute(schema, "query { someObject {someKey { name} } }", mockConfig)
 
         val someObject = data["someObject"] as Map<*, *>
         val myObjectArr = someObject["someKey"] as List<*>
-        assertThat(myObjectArr[0]).asInstanceOf(MAP)
+        assertThat(myObjectArr[0])
+            .asInstanceOf(MAP)
             .extractingByKey("name")
             .asInstanceOf(STRING)
             .isNotBlank()
@@ -257,8 +266,9 @@ class MockGraphQLVisitorTest {
     fun providedMockData() {
         val mockConfig = mapOf("someObject.someKey" to listOf("a", "b", "c"))
 
-        val schema = createSchema(
-            """
+        val schema =
+            createSchema(
+                """
             type Query {
                someObject: SomeObject
             }
@@ -266,13 +276,14 @@ class MockGraphQLVisitorTest {
             type SomeObject {
                 someKey: [String]
             }
-        """
-        )
+        """,
+            )
 
         val data = execute(schema, "query { someObject {someKey} }", mockConfig)
 
         val someObject = data["someObject"] as Map<*, *>
-        assertThat(someObject["someKey"]).asInstanceOf(LIST)
+        assertThat(someObject["someKey"])
+            .asInstanceOf(LIST)
             .containsExactly("a", "b", "c")
     }
 
@@ -280,8 +291,9 @@ class MockGraphQLVisitorTest {
     fun providedMockDataForObject() {
         val mockConfig = mapOf("someObject.someKey" to listOf(MyObject(name = "mymockedvalue")))
 
-        val schema = createSchema(
-            """
+        val schema =
+            createSchema(
+                """
             type Query {
                someObject: SomeObject
             }
@@ -293,8 +305,8 @@ class MockGraphQLVisitorTest {
             type MyObject {
                 name: String
             }
-        """
-        )
+        """,
+            )
 
         val data = execute(schema, "query { someObject {someKey { name} } }", mockConfig)
 
@@ -309,8 +321,9 @@ class MockGraphQLVisitorTest {
         val dataFetcher = DataFetcher { listOf("a", "b", "c") }
         val mockConfig = mapOf("someObject.someKey" to dataFetcher)
 
-        val schema = createSchema(
-            """
+        val schema =
+            createSchema(
+                """
             type Query {
                someObject: SomeObject
             }
@@ -318,8 +331,8 @@ class MockGraphQLVisitorTest {
             type SomeObject {
                 someKey: [String]
             }
-        """
-        )
+        """,
+            )
 
         val data = execute(schema, "query { someObject {someKey} }", mockConfig)
 
@@ -333,14 +346,15 @@ class MockGraphQLVisitorTest {
         val namesFetcher = StaticDataFetcher(listOf("listNameMock"))
         val mockConfig = mapOf("name" to nameFetcher, "names" to namesFetcher)
 
-        val schema = createSchema(
-            """
+        val schema =
+            createSchema(
+                """
             type Query {
                name: String
                names: [String]
             }
-        """
-        )
+        """,
+            )
 
         val data = execute(schema, "query { names }", mockConfig)
 
@@ -402,11 +416,20 @@ class MockGraphQLVisitorTest {
             }
         """
 
-        val graphqlSchema = createSchema(schema) { builder ->
-            builder.type(TypeRuntimeWiring.newTypeWiring("Animal").typeResolver { env -> env.schema.getObjectType("Sloth") })
-        }
+        val graphqlSchema =
+            createSchema(schema) { builder ->
+                builder.type(TypeRuntimeWiring.newTypeWiring("Animal").typeResolver { env -> env.schema.getObjectType("Sloth") })
+            }
 
-        val data = execute(graphqlSchema, "query { animal { __typename ... on Sloth { chill speed } } }", mapOf("animal" to null, "Sloth" to null))
+        val data =
+            execute(
+                graphqlSchema,
+                "query { animal { __typename ... on Sloth { chill speed } } }",
+                mapOf(
+                    "animal" to null,
+                    "Sloth" to null,
+                ),
+            )
         val slothData = data["animal"] as Map<*, *>
         assertThat(slothData["chill"]).isInstanceOf(Boolean::class.javaObjectType)
         assertThat(slothData["speed"]).isInstanceOf(Int::class.javaObjectType)
@@ -435,9 +458,10 @@ class MockGraphQLVisitorTest {
             }
         """
 
-        val graphqlSchema = createSchema(schema) { builder ->
-            builder.type(TypeRuntimeWiring.newTypeWiring("Animal").typeResolver { env -> env.schema.getObjectType("Sloth") })
-        }
+        val graphqlSchema =
+            createSchema(schema) { builder ->
+                builder.type(TypeRuntimeWiring.newTypeWiring("Animal").typeResolver { env -> env.schema.getObjectType("Sloth") })
+            }
 
         val data = execute(graphqlSchema, "query { animal { __typename ... on Sloth { chill speed } } }", mapOf("animal" to null))
         val slothData = data["animal"] as Map<*, *>
@@ -445,14 +469,23 @@ class MockGraphQLVisitorTest {
         Assertions.assertInstanceOf(Int::class.javaObjectType, slothData["speed"])
     }
 
-    private fun execute(schema: GraphQLSchema, query: String, mockConfig: Map<String, Any?>): Map<String, *> {
+    private fun execute(
+        schema: GraphQLSchema,
+        query: String,
+        mockConfig: Map<String, Any?>,
+    ): Map<String, *> {
         val transform = DgsSchemaTransformer().transformSchema(schema, mockConfig)
 
-        val graphQL = GraphQL.newGraphQL(transform)
-            .build()
+        val graphQL =
+            GraphQL
+                .newGraphQL(transform)
+                .build()
 
-        val executionInput = ExecutionInput.newExecutionInput().query(query)
-            .build()
+        val executionInput =
+            ExecutionInput
+                .newExecutionInput()
+                .query(query)
+                .build()
 
         val executionResult = graphQL.execute(executionInput)
         if (!executionResult.isDataPresent) {
@@ -461,17 +494,27 @@ class MockGraphQLVisitorTest {
         return executionResult.getData()
     }
 
-    private fun createSchema(schema: String, block: (RuntimeWiring.Builder) -> Unit = {}): GraphQLSchema {
+    private fun createSchema(
+        schema: String,
+        block: (RuntimeWiring.Builder) -> Unit = {},
+    ): GraphQLSchema {
         val schemaParser = SchemaParser()
         val typeDefinitionRegistry = schemaParser.parse(schema.trimIndent())
 
         val someObjectDf = StaticDataFetcher(SomeObject())
 
-        val codeRegistry = GraphQLCodeRegistry.newCodeRegistry()
-            .dataFetcher(FieldCoordinates.coordinates("Query", "someObject"), someObjectDf)
-            .build()
+        val codeRegistry =
+            GraphQLCodeRegistry
+                .newCodeRegistry()
+                .dataFetcher(FieldCoordinates.coordinates("Query", "someObject"), someObjectDf)
+                .build()
 
-        val runtimeWiring = RuntimeWiring.newRuntimeWiring().codeRegistry(codeRegistry).build().transform(block)
+        val runtimeWiring =
+            RuntimeWiring
+                .newRuntimeWiring()
+                .codeRegistry(codeRegistry)
+                .build()
+                .transform(block)
 
         val schemaGenerator = SchemaGenerator()
         return schemaGenerator.makeExecutableSchema(typeDefinitionRegistry, runtimeWiring)

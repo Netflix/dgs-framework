@@ -25,18 +25,13 @@ import org.springframework.graphql.execution.GraphQlSource
 
 class ReloadableGraphQLSource(
     private var graphQlSourceBuilder: GraphQlSource.Builder<*>,
-    private val reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator
+    private val reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator,
 ) : GraphQlSource {
-
     private var graphQlSource: GraphQlSource? = null
 
-    override fun graphQl(): GraphQL {
-        return getSource().graphQl()
-    }
+    override fun graphQl(): GraphQL = getSource().graphQl()
 
-    override fun schema(): GraphQLSchema {
-        return getSource().schema()
-    }
+    override fun schema(): GraphQLSchema = getSource().schema()
 
     private fun getSource(): GraphQlSource {
         if (graphQlSource == null || reloadSchemaIndicator.reloadSchema()) {

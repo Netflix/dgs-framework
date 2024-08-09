@@ -39,11 +39,12 @@ class DgsWebSocketHandler(
     dgsQueryExecutor: DgsQueryExecutor,
     connectionInitTimeout: Duration,
     subscriptionErrorLogLevel: Level,
-    objectMapper: ObjectMapper = jacksonObjectMapper()
-) : TextWebSocketHandler(), SubProtocolCapable {
-
+    objectMapper: ObjectMapper = jacksonObjectMapper(),
+) : TextWebSocketHandler(),
+    SubProtocolCapable {
     private val graphqlWSHandler = WebsocketGraphQLWSProtocolHandler(dgsQueryExecutor, subscriptionErrorLogLevel, objectMapper)
-    private val graphqlTransportWSHandler = WebsocketGraphQLTransportWSProtocolHandler(dgsQueryExecutor, connectionInitTimeout, subscriptionErrorLogLevel, objectMapper)
+    private val graphqlTransportWSHandler =
+        WebsocketGraphQLTransportWSProtocolHandler(dgsQueryExecutor, connectionInitTimeout, subscriptionErrorLogLevel, objectMapper)
 
     @PostConstruct
     fun setupCleanup() {
@@ -87,7 +88,10 @@ class DgsWebSocketHandler(
         }
     }
 
-    override fun afterConnectionClosed(session: WebSocketSession, status: CloseStatus) {
+    override fun afterConnectionClosed(
+        session: WebSocketSession,
+        status: CloseStatus,
+    ) {
         try {
             graphqlWSHandler.afterConnectionClosed(session, status)
         } catch (e: Exception) {
@@ -101,7 +105,10 @@ class DgsWebSocketHandler(
         }
     }
 
-    public override fun handleTextMessage(session: WebSocketSession, message: TextMessage) {
+    public override fun handleTextMessage(
+        session: WebSocketSession,
+        message: TextMessage,
+    ) {
         loadSecurityContextFromSession(session)
         if (session.acceptedProtocol.equals(GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL, ignoreCase = true)) {
             return graphqlWSHandler.handleTextMessage(session, message)
@@ -124,9 +131,10 @@ class DgsWebSocketHandler(
     private companion object {
         val logger: Logger = LoggerFactory.getLogger(DgsWebSocketHandler::class.java)
 
-        private val springSecurityAvailable: Boolean = ClassUtils.isPresent(
-            "org.springframework.security.core.context.SecurityContextHolder",
-            DgsWebSocketHandler::class.java.classLoader
-        )
+        private val springSecurityAvailable: Boolean =
+            ClassUtils.isPresent(
+                "org.springframework.security.core.context.SecurityContextHolder",
+                DgsWebSocketHandler::class.java.classLoader,
+            )
     }
 }

@@ -24,10 +24,14 @@ import org.springframework.web.util.WebUtils
 
 @Deprecated("Cookie resolving is now handled by ArgumentResolvers")
 class ServletCookieValueResolver : CookieValueResolver {
-    override fun getCookieValue(name: String, requestData: DgsRequestData?): String? {
-        return if (requestData is DgsWebMvcRequestData) {
+    override fun getCookieValue(
+        name: String,
+        requestData: DgsRequestData?,
+    ): String? =
+        if (requestData is DgsWebMvcRequestData) {
             val webRequest = requestData.webRequest as ServletWebRequest
             WebUtils.getCookie(webRequest.request, name)?.value
-        } else null
-    }
+        } else {
+            null
+        }
 }

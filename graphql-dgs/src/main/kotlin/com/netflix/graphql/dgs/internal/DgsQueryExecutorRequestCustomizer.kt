@@ -28,5 +28,8 @@ fun interface DgsQueryExecutorRequestCustomizer : BiFunction<WebRequest?, HttpHe
         val DEFAULT_REQUEST_CUSTOMIZER = DgsQueryExecutorRequestCustomizer { req, _ -> req }
     }
 
-    override fun apply(request: WebRequest?, headers: HttpHeaders?): WebRequest?
+    override fun apply(
+        request: WebRequest?,
+        headers: HttpHeaders?,
+    ): WebRequest?
 }

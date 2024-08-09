@@ -21,17 +21,18 @@ import org.junit.jupiter.api.Test
 import java.util.function.Consumer
 
 internal class SpectatorLimitedTagMetricResolverTest {
-
     companion object {
         private const val DEFAULT_LIMIT = 3
     }
 
-    private val tagProps = DgsGraphQLMetricsProperties.TagsProperties(
-        limiter = DgsGraphQLMetricsProperties.CardinalityLimiterProperties(
-            kind = DgsGraphQLMetricsProperties.CardinalityLimiterKind.FIRST,
-            limit = DEFAULT_LIMIT
+    private val tagProps =
+        DgsGraphQLMetricsProperties.TagsProperties(
+            limiter =
+                DgsGraphQLMetricsProperties.CardinalityLimiterProperties(
+                    kind = DgsGraphQLMetricsProperties.CardinalityLimiterKind.FIRST,
+                    limit = DEFAULT_LIMIT,
+                ),
         )
-    )
 
     @Test
     fun `Limits cardinality per tag`() {
@@ -44,13 +45,14 @@ internal class SpectatorLimitedTagMetricResolverTest {
     private fun assertTagCardinality(
         resolver: SpectatorLimitedTagMetricResolver,
         name: String,
-        limit: Int = DEFAULT_LIMIT
+        limit: Int = DEFAULT_LIMIT,
     ) {
         val list = (0..limit).map { resolver.tag(name, it.toString()) }
 
         assertThat(list).isNotEmpty
         assertThat(list.map { it.get().key }.distinct())
-            .singleElement().satisfies(Consumer { assertThat(it).isEqualTo(name) })
+            .singleElement()
+            .satisfies(Consumer { assertThat(it).isEqualTo(name) })
         assertThat(list.mapIndexed { a, b -> a to b.get().value })
             .allSatisfy(
                 Consumer { (i, v) ->
@@ -59,7 +61,7 @@ internal class SpectatorLimitedTagMetricResolverTest {
                     } else {
                         assertThat(v).isEqualTo("--others--")
                     }
-                }
+                },
             )
     }
 }

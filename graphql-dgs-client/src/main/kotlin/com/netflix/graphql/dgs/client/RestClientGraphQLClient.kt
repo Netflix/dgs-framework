@@ -41,12 +41,15 @@ import java.util.function.Consumer
 class RestClientGraphQLClient(
     private val restClient: RestClient,
     private val headersConsumer: Consumer<HttpHeaders>,
-    private val mapper: ObjectMapper
+    private val mapper: ObjectMapper,
 ) : GraphQLClient {
-
     constructor(restClient: RestClient) : this(restClient, Consumer { })
 
-    constructor(restClient: RestClient, headersConsumer: Consumer<HttpHeaders>) : this(restClient, headersConsumer, GraphQLClients.objectMapper)
+    constructor(restClient: RestClient, headersConsumer: Consumer<HttpHeaders>) : this(
+        restClient,
+        headersConsumer,
+        GraphQLClients.objectMapper,
+    )
 
     constructor(restClient: RestClient, mapper: ObjectMapper) : this(restClient, Consumer { }, mapper)
 
@@ -54,18 +57,19 @@ class RestClientGraphQLClient(
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
      * @return A [GraphQLResponse]. [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
-    override fun executeQuery(@Language("graphql") query: String): GraphQLResponse {
-        return executeQuery(query, emptyMap(), null)
-    }
+    override fun executeQuery(
+        @Language("graphql") query: String,
+    ): GraphQLResponse = executeQuery(query, emptyMap(), null)
 
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
      * @param variables A map of input variables
      * @return A [GraphQLResponse]. [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
-    override fun executeQuery(@Language("graphql") query: String, variables: Map<String, Any>): GraphQLResponse {
-        return executeQuery(query, variables, null)
-    }
+    override fun executeQuery(
+        @Language("graphql") query: String,
+        variables: Map<String, Any>,
+    ): GraphQLResponse = executeQuery(query, variables, null)
 
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
@@ -73,24 +77,31 @@ class RestClientGraphQLClient(
      * @param operationName Operation name
      * @return A [GraphQLResponse]. [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
-    override fun executeQuery(@Language("graphql") query: String, variables: Map<String, Any>, operationName: String?): GraphQLResponse {
-        val serializedRequest = mapper.writeValueAsString(
-            GraphQLClients.toRequestMap(query = query, operationName = operationName, variables = variables)
-        )
+    override fun executeQuery(
+        @Language("graphql") query: String,
+        variables: Map<String, Any>,
+        operationName: String?,
+    ): GraphQLResponse {
+        val serializedRequest =
+            mapper.writeValueAsString(
+                GraphQLClients.toRequestMap(query = query, operationName = operationName, variables = variables),
+            )
 
-        val responseEntity = restClient.post()
-            .headers { headers -> headers.addAll(GraphQLClients.defaultHeaders) }
-            .headers(this.headersConsumer)
-            .body(serializedRequest)
-            .retrieve()
-            .toEntity(String::class.java)
+        val responseEntity =
+            restClient
+                .post()
+                .headers { headers -> headers.addAll(GraphQLClients.defaultHeaders) }
+                .headers(this.headersConsumer)
+                .body(serializedRequest)
+                .retrieve()
+                .toEntity(String::class.java)
 
         if (!responseEntity.statusCode.is2xxSuccessful) {
             throw GraphQLClientException(
                 statusCode = responseEntity.statusCode.value(),
                 url = restClient.toString(),
                 response = responseEntity.body ?: "",
-                request = serializedRequest
+                request = serializedRequest,
             )
         }
 

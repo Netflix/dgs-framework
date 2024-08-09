@@ -16,4 +16,6 @@
 
 package com.netflix.graphql.dgs.exceptions
 
-class InvalidDgsConfigurationException(message: String) : RuntimeException(message)
+class InvalidDgsConfigurationException(
+    message: String,
+) : RuntimeException(message)

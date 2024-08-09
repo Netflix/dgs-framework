@@ -28,7 +28,9 @@ interface GraphQLClient {
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
      * @return [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
-    fun executeQuery(@Language("graphql") query: String): GraphQLResponse
+    fun executeQuery(
+        @Language("graphql") query: String,
+    ): GraphQLResponse
 
     /**
      * A blocking call to execute a query and parse its result.
@@ -36,7 +38,10 @@ interface GraphQLClient {
      * @param variables A map of input variables
      * @return [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
-    fun executeQuery(@Language("graphql") query: String, variables: Map<String, Any>): GraphQLResponse
+    fun executeQuery(
+        @Language("graphql") query: String,
+        variables: Map<String, Any>,
+    ): GraphQLResponse
 
     /**
      * A blocking call to execute a query and parse its result.
@@ -45,30 +50,45 @@ interface GraphQLClient {
      * @param operationName Name of the operation
      * @return [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
-    fun executeQuery(@Language("graphql") query: String, variables: Map<String, Any>, operationName: String?): GraphQLResponse
+    fun executeQuery(
+        @Language("graphql") query: String,
+        variables: Map<String, Any>,
+        operationName: String?,
+    ): GraphQLResponse
 
     @Deprecated(
         "The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.",
-        ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);")
+        ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);"),
     )
-    fun executeQuery(query: String, variables: Map<String, Any>, requestExecutor: RequestExecutor): GraphQLResponse = throw UnsupportedOperationException()
+    fun executeQuery(
+        query: String,
+        variables: Map<String, Any>,
+        requestExecutor: RequestExecutor,
+    ): GraphQLResponse = throw UnsupportedOperationException()
 
     @Deprecated(
         "The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.",
-        ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);")
+        ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);"),
     )
     fun executeQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?,
-        requestExecutor: RequestExecutor
+        requestExecutor: RequestExecutor,
     ): GraphQLResponse = throw UnsupportedOperationException()
 
     companion object {
         @JvmStatic
-        fun createCustom(url: String, requestExecutor: RequestExecutor) = CustomGraphQLClient(url, requestExecutor)
+        fun createCustom(
+            url: String,
+            requestExecutor: RequestExecutor,
+        ) = CustomGraphQLClient(url, requestExecutor)
 
         @JvmStatic
-        fun createCustom(url: String, requestExecutor: RequestExecutor, mapper: ObjectMapper) = CustomGraphQLClient(url, requestExecutor, mapper)
+        fun createCustom(
+            url: String,
+            requestExecutor: RequestExecutor,
+            mapper: ObjectMapper,
+        ) = CustomGraphQLClient(url, requestExecutor, mapper)
     }
 }

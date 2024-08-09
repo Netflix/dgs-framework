@@ -28,5 +28,9 @@ import reactor.core.publisher.Mono
  */
 @FunctionalInterface
 fun interface MonoRequestExecutor {
-    fun execute(url: String, headers: Map<String, List<String>>, body: String): Mono<HttpResponse>
+    fun execute(
+        url: String,
+        headers: Map<String, List<String>>,
+        body: String,
+    ): Mono<HttpResponse>
 }

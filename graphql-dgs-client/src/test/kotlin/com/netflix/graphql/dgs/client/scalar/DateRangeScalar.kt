@@ -50,4 +50,7 @@ class DateRangeScalar : Coercing<DateRange, String> {
     }
 }
 
-class DateRange(val from: LocalDate, val to: LocalDate)
+class DateRange(
+    val from: LocalDate,
+    val to: LocalDate,
+)

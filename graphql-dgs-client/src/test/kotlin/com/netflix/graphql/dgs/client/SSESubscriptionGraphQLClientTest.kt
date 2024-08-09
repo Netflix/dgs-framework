@@ -39,11 +39,10 @@ import reactor.test.StepVerifier
 
 @SpringBootTest(
     classes = [DgsAutoConfiguration::class, DgsSSEAutoConfig::class, TestApp::class],
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
 @EnableAutoConfiguration(exclude = [DgsGraphQLSSEAutoConfig::class])
 internal class SSESubscriptionGraphQLClientTest {
-
     @LocalServerPort
     var port: Int? = null
 
@@ -53,7 +52,8 @@ internal class SSESubscriptionGraphQLClientTest {
         val reactiveExecuteQuery =
             client.reactiveExecuteQuery("subscription {numbers}", emptyMap()).mapNotNull { r -> r.data["numbers"] }
 
-        StepVerifier.create(reactiveExecuteQuery)
+        StepVerifier
+            .create(reactiveExecuteQuery)
             .expectNext(1, 2, 3)
             .expectComplete()
             .verify()
@@ -64,7 +64,8 @@ internal class SSESubscriptionGraphQLClientTest {
         val client = SSESubscriptionGraphQLClient("/subscriptions", WebClient.create("http://localhost:$port"))
         val reactiveExecuteQuery = client.reactiveExecuteQuery("subscription {withError}", emptyMap())
 
-        StepVerifier.create(reactiveExecuteQuery)
+        StepVerifier
+            .create(reactiveExecuteQuery)
             .consumeNextWith { r -> r.hasErrors() }
             .expectComplete()
             .verify()
@@ -100,35 +101,31 @@ internal class SSESubscriptionGraphQLClientTest {
 
 @SpringBootApplication
 internal open class TestApp {
-
     @DgsComponent
     class SubscriptionDataFetcher {
         @DgsSubscription
-        fun numbers(): Flux<Int> {
-            return Flux.just(1, 2, 3)
-        }
+        fun numbers(): Flux<Int> = Flux.just(1, 2, 3)
 
         @DgsSubscription
-        fun withError(): Flux<Int> {
-            return Flux.error(IllegalArgumentException("testing"), true)
-        }
+        fun withError(): Flux<Int> = Flux.error(IllegalArgumentException("testing"), true)
 
         @DgsTypeDefinitionRegistry
         fun typeDefinitionRegistry(): TypeDefinitionRegistry {
             val newRegistry = TypeDefinitionRegistry()
             newRegistry.add(
-                newObjectTypeDefinition().name("Subscription")
+                newObjectTypeDefinition()
+                    .name("Subscription")
                     .fieldDefinition(
                         newFieldDefinition()
                             .name("numbers")
-                            .type(TypeName("Int")).build()
-                    )
-                    .fieldDefinition(
+                            .type(TypeName("Int"))
+                            .build(),
+                    ).fieldDefinition(
                         newFieldDefinition()
                             .name("withError")
-                            .type(TypeName("Int")).build()
-                    )
-                    .build()
+                            .type(TypeName("Int"))
+                            .build(),
+                    ).build(),
             )
             return newRegistry
         }

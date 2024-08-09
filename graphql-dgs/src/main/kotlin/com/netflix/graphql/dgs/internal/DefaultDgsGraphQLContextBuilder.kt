@@ -28,9 +28,8 @@ import kotlin.time.measureTimedValue
 
 open class DefaultDgsGraphQLContextBuilder(
     private val dgsCustomContextBuilder: Optional<DgsCustomContextBuilder<*>>,
-    private val dgsCustomContextBuilderWithRequest: Optional<DgsCustomContextBuilderWithRequest<*>> = Optional.empty()
+    private val dgsCustomContextBuilderWithRequest: Optional<DgsCustomContextBuilderWithRequest<*>> = Optional.empty(),
 ) {
-
     fun build(dgsRequestData: DgsWebMvcRequestData): DgsContext {
         val (context, elapsed) = measureTimedValue { buildDgsContext(dgsRequestData) }
         logger.debug("Created DGS context in {}ms", elapsed.inWholeMilliseconds)
@@ -38,24 +37,26 @@ open class DefaultDgsGraphQLContextBuilder(
     }
 
     private fun buildDgsContext(dgsRequestData: DgsWebMvcRequestData?): DgsContext {
-        val customContext = when {
-            dgsCustomContextBuilderWithRequest.isPresent -> dgsCustomContextBuilderWithRequest.get().build(
-                dgsRequestData?.extensions ?: mapOf(),
-                HttpHeaders.readOnlyHttpHeaders(
-                    dgsRequestData?.headers
-                        ?: HttpHeaders()
-                ),
-                dgsRequestData?.webRequest
-            )
-            dgsCustomContextBuilder.isPresent -> dgsCustomContextBuilder.get().build()
-            else
-            // This is for backwards compatibility - we previously made DefaultRequestData the custom context if no custom context was provided.
-            -> dgsRequestData
-        }
+        val customContext =
+            when {
+                dgsCustomContextBuilderWithRequest.isPresent ->
+                    dgsCustomContextBuilderWithRequest.get().build(
+                        dgsRequestData?.extensions ?: mapOf(),
+                        HttpHeaders.readOnlyHttpHeaders(
+                            dgsRequestData?.headers
+                                ?: HttpHeaders(),
+                        ),
+                        dgsRequestData?.webRequest,
+                    )
+                dgsCustomContextBuilder.isPresent -> dgsCustomContextBuilder.get().build()
+                else
+                // This is for backwards compatibility - we previously made DefaultRequestData the custom context if no custom context was provided.
+                -> dgsRequestData
+            }
 
         return DgsContext(
             customContext,
-            dgsRequestData
+            dgsRequestData,
         )
     }
 
@@ -67,7 +68,7 @@ open class DefaultDgsGraphQLContextBuilder(
 @Deprecated("Use DgsContext.requestData instead")
 data class DefaultRequestData(
     @Deprecated("Use DgsContext.requestData instead") val extensions: Map<String, Any>,
-    @Deprecated("Use DgsContext.requestData instead") val headers: HttpHeaders
+    @Deprecated("Use DgsContext.requestData instead") val headers: HttpHeaders,
 )
 
 interface DgsRequestData {
@@ -83,5 +84,5 @@ interface DgsRequestData {
 data class DgsWebMvcRequestData(
     override val extensions: Map<String, Any>? = null,
     override val headers: HttpHeaders? = null,
-    val webRequest: WebRequest? = null
+    val webRequest: WebRequest? = null,
 ) : DgsRequestData

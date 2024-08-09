@@ -18,4 +18,6 @@ package com.netflix.graphql.dgs.exceptions
 
 import graphql.GraphQLError
 
-class QueryException(val errors: List<GraphQLError>) : RuntimeException(errors.joinToString(separator = ", ") { it.message })
+class QueryException(
+    val errors: List<GraphQLError>,
+) : RuntimeException(errors.joinToString(separator = ", ") { it.message })

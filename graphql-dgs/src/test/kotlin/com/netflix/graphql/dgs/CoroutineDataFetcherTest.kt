@@ -46,7 +46,6 @@ import java.util.function.Consumer
 import kotlin.system.measureTimeMillis
 
 class CoroutineDataFetcherTest {
-
     private val context = GenericApplicationContext()
 
     private val schemaProvider by lazy {
@@ -54,22 +53,28 @@ class CoroutineDataFetcherTest {
             applicationContext = context,
             federationResolver = Optional.empty(),
             existingTypeDefinitionRegistry = Optional.empty(),
-            methodDataFetcherFactory = MethodDataFetcherFactory(
-                argumentResolvers = listOf(
-                    InputArgumentResolver(DefaultInputObjectMapper()),
-                    ContinuationArgumentResolver(),
-                    FallbackEnvironmentArgumentResolver(DefaultInputObjectMapper())
-                )
-            ),
-            dataFetcherResultProcessors = listOf(stubDataFetcherResultProcessor)
+            methodDataFetcherFactory =
+                MethodDataFetcherFactory(
+                    argumentResolvers =
+                        listOf(
+                            InputArgumentResolver(DefaultInputObjectMapper()),
+                            ContinuationArgumentResolver(),
+                            FallbackEnvironmentArgumentResolver(DefaultInputObjectMapper()),
+                        ),
+                ),
+            dataFetcherResultProcessors = listOf(stubDataFetcherResultProcessor),
         )
     }
 
-    private val stubDataFetcherResultProcessor = object : DataFetcherResultProcessor {
-        override fun supportsType(originalResult: Any): Boolean = originalResult is Mono<*>
-        override fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any =
-            (originalResult as Mono<*>).contextWrite(Context.of("some-key", "some context value")).toFuture()
-    }
+    private val stubDataFetcherResultProcessor =
+        object : DataFetcherResultProcessor {
+            override fun supportsType(originalResult: Any): Boolean = originalResult is Mono<*>
+
+            override fun process(
+                originalResult: Any,
+                dfe: DgsDataFetchingEnvironment,
+            ): Any = (originalResult as Mono<*>).contextWrite(Context.of("some-key", "some context value")).toFuture()
+        }
 
     @Test
     fun `Suspend functions should be supported as datafetchers`() {
@@ -79,76 +84,93 @@ class CoroutineDataFetcherTest {
         @DgsComponent
         class Fetcher {
             @DgsQuery
-            suspend fun concurrent(@InputArgument from: Int, to: Int): Int = coroutineScope {
-                var sum = 0
-                repeat(from.rangeTo(to).count()) {
-                    sum++
-                    // Forcing a delay to demonstrate concurrency
-                    delay(50)
+            suspend fun concurrent(
+                @InputArgument from: Int,
+                to: Int,
+            ): Int =
+                coroutineScope {
+                    var sum = 0
+                    repeat(from.rangeTo(to).count()) {
+                        sum++
+                        // Forcing a delay to demonstrate concurrency
+                        delay(50)
+                    }
+                    // Capture ReactorContext from coroutine context
+                    stubContextConsumer.accept(coroutineContext[ReactorContext]?.context?.readOnly())
+                    sum
                 }
-                // Capture ReactorContext from coroutine context
-                stubContextConsumer.accept(coroutineContext[ReactorContext]?.context?.readOnly())
-                sum
-            }
         }
 
         context.beanFactory.registerSingleton("concurrentFetcher", Fetcher())
         context.refresh()
 
-        val schema = schemaProvider.schema(
-            """
-            type Query {
-                concurrent(from: Int, to: Int): Int
-            }           
-            """.trimIndent()
-        ).graphQLSchema
+        val schema =
+            schemaProvider
+                .schema(
+                    """
+                    type Query {
+                        concurrent(from: Int, to: Int): Int
+                    }           
+                    """.trimIndent(),
+                ).graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
 
-        val context = DgsContext(
-            null,
-            null
-        )
-
-        val concurrentTime = measureTimeMillis {
-            val executionResult = build.execute(
-                ExecutionInput.newExecutionInput().graphQLContext(context).query(
-                    """
-            {
-                first: concurrent(from: 1, to: 10)
-                second: concurrent(from: 2, to: 10)               
-                third: concurrent(from: 3, to: 10)               
-                fourth: concurrent(from: 4, to: 10)               
-            }
-                    """.trimIndent()
-                ).build()
+        val context =
+            DgsContext(
+                null,
+                null,
             )
 
-            assertThat(executionResult.getData<Map<String, Int>>())
-                .containsExactlyInAnyOrderEntriesOf(
-                    mapOf(
-                        "first" to 10,
-                        "second" to 9,
-                        "third" to 8,
-                        "fourth" to 7
+        val concurrentTime =
+            measureTimeMillis {
+                val executionResult =
+                    build.execute(
+                        ExecutionInput
+                            .newExecutionInput()
+                            .graphQLContext(context)
+                            .query(
+                                """
+                                {
+                                    first: concurrent(from: 1, to: 10)
+                                    second: concurrent(from: 2, to: 10)               
+                                    third: concurrent(from: 3, to: 10)               
+                                    fourth: concurrent(from: 4, to: 10)               
+                                }
+                                """.trimIndent(),
+                            ).build(),
                     )
-                )
-        }
 
-        val singleTime = measureTimeMillis {
-            val executionResult = build.execute(
-                ExecutionInput.newExecutionInput().graphQLContext(context).query(
-                    """
-            {
-                first: concurrent(from: 1, to: 10)
+                assertThat(executionResult.getData<Map<String, Int>>())
+                    .containsExactlyInAnyOrderEntriesOf(
+                        mapOf(
+                            "first" to 10,
+                            "second" to 9,
+                            "third" to 8,
+                            "fourth" to 7,
+                        ),
+                    )
             }
-                    """.trimIndent()
-                ).build()
-            )
 
-            assertThat(executionResult.getData<Map<String, Int>>())
-                .containsExactlyInAnyOrderEntriesOf(mapOf("first" to 10))
-        }
+        val singleTime =
+            measureTimeMillis {
+                val executionResult =
+                    build.execute(
+                        ExecutionInput
+                            .newExecutionInput()
+                            .graphQLContext(context)
+                            .query(
+                                """
+                                {
+                                    first: concurrent(from: 1, to: 10)
+                                }
+                                """.trimIndent(),
+                            ).build(),
+                    )
+
+                assertThat(executionResult.getData<Map<String, Int>>())
+                    .containsExactlyInAnyOrderEntriesOf(mapOf("first" to 10))
+            }
 
         assertThat(concurrentTime).isCloseTo(singleTime, Percentage.withPercentage(200.0))
         verify {
@@ -163,34 +185,42 @@ class CoroutineDataFetcherTest {
         @DgsComponent
         class Fetcher {
             @DgsQuery
-            suspend fun concurrent(): Int = coroutineScope {
-                42
-            }
+            suspend fun concurrent(): Int =
+                coroutineScope {
+                    42
+                }
         }
 
         context.beanFactory.registerSingleton("concurrentFetcher", Fetcher())
         context.refresh()
 
-        val schema = schemaProvider.schema(
-            """
-            type Query {
-                concurrent: Int
-            }           
-            """.trimIndent()
-        ).graphQLSchema
+        val schema =
+            schemaProvider
+                .schema(
+                    """
+                    type Query {
+                        concurrent: Int
+                    }           
+                    """.trimIndent(),
+                ).graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
 
-        val context = DgsContext(
-            null,
-            null
-        )
+        val context =
+            DgsContext(
+                null,
+                null,
+            )
 
-        val executionResult = build.execute(
-            ExecutionInput.newExecutionInput().graphQLContext(context).query(
-                "{ concurrent }"
-            ).build()
-        )
+        val executionResult =
+            build.execute(
+                ExecutionInput
+                    .newExecutionInput()
+                    .graphQLContext(context)
+                    .query(
+                        "{ concurrent }",
+                    ).build(),
+            )
 
         assertThat(executionResult.isDataPresent).isTrue()
         assertThat(executionResult.getData<Map<String, Int>>()["concurrent"]).isEqualTo(42)
@@ -198,42 +228,54 @@ class CoroutineDataFetcherTest {
 
     @Test
     fun `Throw the cause of InvocationTargetException from CoroutineDataFetcher`() {
-        class CustomException(message: String?) : Exception(message)
+        class CustomException(
+            message: String?,
+        ) : Exception(message)
 
         @DgsComponent
         class Fetcher {
             @DgsQuery
-            suspend fun exceptionWithMessage(@InputArgument message: String?): Nothing = coroutineScope {
-                throw CustomException(message)
-            }
+            suspend fun exceptionWithMessage(
+                @InputArgument message: String?,
+            ): Nothing =
+                coroutineScope {
+                    throw CustomException(message)
+                }
         }
 
         context.beanFactory.registerSingleton("exceptionWithMessageFetcher", Fetcher())
         context.refresh()
 
-        val schema = schemaProvider.schema(
-            """
-            type Query {
-                exceptionWithMessage(message: String): Int
-            }           
-            """.trimIndent()
-        ).graphQLSchema
+        val schema =
+            schemaProvider
+                .schema(
+                    """
+                    type Query {
+                        exceptionWithMessage(message: String): Int
+                    }           
+                    """.trimIndent(),
+                ).graphQLSchema
         val build = GraphQL.newGraphQL(schema).build()
 
-        val context = DgsContext(
-            null,
-            null
-        )
+        val context =
+            DgsContext(
+                null,
+                null,
+            )
 
-        val executionResult = build.execute(
-            ExecutionInput.newExecutionInput().graphQLContext(context).query(
-                """
-                {
-                    result: exceptionWithMessage(message: "Exception from coroutine")        
-                }
-                """.trimIndent()
-            ).build()
-        )
+        val executionResult =
+            build.execute(
+                ExecutionInput
+                    .newExecutionInput()
+                    .graphQLContext(context)
+                    .query(
+                        """
+                        {
+                            result: exceptionWithMessage(message: "Exception from coroutine")        
+                        }
+                        """.trimIndent(),
+                    ).build(),
+            )
 
         assertThat(executionResult.errors.size).isEqualTo(1)
         assertThat(executionResult.errors[0].path).isEqualTo(listOf("result"))

@@ -40,9 +40,8 @@ import java.nio.charset.StandardCharsets
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 open class GraphiQLConfigurer(
     private val configProps: DgsWebMvcConfigurationProperties,
-    private val servletContext: ServletContext
+    private val servletContext: ServletContext,
 ) : WebMvcConfigurer {
-
     override fun addViewControllers(registry: ViewControllerRegistry) {
         registry.addViewController(configProps.graphiql.path).setViewName("forward:$PATH_TO_GRAPHIQL_INDEX_HTML")
         registry.addViewController("${configProps.graphiql.path}/").setViewName("forward:$PATH_TO_GRAPHIQL_INDEX_HTML")
@@ -57,17 +56,24 @@ open class GraphiQLConfigurer(
             .setCachePeriod(3600)
             .resourceChain(true)
             .addResolver(PathResourceResolver())
-            .addTransformer(TokenReplacingTransformer(mapOf("<DGS_GRAPHQL_PATH>" to graphqlPath, "<DGS_GRAPHIQL_TITLE>" to configProps.graphiql.title)))
+            .addTransformer(
+                TokenReplacingTransformer(
+                    mapOf(
+                        "<DGS_GRAPHQL_PATH>" to graphqlPath,
+                        "<DGS_GRAPHIQL_TITLE>" to configProps.graphiql.title,
+                    ),
+                ),
+            )
     }
 
-    class TokenReplacingTransformer(private val replaceMap: Map<String, String>) :
-        ResourceTransformer {
-
+    class TokenReplacingTransformer(
+        private val replaceMap: Map<String, String>,
+    ) : ResourceTransformer {
         @Throws(IOException::class)
         override fun transform(
             request: HttpServletRequest,
             resource: Resource,
-            transformerChain: ResourceTransformerChain
+            transformerChain: ResourceTransformerChain,
         ): Resource {
             if (request.requestURI.orEmpty().endsWith(PATH_TO_GRAPHIQL_INDEX_HTML)) {
                 var content = resource.inputStream.bufferedReader().use(BufferedReader::readText)

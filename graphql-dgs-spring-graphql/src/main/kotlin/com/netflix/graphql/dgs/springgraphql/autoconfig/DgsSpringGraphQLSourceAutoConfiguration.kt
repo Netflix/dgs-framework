@@ -40,8 +40,9 @@ import java.util.function.Consumer
 @AutoConfiguration
 @AutoConfigureBefore(name = ["org.springframework.boot.autoconfigure.graphql.GraphQlAutoConfiguration"])
 @AutoConfigureAfter(name = ["com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration"])
-open class DgsSpringGraphQLSourceAutoConfiguration(private val dgsGraphQLConfigProps: DgsGraphQLConfigurationProperties) {
-
+open class DgsSpringGraphQLSourceAutoConfiguration(
+    private val dgsGraphQLConfigProps: DgsGraphQLConfigurationProperties,
+) {
     private val logger = LogFactory.getLog(DgsSpringGraphQLAutoConfiguration::class.java)
 
     @Bean
@@ -55,15 +56,20 @@ open class DgsSpringGraphQLSourceAutoConfiguration(private val dgsGraphQLConfigP
         sourceCustomizers: ObjectProvider<GraphQlSourceBuilderCustomizer>,
         reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator,
         defaultExceptionHandler: DataFetcherExceptionHandler,
-        reportConsumer: Optional<Consumer<SchemaReport>>
+        reportConsumer: Optional<Consumer<SchemaReport>>,
     ): GraphQlSource {
-        val dataFetcherExceptionResolvers: MutableList<DataFetcherExceptionResolver> = exceptionResolvers.orderedStream().toList().toMutableList()
+        val dataFetcherExceptionResolvers: MutableList<DataFetcherExceptionResolver> =
+            exceptionResolvers
+                .orderedStream()
+                .toList()
+                .toMutableList()
         dataFetcherExceptionResolvers.add((ExceptionHandlerResolverAdapter(defaultExceptionHandler)))
 
-        val builder = DgsGraphQLSourceBuilder(dgsSchemaProvider, dgsGraphQLConfigProps.introspection.showSdlComments)
-            .exceptionResolvers(dataFetcherExceptionResolvers)
-            .subscriptionExceptionResolvers(subscriptionExceptionResolvers.orderedStream().toList())
-            .instrumentation(instrumentations.orderedStream().toList())
+        val builder =
+            DgsGraphQLSourceBuilder(dgsSchemaProvider, dgsGraphQLConfigProps.introspection.showSdlComments)
+                .exceptionResolvers(dataFetcherExceptionResolvers)
+                .subscriptionExceptionResolvers(subscriptionExceptionResolvers.orderedStream().toList())
+                .instrumentation(instrumentations.orderedStream().toList())
 
         if (properties.schema.inspection.isEnabled) {
             if (reportConsumer.isPresent) {
@@ -72,15 +78,17 @@ open class DgsSpringGraphQLSourceAutoConfiguration(private val dgsGraphQLConfigP
                 builder.inspectSchemaMappings { message: SchemaReport? ->
                     val messageBuilder = StringBuilder("***Schema Report***\n")
 
-                    val arguments = message?.unmappedArguments()?.map {
-                        if (it.key is SelfDescribingDataFetcher) {
-                            val dataFetcher =
-                                (it.key as DgsGraphQLSourceBuilder.DgsSelfDescribingDataFetcher).dataFetcher
-                            return@map dataFetcher.method.declaringClass.name + "." + dataFetcher.method.name + " for arguments " + it.value
-                        } else {
-                            return@map it.toString()
+                    val arguments =
+                        message?.unmappedArguments()?.map {
+                            if (it.key is SelfDescribingDataFetcher) {
+                                val dataFetcher =
+                                    (it.key as DgsGraphQLSourceBuilder.DgsSelfDescribingDataFetcher).dataFetcher
+                                return@map dataFetcher.method.declaringClass.name + "." + dataFetcher.method.name + " for arguments " +
+                                    it.value
+                            } else {
+                                return@map it.toString()
+                            }
                         }
-                    }
 
                     messageBuilder.append("Unmapped fields: ${message?.unmappedFields()}\n")
                     messageBuilder.append("Unmapped registrations: ${message?.unmappedRegistrations()}\n")
@@ -94,22 +102,30 @@ open class DgsSpringGraphQLSourceAutoConfiguration(private val dgsGraphQLConfigP
 
         wiringConfigurers.orderedStream().forEach { configurer: RuntimeWiringConfigurer ->
             builder.configureRuntimeWiring(
-                configurer
+                configurer,
             )
         }
         sourceCustomizers.orderedStream().forEach { customizer: GraphQlSourceBuilderCustomizer ->
             customizer.customize(
-                builder
+                builder,
             )
         }
         return ReloadableGraphQLSource(builder, reloadSchemaIndicator)
     }
 }
 
-class ExceptionHandlerResolverAdapter(private val dataFetcherExceptionHandler: DataFetcherExceptionHandler) : DataFetcherExceptionResolverAdapter() {
-    override fun resolveToMultipleErrors(ex: Throwable, env: DataFetchingEnvironment): MutableList<GraphQLError>? {
+class ExceptionHandlerResolverAdapter(
+    private val dataFetcherExceptionHandler: DataFetcherExceptionHandler,
+) : DataFetcherExceptionResolverAdapter() {
+    override fun resolveToMultipleErrors(
+        ex: Throwable,
+        env: DataFetchingEnvironment,
+    ): MutableList<GraphQLError>? {
         val exceptionHandlerParameters =
-            DataFetcherExceptionHandlerParameters.newExceptionParameters().exception(ex).dataFetchingEnvironment(env)
+            DataFetcherExceptionHandlerParameters
+                .newExceptionParameters()
+                .exception(ex)
+                .dataFetchingEnvironment(env)
                 .build()
 
         return dataFetcherExceptionHandler.handleException(exceptionHandlerParameters).get().errors

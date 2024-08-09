@@ -27,32 +27,29 @@ import org.springframework.http.ResponseEntity
 class DgsExecutionResult(
     private val executionResult: ExecutionResult,
     private var headers: HttpHeaders,
-    val status: HttpStatus
+    val status: HttpStatus,
 ) : ExecutionResult by executionResult {
-
     init {
         addExtensionsHeaderKeyToHeader()
     }
 
     /** Read-Only reference to the HTTP Headers. */
-    fun headers(): HttpHeaders {
-        return HttpHeaders.readOnlyHttpHeaders(headers)
-    }
+    fun headers(): HttpHeaders = HttpHeaders.readOnlyHttpHeaders(headers)
 
-    fun toSpringResponse(): ResponseEntity<Any> {
-        return ResponseEntity(
+    fun toSpringResponse(): ResponseEntity<Any> =
+        ResponseEntity(
             toSpecification(),
             headers,
-            status
+            status,
         )
-    }
 
     // Refer to https://github.com/Netflix/dgs-framework/pull/1261 for further details.
     override fun toSpecification(): MutableMap<String, Any> {
         val spec = executionResult.toSpecification()
 
-        val extensions = spec["extensions"] as Map<*, *>?
-            ?: return spec
+        val extensions =
+            spec["extensions"] as Map<*, *>?
+                ?: return spec
 
         if (DGS_RESPONSE_HEADERS_KEY in extensions) {
             if (extensions.size == 1) {
@@ -67,11 +64,13 @@ class DgsExecutionResult(
 
     // Refer to https://github.com/Netflix/dgs-framework/pull/1261 for further details.
     private fun addExtensionsHeaderKeyToHeader() {
-        val extensions = executionResult.extensions
-            ?: return
+        val extensions =
+            executionResult.extensions
+                ?: return
 
-        val dgsResponseHeaders = extensions[DGS_RESPONSE_HEADERS_KEY]
-            ?: return
+        val dgsResponseHeaders =
+            extensions[DGS_RESPONSE_HEADERS_KEY]
+                ?: return
 
         if (dgsResponseHeaders is Map<*, *> && dgsResponseHeaders.isNotEmpty()) {
             // If the HttpHeaders are empty/read-only we need to switch to a new instance that allows us
@@ -89,7 +88,7 @@ class DgsExecutionResult(
             logger.warn(
                 "{} must be of type java.util.Map, but was {}",
                 DGS_RESPONSE_HEADERS_KEY,
-                dgsResponseHeaders.javaClass.name
+                dgsResponseHeaders.javaClass.name,
             )
         }
     }
@@ -101,8 +100,7 @@ class DgsExecutionResult(
         var executionResult: ExecutionResult = DEFAULT_EXECUTION_RESULT
             private set
 
-        fun executionResult(executionResult: ExecutionResult) =
-            apply { this.executionResult = executionResult }
+        fun executionResult(executionResult: ExecutionResult) = apply { this.executionResult = executionResult }
 
         fun executionResult(executionResultBuilder: ExecutionResultImpl.Builder<*>) =
             apply { this.executionResult = executionResultBuilder.build() }
@@ -117,11 +115,12 @@ class DgsExecutionResult(
 
         fun status(status: HttpStatus) = apply { this.status = status }
 
-        fun build() = DgsExecutionResult(
-            executionResult = executionResult,
-            headers = headers,
-            status = status
-        )
+        fun build() =
+            DgsExecutionResult(
+                executionResult = executionResult,
+                headers = headers,
+                status = status,
+            )
 
         companion object {
             private val DEFAULT_EXECUTION_RESULT = ExecutionResultImpl.newExecutionResult().build()

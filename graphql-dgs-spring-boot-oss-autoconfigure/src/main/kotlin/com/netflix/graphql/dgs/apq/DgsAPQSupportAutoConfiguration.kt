@@ -42,28 +42,25 @@ import java.time.Duration
     prefix = DgsAPQSupportProperties.PREFIX,
     name = ["enabled"],
     havingValue = "true",
-    matchIfMissing = DgsAPQSupportProperties.DEFAULT_ENABLED
+    matchIfMissing = DgsAPQSupportProperties.DEFAULT_ENABLED,
 )
 @EnableConfigurationProperties(DgsAPQSupportProperties::class)
 open class DgsAPQSupportAutoConfiguration {
-
     @Bean
     @ConditionalOnBean(PersistedQueryCache::class)
-    open fun apolloPersistedQuerySupport(persistedQueryCache: PersistedQueryCache): ApolloPersistedQuerySupport {
-        return ApolloPersistedQuerySupport(persistedQueryCache)
-    }
+    open fun apolloPersistedQuerySupport(persistedQueryCache: PersistedQueryCache): ApolloPersistedQuerySupport =
+        ApolloPersistedQuerySupport(persistedQueryCache)
 
     @Bean
     @ConditionalOnBean(ApolloPersistedQuerySupport::class)
-    open fun apolloAPQQueryValueCustomizer(): QueryValueCustomizer {
-        return QueryValueCustomizer { query ->
+    open fun apolloAPQQueryValueCustomizer(): QueryValueCustomizer =
+        QueryValueCustomizer { query ->
             if (StringUtils.isBlank(query)) {
                 ApolloPersistedQuerySupport.PERSISTED_QUERY_MARKER
             } else {
                 query
             }
         }
-    }
 
     @Configuration
     @ConditionalOnClass(name = ["com.github.benmanes.caffeine.cache.Cache"])
@@ -71,36 +68,34 @@ open class DgsAPQSupportAutoConfiguration {
         prefix = DgsAPQSupportProperties.CACHE_PREFIX,
         name = ["enabled"],
         havingValue = "true",
-        matchIfMissing = DgsAPQSupportProperties.DEFAULT_CACHE_CAFFEINE_ENABLED
+        matchIfMissing = DgsAPQSupportProperties.DEFAULT_CACHE_CAFFEINE_ENABLED,
     )
     open class APQCaffeineCacheConfiguration {
-
         @Bean(name = [BEAN_APQ_CAFFEINE_CACHE_NAME])
         @ConditionalOnMissingBean(name = [BEAN_APQ_CAFFEINE_CACHE_NAME])
-        open fun apqCaffeineCache(properties: DgsAPQSupportProperties): Cache<String, PreparsedDocumentEntry> {
-            return if (StringUtils.isNotBlank(properties.defaultCache.caffeineSpec)) {
+        open fun apqCaffeineCache(properties: DgsAPQSupportProperties): Cache<String, PreparsedDocumentEntry> =
+            if (StringUtils.isNotBlank(properties.defaultCache.caffeineSpec)) {
                 Caffeine.from(CaffeineSpec.parse(properties.defaultCache.caffeineSpec)).build()
             } else {
-                Caffeine.newBuilder()
+                Caffeine
+                    .newBuilder()
                     .maximumSize(1000)
                     .expireAfterAccess(Duration.ofHours(1))
                     .build()
             }
-        }
     }
 
     @Configuration
     @ConditionalOnClass(
-        name = ["io.micrometer.core.instrument.MeterRegistry", "com.github.benmanes.caffeine.cache.Cache"]
+        name = ["io.micrometer.core.instrument.MeterRegistry", "com.github.benmanes.caffeine.cache.Cache"],
     )
     open class APQMicrometerMeteredCaffeineCacheConfiguration {
-
         @Bean
         @ConditionalOnBean(io.micrometer.core.instrument.MeterRegistry::class)
         @ConditionalOnMissingBean(PersistedQueryCache::class)
         open fun meteredPersistedQueryCache(
             @Qualifier(BEAN_APQ_CAFFEINE_CACHE_NAME) appCaffeine: Cache<String, PreparsedDocumentEntry>,
-            meterRegistry: MeterRegistry
+            meterRegistry: MeterRegistry,
         ): PersistedQueryCache {
             val monitoredCache: Cache<String, PreparsedDocumentEntry> =
                 CaffeineCacheMetrics.monitor(meterRegistry, appCaffeine, BEAN_APQ_CAFFEINE_CACHE_NAME)
@@ -112,14 +107,11 @@ open class DgsAPQSupportAutoConfiguration {
     @ConditionalOnMissingBean(APQMicrometerMeteredCaffeineCacheConfiguration::class)
     @ConditionalOnClass(name = ["com.github.benmanes.caffeine.cache.Cache"])
     open class APQBasicCaffeineCacheConfiguration {
-
         @Bean
         @ConditionalOnMissingBean(PersistedQueryCache::class)
         open fun meteredPersistedQueryCache(
-            @Qualifier(BEAN_APQ_CAFFEINE_CACHE_NAME) cache: Cache<String, PreparsedDocumentEntry>
-        ): PersistedQueryCache {
-            return AutomatedPersistedQueryCaffeineCache(cache)
-        }
+            @Qualifier(BEAN_APQ_CAFFEINE_CACHE_NAME) cache: Cache<String, PreparsedDocumentEntry>,
+        ): PersistedQueryCache = AutomatedPersistedQueryCaffeineCache(cache)
     }
 
     companion object {

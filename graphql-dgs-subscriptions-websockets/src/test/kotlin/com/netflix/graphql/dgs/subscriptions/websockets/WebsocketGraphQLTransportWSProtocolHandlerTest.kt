@@ -46,13 +46,13 @@ import java.time.Duration
 
 @ExtendWith(MockKExtension::class)
 class WebsocketGraphQLTransportWSProtocolHandlerTest {
-
     private val objectMapper = jacksonObjectMapper()
     private lateinit var dgsWebsocketHandler: WebsocketGraphQLTransportWSProtocolHandler
 
     @BeforeEach
     fun setup() {
-        dgsWebsocketHandler = WebsocketGraphQLTransportWSProtocolHandler(dgsQueryExecutor, Duration.ofMillis(1000), Level.ERROR, objectMapper)
+        dgsWebsocketHandler =
+            WebsocketGraphQLTransportWSProtocolHandler(dgsQueryExecutor, Duration.ofMillis(1000), Level.ERROR, objectMapper)
 
         every { session1.id } returns "1"
         every { session2.id } returns "2"
@@ -70,8 +70,10 @@ class WebsocketGraphQLTransportWSProtocolHandlerTest {
     @MockK
     lateinit var executionResult: ExecutionResult
 
-    private fun queryMessage(session: WebSocketSession) = TextMessage(
-        """{
+    private fun queryMessage(session: WebSocketSession) =
+        TextMessage(
+            """
+            {
                 "type": "${MessageType.SUBSCRIBE}",
                 "payload": {
                    "query": "{ hello }",
@@ -80,18 +82,20 @@ class WebsocketGraphQLTransportWSProtocolHandlerTest {
                 },
                 "id": "${session.id}"
             }
-        """.trimIndent()
-    )
+            """.trimIndent(),
+        )
 
-    private val connectionInitMessage = TextMessage(
-        """{
+    private val connectionInitMessage =
+        TextMessage(
+            """
+            {
                 "type": "${MessageType.CONNECTION_INIT}",
                 "payload": {
                    "auth": "test"
                 }
             }
-        """.trimIndent()
-    )
+            """.trimIndent(),
+        )
 
     @Test
     fun query() {
@@ -142,12 +146,14 @@ class WebsocketGraphQLTransportWSProtocolHandlerTest {
         val slot = slot<TextMessage>()
         every { webSocketSession.sendMessage(capture(slot)) } just Runs
 
-        val textMessage = TextMessage(
-            """{
-                "type": "${MessageType.CONNECTION_INIT}"
-            }
-            """.trimIndent()
-        )
+        val textMessage =
+            TextMessage(
+                """
+                {
+                    "type": "${MessageType.CONNECTION_INIT}"
+                }
+                """.trimIndent(),
+            )
 
         dgsWebsocketHandler.afterConnectionEstablished(webSocketSession)
         dgsWebsocketHandler.handleTextMessage(webSocketSession, textMessage)
@@ -167,17 +173,21 @@ class WebsocketGraphQLTransportWSProtocolHandlerTest {
         Assertions.assertThat(dgsWebsocketHandler.sessions.size).isEqualTo(currentNrOfSessions - 1)
     }
 
-    private fun subscribe(webSocketSession: WebSocketSession, nrOfResults: Int) {
+    private fun subscribe(
+        webSocketSession: WebSocketSession,
+        nrOfResults: Int,
+    ) {
         every { webSocketSession.isOpen } returns true
 
-        val results = (1..nrOfResults).map {
-            val result1 = mockkClass(ExecutionResult::class)
-            every { result1.getData<Any>() } returns it
-            every { result1.extensions } returns mapOf<Any, Any>()
-            every { result1.errors } returns listOf()
-            every { result1.isDataPresent } returns true
-            result1
-        }
+        val results =
+            (1..nrOfResults).map {
+                val result1 = mockkClass(ExecutionResult::class)
+                every { result1.getData<Any>() } returns it
+                every { result1.extensions } returns mapOf<Any, Any>()
+                every { result1.errors } returns listOf()
+                every { result1.isDataPresent } returns true
+                result1
+            }
 
         every { executionResult.getData<Publisher<ExecutionResult>>() } returns
             Mono.just(results).flatMapMany { Flux.fromIterable(results) }
@@ -189,7 +199,7 @@ class WebsocketGraphQLTransportWSProtocolHandlerTest {
                 emptyMap(),
                 null,
                 null,
-                null
+                null,
             )
         } returns executionResult
 

@@ -33,15 +33,19 @@ import java.util.stream.Collectors
  */
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
 class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcessor {
-
-    override fun postProcessEnvironment(environment: ConfigurableEnvironment, application: SpringApplication) {
+    override fun postProcessEnvironment(
+        environment: ConfigurableEnvironment,
+        application: SpringApplication,
+    ) {
         val existingExcludes = extractAllExcludes(environment.propertySources)
-        val disabled = DISABLE_AUTOCONFIG_PROPERTIES
-            .asSequence()
-            .filter { !environment.getProperty(it.key, Boolean::class.java, false) }
-            .map { it.value }.plus(existingExcludes)
-            .filter { it.isNotEmpty() }
-            .joinToString(",")
+        val disabled =
+            DISABLE_AUTOCONFIG_PROPERTIES
+                .asSequence()
+                .filter { !environment.getProperty(it.key, Boolean::class.java, false) }
+                .map { it.value }
+                .plus(existingExcludes)
+                .filter { it.isNotEmpty() }
+                .joinToString(",")
 
         environment.propertySources
             .addFirst(
@@ -49,14 +53,15 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
                     "disableRefreshScope",
                     Collections.singletonMap<String, Any>(
                         "spring.autoconfigure.exclude",
-                        disabled
-                    )
-                )
+                        disabled,
+                    ),
+                ),
             )
     }
 
-    private fun extractAllExcludes(propertySources: MutablePropertySources): String {
-        return propertySources.stream()
+    private fun extractAllExcludes(propertySources: MutablePropertySources): String =
+        propertySources
+            .stream()
             .filter { src -> !ConfigurationPropertySources.isAttachedConfigurationPropertySource(src) }
             .map { src ->
                 Binder(ConfigurationPropertySources.from(src))
@@ -66,19 +71,19 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
                     }.orElse(emptyList())
             }.flatMap { it.stream() }
             .collect(Collectors.joining(","))
-    }
 
     companion object {
-        private val DISABLE_AUTOCONFIG_PROPERTIES = mapOf(
-            Pair(
-                "dgs.springgraphql.autoconfiguration.graphqlobservation.enabled",
-                "org.springframework.boot.actuate.autoconfigure.observation.graphql.GraphQlObservationAutoConfiguration"
-            ),
-            Pair(
-                "dgs.springgraphql.autoconfiguration.graphqlwebmvcsecurity.enabled",
-                "org.springframework.boot.autoconfigure.graphql.security.GraphQlWebMvcSecurityAutoConfiguration"
+        private val DISABLE_AUTOCONFIG_PROPERTIES =
+            mapOf(
+                Pair(
+                    "dgs.springgraphql.autoconfiguration.graphqlobservation.enabled",
+                    "org.springframework.boot.actuate.autoconfigure.observation.graphql.GraphQlObservationAutoConfiguration",
+                ),
+                Pair(
+                    "dgs.springgraphql.autoconfiguration.graphqlwebmvcsecurity.enabled",
+                    "org.springframework.boot.autoconfigure.graphql.security.GraphQlWebMvcSecurityAutoConfiguration",
+                ),
             )
-        )
 
         private const val EXCLUDE = "spring.autoconfigure.exclude"
     }

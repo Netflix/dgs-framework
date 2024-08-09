@@ -30,13 +30,17 @@ import reactor.core.publisher.Mono
 import reactor.util.context.Context
 
 class MonoDataFetcherResultProcessor : DataFetcherResultProcessor {
-    override fun supportsType(originalResult: Any): Boolean {
-        return originalResult is Mono<*>
-    }
+    override fun supportsType(originalResult: Any): Boolean = originalResult is Mono<*>
 
-    override fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any {
-        val mono = originalResult as? Mono<*>
-            ?: throw IllegalArgumentException("Instance passed to ${this::class.qualifiedName} was not a Mono<*>. It was a ${originalResult::class.qualifiedName} instead")
+    override fun process(
+        originalResult: Any,
+        dfe: DgsDataFetchingEnvironment,
+    ): Any {
+        val mono =
+            originalResult as? Mono<*>
+                ?: throw IllegalArgumentException(
+                    "Instance passed to ${this::class.qualifiedName} was not a Mono<*>. It was a ${originalResult::class.qualifiedName} instead",
+                )
         return when (dfe.operationDefinition.operation) {
             OperationDefinition.Operation.SUBSCRIPTION -> mono
             else -> originalResult.contextWrite(reactorContextFrom(dfe)).toFuture()
@@ -45,14 +49,18 @@ class MonoDataFetcherResultProcessor : DataFetcherResultProcessor {
 }
 
 class FlowDataFetcherResultProcessor : DataFetcherResultProcessor {
-    override fun supportsType(originalResult: Any): Boolean {
-        return originalResult is Flow<*>
-    }
+    override fun supportsType(originalResult: Any): Boolean = originalResult is Flow<*>
 
-    override fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any {
+    override fun process(
+        originalResult: Any,
+        dfe: DgsDataFetchingEnvironment,
+    ): Any {
         @Suppress("unchecked_cast")
-        val flow = originalResult as? Flow<Any>
-            ?: throw IllegalArgumentException("Instance passed to ${this::class.qualifiedName} was not a Flow<*>. It was a ${originalResult::class.qualifiedName} instead")
+        val flow =
+            originalResult as? Flow<Any>
+                ?: throw IllegalArgumentException(
+                    "Instance passed to ${this::class.qualifiedName} was not a Flow<*>. It was a ${originalResult::class.qualifiedName} instead",
+                )
         return when (dfe.operationDefinition.operation) {
             OperationDefinition.Operation.SUBSCRIPTION -> flow.asPublisher()
             else -> CoroutineScope(Dispatchers.Default).future { flow.toList() }
@@ -61,13 +69,17 @@ class FlowDataFetcherResultProcessor : DataFetcherResultProcessor {
 }
 
 class FluxDataFetcherResultProcessor : DataFetcherResultProcessor {
-    override fun supportsType(originalResult: Any): Boolean {
-        return originalResult is Flux<*>
-    }
+    override fun supportsType(originalResult: Any): Boolean = originalResult is Flux<*>
 
-    override fun process(originalResult: Any, dfe: DgsDataFetchingEnvironment): Any {
-        val flux = originalResult as? Flux<*>
-            ?: throw IllegalArgumentException("Instance passed to ${this::class.qualifiedName} was not a Flux<*>. It was a ${originalResult::class.qualifiedName} instead")
+    override fun process(
+        originalResult: Any,
+        dfe: DgsDataFetchingEnvironment,
+    ): Any {
+        val flux =
+            originalResult as? Flux<*>
+                ?: throw IllegalArgumentException(
+                    "Instance passed to ${this::class.qualifiedName} was not a Flux<*>. It was a ${originalResult::class.qualifiedName} instead",
+                )
         return when (dfe.operationDefinition.operation) {
             OperationDefinition.Operation.SUBSCRIPTION -> flux
             else -> flux.contextWrite(reactorContextFrom(dfe)).collectList().toFuture()
@@ -75,5 +87,4 @@ class FluxDataFetcherResultProcessor : DataFetcherResultProcessor {
     }
 }
 
-private fun reactorContextFrom(dfe: DgsDataFetchingEnvironment) =
-    ReactiveDgsContext.from(dfe)?.reactorContext ?: Context.empty()
+private fun reactorContextFrom(dfe: DgsDataFetchingEnvironment) = ReactiveDgsContext.from(dfe)?.reactorContext ?: Context.empty()

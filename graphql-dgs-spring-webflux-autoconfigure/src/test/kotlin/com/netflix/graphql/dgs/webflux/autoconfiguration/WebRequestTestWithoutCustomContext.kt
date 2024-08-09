@@ -33,23 +33,34 @@ import org.springframework.web.reactive.config.EnableWebFlux
 
 @AutoConfigureWebTestClient
 @EnableWebFlux
-@SpringBootTest(classes = [DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, WebRequestTestWithoutCustomContext.ExampleImplementation::class])
+@SpringBootTest(
+    classes = [
+        DgsWebFluxAutoConfiguration::class,
+        DgsAutoConfiguration::class,
+        WebRequestTestWithoutCustomContext.ExampleImplementation::class,
+    ],
+)
 class WebRequestTestWithoutCustomContext {
     @Autowired
     lateinit var webTestClient: WebTestClient
 
     @Test
     fun `A simple request should execute correctly when no custom context builder is available`() {
-        webTestClient.post().uri("/graphql").bodyValue(
-            """
-            {"query": "{hello}"}
-            """.trimIndent()
-        ).exchange().expectBody().jsonPath("data.hello").isEqualTo("Hello, DGS")
+        webTestClient
+            .post()
+            .uri("/graphql")
+            .bodyValue(
+                """
+                {"query": "{hello}"}
+                """.trimIndent(),
+            ).exchange()
+            .expectBody()
+            .jsonPath("data.hello")
+            .isEqualTo("Hello, DGS")
     }
 
     @DgsComponent
     class ExampleImplementation {
-
         @DgsTypeDefinitionRegistry
         fun typeDefinitionRegistry(): TypeDefinitionRegistry {
             val newRegistry = TypeDefinitionRegistry()
@@ -63,7 +74,7 @@ class WebRequestTestWithoutCustomContext {
                             .newFieldDefinition()
                             .name("hello")
                             .type(TypeName("String"))
-                            .build()
+                            .build(),
                     ).build()
             newRegistry.add(query)
 
@@ -71,8 +82,6 @@ class WebRequestTestWithoutCustomContext {
         }
 
         @DgsQuery
-        fun hello(): String {
-            return "Hello, DGS"
-        }
+        fun hello(): String = "Hello, DGS"
     }
 }

@@ -13,10 +13,13 @@ import java.util.concurrent.CompletionStage
 internal class BatchLoaderWithContextInterceptor(
     private val batchLoaderWithContext: Any,
     private val name: String,
-    private val registry: MeterRegistry
+    private val registry: MeterRegistry,
 ) : InvocationHandler {
-
-    override fun invoke(proxy: Any, method: Method, args: Array<out Any>): CompletionStage<*> {
+    override fun invoke(
+        proxy: Any,
+        method: Method,
+        args: Array<out Any>,
+    ): CompletionStage<*> {
         if (method.name == "load") {
             logger.debug("Starting metered timer[{}] for {}.", ID, javaClass.simpleName)
             val timerSampler = Timer.start(registry)
@@ -25,22 +28,26 @@ internal class BatchLoaderWithContextInterceptor(
                 future.whenComplete { result, _ ->
                     logger.debug("Stopping timer[{}] for {}", ID, javaClass.simpleName)
 
-                    val resultSize = if (result is List<*>) {
-                        result.size
-                    } else if (result is Map<*, *>) {
-                        result.size
-                    } else {
-                        throw IllegalStateException("BatchLoader or MappedBatchLoader should always return a List/Map. A ${result.javaClass.name} was found.")
-                    }
+                    val resultSize =
+                        if (result is List<*>) {
+                            result.size
+                        } else if (result is Map<*, *>) {
+                            result.size
+                        } else {
+                            throw IllegalStateException(
+                                "BatchLoader or MappedBatchLoader should always return a List/Map. A ${result.javaClass.name} was found.",
+                            )
+                        }
 
                     timerSampler.stop(
-                        Timer.builder(ID)
+                        Timer
+                            .builder(ID)
                             .tags(
                                 listOf(
                                     Tag.of(GqlTag.LOADER_NAME.key, name),
-                                    Tag.of(GqlTag.LOADER_BATCH_SIZE.key, resultSize.toString())
-                                )
-                            ).register(registry)
+                                    Tag.of(GqlTag.LOADER_BATCH_SIZE.key, resultSize.toString()),
+                                ),
+                            ).register(registry),
                     )
                 }
             } catch (exception: Exception) {

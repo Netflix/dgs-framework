@@ -32,7 +32,7 @@ plugins {
     id("nebula.netflixoss") version "11.4.0"
     id("io.spring.dependency-management") version "1.1.6"
 
-    id("org.jmailen.kotlinter") version "3.11.1"
+    id("org.jmailen.kotlinter") version "4.4.+"
     id("me.champeau.jmh") version "0.7.2"
     id("me.champeau.mrjar") version "0.1.1"
 
@@ -160,7 +160,5 @@ configure(subprojects.filterNot { it in internalBomModules }) {
 
     kotlinter {
         reporters = arrayOf("checkstyle", "plain")
-        experimentalRules = false
-        disabledRules = arrayOf("no-wildcard-imports")
     }
 }

@@ -43,8 +43,8 @@ import reactor.core.publisher.Mono
         DgsWebFluxAutoConfiguration::class,
         DgsAutoConfiguration::class,
         WebRequestTestWithCustomContext.ExampleImplementation::class,
-        WebRequestTestWithCustomContext.MyContextBuilder::class
-    ]
+        WebRequestTestWithCustomContext.MyContextBuilder::class,
+    ],
 )
 class WebRequestTestWithCustomContext {
     @Autowired
@@ -52,34 +52,53 @@ class WebRequestTestWithCustomContext {
 
     @Test
     fun `A simple request should execute correctly`() {
-        webTestClient.post().uri("/graphql").bodyValue(
-            """
-            {"query": "{hello}"}
-            """.trimIndent()
-        ).exchange().expectBody().jsonPath("data.hello").isEqualTo("Hello, DGS")
+        webTestClient
+            .post()
+            .uri("/graphql")
+            .bodyValue(
+                """
+                {"query": "{hello}"}
+                """.trimIndent(),
+            ).exchange()
+            .expectBody()
+            .jsonPath("data.hello")
+            .isEqualTo("Hello, DGS")
     }
 
     @Test
     fun `Reactive custom context should be available`() {
-        webTestClient.post().uri("/graphql").header("myheader", "DGS").bodyValue(
-            """
-            {"query": "{withContext}"}
-            """.trimIndent()
-        ).exchange().expectBody().jsonPath("data.withContext").isEqualTo("DGS")
+        webTestClient
+            .post()
+            .uri("/graphql")
+            .header("myheader", "DGS")
+            .bodyValue(
+                """
+                {"query": "{withContext}"}
+                """.trimIndent(),
+            ).exchange()
+            .expectBody()
+            .jsonPath("data.withContext")
+            .isEqualTo("DGS")
     }
 
     @Test
     fun `@RequestHeader should receive HTTP header`() {
-        webTestClient.post().uri("/graphql").header("myheader", "DGS").bodyValue(
-            """
-            {"query": "{withHeader}"}
-            """.trimIndent()
-        ).exchange().expectBody().jsonPath("data.withHeader").isEqualTo("DGS")
+        webTestClient
+            .post()
+            .uri("/graphql")
+            .header("myheader", "DGS")
+            .bodyValue(
+                """
+                {"query": "{withHeader}"}
+                """.trimIndent(),
+            ).exchange()
+            .expectBody()
+            .jsonPath("data.withHeader")
+            .isEqualTo("DGS")
     }
 
     @DgsComponent
     class ExampleImplementation {
-
         @DgsTypeDefinitionRegistry
         fun typeDefinitionRegistry(): TypeDefinitionRegistry {
             val newRegistry = TypeDefinitionRegistry()
@@ -93,40 +112,36 @@ class WebRequestTestWithCustomContext {
                             .newFieldDefinition()
                             .name("hello")
                             .type(TypeName("String"))
-                            .build()
+                            .build(),
                     ).fieldDefinition(
                         FieldDefinition
                             .newFieldDefinition()
                             .name("withContext")
                             .type(TypeName("String"))
-                            .build()
+                            .build(),
                     ).fieldDefinition(
                         FieldDefinition
                             .newFieldDefinition()
                             .name("withHeader")
                             .type(TypeName("String"))
-                            .build()
-                    )
-                    .build()
+                            .build(),
+                    ).build()
             newRegistry.add(query)
 
             return newRegistry
         }
 
         @DgsQuery
-        fun hello(): String {
-            return "Hello, DGS"
-        }
+        fun hello(): String = "Hello, DGS"
 
         @DgsQuery
-        fun withContext(dgsDataFetchingEnvironment: DgsDataFetchingEnvironment): String {
-            return DgsContext.getCustomContext(dgsDataFetchingEnvironment)
-        }
+        fun withContext(dgsDataFetchingEnvironment: DgsDataFetchingEnvironment): String =
+            DgsContext.getCustomContext(dgsDataFetchingEnvironment)
 
         @DgsQuery
-        fun withHeader(@RequestHeader myheader: String): String {
-            return myheader
-        }
+        fun withHeader(
+            @RequestHeader myheader: String,
+        ): String = myheader
     }
 
     @Component
@@ -134,9 +149,7 @@ class WebRequestTestWithCustomContext {
         override fun build(
             extensions: Map<String, Any>?,
             headers: HttpHeaders?,
-            serverRequest: ServerRequest?
-        ): Mono<String> {
-            return Mono.just(serverRequest?.headers()?.firstHeader("myheader") ?: "")
-        }
+            serverRequest: ServerRequest?,
+        ): Mono<String> = Mono.just(serverRequest?.headers()?.firstHeader("myheader") ?: "")
     }
 }

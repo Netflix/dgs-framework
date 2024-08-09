@@ -60,16 +60,17 @@ open class DgsWebMvcAutoConfiguration {
     @Bean
     @Qualifier("dgsObjectMapper")
     @ConditionalOnMissingBean(name = ["dgsObjectMapper"])
-    open fun dgsObjectMapper(): ObjectMapper {
-        return Jackson2ObjectMapperBuilder.json()
+    open fun dgsObjectMapper(): ObjectMapper =
+        Jackson2ObjectMapperBuilder
+            .json()
             .modulesToInstall(KotlinModule.Builder().build(), JavaTimeModule())
             .build()
-    }
 
     @Bean
-    open fun dgsRestController(dgsQueryExecutor: DgsQueryExecutor, @Qualifier("dgsObjectMapper") objectMapper: ObjectMapper): DgsRestController {
-        return DgsRestController(dgsQueryExecutor, objectMapper)
-    }
+    open fun dgsRestController(
+        dgsQueryExecutor: DgsQueryExecutor,
+        @Qualifier("dgsObjectMapper") objectMapper: ObjectMapper,
+    ): DgsRestController = DgsRestController(dgsQueryExecutor, objectMapper)
 
     @Configuration
     @ConditionalOnClass(DispatcherServlet::class)
@@ -81,84 +82,79 @@ open class DgsWebMvcAutoConfiguration {
     @ConditionalOnProperty(name = ["dgs.graphql.schema-json.enabled"], havingValue = "true", matchIfMissing = true)
     open class DgsWebMvcSchemaJsonConfiguration {
         @Bean
-        open fun dgsRestSchemaJsonController(dgsSchemaProvider: DgsSchemaProvider): DgsRestSchemaJsonController {
-            return DgsRestSchemaJsonController(dgsSchemaProvider)
-        }
+        open fun dgsRestSchemaJsonController(dgsSchemaProvider: DgsSchemaProvider): DgsRestSchemaJsonController =
+            DgsRestSchemaJsonController(dgsSchemaProvider)
     }
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
     open class WebMvcArgumentHandlerConfiguration {
-
         @Qualifier
         private annotation class Dgs
 
         @Bean
         @Dgs
-        open fun dgsWebDataBinderFactory(@Qualifier("requestMappingHandlerAdapter") adapter: ObjectProvider<RequestMappingHandlerAdapter>): WebDataBinderFactory {
-            return ServletRequestDataBinderFactory(listOf(), adapter.ifAvailable?.webBindingInitializer)
-        }
+        open fun dgsWebDataBinderFactory(
+            @Qualifier("requestMappingHandlerAdapter") adapter: ObjectProvider<RequestMappingHandlerAdapter>,
+        ): WebDataBinderFactory = ServletRequestDataBinderFactory(listOf(), adapter.ifAvailable?.webBindingInitializer)
 
         @Bean
-        open fun requestHeaderMapResolver(@Dgs dataBinderFactory: WebDataBinderFactory): ArgumentResolver {
-            return HandlerMethodArgumentResolverAdapter(RequestHeaderMapMethodArgumentResolver(), dataBinderFactory)
-        }
+        open fun requestHeaderMapResolver(
+            @Dgs dataBinderFactory: WebDataBinderFactory,
+        ): ArgumentResolver = HandlerMethodArgumentResolverAdapter(RequestHeaderMapMethodArgumentResolver(), dataBinderFactory)
 
         @Bean
-        open fun requestHeaderResolver(beanFactory: ConfigurableBeanFactory, @Dgs dataBinderFactory: WebDataBinderFactory): ArgumentResolver {
-            return HandlerMethodArgumentResolverAdapter(
+        open fun requestHeaderResolver(
+            beanFactory: ConfigurableBeanFactory,
+            @Dgs dataBinderFactory: WebDataBinderFactory,
+        ): ArgumentResolver =
+            HandlerMethodArgumentResolverAdapter(
                 RequestHeaderMethodArgumentResolver(beanFactory),
-                dataBinderFactory
+                dataBinderFactory,
             )
-        }
 
         @Bean
-        open fun requestParamResolver(@Dgs dataBinderFactory: WebDataBinderFactory): ArgumentResolver {
-            return HandlerMethodArgumentResolverAdapter(RequestParamMethodArgumentResolver(false), dataBinderFactory)
-        }
+        open fun requestParamResolver(
+            @Dgs dataBinderFactory: WebDataBinderFactory,
+        ): ArgumentResolver = HandlerMethodArgumentResolverAdapter(RequestParamMethodArgumentResolver(false), dataBinderFactory)
 
         @Bean
-        open fun requestParamMapResolver(@Dgs dataBinderFactory: WebDataBinderFactory): ArgumentResolver {
-            return HandlerMethodArgumentResolverAdapter(RequestParamMapMethodArgumentResolver(), dataBinderFactory)
-        }
+        open fun requestParamMapResolver(
+            @Dgs dataBinderFactory: WebDataBinderFactory,
+        ): ArgumentResolver = HandlerMethodArgumentResolverAdapter(RequestParamMapMethodArgumentResolver(), dataBinderFactory)
 
         @Bean
-        open fun cookieValueResolver(beanFactory: ConfigurableBeanFactory, @Dgs dataBinderFactory: WebDataBinderFactory): ArgumentResolver {
-            return HandlerMethodArgumentResolverAdapter(ServletCookieValueMethodArgumentResolver(beanFactory), dataBinderFactory)
-        }
+        open fun cookieValueResolver(
+            beanFactory: ConfigurableBeanFactory,
+            @Dgs dataBinderFactory: WebDataBinderFactory,
+        ): ArgumentResolver = HandlerMethodArgumentResolverAdapter(ServletCookieValueMethodArgumentResolver(beanFactory), dataBinderFactory)
     }
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
     open class WebMvcHeaderValidationConfiguration {
-
         @Bean
         @ConditionalOnMissingBean
         open fun defaultOSSDgsGraphQLRequestHeadersValidator(
             validationRulesProvider: ObjectProvider<GraphQLRequestHeaderValidationRule>,
-            contentTypePredicatesProviders: ObjectProvider<GraphQLRequestContentTypePredicate>
-        ): DgsGraphQLRequestHeaderValidator {
-            return DefaultDgsGraphQLRequestHeaderValidator(
+            contentTypePredicatesProviders: ObjectProvider<GraphQLRequestContentTypePredicate>,
+        ): DgsGraphQLRequestHeaderValidator =
+            DefaultDgsGraphQLRequestHeaderValidator(
                 validationRules = validationRulesProvider.orderedStream().toList(),
-                contentTypePredicates = contentTypePredicatesProviders.orderedStream().toList()
+                contentTypePredicates = contentTypePredicatesProviders.orderedStream().toList(),
             )
-        }
 
         @Bean
-        open fun graphQLRequestContentTypePredicates(): List<GraphQLRequestContentTypePredicate> {
-            return GraphQLRequestContentTypePredicate.RECOMMENDED_GRAPHQL_CONTENT_TYPE_PREDICATES
-        }
+        open fun graphQLRequestContentTypePredicates(): List<GraphQLRequestContentTypePredicate> =
+            GraphQLRequestContentTypePredicate.RECOMMENDED_GRAPHQL_CONTENT_TYPE_PREDICATES
 
         @Bean
         @ConditionalOnProperty("dgs.graphql.header.validation.enabled", havingValue = "true", matchIfMissing = true)
-        open fun graphqlRequestHeaderValidationRules(): List<GraphQLRequestHeaderValidationRule> {
-            return DgsGraphQLRequestHeaderValidator.RECOMMENDED_GRAPHQL_REQUEST_HEADERS_VALIDATOR
-        }
+        open fun graphqlRequestHeaderValidationRules(): List<GraphQLRequestHeaderValidationRule> =
+            DgsGraphQLRequestHeaderValidator.RECOMMENDED_GRAPHQL_REQUEST_HEADERS_VALIDATOR
 
         @Bean
         @ConditionalOnProperty("dgs.graphql.prevent-mutation-over-get.enabled", havingValue = "true", matchIfMissing = true)
-        open fun csrfCheckInstrumentation(): DgsGraphQLCSRFInstrumentation {
-            return DgsGraphQLCSRFInstrumentation()
-        }
+        open fun csrfCheckInstrumentation(): DgsGraphQLCSRFInstrumentation = DgsGraphQLCSRFInstrumentation()
     }
 }

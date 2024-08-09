@@ -24,7 +24,6 @@ import org.springframework.boot.context.properties.source.MapConfigurationProper
 import java.util.*
 
 class DgsConfigurationPropertiesTest {
-
     @Test
     fun schemaLocationsDefault() {
         val properties = bind(Collections.emptyMap())
@@ -43,9 +42,10 @@ class DgsConfigurationPropertiesTest {
         Assertions.assertThat(properties.schemaLocations).containsExactly("foo.graphqls", "bar.graphqls")
     }
 
-    private fun bind(name: String, value: String): DgsConfigurationProperties {
-        return bind(Collections.singletonMap(name, value))
-    }
+    private fun bind(
+        name: String,
+        value: String,
+    ): DgsConfigurationProperties = bind(Collections.singletonMap(name, value))
 
     private fun bind(map: Map<String?, String?>): DgsConfigurationProperties {
         val source: ConfigurationPropertySource = MapConfigurationPropertySource(map)

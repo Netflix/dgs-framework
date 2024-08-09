@@ -40,8 +40,9 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmErasure
 
-class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = null) : InputObjectMapper {
-
+class DefaultInputObjectMapper(
+    customInputObjectMapper: InputObjectMapper? = null,
+) : InputObjectMapper {
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(InputObjectMapper::class.java)
     }
@@ -52,12 +53,16 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
         conversionService.addConverter(Converter(customInputObjectMapper ?: this))
     }
 
-    private class Converter(private val mapper: InputObjectMapper) : ConditionalGenericConverter {
-        override fun getConvertibleTypes(): Set<GenericConverter.ConvertiblePair> {
-            return setOf(GenericConverter.ConvertiblePair(Map::class.java, Any::class.java))
-        }
+    private class Converter(
+        private val mapper: InputObjectMapper,
+    ) : ConditionalGenericConverter {
+        override fun getConvertibleTypes(): Set<GenericConverter.ConvertiblePair> =
+            setOf(GenericConverter.ConvertiblePair(Map::class.java, Any::class.java))
 
-        override fun matches(sourceType: TypeDescriptor, targetType: TypeDescriptor): Boolean {
+        override fun matches(
+            sourceType: TypeDescriptor,
+            targetType: TypeDescriptor,
+        ): Boolean {
             if (targetType.type == Optional::class.java) {
                 // Let Spring's ObjectToOptionalConverter handle it
                 return false
@@ -69,7 +74,11 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
             return false
         }
 
-        override fun convert(source: Any?, sourceType: TypeDescriptor, targetType: TypeDescriptor): Any? {
+        override fun convert(
+            source: Any?,
+            sourceType: TypeDescriptor,
+            targetType: TypeDescriptor,
+        ): Any? {
             @Suppress("UNCHECKED_CAST")
             val sourceMap = source as Map<String, *>
             if (KotlinDetector.isKotlinType(targetType.type)) {
@@ -79,9 +88,13 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
         }
     }
 
-    override fun <T : Any> mapToKotlinObject(inputMap: Map<String, *>, targetClass: KClass<T>): T {
-        val constructor = targetClass.primaryConstructor
-            ?: throw DgsInvalidInputArgumentException("No primary constructor found for class $targetClass")
+    override fun <T : Any> mapToKotlinObject(
+        inputMap: Map<String, *>,
+        targetClass: KClass<T>,
+    ): T {
+        val constructor =
+            targetClass.primaryConstructor
+                ?: throw DgsInvalidInputArgumentException("No primary constructor found for class $targetClass")
 
         val parameters = constructor.parameters
         val parametersByName = CollectionUtils.newLinkedHashMap<KParameter, Any?>(parameters.size)
@@ -108,7 +121,10 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
         }
     }
 
-    private fun maybeConvert(input: Any?, parameterType: KType): Any? {
+    private fun maybeConvert(
+        input: Any?,
+        parameterType: KType,
+    ): Any? {
         // Check if input is already an instance of the parameter type; we check against the KType / KClass
         // to support inline value classes.
         if (parameterType.arguments.isEmpty() && parameterType.jvmErasure.isInstance(input)) {
@@ -117,7 +133,10 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
         return maybeConvert(input, parameterType.javaType)
     }
 
-    private fun maybeConvert(input: Any?, parameterType: Type): Any? {
+    private fun maybeConvert(
+        input: Any?,
+        parameterType: Type,
+    ): Any? {
         val targetType: TypeDescriptor
         if (parameterType is Class<*>) {
             if (parameterType.isInstance(input)) {
@@ -137,7 +156,10 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
         }
     }
 
-    override fun <T> mapToJavaObject(inputMap: Map<String, *>, targetClass: Class<T>): T {
+    override fun <T> mapToJavaObject(
+        inputMap: Map<String, *>,
+        targetClass: Class<T>,
+    ): T {
         if (targetClass.isAssignableFrom(inputMap::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return inputMap as T
@@ -164,7 +186,10 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
                     logger.warn("Field or property '{}' was not found on Input object of type '{}'", name, targetClass)
                 }
             } catch (ex: Exception) {
-                throw DgsInvalidInputArgumentException("Invalid input argument `$value` for field/property `$name` on type `${targetClass.name}`", ex)
+                throw DgsInvalidInputArgumentException(
+                    "Invalid input argument `$value` for field/property `$name` on type `${targetClass.name}`",
+                    ex,
+                )
             }
         }
 
@@ -180,7 +205,10 @@ class DefaultInputObjectMapper(customInputObjectMapper: InputObjectMapper? = nul
         return instance
     }
 
-    private fun <T> handleRecordClass(inputMap: Map<String, Any?>, targetClass: Class<T>): T {
+    private fun <T> handleRecordClass(
+        inputMap: Map<String, Any?>,
+        targetClass: Class<T>,
+    ): T {
         val recordComponents = targetClass.recordComponents
         val args = arrayOfNulls<Any?>(recordComponents.size)
         for ((index, component) in recordComponents.withIndex()) {

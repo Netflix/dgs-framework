@@ -38,65 +38,70 @@ class CustomScalarsTest {
 
     @Test
     fun testLocalDateTimeScalar() {
-        val fetcher = object : Any() {
-            @DgsData(parentType = "Query", field = "now")
-            fun now(): LocalDateTime {
-                return LocalDateTime.now()
+        val fetcher =
+            object : Any() {
+                @DgsData(parentType = "Query", field = "now")
+                fun now(): LocalDateTime = LocalDateTime.now()
+
+                @DgsData(parentType = "Query", field = "schedule")
+                fun schedule(env: DataFetchingEnvironment): Boolean {
+                    val time = env.getArgument<LocalDateTime>("time")
+                    println(time)
+                    return true
+                }
             }
 
-            @DgsData(parentType = "Query", field = "schedule")
-            fun schedule(env: DataFetchingEnvironment): Boolean {
-                val time = env.getArgument<LocalDateTime>("time")
-                println(time)
-                return true
-            }
-        }
-
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(
-            Pair(
-                "timeFetcher",
-                fetcher
+        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+            mapOf(
+                Pair(
+                    "timeFetcher",
+                    fetcher,
+                ),
             )
-        )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf(
-            Pair(
-                "localDateTimeScalar",
-                LocalDateTimeScalar()
+        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns
+            mapOf(
+                Pair(
+                    "localDateTimeScalar",
+                    LocalDateTimeScalar(),
+                ),
             )
-        )
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
-        val provider = DgsSchemaProvider(
-            applicationContext = applicationContextMock,
-            federationResolver = Optional.empty(),
-            existingTypeDefinitionRegistry = Optional.empty(),
-            methodDataFetcherFactory = MethodDataFetcherFactory(listOf())
-        )
+        val provider =
+            DgsSchemaProvider(
+                applicationContext = applicationContextMock,
+                federationResolver = Optional.empty(),
+                existingTypeDefinitionRegistry = Optional.empty(),
+                methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
+            )
 
-        val schema = provider.schema(
-            """
-            type Query {
-                now: DateTime
-                schedule(time: DateTime): Boolean
-            }
-            
-            scalar DateTime
-            """.trimIndent()
-        ).graphQLSchema
+        val schema =
+            provider
+                .schema(
+                    """
+                    type Query {
+                        now: DateTime
+                        schedule(time: DateTime): Boolean
+                    }
+                    
+                    scalar DateTime
+                    """.trimIndent(),
+                ).graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
-        val executionResult = build.execute(
-            """
-            {
-                now
-            }
-            """.trimIndent()
-        )
+        val executionResult =
+            build.execute(
+                """
+                {
+                    now
+                }
+                """.trimIndent(),
+            )
 
         Assertions.assertEquals(0, executionResult.errors.size)
         val data = executionResult.getData<Map<String, String>>()
         Assertions.assertTrue(
-            LocalDateTime.parse(data["now"], DateTimeFormatter.ISO_DATE_TIME).plusHours(1).isAfter(LocalDateTime.now())
+            LocalDateTime.parse(data["now"], DateTimeFormatter.ISO_DATE_TIME).plusHours(1).isAfter(LocalDateTime.now()),
         )
     }
 }

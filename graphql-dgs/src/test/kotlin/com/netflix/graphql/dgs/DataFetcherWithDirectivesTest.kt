@@ -39,47 +39,54 @@ class DataFetcherWithDirectivesTest {
 
     @Test
     fun addFetchersWithConvertedArguments() {
-        val queryFetcher = object : Any() {
-            @DgsData(parentType = "Query", field = "hello")
-            fun hellOFetcher(dataFetchingEnvironment: DataFetchingEnvironment): String {
-                assertThat(dataFetchingEnvironment.fieldDefinition.directives)
-                    .hasSize(1)
-                    .first()
-                    .extracting({ it.arguments }, InstanceOfAssertFactories.LIST)
-                    .hasSize(1)
+        val queryFetcher =
+            object : Any() {
+                @DgsData(parentType = "Query", field = "hello")
+                fun hellOFetcher(dataFetchingEnvironment: DataFetchingEnvironment): String {
+                    assertThat(dataFetchingEnvironment.fieldDefinition.directives)
+                        .hasSize(1)
+                        .first()
+                        .extracting({ it.arguments }, InstanceOfAssertFactories.LIST)
+                        .hasSize(1)
 
-                val graphQLArgument =
-                    dataFetchingEnvironment.fieldDefinition.directives.first().arguments.first()
+                    val graphQLArgument =
+                        dataFetchingEnvironment.fieldDefinition.directives
+                            .first()
+                            .arguments
+                            .first()
 
-                assertThat(graphQLArgument.toAppliedArgument().hasSetValue()).isTrue
-                assertThat(graphQLArgument.toAppliedArgument().type).isEqualTo(Scalars.GraphQLString)
+                    assertThat(graphQLArgument.toAppliedArgument().hasSetValue()).isTrue
+                    assertThat(graphQLArgument.toAppliedArgument().type).isEqualTo(Scalars.GraphQLString)
 
-                val value = graphQLArgument.toAppliedArgument().getValue<String>()
-                assertThat(value).isEqualTo("some name")
-                return "hello $value"
+                    val value = graphQLArgument.toAppliedArgument().getValue<String>()
+                    assertThat(value).isEqualTo("some name")
+                    return "hello $value"
+                }
             }
-        }
 
         every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to queryFetcher)
         every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
         every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
 
-        val provider = DgsSchemaProvider(
-            applicationContext = applicationContextMock,
-            federationResolver = Optional.empty(),
-            existingTypeDefinitionRegistry = Optional.empty(),
-            methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver()))
-        )
+        val provider =
+            DgsSchemaProvider(
+                applicationContext = applicationContextMock,
+                federationResolver = Optional.empty(),
+                existingTypeDefinitionRegistry = Optional.empty(),
+                methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver())),
+            )
 
-        val schema = provider.schema(
-            """
-            directive @someDirective(name: String) on FIELD_DEFINITION
-            type Query {
-                hello: String @someDirective(name: "some name")
-            }
-            
-            """.trimIndent()
-        ).graphQLSchema
+        val schema =
+            provider
+                .schema(
+                    """
+                    directive @someDirective(name: String) on FIELD_DEFINITION
+                    type Query {
+                        hello: String @someDirective(name: "some name")
+                    }
+                    
+                    """.trimIndent(),
+                ).graphQLSchema
 
         val build = GraphQL.newGraphQL(schema).build()
         val executionResult = build.execute("{ hello }")

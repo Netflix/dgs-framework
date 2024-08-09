@@ -30,13 +30,14 @@ class DefaultExceptionHandlerTest {
 
     @Test
     fun queryDocumentWithDefaultException() {
-        val error: QueryException = assertThrows {
-            context.withUserConfiguration(TestExceptionDatFetcherConfig::class.java).run { ctx ->
-                assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
-                    it.executeAndGetDocumentContext("{errorTest}")
+        val error: QueryException =
+            assertThrows {
+                context.withUserConfiguration(TestExceptionDatFetcherConfig::class.java).run { ctx ->
+                    assertThat(ctx).getBean(DgsQueryExecutor::class.java).extracting {
+                        it.executeAndGetDocumentContext("{errorTest}")
+                    }
                 }
             }
-        }
         assertThat(error.errors.size).isEqualTo(1)
 
         assertThat(error.errors[0].extensions["errorType"]).isEqualTo("INTERNAL")

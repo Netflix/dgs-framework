@@ -34,7 +34,7 @@ interface MonoGraphQLClient {
      * @return A [Mono] of [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
     fun reactiveExecuteQuery(
-        @Language("graphql") query: String
+        @Language("graphql") query: String,
     ): Mono<GraphQLResponse>
 
     /**
@@ -46,7 +46,7 @@ interface MonoGraphQLClient {
      */
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
-        variables: Map<String, Any>
+        variables: Map<String, Any>,
     ): Mono<GraphQLResponse>
 
     /**
@@ -60,47 +60,50 @@ interface MonoGraphQLClient {
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
-        operationName: String?
+        operationName: String?,
     ): Mono<GraphQLResponse>
 
     @Deprecated(
         "The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.",
-        ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);")
+        ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);"),
     )
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
-        requestExecutor: MonoRequestExecutor
+        requestExecutor: MonoRequestExecutor,
     ): Mono<GraphQLResponse> = throw UnsupportedOperationException()
 
     @Deprecated(
         "The RequestExecutor should be provided while creating the implementation. Use CustomGraphQLClient/CustomMonoGraphQLClient instead.",
-        ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);")
+        ReplaceWith("Example: new CustomGraphQLClient(url, requestExecutor);"),
     )
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?,
-        requestExecutor: MonoRequestExecutor
+        requestExecutor: MonoRequestExecutor,
     ): Mono<GraphQLResponse> = throw UnsupportedOperationException()
 
     companion object {
         @JvmStatic
         fun createCustomReactive(
             @Language("url") url: String,
-            requestExecutor: MonoRequestExecutor
+            requestExecutor: MonoRequestExecutor,
         ) = CustomMonoGraphQLClient(url, requestExecutor)
 
         @JvmStatic
         fun createWithWebClient(webClient: WebClient) = WebClientGraphQLClient(webClient)
 
         @JvmStatic
-        fun createWithWebClient(webClient: WebClient, objectMapper: ObjectMapper) = WebClientGraphQLClient(webClient, objectMapper)
+        fun createWithWebClient(
+            webClient: WebClient,
+            objectMapper: ObjectMapper,
+        ) = WebClientGraphQLClient(webClient, objectMapper)
 
         @JvmStatic
         fun createWithWebClient(
             webClient: WebClient,
-            headersConsumer: Consumer<HttpHeaders>
+            headersConsumer: Consumer<HttpHeaders>,
         ) = WebClientGraphQLClient(webClient, headersConsumer)
     }
 }

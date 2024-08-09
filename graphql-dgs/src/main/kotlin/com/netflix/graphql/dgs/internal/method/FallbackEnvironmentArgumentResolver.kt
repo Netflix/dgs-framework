@@ -29,14 +29,9 @@ import org.springframework.core.annotation.Order
  */
 @Order(Ordered.LOWEST_PRECEDENCE)
 class FallbackEnvironmentArgumentResolver(
-    inputObjectMapper: InputObjectMapper
+    inputObjectMapper: InputObjectMapper,
 ) : AbstractInputArgumentResolver(inputObjectMapper) {
+    override fun supportsParameter(parameter: MethodParameter): Boolean = parameter.parameterName != null
 
-    override fun supportsParameter(parameter: MethodParameter): Boolean {
-        return parameter.parameterName != null
-    }
-
-    override fun resolveArgumentName(parameter: MethodParameter): String? {
-        return parameter.parameterName
-    }
+    override fun resolveArgumentName(parameter: MethodParameter): String? = parameter.parameterName
 }

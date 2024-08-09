@@ -41,19 +41,19 @@ import org.springframework.web.method.annotation.RequestHeaderMethodArgumentReso
 import java.util.*
 
 class RequestHeaderTest {
-
     private val applicationContext = GenericApplicationContext()
     private val provider: DgsSchemaProvider by lazy {
         DgsSchemaProvider(
             applicationContext = applicationContext,
             federationResolver = Optional.empty(),
             existingTypeDefinitionRegistry = Optional.empty(),
-            methodDataFetcherFactory = MethodDataFetcherFactory(
-                listOf(
-                    HandlerMethodArgumentResolverAdapter(RequestHeaderMapMethodArgumentResolver()),
-                    HandlerMethodArgumentResolverAdapter(RequestHeaderMethodArgumentResolver(applicationContext.beanFactory))
-                )
-            )
+            methodDataFetcherFactory =
+                MethodDataFetcherFactory(
+                    listOf(
+                        HandlerMethodArgumentResolverAdapter(RequestHeaderMapMethodArgumentResolver()),
+                        HandlerMethodArgumentResolverAdapter(RequestHeaderMethodArgumentResolver(applicationContext.beanFactory)),
+                    ),
+                ),
         )
     }
 
@@ -62,15 +62,15 @@ class RequestHeaderTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@RequestHeader headers: MultiValueMap<String, String>): String {
+            fun someFetcher(
+                @RequestHeader headers: MultiValueMap<String, String>,
+            ): String {
                 val header = headers.getFirst("Referer")
                 return "From, $header"
             }
 
             @DgsTypeDefinitionRegistry
-            fun typeDefinitionRegistry(): TypeDefinitionRegistry {
-                return SchemaParser().parse("type Query { hello(name: String): String }")
-            }
+            fun typeDefinitionRegistry(): TypeDefinitionRegistry = SchemaParser().parse("type Query { hello(name: String): String }")
         }
 
         applicationContext.registerBean("helloFetcher", Fetcher::class.java, *emptyArray())
@@ -82,16 +82,19 @@ class RequestHeaderTest {
         val httpHeaders = HttpHeaders()
         httpHeaders.add("Referer", "localhost")
 
-        val request = ServletWebRequest(
-            MockHttpServletRequest().apply {
-                addHeader("Referer", "localhost")
-            }
-        )
+        val request =
+            ServletWebRequest(
+                MockHttpServletRequest().apply {
+                    addHeader("Referer", "localhost")
+                },
+            )
 
-        val executionResult = build.execute(
-            ExecutionInput.newExecutionInput("""{hello}""")
-                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, request)))
-        )
+        val executionResult =
+            build.execute(
+                ExecutionInput
+                    .newExecutionInput("""{hello}""")
+                    .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, request))),
+            )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("From, localhost", data["hello"])
@@ -102,15 +105,15 @@ class RequestHeaderTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@RequestHeader headers: Map<String, String>): String {
+            fun someFetcher(
+                @RequestHeader headers: Map<String, String>,
+            ): String {
                 val header = headers["Referer"]
                 return "From, $header"
             }
 
             @DgsTypeDefinitionRegistry
-            fun typeDefinitionRegistry(): TypeDefinitionRegistry {
-                return SchemaParser().parse("type Query { hello(name: String): String }")
-            }
+            fun typeDefinitionRegistry(): TypeDefinitionRegistry = SchemaParser().parse("type Query { hello(name: String): String }")
         }
 
         applicationContext.registerBean("helloFetcher", Fetcher::class.java, *emptyArray())
@@ -122,16 +125,19 @@ class RequestHeaderTest {
         val httpHeaders = HttpHeaders()
         httpHeaders.add("Referer", "localhost")
 
-        val request = ServletWebRequest(
-            MockHttpServletRequest().apply {
-                addHeader("Referer", "localhost")
-            }
-        )
+        val request =
+            ServletWebRequest(
+                MockHttpServletRequest().apply {
+                    addHeader("Referer", "localhost")
+                },
+            )
 
-        val executionResult = build.execute(
-            ExecutionInput.newExecutionInput("""{hello}""")
-                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, request)))
-        )
+        val executionResult =
+            build.execute(
+                ExecutionInput
+                    .newExecutionInput("""{hello}""")
+                    .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, request))),
+            )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("From, localhost", data["hello"])
@@ -142,15 +148,15 @@ class RequestHeaderTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@RequestHeader headers: HttpHeaders): String {
+            fun someFetcher(
+                @RequestHeader headers: HttpHeaders,
+            ): String {
                 val header = headers.getFirst("Referer")
                 return "From, $header"
             }
 
             @DgsTypeDefinitionRegistry
-            fun typeDefinitionRegistry(): TypeDefinitionRegistry {
-                return SchemaParser().parse("type Query { hello(name: String): String }")
-            }
+            fun typeDefinitionRegistry(): TypeDefinitionRegistry = SchemaParser().parse("type Query { hello(name: String): String }")
         }
 
         applicationContext.registerBean("helloFetcher", Fetcher::class.java, *emptyArray())
@@ -162,16 +168,19 @@ class RequestHeaderTest {
         val httpHeaders = HttpHeaders()
         httpHeaders.add("Referer", "localhost")
 
-        val request = ServletWebRequest(
-            MockHttpServletRequest().apply {
-                addHeader("Referer", "localhost")
-            }
-        )
+        val request =
+            ServletWebRequest(
+                MockHttpServletRequest().apply {
+                    addHeader("Referer", "localhost")
+                },
+            )
 
-        val executionResult = build.execute(
-            ExecutionInput.newExecutionInput("""{hello}""")
-                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, request)))
-        )
+        val executionResult =
+            build.execute(
+                ExecutionInput
+                    .newExecutionInput("""{hello}""")
+                    .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, request))),
+            )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("From, localhost", data["hello"])
@@ -182,14 +191,12 @@ class RequestHeaderTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@RequestHeader("referer") header: String): String {
-                return "From, $header"
-            }
+            fun someFetcher(
+                @RequestHeader("referer") header: String,
+            ): String = "From, $header"
 
             @DgsTypeDefinitionRegistry
-            fun typeDefinitionRegistry(): TypeDefinitionRegistry {
-                return SchemaParser().parse("type Query { hello(name: String): String }")
-            }
+            fun typeDefinitionRegistry(): TypeDefinitionRegistry = SchemaParser().parse("type Query { hello(name: String): String }")
         }
 
         applicationContext.registerBean("helloFetcher", Fetcher::class.java, *emptyArray())
@@ -201,16 +208,19 @@ class RequestHeaderTest {
         val httpHeaders = HttpHeaders()
         httpHeaders.add("Referer", "localhost")
 
-        val request = ServletWebRequest(
-            MockHttpServletRequest().apply {
-                addHeader("Referer", "localhost")
-            }
-        )
+        val request =
+            ServletWebRequest(
+                MockHttpServletRequest().apply {
+                    addHeader("Referer", "localhost")
+                },
+            )
 
-        val executionResult = build.execute(
-            ExecutionInput.newExecutionInput("""{hello}""")
-                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, request)))
-        )
+        val executionResult =
+            build.execute(
+                ExecutionInput
+                    .newExecutionInput("""{hello}""")
+                    .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, request))),
+            )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("From, localhost", data["hello"])
@@ -221,14 +231,12 @@ class RequestHeaderTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@RequestHeader(name = "referer") header: String): String {
-                return "From, $header"
-            }
+            fun someFetcher(
+                @RequestHeader(name = "referer") header: String,
+            ): String = "From, $header"
 
             @DgsTypeDefinitionRegistry
-            fun typeDefinitionRegistry(): TypeDefinitionRegistry {
-                return SchemaParser().parse("type Query { hello(name: String): String }")
-            }
+            fun typeDefinitionRegistry(): TypeDefinitionRegistry = SchemaParser().parse("type Query { hello(name: String): String }")
         }
 
         applicationContext.registerBean("helloFetcher", Fetcher::class.java, *emptyArray())
@@ -240,16 +248,19 @@ class RequestHeaderTest {
         val httpHeaders = HttpHeaders()
         httpHeaders.add("Referer", "localhost")
 
-        val request = ServletWebRequest(
-            MockHttpServletRequest().apply {
-                addHeader("Referer", "localhost")
-            }
-        )
+        val request =
+            ServletWebRequest(
+                MockHttpServletRequest().apply {
+                    addHeader("Referer", "localhost")
+                },
+            )
 
-        val executionResult = build.execute(
-            ExecutionInput.newExecutionInput("""{hello}""")
-                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, request)))
-        )
+        val executionResult =
+            build.execute(
+                ExecutionInput
+                    .newExecutionInput("""{hello}""")
+                    .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, request))),
+            )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("From, localhost", data["hello"])
@@ -260,14 +271,12 @@ class RequestHeaderTest {
         @DgsComponent
         class Fetcher {
             @DgsData(parentType = "Query", field = "hello")
-            fun someFetcher(@RequestHeader referer: String): String {
-                return "From, $referer"
-            }
+            fun someFetcher(
+                @RequestHeader referer: String,
+            ): String = "From, $referer"
 
             @DgsTypeDefinitionRegistry
-            fun typeDefinitionRegistry(): TypeDefinitionRegistry {
-                return SchemaParser().parse("type Query { hello(name: String): String }")
-            }
+            fun typeDefinitionRegistry(): TypeDefinitionRegistry = SchemaParser().parse("type Query { hello(name: String): String }")
         }
 
         applicationContext.registerBean("helloFetcher", Fetcher::class.java, *emptyArray())
@@ -279,16 +288,19 @@ class RequestHeaderTest {
         val httpHeaders = HttpHeaders()
         httpHeaders.add("Referer", "localhost")
 
-        val request = ServletWebRequest(
-            MockHttpServletRequest().apply {
-                addHeader("Referer", "localhost")
-            }
-        )
+        val request =
+            ServletWebRequest(
+                MockHttpServletRequest().apply {
+                    addHeader("Referer", "localhost")
+                },
+            )
 
-        val executionResult = build.execute(
-            ExecutionInput.newExecutionInput("""{hello}""")
-                .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, request)))
-        )
+        val executionResult =
+            build.execute(
+                ExecutionInput
+                    .newExecutionInput("""{hello}""")
+                    .graphQLContext(DgsContext(null, DgsWebMvcRequestData(emptyMap(), httpHeaders, request))),
+            )
         Assertions.assertTrue(executionResult.isDataPresent)
         val data = executionResult.getData<Map<String, *>>()
         Assertions.assertEquals("From, localhost", data["hello"])

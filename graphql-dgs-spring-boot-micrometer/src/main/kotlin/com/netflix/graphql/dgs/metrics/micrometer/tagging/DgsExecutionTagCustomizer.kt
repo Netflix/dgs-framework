@@ -23,11 +23,10 @@ import io.micrometer.core.instrument.Tag
 
 @FunctionalInterface
 fun interface DgsExecutionTagCustomizer {
-
     fun getExecutionTags(
         state: DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState,
         parameters: InstrumentationExecutionParameters,
         result: ExecutionResult,
-        exception: Throwable?
+        exception: Throwable?,
     ): Iterable<Tag>
 }

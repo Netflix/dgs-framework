@@ -40,39 +40,45 @@ import reactor.core.publisher.Mono
 @AutoConfigureWebTestClient
 @EnableWebFlux
 @SpringBootTest(
-    classes = [CustomDgsWebfluxHttpHandler.TestConfig::class, DgsWebFluxAutoConfiguration::class, DgsAutoConfiguration::class, CustomDgsWebfluxHttpHandler.ExampleImplementation::class]
+    classes = [
+        CustomDgsWebfluxHttpHandler.TestConfig::class,
+        DgsWebFluxAutoConfiguration::class,
+        DgsAutoConfiguration::class,
+        CustomDgsWebfluxHttpHandler.ExampleImplementation::class,
+    ],
 )
 class CustomDgsWebfluxHttpHandler {
-
     @Autowired
     lateinit var webTestClient: WebTestClient
 
     @Test
     fun customDgsWebfluxHttpHandler() {
-        webTestClient.post().uri("/graphql").bodyValue(
-            """
-            {"query": "hello"}
-            """.trimIndent()
-        ).exchange().expectBody().jsonPath("query").isEqualTo("hello")
+        webTestClient
+            .post()
+            .uri("/graphql")
+            .bodyValue(
+                """
+                {"query": "hello"}
+                """.trimIndent(),
+            ).exchange()
+            .expectBody()
+            .jsonPath("query")
+            .isEqualTo("hello")
     }
 
     @TestConfiguration
     open class TestConfig {
         @Bean
-        open fun customPreparsedDocumentProvider(): DgsWebfluxHttpHandler {
-            return CustomHttpHandler()
-        }
+        open fun customPreparsedDocumentProvider(): DgsWebfluxHttpHandler = CustomHttpHandler()
 
         class CustomHttpHandler : DgsWebfluxHttpHandler {
-            override fun graphql(request: ServerRequest): Mono<ServerResponse> {
-                return ServerResponse.ok().body(request.bodyToMono(String::class.java), String::class.java)
-            }
+            override fun graphql(request: ServerRequest): Mono<ServerResponse> =
+                ServerResponse.ok().body(request.bodyToMono(String::class.java), String::class.java)
         }
     }
 
     @DgsComponent
     class ExampleImplementation {
-
         @DgsTypeDefinitionRegistry
         fun typeDefinitionRegistry(): TypeDefinitionRegistry {
             val newRegistry = TypeDefinitionRegistry()
@@ -86,7 +92,7 @@ class CustomDgsWebfluxHttpHandler {
                             .newFieldDefinition()
                             .name("hello")
                             .type(TypeName("String"))
-                            .build()
+                            .build(),
                     ).build()
             newRegistry.add(query)
 
@@ -94,8 +100,6 @@ class CustomDgsWebfluxHttpHandler {
         }
 
         @DgsQuery
-        fun hello(): String {
-            return "Hello, DGS"
-        }
+        fun hello(): String = "Hello, DGS"
     }
 }

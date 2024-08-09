@@ -86,8 +86,9 @@ import java.util.*
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @AutoConfiguration
 @EnableConfigurationProperties(DgsWebfluxConfigurationProperties::class)
-open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfigurationProperties) {
-
+open class DgsWebFluxAutoConfiguration(
+    private val configProps: DgsWebfluxConfigurationProperties,
+) {
     @Bean
     open fun dgsReactiveQueryExecutor(
         applicationContext: ApplicationContext,
@@ -103,18 +104,19 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
         idProvider: Optional<ExecutionIdProvider>,
         reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator,
         preparsedDocumentProvider: ObjectProvider<PreparsedDocumentProvider>,
-        queryValueCustomizer: QueryValueCustomizer
+        queryValueCustomizer: QueryValueCustomizer,
     ): DgsReactiveQueryExecutor {
         val queryExecutionStrategy =
             providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
         val mutationExecutionStrategy =
             providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
         val instrumentationImpls = instrumentations.orderedStream().toList()
-        val instrumentation: Instrumentation? = when {
-            instrumentationImpls.size == 1 -> instrumentationImpls.single()
-            instrumentationImpls.isNotEmpty() -> ChainedInstrumentation(instrumentationImpls)
-            else -> null
-        }
+        val instrumentation: Instrumentation? =
+            when {
+                instrumentationImpls.size == 1 -> instrumentationImpls.single()
+                instrumentationImpls.isNotEmpty() -> ChainedInstrumentation(instrumentationImpls)
+                else -> null
+            }
 
         return DefaultDgsReactiveQueryExecutor(
             defaultSchema = schema,
@@ -127,76 +129,71 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
             idProvider = idProvider,
             reloadIndicator = reloadSchemaIndicator,
             preparsedDocumentProvider = preparsedDocumentProvider.ifAvailable,
-            queryValueCustomizer = queryValueCustomizer
+            queryValueCustomizer = queryValueCustomizer,
         )
     }
 
     @Bean
     @ConditionalOnMissingBean
     open fun reactiveGraphQlContextBuilder(
-        dgsReactiveCustomContextBuilderWithRequest: Optional<DgsReactiveCustomContextBuilderWithRequest<*>>
-    ): DefaultDgsReactiveGraphQLContextBuilder {
-        return DefaultDgsReactiveGraphQLContextBuilder(dgsReactiveCustomContextBuilderWithRequest)
-    }
+        dgsReactiveCustomContextBuilderWithRequest: Optional<DgsReactiveCustomContextBuilderWithRequest<*>>,
+    ): DefaultDgsReactiveGraphQLContextBuilder = DefaultDgsReactiveGraphQLContextBuilder(dgsReactiveCustomContextBuilderWithRequest)
 
     @Bean
     @ConditionalOnProperty(name = ["dgs.graphql.graphiql.enabled"], havingValue = "true", matchIfMissing = true)
-    open fun graphiQlConfigurer(configProps: DgsWebfluxConfigurationProperties): GraphiQlConfigurer {
-        return GraphiQlConfigurer(configProps)
-    }
+    open fun graphiQlConfigurer(configProps: DgsWebfluxConfigurationProperties): GraphiQlConfigurer = GraphiQlConfigurer(configProps)
 
     @Bean
     @ConditionalOnProperty(name = ["dgs.graphql.graphiql.enabled"], havingValue = "true", matchIfMissing = true)
-    open fun graphiQlIndexRedirect(): RouterFunction<ServerResponse> {
-        return RouterFunctions.route()
+    open fun graphiQlIndexRedirect(): RouterFunction<ServerResponse> =
+        RouterFunctions
+            .route()
             .GET(configProps.graphiql.path) {
                 permanentRedirect(URI.create(configProps.graphiql.path + "/index.html")).build()
-            }
-            .build()
-    }
+            }.build()
 
     @Bean
     @Qualifier("dgsObjectMapper")
     @ConditionalOnMissingBean(name = ["dgsObjectMapper"])
-    open fun dgsObjectMapper(): ObjectMapper {
-        return jacksonObjectMapper()
-    }
+    open fun dgsObjectMapper(): ObjectMapper = jacksonObjectMapper()
 
     @Bean
     @ConditionalOnMissingBean
     open fun dgsWebfluxHttpHandler(
         dgsQueryExecutor: DgsReactiveQueryExecutor,
-        @Qualifier("dgsObjectMapper") dgsObjectMapper: ObjectMapper
-    ): DgsWebfluxHttpHandler {
-        return DefaultDgsWebfluxHttpHandler(dgsQueryExecutor, dgsObjectMapper)
-    }
+        @Qualifier("dgsObjectMapper") dgsObjectMapper: ObjectMapper,
+    ): DgsWebfluxHttpHandler = DefaultDgsWebfluxHttpHandler(dgsQueryExecutor, dgsObjectMapper)
 
     @Bean
-    open fun dgsGraphQlRouter(dgsWebfluxHttpHandler: DgsWebfluxHttpHandler): RouterFunction<ServerResponse> {
-        return RouterFunctions.route()
+    open fun dgsGraphQlRouter(dgsWebfluxHttpHandler: DgsWebfluxHttpHandler): RouterFunction<ServerResponse> =
+        RouterFunctions
+            .route()
             .POST(
                 configProps.path,
                 accept(*GraphQLMediaTypes.ACCEPTABLE_MEDIA_TYPES.toTypedArray()),
-                dgsWebfluxHttpHandler::graphql
+                dgsWebfluxHttpHandler::graphql,
             ).build()
-    }
 
     @Bean
     @ConditionalOnProperty(name = ["dgs.graphql.schema-json.enabled"], havingValue = "true", matchIfMissing = true)
     open fun schemaRouter(schemaProvider: DgsSchemaProvider): RouterFunction<ServerResponse> {
-        return RouterFunctions.route()
+        return RouterFunctions
+            .route()
             .GET(
-                configProps.schemaJson.path
+                configProps.schemaJson.path,
             ) {
                 val graphQLSchema: GraphQLSchema = schemaProvider.schema().graphQLSchema
                 val graphQL = GraphQL.newGraphQL(graphQLSchema).build()
 
                 val executionInput: ExecutionInput =
-                    ExecutionInput.newExecutionInput().query(IntrospectionQuery.INTROSPECTION_QUERY)
+                    ExecutionInput
+                        .newExecutionInput()
+                        .query(IntrospectionQuery.INTROSPECTION_QUERY)
                         .build()
                 val execute = graphQL.executeAsync(executionInput)
 
-                return@GET Mono.fromCompletionStage(execute)
+                return@GET Mono
+                    .fromCompletionStage(execute)
                     .map { it.toSpecification() }
                     .flatMap { ok().json().bodyValue(it) }
             }.build()
@@ -204,9 +201,20 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
 
     @Bean
     @ConditionalOnMissingBean
-    open fun websocketSubscriptionHandler(dgsReactiveQueryExecutor: DgsReactiveQueryExecutor, webfluxConfigurationProperties: DgsWebfluxConfigurationProperties): SimpleUrlHandlerMapping {
+    open fun websocketSubscriptionHandler(
+        dgsReactiveQueryExecutor: DgsReactiveQueryExecutor,
+        webfluxConfigurationProperties: DgsWebfluxConfigurationProperties,
+    ): SimpleUrlHandlerMapping {
         val simpleUrlHandlerMapping =
-            SimpleUrlHandlerMapping(mapOf(webfluxConfigurationProperties.websocket.path to DgsReactiveWebsocketHandler(dgsReactiveQueryExecutor, webfluxConfigurationProperties.websocket.connectionInitTimeout)))
+            SimpleUrlHandlerMapping(
+                mapOf(
+                    webfluxConfigurationProperties.websocket.path to
+                        DgsReactiveWebsocketHandler(
+                            dgsReactiveQueryExecutor,
+                            webfluxConfigurationProperties.websocket.connectionInitTimeout,
+                        ),
+                ),
+            )
         simpleUrlHandlerMapping.order = 1
         return simpleUrlHandlerMapping
     }
@@ -218,96 +226,83 @@ open class DgsWebFluxAutoConfiguration(private val configProps: DgsWebfluxConfig
     }
 
     @Bean
-    open fun handlerAdapter(webSocketService: WebSocketService): WebSocketHandlerAdapter? {
-        return WebSocketHandlerAdapter(webSocketService)
-    }
+    open fun handlerAdapter(webSocketService: WebSocketService): WebSocketHandlerAdapter? = WebSocketHandlerAdapter(webSocketService)
 
     @Bean
     @ConditionalOnMissingBean
-    open fun monoReactiveDataFetcherResultProcessor(): MonoDataFetcherResultProcessor {
-        return MonoDataFetcherResultProcessor()
-    }
+    open fun monoReactiveDataFetcherResultProcessor(): MonoDataFetcherResultProcessor = MonoDataFetcherResultProcessor()
 
     @Bean
     @ConditionalOnMissingBean
-    open fun fluxReactiveDataFetcherResultProcessor(): FluxDataFetcherResultProcessor {
-        return FluxDataFetcherResultProcessor()
-    }
+    open fun fluxReactiveDataFetcherResultProcessor(): FluxDataFetcherResultProcessor = FluxDataFetcherResultProcessor()
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
     open class WebFluxArgumentHandlerConfiguration {
-
         @Qualifier
         private annotation class Dgs
 
         @Dgs
         @Bean
-        open fun dgsBindingContext(adapter: ObjectProvider<RequestMappingHandlerAdapter>): BindingContext {
-            return BindingContext(adapter.ifAvailable?.webBindingInitializer)
-        }
+        open fun dgsBindingContext(adapter: ObjectProvider<RequestMappingHandlerAdapter>): BindingContext =
+            BindingContext(adapter.ifAvailable?.webBindingInitializer)
 
         @Bean
         open fun cookieValueArgumentResolver(
             beanFactory: ConfigurableBeanFactory,
             registry: ReactiveAdapterRegistry,
-            @Dgs bindingContext: BindingContext
-        ): ArgumentResolver {
-            return SyncHandlerMethodArgumentResolverAdapter(
+            @Dgs bindingContext: BindingContext,
+        ): ArgumentResolver =
+            SyncHandlerMethodArgumentResolverAdapter(
                 CookieValueMethodArgumentResolver(beanFactory, registry),
-                bindingContext
+                bindingContext,
             )
-        }
 
         @Bean
         open fun requestHeaderMapArgumentResolver(
             registry: ReactiveAdapterRegistry,
-            @Dgs bindingContext: BindingContext
-        ): ArgumentResolver {
-            return SyncHandlerMethodArgumentResolverAdapter(
+            @Dgs bindingContext: BindingContext,
+        ): ArgumentResolver =
+            SyncHandlerMethodArgumentResolverAdapter(
                 RequestHeaderMapMethodArgumentResolver(registry),
-                bindingContext
+                bindingContext,
             )
-        }
 
         @Bean
         open fun requestHeaderArgumentResolver(
             beanFactory: ConfigurableBeanFactory,
             registry: ReactiveAdapterRegistry,
-            @Dgs bindingContext: BindingContext
-        ): ArgumentResolver {
-            return SyncHandlerMethodArgumentResolverAdapter(
+            @Dgs bindingContext: BindingContext,
+        ): ArgumentResolver =
+            SyncHandlerMethodArgumentResolverAdapter(
                 RequestHeaderMethodArgumentResolver(beanFactory, registry),
-                bindingContext
+                bindingContext,
             )
-        }
 
         @Bean
         open fun requestParamArgumentResolver(
             beanFactory: ConfigurableBeanFactory,
             registry: ReactiveAdapterRegistry,
-            @Dgs bindingContext: BindingContext
-        ): ArgumentResolver {
-            return SyncHandlerMethodArgumentResolverAdapter(
+            @Dgs bindingContext: BindingContext,
+        ): ArgumentResolver =
+            SyncHandlerMethodArgumentResolverAdapter(
                 RequestParamMethodArgumentResolver(
                     beanFactory,
                     registry,
-                    false
+                    false,
                 ),
-                bindingContext
+                bindingContext,
             )
-        }
 
         @Bean
         open fun requestParamMapArgumentResolver(
             beanFactory: ConfigurableBeanFactory,
             registry: ReactiveAdapterRegistry,
-            @Dgs bindingContext: BindingContext
-        ): ArgumentResolver {
-            return SyncHandlerMethodArgumentResolverAdapter(
+            @Dgs bindingContext: BindingContext,
+        ): ArgumentResolver =
+            SyncHandlerMethodArgumentResolverAdapter(
                 RequestParamMapMethodArgumentResolver(registry),
-                bindingContext
+                bindingContext,
             )
-        }
     }
 }

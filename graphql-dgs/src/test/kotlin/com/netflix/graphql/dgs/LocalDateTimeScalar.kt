@@ -25,9 +25,7 @@ import java.time.format.DateTimeFormatter
 
 @DgsScalar(name = "DateTime")
 class LocalDateTimeScalar : Coercing<LocalDateTime, String> {
-    override fun parseValue(input: Any): LocalDateTime {
-        return LocalDateTime.parse(input.toString(), DateTimeFormatter.ISO_DATE_TIME)
-    }
+    override fun parseValue(input: Any): LocalDateTime = LocalDateTime.parse(input.toString(), DateTimeFormatter.ISO_DATE_TIME)
 
     override fun parseLiteral(input: Any): LocalDateTime {
         if (input is StringValue) {

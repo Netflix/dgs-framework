@@ -26,5 +26,9 @@ package com.netflix.graphql.dgs.client
  */
 @FunctionalInterface
 fun interface RequestExecutor {
-    fun execute(url: String, headers: Map<String, List<String>>, body: String): HttpResponse
+    fun execute(
+        url: String,
+        headers: Map<String, List<String>>,
+        body: String,
+    ): HttpResponse
 }

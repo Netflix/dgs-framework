@@ -25,12 +25,14 @@ import org.springframework.core.MethodParameter
  * or [DgsDataFetchingEnvironment].
  */
 class DataFetchingEnvironmentArgumentResolver : ArgumentResolver {
-    override fun supportsParameter(parameter: MethodParameter): Boolean {
-        return parameter.parameterType == DgsDataFetchingEnvironment::class.java ||
+    override fun supportsParameter(parameter: MethodParameter): Boolean =
+        parameter.parameterType == DgsDataFetchingEnvironment::class.java ||
             parameter.parameterType == DataFetchingEnvironment::class.java
-    }
 
-    override fun resolveArgument(parameter: MethodParameter, dfe: DataFetchingEnvironment): Any {
+    override fun resolveArgument(
+        parameter: MethodParameter,
+        dfe: DataFetchingEnvironment,
+    ): Any {
         if (parameter.parameterType == DgsDataFetchingEnvironment::class.java && dfe !is DgsDataFetchingEnvironment) {
             return DgsDataFetchingEnvironment(dfe)
         }

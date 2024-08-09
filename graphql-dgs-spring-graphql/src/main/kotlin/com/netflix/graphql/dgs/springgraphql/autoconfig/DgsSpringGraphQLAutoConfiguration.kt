@@ -83,11 +83,12 @@ import java.util.Optional
 open class DgsSpringGraphQLAutoConfiguration {
     @Bean
     @DgsComponent
-    open fun dgsRuntimeWiringConfigurerBridge(configurers: List<RuntimeWiringConfigurer>): DgsRuntimeWiringConfigurerBridge {
-        return DgsRuntimeWiringConfigurerBridge(configurers)
-    }
+    open fun dgsRuntimeWiringConfigurerBridge(configurers: List<RuntimeWiringConfigurer>): DgsRuntimeWiringConfigurerBridge =
+        DgsRuntimeWiringConfigurerBridge(configurers)
 
-    class DgsRuntimeWiringConfigurerBridge(private val configurers: List<RuntimeWiringConfigurer>) {
+    class DgsRuntimeWiringConfigurerBridge(
+        private val configurers: List<RuntimeWiringConfigurer>,
+    ) {
         @DgsRuntimeWiring
         fun runtimeWiring(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
             configurers.forEach {
@@ -100,9 +101,8 @@ open class DgsSpringGraphQLAutoConfiguration {
     @Bean
     @ConditionalOnProperty("dgs.springgraphql.pagination.enabled", havingValue = "true", matchIfMissing = true)
     @DgsComponent
-    open fun dgsTypeDefinitionConfigurerBridge(environment: Environment): DgsTypeDefinitionConfigurerBridge {
-        return DgsTypeDefinitionConfigurerBridge()
-    }
+    open fun dgsTypeDefinitionConfigurerBridge(environment: Environment): DgsTypeDefinitionConfigurerBridge =
+        DgsTypeDefinitionConfigurerBridge()
 
     class DgsTypeDefinitionConfigurerBridge {
         @DgsTypeDefinitionRegistry
@@ -118,7 +118,7 @@ open class DgsSpringGraphQLAutoConfiguration {
         preparsedDocumentProvider: Optional<PreparsedDocumentProvider>,
         @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
         @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
-        dataFetcherExceptionHandler: DataFetcherExceptionHandler
+        dataFetcherExceptionHandler: DataFetcherExceptionHandler,
     ): GraphQlSourceBuilderCustomizer {
         val queryExecutionStrategy =
             providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
@@ -142,94 +142,93 @@ open class DgsSpringGraphQLAutoConfiguration {
         prefix = "spring.graphql.schema.introspection",
         name = ["enabled"],
         havingValue = "false",
-        matchIfMissing = false
+        matchIfMissing = false,
     )
-    open fun disableIntrospectionContextContributor(): GraphQLContextContributor {
-        return GraphQLContextContributor { builder, _, _ -> builder.put(Introspection.INTROSPECTION_DISABLED, true) }
-    }
+    open fun disableIntrospectionContextContributor(): GraphQLContextContributor =
+        GraphQLContextContributor {
+                builder,
+                _,
+                _,
+            ->
+            builder.put(Introspection.INTROSPECTION_DISABLED, true)
+        }
 
     @Bean
     open fun springGraphQLDgsQueryExecutor(
         executionService: ExecutionGraphQlService,
         dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
         dgsDataLoaderProvider: DgsDataLoaderProvider,
-        requestCustomizer: ObjectProvider<DgsQueryExecutorRequestCustomizer>
-    ): DgsQueryExecutor {
-        return SpringGraphQLDgsQueryExecutor(
+        requestCustomizer: ObjectProvider<DgsQueryExecutorRequestCustomizer>,
+    ): DgsQueryExecutor =
+        SpringGraphQLDgsQueryExecutor(
             executionService,
             dgsContextBuilder,
             dgsDataLoaderProvider,
-            requestCustomizer = requestCustomizer.getIfAvailable(DgsQueryExecutorRequestCustomizer::DEFAULT_REQUEST_CUSTOMIZER)
+            requestCustomizer = requestCustomizer.getIfAvailable(DgsQueryExecutorRequestCustomizer::DEFAULT_REQUEST_CUSTOMIZER),
         )
-    }
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
     open class WebMvcConfiguration(
-        private val dgsSpringGraphQLConfigurationProperties: DgsSpringGraphQLConfigurationProperties
+        private val dgsSpringGraphQLConfigurationProperties: DgsSpringGraphQLConfigurationProperties,
     ) {
         @Bean
         open fun dgsGraphQlInterceptor(
             dgsDataLoaderProvider: DgsDataLoaderProvider,
-            dgsDefaultContextBuilder: DefaultDgsGraphQLContextBuilder
-        ): DgsWebMvcGraphQLInterceptor {
-            return DgsWebMvcGraphQLInterceptor(
+            dgsDefaultContextBuilder: DefaultDgsGraphQLContextBuilder,
+        ): DgsWebMvcGraphQLInterceptor =
+            DgsWebMvcGraphQLInterceptor(
                 dgsDataLoaderProvider,
                 dgsDefaultContextBuilder,
-                dgsSpringGraphQLConfigurationProperties
+                dgsSpringGraphQLConfigurationProperties,
             )
-        }
     }
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
     open class WebMvcArgumentHandlerConfiguration {
-
         @Qualifier
         private annotation class Dgs
 
         @Bean
         @Dgs
-        open fun dgsWebDataBinderFactory(adapter: ObjectProvider<RequestMappingHandlerAdapter>): WebDataBinderFactory {
-            return ServletRequestDataBinderFactory(listOf(), adapter.ifAvailable?.webBindingInitializer)
-        }
+        open fun dgsWebDataBinderFactory(adapter: ObjectProvider<RequestMappingHandlerAdapter>): WebDataBinderFactory =
+            ServletRequestDataBinderFactory(listOf(), adapter.ifAvailable?.webBindingInitializer)
 
         @Bean
-        open fun requestHeaderMapResolver(@Dgs dataBinderFactory: WebDataBinderFactory): ArgumentResolver {
-            return HandlerMethodArgumentResolverAdapter(RequestHeaderMapMethodArgumentResolver(), dataBinderFactory)
-        }
+        open fun requestHeaderMapResolver(
+            @Dgs dataBinderFactory: WebDataBinderFactory,
+        ): ArgumentResolver = HandlerMethodArgumentResolverAdapter(RequestHeaderMapMethodArgumentResolver(), dataBinderFactory)
 
         @Bean
         open fun requestHeaderResolver(
             beanFactory: ConfigurableBeanFactory,
-            @Dgs dataBinderFactory: WebDataBinderFactory
-        ): ArgumentResolver {
-            return HandlerMethodArgumentResolverAdapter(
+            @Dgs dataBinderFactory: WebDataBinderFactory,
+        ): ArgumentResolver =
+            HandlerMethodArgumentResolverAdapter(
                 RequestHeaderMethodArgumentResolver(beanFactory),
-                dataBinderFactory
+                dataBinderFactory,
             )
-        }
 
         @Bean
-        open fun requestParamResolver(@Dgs dataBinderFactory: WebDataBinderFactory): ArgumentResolver {
-            return HandlerMethodArgumentResolverAdapter(RequestParamMethodArgumentResolver(false), dataBinderFactory)
-        }
+        open fun requestParamResolver(
+            @Dgs dataBinderFactory: WebDataBinderFactory,
+        ): ArgumentResolver = HandlerMethodArgumentResolverAdapter(RequestParamMethodArgumentResolver(false), dataBinderFactory)
 
         @Bean
-        open fun requestParamMapResolver(@Dgs dataBinderFactory: WebDataBinderFactory): ArgumentResolver {
-            return HandlerMethodArgumentResolverAdapter(RequestParamMapMethodArgumentResolver(), dataBinderFactory)
-        }
+        open fun requestParamMapResolver(
+            @Dgs dataBinderFactory: WebDataBinderFactory,
+        ): ArgumentResolver = HandlerMethodArgumentResolverAdapter(RequestParamMapMethodArgumentResolver(), dataBinderFactory)
 
         @Bean
         open fun cookieValueResolver(
             beanFactory: ConfigurableBeanFactory,
-            @Dgs dataBinderFactory: WebDataBinderFactory
-        ): ArgumentResolver {
-            return HandlerMethodArgumentResolverAdapter(
+            @Dgs dataBinderFactory: WebDataBinderFactory,
+        ): ArgumentResolver =
+            HandlerMethodArgumentResolverAdapter(
                 ServletCookieValueMethodArgumentResolver(beanFactory),
-                dataBinderFactory
+                dataBinderFactory,
             )
-        }
     }
 
     @Configuration(proxyBeanMethods = false)
@@ -239,24 +238,18 @@ open class DgsSpringGraphQLAutoConfiguration {
         open fun springGraphQLDgsReactiveQueryExecutor(
             executionService: ExecutionGraphQlService,
             dgsContextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
-            dgsDataLoaderProvider: DgsDataLoaderProvider
-        ): DgsReactiveQueryExecutor {
-            return SpringGraphQLDgsReactiveQueryExecutor(executionService, dgsContextBuilder, dgsDataLoaderProvider)
-        }
+            dgsDataLoaderProvider: DgsDataLoaderProvider,
+        ): DgsReactiveQueryExecutor = SpringGraphQLDgsReactiveQueryExecutor(executionService, dgsContextBuilder, dgsDataLoaderProvider)
 
         @Bean
         @ConditionalOnMissingBean
         open fun reactiveGraphQlContextBuilder(
-            dgsReactiveCustomContextBuilderWithRequest: Optional<DgsReactiveCustomContextBuilderWithRequest<*>>
-        ): DefaultDgsReactiveGraphQLContextBuilder {
-            return DefaultDgsReactiveGraphQLContextBuilder(dgsReactiveCustomContextBuilderWithRequest)
-        }
+            dgsReactiveCustomContextBuilderWithRequest: Optional<DgsReactiveCustomContextBuilderWithRequest<*>>,
+        ): DefaultDgsReactiveGraphQLContextBuilder = DefaultDgsReactiveGraphQLContextBuilder(dgsReactiveCustomContextBuilderWithRequest)
 
         @Bean
         @ConditionalOnMissingBean
-        open fun serverWebExchangeContextFilter(): ServerWebExchangeContextFilter {
-            return ServerWebExchangeContextFilter()
-        }
+        open fun serverWebExchangeContextFilter(): ServerWebExchangeContextFilter = ServerWebExchangeContextFilter()
     }
 
     @Configuration(proxyBeanMethods = false)
@@ -265,13 +258,12 @@ open class DgsSpringGraphQLAutoConfiguration {
         @Bean
         open fun webFluxDgsGraphQLInterceptor(
             dgsDataLoaderProvider: DgsDataLoaderProvider,
-            defaultDgsReactiveGraphQLContextBuilder: DefaultDgsReactiveGraphQLContextBuilder
-        ): DgsWebFluxGraphQLInterceptor {
-            return DgsWebFluxGraphQLInterceptor(
+            defaultDgsReactiveGraphQLContextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
+        ): DgsWebFluxGraphQLInterceptor =
+            DgsWebFluxGraphQLInterceptor(
                 dgsDataLoaderProvider,
-                defaultDgsReactiveGraphQLContextBuilder
+                defaultDgsReactiveGraphQLContextBuilder,
             )
-        }
     }
 
     @Configuration(proxyBeanMethods = false)
@@ -282,76 +274,72 @@ open class DgsSpringGraphQLAutoConfiguration {
 
         @Dgs
         @Bean
-        open fun dgsBindingContext(adapter: ObjectProvider<org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerAdapter>): BindingContext {
-            return BindingContext(adapter.ifAvailable?.webBindingInitializer)
-        }
+        open fun dgsBindingContext(
+            adapter: ObjectProvider<org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerAdapter>,
+        ): BindingContext = BindingContext(adapter.ifAvailable?.webBindingInitializer)
 
         @Bean
         open fun cookieValueArgumentResolver(
             beanFactory: ConfigurableBeanFactory,
             registry: ReactiveAdapterRegistry,
-            @Dgs bindingContext: BindingContext
-        ): ArgumentResolver {
-            return SyncHandlerMethodArgumentResolverAdapter(
+            @Dgs bindingContext: BindingContext,
+        ): ArgumentResolver =
+            SyncHandlerMethodArgumentResolverAdapter(
                 CookieValueMethodArgumentResolver(beanFactory, registry),
-                bindingContext
+                bindingContext,
             )
-        }
 
         @Bean
         open fun requestHeaderMapArgumentResolver(
             registry: ReactiveAdapterRegistry,
-            @Dgs bindingContext: BindingContext
-        ): ArgumentResolver {
-            return SyncHandlerMethodArgumentResolverAdapter(
+            @Dgs bindingContext: BindingContext,
+        ): ArgumentResolver =
+            SyncHandlerMethodArgumentResolverAdapter(
                 org.springframework.web.reactive.result.method.annotation.RequestHeaderMapMethodArgumentResolver(
-                    registry
+                    registry,
                 ),
-                bindingContext
+                bindingContext,
             )
-        }
 
         @Bean
         open fun requestHeaderArgumentResolver(
             beanFactory: ConfigurableBeanFactory,
             registry: ReactiveAdapterRegistry,
-            @Dgs bindingContext: BindingContext
-        ): ArgumentResolver {
-            return SyncHandlerMethodArgumentResolverAdapter(
+            @Dgs bindingContext: BindingContext,
+        ): ArgumentResolver =
+            SyncHandlerMethodArgumentResolverAdapter(
                 org.springframework.web.reactive.result.method.annotation.RequestHeaderMethodArgumentResolver(
                     beanFactory,
-                    registry
+                    registry,
                 ),
-                bindingContext
+                bindingContext,
             )
-        }
 
         @Bean
         open fun requestParamArgumentResolver(
             beanFactory: ConfigurableBeanFactory,
             registry: ReactiveAdapterRegistry,
-            @Dgs bindingContext: BindingContext
-        ): ArgumentResolver {
-            return SyncHandlerMethodArgumentResolverAdapter(
+            @Dgs bindingContext: BindingContext,
+        ): ArgumentResolver =
+            SyncHandlerMethodArgumentResolverAdapter(
                 org.springframework.web.reactive.result.method.annotation.RequestParamMethodArgumentResolver(
                     beanFactory,
                     registry,
-                    false
+                    false,
                 ),
-                bindingContext
+                bindingContext,
             )
-        }
 
         @Bean
         open fun requestParamMapArgumentResolver(
             beanFactory: ConfigurableBeanFactory,
             registry: ReactiveAdapterRegistry,
-            @Dgs bindingContext: BindingContext
-        ): ArgumentResolver {
-            return SyncHandlerMethodArgumentResolverAdapter(
-                org.springframework.web.reactive.result.method.annotation.RequestParamMapMethodArgumentResolver(registry),
-                bindingContext
+            @Dgs bindingContext: BindingContext,
+        ): ArgumentResolver =
+            SyncHandlerMethodArgumentResolverAdapter(
+                org.springframework.web.reactive.result.method.annotation
+                    .RequestParamMapMethodArgumentResolver(registry),
+                bindingContext,
             )
-        }
     }
 }

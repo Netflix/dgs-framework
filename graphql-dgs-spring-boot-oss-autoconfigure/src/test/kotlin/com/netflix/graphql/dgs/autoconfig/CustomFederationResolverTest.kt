@@ -29,9 +29,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 class CustomFederationResolverTest {
-
-    private val context: WebApplicationContextRunner = WebApplicationContextRunner()
-        .withConfiguration(AutoConfigurations.of(DgsAutoConfiguration::class.java))
+    private val context: WebApplicationContextRunner =
+        WebApplicationContextRunner()
+            .withConfiguration(AutoConfigurations.of(DgsAutoConfiguration::class.java))
 
     @Test
     fun `When a custom federation resolver is registered, it should be used`() {
@@ -40,18 +40,19 @@ class CustomFederationResolverTest {
                 val representation = mapOf("__typename" to "MyMovie", "id" to "1")
                 val variables = mapOf("representations" to listOf(representation))
 
-                val title = it.executeAndExtractJsonPathAsObject(
-                    """query (${'$'}representations:[_Any!]!) { 
+                val title =
+                    it.executeAndExtractJsonPathAsObject(
+                        """query (${'$'}representations:[_Any!]!) { 
                                 _entities(representations:${'$'}representations) {
                                     ... on MyMovie {   
                                         title 
                                     } 
                                 }
                             }""",
-                    "data['_entities'][0].title",
-                    variables,
-                    String::class.java
-                )
+                        "data['_entities'][0].title",
+                        variables,
+                        String::class.java,
+                    )
 
                 assertThat(title).isEqualTo("some title")
             }
@@ -61,28 +62,22 @@ class CustomFederationResolverTest {
     @Configuration
     open class MyFederationConfig {
         @Bean
-        open fun federationResolver(): DgsFederationResolver {
-            return MyFederationResolver()
-        }
+        open fun federationResolver(): DgsFederationResolver = MyFederationResolver()
 
         @Bean
-        open fun movieFetcher(): MovieDataFetcher {
-            return MovieDataFetcher()
-        }
+        open fun movieFetcher(): MovieDataFetcher = MovieDataFetcher()
     }
 
     @DgsComponent
     class MovieDataFetcher {
         @DgsEntityFetcher(name = "MyMovie")
-        fun movieEntityFetcher(@Suppress("unused_parameter") arguments: Map<String, Any>): Movie {
-            return Movie()
-        }
+        fun movieEntityFetcher(
+            @Suppress("unused_parameter") arguments: Map<String, Any>,
+        ): Movie = Movie()
     }
 
     class MyFederationResolver : DefaultDgsFederationResolver() {
-        override fun typeMapping(): Map<Class<*>, String> {
-            return mapOf(Movie::class.java to "MyMovie")
-        }
+        override fun typeMapping(): Map<Class<*>, String> = mapOf(Movie::class.java to "MyMovie")
     }
 
     class Movie {
