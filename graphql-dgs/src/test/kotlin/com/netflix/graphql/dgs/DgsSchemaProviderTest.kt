@@ -685,13 +685,13 @@ internal class DgsSchemaProviderTest {
     @Test
     fun enableInstrumentationForAsyncDataFetchersWithAnnotation() {
         @DgsComponent
-        class NoTracingDataFetcher {
+        class TracingDataFetcher {
             @DgsEnableDataFetcherInstrumentation(true)
             @DgsData(parentType = "Query", field = "hello")
             fun someFetcher(): CompletableFuture<String> = CompletableFuture.supplyAsync { "hello" }
         }
 
-        contextRunner.withBeans(NoTracingDataFetcher::class).run { context ->
+        contextRunner.withBeans(TracingDataFetcher::class).run { context ->
             val schemaProvider = schemaProvider(applicationContext = context)
             schemaProvider.schema()
             assertThat(schemaProvider.isFieldTracingInstrumentationEnabled("Query.hello")).isTrue
