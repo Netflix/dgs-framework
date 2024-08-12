@@ -41,7 +41,7 @@ internal class CompletableFutureWrapper(
      * Wrap the call to a data fetcher in CompletableFuture to enable parallel behavior.
      * Used when virtual threads are enabled.
      */
-    fun wrapInCompletableFuture(function: () -> Any?): CompletableFuture<Any?> = CompletableFuture.supplyAsync({ function() }, taskExecutor)
+    fun wrapInCompletableFuture(function: () -> Any?): CompletableFuture<Any?> = CompletableFuture.supplyAsync(function, taskExecutor)
 
     /**
      * Decides if a data fetcher method should be wrapped in CompletableFuture automatically.
