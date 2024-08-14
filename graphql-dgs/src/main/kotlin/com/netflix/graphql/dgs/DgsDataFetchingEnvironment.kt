@@ -22,6 +22,7 @@ import com.netflix.graphql.dgs.exceptions.NoDataLoaderFoundException
 import com.netflix.graphql.dgs.internal.utils.DataLoaderNameUtil
 import graphql.schema.DataFetchingEnvironment
 import org.dataloader.DataLoader
+import java.util.*
 
 class DgsDataFetchingEnvironment(
     private val dfe: DataFetchingEnvironment,
@@ -51,4 +52,30 @@ class DgsDataFetchingEnvironment(
             }
         return getDataLoader(loaderName) ?: throw NoDataLoaderFoundException("DataLoader with name $loaderName not found")
     }
+
+    fun isArgumentSet(path: String): Boolean {
+        val pathParts = path.split(".", "->")
+        return isArgumentSet(*pathParts.toTypedArray())
+    }
+
+    fun isArgumentSet(vararg path: String): Boolean {
+        val value = getValue(dfe.executionStepInfo.arguments, *path)
+        return value !is NotSet
+    }
+
+    private fun getValue(
+        input: Any?,
+        vararg tail: String,
+    ): Any? =
+        if (input is Map<*, *>) {
+            if (input.containsKey(tail[0])) {
+                getValue(input[tail[0]], *Arrays.copyOfRange(tail, 1, tail.size))
+            } else {
+                NotSet()
+            }
+        } else {
+            input
+        }
+
+    private class NotSet
 }
