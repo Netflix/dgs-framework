@@ -54,7 +54,7 @@ class DgsDataFetchingEnvironment(
     }
 
     fun isArgumentSet(path: String): Boolean {
-        val pathParts = path.split(".", "->")
+        val pathParts = path.split(".", "->").map { s -> s.trim() }
         return isArgumentSet(*pathParts.toTypedArray())
     }
 

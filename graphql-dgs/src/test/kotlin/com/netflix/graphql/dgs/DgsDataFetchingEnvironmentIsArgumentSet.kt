@@ -129,12 +129,21 @@ class DgsDataFetchingEnvironmentIsArgumentSet {
 
     @DgsComponent
     class HelloFetcher {
+        /**
+         * Check if a top level argument was provided explicitly.
+         * An explicit null value should also return true.
+         */
         @DgsMutation
         fun inputTester(
             @InputArgument topLevelArg: String?,
             dfe: DgsDataFetchingEnvironment,
         ): Boolean = dfe.isArgumentSet("topLevelArg")
 
+        /**
+         * Check properties of complex input type if they were provided explicitly.
+         * An explicit null value should also return true.
+         * This example uses var args for the property path (e.g. isArgumentSet("personInput", "address", "city"))
+         */
         @DgsMutation
         fun complexInputTester(
             @InputArgument personInput: PersonInput?,
@@ -146,13 +155,18 @@ class DgsDataFetchingEnvironmentIsArgumentSet {
             return InputTestResult(nameIsSet, cityIsSet)
         }
 
+        /**
+         * Check properties of complex input type if they were provided explicitly.
+         * An explicit null value should also return true.
+         * This example uses the . and -> delimiters for the property paths (e.g. isArgumentSet(personInput->address->city))
+         */
         @DgsMutation
         fun complexInputTesterWithDelimiter(
             @InputArgument personInput: PersonInput?,
             dfe: DgsDataFetchingEnvironment,
         ): InputTestResult {
             val nameIsSet = dfe.isArgumentSet("personInput.name")
-            val cityIsSet = dfe.isArgumentSet("personInput->address->city")
+            val cityIsSet = dfe.isArgumentSet("personInput->address -> city")
 
             return InputTestResult(nameIsSet, cityIsSet)
         }
