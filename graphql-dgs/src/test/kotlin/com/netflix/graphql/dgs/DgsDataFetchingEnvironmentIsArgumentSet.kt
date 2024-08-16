@@ -165,8 +165,8 @@ class DgsDataFetchingEnvironmentIsArgumentSet {
             @InputArgument personInput: PersonInput?,
             dfe: DgsDataFetchingEnvironment,
         ): InputTestResult {
-            val nameIsSet = dfe.isArgumentSet("personInput.name")
-            val cityIsSet = dfe.isArgumentSet("personInput->address -> city")
+            val nameIsSet = dfe.isNestedArgumentSet("personInput.name")
+            val cityIsSet = dfe.isNestedArgumentSet("personInput->address -> city")
 
             return InputTestResult(nameIsSet, cityIsSet)
         }

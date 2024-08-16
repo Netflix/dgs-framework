@@ -53,29 +53,38 @@ class DgsDataFetchingEnvironment(
         return getDataLoader(loaderName) ?: throw NoDataLoaderFoundException("DataLoader with name $loaderName not found")
     }
 
-    fun isArgumentSet(path: String): Boolean {
+    /**
+     * Check if an argument is explicitly set using "argument.nested.property" or "argument->nested->property" syntax.
+     * Note that this requires String splitting which is expensive for hot code paths.
+     * Use the isArgumentSet(String...) as a faster alternative.
+     */
+    fun isNestedArgumentSet(path: String): Boolean {
         val pathParts = path.split(".", "->").map { s -> s.trim() }
         return isArgumentSet(*pathParts.toTypedArray())
     }
 
+    /**
+     * Check if an argument is explicitly set.
+     * For complex object arguments, use the isArgumentSet("root", "nested", "property") syntax.
+     */
     fun isArgumentSet(vararg path: String): Boolean {
-        val value = getValue(dfe.executionStepInfo.arguments, *path)
-        return value !is NotSet
+        return isArgumentSet(path.asSequence())
     }
 
-    private fun getValue(
-        input: Any?,
-        vararg tail: String,
-    ): Any? =
-        if (input is Map<*, *>) {
-            if (input.containsKey(tail[0])) {
-                getValue(input[tail[0]], *Arrays.copyOfRange(tail, 1, tail.size))
-            } else {
-                NotSet()
+    private fun isArgumentSet(keys: Sequence<String>): Boolean {
+        var args: Map<*, *> = dfe.executionStepInfo.arguments
+        var value: Any?
+        for (key in keys) {
+            //Explicitly check contains to support explicit null values
+            if(!args.contains(key)) return false
+            value = args[key]
+            if (value !is Map<*, *>) {
+                return true
             }
-        } else {
-            input
+            args = value
         }
-
-    private class NotSet
+        return true
+    }
 }
+
+
