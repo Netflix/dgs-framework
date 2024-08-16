@@ -22,6 +22,7 @@ import com.netflix.graphql.dgs.exceptions.NoDataLoaderFoundException
 import com.netflix.graphql.dgs.internal.utils.DataLoaderNameUtil
 import graphql.schema.DataFetchingEnvironment
 import org.dataloader.DataLoader
+import java.util.*
 
 class DgsDataFetchingEnvironment(
     private val dfe: DataFetchingEnvironment,
@@ -50,5 +51,36 @@ class DgsDataFetchingEnvironment(
                 theAnnotation.name
             }
         return getDataLoader(loaderName) ?: throw NoDataLoaderFoundException("DataLoader with name $loaderName not found")
+    }
+
+    /**
+     * Check if an argument is explicitly set using "argument.nested.property" or "argument->nested->property" syntax.
+     * Note that this requires String splitting which is expensive for hot code paths.
+     * Use the isArgumentSet(String...) as a faster alternative.
+     */
+    fun isNestedArgumentSet(path: String): Boolean {
+        val pathParts = path.split(".", "->").map { s -> s.trim() }
+        return isArgumentSet(*pathParts.toTypedArray())
+    }
+
+    /**
+     * Check if an argument is explicitly set.
+     * For complex object arguments, use the isArgumentSet("root", "nested", "property") syntax.
+     */
+    fun isArgumentSet(vararg path: String): Boolean = isArgumentSet(path.asSequence())
+
+    private fun isArgumentSet(keys: Sequence<String>): Boolean {
+        var args: Map<*, *> = dfe.executionStepInfo.arguments
+        var value: Any?
+        for (key in keys) {
+            // Explicitly check contains to support explicit null values
+            if (!args.contains(key)) return false
+            value = args[key]
+            if (value !is Map<*, *>) {
+                return true
+            }
+            args = value
+        }
+        return true
     }
 }

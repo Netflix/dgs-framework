@@ -18,13 +18,18 @@ package com.netflix.graphql.dgs.example.shared.datafetcher;
 
 import com.netflix.graphql.dgs.DgsComponent;
 import com.netflix.graphql.dgs.DgsData;
+import com.netflix.graphql.dgs.DgsDataFetchingEnvironment;
 import com.netflix.graphql.dgs.InputArgument;
 import com.netflix.graphql.dgs.example.shared.types.Rating;
 
 @DgsComponent
 public class RatingMutation {
     @DgsData(parentType = "Mutation", field = "addRating")
-    public Rating addRating(@InputArgument("input") RatingInput ratingInput) {
+    public Rating addRating(@InputArgument("input") RatingInput ratingInput, DgsDataFetchingEnvironment dfe) {
+        if(!dfe.isArgumentSet("input", "title")) {
+            throw new IllegalArgumentException("Title must be explicitly provided");
+        }
+
         if(ratingInput.getStars() < 0) {
             throw new IllegalArgumentException("Stars must be 1-5");
         }
