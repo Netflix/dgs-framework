@@ -67,16 +67,14 @@ class DgsDataFetchingEnvironment(
      * Check if an argument is explicitly set.
      * For complex object arguments, use the isArgumentSet("root", "nested", "property") syntax.
      */
-    fun isArgumentSet(vararg path: String): Boolean {
-        return isArgumentSet(path.asSequence())
-    }
+    fun isArgumentSet(vararg path: String): Boolean = isArgumentSet(path.asSequence())
 
     private fun isArgumentSet(keys: Sequence<String>): Boolean {
         var args: Map<*, *> = dfe.executionStepInfo.arguments
         var value: Any?
         for (key in keys) {
-            //Explicitly check contains to support explicit null values
-            if(!args.contains(key)) return false
+            // Explicitly check contains to support explicit null values
+            if (!args.contains(key)) return false
             value = args[key]
             if (value !is Map<*, *>) {
                 return true
@@ -86,5 +84,3 @@ class DgsDataFetchingEnvironment(
         return true
     }
 }
-
-
