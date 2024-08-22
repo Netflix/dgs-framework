@@ -25,7 +25,7 @@ import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherExceptionHandlerParameters
 import graphql.execution.instrumentation.Instrumentation
 import graphql.schema.DataFetchingEnvironment
-import org.apache.commons.logging.LogFactory
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
@@ -33,9 +33,15 @@ import org.springframework.boot.autoconfigure.AutoConfigureBefore
 import org.springframework.boot.autoconfigure.graphql.GraphQlProperties
 import org.springframework.boot.autoconfigure.graphql.GraphQlSourceBuilderCustomizer
 import org.springframework.context.annotation.Bean
-import org.springframework.graphql.execution.*
-import java.util.Optional
+import org.springframework.graphql.execution.DataFetcherExceptionResolver
+import org.springframework.graphql.execution.DataFetcherExceptionResolverAdapter
+import org.springframework.graphql.execution.GraphQlSource
+import org.springframework.graphql.execution.RuntimeWiringConfigurer
+import org.springframework.graphql.execution.SchemaReport
+import org.springframework.graphql.execution.SelfDescribingDataFetcher
+import org.springframework.graphql.execution.SubscriptionExceptionResolver
 import java.util.function.Consumer
+import java.util.stream.Collectors
 
 @AutoConfiguration
 @AutoConfigureBefore(name = ["org.springframework.boot.autoconfigure.graphql.GraphQlAutoConfiguration"])
@@ -43,7 +49,9 @@ import java.util.function.Consumer
 open class DgsSpringGraphQLSourceAutoConfiguration(
     private val dgsGraphQLConfigProps: DgsGraphQLConfigurationProperties,
 ) {
-    private val logger = LogFactory.getLog(DgsSpringGraphQLAutoConfiguration::class.java)
+    companion object {
+        private val logger = LoggerFactory.getLogger(DgsSpringGraphQLAutoConfiguration::class.java)
+    }
 
     @Bean
     open fun graphQlSource(
@@ -51,19 +59,18 @@ open class DgsSpringGraphQLSourceAutoConfiguration(
         dgsSchemaProvider: DgsSchemaProvider,
         exceptionResolvers: ObjectProvider<DataFetcherExceptionResolver>,
         subscriptionExceptionResolvers: ObjectProvider<SubscriptionExceptionResolver>,
-        instrumentations: ObjectProvider<Instrumentation?>,
+        instrumentations: ObjectProvider<Instrumentation>,
         wiringConfigurers: ObjectProvider<RuntimeWiringConfigurer>,
         sourceCustomizers: ObjectProvider<GraphQlSourceBuilderCustomizer>,
         reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator,
         defaultExceptionHandler: DataFetcherExceptionHandler,
-        reportConsumer: Optional<Consumer<SchemaReport>>,
+        reportConsumer: Consumer<SchemaReport>?,
     ): GraphQlSource {
         val dataFetcherExceptionResolvers: MutableList<DataFetcherExceptionResolver> =
             exceptionResolvers
                 .orderedStream()
-                .toList()
-                .toMutableList()
-        dataFetcherExceptionResolvers.add((ExceptionHandlerResolverAdapter(defaultExceptionHandler)))
+                .collect(Collectors.toList())
+        dataFetcherExceptionResolvers += ExceptionHandlerResolverAdapter(defaultExceptionHandler)
 
         val builder =
             DgsGraphQLSourceBuilder(dgsSchemaProvider, dgsGraphQLConfigProps.introspection.showSdlComments)
@@ -72,43 +79,39 @@ open class DgsSpringGraphQLSourceAutoConfiguration(
                 .instrumentation(instrumentations.orderedStream().toList())
 
         if (properties.schema.inspection.isEnabled) {
-            if (reportConsumer.isPresent) {
-                builder.inspectSchemaMappings(reportConsumer.get())
-            } else {
-                builder.inspectSchemaMappings { message: SchemaReport? ->
+            if (reportConsumer != null) {
+                builder.inspectSchemaMappings(reportConsumer)
+            } else if (logger.isInfoEnabled) {
+                builder.inspectSchemaMappings { schemaReport ->
                     val messageBuilder = StringBuilder("***Schema Report***\n")
 
                     val arguments =
-                        message?.unmappedArguments()?.map {
-                            if (it.key is SelfDescribingDataFetcher) {
+                        schemaReport.unmappedArguments().map { entry ->
+                            val (key, value) = entry
+                            if (key is SelfDescribingDataFetcher) {
                                 val dataFetcher =
-                                    (it.key as DgsGraphQLSourceBuilder.DgsSelfDescribingDataFetcher).dataFetcher
-                                return@map dataFetcher.method.declaringClass.name + "." + dataFetcher.method.name + " for arguments " +
-                                    it.value
+                                    (key as DgsGraphQLSourceBuilder.DgsSelfDescribingDataFetcher).dataFetcher
+                                dataFetcher.method.declaringClass.name + "." + dataFetcher.method.name + " for arguments " + value
                             } else {
-                                return@map it.toString()
+                                entry.toString()
                             }
                         }
 
-                    messageBuilder.append("Unmapped fields: ${message?.unmappedFields()}\n")
-                    messageBuilder.append("Unmapped registrations: ${message?.unmappedRegistrations()}\n")
-                    messageBuilder.append("Unmapped arguments: ${arguments}\n")
-                    messageBuilder.append("Skipped types: ${message?.skippedTypes()}\n")
+                    messageBuilder.append("Unmapped fields: ").append(schemaReport.unmappedFields()).append('\n')
+                    messageBuilder.append("Unmapped registrations: ").append(schemaReport.unmappedRegistrations()).append('\n')
+                    messageBuilder.append("Unmapped arguments: ").append(arguments).append('\n')
+                    messageBuilder.append("Skipped types: ").append(schemaReport.skippedTypes()).append('\n')
 
-                    logger.info(messageBuilder.toString())
+                    logger.info("{}", messageBuilder)
                 }
             }
         }
 
         wiringConfigurers.orderedStream().forEach { configurer: RuntimeWiringConfigurer ->
-            builder.configureRuntimeWiring(
-                configurer,
-            )
+            builder.configureRuntimeWiring(configurer)
         }
         sourceCustomizers.orderedStream().forEach { customizer: GraphQlSourceBuilderCustomizer ->
-            customizer.customize(
-                builder,
-            )
+            customizer.customize(builder)
         }
         return ReloadableGraphQLSource(builder, reloadSchemaIndicator)
     }
