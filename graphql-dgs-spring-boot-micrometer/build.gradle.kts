@@ -7,11 +7,10 @@ dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine")
     implementation("org.springframework:spring-context-support")
 
-    compileOnly(project(":graphql-dgs-spring-boot-starter"))
     compileOnly("org.springframework.boot:spring-boot-actuator-autoconfigure")
     compileOnly("org.springframework.boot:spring-boot-starter-web")
 
-    testImplementation(project(":graphql-dgs-spring-boot-starter"))
+    testImplementation(project(":graphql-dgs-spring-graphql-starter"))
     testImplementation("org.springframework.boot:spring-boot-actuator-autoconfigure")
     testImplementation("org.springframework.boot:spring-boot-starter-web")
 }
