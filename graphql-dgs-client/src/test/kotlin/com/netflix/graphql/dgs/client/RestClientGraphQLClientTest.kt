@@ -23,9 +23,7 @@ import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.DgsRuntimeWiring
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import com.netflix.graphql.dgs.InputArgument
-import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
-import com.netflix.graphql.dgs.subscriptions.graphql.sse.DgsGraphQLSSEAutoConfig
-import com.netflix.graphql.dgs.webmvc.autoconfigure.DgsWebMvcAutoConfiguration
+import com.netflix.graphql.dgs.test.EnableDgsTest
 import graphql.GraphQLContext
 import graphql.scalars.ExtendedScalars
 import graphql.schema.Coercing
@@ -38,7 +36,6 @@ import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
@@ -48,17 +45,15 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.client.RestClient
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Locale
+import java.util.*
 
 @SpringBootTest(
     classes = [
-        DgsAutoConfiguration::class,
-        DgsWebMvcAutoConfiguration::class,
         RestClientGraphQLClientTest.TestApp::class,
     ],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
-@EnableAutoConfiguration(exclude = [DgsGraphQLSSEAutoConfig::class])
+@EnableDgsTest
 class RestClientGraphQLClientTest {
     @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
     @LocalServerPort

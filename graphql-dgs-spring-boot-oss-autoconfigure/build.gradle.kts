@@ -16,7 +16,6 @@
 
 dependencies {
     api(project(":graphql-dgs"))
-    api(project(":graphql-dgs-spring-webmvc"))
     implementation("org.springframework:spring-web")
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.apache.commons:commons-lang3")
