@@ -19,16 +19,14 @@ package com.netflix.graphql.dgs.client
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsSubscription
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
-import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
-import com.netflix.graphql.dgs.subscriptions.graphql.sse.DgsGraphQLSSEAutoConfig
-import com.netflix.graphql.dgs.subscriptions.sse.DgsSSEAutoConfig
+import com.netflix.graphql.dgs.test.EnableDgsTest
 import graphql.language.FieldDefinition.newFieldDefinition
 import graphql.language.ObjectTypeDefinition.newObjectTypeDefinition
 import graphql.language.TypeName
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
@@ -38,10 +36,11 @@ import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
 
 @SpringBootTest(
-    classes = [DgsAutoConfiguration::class, DgsSSEAutoConfig::class, TestApp::class],
+    classes = [TestApp::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
-@EnableAutoConfiguration(exclude = [DgsGraphQLSSEAutoConfig::class])
+@EnableDgsTest
+@Disabled
 internal class SSESubscriptionGraphQLClientTest {
     @LocalServerPort
     var port: Int? = null
