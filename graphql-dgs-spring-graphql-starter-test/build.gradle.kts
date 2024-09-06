@@ -16,4 +16,6 @@
 
 dependencies {
     api(project(":graphql-dgs-spring-graphql-test"))
+    api("org.springframework.graphql:spring-graphql-test")
+
 }
