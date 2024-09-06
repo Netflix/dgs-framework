@@ -16,29 +16,218 @@
         }
     },
     "compileClasspath": {
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "locked": "2.17.2",
+            "transitive": [
+                "com.fasterxml.jackson.core:jackson-databind",
+                "com.fasterxml.jackson.module:jackson-module-kotlin",
+                "com.fasterxml.jackson:jackson-bom",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-core": {
+            "locked": "2.17.2",
+            "transitive": [
+                "com.fasterxml.jackson.core:jackson-databind",
+                "com.fasterxml.jackson.datatype:jackson-datatype-jdk8",
+                "com.fasterxml.jackson:jackson-bom"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-databind": {
+            "locked": "2.17.2",
+            "transitive": [
+                "com.fasterxml.jackson.datatype:jackson-datatype-jdk8",
+                "com.fasterxml.jackson.module:jackson-module-kotlin",
+                "com.fasterxml.jackson:jackson-bom"
+            ]
+        },
         "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
-            "locked": "2.17.2"
+            "locked": "2.17.2",
+            "transitive": [
+                "com.fasterxml.jackson:jackson-bom"
+            ]
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.17.2"
+            "locked": "2.17.2",
+            "transitive": [
+                "com.fasterxml.jackson:jackson-bom"
+            ]
+        },
+        "com.fasterxml.jackson:jackson-bom": {
+            "locked": "2.17.2",
+            "transitive": [
+                "com.fasterxml.jackson.core:jackson-annotations",
+                "com.fasterxml.jackson.core:jackson-core",
+                "com.fasterxml.jackson.core:jackson-databind",
+                "com.fasterxml.jackson.datatype:jackson-datatype-jdk8",
+                "com.fasterxml.jackson.module:jackson-module-kotlin"
+            ]
+        },
+        "com.graphql-java:graphql-java": {
+            "locked": "22.1",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-platform",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ]
+        },
+        "com.graphql-java:java-dataloader": {
+            "locked": "3.3.0",
+            "transitive": [
+                "com.graphql-java:graphql-java",
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "com.jayway.jsonpath:json-path": {
+            "locked": "2.9.0",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
-            "project": true
+            "project": true,
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
+            "project": true,
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
-            "project": true
+            "project": true,
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ]
         },
         "com.netflix.graphql.dgs:graphql-dgs-subscription-types": {
-            "project": true
+            "project": true,
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "com.netflix.graphql.dgs:graphql-error-types": {
+            "project": true,
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "io.micrometer:micrometer-commons": {
+            "locked": "1.13.3",
+            "transitive": [
+                "io.micrometer:micrometer-observation"
+            ]
+        },
+        "io.micrometer:micrometer-observation": {
+            "locked": "1.13.3",
+            "transitive": [
+                "org.springframework:spring-context",
+                "org.springframework:spring-web"
+            ]
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.6.9"
+            "locked": "3.6.9",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-reflect": {
+            "locked": "1.9.25",
+            "transitive": [
+                "com.fasterxml.jackson.module:jackson-module-kotlin"
+            ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25"
+            "locked": "1.9.25",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
+                "com.netflix.graphql.dgs:graphql-error-types",
+                "org.jetbrains.kotlin:kotlin-reflect"
+            ]
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-stdlib"
+            ]
+        },
+        "org.reactivestreams:reactive-streams": {
+            "locked": "1.0.4",
+            "transitive": [
+                "com.graphql-java:graphql-java",
+                "io.projectreactor:reactor-core"
+            ]
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "2.0.16",
+            "transitive": [
+                "com.graphql-java:java-dataloader"
+            ]
+        },
+        "org.springframework:spring-aop": {
+            "locked": "6.1.12",
+            "transitive": [
+                "org.springframework:spring-context",
+                "org.springframework:spring-webmvc"
+            ]
+        },
+        "org.springframework:spring-beans": {
+            "locked": "6.1.12",
+            "transitive": [
+                "org.springframework:spring-aop",
+                "org.springframework:spring-context",
+                "org.springframework:spring-web",
+                "org.springframework:spring-webmvc"
+            ]
+        },
+        "org.springframework:spring-context": {
+            "locked": "6.1.12",
+            "transitive": [
+                "org.springframework:spring-webmvc"
+            ]
+        },
+        "org.springframework:spring-core": {
+            "locked": "6.1.12",
+            "transitive": [
+                "org.springframework:spring-aop",
+                "org.springframework:spring-beans",
+                "org.springframework:spring-context",
+                "org.springframework:spring-expression",
+                "org.springframework:spring-web",
+                "org.springframework:spring-webmvc"
+            ]
+        },
+        "org.springframework:spring-expression": {
+            "locked": "6.1.12",
+            "transitive": [
+                "org.springframework:spring-context",
+                "org.springframework:spring-webmvc"
+            ]
+        },
+        "org.springframework:spring-jcl": {
+            "locked": "6.1.12",
+            "transitive": [
+                "org.springframework:spring-core"
+            ]
         },
         "org.springframework:spring-web": {
-            "locked": "6.1.12"
+            "locked": "6.1.12",
+            "transitive": [
+                "org.springframework:spring-webmvc"
+            ]
         },
         "org.springframework:spring-webmvc": {
             "locked": "6.1.12"

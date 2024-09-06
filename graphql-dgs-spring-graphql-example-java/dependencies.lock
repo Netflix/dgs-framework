@@ -1338,7 +1338,10 @@
             ]
         },
         "org.springframework.graphql:spring-graphql-test": {
-            "locked": "1.3.2"
+            "locked": "1.3.2",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter-test"
+            ]
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.12",
@@ -3618,7 +3621,10 @@
             ]
         },
         "org.springframework.graphql:spring-graphql-test": {
-            "locked": "1.3.2"
+            "locked": "1.3.2",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter-test"
+            ]
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.12",
@@ -4561,7 +4567,10 @@
             ]
         },
         "org.springframework.graphql:spring-graphql-test": {
-            "locked": "1.3.2"
+            "locked": "1.3.2",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter-test"
+            ]
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.12",
@@ -5790,7 +5799,10 @@
             ]
         },
         "org.springframework.graphql:spring-graphql-test": {
-            "locked": "1.3.2"
+            "locked": "1.3.2",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter-test"
+            ]
         },
         "org.springframework:spring-aop": {
             "locked": "6.1.12",

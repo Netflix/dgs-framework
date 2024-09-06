@@ -378,51 +378,14 @@
         }
     },
     "jmh": {
-        "net.sf.jopt-simple:jopt-simple": {
-            "locked": "5.0.4",
-            "transitive": [
-                "org.openjdk.jmh:jmh-core"
-            ]
-        },
-        "org.apache.commons:commons-math3": {
-            "locked": "3.6.1",
-            "transitive": [
-                "org.openjdk.jmh:jmh-core"
-            ]
-        },
         "org.openjdk.jmh:jmh-core": {
-            "locked": "1.37",
-            "transitive": [
-                "org.openjdk.jmh:jmh-generator-annprocess",
-                "org.openjdk.jmh:jmh-generator-asm",
-                "org.openjdk.jmh:jmh-generator-bytecode",
-                "org.openjdk.jmh:jmh-generator-reflection"
-            ]
+            "locked": "1.37"
         },
         "org.openjdk.jmh:jmh-generator-annprocess": {
             "locked": "1.37"
         },
-        "org.openjdk.jmh:jmh-generator-asm": {
-            "locked": "1.36",
-            "transitive": [
-                "org.openjdk.jmh:jmh-generator-bytecode"
-            ]
-        },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.36"
-        },
-        "org.openjdk.jmh:jmh-generator-reflection": {
-            "locked": "1.36",
-            "transitive": [
-                "org.openjdk.jmh:jmh-generator-asm",
-                "org.openjdk.jmh:jmh-generator-bytecode"
-            ]
-        },
-        "org.ow2.asm:asm": {
-            "locked": "9.0",
-            "transitive": [
-                "org.openjdk.jmh:jmh-generator-asm"
-            ]
         }
     },
     "jmhApiDependenciesMetadata": {
