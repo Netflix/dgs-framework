@@ -162,25 +162,99 @@
     },
     "jmhCompileClasspath": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.17.2"
+            "locked": "2.17.2",
+            "transitive": [
+                "com.fasterxml.jackson:jackson-bom"
+            ]
+        },
+        "com.fasterxml.jackson:jackson-bom": {
+            "locked": "2.17.2",
+            "transitive": [
+                "com.fasterxml.jackson.core:jackson-annotations"
+            ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "22.1"
+            "locked": "22.1",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "com.graphql-java:java-dataloader": {
+            "locked": "3.3.0",
+            "transitive": [
+                "com.graphql-java:graphql-java",
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
         },
+        "net.sf.jopt-simple:jopt-simple": {
+            "locked": "5.0.4",
+            "transitive": [
+                "org.openjdk.jmh:jmh-core"
+            ]
+        },
+        "org.apache.commons:commons-math3": {
+            "locked": "3.6.1",
+            "transitive": [
+                "org.openjdk.jmh:jmh-core"
+            ]
+        },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "1.9.25"
         },
+        "org.jetbrains:annotations": {
+            "locked": "13.0",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-stdlib"
+            ]
+        },
         "org.openjdk.jmh:jmh-core": {
-            "locked": "1.37"
+            "locked": "1.37",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-annprocess",
+                "org.openjdk.jmh:jmh-generator-asm",
+                "org.openjdk.jmh:jmh-generator-bytecode",
+                "org.openjdk.jmh:jmh-generator-reflection"
+            ]
         },
         "org.openjdk.jmh:jmh-generator-annprocess": {
             "locked": "1.37"
         },
+        "org.openjdk.jmh:jmh-generator-asm": {
+            "locked": "1.36",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-bytecode"
+            ]
+        },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.36"
+        },
+        "org.openjdk.jmh:jmh-generator-reflection": {
+            "locked": "1.36",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-asm",
+                "org.openjdk.jmh:jmh-generator-bytecode"
+            ]
+        },
+        "org.ow2.asm:asm": {
+            "locked": "9.0",
+            "transitive": [
+                "org.openjdk.jmh:jmh-generator-asm"
+            ]
+        },
+        "org.reactivestreams:reactive-streams": {
+            "locked": "1.0.4",
+            "transitive": [
+                "com.graphql-java:graphql-java"
+            ]
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "2.0.16",
+            "transitive": [
+                "com.graphql-java:java-dataloader"
+            ]
         }
     },
     "jmhImplementationDependenciesMetadata": {
