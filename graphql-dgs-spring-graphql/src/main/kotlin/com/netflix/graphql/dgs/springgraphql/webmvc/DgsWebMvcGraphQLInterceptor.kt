@@ -67,7 +67,7 @@ class DgsWebMvcGraphQLInterceptor(
         }
         graphQLContextFuture.complete(request.toExecutionInput().graphQLContext)
 
-       return if (dgsSpringConfigurationProperties.webmvc.asyncdispatch.enabled) {
+        return if (dgsSpringConfigurationProperties.webmvc.asyncdispatch.enabled) {
             chain.next(request).doFinally {
                 if (dataLoaderRegistry is AutoCloseable) {
                     dataLoaderRegistry.close()
@@ -76,7 +76,7 @@ class DgsWebMvcGraphQLInterceptor(
         } else {
             @Suppress("BlockingMethodInNonBlockingContext")
             val response = chain.next(request).block()!!
-            if(dataLoaderRegistry is AutoCloseable) {
+            if (dataLoaderRegistry is AutoCloseable) {
                 dataLoaderRegistry.close()
             }
             return Mono.just(response)
