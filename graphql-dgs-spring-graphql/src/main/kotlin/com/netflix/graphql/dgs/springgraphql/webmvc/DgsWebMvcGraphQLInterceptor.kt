@@ -67,11 +67,19 @@ class DgsWebMvcGraphQLInterceptor(
         }
         graphQLContextFuture.complete(request.toExecutionInput().graphQLContext)
 
-        return if (dgsSpringConfigurationProperties.webmvc.asyncdispatch.enabled) {
-            chain.next(request)
+       return if (dgsSpringConfigurationProperties.webmvc.asyncdispatch.enabled) {
+            chain.next(request).doFinally {
+                if (dataLoaderRegistry is AutoCloseable) {
+                    dataLoaderRegistry.close()
+                }
+            }
         } else {
             @Suppress("BlockingMethodInNonBlockingContext")
-            return Mono.just(chain.next(request).block()!!)
+            val response = chain.next(request).block()!!
+            if(dataLoaderRegistry is AutoCloseable) {
+                dataLoaderRegistry.close()
+            }
+            return Mono.just(response)
         }
     }
 }
