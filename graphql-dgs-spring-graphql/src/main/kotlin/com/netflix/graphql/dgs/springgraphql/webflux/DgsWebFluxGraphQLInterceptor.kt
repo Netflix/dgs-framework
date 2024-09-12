@@ -60,6 +60,10 @@ class DgsWebFluxGraphQLInterceptor(
                         .build()
                 }
                 graphQLContextFuture.complete(request.toExecutionInput().graphQLContext)
-                chain.next(request)
+                chain.next(request).doFinally {
+                    if (dataLoaderRegistry is AutoCloseable) {
+                        dataLoaderRegistry.close()
+                    }
+                }
             }
 }
