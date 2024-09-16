@@ -331,13 +331,6 @@ open class DgsAutoConfiguration(
     @ConditionalOnClass(name = ["reactor.core.publisher.Flux"])
     open fun fluxReactiveDataFetcherResultProcessor(): FluxDataFetcherResultProcessor = FluxDataFetcherResultProcessor()
 
-    @Bean
-    @ConditionalOnMissingBean
-    open fun dgsMicrometerContextRegistry(): ContextRegistry =
-        ContextRegistry
-            .getInstance()
-            .registerThreadLocalAccessor(Slf4jThreadLocalAccessor())
-
     /**
      * JDK 21+ only - Creates the dgsAsyncTaskExecutor which is used to run data fetchers automatically wrapped in CompletableFuture.
      * Can be provided by other frameworks to enable context propagation.
@@ -347,8 +340,15 @@ open class DgsAutoConfiguration(
     @ConditionalOnJava(JavaVersion.TWENTY_ONE)
     @ConditionalOnMissingBean(name = ["dgsAsyncTaskExecutor"])
     @ConditionalOnProperty(name = ["dgs.graphql.virtualthreads.enabled"], havingValue = "true", matchIfMissing = false)
-    open fun virtualThreadsTaskExecutor(contextRegistry: ContextRegistry): AsyncTaskExecutor {
+    open fun virtualThreadsTaskExecutor(): AsyncTaskExecutor {
         LOG.info("Enabling virtual threads for DGS")
+
+        val contextRegistry =
+            ContextRegistry()
+                .loadContextAccessors()
+                .loadThreadLocalAccessors()
+                .registerThreadLocalAccessor(Slf4jThreadLocalAccessor())
+
         val executor = SimpleAsyncTaskExecutor("dgs-virtual-thread-")
         executor.setVirtualThreads(true)
         executor.setTaskDecorator(
