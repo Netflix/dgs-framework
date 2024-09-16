@@ -174,4 +174,22 @@ public class GreetingTest {
         DocumentContext documentContext = queryExecutor.executeAndGetDocumentContext("query Hello($name: String){ hello(name: $name) }", Map.of("name", "DGS"));
         assertThat(documentContext.<String>read("data.hello")).isEqualTo("hello, DGS!");
     }
+
+    @Test
+    void withHeaders() {
+        MockHttpServletRequest servletRequest = new MockHttpServletRequest();
+        servletRequest.addHeader("demo-header", "demo-header-value");
+
+        String message = queryExecutor.executeAndExtractJsonPath("{demoHeader}", "data.demoHeader", new ServletWebRequest(servletRequest));
+        assertThat(message).isEqualTo("demo-header-value");
+    }
+
+    @Test
+    void withHeadersAndNoRequest() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("demo-header", "demo-header-value");
+
+        String message = queryExecutor.executeAndExtractJsonPath("{demoHeader}", "data.demoHeader", headers);
+        assertThat(message).isEqualTo("demo-header-value");
+    }
 }
