@@ -130,9 +130,10 @@ open class DgsSpringGraphQLAutoConfiguration {
                 if (preparsedDocumentProvider.isPresent) {
                     graphQlBuilder
                         .preparsedDocumentProvider(preparsedDocumentProvider.get())
-                        .queryExecutionStrategy(queryExecutionStrategy)
-                        .mutationExecutionStrategy(mutationExecutionStrategy)
                 }
+                graphQlBuilder
+                    .queryExecutionStrategy(queryExecutionStrategy)
+                    .mutationExecutionStrategy(mutationExecutionStrategy)
             }
         }
     }
