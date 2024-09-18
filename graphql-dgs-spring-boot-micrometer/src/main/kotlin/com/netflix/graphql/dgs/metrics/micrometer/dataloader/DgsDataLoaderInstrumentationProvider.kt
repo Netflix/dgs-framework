@@ -2,6 +2,7 @@ package com.netflix.graphql.dgs.metrics.micrometer.dataloader
 
 import com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider
 import com.netflix.graphql.dgs.metrics.micrometer.DgsMeterRegistrySupplier
+import com.netflix.graphql.dgs.metrics.micrometer.LimitedTagMetricResolver
 import org.dataloader.BatchLoader
 import org.dataloader.BatchLoaderWithContext
 import org.dataloader.MappedBatchLoader
@@ -10,6 +11,7 @@ import java.lang.reflect.Proxy
 
 class DgsDataLoaderInstrumentationProvider(
     private val meterRegistrySupplier: DgsMeterRegistrySupplier,
+    private val limitedTagMetricResolver: LimitedTagMetricResolver
 ) : DataLoaderInstrumentationExtensionProvider {
     private val batchLoaderClasses = mutableMapOf<String, BatchLoader<*, *>>()
     private val batchLoaderWithContextClasses = mutableMapOf<String, BatchLoaderWithContext<*, *>>()
@@ -21,7 +23,7 @@ class DgsDataLoaderInstrumentationProvider(
         name: String,
     ): BatchLoader<*, *> =
         batchLoaderClasses.getOrPut(name) {
-            val handler = BatchLoaderWithContextInterceptor(original, name, meterRegistrySupplier.get())
+            val handler = BatchLoaderWithContextInterceptor(original, name, meterRegistrySupplier.get(), limitedTagMetricResolver)
             Proxy.newProxyInstance(
                 javaClass.classLoader,
                 arrayOf(BatchLoader::class.java),
@@ -34,7 +36,7 @@ class DgsDataLoaderInstrumentationProvider(
         name: String,
     ): BatchLoaderWithContext<*, *> =
         batchLoaderWithContextClasses.getOrPut(name) {
-            val handler = BatchLoaderWithContextInterceptor(original, name, meterRegistrySupplier.get())
+            val handler = BatchLoaderWithContextInterceptor(original, name, meterRegistrySupplier.get(), limitedTagMetricResolver)
             Proxy.newProxyInstance(
                 javaClass.classLoader,
                 arrayOf(BatchLoaderWithContext::class.java),
@@ -47,7 +49,7 @@ class DgsDataLoaderInstrumentationProvider(
         name: String,
     ): MappedBatchLoader<*, *> =
         mappedBatchLoaderClasses.getOrPut(name) {
-            val handler = BatchLoaderWithContextInterceptor(original, name, meterRegistrySupplier.get())
+            val handler = BatchLoaderWithContextInterceptor(original, name, meterRegistrySupplier.get(), limitedTagMetricResolver)
             Proxy.newProxyInstance(
                 javaClass.classLoader,
                 arrayOf(MappedBatchLoader::class.java),
@@ -60,7 +62,7 @@ class DgsDataLoaderInstrumentationProvider(
         name: String,
     ): MappedBatchLoaderWithContext<*, *> =
         mappedBatchLoaderWithContextClasses.getOrPut(name) {
-            val handler = BatchLoaderWithContextInterceptor(original, name, meterRegistrySupplier.get())
+            val handler = BatchLoaderWithContextInterceptor(original, name, meterRegistrySupplier.get(), limitedTagMetricResolver)
             Proxy.newProxyInstance(
                 javaClass.classLoader,
                 arrayOf(MappedBatchLoaderWithContext::class.java),

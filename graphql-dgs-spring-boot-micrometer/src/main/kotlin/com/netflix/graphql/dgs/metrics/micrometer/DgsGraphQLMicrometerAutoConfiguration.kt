@@ -69,8 +69,8 @@ open class DgsGraphQLMicrometerAutoConfiguration {
         havingValue = "true",
         matchIfMissing = true,
     )
-    open fun dataLoaderInstrumentationProvider(meterRegistrySupplier: DgsMeterRegistrySupplier): DgsDataLoaderInstrumentationProvider =
-        DgsDataLoaderInstrumentationProvider(meterRegistrySupplier)
+    open fun dataLoaderInstrumentationProvider(meterRegistrySupplier: DgsMeterRegistrySupplier,  limitedTagMetricResolver: LimitedTagMetricResolver): DgsDataLoaderInstrumentationProvider =
+        DgsDataLoaderInstrumentationProvider(meterRegistrySupplier, limitedTagMetricResolver)
 
     @Bean
     open fun collatedMetricsTagsProvider(

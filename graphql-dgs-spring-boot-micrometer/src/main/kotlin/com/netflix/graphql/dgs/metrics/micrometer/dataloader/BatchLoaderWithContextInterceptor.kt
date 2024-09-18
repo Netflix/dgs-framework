@@ -2,6 +2,7 @@ package com.netflix.graphql.dgs.metrics.micrometer.dataloader
 
 import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlMetric
 import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlTag
+import com.netflix.graphql.dgs.metrics.micrometer.LimitedTagMetricResolver
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Timer
@@ -14,6 +15,7 @@ internal class BatchLoaderWithContextInterceptor(
     private val batchLoaderWithContext: Any,
     private val name: String,
     private val registry: MeterRegistry,
+    private val limitedTagMetricResolver: LimitedTagMetricResolver
 ) : InvocationHandler {
     override fun invoke(
         proxy: Any,
@@ -45,7 +47,7 @@ internal class BatchLoaderWithContextInterceptor(
                             .tags(
                                 listOf(
                                     Tag.of(GqlTag.LOADER_NAME.key, name),
-                                    Tag.of(GqlTag.LOADER_BATCH_SIZE.key, resultSize.toString()),
+                                    limitedTagMetricResolver.tag(GqlTag.LOADER_BATCH_SIZE.key, resultSize.toString()).get(),
                                 ),
                             ).register(registry),
                     )
