@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4.2.0
 
       - name: Setup Java ${{ matrix.jdk-version }}
         uses: actions/setup-java@v4
@@ -61,13 +61,13 @@ jobs:
           ./gradlew --info --no-watch-fs publishToMavenLocal --warning-mode all
 
       - name: Clone dgs-examples-java
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4.2.0
         with:
           repository: Netflix/dgs-examples-java
           path: build/examples/dgs-examples-java
 
       - name: Clone dgs-examples-kotlin
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4.2.0
         with:
           repository: Netflix/dgs-examples-kotlin
           path: build/examples/dgs-examples-kotlin
