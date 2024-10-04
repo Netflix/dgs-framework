@@ -23,6 +23,7 @@ import graphql.GraphQLError;
 import graphql.GraphqlErrorHelper;
 import graphql.execution.ResultPath;
 import graphql.language.SourceLocation;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -215,13 +216,13 @@ public class TypedGraphQLError implements GraphQLError {
             return extensionsMap;
         }
 
-        public Builder message(String message) {
+        public Builder message(@NotNull String message) {
             this.message = assertNotNull(message);
             return this;
         }
 
         @Override
-        public Builder message(String message, Object... formatArgs) {
+        public Builder message(@NotNull String message, Object... formatArgs) {
             if (formatArgs == null || formatArgs.length == 0) {
                 this.message = assertNotNull(message);
             } else {
@@ -271,27 +272,27 @@ public class TypedGraphQLError implements GraphQLError {
             return this;
         }
 
-        public Builder errorType(ErrorType errorType) {
+        public Builder errorType(@NotNull ErrorType errorType) {
             this.errorClassification = assertNotNull(errorType);
             return this;
         }
 
-        public Builder errorDetail(ErrorDetail errorDetail) {
+        public Builder errorDetail(@NotNull ErrorDetail errorDetail) {
             this.errorClassification = assertNotNull(errorDetail);
             return this;
         }
 
-        public Builder origin(String origin) {
+        public Builder origin(@NotNull String origin) {
             this.origin = assertNotNull(origin);
             return this;
         }
 
-        public Builder debugUri(String debugUri) {
+        public Builder debugUri(@NotNull String debugUri) {
             this.debugUri = assertNotNull(debugUri);
             return this;
         }
 
-        public Builder debugInfo(Map<String, Object> debugInfo) {
+        public Builder debugInfo(@NotNull Map<String, Object> debugInfo) {
             this.debugInfo = assertNotNull(debugInfo);
             return this;
         }
