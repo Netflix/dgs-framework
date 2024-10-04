@@ -1004,7 +1004,7 @@ class MicrometerServletSmokeTest {
                     TypedGraphQLError
                         .newBuilder()
                         .errorDetail(ErrorDetail.Common.ENHANCE_YOUR_CALM)
-                        .message(exception.message)
+                        .message(exception.message ?: "An error occurred: ${exception::class.simpleName}")
                         .path(handlerParameters.path)
                         .build()
                 CompletableFuture.completedFuture(
