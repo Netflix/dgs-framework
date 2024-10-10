@@ -193,8 +193,9 @@ open class DgsSpringGraphQLAutoConfiguration {
 
         @Bean
         @Dgs
-        open fun dgsWebDataBinderFactory(adapter: ObjectProvider<RequestMappingHandlerAdapter>): WebDataBinderFactory =
-            ServletRequestDataBinderFactory(listOf(), adapter.ifAvailable?.webBindingInitializer)
+        open fun dgsWebDataBinderFactory(
+            @Qualifier("requestMappingHandlerAdapter") adapter: ObjectProvider<RequestMappingHandlerAdapter>,
+        ): WebDataBinderFactory = ServletRequestDataBinderFactory(listOf(), adapter.ifAvailable?.webBindingInitializer)
 
         @Bean
         open fun requestHeaderMapResolver(

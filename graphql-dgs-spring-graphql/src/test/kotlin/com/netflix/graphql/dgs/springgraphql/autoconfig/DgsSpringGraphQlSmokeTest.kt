@@ -30,6 +30,8 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.graphql.execution.SchemaReport
 import org.springframework.http.MediaType
@@ -37,6 +39,7 @@ import org.springframework.stereotype.Component
 import org.springframework.stereotype.Controller
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
+import org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerAdapter
 import java.util.function.Consumer
 
 @SpringBootTest(
@@ -48,6 +51,7 @@ import java.util.function.Consumer
         GraphQlAutoConfiguration::class,
         GraphQlWebMvcAutoConfiguration::class,
         WebMvcAutoConfiguration::class,
+        DgsSpringGraphQlSmokeTest.TestWebConfiguration::class,
     ],
     properties = [
         "dgs.graphql.schema-locations=classpath:/dgs-spring-graphql-smoke-test.graphqls",
@@ -144,6 +148,15 @@ class DgsSpringGraphQlSmokeTest {
             override fun accept(schemaReport: SchemaReport) {
                 this.schemaReport = schemaReport
             }
+        }
+    }
+
+    @Configuration
+    open class TestWebConfiguration {
+        @Bean
+        open fun extraAdapter(): RequestMappingHandlerAdapter {
+            // to produce multiple beans to verify DGS injects the right one
+            return RequestMappingHandlerAdapter()
         }
     }
 }
