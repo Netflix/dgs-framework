@@ -48,7 +48,7 @@
             ]
         },
         "com.googlecode.libphonenumber:libphonenumber": {
-            "locked": "8.13.41",
+            "locked": "8.13.46",
             "transitive": [
                 "net.datafaker:datafaker"
             ]
@@ -70,7 +70,7 @@
             "project": true
         },
         "net.datafaker:datafaker": {
-            "locked": "2.3.1"
+            "locked": "2.4.0"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "1.9.25"
@@ -108,7 +108,7 @@
             ]
         },
         "com.googlecode.libphonenumber:libphonenumber": {
-            "locked": "8.13.41",
+            "locked": "8.13.46",
             "transitive": [
                 "net.datafaker:datafaker"
             ]
@@ -130,7 +130,7 @@
             "project": true
         },
         "net.datafaker:datafaker": {
-            "locked": "2.3.1"
+            "locked": "2.4.0"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "1.9.25"
@@ -215,7 +215,7 @@
             ]
         },
         "com.googlecode.libphonenumber:libphonenumber": {
-            "locked": "8.13.41",
+            "locked": "8.13.46",
             "transitive": [
                 "net.datafaker:datafaker"
             ]
@@ -237,7 +237,7 @@
             "project": true
         },
         "net.datafaker:datafaker": {
-            "locked": "2.3.1"
+            "locked": "2.4.0"
         },
         "net.sf.jopt-simple:jopt-simple": {
             "locked": "5.0.4",
@@ -384,7 +384,7 @@
             ]
         },
         "com.googlecode.libphonenumber:libphonenumber": {
-            "locked": "8.13.41",
+            "locked": "8.13.46",
             "transitive": [
                 "net.datafaker:datafaker"
             ]
@@ -431,35 +431,35 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.13.12"
+            "locked": "1.13.13"
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api-jvm": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-agent-api"
             ]
         },
         "io.mockk:mockk-agent-jvm": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-dsl-jvm",
@@ -467,25 +467,25 @@
             ]
         },
         "io.mockk:mockk-core-jvm": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-core"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-dsl-jvm": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-dsl"
             ]
         },
         "io.mockk:mockk-jvm": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk"
             ]
@@ -530,7 +530,7 @@
             ]
         },
         "net.datafaker:datafaker": {
-            "locked": "2.3.1"
+            "locked": "2.4.0"
         },
         "net.minidev:accessors-smart": {
             "locked": "2.5.1",
@@ -1216,7 +1216,7 @@
             ]
         },
         "com.googlecode.libphonenumber:libphonenumber": {
-            "locked": "8.13.41",
+            "locked": "8.13.46",
             "transitive": [
                 "net.datafaker:datafaker"
             ]
@@ -1238,7 +1238,7 @@
             "project": true
         },
         "net.datafaker:datafaker": {
-            "locked": "2.3.1"
+            "locked": "2.4.0"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "1.9.25"
@@ -1288,7 +1288,7 @@
             ]
         },
         "com.googlecode.libphonenumber:libphonenumber": {
-            "locked": "8.13.41",
+            "locked": "8.13.46",
             "transitive": [
                 "net.datafaker:datafaker"
             ]
@@ -1335,59 +1335,59 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.13.12"
+            "locked": "1.13.13"
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api-jvm": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-agent-api"
             ]
         },
         "io.mockk:mockk-agent-jvm": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-core-jvm": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-core"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-dsl-jvm": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-dsl"
             ]
         },
         "io.mockk:mockk-jvm": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk"
             ]
@@ -1426,7 +1426,7 @@
             ]
         },
         "net.datafaker:datafaker": {
-            "locked": "2.3.1"
+            "locked": "2.4.0"
         },
         "net.minidev:accessors-smart": {
             "locked": "2.5.1",
@@ -1722,7 +1722,7 @@
             ]
         },
         "com.googlecode.libphonenumber:libphonenumber": {
-            "locked": "8.13.41",
+            "locked": "8.13.46",
             "transitive": [
                 "net.datafaker:datafaker"
             ]
@@ -1769,29 +1769,29 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.13.12"
+            "locked": "1.13.13"
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk",
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk"
             ]
@@ -1828,7 +1828,7 @@
             ]
         },
         "net.datafaker:datafaker": {
-            "locked": "2.3.1"
+            "locked": "2.4.0"
         },
         "net.minidev:accessors-smart": {
             "locked": "2.5.1",
@@ -2112,7 +2112,7 @@
             ]
         },
         "com.googlecode.libphonenumber:libphonenumber": {
-            "locked": "8.13.41",
+            "locked": "8.13.46",
             "transitive": [
                 "net.datafaker:datafaker"
             ]
@@ -2159,35 +2159,35 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.13.12"
+            "locked": "1.13.13"
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api-jvm": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-agent-api"
             ]
         },
         "io.mockk:mockk-agent-jvm": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-dsl-jvm",
@@ -2195,25 +2195,25 @@
             ]
         },
         "io.mockk:mockk-core-jvm": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-core"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-dsl-jvm": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk-dsl"
             ]
         },
         "io.mockk:mockk-jvm": {
-            "locked": "1.13.12",
+            "locked": "1.13.13",
             "transitive": [
                 "io.mockk:mockk"
             ]
@@ -2258,7 +2258,7 @@
             ]
         },
         "net.datafaker:datafaker": {
-            "locked": "2.3.1"
+            "locked": "2.4.0"
         },
         "net.minidev:accessors-smart": {
             "locked": "2.5.1",
