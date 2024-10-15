@@ -1,6 +1,7 @@
 extend type Query {
     greetings(name: String): String
     greetingFromBatchLoader(person: Person): String
+    withControllerAdvice: String
 }
 
 input Person {

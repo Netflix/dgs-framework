@@ -32,8 +32,6 @@ import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.webflux.DgsWebFluxGraphQLInterceptor
 import com.netflix.graphql.dgs.springgraphql.webmvc.DgsWebMvcGraphQLInterceptor
-import graphql.execution.AsyncExecutionStrategy
-import graphql.execution.AsyncSerialExecutionStrategy
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.ExecutionStrategy
 import graphql.execution.preparsed.PreparsedDocumentProvider
@@ -119,24 +117,25 @@ open class DgsSpringGraphQLAutoConfiguration {
         @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
         @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
         dataFetcherExceptionHandler: DataFetcherExceptionHandler,
-    ): GraphQlSourceBuilderCustomizer {
-        val queryExecutionStrategy =
-            providedQueryExecutionStrategy.orElse(AsyncExecutionStrategy(dataFetcherExceptionHandler))
-        val mutationExecutionStrategy =
-            providedMutationExecutionStrategy.orElse(AsyncSerialExecutionStrategy(dataFetcherExceptionHandler))
-
-        return GraphQlSourceBuilderCustomizer { builder ->
+    ): GraphQlSourceBuilderCustomizer =
+        GraphQlSourceBuilderCustomizer { builder ->
             builder.configureGraphQl { graphQlBuilder ->
                 if (preparsedDocumentProvider.isPresent) {
                     graphQlBuilder
                         .preparsedDocumentProvider(preparsedDocumentProvider.get())
                 }
-                graphQlBuilder
-                    .queryExecutionStrategy(queryExecutionStrategy)
-                    .mutationExecutionStrategy(mutationExecutionStrategy)
+
+                if (providedQueryExecutionStrategy.isPresent) {
+                    graphQlBuilder
+                        .queryExecutionStrategy(providedQueryExecutionStrategy.get())
+                }
+
+                if (providedMutationExecutionStrategy.isPresent) {
+                    graphQlBuilder
+                        .mutationExecutionStrategy(providedMutationExecutionStrategy.get())
+                }
             }
         }
-    }
 
     @Bean
     @ConditionalOnProperty(
