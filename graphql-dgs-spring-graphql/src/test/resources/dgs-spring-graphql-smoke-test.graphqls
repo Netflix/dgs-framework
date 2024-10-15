@@ -5,4 +5,5 @@ type Query {
     unmappedArgument: String
     incorrectNamedArgument(somename: String): String
     mappedArguments(firstParam: String, secondParam: Int): String
+    withControllerAdvice: String
 }
