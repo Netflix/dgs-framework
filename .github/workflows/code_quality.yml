@@ -19,7 +19,7 @@ jobs:
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2024.2
         with:
-          args: -v,${{ steps.get-java-home-17.outputs.JAVA_HOME_17_X64 }}:/root/.jdks/jdk17
+          args: -v,${{ steps.get-java-home-17.outputs.JAVA_HOME_17_X64 }}:/root/.jdks/jdk17, --script, "/opt/idea/bin/idea.sh installPlugins com.netflix.spring.intellij.spring-boot-netflix-intellij-plugin https://artifacts.netflix.net/devtools/sbn-intellij/updatePlugins.xml"
           push-fixes: pull-request
           upload-result: true
         env:
