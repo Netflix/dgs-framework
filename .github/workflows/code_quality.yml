@@ -21,8 +21,6 @@ jobs:
         with:
           args: -v,${{ steps.get-java-home-17.outputs.JAVA_HOME_17_X64 }}:/root/.jdks/jdk17
           push-fixes: pull-request
+          upload-result: true
         env:
           QODANA_LICENSE: ${{ secrets.QODANA_LICENSE }} # read the steps about it below
-      - uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: ${{ runner.temp }}/qodana/results/qodana.sarif.json
