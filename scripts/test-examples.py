@@ -118,7 +118,7 @@ def update_build(build_file, version):
 
 
 def run_example_build(project_dir, build_file="", settings_file=""):
-    command = [gradlew, "-p", project_dir, "-s", "-w", "--debug", "--stacktrace"]
+    command = [gradlew, "-p", project_dir, "-s", "-w", "--info", "--stacktrace"]
 
     if settings_file:
         command.extend(["-c", settings_file])
