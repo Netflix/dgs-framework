@@ -20,6 +20,7 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.env.EnvironmentPostProcessor
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.MapPropertySource
+import org.springframework.core.env.get
 
 class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
     override fun postProcessEnvironment(
@@ -28,7 +29,19 @@ class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
     ) {
         val properties = mutableMapOf<String, Any>()
 
-        properties["spring.graphql.schema.introspection.enabled"] = environment.getProperty("dgs.graphql.introspection.enabled") ?: true
+        if (environment.getProperty("spring.graphql.schema.introspection.enabled") != null &&
+            environment.getProperty("dgs.graphql.introspection.enabled") != null
+        ) {
+            throw RuntimeException(
+                "Both properties `spring.graphql.schema.introspection.enabled` and `dgs.graphql.introspection.enabled` are explicitly set. Use `dgs.graphql.introspection.enabled` only",
+            )
+        } else if (environment.getProperty("dgs.graphql.introspection.enabled") != null) {
+            properties["spring.graphql.schema.introspection.enabled"] = environment.getProperty("dgs.graphql.introspection.enabled") ?: true
+        } else {
+            properties["spring.graphql.schema.introspection.enabled"] =
+                environment["spring.graphql.schema.introspection.enabled"] ?: true
+        }
+
         properties["spring.graphql.graphiql.enabled"] = environment.getProperty("dgs.graphql.graphiql.enabled") ?: true
         properties["spring.graphql.graphiql.path"] = environment.getProperty("dgs.graphql.graphiql.path") ?: "/graphiql"
         properties["spring.graphql.path"] = environment.getProperty("dgs.graphql.path") ?: "/graphql"
