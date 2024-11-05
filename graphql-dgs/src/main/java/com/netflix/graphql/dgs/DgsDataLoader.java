@@ -17,7 +17,6 @@
 package com.netflix.graphql.dgs;
 
 import com.netflix.graphql.dgs.internal.utils.DataLoaderNameUtil;
-import org.dataloader.registries.DispatchPredicate;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.ElementType;
@@ -31,7 +30,7 @@ import java.lang.annotation.Target;
  * The class or field must implement one of the BatchLoader interfaces.
  * See https://netflix.github.io/dgs/data-loaders/
  */
-@Target({ElementType.TYPE, ElementType.FIELD})
+@Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Component
 @Inherited

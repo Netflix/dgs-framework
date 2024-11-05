@@ -26,7 +26,9 @@ import graphql.schema.DataFetchingEnvironment
 import org.dataloader.DataLoader
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.springframework.boot.autoconfigure.AutoConfigurations
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
+import org.springframework.context.ApplicationContext
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import kotlin.reflect.KClass
@@ -107,90 +109,63 @@ internal class DgsDataFetchingEnvironmentTest {
     @Test
     fun getDataLoader() {
         contextRunner.withBeans(ExampleBatchLoader::class, HelloFetcher::class).run { context ->
-            val provider = DgsDataLoaderProvider(context)
-            provider.findDataLoaders()
-            val dataLoaderRegistry = provider.buildRegistry()
-
-            val schemaProvider =
-                DgsSchemaProvider(
-                    applicationContext = context,
-                    federationResolver = Optional.empty(),
-                    existingTypeDefinitionRegistry = Optional.empty(),
-                    methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver())),
-                )
-            val schema = schemaProvider.schema().graphQLSchema
-            val build = GraphQL.newGraphQL(schema).build()
-
-            val executionInput: ExecutionInput =
-                ExecutionInput
-                    .newExecutionInput()
-                    .query("{hello}")
-                    .dataLoaderRegistry(dataLoaderRegistry)
-                    .build()
-            val executionResult = build.execute(executionInput)
-            Assertions.assertTrue(executionResult.isDataPresent)
-            val result = executionResult.getData() as Map<String, String>
-            Assertions.assertEquals("c", result["hello"])
+            validateDataLoader(context)
         }
     }
 
     @Test
     fun getDataLoaderWithBasicDfe() {
         contextRunner.withBeans(HelloFetcherWithBasicDfe::class, ExampleBatchLoader::class).run { context ->
-            val provider = DgsDataLoaderProvider(context)
-            provider.findDataLoaders()
-            val dataLoaderRegistry = provider.buildRegistry()
-
-            val schemaProvider =
-                DgsSchemaProvider(
-                    applicationContext = context,
-                    federationResolver = Optional.empty(),
-                    existingTypeDefinitionRegistry = Optional.empty(),
-                    methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver())),
-                )
-            val schema = schemaProvider.schema().graphQLSchema
-            val build = GraphQL.newGraphQL(schema).build()
-
-            val executionInput: ExecutionInput =
-                ExecutionInput
-                    .newExecutionInput()
-                    .query("{hello}")
-                    .dataLoaderRegistry(dataLoaderRegistry)
-                    .build()
-            val executionResult = build.execute(executionInput)
-            Assertions.assertTrue(executionResult.isDataPresent)
-            val result = executionResult.getData() as Map<String, String>
-            Assertions.assertEquals("c", result["hello"])
+           validateDataLoader(context)
         }
+    }
+
+    private fun validateDataLoader(context: ApplicationContext) {
+        val provider = DgsDataLoaderProvider(context)
+        provider.findDataLoaders()
+        val dataLoaderRegistry = provider.buildRegistry()
+
+        val schemaProvider =
+            DgsSchemaProvider(
+                applicationContext = context,
+                federationResolver = Optional.empty(),
+                existingTypeDefinitionRegistry = Optional.empty(),
+                methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver(context))),
+            )
+        val schema = schemaProvider.schema().graphQLSchema
+        val build = GraphQL.newGraphQL(schema).build()
+
+        val executionInput: ExecutionInput =
+            ExecutionInput
+                .newExecutionInput()
+                .query("{hello}")
+                .dataLoaderRegistry(dataLoaderRegistry)
+                .build()
+        val executionResult = build.execute(executionInput)
+        Assertions.assertTrue(executionResult.isDataPresent)
+        val result = executionResult.getData() as Map<String, String>
+        Assertions.assertEquals("c", result["hello"])
+    }
+
+    @Test
+    fun getDataLoaderFromBean() {
+        contextRunner
+            .withConfiguration(AutoConfigurations.of(ExampleBatchLoaderFromBean::class.java))
+            .run { context ->
+                validateDataLoader(context)
+            }
+
+        contextRunner
+            .withConfiguration(AutoConfigurations.of(ExampleBatchLoaderFromBeanName::class.java))
+            .run { context ->
+                validateDataLoader(context)
+            }
     }
 
     @Test
     fun getDataLoaderFromField() {
         contextRunner.withBeans(HelloFetcherWithField::class, ExampleBatchLoaderFromField::class).run { context ->
-            val provider = DgsDataLoaderProvider(context)
-            provider.findDataLoaders()
-            val dataLoaderRegistry = provider.buildRegistry()
-
-            val schemaProvider =
-                DgsSchemaProvider(
-                    applicationContext = context,
-                    federationResolver = Optional.empty(),
-                    existingTypeDefinitionRegistry = Optional.empty(),
-                    methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver())),
-                )
-            val schema = schemaProvider.schema().graphQLSchema
-            val build = GraphQL.newGraphQL(schema).build()
-
-            val executionInput: ExecutionInput =
-                ExecutionInput
-                    .newExecutionInput()
-                    .query("{hello}")
-                    .dataLoaderRegistry(dataLoaderRegistry)
-                    .build()
-            val executionResult = build.execute(executionInput)
-            Assertions.assertTrue(executionResult.isDataPresent)
-            val result = executionResult.getData() as Map<String, String>
-            Assertions.assertEquals("c", result["hello"])
+            validateDataLoader(context)
         }
     }
 
@@ -236,7 +211,7 @@ internal class DgsDataFetchingEnvironmentTest {
                     applicationContext = context,
                     federationResolver = Optional.empty(),
                     existingTypeDefinitionRegistry = Optional.empty(),
-                    methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver())),
+                    methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver(context))),
                 )
 
             val schema = schemaProvider.schema().graphQLSchema
@@ -267,7 +242,7 @@ internal class DgsDataFetchingEnvironmentTest {
                     applicationContext = context,
                     federationResolver = Optional.empty(),
                     existingTypeDefinitionRegistry = Optional.empty(),
-                    methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver())),
+                    methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver(context))),
                 )
 
             val schema = schemaProvider.schema().graphQLSchema

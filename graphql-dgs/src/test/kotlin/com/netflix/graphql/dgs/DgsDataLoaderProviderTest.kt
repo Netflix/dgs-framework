@@ -209,6 +209,7 @@ class DgsDataLoaderProviderTest {
                             .newDataFetchingEnvironment()
                             .dataLoaderRegistry(dataLoaderRegistry)
                             .build(),
+                        context,
                     ).getDataLoader<Any, Any>(ExampleBatchLoaderWithoutName::class.java)
                 Assertions.assertNotNull(dataLoader)
             }
