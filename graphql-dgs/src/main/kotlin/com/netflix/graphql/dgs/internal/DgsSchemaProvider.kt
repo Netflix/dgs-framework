@@ -20,6 +20,7 @@ import com.apollographql.federation.graphqljava.Federation
 import com.netflix.graphql.dgs.*
 import com.netflix.graphql.dgs.exceptions.DataFetcherInputArgumentSchemaMismatchException
 import com.netflix.graphql.dgs.exceptions.DataFetcherSchemaMismatchException
+import com.netflix.graphql.dgs.exceptions.DuplicateEntityFetcherException
 import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
 import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
@@ -583,15 +584,32 @@ class DgsSchemaProvider(
                     val enableInstrumentation =
                         method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)?.value
                             ?: false
+                    val entityFetcherTypeName = dgsEntityFetcherAnnotation.name
                     if (enableInstrumentation) {
-                        val coordinateName = "__entities.${dgsEntityFetcherAnnotation.name}"
+                        val coordinateName = "__entities.$entityFetcherTypeName"
                         dataFetcherInfo.tracingEnabled += coordinateName
                         dataFetcherInfo.metricsEnabled += coordinateName
                     }
 
-                    entityFetcherRegistry.entityFetchers[dgsEntityFetcherAnnotation.name] = dgsComponent.instance to method
+                    // Throw if an entity fetcher for the same type was already registered
+                    if (entityFetcherRegistry.entityFetchers.contains(entityFetcherTypeName)) {
+                        val firstEntityFetcher = entityFetcherRegistry.entityFetchers[entityFetcherTypeName]!!
 
-                    val type = registry.getType(dgsEntityFetcherAnnotation.name)
+                        // It's possible the schema() method is invoked multiple times, so check if the second entity fetcher is different from the existing one.
+                        if (firstEntityFetcher != dgsComponent.instance to method) {
+                            throw DuplicateEntityFetcherException(
+                                entityFetcherTypeName,
+                                firstEntityFetcher.first::class.java,
+                                firstEntityFetcher.second,
+                                dgsComponent.instance::class.java,
+                                method,
+                            )
+                        }
+                    }
+
+                    entityFetcherRegistry.entityFetchers[entityFetcherTypeName] = dgsComponent.instance to method
+
+                    val type = registry.getType(entityFetcherTypeName)
 
                     if (enableEntityFetcherCustomScalarParsing) {
                         type.ifPresent {
@@ -605,7 +623,7 @@ class DgsSchemaProvider(
                                     val fieldsSelection = (fields.value as StringValue).value
                                     val paths = SelectionSetUtil.toPaths(fieldsSelection)
 
-                                    entityFetcherRegistry.entityFetcherInputMappings[dgsEntityFetcherAnnotation.name] =
+                                    entityFetcherRegistry.entityFetcherInputMappings[entityFetcherTypeName] =
                                         paths
                                             .asSequence()
                                             .mapNotNull { path ->
