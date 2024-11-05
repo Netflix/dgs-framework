@@ -116,7 +116,7 @@ internal class DgsDataFetchingEnvironmentTest {
     @Test
     fun getDataLoaderWithBasicDfe() {
         contextRunner.withBeans(HelloFetcherWithBasicDfe::class, ExampleBatchLoader::class).run { context ->
-           validateDataLoader(context)
+            validateDataLoader(context)
         }
     }
 
