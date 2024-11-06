@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2024 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,14 @@
 
 package com.netflix.graphql.dgs.exceptions
 
-class MultipleDataLoadersDefinedException(
-    vararg classes: Class<*>,
-) : RuntimeException("Multiple data loaders found, unable to disambiguate. [${classes.joinToString { it.name }}].")
+import java.lang.reflect.Method
+
+class DuplicateEntityFetcherException(
+    val entityType: String,
+    val firstEntityFetcherClass: Class<out Any>,
+    val firstEntityFetcherMethod: Method,
+    val secondEntityFetcherClass: Class<out Any>,
+    val secondEntityFetcherMethod: Method,
+) : RuntimeException(
+        "Duplicate EntityFetcherResolver found for entity type $entityType, defined by ${firstEntityFetcherClass.name}.${firstEntityFetcherMethod.name} and ${secondEntityFetcherClass.name}.${secondEntityFetcherMethod.name}",
+    )

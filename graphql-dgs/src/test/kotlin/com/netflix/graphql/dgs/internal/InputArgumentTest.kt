@@ -88,7 +88,7 @@ internal class InputArgumentTest {
                 MethodDataFetcherFactory(
                     listOf(
                         InputArgumentResolver(DefaultInputObjectMapper()),
-                        DataFetchingEnvironmentArgumentResolver(),
+                        DataFetchingEnvironmentArgumentResolver(applicationContext),
                         FallbackEnvironmentArgumentResolver(DefaultInputObjectMapper()),
                     ),
                 ),

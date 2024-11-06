@@ -22,10 +22,13 @@ import com.netflix.graphql.dgs.exceptions.NoDataLoaderFoundException
 import com.netflix.graphql.dgs.internal.utils.DataLoaderNameUtil
 import graphql.schema.DataFetchingEnvironment
 import org.dataloader.DataLoader
-import java.util.*
+import org.springframework.context.ApplicationContext
+import org.springframework.context.ConfigurableApplicationContext
+import org.springframework.core.type.StandardMethodMetadata
 
 class DgsDataFetchingEnvironment(
     private val dfe: DataFetchingEnvironment,
+    private val ctx: ApplicationContext,
 ) : DataFetchingEnvironment by dfe {
     fun getDfe(): DataFetchingEnvironment = this.dfe
 
@@ -45,12 +48,40 @@ class DgsDataFetchingEnvironment(
                 DataLoaderNameUtil.getDataLoaderName(loaderClass, annotation)
             } else {
                 val loaders = loaderClass.fields.filter { it.isAnnotationPresent(DgsDataLoader::class.java) }
-                if (loaders.size > 1) throw MultipleDataLoadersDefinedException(loaderClass)
-                val loaderField = loaders.firstOrNull() ?: throw NoDataLoaderFoundException(loaderClass)
-                val theAnnotation = loaderField.getAnnotation(DgsDataLoader::class.java)
-                theAnnotation.name
+                if (loaders.isEmpty()) {
+                    // annotation is not on the class, but potentially on the Bean definition
+                    tryGetDataLoaderFromBeanDefinition(loaderClass)
+                } else {
+                    if (loaders.size > 1) throw MultipleDataLoadersDefinedException(loaderClass)
+                    val loaderField = loaders.firstOrNull() ?: throw NoDataLoaderFoundException(loaderClass)
+                    val theAnnotation = loaderField.getAnnotation(DgsDataLoader::class.java)
+                    theAnnotation.name
+                }
             }
+
         return getDataLoader(loaderName) ?: throw NoDataLoaderFoundException("DataLoader with name $loaderName not found")
+    }
+
+    private fun tryGetDataLoaderFromBeanDefinition(loaderClass: Class<*>): String {
+        var name = loaderClass.simpleName
+        if (ctx is ConfigurableApplicationContext) {
+            val beansOfType = ctx.beanFactory.getBeansOfType(loaderClass)
+            if (beansOfType.isEmpty()) {
+                throw NoDataLoaderFoundException(loaderClass)
+            }
+            if (beansOfType.size > 1) {
+                throw MultipleDataLoadersDefinedException(loaderClass)
+            }
+            val beanName = beansOfType.keys.first()
+            val beanDefinition = ctx.beanFactory.getBeanDefinition(beanName)
+            if (beanDefinition.source is StandardMethodMetadata) {
+                val methodMetadata = beanDefinition.source as StandardMethodMetadata
+                val method = methodMetadata.introspectedMethod
+                val methodAnnotation = method.getAnnotation(DgsDataLoader::class.java)
+                name = DataLoaderNameUtil.getDataLoaderName(loaderClass, methodAnnotation)
+            }
+        }
+        return name
     }
 
     /**
