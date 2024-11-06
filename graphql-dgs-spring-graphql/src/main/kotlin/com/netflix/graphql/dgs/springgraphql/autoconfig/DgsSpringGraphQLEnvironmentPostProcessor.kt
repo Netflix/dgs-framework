@@ -20,15 +20,35 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.env.EnvironmentPostProcessor
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.MapPropertySource
+import org.springframework.core.env.get
 
 class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
+    companion object {
+        private const val SPRING_GRAPHQL_SCHEMA_INTROSPECTION_ENABLED = "spring.graphql.schema.introspection.enabled"
+        private const val DGS_GRAPHQL_INTROSPECTION_ENABLED = "dgs.graphql.introspection.enabled"
+    }
+
     override fun postProcessEnvironment(
         environment: ConfigurableEnvironment,
         application: SpringApplication,
     ) {
         val properties = mutableMapOf<String, Any>()
 
-        properties["spring.graphql.schema.introspection.enabled"] = environment.getProperty("dgs.graphql.introspection.enabled") ?: true
+        if (environment.getProperty(SPRING_GRAPHQL_SCHEMA_INTROSPECTION_ENABLED) != null &&
+            environment.getProperty(DGS_GRAPHQL_INTROSPECTION_ENABLED) != null
+        ) {
+            throw RuntimeException(
+                "Both properties `$SPRING_GRAPHQL_SCHEMA_INTROSPECTION_ENABLED` and `$DGS_GRAPHQL_INTROSPECTION_ENABLED` are explicitly set. Use `$DGS_GRAPHQL_INTROSPECTION_ENABLED` only",
+            )
+        } else if (environment.getProperty(DGS_GRAPHQL_INTROSPECTION_ENABLED) != null) {
+            properties[SPRING_GRAPHQL_SCHEMA_INTROSPECTION_ENABLED] = environment.getProperty(
+                DGS_GRAPHQL_INTROSPECTION_ENABLED,
+            ) ?: true
+        } else {
+            properties[SPRING_GRAPHQL_SCHEMA_INTROSPECTION_ENABLED] =
+                environment[SPRING_GRAPHQL_SCHEMA_INTROSPECTION_ENABLED] ?: true
+        }
+
         properties["spring.graphql.graphiql.enabled"] = environment.getProperty("dgs.graphql.graphiql.enabled") ?: true
         properties["spring.graphql.graphiql.path"] = environment.getProperty("dgs.graphql.graphiql.path") ?: "/graphiql"
         properties["spring.graphql.path"] = environment.getProperty("dgs.graphql.path") ?: "/graphql"

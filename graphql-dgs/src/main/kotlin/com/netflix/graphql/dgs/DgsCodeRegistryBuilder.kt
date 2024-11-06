@@ -23,6 +23,7 @@ import graphql.schema.DataFetchingEnvironment
 import graphql.schema.FieldCoordinates
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.GraphQLFieldDefinition
+import org.springframework.context.ApplicationContext
 
 /**
  * Utility wrapper for [GraphQLCodeRegistry.Builder] which provides
@@ -32,6 +33,7 @@ import graphql.schema.GraphQLFieldDefinition
 class DgsCodeRegistryBuilder(
     private val dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
     private val graphQLCodeRegistry: GraphQLCodeRegistry.Builder,
+    private val ctx: ApplicationContext,
 ) {
     fun dataFetcher(
         coordinates: FieldCoordinates,
@@ -67,7 +69,7 @@ class DgsCodeRegistryBuilder(
             if (dfe is DgsDataFetchingEnvironment) {
                 dfe
             } else {
-                DgsDataFetchingEnvironment(dfe)
+                DgsDataFetchingEnvironment(dfe, ctx)
             }
         return processor.process(result, env)
     }

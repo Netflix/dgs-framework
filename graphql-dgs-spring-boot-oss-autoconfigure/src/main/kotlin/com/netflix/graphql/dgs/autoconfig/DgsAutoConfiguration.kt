@@ -289,7 +289,9 @@ open class DgsAutoConfiguration(
             Duration.parse(configProps.preparsedDocumentProvider.cacheValidityDuration),
         )
 
+    // TODO: Remove when legacy modules are removed. This is also handled in DgsSpringGraphQLAutoConfiguration
     @Bean
+    @ConditionalOnMissingBean
     @ConditionalOnProperty(
         prefix = "$AUTO_CONF_PREFIX.introspection",
         name = ["enabled"],
