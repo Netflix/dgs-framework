@@ -23,23 +23,30 @@ import org.springframework.core.env.MapPropertySource
 import org.springframework.core.env.get
 
 class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
+    companion object {
+        private const val SPRING_GRAPHQL_SCHEMA_INTROSPECTION_ENABLED = "spring.graphql.schema.introspection.enabled"
+        private const val DGS_GRAPHQL_INTROSPECTION_ENABLED = "dgs.graphql.introspection.enabled"
+    }
+
     override fun postProcessEnvironment(
         environment: ConfigurableEnvironment,
         application: SpringApplication,
     ) {
         val properties = mutableMapOf<String, Any>()
 
-        if (environment.getProperty("spring.graphql.schema.introspection.enabled") != null &&
-            environment.getProperty("dgs.graphql.introspection.enabled") != null
+        if (environment.getProperty(SPRING_GRAPHQL_SCHEMA_INTROSPECTION_ENABLED) != null &&
+            environment.getProperty(DGS_GRAPHQL_INTROSPECTION_ENABLED) != null
         ) {
             throw RuntimeException(
-                "Both properties `spring.graphql.schema.introspection.enabled` and `dgs.graphql.introspection.enabled` are explicitly set. Use `dgs.graphql.introspection.enabled` only",
+                "Both properties `$SPRING_GRAPHQL_SCHEMA_INTROSPECTION_ENABLED` and `$DGS_GRAPHQL_INTROSPECTION_ENABLED` are explicitly set. Use `$DGS_GRAPHQL_INTROSPECTION_ENABLED` only",
             )
-        } else if (environment.getProperty("dgs.graphql.introspection.enabled") != null) {
-            properties["spring.graphql.schema.introspection.enabled"] = environment.getProperty("dgs.graphql.introspection.enabled") ?: true
+        } else if (environment.getProperty(DGS_GRAPHQL_INTROSPECTION_ENABLED) != null) {
+            properties[SPRING_GRAPHQL_SCHEMA_INTROSPECTION_ENABLED] = environment.getProperty(
+                DGS_GRAPHQL_INTROSPECTION_ENABLED,
+            ) ?: true
         } else {
-            properties["spring.graphql.schema.introspection.enabled"] =
-                environment["spring.graphql.schema.introspection.enabled"] ?: true
+            properties[SPRING_GRAPHQL_SCHEMA_INTROSPECTION_ENABLED] =
+                environment[SPRING_GRAPHQL_SCHEMA_INTROSPECTION_ENABLED] ?: true
         }
 
         properties["spring.graphql.graphiql.enabled"] = environment.getProperty("dgs.graphql.graphiql.enabled") ?: true
