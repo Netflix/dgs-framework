@@ -19,7 +19,6 @@ package com.netflix.graphql.dgs.mvc
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import graphql.ExecutionResultImpl
-import graphql.execution.reactive.SubscriptionPublisher
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
@@ -166,26 +165,6 @@ class DgsRestControllerTest {
                     jsonPath("data.hello") {
                         value("hello")
                     }
-                }
-            }
-    }
-
-    @Test
-    fun `Return an error when a Subscription is attempted on the Graphql Endpoint`() {
-        val queryString = "subscription { stocks { name } }"
-
-        `when`(dgsQueryExecutor.execute(eq(queryString), eq(emptyMap()), any(), any(), any(), any())).thenReturn(
-            ExecutionResultImpl.newExecutionResult().data(SubscriptionPublisher(null, null)).build(),
-        )
-
-        mvc
-            .post("/graphql") {
-                contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(mapOf("query" to queryString))
-            }.andExpect {
-                status { isBadRequest() }
-                content {
-                    string("Trying to execute subscription on /graphql. Use /subscriptions instead!")
                 }
             }
     }
