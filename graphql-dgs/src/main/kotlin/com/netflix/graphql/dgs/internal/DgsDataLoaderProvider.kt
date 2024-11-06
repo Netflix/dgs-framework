@@ -37,6 +37,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.aop.support.AopUtils
 import org.springframework.beans.factory.NoSuchBeanDefinitionException
 import org.springframework.context.ApplicationContext
+import org.springframework.context.ConfigurableApplicationContext
+import org.springframework.core.type.StandardMethodMetadata
 import org.springframework.util.ReflectionUtils
 import java.time.Duration
 import java.util.concurrent.Executors
@@ -128,19 +130,37 @@ class DgsDataLoaderProvider(
 
     private fun addDataLoaderComponents() {
         val dataLoaders = applicationContext.getBeansWithAnnotation(DgsDataLoader::class.java)
-        dataLoaders.values.forEach { dgsComponent ->
-            val javaClass = AopUtils.getTargetClass(dgsComponent)
+        dataLoaders.forEach { (beanName, beanInstance) ->
+            val javaClass = AopUtils.getTargetClass(beanInstance)
+
+            // check for class-level annotations
             val annotation = javaClass.getAnnotation(DgsDataLoader::class.java)
-            val dataLoaderName = DataLoaderNameUtil.getDataLoaderName(javaClass, annotation)
-            val predicateField = javaClass.declaredFields.find { it.isAnnotationPresent(DgsDispatchPredicate::class.java) }
-            if (predicateField != null) {
-                ReflectionUtils.makeAccessible(predicateField)
-                val dispatchPredicate = predicateField.get(dgsComponent)
-                if (dispatchPredicate is DispatchPredicate) {
-                    addDataLoader(dgsComponent, dataLoaderName, javaClass, annotation, dispatchPredicate)
+            if (annotation != null) {
+                val dataLoaderName = DataLoaderNameUtil.getDataLoaderName(javaClass, annotation)
+                val predicateField = javaClass.declaredFields.find { it.isAnnotationPresent(DgsDispatchPredicate::class.java) }
+                if (predicateField != null) {
+                    ReflectionUtils.makeAccessible(predicateField)
+                    val dispatchPredicate = predicateField.get(beanInstance)
+                    if (dispatchPredicate is DispatchPredicate) {
+                        addDataLoader(beanInstance, dataLoaderName, javaClass, annotation, dispatchPredicate)
+                    }
+                } else {
+                    addDataLoader(beanInstance, dataLoaderName, javaClass, annotation)
                 }
             } else {
-                addDataLoader(dgsComponent, dataLoaderName, javaClass, annotation)
+                // Check for method-level bean annotations in configuration classes
+                if (applicationContext is ConfigurableApplicationContext) {
+                    val beanDefinition = applicationContext.beanFactory.getBeanDefinition(beanName)
+                    if (beanDefinition.source is StandardMethodMetadata) {
+                        val methodMetadata = beanDefinition.source as StandardMethodMetadata
+                        val method = methodMetadata.introspectedMethod
+                        val methodAnnotation = method.getAnnotation(DgsDataLoader::class.java)
+                        if (methodAnnotation != null) {
+                            val dataLoaderName = DataLoaderNameUtil.getDataLoaderName(javaClass, methodAnnotation)
+                            addDataLoader(beanInstance, dataLoaderName, javaClass, methodAnnotation, null)
+                        }
+                    }
+                }
             }
         }
     }

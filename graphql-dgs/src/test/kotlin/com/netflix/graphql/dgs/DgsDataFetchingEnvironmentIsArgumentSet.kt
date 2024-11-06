@@ -43,7 +43,7 @@ class DgsDataFetchingEnvironmentIsArgumentSet {
                     methodDataFetcherFactory =
                         MethodDataFetcherFactory(
                             listOf(
-                                DataFetchingEnvironmentArgumentResolver(),
+                                DataFetchingEnvironmentArgumentResolver(context),
                                 InputArgumentResolver(
                                     DefaultInputObjectMapper(),
                                 ),
