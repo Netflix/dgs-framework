@@ -81,10 +81,16 @@ class DgsDataLoaderProviderTest {
     @Test
     fun detectDuplicateDataLoaders() {
         applicationContextRunner.withBean(ExampleBatchLoader::class.java).withBean(ExampleDuplicateBatchLoader::class.java).run { context ->
-            val provider = context.getBean(DgsDataLoaderProvider::class.java)
-            assertThrows<MultipleDataLoadersDefinedException> {
-                provider.buildRegistry()
-            }
+            val exc =
+                assertThrows<IllegalStateException> {
+                    val provider = context.getBean(DgsDataLoaderProvider::class.java)
+                    provider.buildRegistry()
+                }
+
+            assertThat(exc.cause)
+                .isInstanceOf(BeanCreationException::class.java)
+                .rootCause()
+                .isInstanceOf(MultipleDataLoadersDefinedException::class.java)
         }
     }
 
