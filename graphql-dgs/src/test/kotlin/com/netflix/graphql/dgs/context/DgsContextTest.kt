@@ -78,7 +78,7 @@ internal class DgsContextTest {
                     MethodDataFetcherFactory(
                         listOf(
                             InputArgumentResolver(DefaultInputObjectMapper()),
-                            DataFetchingEnvironmentArgumentResolver(),
+                            DataFetchingEnvironmentArgumentResolver(context),
                         ),
                     ),
             )

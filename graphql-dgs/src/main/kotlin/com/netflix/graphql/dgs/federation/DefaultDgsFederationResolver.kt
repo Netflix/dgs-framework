@@ -40,6 +40,7 @@ import org.dataloader.Try
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationContext
 import org.springframework.util.ReflectionUtils
 import reactor.core.publisher.Mono
 import java.lang.reflect.InvocationTargetException
@@ -59,9 +60,11 @@ open class DefaultDgsFederationResolver() : DgsFederationResolver {
     constructor(
         entityFetcherRegistry: EntityFetcherRegistry,
         dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler>,
+        applicationContext: ApplicationContext,
     ) : this() {
         this.entityFetcherRegistry = entityFetcherRegistry
-        dgsExceptionHandler = dataFetcherExceptionHandler
+        this.dgsExceptionHandler = dataFetcherExceptionHandler
+        this.applicationContext = applicationContext
     }
 
     /**
@@ -72,6 +75,9 @@ open class DefaultDgsFederationResolver() : DgsFederationResolver {
 
     @Autowired
     lateinit var dgsExceptionHandler: Optional<DataFetcherExceptionHandler>
+
+    @Autowired
+    lateinit var applicationContext: ApplicationContext
 
     private val entitiesDataFetcher: DataFetcher<Any?> = DataFetcher { env -> dgsEntityFetchers(env) }
 
@@ -139,7 +145,12 @@ open class DefaultDgsFederationResolver() : DgsFederationResolver {
 
                             val result =
                                 if (parameterTypes.last().isAssignableFrom(DgsDataFetchingEnvironment::class.java)) {
-                                    ReflectionUtils.invokeMethod(method, target, coercedValues, DgsDataFetchingEnvironment(env))
+                                    ReflectionUtils.invokeMethod(
+                                        method,
+                                        target,
+                                        coercedValues,
+                                        DgsDataFetchingEnvironment(env, applicationContext),
+                                    )
                                 } else {
                                     ReflectionUtils.invokeMethod(method, target, coercedValues)
                                 }
@@ -216,6 +227,7 @@ open class DefaultDgsFederationResolver() : DgsFederationResolver {
         val dfe = if (env is DgsDataFetchingEnvironment) env.getDfe() else env
         return DgsDataFetchingEnvironment(
             DataFetchingEnvironmentImpl.newDataFetchingEnvironment(dfe).executionStepInfo(executionStepInfoWithPath).build(),
+            applicationContext,
         )
     }
 

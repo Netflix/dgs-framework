@@ -91,7 +91,7 @@ internal class DgsSchemaProviderTest {
                 MethodDataFetcherFactory(
                     listOf(
                         InputArgumentResolver(DefaultInputObjectMapper()),
-                        DataFetchingEnvironmentArgumentResolver(),
+                        DataFetchingEnvironmentArgumentResolver(applicationContext),
                     ),
                 ),
             componentFilter = componentFilter,
