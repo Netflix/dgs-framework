@@ -63,6 +63,7 @@ class DgsDataLoaderProvider(
         val dispatchPredicate: DispatchPredicate? = null,
     )
 
+    private val dataLoaders = mutableMapOf<String, Class<*>>()
     private val batchLoaders = mutableListOf<LoaderHolder<BatchLoader<*, *>>>()
     private val batchLoadersWithContext = mutableListOf<LoaderHolder<BatchLoaderWithContext<*, *>>>()
     private val mappedBatchLoaders = mutableListOf<LoaderHolder<MappedBatchLoader<*, *>>>()
@@ -120,14 +121,7 @@ class DgsDataLoaderProvider(
                         throw DgsUnnamedDataLoaderOnFieldException(field)
                     }
 
-                    fun <T : Any> createHolder(t: T): LoaderHolder<T> = LoaderHolder(t, annotation, annotation.name)
-                    when (val dataLoader = runCustomizers(field.get(dgsComponent), annotation.name, dgsComponent::class.java)) {
-                        is BatchLoader<*, *> -> batchLoaders.add(createHolder(dataLoader))
-                        is BatchLoaderWithContext<*, *> -> batchLoadersWithContext.add(createHolder(dataLoader))
-                        is MappedBatchLoader<*, *> -> mappedBatchLoaders.add(createHolder(dataLoader))
-                        is MappedBatchLoaderWithContext<*, *> -> mappedBatchLoadersWithContext.add(createHolder(dataLoader))
-                        else -> throw InvalidDataLoaderTypeException(dgsComponent::class.java)
-                    }
+                    addDataLoader(field.get(dgsComponent), annotation.name, dgsComponent::class.java, annotation)
                 }
         }
     }
@@ -137,36 +131,40 @@ class DgsDataLoaderProvider(
         dataLoaders.values.forEach { dgsComponent ->
             val javaClass = AopUtils.getTargetClass(dgsComponent)
             val annotation = javaClass.getAnnotation(DgsDataLoader::class.java)
+            val dataLoaderName = DataLoaderNameUtil.getDataLoaderName(javaClass, annotation)
             val predicateField = javaClass.declaredFields.find { it.isAnnotationPresent(DgsDispatchPredicate::class.java) }
             if (predicateField != null) {
                 ReflectionUtils.makeAccessible(predicateField)
                 val dispatchPredicate = predicateField.get(dgsComponent)
                 if (dispatchPredicate is DispatchPredicate) {
-                    addDataLoaders(dgsComponent, javaClass, annotation, dispatchPredicate)
+                    addDataLoader(dgsComponent, dataLoaderName, javaClass, annotation, dispatchPredicate)
                 }
             } else {
-                addDataLoaders(dgsComponent, javaClass, annotation, null)
+                addDataLoader(dgsComponent, dataLoaderName, javaClass, annotation)
             }
         }
     }
 
-    private fun <T : Any> addDataLoaders(
-        dgsComponent: T,
-        targetClass: Class<*>,
+    private fun <T : Any> addDataLoader(
+        dataLoader: T,
+        dataLoaderName: String,
+        dgsComponentClass: Class<*>,
         annotation: DgsDataLoader,
-        dispatchPredicate: DispatchPredicate?,
+        dispatchPredicate: DispatchPredicate? = null,
     ) {
-        val name = DataLoaderNameUtil.getDataLoaderName(targetClass, annotation)
+        if (dataLoaders.contains(dataLoaderName)) {
+            throw MultipleDataLoadersDefinedException(dgsComponentClass, dataLoaders.getValue(dataLoaderName))
+        }
+        dataLoaders[dataLoaderName] = dgsComponentClass
 
-        fun <T : Any> createHolder(t: T): LoaderHolder<T> =
-            LoaderHolder(t, annotation, DataLoaderNameUtil.getDataLoaderName(targetClass, annotation), dispatchPredicate)
+        fun <T : Any> createHolder(t: T): LoaderHolder<T> = LoaderHolder(t, annotation, dataLoaderName, dispatchPredicate)
 
-        when (val dataLoader = runCustomizers(dgsComponent, name, dgsComponent::class.java)) {
-            is BatchLoader<*, *> -> batchLoaders.add(createHolder(dataLoader))
-            is BatchLoaderWithContext<*, *> -> batchLoadersWithContext.add(createHolder(dataLoader))
-            is MappedBatchLoader<*, *> -> mappedBatchLoaders.add(createHolder(dataLoader))
-            is MappedBatchLoaderWithContext<*, *> -> mappedBatchLoadersWithContext.add(createHolder(dataLoader))
-            else -> throw InvalidDataLoaderTypeException(dgsComponent::class.java)
+        when (val customizedDataLoader = runCustomizers(dataLoader, dataLoaderName, dgsComponentClass)) {
+            is BatchLoader<*, *> -> batchLoaders.add(createHolder(customizedDataLoader))
+            is BatchLoaderWithContext<*, *> -> batchLoadersWithContext.add(createHolder(customizedDataLoader))
+            is MappedBatchLoader<*, *> -> mappedBatchLoaders.add(createHolder(customizedDataLoader))
+            is MappedBatchLoaderWithContext<*, *> -> mappedBatchLoadersWithContext.add(createHolder(customizedDataLoader))
+            else -> throw InvalidDataLoaderTypeException(dgsComponentClass)
         }
     }
 
