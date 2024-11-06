@@ -184,7 +184,7 @@ class DgsSchemaProvider(
         val runtimeWiringBuilder =
             RuntimeWiring.newRuntimeWiring().codeRegistry(codeRegistryBuilder).fieldVisibility(fieldVisibility)
 
-        val dgsCodeRegistryBuilder = DgsCodeRegistryBuilder(dataFetcherResultProcessors, codeRegistryBuilder)
+        val dgsCodeRegistryBuilder = DgsCodeRegistryBuilder(dataFetcherResultProcessors, codeRegistryBuilder, applicationContext)
 
         dgsComponents
             .asSequence()
@@ -218,6 +218,7 @@ class DgsSchemaProvider(
                 DefaultDgsFederationResolver(
                     entityFetcherRegistry,
                     dataFetcherExceptionHandler,
+                    applicationContext,
                 )
             }
 
@@ -270,7 +271,7 @@ class DgsSchemaProvider(
         codeRegistryBuilder: GraphQLCodeRegistry.Builder,
         registry: TypeDefinitionRegistry,
     ) {
-        val dgsCodeRegistryBuilder = DgsCodeRegistryBuilder(dataFetcherResultProcessors, codeRegistryBuilder)
+        val dgsCodeRegistryBuilder = DgsCodeRegistryBuilder(dataFetcherResultProcessors, codeRegistryBuilder, applicationContext)
 
         dgsComponent
             .annotatedMethods<DgsCodeRegistry>()

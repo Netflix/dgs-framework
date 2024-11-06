@@ -106,7 +106,7 @@ class DefaultDgsFederationResolverTest {
             val graphQLSchema: GraphQLSchema = buildGraphQLSchema(schema)
 
             val type =
-                DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
+                DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler), applicationContextMock)
                     .typeResolver()
                     .getType(
                         TypeResolutionParameters
@@ -130,7 +130,7 @@ class DefaultDgsFederationResolverTest {
             val graphQLSchema: GraphQLSchema = buildGraphQLSchema(schema)
 
             val type =
-                DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
+                DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler), applicationContextMock)
                     .typeResolver()
                     .getType(
                         TypeResolutionParameters
@@ -159,7 +159,7 @@ class DefaultDgsFederationResolverTest {
 
             val graphQLSchema: GraphQLSchema = buildGraphQLSchema(schema)
             val customTypeResolver =
-                object : DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler)) {
+                object : DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler), applicationContextMock) {
                     override fun typeMapping(): Map<Class<*>, String> = mapOf(Movie::class.java to "DgsMovie")
                 }
 
@@ -180,7 +180,7 @@ class DefaultDgsFederationResolverTest {
             val dataFetchingEnvironment = constructDFE(arguments)
             val result =
                 (
-                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
+                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler), applicationContextMock)
                         .entitiesFetcher()
                         .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
                 )
@@ -197,7 +197,7 @@ class DefaultDgsFederationResolverTest {
             val dataFetchingEnvironment = constructDFE(arguments)
             val result =
                 (
-                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
+                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler), applicationContextMock)
                         .entitiesFetcher()
                         .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
                 )
@@ -291,7 +291,7 @@ class DefaultDgsFederationResolverTest {
 
             val result =
                 (
-                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
+                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler), applicationContextMock)
                         .entitiesFetcher()
                         .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
                 )
@@ -351,7 +351,7 @@ class DefaultDgsFederationResolverTest {
 
             val result =
                 (
-                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
+                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler), applicationContextMock)
                         .entitiesFetcher()
                         .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
                 )
@@ -422,7 +422,7 @@ class DefaultDgsFederationResolverTest {
 
             val result =
                 (
-                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
+                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler), applicationContextMock)
                         .entitiesFetcher()
                         .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
                 )
@@ -449,7 +449,7 @@ class DefaultDgsFederationResolverTest {
 
             val result =
                 (
-                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
+                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler), applicationContextMock)
                         .entitiesFetcher()
                         .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
                 )
@@ -488,7 +488,7 @@ class DefaultDgsFederationResolverTest {
 
             val result =
                 (
-                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
+                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler), applicationContextMock)
                         .entitiesFetcher()
                         .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
                 )
@@ -572,7 +572,7 @@ class DefaultDgsFederationResolverTest {
 
             val result =
                 (
-                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(customExceptionHandler))
+                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(customExceptionHandler), applicationContextMock)
                         .entitiesFetcher()
                         .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
                 )
@@ -624,7 +624,7 @@ class DefaultDgsFederationResolverTest {
             val dataFetchingEnvironment = constructDFE(arguments)
 
             val result =
-                DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
+                DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler), applicationContextMock)
                     .entitiesFetcher()
                     .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
 
@@ -670,7 +670,7 @@ class DefaultDgsFederationResolverTest {
             val dataFetchingEnvironment = constructDFE(arguments)
 
             val result =
-                DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
+                DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler), applicationContextMock)
                     .entitiesFetcher()
                     .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
 
@@ -758,7 +758,7 @@ class DefaultDgsFederationResolverTest {
 
             // Invoke the entitiesFetcher to get the result
             val result =
-                DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(customExceptionHandler))
+                DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(customExceptionHandler), applicationContextMock)
                     .entitiesFetcher()
                     .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
 
@@ -821,7 +821,7 @@ class DefaultDgsFederationResolverTest {
             val dataFetchingEnvironment = constructDFE(arguments)
 
             val result =
-                DefaultDgsFederationResolver(entityFetcherRegistry, Optional.empty())
+                DefaultDgsFederationResolver(entityFetcherRegistry, Optional.empty(), applicationContextMock)
                     .entitiesFetcher()
                     .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
 
@@ -844,7 +844,7 @@ class DefaultDgsFederationResolverTest {
 
             val result =
                 (
-                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler))
+                    DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler), applicationContextMock)
                         .entitiesFetcher()
                         .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
                 )
@@ -889,6 +889,7 @@ class DefaultDgsFederationResolverTest {
                 .executionStepInfo(executionStepInfo)
                 .mergedField(MergedField.newMergedField(Field("Movie")).build())
                 .build(),
+            applicationContextMock,
         )
     }
 

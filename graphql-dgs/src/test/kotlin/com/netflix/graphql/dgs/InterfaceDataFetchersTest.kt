@@ -99,7 +99,10 @@ class InterfaceDataFetchersTest {
                 applicationContext = applicationContextMock,
                 federationResolver = Optional.empty(),
                 existingTypeDefinitionRegistry = Optional.empty(),
-                methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver())),
+                methodDataFetcherFactory =
+                    MethodDataFetcherFactory(
+                        listOf(DataFetchingEnvironmentArgumentResolver(applicationContextMock)),
+                    ),
             )
         val schema =
             provider
