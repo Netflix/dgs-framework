@@ -250,7 +250,7 @@ open class DgsSpringGraphQLAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        open fun serverWebExchangeContextFilter(): ServerWebExchangeContextFilter = ServerWebExchangeContextFilter()
+        open fun dgsServerWebExchangeContextFilter(): ServerWebExchangeContextFilter = ServerWebExchangeContextFilter()
     }
 
     @Configuration(proxyBeanMethods = false)
