@@ -120,7 +120,6 @@ open class DgsSpringGraphQLAutoConfiguration {
     ): GraphQlSourceBuilderCustomizer =
         GraphQlSourceBuilderCustomizer { builder ->
             builder.configureGraphQl { graphQlBuilder ->
-
                 if (preparsedDocumentProvider.isPresent) {
                     graphQlBuilder
                         .preparsedDocumentProvider(preparsedDocumentProvider.get())
@@ -160,12 +159,14 @@ open class DgsSpringGraphQLAutoConfiguration {
         dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
         dgsDataLoaderProvider: DgsDataLoaderProvider,
         requestCustomizer: ObjectProvider<DgsQueryExecutorRequestCustomizer>,
+        graphQLContextContributors: List<GraphQLContextContributor>,
     ): DgsQueryExecutor =
         SpringGraphQLDgsQueryExecutor(
             executionService,
             dgsContextBuilder,
             dgsDataLoaderProvider,
             requestCustomizer = requestCustomizer.getIfAvailable(DgsQueryExecutorRequestCustomizer::DEFAULT_REQUEST_CUSTOMIZER),
+            graphQLContextContributors,
         )
 
     @Configuration(proxyBeanMethods = false)

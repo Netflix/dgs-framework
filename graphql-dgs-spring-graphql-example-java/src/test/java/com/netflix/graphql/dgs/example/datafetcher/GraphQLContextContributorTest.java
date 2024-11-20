@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package com.netflix.graphql.dgs.example.datafetcher;import com.netflix.graphql.dgs.DgsQueryExecutor;
-import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration;
-import com.netflix.graphql.dgs.autoconfig.DgsExtendedScalarsAutoConfiguration;
-import com.netflix.graphql.dgs.example.context.MyContextBuilder;
-import com.netflix.graphql.dgs.example.datafetcher.HelloDataFetcher;
-import com.netflix.graphql.dgs.example.shared.context.ExampleGraphQLContextContributor;
-import com.netflix.graphql.dgs.example.shared.dataLoader.ExampleLoaderWithContext;
-import com.netflix.graphql.dgs.example.shared.dataLoader.ExampleLoaderWithGraphQLContext;
+package com.netflix.graphql.dgs.example.datafetcher;
+
+import com.netflix.graphql.dgs.DgsQueryExecutor;
 import com.netflix.graphql.dgs.example.shared.datafetcher.RequestHeadersDataFetcher;
-import com.netflix.graphql.dgs.example.shared.instrumentation.ExampleInstrumentationDependingOnContextContributor;
 import com.netflix.graphql.dgs.example.shared.datafetcher.MovieDataFetcher;
-import com.netflix.graphql.dgs.pagination.DgsPaginationAutoConfiguration;
 import com.netflix.graphql.dgs.test.EnableDgsTest;
-import graphql.scalars.ExtendedScalars;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
