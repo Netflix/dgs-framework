@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.springgraphql.webmvc
 
+import com.netflix.graphql.dgs.context.GraphQLContextContributor
 import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsWebMvcRequestData
@@ -29,12 +30,12 @@ import org.springframework.web.context.request.ServletRequestAttributes
 import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
 import reactor.core.publisher.Mono
-import java.util.concurrent.CompletableFuture
 
 class DgsWebMvcGraphQLInterceptor(
     private val dgsDataLoaderProvider: DgsDataLoaderProvider,
     private val dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
     private val dgsSpringConfigurationProperties: DgsSpringGraphQLConfigurationProperties,
+    private val graphQLContextContributors: List<GraphQLContextContributor>,
 ) : WebGraphQlInterceptor {
     override fun intercept(
         request: WebGraphQlRequest,
@@ -55,8 +56,19 @@ class DgsWebMvcGraphQLInterceptor(
             } else {
                 dgsContextBuilder.build(DgsWebMvcRequestData(request.extensions, request.headers))
             }
-        val graphQLContextFuture = CompletableFuture<GraphQLContext>()
-        val dataLoaderRegistry = dgsDataLoaderProvider.buildRegistryWithContextSupplier { graphQLContextFuture.get() }
+        val dataLoaderRegistry =
+            dgsDataLoaderProvider.buildRegistryWithContextSupplier {
+                val graphQLContext = request.toExecutionInput().graphQLContext
+                if (graphQLContextContributors.isNotEmpty()) {
+                    val extensions = request.extensions
+                    val requestData = dgsContext.requestData
+                    val builderForContributors = GraphQLContext.newContext()
+                    graphQLContextContributors.forEach { it.contribute(builderForContributors, extensions, requestData) }
+                    graphQLContext.putAll(builderForContributors)
+                }
+
+                graphQLContext
+            }
 
         request.configureExecutionInput { _, builder ->
             builder
@@ -65,7 +77,6 @@ class DgsWebMvcGraphQLInterceptor(
                 .dataLoaderRegistry(dataLoaderRegistry)
                 .build()
         }
-        graphQLContextFuture.complete(request.toExecutionInput().graphQLContext)
 
         return if (dgsSpringConfigurationProperties.webmvc.asyncdispatch.enabled) {
             chain.next(request).doFinally {

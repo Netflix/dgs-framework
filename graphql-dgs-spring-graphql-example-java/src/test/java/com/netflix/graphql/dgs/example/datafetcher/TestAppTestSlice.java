@@ -20,6 +20,7 @@ import com.netflix.graphql.dgs.autoconfig.DgsExtendedScalarsAutoConfiguration;
 import com.netflix.graphql.dgs.example.context.MyContextBuilder;
 import com.netflix.graphql.dgs.example.shared.context.ExampleGraphQLContextContributor;
 import com.netflix.graphql.dgs.example.shared.dataLoader.ExampleLoaderWithContext;
+import com.netflix.graphql.dgs.example.shared.dataLoader.ExampleLoaderWithGraphQLContext;
 import com.netflix.graphql.dgs.example.shared.dataLoader.MessageDataLoader;
 import com.netflix.graphql.dgs.example.shared.instrumentation.ExampleInstrumentationDependingOnContextContributor;
 import com.netflix.graphql.dgs.pagination.DgsPaginationAutoConfiguration;
@@ -36,6 +37,7 @@ import java.lang.annotation.*;
 @Import({MessageDataLoader.class,
         UploadScalar.class,
         ExampleLoaderWithContext.class,
+        ExampleLoaderWithGraphQLContext.class,
         ExampleGraphQLContextContributor.class,
         ExampleInstrumentationDependingOnContextContributor.class,
         MyContextBuilder.class

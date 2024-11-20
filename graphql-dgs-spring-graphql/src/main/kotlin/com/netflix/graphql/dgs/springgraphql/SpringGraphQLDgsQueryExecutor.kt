@@ -21,6 +21,7 @@ import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.context.GraphQLContextContributor
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor
@@ -42,6 +43,7 @@ class SpringGraphQLDgsQueryExecutor(
     private val dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
     private val dgsDataLoaderProvider: DgsDataLoaderProvider,
     private val requestCustomizer: DgsQueryExecutorRequestCustomizer = DgsQueryExecutorRequestCustomizer.DEFAULT_REQUEST_CUSTOMIZER,
+    private val graphQLContextContributors: List<GraphQLContextContributor>,
 ) : DgsQueryExecutor {
     override fun execute(
         query: String,
@@ -63,8 +65,18 @@ class SpringGraphQLDgsQueryExecutor(
 
         val httpRequest = requestCustomizer.apply(webRequest ?: RequestContextHolder.getRequestAttributes() as? WebRequest, headers)
         val dgsContext = dgsContextBuilder.build(DgsWebMvcRequestData(request.extensions, headers, httpRequest))
-        lateinit var graphQLContext: GraphQLContext
-        val dataLoaderRegistry = dgsDataLoaderProvider.buildRegistryWithContextSupplier { graphQLContext }
+        val dataLoaderRegistry =
+            dgsDataLoaderProvider.buildRegistryWithContextSupplier {
+                val graphQLContext = request.toExecutionInput().graphQLContext
+                if (graphQLContextContributors.isNotEmpty()) {
+                    val requestData = dgsContext.requestData
+                    val builderForContributors = GraphQLContext.newContext()
+                    graphQLContextContributors.forEach { it.contribute(builderForContributors, extensions, requestData) }
+                    graphQLContext.putAll(builderForContributors)
+                }
+
+                graphQLContext
+            }
 
         request.configureExecutionInput { _, builder ->
             builder
@@ -73,8 +85,6 @@ class SpringGraphQLDgsQueryExecutor(
                 .dataLoaderRegistry(dataLoaderRegistry)
                 .build()
         }
-
-        graphQLContext = request.toExecutionInput().graphQLContext
 
         val response =
             executionService.execute(request).block() ?: throw IllegalStateException("Unexpected null response from Spring GraphQL client")

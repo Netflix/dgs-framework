@@ -159,12 +159,14 @@ open class DgsSpringGraphQLAutoConfiguration {
         dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
         dgsDataLoaderProvider: DgsDataLoaderProvider,
         requestCustomizer: ObjectProvider<DgsQueryExecutorRequestCustomizer>,
+        graphQLContextContributors: List<GraphQLContextContributor>,
     ): DgsQueryExecutor =
         SpringGraphQLDgsQueryExecutor(
             executionService,
             dgsContextBuilder,
             dgsDataLoaderProvider,
             requestCustomizer = requestCustomizer.getIfAvailable(DgsQueryExecutorRequestCustomizer::DEFAULT_REQUEST_CUSTOMIZER),
+            graphQLContextContributors,
         )
 
     @Configuration(proxyBeanMethods = false)
@@ -176,11 +178,13 @@ open class DgsSpringGraphQLAutoConfiguration {
         open fun dgsGraphQlInterceptor(
             dgsDataLoaderProvider: DgsDataLoaderProvider,
             dgsDefaultContextBuilder: DefaultDgsGraphQLContextBuilder,
+            graphQLContextContributors: List<GraphQLContextContributor>,
         ): DgsWebMvcGraphQLInterceptor =
             DgsWebMvcGraphQLInterceptor(
                 dgsDataLoaderProvider,
                 dgsDefaultContextBuilder,
                 dgsSpringGraphQLConfigurationProperties,
+                graphQLContextContributors,
             )
     }
 
