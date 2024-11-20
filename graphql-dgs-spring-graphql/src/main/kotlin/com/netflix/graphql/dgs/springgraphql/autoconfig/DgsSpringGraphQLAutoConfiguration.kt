@@ -120,6 +120,7 @@ open class DgsSpringGraphQLAutoConfiguration {
     ): GraphQlSourceBuilderCustomizer =
         GraphQlSourceBuilderCustomizer { builder ->
             builder.configureGraphQl { graphQlBuilder ->
+
                 if (preparsedDocumentProvider.isPresent) {
                     graphQlBuilder
                         .preparsedDocumentProvider(preparsedDocumentProvider.get())
@@ -176,11 +177,13 @@ open class DgsSpringGraphQLAutoConfiguration {
         open fun dgsGraphQlInterceptor(
             dgsDataLoaderProvider: DgsDataLoaderProvider,
             dgsDefaultContextBuilder: DefaultDgsGraphQLContextBuilder,
+            graphQLContextContributors: List<GraphQLContextContributor>,
         ): DgsWebMvcGraphQLInterceptor =
             DgsWebMvcGraphQLInterceptor(
                 dgsDataLoaderProvider,
                 dgsDefaultContextBuilder,
                 dgsSpringGraphQLConfigurationProperties,
+                graphQLContextContributors,
             )
     }
 
