@@ -99,7 +99,7 @@ class RestClientGraphQLClient(
         if (!responseEntity.statusCode.is2xxSuccessful) {
             throw GraphQLClientException(
                 statusCode = responseEntity.statusCode.value(),
-                url = restClient.toString(),
+                url = "",
                 response = responseEntity.body ?: "",
                 request = serializedRequest,
             )
