@@ -674,7 +674,7 @@
             ]
         },
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.0.0",
+            "locked": "5.2.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
@@ -738,7 +738,7 @@
             ]
         },
         "com.google.protobuf:protobuf-java": {
-            "locked": "4.26.1",
+            "locked": "4.27.1",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support"
             ]
@@ -1700,7 +1700,7 @@
     },
     "runtimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.0.0",
+            "locked": "5.2.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
@@ -1764,7 +1764,7 @@
             ]
         },
         "com.google.protobuf:protobuf-java": {
-            "locked": "4.26.1",
+            "locked": "4.27.1",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support"
             ]
@@ -2990,7 +2990,7 @@
             ]
         },
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.0.0",
+            "locked": "5.2.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
@@ -3054,7 +3054,7 @@
             ]
         },
         "com.google.protobuf:protobuf-java": {
-            "locked": "4.26.1",
+            "locked": "4.27.1",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support"
             ]
