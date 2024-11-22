@@ -49,15 +49,13 @@ dependencies {
         // GraphQL Platform
         api("com.graphql-java:graphql-java") {
             version {
-                strictly("22.1")
-                prefer("22.1")
+                prefer("22.3")
                 reject("[20.6, 19.5, 18.2]")
             }
 
         }
         api("com.graphql-java:java-dataloader") {
             version {
-                strictly("[3.3.0]")
                 prefer("3.3.0")
                 reject("[3.2.1]")
             }
