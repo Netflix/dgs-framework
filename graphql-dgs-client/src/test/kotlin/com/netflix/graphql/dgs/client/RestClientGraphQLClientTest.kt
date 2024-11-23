@@ -34,6 +34,7 @@ import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatException
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -45,6 +46,7 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestClient
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -80,6 +82,27 @@ class RestClientGraphQLClientTest {
         val result = client.executeQuery("{hello}").extractValue<String>("hello")
 
         assertThat(result).isEqualTo("Hi!")
+    }
+
+    @Test
+    fun `Unsuccessful request with default status handling`() {
+        val client = RestClientGraphQLClient(restClient.mutate().baseUrl("http://localhost:$port/wrongpath").build())
+        assertThatException().isThrownBy { client.executeQuery("{hello}") }.isInstanceOf(HttpClientErrorException::class.java)
+    }
+
+    @Test
+    fun `Unsuccessful request with non default status handling`() {
+        val client =
+            RestClientGraphQLClient(
+                restClient
+                    .mutate()
+                    .defaultStatusHandler(
+                        { true },
+                        { _, _ -> },
+                    ).baseUrl("http://localhost:$port/wrongpath")
+                    .build(),
+            )
+        assertThatException().isThrownBy { client.executeQuery("{hello}") }.isInstanceOf(GraphQLClientException::class.java)
     }
 
     @Test
