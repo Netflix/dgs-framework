@@ -31,8 +31,11 @@ Details can be found [here](https://netflix.github.io/dgs/spring-graphql-integra
 As announced previously, we will remove the "legacy" code (which doesn't leverage Spring GraphQL) by the end of 2024.
 Release 9.2.1 will likely be the final release before this happens.
 
-The next release will be 10.0, where all legacy code is removed. The existing starter will be updated to switch to the new behavior. For the majority of applications, this is an invisible change.
-At Netflix we have completed migrating all our applications to the new implementation. Some issues were found and fixed on the way, but we see no blockers to proceed as planned.
+The next release will be 10.0, where all legacy code is removed.
+The existing starter will be updated to switch to the new behavior.
+For the majority of applications, this is an invisible change.
+At Netflix, we have completed migrating all our applications to the new implementation.
+Some issues were found and fixed on the way, but we see no blockers to proceed as planned.
 
 There is a Pull Request that already includes most of the work to delete the legacy code.
 
