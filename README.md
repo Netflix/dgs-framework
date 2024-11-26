@@ -37,7 +37,7 @@ For the majority of applications, this is an invisible change.
 At Netflix, we have completed migrating all our applications to the new implementation.
 Some issues were found and fixed on the way, but we see no blockers to proceed as planned.
 
-There is a Pull Request that already includes most of the work to delete the legacy code.
+A [Pull Request](https://github.com/Netflix/dgs-framework/pull/1995) already includes most of the work to delete the legacy code.
 
 *Action: Please manually switch to the new `com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter` starter to ensure your app runs without problems so that you won't be surprised by the 10.0 version!*
 
