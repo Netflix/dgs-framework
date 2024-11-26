@@ -26,7 +26,7 @@ Follow the [getting started guide](https://netflix.github.io/dgs/getting-started
 
 # Upcoming major 10.0 rease
 The DGS Framework was deeply integrated with Spring GraphQL earlier this year. 
-Details can be found herehttps://netflix.github.io/dgs/spring-graphql-integration.
+Details can be found [here](https://netflix.github.io/dgs/spring-graphql-integration).
 
 As announced previously, we will remove the "legacy" code (which doesn't leverage Spring GraphQL) by the end of 2024.
 Release 9.2.1 will likely be the final release before this happens.
