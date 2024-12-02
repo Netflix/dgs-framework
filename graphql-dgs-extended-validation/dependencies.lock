@@ -111,7 +111,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
@@ -247,7 +247,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
@@ -439,7 +439,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
@@ -558,8 +558,127 @@
         }
     },
     "jmhApiDependenciesMetadata": {
+        "com.fasterxml:classmate": {
+            "locked": "1.7.0",
+            "transitive": [
+                "org.hibernate.validator:hibernate-validator"
+            ]
+        },
+        "com.graphql-java:graphql-java": {
+            "locked": "22.3",
+            "transitive": [
+                "com.graphql-java:graphql-java-extended-validation",
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-platform",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ]
+        },
+        "com.graphql-java:graphql-java-extended-scalars": {
+            "locked": "22.0",
+            "transitive": [
+                "com.graphql-java:graphql-java-extended-validation",
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "com.graphql-java:graphql-java-extended-validation": {
+            "locked": "22.0",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "com.graphql-java:java-dataloader": {
+            "locked": "3.3.0",
+            "transitive": [
+                "com.graphql-java:graphql-java",
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "com.jayway.jsonpath:json-path": {
+            "locked": "2.9.0",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "com.netflix.graphql.dgs:graphql-dgs": {
+            "project": true,
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
+            "project": true,
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true,
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ]
+        },
+        "com.netflix.graphql.dgs:graphql-error-types": {
+            "project": true,
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "jakarta.el:jakarta.el-api": {
+            "locked": "4.0.0",
+            "transitive": [
+                "org.glassfish:jakarta.el"
+            ]
+        },
+        "jakarta.validation:jakarta.validation-api": {
+            "locked": "3.0.2",
+            "transitive": [
+                "org.hibernate.validator:hibernate-validator"
+            ]
+        },
+        "org.glassfish:jakarta.el": {
+            "locked": "4.0.2",
+            "transitive": [
+                "com.graphql-java:graphql-java-extended-validation"
+            ]
+        },
+        "org.hibernate.validator:hibernate-validator": {
+            "locked": "8.0.1.Final",
+            "transitive": [
+                "com.graphql-java:graphql-java-extended-validation"
+            ]
+        },
+        "org.jboss.logging:jboss-logging": {
+            "locked": "3.5.3.Final",
+            "transitive": [
+                "org.hibernate.validator:hibernate-validator"
+            ]
+        },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25"
+            "locked": "2.0.21",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ]
+        },
+        "org.reactivestreams:reactive-streams": {
+            "locked": "1.0.4",
+            "transitive": [
+                "com.graphql-java:graphql-java"
+            ]
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "2.0.16",
+            "transitive": [
+                "com.graphql-java:java-dataloader"
+            ]
         }
     },
     "jmhCompileClasspath": {
@@ -690,7 +809,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
@@ -801,6 +920,102 @@
         }
     },
     "jmhImplementationDependenciesMetadata": {
+        "com.fasterxml:classmate": {
+            "locked": "1.7.0",
+            "transitive": [
+                "org.hibernate.validator:hibernate-validator"
+            ]
+        },
+        "com.graphql-java:graphql-java": {
+            "locked": "22.3",
+            "transitive": [
+                "com.graphql-java:graphql-java-extended-validation",
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-dgs-platform",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ]
+        },
+        "com.graphql-java:graphql-java-extended-scalars": {
+            "locked": "22.0",
+            "transitive": [
+                "com.graphql-java:graphql-java-extended-validation",
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "com.graphql-java:graphql-java-extended-validation": {
+            "locked": "22.0",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "com.graphql-java:java-dataloader": {
+            "locked": "3.3.0",
+            "transitive": [
+                "com.graphql-java:graphql-java",
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "com.jayway.jsonpath:json-path": {
+            "locked": "2.9.0",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "com.netflix.graphql.dgs:graphql-dgs": {
+            "project": true,
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
+            "project": true,
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true,
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ]
+        },
+        "com.netflix.graphql.dgs:graphql-error-types": {
+            "project": true,
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
+            ]
+        },
+        "io.micrometer:micrometer-commons": {
+            "locked": "1.13.8",
+            "transitive": [
+                "io.micrometer:micrometer-observation"
+            ]
+        },
+        "io.micrometer:micrometer-observation": {
+            "locked": "1.13.8",
+            "transitive": [
+                "org.springframework:spring-context"
+            ]
+        },
+        "jakarta.el:jakarta.el-api": {
+            "locked": "4.0.0",
+            "transitive": [
+                "org.glassfish:jakarta.el"
+            ]
+        },
+        "jakarta.validation:jakarta.validation-api": {
+            "locked": "3.0.2",
+            "transitive": [
+                "org.hibernate.validator:hibernate-validator"
+            ]
+        },
         "net.sf.jopt-simple:jopt-simple": {
             "locked": "5.0.4",
             "transitive": [
@@ -813,8 +1028,31 @@
                 "org.openjdk.jmh:jmh-core"
             ]
         },
+        "org.glassfish:jakarta.el": {
+            "locked": "4.0.2",
+            "transitive": [
+                "com.graphql-java:graphql-java-extended-validation"
+            ]
+        },
+        "org.hibernate.validator:hibernate-validator": {
+            "locked": "8.0.1.Final",
+            "transitive": [
+                "com.graphql-java:graphql-java-extended-validation"
+            ]
+        },
+        "org.jboss.logging:jboss-logging": {
+            "locked": "3.5.3.Final",
+            "transitive": [
+                "org.hibernate.validator:hibernate-validator"
+            ]
+        },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25"
+            "locked": "2.0.21",
+            "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-mocking",
+                "com.netflix.graphql.dgs:graphql-error-types"
+            ]
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.37",
@@ -848,6 +1086,68 @@
             "locked": "9.0",
             "transitive": [
                 "org.openjdk.jmh:jmh-generator-asm"
+            ]
+        },
+        "org.reactivestreams:reactive-streams": {
+            "locked": "1.0.4",
+            "transitive": [
+                "com.graphql-java:graphql-java"
+            ]
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "2.0.16",
+            "transitive": [
+                "com.graphql-java:java-dataloader"
+            ]
+        },
+        "org.springframework.boot:spring-boot": {
+            "locked": "3.3.6",
+            "transitive": [
+                "org.springframework.boot:spring-boot-autoconfigure"
+            ]
+        },
+        "org.springframework.boot:spring-boot-autoconfigure": {
+            "locked": "3.3.6"
+        },
+        "org.springframework:spring-aop": {
+            "locked": "6.1.15",
+            "transitive": [
+                "org.springframework:spring-context"
+            ]
+        },
+        "org.springframework:spring-beans": {
+            "locked": "6.1.15",
+            "transitive": [
+                "org.springframework:spring-aop",
+                "org.springframework:spring-context"
+            ]
+        },
+        "org.springframework:spring-context": {
+            "locked": "6.1.15",
+            "transitive": [
+                "org.springframework.boot:spring-boot"
+            ]
+        },
+        "org.springframework:spring-core": {
+            "locked": "6.1.15",
+            "transitive": [
+                "org.springframework.boot:spring-boot",
+                "org.springframework:spring-aop",
+                "org.springframework:spring-beans",
+                "org.springframework:spring-context",
+                "org.springframework:spring-expression"
+            ]
+        },
+        "org.springframework:spring-expression": {
+            "locked": "6.1.15",
+            "transitive": [
+                "org.springframework:spring-context"
+            ]
+        },
+        "org.springframework:spring-jcl": {
+            "locked": "6.1.15",
+            "transitive": [
+                "org.springframework:spring-core"
             ]
         }
     },
@@ -1368,7 +1668,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -1380,7 +1680,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
@@ -1795,67 +2095,100 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-build-common": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-runner"
             ]
         },
         "org.jetbrains.kotlin:kotlin-build-tools-api": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-build-tools-impl"
             ]
         },
         "org.jetbrains.kotlin:kotlin-build-tools-impl": {
-            "locked": "1.9.25"
+            "locked": "2.0.21"
         },
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-build-tools-impl",
                 "org.jetbrains.kotlin:kotlin-compiler-runner"
             ]
         },
         "org.jetbrains.kotlin:kotlin-compiler-runner": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-build-tools-impl"
             ]
         },
         "org.jetbrains.kotlin:kotlin-daemon-client": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-runner"
             ]
         },
         "org.jetbrains.kotlin:kotlin-daemon-embeddable": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
-                "org.jetbrains.kotlin:kotlin-compiler-embeddable"
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable",
+                "org.jetbrains.kotlin:kotlin-scripting-jvm"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-scripting-common": {
+            "locked": "2.0.21",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
+                "org.jetbrains.kotlin:kotlin-scripting-jvm"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
+            "locked": "2.0.21",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-build-tools-impl"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable": {
+            "locked": "2.0.21",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-build-tools-impl",
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable"
+            ]
+        },
+        "org.jetbrains.kotlin:kotlin-scripting-jvm": {
+            "locked": "2.0.21",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-build-tools-impl",
-                "org.jetbrains.kotlin:kotlin-compiler-embeddable"
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable",
+                "org.jetbrains.kotlin:kotlin-daemon-client",
+                "org.jetbrains.kotlin:kotlin-scripting-common",
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable",
+                "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
+                "org.jetbrains.kotlin:kotlin-scripting-jvm"
             ]
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm": {
             "locked": "1.8.1",
             "transitive": [
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable",
                 "org.jetbrains.kotlin:kotlin-compiler-runner"
             ]
         },
@@ -1874,28 +2207,34 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.9.25"
+            "locked": "2.0.21"
         },
         "org.jetbrains.kotlin:kotlin-daemon-embeddable": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable"
+            ]
+        },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm": {
+            "locked": "1.8.1",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable"
             ]
@@ -1909,35 +2248,35 @@
     },
     "kotlinCompilerPluginClasspathJmh": {
         "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-jvm"
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-common": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
                 "org.jetbrains.kotlin:kotlin-scripting-jvm"
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.25"
+            "locked": "2.0.21"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-jvm": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-common",
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable",
@@ -1954,35 +2293,35 @@
     },
     "kotlinCompilerPluginClasspathMain": {
         "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-jvm"
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-common": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
                 "org.jetbrains.kotlin:kotlin-scripting-jvm"
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.25"
+            "locked": "2.0.21"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-jvm": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-common",
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable",
@@ -1999,35 +2338,35 @@
     },
     "kotlinCompilerPluginClasspathTest": {
         "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-jvm"
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-common": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
                 "org.jetbrains.kotlin:kotlin-scripting-jvm"
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.25"
+            "locked": "2.0.21"
         },
         "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-scripting-jvm": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-scripting-common",
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable",
@@ -2050,37 +2389,43 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-daemon-embeddable": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
-            "locked": "1.9.25"
+            "locked": "2.0.21"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable"
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-compiler-embeddable",
                 "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable"
+            ]
+        },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm": {
+            "locked": "1.8.1",
+            "transitive": [
+                "org.jetbrains.kotlin:kotlin-compiler-embeddable"
             ]
         },
         "org.jetbrains:annotations": {
@@ -2088,6 +2433,11 @@
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-stdlib"
             ]
+        }
+    },
+    "kotlinNativeBundleConfiguration": {
+        "org.jetbrains.kotlin:kotlin-native-prebuilt": {
+            "locked": "2.0.21"
         }
     },
     "runtimeClasspath": {
@@ -2315,14 +2665,14 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
                 "com.netflix.graphql.dgs:graphql-dgs"
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
@@ -2822,7 +3172,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
@@ -3374,7 +3724,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
@@ -4096,7 +4446,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -4108,7 +4458,7 @@
             ]
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25",
+            "locked": "2.0.21",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",

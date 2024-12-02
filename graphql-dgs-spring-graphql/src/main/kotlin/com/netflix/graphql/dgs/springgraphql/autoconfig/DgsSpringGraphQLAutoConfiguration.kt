@@ -146,9 +146,9 @@ open class DgsSpringGraphQLAutoConfiguration {
     )
     open fun disableIntrospectionContextContributor(): GraphQLContextContributor =
         GraphQLContextContributor {
-                builder,
-                _,
-                _,
+            builder,
+            _,
+            _,
             ->
             builder.put(Introspection.INTROSPECTION_DISABLED, true)
         }
