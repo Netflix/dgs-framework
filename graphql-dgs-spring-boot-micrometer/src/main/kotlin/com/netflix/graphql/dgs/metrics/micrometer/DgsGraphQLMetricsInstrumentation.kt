@@ -292,8 +292,8 @@ class DgsGraphQLMetricsInstrumentation(
     internal object ComplexityUtils {
         private val complexityCalculator: FieldComplexityCalculator =
             FieldComplexityCalculator {
-                    _,
-                    childComplexity,
+                _,
+                childComplexity,
                 ->
                 childComplexity + 1
             }
