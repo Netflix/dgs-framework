@@ -25,7 +25,6 @@ import graphql.language.ObjectTypeDefinition.newObjectTypeDefinition
 import graphql.language.TypeName
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
@@ -40,14 +39,13 @@ import reactor.test.StepVerifier
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
 @EnableDgsTest
-@Disabled
-internal class SSESubscriptionGraphQLClientTest {
+internal class GraphqlSSESubscriptionGraphQLClientTest {
     @LocalServerPort
     var port: Int? = null
 
     @Test
     fun `A successful subscription should publish ticks`() {
-        val client = SSESubscriptionGraphQLClient("/subscriptions", WebClient.create("http://localhost:$port"))
+        val client = GraphqlSSESubscriptionGraphQLClient("/graphql", WebClient.create("http://localhost:$port"))
         val reactiveExecuteQuery =
             client.reactiveExecuteQuery("subscription {numbers}", emptyMap()).mapNotNull { r -> r.data["numbers"] }
 
@@ -60,7 +58,7 @@ internal class SSESubscriptionGraphQLClientTest {
 
     @Test
     fun `An error on the subscription should send the error as a response and end the subscription`() {
-        val client = SSESubscriptionGraphQLClient("/subscriptions", WebClient.create("http://localhost:$port"))
+        val client = GraphqlSSESubscriptionGraphQLClient("/graphql", WebClient.create("http://localhost:$port"))
         val reactiveExecuteQuery = client.reactiveExecuteQuery("subscription {withError}", emptyMap())
 
         StepVerifier
@@ -72,7 +70,7 @@ internal class SSESubscriptionGraphQLClientTest {
 
     @Test
     fun `A connection error should result in a WebClientException`() {
-        val client = SSESubscriptionGraphQLClient("/wrongurl", WebClient.create("http://localhost:$port"))
+        val client = GraphqlSSESubscriptionGraphQLClient("/wrongurl", WebClient.create("http://localhost:$port"))
 
         assertThrows(WebClientResponseException.NotFound::class.java) {
             client.reactiveExecuteQuery("subscription {withError}", emptyMap()).blockLast()
@@ -81,20 +79,26 @@ internal class SSESubscriptionGraphQLClientTest {
 
     @Test
     fun `A badly formatted query should result in a WebClientException`() {
-        val client = SSESubscriptionGraphQLClient("/subscriptions", WebClient.create("http://localhost:$port"))
+        val client = GraphqlSSESubscriptionGraphQLClient("/graphql", WebClient.create("http://localhost:$port"))
 
-        assertThrows(WebClientResponseException.BadRequest::class.java) {
-            client.reactiveExecuteQuery("invalid query", emptyMap()).blockLast()
-        }
+        val reactiveExecuteQuery = client.reactiveExecuteQuery("invalid query", emptyMap())
+        StepVerifier
+            .create(reactiveExecuteQuery)
+            .consumeNextWith { r -> r.hasErrors() }
+            .expectComplete()
+            .verify()
     }
 
     @Test
     fun `An invalid query should result in a WebClientException`() {
-        val client = SSESubscriptionGraphQLClient("/subscriptions", WebClient.create("http://localhost:$port"))
+        val client = GraphqlSSESubscriptionGraphQLClient("/graphql", WebClient.create("http://localhost:$port"))
 
-        assertThrows(WebClientResponseException.BadRequest::class.java) {
-            client.reactiveExecuteQuery("subscriptions { unkownField }", emptyMap()).blockLast()
-        }
+        val reactiveExecuteQuery = client.reactiveExecuteQuery("subscriptions { unkownField }", emptyMap())
+        StepVerifier
+            .create(reactiveExecuteQuery)
+            .consumeNextWith { r -> r.hasErrors() }
+            .expectComplete()
+            .verify()
     }
 }
 
