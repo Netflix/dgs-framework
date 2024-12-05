@@ -26,7 +26,7 @@ gradleEnterprise {
 }
 rootProject.name = "dgs-framework"
 include("graphql-dgs")
-include("graphql-dgs-spring-boot-oss-autoconfigure")
+//include("graphql-dgs-spring-boot-oss-autoconfigure")
 include("graphql-error-types")
 include("graphql-dgs-mocking")
 include("graphql-dgs-client")

@@ -16,7 +16,7 @@
 
 package com.netflix.graphql.dgs.springgraphql
 
-import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor
+import com.netflix.graphql.dgs.ReloadSchemaIndicator
 import graphql.GraphQL
 import graphql.schema.GraphQLSchema
 import org.slf4j.Logger
@@ -25,7 +25,7 @@ import org.springframework.graphql.execution.GraphQlSource
 
 class ReloadableGraphQLSource(
     private var graphQlSourceBuilder: GraphQlSource.Builder<*>,
-    private val reloadSchemaIndicator: DefaultDgsQueryExecutor.ReloadSchemaIndicator,
+    private val reloadSchemaIndicator: ReloadSchemaIndicator,
 ) : GraphQlSource {
     private var graphQlSource: GraphQlSource? = null
 

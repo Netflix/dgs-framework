@@ -29,7 +29,6 @@ import com.netflix.graphql.dgs.context.GraphQLContextContributor
 import com.netflix.graphql.dgs.context.GraphQLContextContributorInstrumentation
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
 import com.netflix.graphql.dgs.internal.*
-import com.netflix.graphql.dgs.internal.DefaultDgsQueryExecutor.ReloadSchemaIndicator
 import com.netflix.graphql.dgs.internal.method.ArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import com.netflix.graphql.dgs.scalars.UploadScalar
