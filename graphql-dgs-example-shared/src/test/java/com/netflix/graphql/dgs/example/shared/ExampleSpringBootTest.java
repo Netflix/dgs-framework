@@ -16,12 +16,13 @@
 
 package com.netflix.graphql.dgs.example.shared;
 
-import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration;
 import com.netflix.graphql.dgs.autoconfig.DgsExtendedScalarsAutoConfiguration;
 import com.netflix.graphql.dgs.example.datafetcher.HelloDataFetcher;
 import com.netflix.graphql.dgs.example.shared.dataLoader.MessageDataLoaderWithDispatchPredicate;
 import com.netflix.graphql.dgs.example.shared.datafetcher.*;
 import com.netflix.graphql.dgs.pagination.DgsPaginationAutoConfiguration;
+import com.netflix.graphql.dgs.scalars.UploadScalar;
+import com.netflix.graphql.dgs.test.EnableDgsTest;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.lang.annotation.ElementType;
@@ -31,6 +32,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@SpringBootTest(classes = {HelloDataFetcher.class, MovieDataFetcher.class, ConcurrentDataFetcher.class, RequestHeadersDataFetcher.class, RatingMutation.class, CurrentTimeDateFetcher.class, DgsExtendedScalarsAutoConfiguration.class, DgsAutoConfiguration.class, DgsPaginationAutoConfiguration.class, MessageDataLoaderWithDispatchPredicate.class})
+@SpringBootTest(classes = {HelloDataFetcher.class, MovieDataFetcher.class, ConcurrentDataFetcher.class, RequestHeadersDataFetcher.class, RatingMutation.class, CurrentTimeDateFetcher.class, DgsExtendedScalarsAutoConfiguration.class, DgsPaginationAutoConfiguration.class, MessageDataLoaderWithDispatchPredicate.class, UploadScalar.class})
+@EnableDgsTest
 public @interface ExampleSpringBootTest {
 }

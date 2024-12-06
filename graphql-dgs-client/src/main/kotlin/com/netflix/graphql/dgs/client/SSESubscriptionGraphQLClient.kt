@@ -31,6 +31,11 @@ import java.util.*
  * This client can be used for servers which are following the subscriptions-transport-sse specification, which can be found here:
  * https://github.com/CodeCommission/subscriptions-transport-sse
  */
+@Deprecated(
+    "This client uses the obsolete subscriptions-transport-sse protocol. Use GraphqlSSESubscriptionGraphQLClient to use the newer graphql-sse spec https://github.com/graphql/graphql-over-http/blob/d51ae80d62b5fd8802a3383793f01bdf306e8290/rfcs/GraphQLOverSSE.md.",
+    ReplaceWith("GraphqlSSESubscriptionGraphQLClient"),
+    DeprecationLevel.WARNING,
+)
 class SSESubscriptionGraphQLClient(
     private val url: String,
     private val webClient: WebClient,

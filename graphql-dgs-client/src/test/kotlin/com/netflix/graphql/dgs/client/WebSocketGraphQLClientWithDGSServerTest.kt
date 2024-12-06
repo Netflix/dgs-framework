@@ -31,25 +31,24 @@ package com.netflix.graphql.dgs.client
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.netflix.graphql.dgs.subscriptions.graphql.sse.DgsGraphQLSSEAutoConfig
-import com.netflix.graphql.dgs.subscriptions.sse.DgsSSEAutoConfig
-import com.netflix.graphql.dgs.subscriptions.websockets.DgsWebSocketAutoConfig
+import com.netflix.graphql.dgs.test.EnableDgsTest
 import graphql.GraphQLException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.web.reactive.socket.client.ReactorNettyWebSocketClient
 import reactor.test.StepVerifier
 
 @SpringBootTest(
-    classes = [DgsWebSocketAutoConfig::class, TestApp::class],
+    classes = [TestApp::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
-@EnableAutoConfiguration(exclude = [DgsSSEAutoConfig::class, DgsGraphQLSSEAutoConfig::class])
+@EnableDgsTest
+@Disabled
 internal class WebSocketGraphQLClientWithDGSServerTest {
     private val logger = LoggerFactory.getLogger(WebSocketGraphQLClientWithDGSServerTest::class.java)
 

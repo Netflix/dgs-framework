@@ -104,7 +104,9 @@ dependencies {
 // The following internal modules will be excluded from the BOM
 val ignoreInternalModules by extra(
     listOf(
-        project(":graphql-dgs-example-java"),
+        project(":graphql-dgs-example-shared"),
+        project(":graphql-dgs-spring-graphql-example-java"),
+        project(":graphql-dgs-spring-graphql-example-java-webflux"),
         project(":graphql-dgs-platform-dependencies")
     )
 )

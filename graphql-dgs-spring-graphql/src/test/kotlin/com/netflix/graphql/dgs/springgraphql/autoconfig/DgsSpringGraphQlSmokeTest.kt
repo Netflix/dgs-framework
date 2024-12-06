@@ -20,7 +20,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.InputArgument
-import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
+import com.netflix.graphql.dgs.test.EnableDgsTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -46,8 +46,6 @@ import java.util.function.Consumer
     classes = [
         DgsSpringGraphQlSmokeTest.TestApp::class,
         DgsSpringGraphQLAutoConfiguration::class,
-        DgsAutoConfiguration::class,
-        DgsSpringGraphQLSourceAutoConfiguration::class,
         GraphQlAutoConfiguration::class,
         GraphQlWebMvcAutoConfiguration::class,
         WebMvcAutoConfiguration::class,
@@ -60,6 +58,7 @@ import java.util.function.Consumer
     ],
 )
 @AutoConfigureMockMvc
+@EnableDgsTest
 class DgsSpringGraphQlSmokeTest {
     @Autowired
     lateinit var mockMvc: MockMvc

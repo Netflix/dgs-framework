@@ -19,7 +19,7 @@ package com.netflix.graphql.dgs.springgraphql.autoconfig
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
+import com.netflix.graphql.dgs.test.EnableDgsTest
 import graphql.GraphQLError
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
@@ -35,8 +35,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 @SpringBootTest(
     classes = [
         DgsSpringGraphQLAutoConfiguration::class,
-        DgsAutoConfiguration::class,
-        DgsSpringGraphQLSourceAutoConfiguration::class,
         GraphQlAutoConfiguration::class,
         ControllerAdviceTest.ControllerAdviceTestConfig::class,
     ],
@@ -46,6 +44,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
         "dgs.graphql.schema-wiring-validation-enabled=false",
     ],
 )
+@EnableDgsTest
 class ControllerAdviceTest {
     @Autowired
     lateinit var queryExecutor: DgsQueryExecutor
