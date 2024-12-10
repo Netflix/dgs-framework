@@ -32,7 +32,7 @@ plugins {
     id("nebula.netflixoss") version "11.4.0"
     id("io.spring.dependency-management") version "1.1.6"
 
-    id("org.jmailen.kotlinter") version "4.4.+"
+    id("org.jmailen.kotlinter") version "4.5.+"
     id("me.champeau.jmh") version "0.7.2"
 
     kotlin("jvm") version Versions.KOTLIN_VERSION
@@ -106,12 +106,6 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         testImplementation("io.mockk:mockk:1.+")
     }
 
-    java {
-        toolchain {
-            languageVersion.set(JavaLanguageVersion.of(17))
-        }
-    }
-
     jmh {
         includeTests.set(true)
         jmhTimeout.set("5s")
@@ -130,20 +124,6 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         options.compilerArgs.addAll(listOf("-parameters", "-deprecation"))
     }
 
-    tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            /*
-             * Prior to Kotlin 1.6 we had `jvm-default=enable`, 1.6.20 adds `-Xjvm-default=all-compatibility`
-             *   > .. generate compatibility stubs in the DefaultImpls classes.
-             *   > Compatibility stubs could be useful for library and runtime authors to keep backward binary
-             *   > compatibility for existing clients compiled against previous library versions.
-             * Ref. https://kotlinlang.org/docs/kotlin-reference.pdf
-             */
-            freeCompilerArgs = freeCompilerArgs + "-Xjvm-default=all-compatibility" + "-java-parameters"
-            jvmTarget = "17"
-        }
-    }
-
     tasks {
         test {
             useJUnitPlatform()
@@ -153,6 +133,14 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     tasks.withType<Javadoc>().configureEach {
         options {
             (this as CoreJavadocOptions).addStringOption("Xdoclint:none", "-quiet")
+        }
+    }
+
+    kotlin {
+        jvmToolchain(17)
+        compilerOptions {
+           javaParameters = true
+            freeCompilerArgs.addAll("-Xjvm-default=all-compatibility", "-java-parameters")
         }
     }
 

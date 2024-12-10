@@ -835,8 +835,8 @@ class MicrometerServletSmokeTest {
         @Bean
         open fun querySignatureRepository(): QuerySignatureRepository =
             QuerySignatureRepository {
-                    _,
-                    _,
+                _,
+                _,
                 ->
                 Optional.of(MOCKED_QUERY_SIGNATURE)
             }
@@ -847,10 +847,10 @@ class MicrometerServletSmokeTest {
         @Bean
         open fun executionTagCustomizer(): DgsExecutionTagCustomizer =
             DgsExecutionTagCustomizer {
-                    _,
-                    _,
-                    _,
-                    _,
+                _,
+                _,
+                _,
+                _,
                 ->
                 Tags.of("execution-tag", "foo")
             }
@@ -858,9 +858,9 @@ class MicrometerServletSmokeTest {
         @Bean
         open fun fieldFetchTagCustomizer(): DgsFieldFetchTagCustomizer =
             DgsFieldFetchTagCustomizer {
-                    _,
-                    _,
-                    _,
+                _,
+                _,
+                _,
                 ->
                 Tags.of("field-fetch-tag", "foo")
             }
