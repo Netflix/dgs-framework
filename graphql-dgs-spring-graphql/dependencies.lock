@@ -1007,15 +1007,29 @@
         }
     },
     "jmhCompileOnlyDependenciesMetadata": {
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "3.1.8"
+        },
+        "com.google.errorprone:error_prone_annotations": {
+            "locked": "2.21.1",
+            "transitive": [
+                "com.github.ben-manes.caffeine:caffeine"
+            ]
+        },
         "io.micrometer:micrometer-commons": {
             "locked": "1.13.8",
             "transitive": [
+                "io.micrometer:micrometer-core",
                 "io.micrometer:micrometer-observation"
             ]
+        },
+        "io.micrometer:micrometer-core": {
+            "locked": "1.13.8"
         },
         "io.micrometer:micrometer-observation": {
             "locked": "1.13.8",
             "transitive": [
+                "io.micrometer:micrometer-core",
                 "org.springframework:spring-context",
                 "org.springframework:spring-web"
             ]
@@ -1028,6 +1042,12 @@
         },
         "jakarta.servlet:jakarta.servlet-api": {
             "locked": "6.0.0"
+        },
+        "org.checkerframework:checker-qual": {
+            "locked": "3.37.0",
+            "transitive": [
+                "com.github.ben-manes.caffeine:caffeine"
+            ]
         },
         "org.reactivestreams:reactive-streams": {
             "locked": "1.0.4",

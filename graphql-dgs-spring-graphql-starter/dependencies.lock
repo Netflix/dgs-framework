@@ -1169,9 +1169,7 @@
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
-                "com.netflix.graphql.dgs:graphql-dgs-reactive",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
+                "com.netflix.graphql.dgs:graphql-dgs-reactive"
             ]
         },
         "com.netflix.graphql.dgs:graphql-dgs-client": {
@@ -1194,9 +1192,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
@@ -1207,23 +1203,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
-        "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-spring-graphql": {
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
-        "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-platform",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure"
             ]
         },
         "com.netflix.graphql.dgs:graphql-dgs-subscription-types": {
@@ -1237,8 +1220,7 @@
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
         "io.micrometer:micrometer-commons": {
@@ -1289,9 +1271,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
@@ -1909,9 +1889,7 @@
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
-                "com.netflix.graphql.dgs:graphql-dgs-reactive",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
+                "com.netflix.graphql.dgs:graphql-dgs-reactive"
             ]
         },
         "com.netflix.graphql.dgs:graphql-dgs-client": {
@@ -1934,9 +1912,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
@@ -1947,23 +1923,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
-        "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-spring-graphql": {
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
-        "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-platform",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure"
             ]
         },
         "com.netflix.graphql.dgs:graphql-dgs-subscription-types": {
@@ -1977,8 +1940,7 @@
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc"
+                "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
         "io.micrometer:micrometer-commons": {
@@ -2041,9 +2003,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-boot-oss-autoconfigure",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
-                "com.netflix.graphql.dgs:graphql-dgs-spring-webmvc",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
