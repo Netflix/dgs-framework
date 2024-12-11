@@ -18,10 +18,11 @@ package com.netflix.graphql.dgs.example.shared.datafetcher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.graphql.dgs.DgsQueryExecutor;
-import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration;
 import com.netflix.graphql.dgs.autoconfig.DgsExtendedScalarsAutoConfiguration;
 import com.netflix.graphql.dgs.example.shared.types.Stock;
 import com.netflix.graphql.dgs.pagination.DgsPaginationAutoConfiguration;
+import com.netflix.graphql.dgs.scalars.UploadScalar;
+import com.netflix.graphql.dgs.test.EnableDgsTest;
 import graphql.ExecutionResult;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
@@ -34,7 +35,8 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {DgsAutoConfiguration.class, SubscriptionDataFetcher.class, DgsExtendedScalarsAutoConfiguration.class, DgsPaginationAutoConfiguration.class})
+@SpringBootTest(classes = {SubscriptionDataFetcher.class, DgsExtendedScalarsAutoConfiguration.class, DgsPaginationAutoConfiguration.class, UploadScalar.class})
+@EnableDgsTest
 class SubscriptionDataFetcherTest {
 
     @Autowired

@@ -1,7 +1,0 @@
-spring:
-  application:
-    name: dgs-example
-
-debug: true
-
-

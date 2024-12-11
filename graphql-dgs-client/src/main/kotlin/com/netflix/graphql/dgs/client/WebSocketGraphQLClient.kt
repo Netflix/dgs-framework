@@ -40,6 +40,10 @@ import java.util.concurrent.atomic.AtomicReference
  * Reactive client implementation using websockets and the subscription-transport-ws protocol:
  * https://github.com/apollographql/subscriptions-transport-ws/blob/master/PROTOCOL.md
  */
+@Deprecated(
+    "This client is using the deprecated subscription-transport-ws protocol, which is no longer supported by DGS servers. Use Spring GraphQL WebSocketGraphQlClient instead. https://docs.spring.io/spring-graphql/reference/client.html#client.websocketgraphqlclient",
+    level = DeprecationLevel.WARNING,
+)
 class WebSocketGraphQLClient(
     private val client: OperationMessageWebSocketClient,
     private val acknowledgementTimeout: Duration = DEFAULT_ACKNOWLEDGEMENT_TIMEOUT,

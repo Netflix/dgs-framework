@@ -352,7 +352,7 @@ class DgsGraphQLMetricsInstrumentation(
                 val errorDetail = errorDetailExtension(error)
                 when (error) {
                     is ValidationError -> {
-                        errorPath = error.path.orEmpty()
+                        errorPath = error.queryPath.orEmpty()
                         errorType = ErrorType.BAD_REQUEST.name
                     }
                     is InvalidSyntaxError -> {
