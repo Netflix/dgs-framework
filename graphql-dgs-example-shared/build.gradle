@@ -15,7 +15,6 @@
  */
 
 dependencies {
-    implementation(project(":graphql-dgs-spring-boot-oss-autoconfigure"))
     implementation(project(":graphql-dgs-pagination"))
     implementation(project(":graphql-dgs-extended-scalars"))
     implementation("io.projectreactor:reactor-core")
@@ -23,4 +22,7 @@ dependencies {
     implementation("org.springframework:spring-web")
     implementation("com.fasterxml.jackson.core:jackson-databind")
     testImplementation ('io.projectreactor:reactor-test')
+    testImplementation(project(":graphql-dgs-spring-graphql-starter-test"))
+    testImplementation(project(":graphql-dgs-spring-graphql-starter"))
+    testImplementation("name.nkonev.multipart-spring-graphql:multipart-spring-graphql:1.+")
 }

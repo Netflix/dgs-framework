@@ -18,11 +18,11 @@ package com.netflix.graphql.dgs.metrics.micrometer
 
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
-import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
 import com.netflix.graphql.dgs.metrics.micrometer.dataloader.DgsDataLoaderInstrumentationProvider
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsGraphQLMetricsTagsProvider
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.SimpleGqlOutcomeTagCustomizer
 import com.netflix.graphql.dgs.metrics.micrometer.utils.QuerySignatureRepository
+import com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLAutoConfiguration
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.assertj.core.api.Assertions.assertThat
@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration
 import org.springframework.boot.autoconfigure.AutoConfigurations
+import org.springframework.boot.autoconfigure.graphql.GraphQlAutoConfiguration
 import org.springframework.boot.context.annotation.UserConfigurations
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
@@ -40,10 +41,11 @@ internal class DgsGraphQLMicrometerAutoConfigurationTest {
         ApplicationContextRunner()
             .withConfiguration(
                 AutoConfigurations.of(
+                    DgsSpringGraphQLAutoConfiguration::class.java,
+                    GraphQlAutoConfiguration::class.java,
                     CompositeMeterRegistryAutoConfiguration::class.java,
                     MetricsAutoConfiguration::class.java,
                     DgsGraphQLMicrometerAutoConfiguration::class.java,
-                    DgsAutoConfiguration::class.java,
                 ),
             ).withConfiguration(
                 UserConfigurations.of(LocalTestConfiguration::class.java),

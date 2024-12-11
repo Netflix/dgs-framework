@@ -55,6 +55,7 @@ class GraphqlSSESubscriptionGraphQLClient(
             webClient
                 .post()
                 .uri(url)
+                .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(jsonPayload)
                 .accept(MediaType.TEXT_EVENT_STREAM)
                 .retrieve()

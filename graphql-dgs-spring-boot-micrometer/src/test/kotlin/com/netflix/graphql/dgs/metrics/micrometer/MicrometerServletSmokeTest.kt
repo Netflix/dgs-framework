@@ -53,7 +53,6 @@ import org.dataloader.BatchLoader
 import org.dataloader.DataLoaderRegistry
 import org.dataloader.MappedBatchLoader
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -252,101 +251,6 @@ class MicrometerServletSmokeTest {
     }
 
     @Test
-    @Disabled
-    fun `Metrics for a successful request with data loaders`() {
-        mvc
-            .perform(
-                MockMvcRequestBuilders
-                    .post("/graphql")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(
-                        """{"query": 
-                    |   "{transform(input: [\"A madam in a racecar.\", \"A man, a plan, a canal - Panama\" ]){ index value upperCased reversed } }" }
-                        """.trimMargin(),
-                    ),
-            ).andExpect(status().isOk)
-            .andExpect(
-                content().json(
-                    """
-                    |{
-                    |   "data":{
-                    |       "transform":[
-                    |           {
-                    |               "index":0,
-                    |               "value":"A madam in a racecar.",
-                    |               "upperCased":"A MADAM IN A RACECAR.",
-                    |               "reversed":".racecar a ni madam A"
-                    |           },
-                    |           {
-                    |               "index":1,
-                    |               "value":"A man, a plan, a canal - Panama",
-                    |               "upperCased":"A MAN, A PLAN, A CANAL - PANAMA",
-                    |               "reversed":"amanaP - lanac a ,nalp a ,nam A"
-                    |            }
-                    |       ]
-                    |   }
-                    |}
-                    """.trimMargin(),
-                    false,
-                ),
-            )
-
-        val meters = fetchMeters()
-
-        assertThat(meters).containsOnlyKeys("gql.dataLoader", "gql.query", "gql.resolver")
-
-        assertThat(meters["gql.dataLoader"]).isNotNull.hasSize(2)
-        assertThat(meters["gql.dataLoader"]?.map { it.id.tags })
-            .containsAll(
-                listOf(
-                    Tags.of("gql.loaderBatchSize", "2").and("gql.loaderName", "reverser").toList(),
-                    Tags.of("gql.loaderBatchSize", "2").and("gql.loaderName", "upperCaseLoader").toList(),
-                ),
-            )
-
-        assertThat(meters["gql.query"]).isNotNull.hasSize(1)
-        assertThat(meters["gql.query"]?.first()?.id?.tags)
-            .containsAll(
-                Tags
-                    .of("execution-tag", "foo")
-                    .and("contextual-tag", "foo")
-                    .and("outcome", "success")
-                    .and("gql.operation", "QUERY")
-                    .and("gql.operation.name", "anonymous")
-                    .and("gql.query.complexity", "10")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
-            )
-
-        assertThat(meters["gql.resolver"]?.first()?.id?.tags)
-            .containsAll(
-                Tags
-                    .of("gql.field", "Query.transform")
-                    .and("field-fetch-tag", "foo")
-                    .and("contextual-tag", "foo")
-                    .and("outcome", "success")
-                    .and("gql.operation", "QUERY")
-                    .and("gql.operation.name", "anonymous")
-                    .and("gql.query.complexity", "10")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
-            )
-
-        assertThat(meters["gql.dataLoader"]).isNotNull.hasSize(2)
-        assertThat(meters["gql.dataLoader"]?.map { it.id.tags })
-            .containsAll(
-                listOf(
-                    Tags
-                        .of("gql.loaderBatchSize", "2")
-                        .and("gql.loaderName", "reverser")
-                        .toList(),
-                    Tags
-                        .of("gql.loaderBatchSize", "2")
-                        .and("gql.loaderName", "upperCaseLoader")
-                        .toList(),
-                ),
-            )
-    }
-
-    @Test
     fun `Assert metrics for a syntax error`() {
         mvc
             .perform(
@@ -483,7 +387,7 @@ class MicrometerServletSmokeTest {
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "none")
                     .and("gql.query.sig.hash", "none")
-                    .and("gql.errorDetail", "INVALID_ARGUMENT")
+                    .and("gql.errorDetail", "none")
                     .and("gql.errorCode", "BAD_REQUEST")
                     .and("gql.path", "[hello]")
                     .and("outcome", "failure"),
@@ -835,8 +739,8 @@ class MicrometerServletSmokeTest {
         @Bean
         open fun querySignatureRepository(): QuerySignatureRepository =
             QuerySignatureRepository {
-                    _,
-                    _,
+                _,
+                _,
                 ->
                 Optional.of(MOCKED_QUERY_SIGNATURE)
             }
@@ -847,10 +751,10 @@ class MicrometerServletSmokeTest {
         @Bean
         open fun executionTagCustomizer(): DgsExecutionTagCustomizer =
             DgsExecutionTagCustomizer {
-                    _,
-                    _,
-                    _,
-                    _,
+                _,
+                _,
+                _,
+                _,
                 ->
                 Tags.of("execution-tag", "foo")
             }
@@ -858,9 +762,9 @@ class MicrometerServletSmokeTest {
         @Bean
         open fun fieldFetchTagCustomizer(): DgsFieldFetchTagCustomizer =
             DgsFieldFetchTagCustomizer {
-                    _,
-                    _,
-                    _,
+                _,
+                _,
+                _,
                 ->
                 Tags.of("field-fetch-tag", "foo")
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Netflix, Inc.
+ * Copyright 2021 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,33 +16,36 @@
 
 package com.netflix.graphql.dgs.client
 
-import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
-import com.netflix.graphql.dgs.subscriptions.graphql.sse.DgsGraphQLSSEAutoConfig
-import com.netflix.graphql.dgs.subscriptions.sse.DgsSSEAutoConfig
-import com.netflix.graphql.dgs.subscriptions.websockets.DgsWebSocketAutoConfig
+import com.netflix.graphql.dgs.DgsComponent
+import com.netflix.graphql.dgs.DgsSubscription
+import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
+import com.netflix.graphql.dgs.test.EnableDgsTest
+import graphql.language.FieldDefinition.newFieldDefinition
+import graphql.language.ObjectTypeDefinition.newObjectTypeDefinition
+import graphql.language.TypeName
+import graphql.schema.idl.TypeDefinitionRegistry
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
+import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
 
 @SpringBootTest(
-    classes = [DgsAutoConfiguration::class, DgsGraphQLSSEAutoConfig::class, TestApp::class],
+    classes = [TestApp::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
-@EnableAutoConfiguration(exclude = [DgsSSEAutoConfig::class, DgsWebSocketAutoConfig::class])
-@Disabled("Suspecting this test class to be the root cause of hanging builds")
+@EnableDgsTest
 internal class GraphqlSSESubscriptionGraphQLClientTest {
     @LocalServerPort
     var port: Int? = null
 
     @Test
     fun `A successful subscription should publish ticks`() {
-        val client = GraphqlSSESubscriptionGraphQLClient("/subscriptions", WebClient.create("http://localhost:$port"))
+        val client = GraphqlSSESubscriptionGraphQLClient("/graphql", WebClient.create("http://localhost:$port"))
         val reactiveExecuteQuery =
             client.reactiveExecuteQuery("subscription {numbers}", emptyMap()).mapNotNull { r -> r.data["numbers"] }
 
@@ -55,7 +58,7 @@ internal class GraphqlSSESubscriptionGraphQLClientTest {
 
     @Test
     fun `An error on the subscription should send the error as a response and end the subscription`() {
-        val client = GraphqlSSESubscriptionGraphQLClient("/subscriptions", WebClient.create("http://localhost:$port"))
+        val client = GraphqlSSESubscriptionGraphQLClient("/graphql", WebClient.create("http://localhost:$port"))
         val reactiveExecuteQuery = client.reactiveExecuteQuery("subscription {withError}", emptyMap())
 
         StepVerifier
@@ -76,19 +79,58 @@ internal class GraphqlSSESubscriptionGraphQLClientTest {
 
     @Test
     fun `A badly formatted query should result in a WebClientException`() {
-        val client = GraphqlSSESubscriptionGraphQLClient("/subscriptions", WebClient.create("http://localhost:$port"))
+        val client = GraphqlSSESubscriptionGraphQLClient("/graphql", WebClient.create("http://localhost:$port"))
 
-        assertThrows(WebClientResponseException.BadRequest::class.java) {
-            client.reactiveExecuteQuery("invalid query", emptyMap()).blockLast()
-        }
+        val reactiveExecuteQuery = client.reactiveExecuteQuery("invalid query", emptyMap())
+        StepVerifier
+            .create(reactiveExecuteQuery)
+            .consumeNextWith { r -> r.hasErrors() }
+            .expectComplete()
+            .verify()
     }
 
     @Test
     fun `An invalid query should result in a WebClientException`() {
-        val client = GraphqlSSESubscriptionGraphQLClient("/subscriptions", WebClient.create("http://localhost:$port"))
+        val client = GraphqlSSESubscriptionGraphQLClient("/graphql", WebClient.create("http://localhost:$port"))
 
-        assertThrows(WebClientResponseException.BadRequest::class.java) {
-            client.reactiveExecuteQuery("subscriptions { unkownField }", emptyMap()).blockLast()
+        val reactiveExecuteQuery = client.reactiveExecuteQuery("subscriptions { unkownField }", emptyMap())
+        StepVerifier
+            .create(reactiveExecuteQuery)
+            .consumeNextWith { r -> r.hasErrors() }
+            .expectComplete()
+            .verify()
+    }
+}
+
+@SpringBootApplication
+internal open class TestApp {
+    @DgsComponent
+    class SubscriptionDataFetcher {
+        @DgsSubscription
+        fun numbers(): Flux<Int> = Flux.just(1, 2, 3)
+
+        @DgsSubscription
+        fun withError(): Flux<Int> = Flux.error(IllegalArgumentException("testing"), true)
+
+        @DgsTypeDefinitionRegistry
+        fun typeDefinitionRegistry(): TypeDefinitionRegistry {
+            val newRegistry = TypeDefinitionRegistry()
+            newRegistry.add(
+                newObjectTypeDefinition()
+                    .name("Subscription")
+                    .fieldDefinition(
+                        newFieldDefinition()
+                            .name("numbers")
+                            .type(TypeName("Int"))
+                            .build(),
+                    ).fieldDefinition(
+                        newFieldDefinition()
+                            .name("withError")
+                            .type(TypeName("Int"))
+                            .build(),
+                    ).build(),
+            )
+            return newRegistry
         }
     }
 }

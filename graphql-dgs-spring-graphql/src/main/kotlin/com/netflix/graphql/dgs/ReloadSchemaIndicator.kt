@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2024 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-dependencies {
-    api(project(":graphql-dgs"))
-    compileOnly("org.springframework.boot:spring-boot-starter")
-    compileOnly("org.springframework:spring-webflux")
+package com.netflix.graphql.dgs
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
-    testImplementation("io.projectreactor:reactor-test")
+@FunctionalInterface
+fun interface ReloadSchemaIndicator {
+    fun reloadSchema(): Boolean
 }
