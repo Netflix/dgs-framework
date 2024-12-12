@@ -15,5 +15,5 @@
  */
 
 object Versions {
-    const val KOTLIN_VERSION = "2.0.21"
+    const val KOTLIN_VERSION = "2.1.0"
 }
