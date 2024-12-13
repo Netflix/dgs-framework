@@ -12,7 +12,6 @@
             "locked": "22.3",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
@@ -38,18 +37,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
         },
@@ -64,7 +55,6 @@
             "locked": "2.1.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
         },
@@ -135,7 +125,6 @@
             "locked": "22.3",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
@@ -161,18 +150,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
         },
@@ -237,7 +218,6 @@
             "locked": "2.1.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types",
                 "org.jetbrains.kotlin:kotlin-reflect",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm"
@@ -571,7 +551,6 @@
             "locked": "22.3",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
@@ -597,18 +576,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
         },
@@ -639,7 +610,6 @@
             "locked": "2.1.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types",
                 "org.jetbrains.kotlin:kotlin-reflect",
                 "org.jetbrains.kotlin:kotlin-stdlib-common",
@@ -730,7 +700,6 @@
             "locked": "22.3",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
@@ -756,18 +725,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
         },
@@ -782,7 +743,6 @@
             "locked": "2.1.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
         },
@@ -853,7 +813,6 @@
             "locked": "22.3",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
@@ -879,18 +838,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
         },
@@ -967,7 +918,6 @@
             "locked": "2.1.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types",
                 "org.jetbrains.kotlin:kotlin-reflect",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm"
@@ -1335,7 +1285,6 @@
             "locked": "22.3",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
@@ -1361,18 +1310,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
         },
@@ -1415,7 +1356,6 @@
             "locked": "2.1.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types",
                 "org.jetbrains.kotlin:kotlin-reflect",
                 "org.jetbrains.kotlin:kotlin-stdlib-common",
@@ -1556,22 +1496,10 @@
                 "com.fasterxml.jackson.module:jackson-module-kotlin"
             ]
         },
-        "com.github.curious-odd-man:rgxgen": {
-            "locked": "2.0",
-            "transitive": [
-                "net.datafaker:datafaker"
-            ]
-        },
         "com.google.protobuf:protobuf-java": {
             "locked": "4.27.1",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support"
-            ]
-        },
-        "com.googlecode.libphonenumber:libphonenumber": {
-            "locked": "8.13.50",
-            "transitive": [
-                "net.datafaker:datafaker"
             ]
         },
         "com.graphql-java:graphql-java": {
@@ -1579,7 +1507,6 @@
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
@@ -1606,18 +1533,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
         },
@@ -1771,12 +1690,6 @@
                 "org.mockito:mockito-core"
             ]
         },
-        "net.datafaker:datafaker": {
-            "locked": "2.4.2",
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-mocking"
-            ]
-        },
         "net.minidev:accessors-smart": {
             "locked": "2.5.1",
             "transitive": [
@@ -1857,7 +1770,6 @@
             "locked": "2.1.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types",
                 "io.mockk:mockk-agent-api-jvm",
                 "io.mockk:mockk-agent-jvm",
@@ -2066,7 +1978,6 @@
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.graphql-java:java-dataloader",
                 "com.jayway.jsonpath:json-path",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "org.apache.logging.log4j:log4j-to-slf4j",
                 "org.slf4j:jul-to-slf4j"
             ]
@@ -2184,7 +2095,6 @@
         "org.yaml:snakeyaml": {
             "locked": "2.2",
             "transitive": [
-                "net.datafaker:datafaker",
                 "org.springframework.boot:spring-boot-starter"
             ]
         }
@@ -2993,22 +2903,10 @@
                 "com.fasterxml.jackson.module:jackson-module-kotlin"
             ]
         },
-        "com.github.curious-odd-man:rgxgen": {
-            "locked": "2.0",
-            "transitive": [
-                "net.datafaker:datafaker"
-            ]
-        },
         "com.google.protobuf:protobuf-java": {
             "locked": "4.27.1",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support"
-            ]
-        },
-        "com.googlecode.libphonenumber:libphonenumber": {
-            "locked": "8.13.50",
-            "transitive": [
-                "net.datafaker:datafaker"
             ]
         },
         "com.graphql-java:graphql-java": {
@@ -3016,7 +2914,6 @@
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
@@ -3042,18 +2939,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
         },
@@ -3095,12 +2984,6 @@
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactor"
             ]
         },
-        "net.datafaker:datafaker": {
-            "locked": "2.4.2",
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-mocking"
-            ]
-        },
         "net.minidev:accessors-smart": {
             "locked": "2.5.1",
             "transitive": [
@@ -3124,7 +3007,6 @@
             "locked": "2.1.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types",
                 "org.jetbrains.kotlin:kotlin-reflect",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm",
@@ -3196,8 +3078,7 @@
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.graphql-java:java-dataloader",
-                "com.jayway.jsonpath:json-path",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking"
+                "com.jayway.jsonpath:json-path"
             ]
         },
         "org.springframework:spring-aop": {
@@ -3246,12 +3127,6 @@
             "locked": "6.1.15",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
-            ]
-        },
-        "org.yaml:snakeyaml": {
-            "locked": "2.2",
-            "transitive": [
-                "net.datafaker:datafaker"
             ]
         }
     },
@@ -3309,7 +3184,6 @@
             "locked": "22.3",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
@@ -3336,18 +3210,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
         },
@@ -3547,7 +3413,6 @@
             "locked": "2.1.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types",
                 "io.mockk:mockk-agent-api-jvm",
                 "io.mockk:mockk-agent-jvm",
@@ -3843,7 +3708,6 @@
             "locked": "22.3",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
@@ -3870,18 +3734,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
         },
@@ -4049,7 +3905,6 @@
             "locked": "2.1.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types",
                 "io.mockk:mockk",
                 "io.mockk:mockk-agent",
@@ -4346,22 +4201,10 @@
                 "com.fasterxml.jackson.module:jackson-module-kotlin"
             ]
         },
-        "com.github.curious-odd-man:rgxgen": {
-            "locked": "2.0",
-            "transitive": [
-                "net.datafaker:datafaker"
-            ]
-        },
         "com.google.protobuf:protobuf-java": {
             "locked": "4.27.1",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support"
-            ]
-        },
-        "com.googlecode.libphonenumber:libphonenumber": {
-            "locked": "8.13.50",
-            "transitive": [
-                "net.datafaker:datafaker"
             ]
         },
         "com.graphql-java:graphql-java": {
@@ -4369,7 +4212,6 @@
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
@@ -4396,18 +4238,10 @@
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
         },
@@ -4561,12 +4395,6 @@
                 "org.mockito:mockito-core"
             ]
         },
-        "net.datafaker:datafaker": {
-            "locked": "2.4.2",
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-mocking"
-            ]
-        },
         "net.minidev:accessors-smart": {
             "locked": "2.5.1",
             "transitive": [
@@ -4635,7 +4463,6 @@
             "locked": "2.1.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-error-types",
                 "io.mockk:mockk-agent-api-jvm",
                 "io.mockk:mockk-agent-jvm",
@@ -4815,7 +4642,6 @@
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.graphql-java:java-dataloader",
                 "com.jayway.jsonpath:json-path",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "org.apache.logging.log4j:log4j-to-slf4j",
                 "org.slf4j:jul-to-slf4j"
             ]
@@ -4933,7 +4759,6 @@
         "org.yaml:snakeyaml": {
             "locked": "2.2",
             "transitive": [
-                "net.datafaker:datafaker",
                 "org.springframework.boot:spring-boot-starter"
             ]
         }

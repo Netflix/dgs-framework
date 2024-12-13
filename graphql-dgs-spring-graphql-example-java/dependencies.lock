@@ -103,7 +103,6 @@
             "locked": "22.3",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types",
@@ -144,20 +143,12 @@
         "com.netflix.graphql.dgs:graphql-dgs-example-shared": {
             "project": true
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -472,7 +463,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -764,7 +754,6 @@
             "locked": "22.3",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types",
@@ -805,20 +794,12 @@
         "com.netflix.graphql.dgs:graphql-dgs-example-shared": {
             "project": true
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -1133,7 +1114,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -1475,7 +1455,6 @@
             "locked": "22.3",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types",
@@ -1516,20 +1495,12 @@
         "com.netflix.graphql.dgs:graphql-dgs-example-shared": {
             "project": true
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -1856,7 +1827,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -2182,7 +2152,6 @@
             "locked": "22.3",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types",
@@ -2223,20 +2192,12 @@
         "com.netflix.graphql.dgs:graphql-dgs-example-shared": {
             "project": true
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true,
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -2563,7 +2524,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -2904,12 +2864,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ]
         },
-        "com.github.curious-odd-man:rgxgen": {
-            "locked": "2.0",
-            "transitive": [
-                "net.datafaker:datafaker"
-            ]
-        },
         "com.google.errorprone:error_prone_annotations": {
             "locked": "2.21.1",
             "transitive": [
@@ -2922,12 +2876,6 @@
                 "com.apollographql.federation:federation-graphql-java-support"
             ]
         },
-        "com.googlecode.libphonenumber:libphonenumber": {
-            "locked": "8.13.50",
-            "transitive": [
-                "net.datafaker:datafaker"
-            ]
-        },
         "com.graphql-java:graphql-java": {
             "locked": "22.3",
             "transitive": [
@@ -2935,7 +2883,6 @@
                 "com.graphql-java:graphql-java-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
@@ -2997,13 +2944,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-pagination": {
             "project": true,
             "transitive": [
@@ -3018,7 +2958,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -3443,12 +3382,6 @@
                 "org.mockito:mockito-core"
             ]
         },
-        "net.datafaker:datafaker": {
-            "locked": "2.4.2",
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-mocking"
-            ]
-        },
         "net.minidev:accessors-smart": {
             "locked": "2.5.1",
             "transitive": [
@@ -3563,7 +3496,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -3788,7 +3720,6 @@
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.graphql-java:java-dataloader",
                 "com.jayway.jsonpath:json-path",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.spectator:spectator-api",
                 "org.apache.logging.log4j:log4j-to-slf4j",
                 "org.slf4j:jul-to-slf4j"
@@ -4031,7 +3962,6 @@
         "org.yaml:snakeyaml": {
             "locked": "2.2",
             "transitive": [
-                "net.datafaker:datafaker",
                 "org.springframework.boot:spring-boot-starter"
             ]
         }
@@ -4892,12 +4822,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ]
         },
-        "com.github.curious-odd-man:rgxgen": {
-            "locked": "2.0",
-            "transitive": [
-                "net.datafaker:datafaker"
-            ]
-        },
         "com.google.errorprone:error_prone_annotations": {
             "locked": "2.21.1",
             "transitive": [
@@ -4910,12 +4834,6 @@
                 "com.apollographql.federation:federation-graphql-java-support"
             ]
         },
-        "com.googlecode.libphonenumber:libphonenumber": {
-            "locked": "8.13.50",
-            "transitive": [
-                "net.datafaker:datafaker"
-            ]
-        },
         "com.graphql-java:graphql-java": {
             "locked": "22.3",
             "transitive": [
@@ -4923,7 +4841,6 @@
                 "com.graphql-java:graphql-java-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
@@ -4982,13 +4899,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-pagination": {
             "project": true,
             "transitive": [
@@ -5003,7 +4913,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -5306,12 +5215,6 @@
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
             "locked": "1.5.2"
         },
-        "net.datafaker:datafaker": {
-            "locked": "2.4.2",
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-mocking"
-            ]
-        },
         "net.minidev:accessors-smart": {
             "locked": "2.5.1",
             "transitive": [
@@ -5383,7 +5286,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -5477,7 +5379,6 @@
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.graphql-java:java-dataloader",
                 "com.jayway.jsonpath:json-path",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.spectator:spectator-api",
                 "org.apache.logging.log4j:log4j-to-slf4j",
                 "org.slf4j:jul-to-slf4j"
@@ -5674,7 +5575,6 @@
         "org.yaml:snakeyaml": {
             "locked": "2.2",
             "transitive": [
-                "net.datafaker:datafaker",
                 "org.springframework.boot:spring-boot-starter"
             ]
         }
@@ -5767,7 +5667,6 @@
             "locked": "22.3",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types",
@@ -5826,13 +5725,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-pagination": {
             "project": true,
             "transitive": [
@@ -5846,7 +5738,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -6316,7 +6207,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -6735,7 +6625,6 @@
             "locked": "22.3",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types",
@@ -6794,13 +6683,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-pagination": {
             "project": true,
             "transitive": [
@@ -6814,7 +6696,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -7252,7 +7133,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -7680,12 +7560,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer"
             ]
         },
-        "com.github.curious-odd-man:rgxgen": {
-            "locked": "2.0",
-            "transitive": [
-                "net.datafaker:datafaker"
-            ]
-        },
         "com.google.errorprone:error_prone_annotations": {
             "locked": "2.21.1",
             "transitive": [
@@ -7698,12 +7572,6 @@
                 "com.apollographql.federation:federation-graphql-java-support"
             ]
         },
-        "com.googlecode.libphonenumber:libphonenumber": {
-            "locked": "8.13.50",
-            "transitive": [
-                "net.datafaker:datafaker"
-            ]
-        },
         "com.graphql-java:graphql-java": {
             "locked": "22.3",
             "transitive": [
@@ -7711,7 +7579,6 @@
                 "com.graphql-java:graphql-java-extended-scalars",
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
@@ -7773,13 +7640,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
         },
-        "com.netflix.graphql.dgs:graphql-dgs-mocking": {
-            "project": true,
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-platform"
-            ]
-        },
         "com.netflix.graphql.dgs:graphql-dgs-pagination": {
             "project": true,
             "transitive": [
@@ -7794,7 +7654,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -8219,12 +8078,6 @@
                 "org.mockito:mockito-core"
             ]
         },
-        "net.datafaker:datafaker": {
-            "locked": "2.4.2",
-            "transitive": [
-                "com.netflix.graphql.dgs:graphql-dgs-mocking"
-            ]
-        },
         "net.minidev:accessors-smart": {
             "locked": "2.5.1",
             "transitive": [
@@ -8327,7 +8180,6 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -8523,7 +8375,6 @@
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.graphql-java:java-dataloader",
                 "com.jayway.jsonpath:json-path",
-                "com.netflix.graphql.dgs:graphql-dgs-mocking",
                 "com.netflix.spectator:spectator-api",
                 "org.apache.logging.log4j:log4j-to-slf4j",
                 "org.slf4j:jul-to-slf4j"
@@ -8766,7 +8617,6 @@
         "org.yaml:snakeyaml": {
             "locked": "2.2",
             "transitive": [
-                "net.datafaker:datafaker",
                 "org.springframework.boot:spring-boot-starter"
             ]
         }

@@ -28,8 +28,6 @@ import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
 import com.netflix.graphql.dgs.internal.method.InputArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import com.netflix.graphql.dgs.internal.utils.SelectionSetUtil
-import com.netflix.graphql.mocking.DgsSchemaTransformer
-import com.netflix.graphql.mocking.MockProvider
 import graphql.TypeResolutionEnvironment
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.language.FieldDefinition
@@ -71,7 +69,7 @@ import org.springframework.core.io.support.ResourcePatternUtils
 import org.springframework.util.ReflectionUtils
 import java.io.IOException
 import java.lang.reflect.Method
-import java.util.Optional
+import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.atomic.AtomicReference
@@ -86,7 +84,6 @@ class DgsSchemaProvider(
     private val applicationContext: ApplicationContext,
     private val federationResolver: Optional<DgsFederationResolver>,
     private val existingTypeDefinitionRegistry: Optional<TypeDefinitionRegistry>,
-    private val mockProviders: Set<MockProvider> = emptySet(),
     private val schemaLocations: List<String> = listOf(DEFAULT_SCHEMA_LOCATION),
     private val dataFetcherResultProcessors: List<DataFetcherResultProcessor> = emptyList(),
     private val dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
@@ -236,13 +233,6 @@ class DgsSchemaProvider(
         val endTime = System.currentTimeMillis()
         val totalTime = endTime - startTime
         logger.debug("DGS initialized schema in {}ms", totalTime)
-
-        graphQLSchema =
-            if (mockProviders.isNotEmpty()) {
-                DgsSchemaTransformer().transformSchemaWithMockProviders(graphQLSchema, mockProviders)
-            } else {
-                graphQLSchema
-            }
 
         return SchemaProviderResult(graphQLSchema, runtimeWiring) to dataFetcherInfo.toImmutable()
     }
