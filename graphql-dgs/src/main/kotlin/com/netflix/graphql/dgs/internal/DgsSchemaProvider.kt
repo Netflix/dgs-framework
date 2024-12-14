@@ -94,6 +94,37 @@ class DgsSchemaProvider(
     private val schemaWiringValidationEnabled: Boolean = true,
     private val enableEntityFetcherCustomScalarParsing: Boolean = false,
 ) {
+    @Suppress("UNUSED_PARAMETER")
+    @Deprecated("The mockProviders argument is no longer supported")
+    constructor(
+        applicationContext: ApplicationContext,
+        federationResolver: Optional<DgsFederationResolver>,
+        existingTypeDefinitionRegistry: Optional<TypeDefinitionRegistry>,
+        mockProviders: Set<Any>,
+        schemaLocations: List<String> = listOf(DEFAULT_SCHEMA_LOCATION),
+        dataFetcherResultProcessors: List<DataFetcherResultProcessor> = emptyList(),
+        dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
+        entityFetcherRegistry: EntityFetcherRegistry = EntityFetcherRegistry(),
+        defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty(),
+        methodDataFetcherFactory: MethodDataFetcherFactory,
+        componentFilter: ((Any) -> Boolean)? = null,
+        schemaWiringValidationEnabled: Boolean = true,
+        enableEntityFetcherCustomScalarParsing: Boolean = false,
+    ) : this(
+        applicationContext,
+        federationResolver,
+        existingTypeDefinitionRegistry,
+        schemaLocations,
+        dataFetcherResultProcessors,
+        dataFetcherExceptionHandler,
+        entityFetcherRegistry,
+        defaultDataFetcherFactory,
+        methodDataFetcherFactory,
+        componentFilter,
+        schemaWiringValidationEnabled,
+        enableEntityFetcherCustomScalarParsing,
+    )
+
     private val dataFetcherInfo = AtomicReference(DataFetcherInfo(emptyList(), emptySet(), emptySet()))
 
     /**
