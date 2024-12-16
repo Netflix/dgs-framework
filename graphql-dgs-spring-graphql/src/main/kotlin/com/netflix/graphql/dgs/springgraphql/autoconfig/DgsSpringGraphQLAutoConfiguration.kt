@@ -49,7 +49,6 @@ import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.webflux.DgsWebFluxGraphQLInterceptor
 import com.netflix.graphql.dgs.springgraphql.webmvc.DgsWebMvcGraphQLInterceptor
-import com.netflix.graphql.mocking.MockProvider
 import graphql.GraphQLError
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherExceptionHandlerParameters
@@ -262,7 +261,6 @@ open class DgsSpringGraphQLAutoConfiguration(
         federationResolver: Optional<DgsFederationResolver>,
         existingTypeDefinitionFactory: Optional<TypeDefinitionRegistry>,
         existingCodeRegistry: Optional<GraphQLCodeRegistry>,
-        mockProviders: ObjectProvider<MockProvider>,
         dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
         dataFetcherExceptionHandler: Optional<DataFetcherExceptionHandler> = Optional.empty(),
         entityFetcherRegistry: EntityFetcherRegistry,
@@ -273,7 +271,6 @@ open class DgsSpringGraphQLAutoConfiguration(
             applicationContext = applicationContext,
             federationResolver = federationResolver,
             existingTypeDefinitionRegistry = existingTypeDefinitionFactory,
-            mockProviders = mockProviders.toSet(),
             schemaLocations = configProps.schemaLocations,
             dataFetcherResultProcessors = dataFetcherResultProcessors,
             dataFetcherExceptionHandler = dataFetcherExceptionHandler,
