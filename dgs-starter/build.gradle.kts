@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Netflix, Inc.
+ * Copyright 2024 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-/**
- * Prefer to use dgs-starter, which has the same dependencies but a nicer/shorter name.
- * This starter might be removed in the future.
- */
+
 dependencies {
-    api(project(":dgs-starter"))
+    api(project(":graphql-dgs-spring-graphql"))
+    api(project(":graphql-dgs-client"))
+    api(project(":graphql-dgs-reactive"))
+    api(project(":graphql-error-types"))
+    api("org.springframework.boot:spring-boot-starter-graphql")
 }

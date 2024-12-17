@@ -25,7 +25,11 @@ gradleEnterprise {
     }
 }
 rootProject.name = "dgs-framework"
+
+
 include("graphql-dgs")
+include("dgs-starter")
+include("dgs-starter-test")
 include("graphql-error-types")
 include("graphql-dgs-client")
 include("graphql-dgs-spring-boot-micrometer")
