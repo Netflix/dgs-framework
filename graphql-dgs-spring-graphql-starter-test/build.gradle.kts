@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+/**
+ * Prefer to use dgs-starter-test, which has the same dependencies but a nicer/shorter name.
+ * This starter might be removed in the future.
+ */
 dependencies {
-    api(project(":graphql-dgs-spring-graphql-test"))
-    api("org.springframework.graphql:spring-graphql-test")
-
+    api(project(":dgs-starter-test"))
 }
