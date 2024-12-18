@@ -24,23 +24,23 @@ Features include:
 
 Follow the [getting started guide](https://netflix.github.io/dgs/getting-started/)!
 
-# Upcoming major 10.0 rease
-The DGS Framework was deeply integrated with Spring GraphQL earlier this year. 
-Details can be found [here](https://netflix.github.io/dgs/spring-graphql-integration).
+# DGS 10.x has been released! 🎉
 
-As announced previously, we will remove the "legacy" code (which doesn't leverage Spring GraphQL) by the end of 2024.
-Release 9.2.1 will likely be the final release before this happens.
+DGS 10.0.0 removes all the legacy code in favor of our integration with Spring for GraphQL.
+In March 2024 we released deep integration with Spring for GraphQL after working closely with the Spring team.
+This integration makes it possible to mix and match features from DGS and Spring for GraphQL, and leverages the web transports provided by Spring for GraphQL.
+With the March released we declared the "old" DGS starter, and the implementation code legacy, with the plan to remove this code end of 2024.
+The community has adopted the DGS/Spring for GraphQL integration really well, in most cases without any required code changes.
+At Netflix we migrated all our services to use the new integration, again mostly without any code changes.
+Performance is critical for our services, and after all the performance optimization that went into the March release and some patch releases after, we see the same performance with the Spring for GraphQL integration as what we had previously.
 
-The next release will be 10.0, where all legacy code is removed.
-The existing starter will be updated to switch to the new behavior.
-For the majority of applications, this is an invisible change.
-At Netflix, we have completed migrating all our applications to the new implementation.
-Some issues were found and fixed on the way, but we see no blockers to proceed as planned.
+DGS 10.0.0 finalizes the integration work by removing all the legacy modules and code.
+This greatly reduces the footprint of the codebase, which will speed up feature development into the future!
 
-A [Pull Request](https://github.com/Netflix/dgs-framework/pull/1995) already includes most of the work to delete the legacy code.
+Although the list of changes is large, you probably won't notice the difference for your applications!
+Just make sure to use the (new) `netflix.graphql.dgs:dgs-starter` AKA `netflix.graphql.dgs:graphql-dgs-spring-graphql-starter` starter!
 
-*Action: Please manually switch to the new `com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter` starter to ensure your app runs without problems so that you won't be surprised by the 10.0 version!*
-
+See [release notes](https://github.com/Netflix/dgs-framework/releases/tag/v10.0.0) for a detailed overview of changes.
 
 # Contributing, asking questions and reporting issues.
 
