@@ -16,17 +16,7 @@
 
 package com.netflix.graphql.dgs.springgraphql.autoconfig
 
-import com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider
-import com.netflix.graphql.dgs.DgsComponent
-import com.netflix.graphql.dgs.DgsDataLoaderCustomizer
-import com.netflix.graphql.dgs.DgsDataLoaderInstrumentation
-import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
-import com.netflix.graphql.dgs.DgsDefaultPreparsedDocumentProvider
-import com.netflix.graphql.dgs.DgsFederationResolver
-import com.netflix.graphql.dgs.DgsQueryExecutor
-import com.netflix.graphql.dgs.DgsRuntimeWiring
-import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
-import com.netflix.graphql.dgs.ReloadSchemaIndicator
+import com.netflix.graphql.dgs.*
 import com.netflix.graphql.dgs.autoconfig.DgsConfigurationProperties
 import com.netflix.graphql.dgs.autoconfig.DgsDataloaderConfigurationProperties
 import com.netflix.graphql.dgs.autoconfig.DgsInputArgumentConfiguration
@@ -102,6 +92,8 @@ import org.springframework.graphql.execution.RuntimeWiringConfigurer
 import org.springframework.graphql.execution.SchemaReport
 import org.springframework.graphql.execution.SelfDescribingDataFetcher
 import org.springframework.graphql.execution.SubscriptionExceptionResolver
+import org.springframework.graphql.server.WebGraphQlInterceptor
+import org.springframework.graphql.server.WebGraphQlResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.bind.support.WebDataBinderFactory
@@ -519,6 +511,20 @@ open class DgsSpringGraphQLAutoConfiguration(
             requestCustomizer = requestCustomizer.getIfAvailable(DgsQueryExecutorRequestCustomizer::DEFAULT_REQUEST_CUSTOMIZER),
             graphQLContextContributors,
         )
+
+    @Bean
+    open fun dgsHeadersInterceptor(): WebGraphQlInterceptor =
+        WebGraphQlInterceptor { request, chain ->
+            chain.next(request).doOnNext { response: WebGraphQlResponse ->
+                val responseHeadersExtension = response.extensions["dgs-response-headers"]
+                if (responseHeadersExtension is HttpHeaders) {
+                    response.responseHeaders.addAll(responseHeadersExtension)
+                }
+                if (response.executionResult is DgsExecutionResult) {
+                    response.responseHeaders.addAll((response.executionResult as DgsExecutionResult).headers)
+                }
+            }
+        }
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
