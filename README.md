@@ -38,7 +38,7 @@ DGS 10.0.0 finalizes the integration work by removing all the legacy modules and
 This greatly reduces the footprint of the codebase, which will speed up feature development into the future!
 
 Although the list of changes is large, you probably won't notice the difference for your applications!
-Just make sure to use the (new) `netflix.graphql.dgs:dgs-starter` AKA `netflix.graphql.dgs:graphql-dgs-spring-graphql-starter` starter!
+Just make sure to use the (new) `com.netflix.graphql.dgs:dgs-starter` AKA `com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter` starter!
 
 See [release notes](https://github.com/Netflix/dgs-framework/releases/tag/v10.0.0) for a detailed overview of changes.
 
