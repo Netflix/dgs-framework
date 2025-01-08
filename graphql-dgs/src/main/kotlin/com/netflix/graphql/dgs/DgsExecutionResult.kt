@@ -24,7 +24,7 @@ import org.springframework.http.HttpStatus
 class DgsExecutionResult(
     private val executionResult: ExecutionResult,
     val headers: HttpHeaders,
-    val status: HttpStatus,
+    val status: HttpStatus = HttpStatus.OK,
 ) : ExecutionResult by executionResult {
     /**
      * Facilitate the construction of a [DgsExecutionResult] instance.

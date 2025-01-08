@@ -16,7 +16,18 @@
 
 package com.netflix.graphql.dgs.springgraphql.autoconfig
 
-import com.netflix.graphql.dgs.*
+import com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider
+import com.netflix.graphql.dgs.DgsComponent
+import com.netflix.graphql.dgs.DgsDataLoaderCustomizer
+import com.netflix.graphql.dgs.DgsDataLoaderInstrumentation
+import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
+import com.netflix.graphql.dgs.DgsDefaultPreparsedDocumentProvider
+import com.netflix.graphql.dgs.DgsExecutionResult
+import com.netflix.graphql.dgs.DgsFederationResolver
+import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.DgsRuntimeWiring
+import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
+import com.netflix.graphql.dgs.ReloadSchemaIndicator
 import com.netflix.graphql.dgs.autoconfig.DgsConfigurationProperties
 import com.netflix.graphql.dgs.autoconfig.DgsDataloaderConfigurationProperties
 import com.netflix.graphql.dgs.autoconfig.DgsInputArgumentConfiguration
@@ -512,7 +523,17 @@ open class DgsSpringGraphQLAutoConfiguration(
             graphQLContextContributors,
         )
 
+    /**
+     * Backward compatibility for setting response headers through a "dgs-response-headers" field in extensions, or using DgsExecutionResult.
+     * While this can easily be done through a custom WebGraphQlInterceptor, this bean provides backward compatibility with older code.
+     */
     @Bean
+    @ConditionalOnProperty(
+        prefix = "${AUTO_CONF_PREFIX}.dgs-response-headers",
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = true,
+    )
     open fun dgsHeadersInterceptor(): WebGraphQlInterceptor =
         WebGraphQlInterceptor { request, chain ->
             chain.next(request).doOnNext { response: WebGraphQlResponse ->
