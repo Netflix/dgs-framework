@@ -60,11 +60,9 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
     }
 
     private fun extractAllExcludes(propertySources: MutablePropertySources): String {
-        if (propertySources.any { it.name == INLINED_TEST_PROPERTIES }) {
-            val testExclude = propertySources.find { it.name == INLINED_TEST_PROPERTIES }?.getProperty(EXCLUDE)
-            if (testExclude is String && testExclude.isNotBlank()) {
-                return testExclude
-            }
+        val testExclude = propertySources.find { it.name == INLINED_TEST_PROPERTIES }?.getProperty(EXCLUDE)
+        if (testExclude != null && testExclude is String && testExclude.isNotBlank()) {
+            return testExclude
         }
 
         return propertySources
