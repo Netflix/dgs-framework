@@ -22,6 +22,7 @@ import com.netflix.graphql.dgs.DgsDataLoaderCustomizer
 import com.netflix.graphql.dgs.DgsDataLoaderInstrumentation
 import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
 import com.netflix.graphql.dgs.DgsDefaultPreparsedDocumentProvider
+import com.netflix.graphql.dgs.DgsExecutionResult
 import com.netflix.graphql.dgs.DgsFederationResolver
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.DgsRuntimeWiring
@@ -102,6 +103,8 @@ import org.springframework.graphql.execution.RuntimeWiringConfigurer
 import org.springframework.graphql.execution.SchemaReport
 import org.springframework.graphql.execution.SelfDescribingDataFetcher
 import org.springframework.graphql.execution.SubscriptionExceptionResolver
+import org.springframework.graphql.server.WebGraphQlInterceptor
+import org.springframework.graphql.server.WebGraphQlResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.bind.support.WebDataBinderFactory
@@ -519,6 +522,30 @@ open class DgsSpringGraphQLAutoConfiguration(
             requestCustomizer = requestCustomizer.getIfAvailable(DgsQueryExecutorRequestCustomizer::DEFAULT_REQUEST_CUSTOMIZER),
             graphQLContextContributors,
         )
+
+    /**
+     * Backward compatibility for setting response headers through a "dgs-response-headers" field in extensions, or using DgsExecutionResult.
+     * While this can easily be done through a custom WebGraphQlInterceptor, this bean provides backward compatibility with older code.
+     */
+    @Bean
+    @ConditionalOnProperty(
+        prefix = "${AUTO_CONF_PREFIX}.dgs-response-headers",
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = true,
+    )
+    open fun dgsHeadersInterceptor(): WebGraphQlInterceptor =
+        WebGraphQlInterceptor { request, chain ->
+            chain.next(request).doOnNext { response: WebGraphQlResponse ->
+                val responseHeadersExtension = response.extensions["dgs-response-headers"]
+                if (responseHeadersExtension is HttpHeaders) {
+                    response.responseHeaders.addAll(responseHeadersExtension)
+                }
+                if (response.executionResult is DgsExecutionResult) {
+                    response.responseHeaders.addAll((response.executionResult as DgsExecutionResult).headers)
+                }
+            }
+        }
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
