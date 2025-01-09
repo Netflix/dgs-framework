@@ -59,8 +59,13 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
             )
     }
 
-    private fun extractAllExcludes(propertySources: MutablePropertySources): String =
-        propertySources
+    private fun extractAllExcludes(propertySources: MutablePropertySources): String {
+        val testExclude = propertySources.find { it.name == INLINED_TEST_PROPERTIES }?.getProperty(EXCLUDE)
+        if (testExclude != null && testExclude is String && testExclude.isNotBlank()) {
+            return testExclude
+        }
+
+        return propertySources
             .stream()
             .filter { src -> !ConfigurationPropertySources.isAttachedConfigurationPropertySource(src) }
             .map { src ->
@@ -71,6 +76,7 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
                     }.orElse(emptyList())
             }.flatMap { it.stream() }
             .collect(Collectors.joining(","))
+    }
 
     companion object {
         private val DISABLE_AUTOCONFIG_PROPERTIES =
@@ -86,5 +92,6 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
             )
 
         private const val EXCLUDE = "spring.autoconfigure.exclude"
+        private const val INLINED_TEST_PROPERTIES = "Inlined Test Properties"
     }
 }
