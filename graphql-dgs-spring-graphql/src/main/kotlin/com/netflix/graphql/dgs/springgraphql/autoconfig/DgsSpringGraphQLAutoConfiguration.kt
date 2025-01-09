@@ -237,12 +237,12 @@ open class DgsSpringGraphQLAutoConfiguration(
     ): DefaultDgsGraphQLContextBuilder = DefaultDgsGraphQLContextBuilder(dgsCustomContextBuilder, dgsCustomContextBuilderWithRequest)
 
     /**
-     * Used by the [DefaultDgsQueryExecutor], it controls if, and when, such executor should reload the schema.
+     * Used by the [ReloadableGraphQLSource], it controls if, and when, such executor should reload the schema.
      * This implementation will return either the boolean value of the `dgs.reload` flag
      * or `true` if the `laptop` profile is an active Spring Boot profiles.
      * <p>
      * You can provide a bean of type [ReloadSchemaIndicator] if you want to control when the
-     * [DefaultDgsQueryExecutor] should reload the schema.
+     * [ReloadableGraphQLSource] should reload the schema.
      *
      * @implSpec the implementation of such bean should be thread-safe.
      */
