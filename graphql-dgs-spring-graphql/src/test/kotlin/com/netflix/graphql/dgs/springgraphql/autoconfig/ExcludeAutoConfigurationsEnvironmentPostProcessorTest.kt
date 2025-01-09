@@ -61,4 +61,24 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessorTest {
                 "org.springframework.boot.autoconfigure.graphql.security.GraphQlWebMvcSecurityAutoConfiguration",
             )
     }
+
+    @Test
+    fun `does not reintroduce overridden excludes in test properties`() {
+        val env = StandardEnvironment()
+        env.propertySources.addLast(MapPropertySource("application-props", mapOf(Pair("spring.autoconfigure.exclude", "someexclude"))))
+        env.propertySources.addLast(
+            MapPropertySource("Inlined Test Properties", mapOf(Pair("spring.autoconfigure.exclude", "someotherexclude"))),
+        )
+
+        ExcludeAutoConfigurationsEnvironmentPostProcessor().postProcessEnvironment(env, SpringApplication())
+        assertThat(env.getProperty("spring.autoconfigure.exclude"))
+            .contains(
+                "someotherexclude",
+                "org.springframework.boot.actuate.autoconfigure.observation.graphql.GraphQlObservationAutoConfiguration",
+                "org.springframework.boot.autoconfigure.graphql.security.GraphQlWebMvcSecurityAutoConfiguration",
+            )
+
+        assertThat(env.getProperty("spring.autoconfigure.exclude"))
+            .doesNotContain("someexclude")
+    }
 }
