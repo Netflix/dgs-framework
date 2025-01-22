@@ -771,35 +771,35 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.13.13"
+            "locked": "1.13.16"
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api-jvm": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-agent-api"
             ]
         },
         "io.mockk:mockk-agent-jvm": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-dsl-jvm",
@@ -807,25 +807,25 @@
             ]
         },
         "io.mockk:mockk-core-jvm": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-core"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-dsl-jvm": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-dsl"
             ]
         },
         "io.mockk:mockk-jvm": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk"
             ]
@@ -2222,59 +2222,59 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.13.13"
+            "locked": "1.13.16"
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api-jvm": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-agent-api"
             ]
         },
         "io.mockk:mockk-agent-jvm": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-core-jvm": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-core"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-dsl-jvm": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-dsl"
             ]
         },
         "io.mockk:mockk-jvm": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk"
             ]
@@ -2674,29 +2674,29 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.13.13"
+            "locked": "1.13.16"
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk",
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk"
             ]
@@ -3089,35 +3089,35 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.13.13"
+            "locked": "1.13.16"
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api-jvm": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-agent-api"
             ]
         },
         "io.mockk:mockk-agent-jvm": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-dsl-jvm",
@@ -3125,25 +3125,25 @@
             ]
         },
         "io.mockk:mockk-core-jvm": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-core"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-dsl-jvm": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk-dsl"
             ]
         },
         "io.mockk:mockk-jvm": {
-            "locked": "1.13.13",
+            "locked": "1.13.16",
             "transitive": [
                 "io.mockk:mockk"
             ]
