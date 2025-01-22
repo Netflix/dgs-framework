@@ -72,7 +72,7 @@ dependencies {
         }
         api("com.apollographql.federation:federation-graphql-java-support") {
             version {
-                require("5.2.0")
+                require("5.3.0")
             }
         }
         // ---
