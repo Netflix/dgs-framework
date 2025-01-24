@@ -611,12 +611,19 @@ class DgsSchemaProvider
                     .forEach { method ->
                         val dgsEntityFetcherAnnotation = method.getAnnotation(DgsEntityFetcher::class.java)
 
+                        val entityFetcherTypeName = dgsEntityFetcherAnnotation.name
+                        val coordinateName = "_entities.$entityFetcherTypeName"
+
+                        val mergedAnnotations =
+                            MergedAnnotations
+                                .from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY)
+                        dataFetcherInfo.dataFetchers +=
+                            DataFetcherReference(dgsComponent.instance, method, mergedAnnotations, "Query", coordinateName)
+
                         val enableInstrumentation =
                             method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)?.value
                                 ?: false
-                        val entityFetcherTypeName = dgsEntityFetcherAnnotation.name
                         if (enableInstrumentation) {
-                            val coordinateName = "__entities.$entityFetcherTypeName"
                             dataFetcherInfo.tracingEnabled += coordinateName
                             dataFetcherInfo.metricsEnabled += coordinateName
                         }
