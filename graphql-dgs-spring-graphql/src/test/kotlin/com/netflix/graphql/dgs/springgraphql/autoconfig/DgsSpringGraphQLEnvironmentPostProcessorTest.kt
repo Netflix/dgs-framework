@@ -104,4 +104,23 @@ class DgsSpringGraphQLEnvironmentPostProcessorTest {
 
         Assertions.assertThat(env.getProperty("spring.graphql.websocket.connection-init-timeout")).isEqualTo("30s")
     }
+
+    @Test
+    fun `DGS virtual threads should by default be enabled when Spring virtual threads are enabled`() {
+        env.setProperty("spring.threads.virtual.enabled", "true")
+
+        DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
+
+        Assertions.assertThat(env.getProperty("dgs.graphql.virtualthreads.enabled")).isEqualTo("true")
+    }
+
+    @Test
+    fun `DGS virtual threads should by disabled when explicitly set to false`() {
+        env.setProperty("spring.threads.virtual.enabled", "true")
+        env.setProperty("dgs.graphql.virtualthreads.enabled", "false")
+
+        DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
+
+        Assertions.assertThat(env.getProperty("dgs.graphql.virtualthreads.enabled")).isEqualTo("false")
+    }
 }
