@@ -1,0 +1,80 @@
+{
+  "properties": [
+    {
+      "name": "dgs.graphql.convert-all-data-loaders-to-with-context.enabled",
+      "defaultValue": "true"
+    },
+    {
+      "name": "dgs.graphql.dataloader.schedule-duration",
+      "defaultValue": "10ms"
+    },
+    {
+      "name": "dgs.graphql.dataloader.ticker-mode-enabled",
+      "defaultValue": "false"
+    },
+    {
+      "name": "dgs.graphql.dgs-response-headers.enabled",
+      "defaultValue": "true"
+    },
+    {
+      "name": "dgs.graphql.enable-entity-fetcher-custom-scalar-parsing",
+      "defaultValue": "false"
+    },
+    {
+      "name": "dgs.graphql.errors.classification.enabled",
+      "defaultValue": "true"
+    },
+    {
+      "name": "dgs.graphql.graphiql.enabled",
+      "defaultValue": "true"
+    },
+    {
+      "name": "dgs.graphql.graphiql.path",
+      "defaultValue": "/graphiql"
+    },
+    {
+      "name": "dgs.graphql.introspection.enabled",
+      "defaultValue": "true"
+    },
+    {
+      "name": "dgs.graphql.introspection.show-sdl-comments",
+      "defaultValue": "true"
+    },
+    {
+      "name": "dgs.graphql.path",
+      "defaultValue": "/graphql"
+    },
+    {
+      "name": "dgs.graphql.preparsed-document-provider.cache-validity-duration",
+      "defaultValue": "PT1H"
+    },
+    {
+      "name": "dgs.graphql.preparsed-document-provider.enabled",
+      "defaultValue": "true"
+    },
+    {
+      "name": "dgs.graphql.preparsed-document-provider.maximum-cache-size",
+      "defaultValue": 2000
+    },
+    {
+      "name": "dgs.graphql.schema-wiring-validation-enabled",
+      "defaultValue": "true"
+    },
+    {
+      "name": "dgs.graphql.spring.webmvc.asyncdispatch.enabled",
+      "defaultValue": "false"
+    },
+    {
+      "name": "dgs.graphql.virtualthreads.enabled",
+      "defaultValue": "false"
+    },
+    {
+      "name": "dgs.graphql.websocket.path",
+      "defaultValue": "/graphql"
+    },
+    {
+      "name": "dgs.springgraphql.pagination.enabled",
+      "defaultValue": "true"
+    }
+  ]
+}
