@@ -45,10 +45,10 @@ import java.time.Duration
 )
 @EnableConfigurationProperties(DgsAPQSupportProperties::class)
 open class DgsAPQSupportAutoConfiguration {
-    @Bean
+   /* @Bean
     @ConditionalOnBean(PersistedQueryCache::class)
     open fun apolloPersistedQuerySupport(persistedQueryCache: PersistedQueryCache): ApolloPersistedQuerySupport =
-        ApolloPersistedQuerySupport(persistedQueryCache)
+        DgsAPQPreParsedDocumentProvider(persistedQueryCache, null)*/
 
     @Bean
     @ConditionalOnBean(ApolloPersistedQuerySupport::class)

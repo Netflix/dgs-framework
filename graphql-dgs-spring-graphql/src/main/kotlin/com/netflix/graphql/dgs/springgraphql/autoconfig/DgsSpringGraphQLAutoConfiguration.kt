@@ -28,6 +28,7 @@ import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.DgsRuntimeWiring
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import com.netflix.graphql.dgs.ReloadSchemaIndicator
+import com.netflix.graphql.dgs.apq.DgsAPQPreParsedDocumentProvider
 import com.netflix.graphql.dgs.autoconfig.DgsConfigurationProperties
 import com.netflix.graphql.dgs.autoconfig.DgsDataloaderConfigurationProperties
 import com.netflix.graphql.dgs.autoconfig.DgsInputArgumentConfiguration
@@ -69,6 +70,7 @@ import graphql.execution.DataFetcherExceptionHandlerParameters
 import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.preparsed.PreparsedDocumentProvider
+import graphql.execution.preparsed.persisted.PersistedQueryCache
 import graphql.introspection.Introspection
 import graphql.schema.DataFetcherFactory
 import graphql.schema.DataFetchingEnvironment
@@ -491,12 +493,20 @@ open class DgsSpringGraphQLAutoConfiguration(
         @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
         @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
         dataFetcherExceptionHandler: DataFetcherExceptionHandler,
+        persistedQueryCache: Optional<PersistedQueryCache>,
+        environment: Environment,
     ): GraphQlSourceBuilderCustomizer =
         GraphQlSourceBuilderCustomizer { builder ->
             builder.configureGraphQl { graphQlBuilder ->
-                if (preparsedDocumentProvider.isPresent) {
-                    graphQlBuilder
-                        .preparsedDocumentProvider(preparsedDocumentProvider.get())
+                val apqEnabled = environment.getProperty("dgs.graphql.apq.enabled", Boolean::class.java, false)
+                if (apqEnabled) {
+                    // Use the APQ PreparsedDocumentProvider if apq is enabled, wrapping the user provided preparsedDocumentProvider
+                    val apqPreParsedDocumentProvider = DgsAPQPreParsedDocumentProvider(persistedQueryCache.get(), preparsedDocumentProvider)
+                    graphQlBuilder.preparsedDocumentProvider(apqPreParsedDocumentProvider)
+                } else {
+                    if (preparsedDocumentProvider.isPresent) {
+                        graphQlBuilder.preparsedDocumentProvider(preparsedDocumentProvider.get())
+                    }
                 }
 
                 if (providedQueryExecutionStrategy.isPresent) {

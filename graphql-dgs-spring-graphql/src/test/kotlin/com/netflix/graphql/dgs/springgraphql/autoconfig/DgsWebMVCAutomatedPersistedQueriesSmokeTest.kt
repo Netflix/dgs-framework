@@ -16,8 +16,13 @@
 
 package com.netflix.graphql.dgs.springgraphql.autoconfig
 
+import com.github.benmanes.caffeine.cache.Cache
+import com.github.benmanes.caffeine.cache.Caffeine
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
+import graphql.ExecutionInput
+import graphql.execution.preparsed.PreparsedDocumentEntry
+import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.junit.jupiter.api.MethodOrderer
@@ -31,13 +36,18 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.FilterType
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
+import java.util.function.Function
 
 @SpringBootTest(
     properties = [
@@ -197,6 +207,22 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
                 |}
                     """.trimMargin()
                 return schemaParser.parse(gqlSchema)
+            }
+
+            @Configuration
+            open class PreparsedDocumentProviderConfig {
+                private val cache: Cache<String, PreparsedDocumentEntry> = Caffeine.newBuilder().maximumSize(250)
+                    .expireAfterAccess(5, TimeUnit.MINUTES).recordStats().build()
+
+
+                @Bean
+                open fun preparsedDocumentProvider(): PreparsedDocumentProvider {
+                    return PreparsedDocumentProvider { executionInput: ExecutionInput, parseAndValidateFunction: Function<ExecutionInput?, PreparsedDocumentEntry?> ->
+                        val mapCompute =
+                            Function { key: String? -> parseAndValidateFunction.apply(executionInput) }
+                        CompletableFuture.completedFuture(cache[executionInput.query, mapCompute])
+                    }
+                }
             }
         }
     }
