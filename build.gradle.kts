@@ -33,7 +33,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.6"
 
     id("org.jmailen.kotlinter") version "5.0.+"
-    id("me.champeau.jmh") version "0.7.2"
+    id("me.champeau.jmh") version "0.7.3"
 
     kotlin("jvm") version Versions.KOTLIN_VERSION
     idea
