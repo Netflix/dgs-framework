@@ -1,0 +1,118 @@
+{
+  "properties": [
+    {
+      "name": "dgs.graphql.convert-all-data-loaders-to-with-context.enabled",
+      "defaultValue": "true",
+      "type": "java.lang.Boolean",
+      "description": "Automatically convert all defined dataloader to accept passing of context."
+    },
+    {
+      "name": "dgs.graphql.dataloader.schedule-duration",
+      "defaultValue": "10ms",
+      "type": "java.lang.String",
+      "description": "Set the schedule for scheduling dispatch predicate checks."
+    },
+    {
+      "name": "dgs.graphql.dataloader.ticker-mode-enabled",
+      "defaultValue": "false",
+      "type": "java.lang.Boolean",
+      "description": "Enables the ticker mode for scheduling data loader dispatches."
+    },
+    {
+      "name": "dgs.graphql.dgs-response-headers.enabled",
+      "defaultValue": "true",
+      "type": "java.lang.Boolean",
+      "description": "Backward compatibility for setting response headers through dgs-response-headers field in extensions, or using DgsExecutionResult. While this can easily be done through a custom WebGraphQlInterceptor, this property provides backward compatibility with older code."
+    },
+    {
+      "name": "dgs.graphql.enable-entity-fetcher-custom-scalar-parsing",
+      "defaultValue": "false",
+      "type": "java.lang.Boolean",
+      "description": "Enables the bug fix for entity fetcher custom scalar parsing. This will eventually be enabled by default."
+    },
+    {
+      "name": "dgs.graphql.errors.classification.enabled",
+      "defaultValue": "true",
+      "type": "java.lang.Boolean",
+      "description": "Enable classification of errors in the extensions field."
+    },
+    {
+      "name": "dgs.graphql.graphiql.enabled",
+      "defaultValue": "true",
+      "type": "java.lang.Boolean",
+      "description": "Enabled the GraphiQL query interface"
+    },
+    {
+      "name": "dgs.graphql.graphiql.path",
+      "defaultValue": "/graphiql",
+      "type": "java.lang.String",
+      "description": "Configure the GraphiQL query interface url path."
+    },
+    {
+      "name": "dgs.graphql.introspection.enabled",
+      "defaultValue": "true",
+      "type": "java.lang.Boolean",
+      "description": "Configure allowing introspection queries. Note that many tools rely on this."
+    },
+    {
+      "name": "dgs.graphql.introspection.show-sdl-comments",
+      "defaultValue": "true",
+      "type": "java.lang.Boolean",
+      "description": "Show schema comments in introspection."
+    },
+    {
+      "name": "dgs.graphql.path",
+      "defaultValue": "/graphql",
+      "type": "java.lang.String",
+      "description": "The path for th the graphql endpoint."
+    },
+    {
+      "name": "dgs.graphql.preparsed-document-provider.cache-validity-duration",
+      "defaultValue": "PT1H",
+      "type": "java.lang.String",
+      "description": "How long a cached entry in the PreparsedDocumentProvider Caffiene-cache is valid for. Specified as an ISO-8601 duration string."
+    },
+    {
+      "name": "dgs.graphql.preparsed-document-provider.enabled",
+      "defaultValue": "true",
+      "type": "java.lang.Boolean",
+      "description": "Enables a Caffiene-cache backed implementation of a PreparsedDocumentProvider."
+    },
+    {
+      "name": "dgs.graphql.preparsed-document-provider.maximum-cache-size",
+      "defaultValue": 2000,
+      "type": "java.lang.Integer",
+      "description": "Sets the maximum size of the PreparsedDocumentProvider Caffiene-cache."
+    },
+    {
+      "name": "dgs.graphql.schema-wiring-validation-enabled",
+      "defaultValue": "true",
+      "type": "java.lang.Boolean",
+      "description": "Verify if datafetchers are registered to fields defined in the schema."
+    },
+    {
+      "name": "dgs.graphql.spring.webmvc.asyncdispatch.enabled",
+      "defaultValue": "false",
+      "type": "java.lang.Boolean",
+      "description": "Enable async dispatching in the request handling. This can reduce the number of server working threads required, but requires all filters to be async aware, and tests to handle async correctly."
+    },
+    {
+      "name": "dgs.graphql.virtualthreads.enabled",
+      "defaultValue": "false",
+      "type": "java.lang.Boolean",
+      "description": "Run each non-trivial datafetcher on a new virtual thread. This allows for parallel execution of datafetchers without explicitly using CompletableFuture. Requires JDK21+. Not that this is in addition to Spring's spring.threads.virtual.enabled property."
+    },
+    {
+      "name": "dgs.graphql.websocket.path",
+      "defaultValue": "/graphql",
+      "type": "java.lang.String",
+      "description": "Path for the WebSockets listener if enabled."
+    },
+    {
+      "name": "dgs.springgraphql.pagination.enabled",
+      "defaultValue": "true",
+      "type": "java.lang.Boolean",
+      "description": "Enable the pagination feature in Spring GraphQL."
+    }
+  ]
+}

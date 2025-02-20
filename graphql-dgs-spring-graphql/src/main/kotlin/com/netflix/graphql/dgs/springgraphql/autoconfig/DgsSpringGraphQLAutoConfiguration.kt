@@ -172,6 +172,12 @@ open class DgsSpringGraphQLAutoConfiguration(
     ): Instrumentation = GraphQLContextContributorInstrumentation(graphQLContextContributors.orderedStream().toList())
 
     @Bean
+    @ConditionalOnProperty(
+        prefix = "${AUTO_CONF_PREFIX}.errors.classification",
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = true,
+    )
     open fun graphqlJavaErrorInstrumentation(): Instrumentation = GraphQLJavaErrorInstrumentation()
 
     @Bean
@@ -383,7 +389,7 @@ open class DgsSpringGraphQLAutoConfiguration(
     @Qualifier("dgsAsyncTaskExecutor")
     @ConditionalOnJava(value = JavaVersion.TWENTY_ONE)
     @ConditionalOnMissingBean(name = ["dgsAsyncTaskExecutor"])
-    @ConditionalOnProperty(name = ["dgs.graphql.virtualthreads.enabled"], havingValue = "true", matchIfMissing = false)
+    @ConditionalOnProperty(prefix = "${AUTO_CONF_PREFIX}.virtualthreads", name = ["enabled"], havingValue = "true", matchIfMissing = false)
     open fun virtualThreadsTaskExecutor(): AsyncTaskExecutor {
         LOG.info("Enabling virtual threads for DGS")
 
