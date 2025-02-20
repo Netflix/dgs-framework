@@ -115,7 +115,7 @@ class DgsSpringGraphQLEnvironmentPostProcessorTest {
     }
 
     @Test
-    fun `DGS virtual threads should by disabled when explicitly set to false`() {
+    fun `DGS virtual threads should be disabled when explicitly set to false`() {
         env.setProperty("spring.threads.virtual.enabled", "true")
         env.setProperty("dgs.graphql.virtualthreads.enabled", "false")
 
