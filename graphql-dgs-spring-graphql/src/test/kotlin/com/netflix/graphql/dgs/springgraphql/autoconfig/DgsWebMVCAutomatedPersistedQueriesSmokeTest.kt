@@ -211,18 +211,24 @@ class DgsWebMVCAutomatedPersistedQueriesSmokeTest {
 
             @Configuration
             open class PreparsedDocumentProviderConfig {
-                private val cache: Cache<String, PreparsedDocumentEntry> = Caffeine.newBuilder().maximumSize(250)
-                    .expireAfterAccess(5, TimeUnit.MINUTES).recordStats().build()
-
+                private val cache: Cache<String, PreparsedDocumentEntry> =
+                    Caffeine
+                        .newBuilder()
+                        .maximumSize(250)
+                        .expireAfterAccess(5, TimeUnit.MINUTES)
+                        .recordStats()
+                        .build()
 
                 @Bean
-                open fun preparsedDocumentProvider(): PreparsedDocumentProvider {
-                    return PreparsedDocumentProvider { executionInput: ExecutionInput, parseAndValidateFunction: Function<ExecutionInput?, PreparsedDocumentEntry?> ->
+                open fun preparsedDocumentProvider(): PreparsedDocumentProvider =
+                    PreparsedDocumentProvider {
+                        executionInput: ExecutionInput,
+                        parseAndValidateFunction: Function<ExecutionInput?, PreparsedDocumentEntry?>,
+                        ->
                         val mapCompute =
                             Function { key: String? -> parseAndValidateFunction.apply(executionInput) }
                         CompletableFuture.completedFuture(cache[executionInput.query, mapCompute])
                     }
-                }
             }
         }
     }

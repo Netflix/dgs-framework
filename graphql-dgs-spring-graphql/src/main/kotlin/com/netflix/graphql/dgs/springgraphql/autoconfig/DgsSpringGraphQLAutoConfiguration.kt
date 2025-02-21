@@ -28,7 +28,6 @@ import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.DgsRuntimeWiring
 import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import com.netflix.graphql.dgs.ReloadSchemaIndicator
-import com.netflix.graphql.dgs.apq.DgsAPQPreParsedDocumentProvider
 import com.netflix.graphql.dgs.autoconfig.DgsConfigurationProperties
 import com.netflix.graphql.dgs.autoconfig.DgsDataloaderConfigurationProperties
 import com.netflix.graphql.dgs.autoconfig.DgsInputArgumentConfiguration
@@ -499,14 +498,9 @@ open class DgsSpringGraphQLAutoConfiguration(
         GraphQlSourceBuilderCustomizer { builder ->
             builder.configureGraphQl { graphQlBuilder ->
                 val apqEnabled = environment.getProperty("dgs.graphql.apq.enabled", Boolean::class.java, false)
-                if (apqEnabled) {
-                    // Use the APQ PreparsedDocumentProvider if apq is enabled, wrapping the user provided preparsedDocumentProvider
-                    val apqPreParsedDocumentProvider = DgsAPQPreParsedDocumentProvider(persistedQueryCache.get(), preparsedDocumentProvider)
-                    graphQlBuilder.preparsedDocumentProvider(apqPreParsedDocumentProvider)
-                } else {
-                    if (preparsedDocumentProvider.isPresent) {
-                        graphQlBuilder.preparsedDocumentProvider(preparsedDocumentProvider.get())
-                    }
+                // if apq is enabled use the APQPreparsedDocumentProvider instead
+                if (preparsedDocumentProvider.isPresent && !apqEnabled) {
+                    graphQlBuilder.preparsedDocumentProvider(preparsedDocumentProvider.get())
                 }
 
                 if (providedQueryExecutionStrategy.isPresent) {
