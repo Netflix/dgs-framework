@@ -100,6 +100,7 @@ import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.DefaultParameterNameDiscoverer
+import org.springframework.core.Ordered
 import org.springframework.core.PriorityOrdered
 import org.springframework.core.ReactiveAdapterRegistry
 import org.springframework.core.annotation.Order
@@ -171,7 +172,9 @@ open class DgsSpringGraphQLAutoConfiguration(
         graphQLContextContributors: ObjectProvider<GraphQLContextContributor>,
     ): Instrumentation = GraphQLContextContributorInstrumentation(graphQLContextContributors.orderedStream().toList())
 
+    // This instrumentation needs to run before MetricsInstrumentation
     @Bean
+    @Order(Ordered.LOWEST_PRECEDENCE - 1)
     @ConditionalOnProperty(
         prefix = "${AUTO_CONF_PREFIX}.errors.classification",
         name = ["enabled"],
