@@ -21,6 +21,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cache.CacheManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.PriorityOrdered
+import org.springframework.core.annotation.Order
 import java.util.Optional
 
 /**
@@ -38,6 +40,7 @@ open class DgsGraphQLMicrometerAutoConfiguration {
     }
 
     @Bean
+    @Order(PriorityOrdered.LOWEST_PRECEDENCE)
     @ConditionalOnProperty(
         prefix = "$AUTO_CONF_PREFIX.instrumentation",
         name = ["enabled"],
