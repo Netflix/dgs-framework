@@ -69,7 +69,6 @@ import graphql.execution.DataFetcherExceptionHandlerParameters
 import graphql.execution.ExecutionStrategy
 import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.preparsed.PreparsedDocumentProvider
-import graphql.execution.preparsed.persisted.PersistedQueryCache
 import graphql.introspection.Introspection
 import graphql.schema.DataFetcherFactory
 import graphql.schema.DataFetchingEnvironment
@@ -492,7 +491,6 @@ open class DgsSpringGraphQLAutoConfiguration(
         @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
         @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
         dataFetcherExceptionHandler: DataFetcherExceptionHandler,
-        persistedQueryCache: Optional<PersistedQueryCache>,
         environment: Environment,
     ): GraphQlSourceBuilderCustomizer =
         GraphQlSourceBuilderCustomizer { builder ->
