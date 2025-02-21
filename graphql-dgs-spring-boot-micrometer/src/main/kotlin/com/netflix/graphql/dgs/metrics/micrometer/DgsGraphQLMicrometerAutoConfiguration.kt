@@ -40,7 +40,6 @@ open class DgsGraphQLMicrometerAutoConfiguration {
     }
 
     @Bean
-    @Order(PriorityOrdered.LOWEST_PRECEDENCE)
     @ConditionalOnProperty(
         prefix = "$AUTO_CONF_PREFIX.instrumentation",
         name = ["enabled"],
