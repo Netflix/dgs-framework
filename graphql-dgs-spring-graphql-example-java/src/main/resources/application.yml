@@ -21,3 +21,7 @@ management:
         include:
           - metrics
 debug: true
+dgs:
+  graphql:
+    apq:
+      enabled: true
