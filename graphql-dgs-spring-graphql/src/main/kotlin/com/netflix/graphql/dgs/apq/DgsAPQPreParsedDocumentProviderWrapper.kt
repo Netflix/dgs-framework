@@ -25,7 +25,7 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function
 
-class DgsAPQPreParsedDocumentProvider(
+class DgsAPQPreParsedDocumentProviderWrapper(
     persistedQueryCache: PersistedQueryCache,
     private val preparsedDocumentProvider: Optional<PreparsedDocumentProvider>,
 ) : ApolloPersistedQuerySupport(persistedQueryCache) {

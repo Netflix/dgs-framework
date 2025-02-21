@@ -496,7 +496,7 @@ open class DgsSpringGraphQLAutoConfiguration(
         GraphQlSourceBuilderCustomizer { builder ->
             builder.configureGraphQl { graphQlBuilder ->
                 val apqEnabled = environment.getProperty("dgs.graphql.apq.enabled", Boolean::class.java, false)
-                // if apq is enabled use the APQPreparsedDocumentProvider instead
+                // If apq is enabled, we will not use this preparsedDocumentProvider and use DgsAPQPreparsedDocumentProviderWrapper instead
                 if (preparsedDocumentProvider.isPresent && !apqEnabled) {
                     graphQlBuilder.preparsedDocumentProvider(preparsedDocumentProvider.get())
                 }

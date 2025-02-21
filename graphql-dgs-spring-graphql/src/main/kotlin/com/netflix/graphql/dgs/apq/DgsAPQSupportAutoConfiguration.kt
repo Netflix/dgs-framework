@@ -58,7 +58,8 @@ open class DgsAPQSupportAutoConfiguration {
             builder.configureGraphQl { graphQlBuilder ->
                 // For non-APQ queries, the user specified PreparsedDocumentProvider should be used, so we configure the DgsAPQPreparsedDocumentProvider to
                 // wrap the user specified one and delegate appropriately since we can only have one PreParsedDocumentProvider bean
-                val apqPreParsedDocumentProvider = DgsAPQPreParsedDocumentProvider(persistedQueryCache.get(), preparsedDocumentProvider)
+                val apqPreParsedDocumentProvider =
+                    DgsAPQPreParsedDocumentProviderWrapper(persistedQueryCache.get(), preparsedDocumentProvider)
                 graphQlBuilder.preparsedDocumentProvider(apqPreParsedDocumentProvider)
             }
         }

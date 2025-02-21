@@ -16,7 +16,7 @@
 
 package com.netflix.graphql.dgs.springgraphql.apq
 
-import com.netflix.graphql.dgs.apq.DgsAPQPreParsedDocumentProvider
+import com.netflix.graphql.dgs.apq.DgsAPQPreParsedDocumentProviderWrapper
 import graphql.ExecutionInput
 import graphql.execution.preparsed.PreparsedDocumentEntry
 import graphql.execution.preparsed.PreparsedDocumentProvider
@@ -36,9 +36,9 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 
 @ExtendWith(MockKExtension::class)
-class DgsAPQPreParsedDocumentProviderTest {
+class DgsAPQPreParsedDocumentProviderWrapperTest {
     @Autowired
-    private lateinit var dgsAPQPreParsedDocumentProvider: DgsAPQPreParsedDocumentProvider
+    private lateinit var dgsAPQPreParsedDocumentProvider: DgsAPQPreParsedDocumentProviderWrapper
 
     @MockK
     lateinit var preparsedDocumentProvider: PreparsedDocumentProvider
@@ -48,7 +48,8 @@ class DgsAPQPreParsedDocumentProviderTest {
 
     @BeforeEach
     fun setUp() {
-        dgsAPQPreParsedDocumentProvider = DgsAPQPreParsedDocumentProvider(persistedQueryCache, Optional.of(preparsedDocumentProvider))
+        dgsAPQPreParsedDocumentProvider =
+            DgsAPQPreParsedDocumentProviderWrapper(persistedQueryCache, Optional.of(preparsedDocumentProvider))
     }
 
     @Test
@@ -74,7 +75,7 @@ class DgsAPQPreParsedDocumentProviderTest {
         }.returns(CompletableFuture.completedFuture(computeFunction(executionInput)))
 
         dgsAPQPreParsedDocumentProvider.getDocumentAsync(executionInput, computeFunction)
-        assertThat(count == 1)
+        assertThat(count).isEqualTo(1)
     }
 
     @Test
@@ -100,7 +101,7 @@ class DgsAPQPreParsedDocumentProviderTest {
         }.returns(CompletableFuture.completedFuture(computeFunction(executionInput)))
 
         dgsAPQPreParsedDocumentProvider.getDocumentAsync(executionInput, computeFunction)
-        assertThat(count == 1)
+        assertThat(count).isEqualTo(1)
     }
 
     @Test
@@ -121,6 +122,6 @@ class DgsAPQPreParsedDocumentProviderTest {
         }.returns(CompletableFuture.completedFuture(computeFunction(executionInput)))
 
         dgsAPQPreParsedDocumentProvider.getDocumentAsync(executionInput, computeFunction)
-        assertThat(count == 1)
+        assertThat(count).isEqualTo(1)
     }
 }
