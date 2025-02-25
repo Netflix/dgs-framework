@@ -255,7 +255,9 @@ class DefaultDataFetcherExceptionHandlerTest {
             .exception(invocation)
             .dataFetchingEnvironment(environment)
             .build()
+
         val result = DefaultDataFetcherExceptionHandler().handleException(params).get()
+
         assertThat(result.errors.size).isEqualTo(1)
         assertThat(result.errors[0].message).containsSubsequence("java.lang.IllegalStateException: I'm illegal!")
     }
