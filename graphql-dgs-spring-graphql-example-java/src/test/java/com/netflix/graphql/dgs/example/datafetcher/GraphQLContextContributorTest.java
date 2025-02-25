@@ -61,4 +61,13 @@ public class GraphQLContextContributorTest {
         String contributorEnabled = queryExecutor.executeAndExtractJsonPath("{ withDataLoaderGraphQLContext }", "data.withDataLoaderGraphQLContext", servletWebRequest);
         assertThat(contributorEnabled).isEqualTo("true");
     }
+
+    @Test
+    void withDataloaderGraphQLContextOverride() {
+        final MockHttpServletRequest mockServletRequest = new MockHttpServletRequest();
+        mockServletRequest.addHeader(CONTEXT_CONTRIBUTOR_HEADER_NAME, CONTEXT_CONTRIBUTOR_HEADER_VALUE);
+        ServletWebRequest servletWebRequest = new ServletWebRequest(mockServletRequest);
+        String contributorEnabled = queryExecutor.executeAndExtractJsonPath("{ withDataLoaderGraphQLContextWithFromDfe }", "data.withDataLoaderGraphQLContextWithFromDfe", servletWebRequest);
+        assertThat(contributorEnabled).isEqualTo("override");
+    }
 }
