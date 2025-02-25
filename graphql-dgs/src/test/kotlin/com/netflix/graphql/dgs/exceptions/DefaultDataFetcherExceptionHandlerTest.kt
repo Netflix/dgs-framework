@@ -31,6 +31,7 @@ import io.mockk.spyk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertAll
 import org.slf4j.Logger
 import org.slf4j.event.Level
 import org.slf4j.spi.NOPLoggingEventBuilder
@@ -259,7 +260,9 @@ class DefaultDataFetcherExceptionHandlerTest {
 
         val result = DefaultDataFetcherExceptionHandler().handleException(params).get()
 
-        assertThat(result.errors.size).isEqualTo(1)
-        assertThat(result.errors[0].message).containsSubsequence("java.lang.IllegalStateException: I'm illegal!")
+        assertAll(
+            { assertThat(result.errors.size).isEqualTo(1) },
+            { assertThat(result.errors[0].message).containsSubsequence("java.lang.IllegalStateException: I'm illegal!") },
+        )
     }
 }
