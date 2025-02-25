@@ -36,7 +36,8 @@ import java.util.concurrent.CompletionException
 open class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
     override fun handleException(
         handlerParameters: DataFetcherExceptionHandlerParameters,
-    ): CompletableFuture<DataFetcherExceptionHandlerResult> = CompletableFuture.completedFuture(doHandleException(handlerParameters))
+    ): CompletableFuture<DataFetcherExceptionHandlerResult> =
+        CompletableFuture.completedFuture(doHandleException(handlerParameters))
 
     private fun doHandleException(handlerParameters: DataFetcherExceptionHandlerParameters): DataFetcherExceptionHandlerResult {
         val exception = unwrapCompletionException(handlerParameters.exception)
@@ -85,9 +86,9 @@ open class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
     }
 
     private fun unwrapCompletionException(e: Throwable): Throwable =
-        when (val exception = e.cause) {
-            is CompletionException -> unwrapCompletionException(exception.cause ?: exception)
-            is InvocationTargetException -> unwrapCompletionException(exception.targetException)
+        when (e) {
+            is CompletionException -> unwrapCompletionException(e.cause ?: e)
+            is InvocationTargetException -> unwrapCompletionException(e.targetException)
             else -> e
         }
 
