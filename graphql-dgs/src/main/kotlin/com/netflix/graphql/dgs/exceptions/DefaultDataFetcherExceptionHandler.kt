@@ -39,10 +39,7 @@ open class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
     ): CompletableFuture<DataFetcherExceptionHandlerResult> = CompletableFuture.completedFuture(doHandleException(handlerParameters))
 
     private fun doHandleException(handlerParameters: DataFetcherExceptionHandlerParameters): DataFetcherExceptionHandlerResult {
-        val exception =
-            handlerParameters.exception
-                .unwrapCompletionException()
-                .unwrapInvocationTargetException()
+        val exception = unwrapCompletionException(handlerParameters.exception)
 
         val graphqlError =
             when (exception) {
@@ -54,6 +51,7 @@ open class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
                                 isSpringSecurityAccessException(
                                     exception,
                                 ) -> TypedGraphQLError.newPermissionDeniedBuilder()
+
                             else -> TypedGraphQLError.newInternalErrorBuilder()
                         }
                     builder
@@ -86,11 +84,12 @@ open class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
         )
     }
 
-    private fun Throwable.unwrapCompletionException(): Throwable =
-        if (this is CompletionException && this.cause != null) this.cause!! else this
-
-    private fun Throwable.unwrapInvocationTargetException(): Throwable =
-        if (this is InvocationTargetException && this.targetException != null) this.targetException!! else this
+    private fun unwrapCompletionException(e: Throwable): Throwable =
+        when (val exception = e.cause) {
+            is CompletionException -> unwrapCompletionException(exception.cause ?: exception)
+            is InvocationTargetException -> unwrapCompletionException(exception.targetException)
+            else -> e
+        }
 
     protected val logger: Logger get() = DefaultDataFetcherExceptionHandler.logger
 
