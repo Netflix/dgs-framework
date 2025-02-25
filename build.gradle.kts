@@ -36,7 +36,6 @@ plugins {
     id("me.champeau.jmh") version "0.7.2"
 
     kotlin("jvm") version Versions.KOTLIN_VERSION
-    kotlin("kapt") version Versions.KOTLIN_VERSION
     idea
     eclipse
 }
@@ -88,10 +87,6 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     dependencies {
         // Apply the BOM to applicable subprojects.
         api(platform(project(":graphql-dgs-platform")))
-        // Speed up processing of AutoConfig's produced by Spring Boot
-        annotationProcessor("org.springframework.boot:spring-boot-autoconfigure-processor")
-        // Produce Config Metadata for properties used in Spring Boot
-        annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
         // Sets the JMH version to use across modules.
         // Please refer to the following links for further reference.
