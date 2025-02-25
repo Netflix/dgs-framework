@@ -39,9 +39,10 @@ open class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
     ): CompletableFuture<DataFetcherExceptionHandlerResult> = CompletableFuture.completedFuture(doHandleException(handlerParameters))
 
     private fun doHandleException(handlerParameters: DataFetcherExceptionHandlerParameters): DataFetcherExceptionHandlerResult {
-        val exception = handlerParameters.exception
-            .unwrapCompletionException()
-            .unwrapInvocationTargetException()
+        val exception =
+            handlerParameters.exception
+                .unwrapCompletionException()
+                .unwrapInvocationTargetException()
 
         val graphqlError =
             when (exception) {

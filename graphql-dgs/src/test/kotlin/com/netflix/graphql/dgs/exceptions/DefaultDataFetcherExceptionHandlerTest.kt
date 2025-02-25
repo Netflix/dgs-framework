@@ -250,11 +250,12 @@ class DefaultDataFetcherExceptionHandlerTest {
     fun `unwraps the invocation target exception`() {
         val invocation = InvocationTargetException(IllegalStateException("I'm illegal!"), "Target invocation happened")
 
-        val params = DataFetcherExceptionHandlerParameters
-            .newExceptionParameters()
-            .exception(invocation)
-            .dataFetchingEnvironment(environment)
-            .build()
+        val params =
+            DataFetcherExceptionHandlerParameters
+                .newExceptionParameters()
+                .exception(invocation)
+                .dataFetchingEnvironment(environment)
+                .build()
 
         val result = DefaultDataFetcherExceptionHandler().handleException(params).get()
 
