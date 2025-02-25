@@ -25,6 +25,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
 import org.springframework.util.ClassUtils
+import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionException
 
@@ -38,7 +39,9 @@ open class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
     ): CompletableFuture<DataFetcherExceptionHandlerResult> = CompletableFuture.completedFuture(doHandleException(handlerParameters))
 
     private fun doHandleException(handlerParameters: DataFetcherExceptionHandlerParameters): DataFetcherExceptionHandlerResult {
-        val exception = unwrapCompletionException(handlerParameters.exception)
+        val exception = handlerParameters.exception
+            .unwrapCompletionException()
+            .unwrapInvocationTargetException()
 
         val graphqlError =
             when (exception) {
@@ -82,7 +85,11 @@ open class DefaultDataFetcherExceptionHandler : DataFetcherExceptionHandler {
         )
     }
 
-    private fun unwrapCompletionException(e: Throwable): Throwable = if (e is CompletionException && e.cause != null) e.cause!! else e
+    private fun Throwable.unwrapCompletionException(): Throwable =
+        if (this is CompletionException && this.cause != null) this.cause!! else this
+
+    private fun Throwable.unwrapInvocationTargetException(): Throwable =
+        if (this is InvocationTargetException && this.targetException != null) this.targetException!! else this
 
     protected val logger: Logger get() = DefaultDataFetcherExceptionHandler.logger
 
