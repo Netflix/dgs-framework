@@ -21,7 +21,6 @@ import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsWebMvcRequestData
 import com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLConfigurationProperties
-import graphql.GraphQLContext
 import org.dataloader.DataLoaderRegistry
 import org.springframework.graphql.server.WebGraphQlInterceptor
 import org.springframework.graphql.server.WebGraphQlRequest
@@ -62,18 +61,7 @@ class DgsWebMvcGraphQLInterceptor(
         request.configureExecutionInput { e, builder ->
 
             dataLoaderRegistry =
-                dgsDataLoaderProvider.buildRegistryWithContextSupplier {
-                    val graphQLContext = e.graphQLContext
-                    if (graphQLContextContributors.isNotEmpty()) {
-                        val extensions = request.extensions
-                        val requestData = dgsContext.requestData
-                        val builderForContributors = GraphQLContext.newContext()
-                        graphQLContextContributors.forEach { it.contribute(builderForContributors, extensions, requestData) }
-                        graphQLContext.putAll(builderForContributors)
-                    }
-
-                    graphQLContext
-                }
+                dgsDataLoaderProvider.buildRegistryWithContextSupplier { e.graphQLContext }
 
             builder
                 .context(dgsContext)
