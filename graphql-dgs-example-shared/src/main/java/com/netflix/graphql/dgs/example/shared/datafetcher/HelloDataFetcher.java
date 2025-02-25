@@ -106,6 +106,14 @@ public class HelloDataFetcher {
         return exampleLoaderWithContext.load(CONTRIBUTOR_ENABLED_CONTEXT_KEY);
     }
 
+    @DgsData(parentType = "Query", field = "withDataLoaderGraphQLContextWithFromDfe")
+    @DgsEnableDataFetcherInstrumentation
+    public CompletableFuture<String> withDataLoaderGraphQLContextWithFromDfe(DataFetchingEnvironment dfe) {
+        dfe.getGraphQlContext().put(CONTRIBUTOR_ENABLED_CONTEXT_KEY, "override");
+        DataLoader<String, String> exampleLoaderWithContext = dfe.getDataLoader("exampleLoaderWithGraphQLContext");
+        return exampleLoaderWithContext.load(CONTRIBUTOR_ENABLED_CONTEXT_KEY);
+    }
+
     @DgsData(parentType = "Query", field = "withGraphqlException")
     public String withGraphqlException() {
         throw new GraphQLException("that's not going to work!");

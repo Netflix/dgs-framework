@@ -4,6 +4,7 @@ type Query {
     withContext: String
     withDataLoaderContext: String
     withDataLoaderGraphQLContext: String
+    withDataLoaderGraphQLContextWithFromDfe: String
     movies: [Movie]
     messageFromBatchLoader: String
     messageFromBatchLoaderWithGreetings: String
