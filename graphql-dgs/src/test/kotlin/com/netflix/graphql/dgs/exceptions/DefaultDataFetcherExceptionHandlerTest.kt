@@ -35,7 +35,7 @@ import org.slf4j.Logger
 import org.slf4j.event.Level
 import org.slf4j.spi.NOPLoggingEventBuilder
 import org.springframework.security.access.AccessDeniedException
-import java.lang.IllegalStateException
+import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.CompletionException
 
 class DefaultDataFetcherExceptionHandlerTest {
@@ -244,5 +244,19 @@ class DefaultDataFetcherExceptionHandlerTest {
         verify { loggerMock.atLevel(Level.DEBUG) }
         verify { loggerMock.atLevel(Level.ERROR) }
         confirmVerified(loggerMock)
+    }
+
+    @Test
+    fun `unwraps the invocation target exception`() {
+        val invocation = InvocationTargetException(IllegalStateException("I'm illegal!"), "Target invocation happened")
+
+        val params = DataFetcherExceptionHandlerParameters
+            .newExceptionParameters()
+            .exception(invocation)
+            .dataFetchingEnvironment(environment)
+            .build()
+        val result = DefaultDataFetcherExceptionHandler().handleException(params).get()
+        assertThat(result.errors.size).isEqualTo(1)
+        assertThat(result.errors[0].message).containsSubsequence("java.lang.IllegalStateException: I'm illegal!")
     }
 }
