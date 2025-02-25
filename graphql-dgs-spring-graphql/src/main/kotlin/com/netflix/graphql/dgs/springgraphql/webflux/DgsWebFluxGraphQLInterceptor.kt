@@ -19,14 +19,13 @@ package com.netflix.graphql.dgs.springgraphql.webflux
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
 import com.netflix.graphql.dgs.reactive.internal.DgsReactiveRequestData
-import graphql.GraphQLContext
+import org.dataloader.DataLoaderRegistry
 import org.springframework.graphql.server.WebGraphQlInterceptor
 import org.springframework.graphql.server.WebGraphQlRequest
 import org.springframework.graphql.server.WebGraphQlResponse
 import org.springframework.web.filter.reactive.ServerWebExchangeContextFilter
 import org.springframework.web.reactive.function.server.ServerRequest
 import reactor.core.publisher.Mono
-import java.util.concurrent.CompletableFuture
 
 class DgsWebFluxGraphQLInterceptor(
     private val dgsDataLoaderProvider: DgsDataLoaderProvider,
@@ -48,21 +47,19 @@ class DgsWebFluxGraphQLInterceptor(
                     ),
                 )
             }.flatMap { dgsContext ->
-                val graphQLContextFuture = CompletableFuture<GraphQLContext>()
-                val dataLoaderRegistry =
-                    dgsDataLoaderProvider.buildRegistryWithContextSupplier { graphQLContextFuture.get() }
-
-                request.configureExecutionInput { _, builder ->
+                var dataLoaderRegistry: DataLoaderRegistry? = null
+                request.configureExecutionInput { e, builder ->
+                    dataLoaderRegistry = dgsDataLoaderProvider.buildRegistryWithContextSupplier { e.graphQLContext }
                     builder
                         .context(dgsContext)
                         .graphQLContext(dgsContext)
                         .dataLoaderRegistry(dataLoaderRegistry)
                         .build()
                 }
-                graphQLContextFuture.complete(request.toExecutionInput().graphQLContext)
+
                 chain.next(request).doFinally {
                     if (dataLoaderRegistry is AutoCloseable) {
-                        dataLoaderRegistry.close()
+                        (dataLoaderRegistry as AutoCloseable).close()
                     }
                 }
             }
