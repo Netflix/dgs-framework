@@ -337,7 +337,7 @@ class MicrometerServletSmokeTest {
                     .and("contextual-tag", "foo")
                     .and("outcome", "success")
                     .and("gql.operation", "QUERY")
-                    .and("gql.operation.name", "anonymous")
+                    .and("gql.operation.name", "-someTrivialThings")
                     .and("gql.query.complexity", "5")
                     .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
@@ -452,7 +452,7 @@ class MicrometerServletSmokeTest {
                     .and("gql.path", "[triggerInternalFailure]")
                     .and("outcome", "failure")
                     .and("gql.operation", "QUERY")
-                    .and("gql.operation.name", "anonymous")
+                    .and("gql.operation.name", "-triggerInternalFailure")
                     .and("gql.query.complexity", "5")
                     .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
@@ -466,7 +466,7 @@ class MicrometerServletSmokeTest {
                     .and("contextual-tag", "foo")
                     .and("outcome", "failure")
                     .and("gql.operation", "QUERY")
-                    .and("gql.operation.name", "anonymous")
+                    .and("gql.operation.name", "-triggerInternalFailure")
                     .and("gql.query.complexity", "5")
                     .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
@@ -481,7 +481,7 @@ class MicrometerServletSmokeTest {
                     .and("gql.field", "Query.triggerInternalFailure")
                     .and("outcome", "failure")
                     .and("gql.operation", "QUERY")
-                    .and("gql.operation.name", "anonymous")
+                    .and("gql.operation.name", "-triggerInternalFailure")
                     .and("gql.query.complexity", "5")
                     .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
@@ -528,7 +528,7 @@ class MicrometerServletSmokeTest {
                     .and("gql.path", "[triggerBadRequestFailure]")
                     .and("outcome", "failure")
                     .and("gql.operation", "QUERY")
-                    .and("gql.operation.name", "anonymous")
+                    .and("gql.operation.name", "-triggerBadRequestFailure")
                     .and("gql.query.complexity", "5")
                     .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
@@ -541,7 +541,7 @@ class MicrometerServletSmokeTest {
                     .and("contextual-tag", "foo")
                     .and("outcome", "failure")
                     .and("gql.operation", "QUERY")
-                    .and("gql.operation.name", "anonymous")
+                    .and("gql.operation.name", "-triggerBadRequestFailure")
                     .and("gql.query.complexity", "5")
                     .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
@@ -555,7 +555,7 @@ class MicrometerServletSmokeTest {
                     .and("gql.field", "Query.triggerBadRequestFailure")
                     .and("outcome", "failure")
                     .and("gql.operation", "QUERY")
-                    .and("gql.operation.name", "anonymous")
+                    .and("gql.operation.name", "-triggerBadRequestFailure")
                     .and("gql.query.complexity", "5")
                     .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
@@ -604,7 +604,7 @@ class MicrometerServletSmokeTest {
                     .and("gql.path", "[triggerCustomFailure]")
                     .and("outcome", "failure")
                     .and("gql.operation", "QUERY")
-                    .and("gql.operation.name", "anonymous")
+                    .and("gql.operation.name", "-triggerCustomFailure")
                     .and("gql.query.complexity", "5")
                     .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
@@ -617,7 +617,7 @@ class MicrometerServletSmokeTest {
                     .and("contextual-tag", "foo")
                     .and("outcome", "failure")
                     .and("gql.operation", "QUERY")
-                    .and("gql.operation.name", "anonymous")
+                    .and("gql.operation.name", "-triggerCustomFailure")
                     .and("gql.query.complexity", "5")
                     .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
@@ -631,7 +631,7 @@ class MicrometerServletSmokeTest {
                     .and("gql.field", "Query.triggerCustomFailure")
                     .and("outcome", "failure")
                     .and("gql.operation", "QUERY")
-                    .and("gql.operation.name", "anonymous")
+                    .and("gql.operation.name", "-triggerCustomFailure")
                     .and("gql.query.complexity", "5")
                     .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
             )
@@ -678,7 +678,7 @@ class MicrometerServletSmokeTest {
                 .and("gql.path", "[triggerBadRequestFailure]")
                 .and("outcome", "failure")
                 .and("gql.operation", "QUERY")
-                .and("gql.operation.name", "anonymous")
+                .and("gql.operation.name", "-triggerInternalFailure")
                 .and("gql.query.complexity", "5")
                 .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
                 .toList(),
@@ -690,7 +690,7 @@ class MicrometerServletSmokeTest {
                 .and("gql.path", "[triggerInternalFailure]")
                 .and("outcome", "failure")
                 .and("gql.operation", "QUERY")
-                .and("gql.operation.name", "anonymous")
+                .and("gql.operation.name", "-triggerInternalFailure")
                 .and("gql.query.complexity", "5")
                 .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
                 .toList(),
@@ -702,7 +702,7 @@ class MicrometerServletSmokeTest {
                 .and("gql.path", "[triggerCustomFailure]")
                 .and("outcome", "failure")
                 .and("gql.operation", "QUERY")
-                .and("gql.operation.name", "anonymous")
+                .and("gql.operation.name", "-triggerInternalFailure")
                 .and("gql.query.complexity", "5")
                 .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
                 .toList(),
