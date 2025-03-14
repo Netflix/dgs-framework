@@ -24,6 +24,10 @@ import graphql.execution.instrumentation.parameters.InstrumentationExecuteOperat
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import graphql.execution.instrumentation.parameters.InstrumentationValidationParameters
+import graphql.language.Field
+import graphql.language.FragmentSpread
+import graphql.language.InlineFragment
+import graphql.language.OperationDefinition
 import graphql.language.OperationDefinition.Operation
 import graphql.schema.DataFetcher
 import graphql.schema.GraphQLNamedType
@@ -202,7 +206,7 @@ class DgsGraphQLMetricsInstrumentation(
         if (parameters.executionContext.getRoot<Any>() == null) {
             state.operationValue = parameters.executionContext.operationDefinition.operation
             if (state.operationNameValue == null) {
-                state.operationNameValue = parameters.executionContext.operationDefinition.name
+                state.operationNameValue = parameters.executionContext.operationDefinition.nameOrFallback
             }
         }
         if (properties.tags.complexity.enabled) {
@@ -210,6 +214,25 @@ class DgsGraphQLMetricsInstrumentation(
         }
         return super.beginExecuteOperation(parameters, state)
     }
+
+    /**
+     * Returns a fallback name if the operation is unnamed.
+     *
+     * If the operation is named, the name is returned.
+     *
+     * Otherwise, a name is created from the first selection in the selection set,
+     * prefixed with a `-` to indicate that it is a fallback name.
+     *
+     */
+    private val OperationDefinition.nameOrFallback
+        get() =
+            name ?: when (val selection = selectionSet?.selections?.first()) {
+                is Field -> "-${selection.name}"
+                is InlineFragment -> "-${selection.typeCondition.name}"
+                is FragmentSpread -> "-${selection.name}"
+                null -> "-noSelections" // This should never happen, but it's possible
+                else -> throw RuntimeException("Unknown Selection type: $selection")
+            }
 
     private fun recordDataFetcherMetrics(
         registry: MeterRegistry,
