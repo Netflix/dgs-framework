@@ -23,47 +23,68 @@ import org.springframework.core.env.MapPropertySource
 import org.springframework.core.env.get
 
 class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
-    companion object {
-        private const val SPRING_GRAPHQL_SCHEMA_INTROSPECTION_ENABLED = "spring.graphql.schema.introspection.enabled"
-        private const val DGS_GRAPHQL_INTROSPECTION_ENABLED = "dgs.graphql.introspection.enabled"
-    }
-
     override fun postProcessEnvironment(
         environment: ConfigurableEnvironment,
         application: SpringApplication,
     ) {
         val properties = mutableMapOf<String, Any>()
-
-        if (environment.getProperty(SPRING_GRAPHQL_SCHEMA_INTROSPECTION_ENABLED) != null &&
-            environment.getProperty(DGS_GRAPHQL_INTROSPECTION_ENABLED) != null
-        ) {
-            throw RuntimeException(
-                "Both properties `$SPRING_GRAPHQL_SCHEMA_INTROSPECTION_ENABLED` and `$DGS_GRAPHQL_INTROSPECTION_ENABLED` are explicitly set. Use `$DGS_GRAPHQL_INTROSPECTION_ENABLED` only",
-            )
-        } else if (environment.getProperty(DGS_GRAPHQL_INTROSPECTION_ENABLED) != null) {
-            properties[SPRING_GRAPHQL_SCHEMA_INTROSPECTION_ENABLED] = environment.getProperty(
-                DGS_GRAPHQL_INTROSPECTION_ENABLED,
-            ) ?: true
-        } else {
-            properties[SPRING_GRAPHQL_SCHEMA_INTROSPECTION_ENABLED] =
-                environment[SPRING_GRAPHQL_SCHEMA_INTROSPECTION_ENABLED] ?: true
-        }
-
-        properties["spring.graphql.graphiql.enabled"] = environment.getProperty("dgs.graphql.graphiql.enabled") ?: true
-        properties["spring.graphql.graphiql.path"] = environment.getProperty("dgs.graphql.graphiql.path") ?: "/graphiql"
-        properties["spring.graphql.path"] = environment.getProperty("dgs.graphql.path") ?: "/graphql"
-        properties["spring.graphql.websocket.connection-init-timeout"] =
-            environment.getProperty("dgs.graphql.websocket.connection-init-timeout") ?: "10s"
-
-        environment.getProperty("dgs.graphql.websocket.path")?.let { websocketPath ->
-            properties["spring.graphql.websocket.path"] = websocketPath
-        }
-
-        if (environment.getProperty("dgs.graphql.virtualthreads.enabled") == null &&
-            environment.getProperty("spring.threads.virtual.enabled") == "true"
-        ) {
-            properties["dgs.graphql.virtualthreads.enabled"] = true
-        }
+        resolveProperty(
+            environment,
+            properties,
+            springGraphQlPropertyName = "spring.graphql.schema.introspection.enabled",
+            dgsGraphQlPropertyName = "dgs.graphql.introspection.enabled",
+            defaultValue = true,
+            allowBothProperties = false,
+        )
+        resolveProperty(
+            environment,
+            properties,
+            springGraphQlPropertyName = "spring.graphql.graphiql.enabled",
+            dgsGraphQlPropertyName = "dgs.graphql.graphiql.enabled",
+            defaultValue = true,
+        )
+        resolveProperty(
+            environment,
+            properties,
+            springGraphQlPropertyName = "spring.graphql.graphiql.path",
+            dgsGraphQlPropertyName = "dgs.graphql.graphiql.path",
+            defaultValue = "/graphiql",
+        )
+        resolveProperty(
+            environment,
+            properties,
+            springGraphQlPropertyName = "spring.graphql.path",
+            dgsGraphQlPropertyName = "dgs.graphql.path",
+            defaultValue = "/graphql",
+        )
+        resolveProperty(
+            environment,
+            properties,
+            springGraphQlPropertyName = "spring.graphql.websocket.connection-init-timeout",
+            dgsGraphQlPropertyName = "dgs.graphql.websocket.connection-init-timeout",
+            defaultValue = "10s",
+        )
+        resolveProperty(
+            environment,
+            properties,
+            springGraphQlPropertyName = "spring.graphql.websocket.connection-init-timeout",
+            dgsGraphQlPropertyName = "dgs.graphql.websocket.connection-init-timeout",
+            defaultValue = "10s",
+        )
+        resolveProperty(
+            environment,
+            properties,
+            springGraphQlPropertyName = "spring.graphql.websocket.path",
+            dgsGraphQlPropertyName = "dgs.graphql.websocket.path",
+            defaultValue = "/graphql",
+        )
+        resolveProperty(
+            environment,
+            properties,
+            springGraphQlPropertyName = "spring.threads.virtual.enabled",
+            dgsGraphQlPropertyName = "dgs.graphql.virtualthreads.enabled",
+            defaultValue = true,
+        )
 
         environment.propertySources.addLast(
             MapPropertySource(
@@ -71,5 +92,32 @@ class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
                 properties,
             ),
         )
+    }
+
+    fun resolveProperty(
+        environment: ConfigurableEnvironment,
+        properties: MutableMap<String, Any>,
+        springGraphQlPropertyName: String,
+        dgsGraphQlPropertyName: String,
+        defaultValue: Any,
+        allowBothProperties: Boolean = true,
+    ) {
+        if (!allowBothProperties &&
+            environment.getProperty(springGraphQlPropertyName) != null &&
+            environment.getProperty(dgsGraphQlPropertyName) != null
+        ) {
+            throw RuntimeException(
+                "Both properties `$springGraphQlPropertyName` and `$dgsGraphQlPropertyName` are explicitly set. Use `$dgsGraphQlPropertyName` only.",
+            )
+        } else if (environment.getProperty(dgsGraphQlPropertyName) != null) {
+            properties[springGraphQlPropertyName] =
+                environment.getProperty(
+                    dgsGraphQlPropertyName,
+                )!!
+        } else {
+            val propertyValue = environment[springGraphQlPropertyName] ?: defaultValue
+            properties[springGraphQlPropertyName] = propertyValue
+            properties[dgsGraphQlPropertyName] = propertyValue
+        }
     }
 }

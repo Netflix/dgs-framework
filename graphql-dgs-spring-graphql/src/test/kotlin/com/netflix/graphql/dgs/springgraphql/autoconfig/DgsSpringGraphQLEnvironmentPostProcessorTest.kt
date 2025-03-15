@@ -122,5 +122,6 @@ class DgsSpringGraphQLEnvironmentPostProcessorTest {
         DgsSpringGraphQLEnvironmentPostProcessor().postProcessEnvironment(env, application)
 
         Assertions.assertThat(env.getProperty("dgs.graphql.virtualthreads.enabled")).isEqualTo("false")
+        Assertions.assertThat(env.getProperty("spring.threads.virtual.enabled")).isEqualTo("false")
     }
 }
