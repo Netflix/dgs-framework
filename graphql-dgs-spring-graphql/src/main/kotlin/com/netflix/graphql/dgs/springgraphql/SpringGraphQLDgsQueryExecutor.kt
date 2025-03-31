@@ -30,7 +30,6 @@ import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsQueryExecutorRequestCustomizer
 import com.netflix.graphql.dgs.internal.DgsWebMvcRequestData
 import graphql.ExecutionResult
-import graphql.GraphQLContext
 import org.springframework.graphql.ExecutionGraphQlService
 import org.springframework.graphql.support.DefaultExecutionGraphQlRequest
 import org.springframework.http.HttpHeaders
@@ -65,20 +64,9 @@ class SpringGraphQLDgsQueryExecutor(
 
         val httpRequest = requestCustomizer.apply(webRequest ?: RequestContextHolder.getRequestAttributes() as? WebRequest, headers)
         val dgsContext = dgsContextBuilder.build(DgsWebMvcRequestData(request.extensions, headers, httpRequest))
-        val dataLoaderRegistry =
-            dgsDataLoaderProvider.buildRegistryWithContextSupplier {
-                val graphQLContext = request.toExecutionInput().graphQLContext
-                if (graphQLContextContributors.isNotEmpty()) {
-                    val requestData = dgsContext.requestData
-                    val builderForContributors = GraphQLContext.newContext()
-                    graphQLContextContributors.forEach { it.contribute(builderForContributors, extensions, requestData) }
-                    graphQLContext.putAll(builderForContributors)
-                }
 
-                graphQLContext
-            }
-
-        request.configureExecutionInput { _, builder ->
+        request.configureExecutionInput { e, builder ->
+            val dataLoaderRegistry = dgsDataLoaderProvider.buildRegistryWithContextSupplier { e.graphQLContext }
             builder
                 .context(dgsContext)
                 .graphQLContext(dgsContext)

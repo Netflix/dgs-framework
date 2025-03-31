@@ -59,6 +59,12 @@ class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
             properties["spring.graphql.websocket.path"] = websocketPath
         }
 
+        if (environment.getProperty("dgs.graphql.virtualthreads.enabled") == null &&
+            environment.getProperty("spring.threads.virtual.enabled") == "true"
+        ) {
+            properties["dgs.graphql.virtualthreads.enabled"] = true
+        }
+
         environment.propertySources.addLast(
             MapPropertySource(
                 "dgs-spring-graphql-defaults",

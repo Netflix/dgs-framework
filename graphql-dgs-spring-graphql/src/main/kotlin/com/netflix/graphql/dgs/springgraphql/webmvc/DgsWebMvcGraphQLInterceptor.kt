@@ -21,7 +21,7 @@ import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsWebMvcRequestData
 import com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLConfigurationProperties
-import graphql.GraphQLContext
+import org.dataloader.DataLoaderRegistry
 import org.springframework.graphql.server.WebGraphQlInterceptor
 import org.springframework.graphql.server.WebGraphQlRequest
 import org.springframework.graphql.server.WebGraphQlResponse
@@ -56,21 +56,13 @@ class DgsWebMvcGraphQLInterceptor(
             } else {
                 dgsContextBuilder.build(DgsWebMvcRequestData(request.extensions, request.headers))
             }
-        val dataLoaderRegistry =
-            dgsDataLoaderProvider.buildRegistryWithContextSupplier {
-                val graphQLContext = request.toExecutionInput().graphQLContext
-                if (graphQLContextContributors.isNotEmpty()) {
-                    val extensions = request.extensions
-                    val requestData = dgsContext.requestData
-                    val builderForContributors = GraphQLContext.newContext()
-                    graphQLContextContributors.forEach { it.contribute(builderForContributors, extensions, requestData) }
-                    graphQLContext.putAll(builderForContributors)
-                }
 
-                graphQLContext
-            }
+        var dataLoaderRegistry: DataLoaderRegistry? = null
+        request.configureExecutionInput { e, builder ->
 
-        request.configureExecutionInput { _, builder ->
+            dataLoaderRegistry =
+                dgsDataLoaderProvider.buildRegistryWithContextSupplier { e.graphQLContext }
+
             builder
                 .context(dgsContext)
                 .graphQLContext(dgsContext)
@@ -81,14 +73,14 @@ class DgsWebMvcGraphQLInterceptor(
         return if (dgsSpringConfigurationProperties.webmvc.asyncdispatch.enabled) {
             chain.next(request).doFinally {
                 if (dataLoaderRegistry is AutoCloseable) {
-                    dataLoaderRegistry.close()
+                    (dataLoaderRegistry as AutoCloseable).close()
                 }
             }
         } else {
             @Suppress("BlockingMethodInNonBlockingContext")
             val response = chain.next(request).block()!!
             if (dataLoaderRegistry is AutoCloseable) {
-                dataLoaderRegistry.close()
+                (dataLoaderRegistry as AutoCloseable).close()
             }
             return Mono.just(response)
         }
