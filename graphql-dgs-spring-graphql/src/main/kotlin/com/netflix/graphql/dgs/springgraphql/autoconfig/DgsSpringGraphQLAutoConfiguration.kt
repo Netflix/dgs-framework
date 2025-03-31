@@ -36,7 +36,20 @@ import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.context.GraphQLContextContributor
 import com.netflix.graphql.dgs.context.GraphQLContextContributorInstrumentation
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
-import com.netflix.graphql.dgs.internal.*
+import com.netflix.graphql.dgs.internal.DataFetcherResultProcessor
+import com.netflix.graphql.dgs.internal.DefaultDataLoaderOptionsProvider
+import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
+import com.netflix.graphql.dgs.internal.DgsDataLoaderInstrumentationDataLoaderCustomizer
+import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
+import com.netflix.graphql.dgs.internal.DgsQueryExecutorRequestCustomizer
+import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.DgsWrapWithContextDataLoaderCustomizer
+import com.netflix.graphql.dgs.internal.EntityFetcherRegistry
+import com.netflix.graphql.dgs.internal.FlowDataFetcherResultProcessor
+import com.netflix.graphql.dgs.internal.FluxDataFetcherResultProcessor
+import com.netflix.graphql.dgs.internal.GraphQLJavaErrorInstrumentation
+import com.netflix.graphql.dgs.internal.MonoDataFetcherResultProcessor
+import com.netflix.graphql.dgs.internal.QueryValueCustomizer
 import com.netflix.graphql.dgs.internal.method.ArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import com.netflix.graphql.dgs.mvc.internal.method.HandlerMethodArgumentResolverAdapter
@@ -74,19 +87,20 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
+import org.springframework.boot.autoconfigure.condition.ConditionalOnJava
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.boot.autoconfigure.condition.ConditionalOnThreading
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.autoconfigure.graphql.GraphQlProperties
 import org.springframework.boot.autoconfigure.graphql.GraphQlSourceBuilderCustomizer
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
-import org.springframework.boot.autoconfigure.thread.Threading
 import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.boot.system.JavaVersion
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.DefaultParameterNameDiscoverer
+import org.springframework.core.Ordered
 import org.springframework.core.PriorityOrdered
 import org.springframework.core.ReactiveAdapterRegistry
 import org.springframework.core.annotation.Order
@@ -158,7 +172,15 @@ open class DgsSpringGraphQLAutoConfiguration(
         graphQLContextContributors: ObjectProvider<GraphQLContextContributor>,
     ): Instrumentation = GraphQLContextContributorInstrumentation(graphQLContextContributors.orderedStream().toList())
 
+    // This instrumentation needs to run before MetricsInstrumentation
     @Bean
+    @Order(Ordered.LOWEST_PRECEDENCE - 1)
+    @ConditionalOnProperty(
+        prefix = "${AUTO_CONF_PREFIX}.errors.classification",
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = true,
+    )
     open fun graphqlJavaErrorInstrumentation(): Instrumentation = GraphQLJavaErrorInstrumentation()
 
     @Bean
@@ -368,9 +390,9 @@ open class DgsSpringGraphQLAutoConfiguration(
      */
     @Bean
     @Qualifier("dgsAsyncTaskExecutor")
-    @ConditionalOnThreading(Threading.VIRTUAL)
+    @ConditionalOnJava(value = JavaVersion.TWENTY_ONE)
     @ConditionalOnMissingBean(name = ["dgsAsyncTaskExecutor"])
-    @ConditionalOnProperty(name = ["dgs.graphql.virtualthreads.enabled"], havingValue = "true", matchIfMissing = false)
+    @ConditionalOnProperty(prefix = "${AUTO_CONF_PREFIX}.virtualthreads", name = ["enabled"], havingValue = "true", matchIfMissing = false)
     open fun virtualThreadsTaskExecutor(): AsyncTaskExecutor {
         LOG.info("Enabling virtual threads for DGS")
 
@@ -472,12 +494,14 @@ open class DgsSpringGraphQLAutoConfiguration(
         @Qualifier("query") providedQueryExecutionStrategy: Optional<ExecutionStrategy>,
         @Qualifier("mutation") providedMutationExecutionStrategy: Optional<ExecutionStrategy>,
         dataFetcherExceptionHandler: DataFetcherExceptionHandler,
+        environment: Environment,
     ): GraphQlSourceBuilderCustomizer =
         GraphQlSourceBuilderCustomizer { builder ->
             builder.configureGraphQl { graphQlBuilder ->
-                if (preparsedDocumentProvider.isPresent) {
-                    graphQlBuilder
-                        .preparsedDocumentProvider(preparsedDocumentProvider.get())
+                val apqEnabled = environment.getProperty("dgs.graphql.apq.enabled", Boolean::class.java, false)
+                // If apq is enabled, we will not use this preparsedDocumentProvider and use DgsAPQPreparsedDocumentProviderWrapper instead
+                if (preparsedDocumentProvider.isPresent && !apqEnabled) {
+                    graphQlBuilder.preparsedDocumentProvider(preparsedDocumentProvider.get())
                 }
 
                 if (providedQueryExecutionStrategy.isPresent) {

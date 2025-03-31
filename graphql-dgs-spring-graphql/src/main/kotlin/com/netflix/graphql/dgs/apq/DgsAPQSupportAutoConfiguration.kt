@@ -19,24 +19,28 @@ package com.netflix.graphql.dgs.apq
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.CaffeineSpec
-import com.netflix.graphql.dgs.internal.QueryValueCustomizer
+import com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLAutoConfiguration
 import graphql.execution.preparsed.PreparsedDocumentEntry
-import graphql.execution.preparsed.persisted.ApolloPersistedQuerySupport
+import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.execution.preparsed.persisted.PersistedQueryCache
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.binder.cache.CaffeineCacheMetrics
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.AutoConfiguration
+import org.springframework.boot.autoconfigure.AutoConfigureAfter
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.boot.autoconfigure.graphql.GraphQlSourceBuilderCustomizer
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.time.Duration
+import java.util.*
 
 @AutoConfiguration
+@AutoConfigureAfter(DgsSpringGraphQLAutoConfiguration::class)
 @ConditionalOnProperty(
     prefix = DgsAPQSupportProperties.PREFIX,
     name = ["enabled"],
@@ -46,18 +50,17 @@ import java.time.Duration
 @EnableConfigurationProperties(DgsAPQSupportProperties::class)
 open class DgsAPQSupportAutoConfiguration {
     @Bean
-    @ConditionalOnBean(PersistedQueryCache::class)
-    open fun apolloPersistedQuerySupport(persistedQueryCache: PersistedQueryCache): ApolloPersistedQuerySupport =
-        ApolloPersistedQuerySupport(persistedQueryCache)
-
-    @Bean
-    @ConditionalOnBean(ApolloPersistedQuerySupport::class)
-    open fun apolloAPQQueryValueCustomizer(): QueryValueCustomizer =
-        QueryValueCustomizer { query ->
-            if (query.isNullOrBlank()) {
-                ApolloPersistedQuerySupport.PERSISTED_QUERY_MARKER
-            } else {
-                query
+    open fun apqSourceBuilderCustomizer(
+        preparsedDocumentProvider: Optional<PreparsedDocumentProvider>,
+        persistedQueryCache: Optional<PersistedQueryCache>,
+    ): GraphQlSourceBuilderCustomizer =
+        GraphQlSourceBuilderCustomizer { builder ->
+            builder.configureGraphQl { graphQlBuilder ->
+                // For non-APQ queries, the user specified PreparsedDocumentProvider should be used, so we configure the DgsAPQPreparsedDocumentProvider to
+                // wrap the user specified one and delegate appropriately since we can only have one PreParsedDocumentProvider bean
+                val apqPreParsedDocumentProvider =
+                    DgsAPQPreParsedDocumentProviderWrapper(persistedQueryCache.get(), preparsedDocumentProvider)
+                graphQlBuilder.preparsedDocumentProvider(apqPreParsedDocumentProvider)
             }
         }
 
