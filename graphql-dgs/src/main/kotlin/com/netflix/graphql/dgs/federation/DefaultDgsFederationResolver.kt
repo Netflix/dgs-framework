@@ -143,17 +143,27 @@ open class DefaultDgsFederationResolver() : DgsFederationResolver {
                                     values
                                 }
 
-                            val result =
-                                if (parameterTypes.last().isAssignableFrom(DgsDataFetchingEnvironment::class.java)) {
-                                    ReflectionUtils.invokeMethod(
-                                        method,
-                                        target,
-                                        coercedValues,
-                                        DgsDataFetchingEnvironment(env, applicationContext),
-                                    )
-                                } else {
-                                    ReflectionUtils.invokeMethod(method, target, coercedValues)
+                            val objects = ArrayList<Any?>()
+                            if (parameterTypes.size == 1) {
+                                objects.add(coercedValues)
+                            } else if (parameterTypes.size == 2) {
+                                for (type in parameterTypes) {
+                                    if (type.isAssignableFrom(Map::class.java)) {
+                                        objects.add(coercedValues)
+                                    } else if (type.isAssignableFrom(DgsDataFetchingEnvironment::class.java)) {
+                                        objects.add(DgsDataFetchingEnvironment(env, applicationContext))
+                                    } else {
+                                        throw InvalidDgsEntityFetcher(
+                                            "@DgsEntityFetcher ${target::class.java.name}.${method.name} is invalid. A DgsEntityFetcher can only accept arguments of type Map<String, Object> or DgsDataFetchingEnvironment",
+                                        )
+                                    }
                                 }
+                            } else {
+                                throw InvalidDgsEntityFetcher(
+                                    "@DgsEntityFetcher ${target::class.java.name}.${method.name} is invalid. A DgsEntityFetcher can only accept up to 2 arguments",
+                                )
+                            }
+                            val result = ReflectionUtils.invokeMethod(method, target, *objects.toTypedArray())
 
                             if (result == null) {
                                 logger.error("@DgsEntityFetcher returned null for type: {}", typename)

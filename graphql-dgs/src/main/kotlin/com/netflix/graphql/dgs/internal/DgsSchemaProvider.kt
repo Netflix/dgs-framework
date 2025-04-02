@@ -22,6 +22,7 @@ import com.netflix.graphql.dgs.exceptions.DataFetcherInputArgumentSchemaMismatch
 import com.netflix.graphql.dgs.exceptions.DataFetcherSchemaMismatchException
 import com.netflix.graphql.dgs.exceptions.DuplicateEntityFetcherException
 import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
+import com.netflix.graphql.dgs.exceptions.InvalidDgsEntityFetcher
 import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
@@ -610,6 +611,28 @@ class DgsSchemaProvider
                     .annotatedMethods<DgsEntityFetcher>()
                     .forEach { method ->
                         val dgsEntityFetcherAnnotation = method.getAnnotation(DgsEntityFetcher::class.java)
+
+                        if (method.parameterCount > 2) {
+                            throw InvalidDgsEntityFetcher(
+                                "@DgsEntityFetcher ${dgsComponent::class.java.name}.${method.name} is invalid. A DgsEntityFetcher can only accept up to 2 arguments",
+                            )
+                        }
+
+                        if (!method.parameterTypes.any { it.isAssignableFrom(Map::class.java) }) {
+                            throw InvalidDgsEntityFetcher(
+                                "@DgsEntityFetcher ${dgsComponent::class.java.name}.${method.name} is invalid. A DgsEntityFetcher must accept an argument of type Map<String, Object>",
+                            )
+                        }
+
+                        if (method.parameterTypes.any {
+                                !it.isAssignableFrom(Map::class.java) &&
+                                    !it.isAssignableFrom(DgsDataFetchingEnvironment::class.java)
+                            }
+                        ) {
+                            throw InvalidDgsEntityFetcher(
+                                "@DgsEntityFetcher ${dgsComponent::class.java.name}.${method.name} is invalid. A DgsEntityFetcher can only accept arguments of type Map<String, Object> or DgsDataFetchingEnvironment",
+                            )
+                        }
 
                         val entityFetcherTypeName = dgsEntityFetcherAnnotation.name
                         val coordinateName = "_entities.$entityFetcherTypeName"
