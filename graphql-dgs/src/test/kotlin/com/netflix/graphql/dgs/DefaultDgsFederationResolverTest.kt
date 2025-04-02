@@ -20,6 +20,7 @@ import com.apollographql.federation.graphqljava._Entity
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
 import com.netflix.graphql.dgs.exceptions.DgsEntityNotFoundException
 import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
+import com.netflix.graphql.dgs.exceptions.InvalidDgsEntityFetcher
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.EntityFetcherRegistry
@@ -53,6 +54,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
 import reactor.core.publisher.Mono
@@ -238,6 +240,25 @@ class DefaultDgsFederationResolverTest {
                     fun movieEntityFetcher(
                         values: Map<String, Any>,
                         dfe: DataFetchingEnvironment?,
+                    ): Movie {
+                        if (dfe == null) {
+                            throw RuntimeException()
+                        }
+                        return Movie(values["movieId"].toString())
+                    }
+                }
+
+            testEntityFetcher(movieEntityFetcher)
+        }
+
+        @Test
+        fun `Call an Entity Fetcher with a DataFetchingEnvironment as first argument`() {
+            val movieEntityFetcher =
+                object {
+                    @DgsEntityFetcher(name = "Movie")
+                    fun movieEntityFetcher(
+                        dfe: DataFetchingEnvironment?,
+                        values: Map<String, Any>,
                     ): Movie {
                         if (dfe == null) {
                             throw RuntimeException()
@@ -600,7 +621,8 @@ class DefaultDgsFederationResolverTest {
                     @Suppress("unused_parameter")
                     fun movieEntityFetcher(
                         values: Map<String, Any>,
-                        illegalArgument: Int,
+                        anotherValue: Map<String, Any>,
+                        dfe: DataFetchingEnvironment,
                     ): Movie = Movie()
                 }
             every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
@@ -608,33 +630,30 @@ class DefaultDgsFederationResolverTest {
             every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
                 mapOf("MovieEntityFetcher" to movieEntityFetcher)
 
-            dgsSchemaProvider.schema("""type Query {}""")
+            assertThrows<InvalidDgsEntityFetcher> {
+                dgsSchemaProvider.schema("""type Query {}""")
+            }
+        }
 
-            val arguments =
-                mapOf<String, Any>(
-                    _Entity.argumentName to
-                        listOf(
-                            mapOf(
-                                "__typename" to "Movie",
-                                "movieId" to "invalid",
-                                "illegalArgument" to 0,
-                            ),
-                        ),
-                )
-            val dataFetchingEnvironment = constructDFE(arguments)
+        @Test
+        fun `Entity Fetcher called with invalid arguments`() {
+            val movieEntityFetcher =
+                object {
+                    @DgsEntityFetcher(name = "Movie")
+                    @Suppress("unused_parameter")
+                    fun movieEntityFetcher(
+                        values: Map<String, Any>,
+                        int: Int,
+                    ): Movie = Movie()
+                }
+            every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+                mapOf("MovieEntityFetcher" to movieEntityFetcher)
 
-            val result =
-                DefaultDgsFederationResolver(entityFetcherRegistry, Optional.of(dgsExceptionHandler), applicationContextMock)
-                    .entitiesFetcher()
-                    .get(dataFetchingEnvironment) as CompletableFuture<DataFetcherResult<List<*>>>
-
-            assertThat(result).isNotNull
-            assertThat(result.get().data).hasSize(1)
-            assertThat(result.get().errors)
-                .hasSize(1)
-                .first()
-                .extracting { it.message }
-                .satisfies(Consumer { assertThat(it).contains("IllegalArgumentException") })
+            assertThrows<InvalidDgsEntityFetcher> {
+                dgsSchemaProvider.schema("""type Query {}""")
+            }
         }
 
         @Test
