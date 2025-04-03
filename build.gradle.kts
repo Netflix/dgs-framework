@@ -98,6 +98,9 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         testImplementation("org.springframework.boot:spring-boot-starter-test") {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         }
+
+
+        implementation("org.jetbrains:annotations:26.0.2")
         testImplementation("io.mockk:mockk:1.+")
     }
 
@@ -126,6 +129,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     }
 
     tasks.withType<Javadoc>().configureEach {
+        enabled = false
         options {
             (this as CoreJavadocOptions).addStringOption("Xdoclint:none", "-quiet")
         }

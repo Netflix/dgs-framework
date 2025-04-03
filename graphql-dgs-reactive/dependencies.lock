@@ -1,12 +1,4 @@
 {
-    "annotationProcessor": {
-        "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "3.3.6"
-        },
-        "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "3.3.6"
-        }
-    },
     "apiDependenciesMetadata": {
         "com.graphql-java:graphql-java": {
             "locked": "22.3",
@@ -243,7 +235,7 @@
             ]
         },
         "org.jetbrains:annotations": {
-            "locked": "23.0.0",
+            "locked": "26.0.2",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-stdlib",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm"
@@ -633,6 +625,9 @@
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
             "locked": "1.8.1"
         },
+        "org.jetbrains:annotations": {
+            "locked": "26.0.2"
+        },
         "org.reactivestreams:reactive-streams": {
             "locked": "1.0.4",
             "transitive": [
@@ -884,7 +879,7 @@
             ]
         },
         "org.jetbrains:annotations": {
-            "locked": "23.0.0",
+            "locked": "26.0.2",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-stdlib",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm"
@@ -1228,35 +1223,35 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.13.16"
+            "locked": "1.13.17"
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent-api"
             ]
         },
         "io.mockk:mockk-agent-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-dsl-jvm",
@@ -1264,25 +1259,25 @@
             ]
         },
         "io.mockk:mockk-core-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-core"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-dsl-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-dsl"
             ]
         },
         "io.mockk:mockk-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk"
             ]
@@ -1479,8 +1474,10 @@
             ]
         },
         "org.jetbrains:annotations": {
-            "locked": "23.0.0",
+            "locked": "26.0.2",
             "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-error-types",
                 "org.jetbrains.kotlin:kotlin-stdlib",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm"
             ]
@@ -2656,8 +2653,10 @@
             ]
         },
         "org.jetbrains:annotations": {
-            "locked": "23.0.0",
+            "locked": "26.0.2",
             "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-error-types",
                 "org.jetbrains.kotlin:kotlin-stdlib",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm"
             ]
@@ -2846,59 +2845,59 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.13.16"
+            "locked": "1.13.17"
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent-api"
             ]
         },
         "io.mockk:mockk-agent-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-core-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-core"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-dsl-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-dsl"
             ]
         },
         "io.mockk:mockk-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk"
             ]
@@ -3046,7 +3045,7 @@
             ]
         },
         "org.jetbrains:annotations": {
-            "locked": "23.0.0",
+            "locked": "26.0.2",
             "transitive": [
                 "org.jetbrains.kotlin:kotlin-stdlib",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm"
@@ -3370,29 +3369,29 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.13.16"
+            "locked": "1.13.17"
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk",
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk"
             ]
@@ -3535,6 +3534,9 @@
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
             "locked": "1.8.1"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "26.0.2"
         },
         "org.junit.jupiter:junit-jupiter": {
             "locked": "5.10.5",
@@ -3882,35 +3884,35 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.13.16"
+            "locked": "1.13.17"
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent-api"
             ]
         },
         "io.mockk:mockk-agent-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-dsl-jvm",
@@ -3918,25 +3920,25 @@
             ]
         },
         "io.mockk:mockk-core-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-core"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-dsl-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-dsl"
             ]
         },
         "io.mockk:mockk-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk"
             ]
@@ -4121,8 +4123,10 @@
             ]
         },
         "org.jetbrains:annotations": {
-            "locked": "23.0.0",
+            "locked": "26.0.2",
             "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-error-types",
                 "org.jetbrains.kotlin:kotlin-stdlib",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm"
             ]

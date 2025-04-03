@@ -40,3 +40,13 @@ dependencies {
     testImplementation("com.github.ben-manes.caffeine:caffeine")
     testImplementation(project(":graphql-dgs-spring-graphql-starter-test"))
 }
+
+tasks.jar {
+    manifest {
+        attributes(
+            mapOf(
+                "Automatic-Module-Name" to "com.netflix.graphql.dgs.springgraphql",
+            )
+        )
+    }
+}

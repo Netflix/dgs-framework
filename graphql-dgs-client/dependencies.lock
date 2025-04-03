@@ -1,12 +1,4 @@
 {
-    "annotationProcessor": {
-        "org.springframework.boot:spring-boot-autoconfigure-processor": {
-            "locked": "3.3.6"
-        },
-        "org.springframework.boot:spring-boot-configuration-processor": {
-            "locked": "3.3.6"
-        }
-    },
     "apiDependenciesMetadata": {
         "com.fasterxml.jackson.core:jackson-annotations": {
             "locked": "2.17.3"
@@ -470,38 +462,38 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ]
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent-api"
             ]
         },
         "io.mockk:mockk-agent-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-dsl-jvm",
@@ -509,25 +501,25 @@
             ]
         },
         "io.mockk:mockk-core-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-core"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-dsl-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-dsl"
             ]
         },
         "io.mockk:mockk-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk"
             ]
@@ -935,7 +927,17 @@
         "org.jetbrains:annotations": {
             "locked": "26.0.1",
             "transitive": [
+                "com.netflix.graphql.dgs:dgs-starter",
+                "com.netflix.graphql.dgs:dgs-starter-test",
+                "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-reactive",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter-test",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
+                "com.netflix.graphql.dgs:graphql-error-types",
                 "org.jetbrains.kotlin:kotlin-stdlib",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm"
             ]
@@ -2158,6 +2160,7 @@
         "org.jetbrains:annotations": {
             "locked": "26.0.1",
             "transitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "org.jetbrains.kotlin:kotlin-stdlib"
             ]
         },
@@ -2476,62 +2479,62 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ]
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent-api"
             ]
         },
         "io.mockk:mockk-agent-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-core-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-core"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-dsl-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-dsl"
             ]
         },
         "io.mockk:mockk-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk"
             ]
@@ -3404,32 +3407,32 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ]
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk",
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk"
             ]
@@ -4324,38 +4327,38 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-client"
             ]
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent-api"
             ]
         },
         "io.mockk:mockk-agent-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-dsl-jvm",
@@ -4363,25 +4366,25 @@
             ]
         },
         "io.mockk:mockk-core-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-core"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-dsl-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk-dsl"
             ]
         },
         "io.mockk:mockk-jvm": {
-            "locked": "1.13.16",
+            "locked": "1.13.17",
             "transitive": [
                 "io.mockk:mockk"
             ]
@@ -4777,7 +4780,17 @@
         "org.jetbrains:annotations": {
             "locked": "26.0.1",
             "transitive": [
+                "com.netflix.graphql.dgs:dgs-starter",
+                "com.netflix.graphql.dgs:dgs-starter-test",
+                "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-reactive",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter-test",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test",
+                "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
+                "com.netflix.graphql.dgs:graphql-error-types",
                 "org.jetbrains.kotlin:kotlin-stdlib",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm"
             ]

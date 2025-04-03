@@ -40,3 +40,7 @@ dependencies {
     testImplementation(project(":graphql-dgs-spring-graphql-starter"))
     testImplementation(project(":graphql-dgs-spring-graphql-starter-test"))
 }
+
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.addAll(listOf("--patch-module", "com.netflix.graphql.dgs.client=${sourceSets["main"].output.asPath}"))
+}
