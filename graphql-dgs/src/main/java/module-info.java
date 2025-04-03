@@ -21,6 +21,8 @@ module com.netflix.graphql.dgs.core {
     requires kotlin.stdlib;
     requires kotlin.reflect;
     requires kotlinx.coroutines.core;
+    requires kotlinx.coroutines.reactive;
+
     requires org.slf4j;
     requires transitive com.graphqljava;
 

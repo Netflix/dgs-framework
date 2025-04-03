@@ -41,12 +41,6 @@ dependencies {
     testImplementation(project(":graphql-dgs-spring-graphql-starter-test"))
 }
 
-tasks.jar {
-    manifest {
-        attributes(
-            mapOf(
-                "Automatic-Module-Name" to "com.netflix.graphql.dgs.springgraphql",
-            )
-        )
-    }
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.addAll(listOf("--patch-module", "com.netflix.graphql.dgs.springgraphql=${sourceSets["main"].output.asPath}"))
 }

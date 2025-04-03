@@ -16,18 +16,13 @@
 
 package com.netflix.graphql.dgs.springgraphql.autoconfig
 
-import com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLConfigurationProperties.Companion.PREFIX
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.bind.DefaultValue
 
-@ConfigurationProperties(prefix = PREFIX)
+@ConfigurationProperties(prefix = "dgs.graphql.spring")
 data class DgsSpringGraphQLConfigurationProperties(
     val webmvc: WebMvc = WebMvc(Asyncdispatch(false)),
 ) {
-    companion object {
-        const val PREFIX: String = "dgs.graphql.spring"
-    }
-
     data class WebMvc(
         val asyncdispatch: Asyncdispatch,
     )
