@@ -98,7 +98,7 @@ class DgsSchemaProvider
         private val componentFilter: ((Any) -> Boolean)? = null,
         private val schemaWiringValidationEnabled: Boolean = true,
         private val enableEntityFetcherCustomScalarParsing: Boolean = false,
-        private val fallbackTypeResolver: TypeResolver? = null
+        private val fallbackTypeResolver: TypeResolver? = null,
     ) {
         @Suppress("UNUSED_PARAMETER")
         @Deprecated("The mockProviders argument is no longer supported")
@@ -827,9 +827,9 @@ class DgsSchemaProvider
                             val instance = env.getObject<Any>()
                             val resolvedType = env.schema.getObjectType(instance::class.java.simpleName)
                             resolvedType ?: fallbackTypeResolver?.getType(env)
-                            ?: throw InvalidTypeResolverException(
-                                "The default type resolver could not find a suitable Java type for GraphQL $typeName type `$it`. Provide a @DgsTypeResolver for `${instance::class.java.simpleName}`."
-                            )
+                                ?: throw InvalidTypeResolverException(
+                                    "The default type resolver could not find a suitable Java type for GraphQL $typeName type `$it`. Provide a @DgsTypeResolver for `${instance::class.java.simpleName}`.",
+                                )
                         },
                 )
             }

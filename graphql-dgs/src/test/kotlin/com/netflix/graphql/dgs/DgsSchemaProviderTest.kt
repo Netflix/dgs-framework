@@ -99,7 +99,7 @@ internal class DgsSchemaProviderTest {
             componentFilter = componentFilter,
             schemaWiringValidationEnabled = schemaWiringValidationEnabled,
             dataFetcherResultProcessors = dataFetcherResultProcessors,
-            fallbackTypeResolver = fallbackTypeResolver
+            fallbackTypeResolver = fallbackTypeResolver,
         )
 
     @DgsComponent
@@ -427,11 +427,14 @@ internal class DgsSchemaProviderTest {
             ): String? = null
         }
 
-
         contextRunner.withBean(FetcherWithDefaultResolver::class.java).withBean(VideoFetcher::class.java).run { context ->
             assertThatNoException().isThrownBy {
                 // verify that it should not trigger a build failure
-                GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema(schema).graphQLSchema).build().execute("{video{title}}")
+                GraphQL
+                    .newGraphQL(
+                        schemaProvider(applicationContext = context).schema(schema).graphQLSchema,
+                    ).build()
+                    .execute("{video{title}}")
             }
         }
     }
@@ -453,15 +456,20 @@ internal class DgsSchemaProviderTest {
             """.trimIndent()
 
         class MyTypeResolverConfig {
-            fun myTypeResolver() : TypeResolver {
-                return TypeResolver { env -> env.schema.getObjectType("Show")}
-            }
+            fun myTypeResolver(): TypeResolver = TypeResolver { env -> env.schema.getObjectType("Show") }
         }
 
         contextRunner.withBean(VideoFetcher::class.java).run { context ->
             assertThatNoException().isThrownBy {
                 // verify that it should not trigger a build failure
-                GraphQL.newGraphQL(schemaProvider(applicationContext = context, fallbackTypeResolver = MyTypeResolverConfig().myTypeResolver()).schema(schema).graphQLSchema).build().execute("{video{title}}")
+                GraphQL
+                    .newGraphQL(
+                        schemaProvider(
+                            applicationContext = context,
+                            fallbackTypeResolver = MyTypeResolverConfig().myTypeResolver(),
+                        ).schema(schema).graphQLSchema,
+                    ).build()
+                    .execute("{video{title}}")
             }
         }
     }
@@ -483,9 +491,7 @@ internal class DgsSchemaProviderTest {
             """.trimIndent()
 
         class MyTypeResolverConfig {
-            fun myTypeResolver() : TypeResolver {
-                return TypeResolver { env -> env.schema.getObjectType("FakeType")}
-            }
+            fun myTypeResolver(): TypeResolver = TypeResolver { env -> env.schema.getObjectType("FakeType") }
         }
 
         @DgsComponent
@@ -500,7 +506,14 @@ internal class DgsSchemaProviderTest {
         contextRunner.withBean(FetcherWithDefaultResolver::class.java).withBean(VideoFetcher::class.java).run { context ->
             assertThatNoException().isThrownBy {
                 // verify that it should not trigger a build failure
-                GraphQL.newGraphQL(schemaProvider(applicationContext = context, fallbackTypeResolver = MyTypeResolverConfig().myTypeResolver()).schema(schema).graphQLSchema).build().execute("{video{title}}")
+                GraphQL
+                    .newGraphQL(
+                        schemaProvider(
+                            applicationContext = context,
+                            fallbackTypeResolver = MyTypeResolverConfig().myTypeResolver(),
+                        ).schema(schema).graphQLSchema,
+                    ).build()
+                    .execute("{video{title}}")
             }
         }
     }
