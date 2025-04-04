@@ -7,13 +7,16 @@ module com.netflix.graphql.dgs.core {
     exports com.netflix.graphql.dgs.scalars;
 
     // Our AutoConfiguration needs access to the internal packages
-    exports com.netflix.graphql.dgs.internal to com.netflix.graphql.dgs.springgraphql, com.netflix.graphql.dgs.reactive, spring.beans;
+    exports com.netflix.graphql.dgs.internal to com.netflix.graphql.dgs.springgraphql, com.netflix.graphql.dgs.reactive, com.netflix.graphql.dgs.micrometer;
     exports com.netflix.graphql.dgs.internal.method to com.netflix.graphql.dgs.springgraphql, com.netflix.graphql.dgs.reactive;
+
+    opens com.netflix.graphql.dgs.internal to spring.beans;
 
     requires com.netflix.graphql.dgs.errortypes;
     requires json.path;
     requires org.dataloader;
     requires org.jetbrains.annotations;
+    requires spring.aop;
     requires spring.beans;
     requires spring.core;
     requires spring.context;
@@ -25,5 +28,4 @@ module com.netflix.graphql.dgs.core {
 
     requires org.slf4j;
     requires transitive com.graphqljava;
-
 }
