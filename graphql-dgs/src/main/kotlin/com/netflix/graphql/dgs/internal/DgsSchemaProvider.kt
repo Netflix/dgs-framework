@@ -46,6 +46,7 @@ import graphql.schema.FieldCoordinates
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.GraphQLScalarType
 import graphql.schema.GraphQLSchema
+import graphql.schema.TypeResolver
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.SchemaDirectiveWiring
 import graphql.schema.idl.SchemaGenerator
@@ -97,6 +98,7 @@ class DgsSchemaProvider
         private val componentFilter: ((Any) -> Boolean)? = null,
         private val schemaWiringValidationEnabled: Boolean = true,
         private val enableEntityFetcherCustomScalarParsing: Boolean = false,
+        private val fallbackTypeResolver: TypeResolver? = null,
     ) {
         @Suppress("UNUSED_PARAMETER")
         @Deprecated("The mockProviders argument is no longer supported")
@@ -824,7 +826,7 @@ class DgsSchemaProvider
                         .typeResolver { env: TypeResolutionEnvironment ->
                             val instance = env.getObject<Any>()
                             val resolvedType = env.schema.getObjectType(instance::class.java.simpleName)
-                            resolvedType
+                            resolvedType ?: fallbackTypeResolver?.getType(env)
                                 ?: throw InvalidTypeResolverException(
                                     "The default type resolver could not find a suitable Java type for GraphQL $typeName type `$it`. Provide a @DgsTypeResolver for `${instance::class.java.simpleName}`.",
                                 )
