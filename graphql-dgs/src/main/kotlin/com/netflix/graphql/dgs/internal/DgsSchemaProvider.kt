@@ -840,7 +840,7 @@ class DgsSchemaProvider
             runtimeWiringBuilder: RuntimeWiring.Builder,
         ) {
             applicationContext.getBeansWithAnnotation<DgsScalar>().values.forEach { scalarComponent ->
-                val annotation = scalarComponent::class.java.getAnnotation(DgsScalar::class.java)
+                val annotation = AopUtils.getTargetClass(scalarComponent).getAnnotation(DgsScalar::class.java)
                 when (scalarComponent) {
                     is Coercing<*, *> ->
                         runtimeWiringBuilder.scalar(
