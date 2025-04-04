@@ -495,14 +495,14 @@ internal class DgsSchemaProviderTest {
         }
 
         @DgsComponent
-        class FetcherWithDefaultResolver {
+        class FetcherWithResolver {
             @DgsTypeResolver(name = "Video")
             fun resolveType(
                 @Suppress("unused_parameter") type: Any,
             ): String? = null
         }
 
-        contextRunner.withBean(FetcherWithDefaultResolver::class.java).withBean(VideoFetcher::class.java).run { context ->
+        contextRunner.withBean(FetcherWithResolver::class.java).withBean(VideoFetcher::class.java).run { context ->
             assertThatNoException().isThrownBy {
                 // verify that it should not trigger a build failure
                 GraphQL
