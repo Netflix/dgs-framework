@@ -23,7 +23,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 /**
  * Configuration properties for DGS framework.
  */
-@ConfigurationProperties(prefix = DgsConfigurationProperties.PREFIX)
+@ConfigurationProperties(prefix = "dgs.graphql")
 data class DgsConfigurationProperties(
     /** Location of the GraphQL schema files. */
     @DefaultValue(DEFAULT_SCHEMA_LOCATION) val schemaLocations: List<String>,
@@ -45,8 +45,4 @@ data class DgsConfigurationProperties(
          * This property toggles that visibility. */
         val showSdlComments: Boolean = true,
     )
-
-    companion object {
-        const val PREFIX: String = "dgs.graphql"
-    }
 }

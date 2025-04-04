@@ -24,3 +24,7 @@ dependencies {
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     testImplementation("io.projectreactor:reactor-test")
 }
+
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.addAll(listOf("--patch-module", "com.netflix.graphql.dgs.reactive=${sourceSets["main"].output.asPath}"))
+}
