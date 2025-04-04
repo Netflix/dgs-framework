@@ -18,3 +18,7 @@ dependencies {
     api("com.graphql-java:graphql-java")
     compileOnly("com.fasterxml.jackson.core:jackson-annotations")
 }
+
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.addAll(listOf("--patch-module", "com.netflix.graphql.dgs.errortypes=${sourceSets["main"].output.asPath}"))
+}

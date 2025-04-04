@@ -22,3 +22,7 @@ dependencies {
 
     testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 }
+
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.addAll(listOf("--patch-module", "com.netflix.graphql.dgs.subscriptiontypes=${sourceSets["main"].output.asPath}"))
+}

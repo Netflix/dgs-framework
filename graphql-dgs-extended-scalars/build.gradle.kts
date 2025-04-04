@@ -21,3 +21,7 @@ dependencies {
 
     testImplementation(project(":graphql-dgs-spring-graphql-starter"))
 }
+
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.addAll(listOf("--patch-module", "com.netflix.graphql.dgs.extendedscalars=${sourceSets["main"].output.asPath}"))
+}
