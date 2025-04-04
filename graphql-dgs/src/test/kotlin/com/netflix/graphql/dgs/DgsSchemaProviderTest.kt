@@ -497,7 +497,6 @@ internal class DgsSchemaProviderTest {
         @DgsComponent
         class FetcherWithDefaultResolver {
             @DgsTypeResolver(name = "Video")
-            @DgsDefaultTypeResolver
             fun resolveType(
                 @Suppress("unused_parameter") type: Any,
             ): String? = null
