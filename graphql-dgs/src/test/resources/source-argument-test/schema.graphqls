@@ -1,0 +1,8 @@
+type Query {
+    shows: [Show]
+}
+
+type Show {
+    title: String
+    description: String
+}
