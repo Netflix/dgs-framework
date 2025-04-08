@@ -23,6 +23,7 @@ import com.netflix.graphql.dgs.internal.method.ContinuationArgumentResolver
 import com.netflix.graphql.dgs.internal.method.DataFetchingEnvironmentArgumentResolver
 import com.netflix.graphql.dgs.internal.method.FallbackEnvironmentArgumentResolver
 import com.netflix.graphql.dgs.internal.method.InputArgumentResolver
+import com.netflix.graphql.dgs.internal.method.SourceArgumentResolver
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
@@ -50,4 +51,7 @@ open class DgsInputArgumentConfiguration {
     @Bean
     @ConditionalOnMissingBean
     open fun defaultInputObjectMapper(): InputObjectMapper = DefaultInputObjectMapper()
+
+    @Bean
+    open fun sourceArgumentResolver(): ArgumentResolver = SourceArgumentResolver()
 }
