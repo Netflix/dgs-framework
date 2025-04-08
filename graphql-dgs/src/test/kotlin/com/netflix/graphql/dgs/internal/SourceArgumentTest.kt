@@ -131,4 +131,36 @@ internal class SourceArgumentTest {
             ).contains("Invalid source type 'com.netflix.graphql.dgs.internal.SourceArgumentTest\$Show'. Expected type 'java.lang.String'")
         }
     }
+
+    @Test
+    fun `Using @Source on a root datafetcher should fail`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsQuery
+            fun shows(
+                @Source something: String,
+            ): List<Show> = listOf(Show("Stranger Things"))
+        }
+
+        contextRunner.withBean(Fetcher::class.java).run { context ->
+            val provider = schemaProvider(context)
+            val schema = provider.schema().graphQLSchema
+
+            val build = GraphQL.newGraphQL(schema).build()
+            val executionResult =
+                build.execute(
+                    """{
+                |   shows {
+                |       title
+                |   }
+                |}
+                    """.trimMargin(),
+                )
+
+            assertThat(executionResult.errors).isNotEmpty()
+            assertThat(
+                executionResult.errors[0].message,
+            ).contains("Source is null. Are you trying to use @Source on a root field (e.g. @DgsQuery)?")
+        }
+    }
 }

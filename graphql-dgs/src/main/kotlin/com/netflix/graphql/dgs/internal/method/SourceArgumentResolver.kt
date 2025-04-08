@@ -28,7 +28,11 @@ class SourceArgumentResolver : ArgumentResolver {
         dfe: DataFetchingEnvironment,
     ): Any {
         val source = dfe.getSource<Any>()
-        if (source != null && parameter.parameterType == source.javaClass) {
+        if (source == null) {
+            throw IllegalArgumentException("Source is null. Are you trying to use @Source on a root field (e.g. @DgsQuery)?")
+        }
+
+        if (parameter.parameterType == source.javaClass) {
             return source
         } else {
             throw IllegalArgumentException(
