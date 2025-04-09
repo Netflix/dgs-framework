@@ -30,7 +30,7 @@ plugins {
     id("nebula.dependency-recommender") version "11.0.0"
 
     id("nebula.netflixoss") version "11.4.0"
-    id("io.spring.dependency-management") version "1.1.6"
+    id("io.spring.dependency-management") version "1.1.7"
 
     id("org.jmailen.kotlinter") version "5.0.+"
     id("me.champeau.jmh") version "0.7.3"
