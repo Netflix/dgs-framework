@@ -107,10 +107,19 @@ enum ErrorDetail {
     The server detected that the client is exhibiting a behavior that
     might be generating excessive load.
 
-    HTTP Mapping: 429 Too Many Requests or 420 Enhance Your Calm
+    HTTP Mapping: 420 Enhance Your Calm
     Error Type: UNAVAILABLE
     """
     ENHANCE_YOUR_CALM
+
+    """
+    The server detected that the client is exhibiting a behavior that
+    might be generating excessive load.
+
+    HTTP Mapping: 429 Too Many Requests
+    Error Type: UNAVAILABLE
+    """
+    TOO_MANY_REQUESTS
 
     """
     Request failed due to network errors.
