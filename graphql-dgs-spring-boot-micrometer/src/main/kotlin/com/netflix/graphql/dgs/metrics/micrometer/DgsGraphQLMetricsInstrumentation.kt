@@ -24,6 +24,7 @@ import graphql.execution.instrumentation.parameters.InstrumentationExecuteOperat
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import graphql.execution.instrumentation.parameters.InstrumentationValidationParameters
+import graphql.execution.preparsed.persisted.PersistedQueryNotFound
 import graphql.language.Field
 import graphql.language.FragmentSpread
 import graphql.language.InlineFragment
@@ -96,7 +97,22 @@ class DgsGraphQLMetricsInstrumentation(
     ): CompletableFuture<ExecutionResult> {
         require(state is MetricsInstrumentationState)
 
-        val errorTagValues = ErrorUtils.sanitizeErrorPaths(executionResult)
+        // if this is an error due to PersistedQueryNotFound, we exclude from the gql.error metric
+        // this is captured in a separate counter instead
+        val persistedQueryNotFoundErrors = executionResult.errors.filter { it.errorType is PersistedQueryNotFound }
+        if (persistedQueryNotFoundErrors.isNotEmpty()) { val registry = registrySupplier.get()
+           persistedQueryNotFoundErrors.forEach {
+               val errorTags = buildList {
+                   add(Tag.of(GqlTag.PERSISTED_QUERY_ID.key, it.extensions["persistedQueryId"].toString()))
+               }
+               registry
+                   .counter(GqlMetric.PERSISTED_QUERY_NOT_FOUND.key, errorTags)
+                   .increment()
+           }
+            return CompletableFuture.completedFuture(executionResult)
+        }
+
+        val errorTagValues = ErrorUtils.sanitizeErrorPaths(executionResult.errors)
         if (errorTagValues.isNotEmpty()) {
             val baseTags =
                 buildList {
@@ -367,9 +383,9 @@ class DgsGraphQLMetricsInstrumentation(
     }
 
     internal object ErrorUtils {
-        fun sanitizeErrorPaths(executionResult: ExecutionResult): Collection<ErrorTagValues> {
+        fun sanitizeErrorPaths(errors: List<GraphQLError>): Collection<ErrorTagValues> {
             val dedupeErrorPaths = mutableMapOf<String, ErrorTagValues>()
-            executionResult.errors.forEach { error ->
+            errors.forEach { error ->
                 val errorPath: List<Any>
                 val errorType: String
                 val errorDetail = errorDetailExtension(error)
