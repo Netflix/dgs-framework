@@ -79,7 +79,9 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.Executor
 
-@SpringBootTest(properties = ["${DgsGraphQLMicrometerAutoConfiguration.AUTO_CONF_QUERY_SIG_PREFIX}.enabled=false"])
+@SpringBootTest(
+    properties = ["${DgsGraphQLMicrometerAutoConfiguration.AUTO_CONF_QUERY_SIG_PREFIX}.enabled=false", "dgs.graphql.apq.enabled:true"],
+)
 @EnableAutoConfiguration
 @AutoConfigureMockMvc
 @Execution(ExecutionMode.SAME_THREAD)
@@ -315,6 +317,117 @@ class MicrometerServletSmokeTest {
     }
 
     @Test
+    fun `Assert metrics for a persisted query not found error`() {
+        val uriBuilder =
+            MockMvcRequestBuilders
+                .post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                       |{
+                       |    "extensions":{
+                       |        "persistedQuery":{
+                       |            "version":1,
+                       |            "sha256Hash":"ecf4edb46db40b5132295c0291d62fb65d6759a9eedfa4d5d612dd5ec54a6b38"
+                       |        }
+                       |    }
+                       | }
+                       |
+                    """.trimMargin(),
+                )
+        mvc
+            .perform(uriBuilder)
+            .andExpect(status().isOk)
+            .andExpect(
+                content().json(
+                    """
+                    |{
+                    |   "errors":[
+                    |     {
+                    |       "message":"PersistedQueryNotFound",
+                    |       "locations":[],
+                    |       "extensions":{
+                    |         "persistedQueryId":"ecf4edb46db40b5132295c0291d62fb65d6759a9eedfa4d5d612dd5ec54a6b38",
+                    |         "generatedBy":"graphql-java",
+                    |         "classification":"PersistedQueryNotFound"
+                    |       }
+                    |     }
+                    |   ]
+                    | }
+                    |
+                    """.trimMargin(),
+                ),
+            )
+
+        val meters = fetchMeters("gql.")
+
+        assertThat(meters).containsOnlyKeys("gql.query", "gql.persistedQueryNotFound")
+
+        assertThat(meters["gql.query"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.query"]?.first()?.id?.tags)
+            .containsAll(
+                Tags
+                    .of("gql.persistedQueryType", DgsGraphQLMetricsInstrumentation.PersistedQueryType.APQ.name),
+            )
+
+        assertThat(meters["gql.persistedQueryNotFound"]).isNotNull.hasSize(1)
+        assertThat((meters["gql.persistedQueryNotFound"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
+        assertThat(meters["gql.persistedQueryNotFound"]?.first()?.id?.tags)
+            .containsAll(
+                Tags
+                    .of("gql.persistedQueryId", "ecf4edb46db40b5132295c0291d62fb65d6759a9eedfa4d5d612dd5ec54a6b38"),
+            )
+    }
+
+    @Test
+    fun `Assert metrics for a full persisted query `() {
+        val uriBuilder =
+            MockMvcRequestBuilders
+                .post("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                       |{
+                       |    "query": "{__typename}",
+                       |    "extensions":{
+                       |        "persistedQuery":{
+                       |            "version":1,
+                       |            "sha256Hash":"ecf4edb46db40b5132295c0291d62fb65d6759a9eedfa4d5d612dd5ec54a6b38"
+                       |        }
+                       |    }
+                       | }
+                       |
+                    """.trimMargin(),
+                )
+        mvc
+            .perform(uriBuilder)
+            .andExpect(status().isOk)
+            .andExpect(
+                content().json(
+                    """
+                    | {
+                    |    "data": {
+                    |        "__typename":"Query"
+                    |    }
+                    | }
+                    |
+                    """.trimMargin(),
+                ),
+            )
+
+        val meters = fetchMeters("gql.")
+
+        assertThat(meters).containsKeys("gql.query")
+
+        assertThat(meters["gql.query"]).isNotNull.hasSize(1)
+        assertThat(meters["gql.query"]?.first()?.id?.tags)
+            .containsAll(
+                Tags
+                    .of("gql.persistedQueryType", DgsGraphQLMetricsInstrumentation.PersistedQueryType.FULL_APQ.name),
+            )
+    }
+
+    @Test
     fun `Metrics for a query with a data fetcher with disabled instrumentation`() {
         mvc
             .perform(
@@ -339,7 +452,8 @@ class MicrometerServletSmokeTest {
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "-someTrivialThings")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.persistedQueryType", DgsGraphQLMetricsInstrumentation.PersistedQueryType.NOT_APQ.name),
             )
     }
 
@@ -403,7 +517,8 @@ class MicrometerServletSmokeTest {
                     .and("gql.operation", "none")
                     .and("gql.operation.name", "anonymous")
                     .and("gql.query.complexity", "none")
-                    .and("gql.query.sig.hash", "none"),
+                    .and("gql.query.sig.hash", "none")
+                    .and("gql.persistedQueryType", DgsGraphQLMetricsInstrumentation.PersistedQueryType.NOT_APQ.name),
             )
     }
 
@@ -468,7 +583,8 @@ class MicrometerServletSmokeTest {
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "-triggerInternalFailure")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.persistedQueryType", DgsGraphQLMetricsInstrumentation.PersistedQueryType.NOT_APQ.name),
             )
 
         logMeters(meters["gql.resolver"])
@@ -543,7 +659,8 @@ class MicrometerServletSmokeTest {
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "-triggerBadRequestFailure")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.persistedQueryType", DgsGraphQLMetricsInstrumentation.PersistedQueryType.NOT_APQ.name),
             )
 
         assertThat(meters["gql.resolver"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
@@ -619,7 +736,8 @@ class MicrometerServletSmokeTest {
                     .and("gql.operation", "QUERY")
                     .and("gql.operation.name", "-triggerCustomFailure")
                     .and("gql.query.complexity", "5")
-                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash),
+                    .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                    .and("gql.persistedQueryType", DgsGraphQLMetricsInstrumentation.PersistedQueryType.NOT_APQ.name),
             )
 
         assertThat(meters["gql.resolver"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
@@ -681,6 +799,7 @@ class MicrometerServletSmokeTest {
                 .and("gql.operation.name", "-triggerInternalFailure")
                 .and("gql.query.complexity", "5")
                 .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                .and("gql.persistedQueryType", DgsGraphQLMetricsInstrumentation.PersistedQueryType.NOT_APQ.name)
                 .toList(),
             Tags
                 .of("execution-tag", "foo")
@@ -693,6 +812,7 @@ class MicrometerServletSmokeTest {
                 .and("gql.operation.name", "-triggerInternalFailure")
                 .and("gql.query.complexity", "5")
                 .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                .and("gql.persistedQueryType", DgsGraphQLMetricsInstrumentation.PersistedQueryType.NOT_APQ.name)
                 .toList(),
             Tags
                 .of("execution-tag", "foo")
@@ -705,6 +825,7 @@ class MicrometerServletSmokeTest {
                 .and("gql.operation.name", "-triggerInternalFailure")
                 .and("gql.query.complexity", "5")
                 .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
+                .and("gql.persistedQueryType", DgsGraphQLMetricsInstrumentation.PersistedQueryType.NOT_APQ.name)
                 .toList(),
         )
     }
