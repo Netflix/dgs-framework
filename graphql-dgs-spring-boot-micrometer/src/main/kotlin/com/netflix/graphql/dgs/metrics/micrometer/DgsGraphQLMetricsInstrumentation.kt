@@ -24,6 +24,7 @@ import graphql.execution.instrumentation.parameters.InstrumentationExecuteOperat
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import graphql.execution.instrumentation.parameters.InstrumentationValidationParameters
+import graphql.execution.preparsed.persisted.PersistedQueryNotFound
 import graphql.language.Field
 import graphql.language.FragmentSpread
 import graphql.language.InlineFragment
@@ -76,7 +77,7 @@ class DgsGraphQLMetricsInstrumentation(
 
         state.operationNameValue = parameters.operation
         state.isIntrospectionQuery = QueryUtils.isIntrospectionQuery(parameters.executionInput)
-
+        state.queryTypeValue = getPersistedQueryType(parameters.executionInput).name
         return SimpleInstrumentationContext.whenCompleted { result, exc ->
             val tags =
                 buildList {
@@ -96,7 +97,22 @@ class DgsGraphQLMetricsInstrumentation(
     ): CompletableFuture<ExecutionResult> {
         require(state is MetricsInstrumentationState)
 
-        val errorTagValues = ErrorUtils.sanitizeErrorPaths(executionResult)
+        // if this is an error due to PersistedQueryNotFound, we exclude from the gql.error metric
+        // this is captured in a separate counter instead
+        val persistedQueryNotFoundErrors = executionResult.errors.filter { it.errorType is PersistedQueryNotFound }
+        if (persistedQueryNotFoundErrors.isNotEmpty()) { val registry = registrySupplier.get()
+            persistedQueryNotFoundErrors.forEach {
+                val errorTags = buildList {
+                    add(Tag.of(GqlTag.PERSISTED_QUERY_ID.key, it.extensions["persistedQueryId"].toString()))
+                }
+                registry
+                    .counter(GqlMetric.PERSISTED_QUERY_NOT_FOUND.key, errorTags)
+                    .increment()
+            }
+            return CompletableFuture.completedFuture(executionResult)
+        }
+
+        val errorTagValues = ErrorUtils.sanitizeErrorPaths(executionResult.errors)
         if (errorTagValues.isNotEmpty()) {
             val baseTags =
                 buildList {
@@ -252,6 +268,21 @@ class DgsGraphQLMetricsInstrumentation(
         )
     }
 
+    enum class PersistedQueryType {
+        NOT_APQ,
+        FULL_APQ,
+        APQ
+    }
+    private fun getPersistedQueryType(executionInput: ExecutionInput) : PersistedQueryType {
+        if (executionInput.query == "PersistedQueryMarker" && executionInput.extensions.containsKey("persistedQuery")) {
+            return PersistedQueryType.APQ
+        } else if (executionInput.query != "PersistedQueryMarker" && executionInput.extensions.containsKey("persistedQuery")) {
+            return PersistedQueryType.FULL_APQ
+        } else {
+            return PersistedQueryType.NOT_APQ
+        }
+    }
+
     class MetricsInstrumentationState(
         private val registry: MeterRegistry,
         private val limitedTagMetricResolver: LimitedTagMetricResolver,
@@ -263,7 +294,7 @@ class DgsGraphQLMetricsInstrumentation(
         internal var operationValue: Operation? = null
         internal var operationNameValue: String? = null
         internal var querySignatureValue: QuerySignatureRepository.QuerySignature? = null
-
+        internal var queryTypeValue: String? = PersistedQueryType.NOT_APQ.name
         val queryComplexity: Optional<Int> get() = Optional.ofNullable(queryComplexityValue)
         val operation: Optional<String> get() = Optional.ofNullable(operationValue?.name)
         val operationName: Optional<String> get() = Optional.ofNullable(operationNameValue)
@@ -302,6 +333,11 @@ class DgsGraphQLMetricsInstrumentation(
                     GqlTag.QUERY_SIG_HASH.key,
                     querySignatureValue?.hash ?: TagUtils.TAG_VALUE_NONE,
                 )
+            tags +=
+                Tag.of(
+                    GqlTag.PERSISTED_QUERY_TYPE.key,
+                    queryTypeValue ?: PersistedQueryType.NOT_APQ.name,
+                )
 
             return tags
         }
@@ -315,8 +351,8 @@ class DgsGraphQLMetricsInstrumentation(
     internal object ComplexityUtils {
         private val complexityCalculator: FieldComplexityCalculator =
             FieldComplexityCalculator {
-                _,
-                childComplexity,
+                    _,
+                    childComplexity,
                 ->
                 childComplexity + 1
             }
@@ -367,9 +403,9 @@ class DgsGraphQLMetricsInstrumentation(
     }
 
     internal object ErrorUtils {
-        fun sanitizeErrorPaths(executionResult: ExecutionResult): Collection<ErrorTagValues> {
+        fun sanitizeErrorPaths(errors: List<GraphQLError>): Collection<ErrorTagValues> {
             val dedupeErrorPaths = mutableMapOf<String, ErrorTagValues>()
-            executionResult.errors.forEach { error ->
+            errors.forEach { error ->
                 val errorPath: List<Any>
                 val errorType: String
                 val errorDetail = errorDetailExtension(error)

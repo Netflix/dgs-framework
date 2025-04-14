@@ -42,6 +42,9 @@ object DgsMetrics {
          * This is useful if you want to find data loaders that might be responsible for poor query performance.
          */
         DATA_LOADER("gql.dataLoader"),
+
+        /** _Counter_ that captures the number of GraphQL errors encountered during query execution. */
+        PERSISTED_QUERY_NOT_FOUND("gql.persistedQueryNotFound"),
     }
 
     /** Defines the tags applied to the [GqlMetric] emitted by the framework. */
@@ -91,6 +94,12 @@ object DgsMetrics {
          * Absent in case the query failed to pass GraphQL validation.
          */
         QUERY_SIG_HASH("gql.query.sig.hash"),
+
+        /** The persisted query Id in case of using automated persisted queries*/
+        PERSISTED_QUERY_ID("gql.persistedQueryId"),
+
+        /** Type of query, i.e. persisted query, full persisted query or not a persisted query.*/
+        PERSISTED_QUERY_TYPE("gql.persistedQueryType")
     }
 
     @Internal
