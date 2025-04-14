@@ -100,11 +100,13 @@ class DgsGraphQLMetricsInstrumentation(
         // if this is an error due to PersistedQueryNotFound, we exclude from the gql.error metric
         // this is captured in a separate counter instead
         val persistedQueryNotFoundErrors = executionResult.errors.filter { it.errorType is PersistedQueryNotFound }
-        if (persistedQueryNotFoundErrors.isNotEmpty()) { val registry = registrySupplier.get()
+        if (persistedQueryNotFoundErrors.isNotEmpty()) {
+            val registry = registrySupplier.get()
             persistedQueryNotFoundErrors.forEach {
-                val errorTags = buildList {
-                    add(Tag.of(GqlTag.PERSISTED_QUERY_ID.key, it.extensions["persistedQueryId"].toString()))
-                }
+                val errorTags =
+                    buildList {
+                        add(Tag.of(GqlTag.PERSISTED_QUERY_ID.key, it.extensions["persistedQueryId"].toString()))
+                    }
                 registry
                     .counter(GqlMetric.PERSISTED_QUERY_NOT_FOUND.key, errorTags)
                     .increment()
@@ -271,9 +273,10 @@ class DgsGraphQLMetricsInstrumentation(
     enum class PersistedQueryType {
         NOT_APQ,
         FULL_APQ,
-        APQ
+        APQ,
     }
-    private fun getPersistedQueryType(executionInput: ExecutionInput) : PersistedQueryType {
+
+    private fun getPersistedQueryType(executionInput: ExecutionInput): PersistedQueryType {
         if (executionInput.query == "PersistedQueryMarker" && executionInput.extensions.containsKey("persistedQuery")) {
             return PersistedQueryType.APQ
         } else if (executionInput.query != "PersistedQueryMarker" && executionInput.extensions.containsKey("persistedQuery")) {
@@ -351,8 +354,8 @@ class DgsGraphQLMetricsInstrumentation(
     internal object ComplexityUtils {
         private val complexityCalculator: FieldComplexityCalculator =
             FieldComplexityCalculator {
-                    _,
-                    childComplexity,
+                _,
+                childComplexity,
                 ->
                 childComplexity + 1
             }

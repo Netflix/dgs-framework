@@ -99,7 +99,7 @@ object DgsMetrics {
         PERSISTED_QUERY_ID("gql.persistedQueryId"),
 
         /** Type of query, i.e. persisted query, full persisted query or not a persisted query.*/
-        PERSISTED_QUERY_TYPE("gql.persistedQueryType")
+        PERSISTED_QUERY_TYPE("gql.persistedQueryType"),
     }
 
     @Internal

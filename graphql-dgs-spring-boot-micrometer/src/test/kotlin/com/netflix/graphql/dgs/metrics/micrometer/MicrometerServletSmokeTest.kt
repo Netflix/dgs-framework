@@ -79,7 +79,9 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.Executor
 
-@SpringBootTest(properties = ["${DgsGraphQLMicrometerAutoConfiguration.AUTO_CONF_QUERY_SIG_PREFIX}.enabled=false", "dgs.graphql.apq.enabled:true"])
+@SpringBootTest(
+    properties = ["${DgsGraphQLMicrometerAutoConfiguration.AUTO_CONF_QUERY_SIG_PREFIX}.enabled=false", "dgs.graphql.apq.enabled:true"],
+)
 @EnableAutoConfiguration
 @AutoConfigureMockMvc
 @Execution(ExecutionMode.SAME_THREAD)
@@ -517,8 +519,7 @@ class MicrometerServletSmokeTest {
                     .and("gql.query.complexity", "none")
                     .and("gql.query.sig.hash", "none")
                     .and("gql.persistedQueryType", DgsGraphQLMetricsInstrumentation.PersistedQueryType.NOT_APQ.name),
-
-                )
+            )
     }
 
     @Test
@@ -737,8 +738,7 @@ class MicrometerServletSmokeTest {
                     .and("gql.query.complexity", "5")
                     .and("gql.query.sig.hash", MOCKED_QUERY_SIGNATURE.hash)
                     .and("gql.persistedQueryType", DgsGraphQLMetricsInstrumentation.PersistedQueryType.NOT_APQ.name),
-
-                )
+            )
 
         assertThat(meters["gql.resolver"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
         assertThat(meters["gql.resolver"]?.first()?.id?.tags)
@@ -860,23 +860,22 @@ class MicrometerServletSmokeTest {
         @Bean
         open fun querySignatureRepository(): QuerySignatureRepository =
             QuerySignatureRepository {
-                    _,
-                    _,
+                _,
+                _,
                 ->
                 Optional.of(MOCKED_QUERY_SIGNATURE)
             }
 
         @Bean
-        open fun contextualTagProvider(): DgsContextualTagCustomizer =
-            DgsContextualTagCustomizer { Tags.of("contextual-tag", "foo") }
+        open fun contextualTagProvider(): DgsContextualTagCustomizer = DgsContextualTagCustomizer { Tags.of("contextual-tag", "foo") }
 
         @Bean
         open fun executionTagCustomizer(): DgsExecutionTagCustomizer =
             DgsExecutionTagCustomizer {
-                    _,
-                    _,
-                    _,
-                    _,
+                _,
+                _,
+                _,
+                _,
                 ->
                 Tags.of("execution-tag", "foo")
             }
@@ -884,9 +883,9 @@ class MicrometerServletSmokeTest {
         @Bean
         open fun fieldFetchTagCustomizer(): DgsFieldFetchTagCustomizer =
             DgsFieldFetchTagCustomizer {
-                    _,
-                    _,
-                    _,
+                _,
+                _,
+                _,
                 ->
                 Tags.of("field-fetch-tag", "foo")
             }
@@ -1004,8 +1003,7 @@ class MicrometerServletSmokeTest {
         }
 
         @Bean
-        open fun customDataFetchingExceptionHandler(): DataFetcherExceptionHandler =
-            CustomDataFetchingExceptionHandler()
+        open fun customDataFetchingExceptionHandler(): DataFetcherExceptionHandler = CustomDataFetchingExceptionHandler()
 
         @Bean
         open fun dataLoaderTaskExecutor(): Executor {
