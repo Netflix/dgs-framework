@@ -17,7 +17,6 @@
 package com.netflix.graphql.dgs.client;
 
 import com.netflix.graphql.dgs.client.scalar.DateRange;
-
 import java.util.List;
 
 public class MovieInput {

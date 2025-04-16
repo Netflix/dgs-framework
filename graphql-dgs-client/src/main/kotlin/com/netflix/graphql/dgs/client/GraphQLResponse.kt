@@ -41,7 +41,7 @@ import graphql.schema.Coercing
 import org.intellij.lang.annotations.Language
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.util.*
+import java.util.Locale
 
 /**
  * Representation of a GraphQL response, which may contain GraphQL errors.
@@ -165,7 +165,7 @@ data class GraphQLResponse(
     fun hasErrors(): Boolean = errors.isNotEmpty()
 
     /**
-     * Helper class to wrap a scaler deserializer into a Jackson JsonDeserializer
+     * Helper class to wrap a scalar deserializer into a Jackson JsonDeserializer
      */
     class CustomScalarDeserializer<T>(
         private val coercing: Coercing<*, *>,

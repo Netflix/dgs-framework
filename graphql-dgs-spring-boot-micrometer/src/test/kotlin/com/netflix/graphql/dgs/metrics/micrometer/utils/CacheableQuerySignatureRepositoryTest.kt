@@ -31,7 +31,7 @@ import org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.EnableCaching
-import java.util.*
+import java.util.Optional
 
 internal class CacheableQuerySignatureRepositoryTest {
     @Nested

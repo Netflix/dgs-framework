@@ -18,7 +18,14 @@ import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
-import com.netflix.graphql.types.subscription.*
+import com.netflix.graphql.types.subscription.DataPayload
+import com.netflix.graphql.types.subscription.EmptyPayload
+import com.netflix.graphql.types.subscription.GQL_CONNECTION_INIT
+import com.netflix.graphql.types.subscription.GQL_DATA
+import com.netflix.graphql.types.subscription.GQL_START
+import com.netflix.graphql.types.subscription.GQL_STOP
+import com.netflix.graphql.types.subscription.OperationMessage
+import com.netflix.graphql.types.subscription.QueryPayload
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

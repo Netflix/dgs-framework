@@ -16,10 +16,11 @@
 
 package com.netflix.graphql.dgs;
 
-import com.netflix.graphql.dgs.internal.utils.DataLoaderNameUtil;
-import org.springframework.stereotype.Component;
-
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Marks a class or field as a Dispatch Predicate for a ScheduledDataLoaderRegistry, which will be registered to the framework.

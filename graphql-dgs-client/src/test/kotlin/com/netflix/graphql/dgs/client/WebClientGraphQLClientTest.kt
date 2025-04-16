@@ -49,7 +49,7 @@ import reactor.netty.transport.logging.AdvancedByteBufFormat
 import reactor.test.StepVerifier
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
 
 @Suppress("GraphQLUnresolvedReference")
 @SpringBootTest(

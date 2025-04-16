@@ -19,15 +19,14 @@ package com.netflix.graphql.dgs;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.TypeRef;
 import graphql.ExecutionResult;
+import java.util.Collections;
+import java.util.Map;
 import org.intellij.lang.annotations.Language;
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
-
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * Represents the core query executing capability of the framework.

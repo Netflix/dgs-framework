@@ -24,7 +24,7 @@ import graphql.ExecutionResult
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import io.micrometer.core.instrument.Tag
-import java.util.*
+import java.util.Collections
 
 class DgsGraphQLCollatedMetricsTagsProvider(
     private val contextualTagCustomizer: Collection<DgsContextualTagCustomizer> = Collections.emptyList(),

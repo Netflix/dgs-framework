@@ -18,7 +18,18 @@ package com.netflix.graphql.dgs.client
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
-import com.netflix.graphql.types.subscription.*
+import com.netflix.graphql.types.subscription.GQL_COMPLETE
+import com.netflix.graphql.types.subscription.GQL_CONNECTION_ACK
+import com.netflix.graphql.types.subscription.GQL_CONNECTION_ERROR
+import com.netflix.graphql.types.subscription.GQL_CONNECTION_INIT
+import com.netflix.graphql.types.subscription.GQL_CONNECTION_KEEP_ALIVE
+import com.netflix.graphql.types.subscription.GQL_DATA
+import com.netflix.graphql.types.subscription.GQL_ERROR
+import com.netflix.graphql.types.subscription.GQL_START
+import com.netflix.graphql.types.subscription.GQL_STOP
+import com.netflix.graphql.types.subscription.GRAPHQL_SUBSCRIPTIONS_WS_PROTOCOL
+import com.netflix.graphql.types.subscription.OperationMessage
+import com.netflix.graphql.types.subscription.QueryPayload
 import graphql.GraphQLException
 import org.intellij.lang.annotations.Language
 import org.springframework.web.reactive.socket.WebSocketHandler

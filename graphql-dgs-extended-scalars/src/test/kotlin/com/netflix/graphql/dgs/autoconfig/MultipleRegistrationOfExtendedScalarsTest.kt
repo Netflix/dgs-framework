@@ -16,7 +16,11 @@
 
 package com.netflix.graphql.dgs.autoconfig
 
-import com.netflix.graphql.dgs.*
+import com.netflix.graphql.dgs.DgsComponent
+import com.netflix.graphql.dgs.DgsQuery
+import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.DgsRuntimeWiring
+import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
 import graphql.scalars.ExtendedScalars
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.SchemaParser

@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
-import java.util.*
+import java.util.Optional
 
 @Suppress("UNUSED_PARAMETER")
 @ExtendWith(MockKExtension::class)

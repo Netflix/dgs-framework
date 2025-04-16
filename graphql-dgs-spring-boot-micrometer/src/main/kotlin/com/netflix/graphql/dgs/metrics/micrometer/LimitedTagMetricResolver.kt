@@ -18,7 +18,7 @@ package com.netflix.graphql.dgs.metrics.micrometer
 
 import com.netflix.graphql.dgs.Internal
 import io.micrometer.core.instrument.Tag
-import java.util.*
+import java.util.Optional
 
 @Internal
 interface LimitedTagMetricResolver {

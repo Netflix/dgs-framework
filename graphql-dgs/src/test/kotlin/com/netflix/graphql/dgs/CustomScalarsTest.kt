@@ -29,7 +29,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Optional
 
 @ExtendWith(MockKExtension::class)
 class CustomScalarsTest {

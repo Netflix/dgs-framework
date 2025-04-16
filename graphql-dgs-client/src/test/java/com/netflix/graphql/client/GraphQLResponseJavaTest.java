@@ -16,16 +16,27 @@
 
 package com.netflix.graphql.client;
 
-import com.netflix.graphql.dgs.client.*;
+import com.netflix.graphql.dgs.client.CustomGraphQLClient;
+import com.netflix.graphql.dgs.client.CustomMonoGraphQLClient;
+import com.netflix.graphql.dgs.client.GraphQLClient;
+import com.netflix.graphql.dgs.client.GraphQLResponse;
+import com.netflix.graphql.dgs.client.HttpResponse;
+import com.netflix.graphql.dgs.client.MonoGraphQLClient;
+import com.netflix.graphql.dgs.client.RequestExecutor;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Mono;
-
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 public class GraphQLResponseJavaTest {

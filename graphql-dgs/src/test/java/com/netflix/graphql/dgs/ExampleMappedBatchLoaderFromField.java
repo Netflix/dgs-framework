@@ -16,10 +16,9 @@
 
 package com.netflix.graphql.dgs;
 
-import org.dataloader.MappedBatchLoader;
-
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
+import org.dataloader.MappedBatchLoader;
 
 @DgsComponent
 public class ExampleMappedBatchLoaderFromField {

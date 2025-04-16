@@ -35,7 +35,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.BeanCreationException
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
-import java.lang.IllegalStateException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 

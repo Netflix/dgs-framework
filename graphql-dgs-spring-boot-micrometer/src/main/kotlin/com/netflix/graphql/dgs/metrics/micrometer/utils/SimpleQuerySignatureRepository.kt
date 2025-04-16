@@ -29,7 +29,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.boot.actuate.metrics.AutoTimer
-import java.util.*
+import java.util.Optional
 
 /**
  * Basic implementation of a [QuerySignatureRepository]. The time it takes to calculate the query signature will be

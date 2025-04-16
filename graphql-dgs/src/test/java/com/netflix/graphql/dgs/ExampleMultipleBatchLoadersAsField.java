@@ -16,11 +16,10 @@
 
 package com.netflix.graphql.dgs;
 
-import org.dataloader.BatchLoader;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import org.dataloader.BatchLoader;
 
 @DgsComponent
 public class ExampleMultipleBatchLoadersAsField {

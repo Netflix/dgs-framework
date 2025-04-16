@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.slf4j.event.Level;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DgsExceptionJavaTest {

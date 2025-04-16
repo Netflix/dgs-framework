@@ -23,7 +23,7 @@ import graphql.language.AstSignature
 import graphql.language.Document
 import org.apache.commons.codec.digest.DigestUtils
 import org.intellij.lang.annotations.Language
-import java.util.*
+import java.util.Optional
 
 /**
  * Interface that defines a _provider_ of a [QuerySignature].

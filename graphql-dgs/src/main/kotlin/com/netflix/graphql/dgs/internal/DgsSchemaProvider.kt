@@ -17,7 +17,20 @@
 package com.netflix.graphql.dgs.internal
 
 import com.apollographql.federation.graphqljava.Federation
-import com.netflix.graphql.dgs.*
+import com.netflix.graphql.dgs.DgsCodeRegistry
+import com.netflix.graphql.dgs.DgsCodeRegistryBuilder
+import com.netflix.graphql.dgs.DgsComponent
+import com.netflix.graphql.dgs.DgsData
+import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
+import com.netflix.graphql.dgs.DgsDefaultTypeResolver
+import com.netflix.graphql.dgs.DgsDirective
+import com.netflix.graphql.dgs.DgsEnableDataFetcherInstrumentation
+import com.netflix.graphql.dgs.DgsEntityFetcher
+import com.netflix.graphql.dgs.DgsFederationResolver
+import com.netflix.graphql.dgs.DgsRuntimeWiring
+import com.netflix.graphql.dgs.DgsScalar
+import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
+import com.netflix.graphql.dgs.DgsTypeResolver
 import com.netflix.graphql.dgs.exceptions.DataFetcherInputArgumentSchemaMismatchException
 import com.netflix.graphql.dgs.exceptions.DataFetcherSchemaMismatchException
 import com.netflix.graphql.dgs.exceptions.DuplicateEntityFetcherException
@@ -72,7 +85,7 @@ import org.springframework.core.io.support.ResourcePatternUtils
 import org.springframework.util.ReflectionUtils
 import java.io.IOException
 import java.lang.reflect.Method
-import java.util.*
+import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.atomic.AtomicReference
@@ -186,7 +199,8 @@ class DgsSchemaProvider
 
             var mergedRegistry =
                 if (schema == null) {
-                    val hasDynamicTypeRegistry = dgsComponents.any { it.annotatedMethods<DgsTypeDefinitionRegistry>().any() }
+                    val hasDynamicTypeRegistry =
+                        dgsComponents.any { it.annotatedMethods<DgsTypeDefinitionRegistry>().any() }
                     val readerBuilder =
                         MultiSourceReader
                             .newMultiSourceReader()
@@ -218,7 +232,8 @@ class DgsSchemaProvider
             val runtimeWiringBuilder =
                 RuntimeWiring.newRuntimeWiring().codeRegistry(codeRegistryBuilder).fieldVisibility(fieldVisibility)
 
-            val dgsCodeRegistryBuilder = DgsCodeRegistryBuilder(dataFetcherResultProcessors, codeRegistryBuilder, applicationContext)
+            val dgsCodeRegistryBuilder =
+                DgsCodeRegistryBuilder(dataFetcherResultProcessors, codeRegistryBuilder, applicationContext)
 
             dgsComponents
                 .asSequence()
@@ -298,7 +313,8 @@ class DgsSchemaProvider
             codeRegistryBuilder: GraphQLCodeRegistry.Builder,
             registry: TypeDefinitionRegistry,
         ) {
-            val dgsCodeRegistryBuilder = DgsCodeRegistryBuilder(dataFetcherResultProcessors, codeRegistryBuilder, applicationContext)
+            val dgsCodeRegistryBuilder =
+                DgsCodeRegistryBuilder(dataFetcherResultProcessors, codeRegistryBuilder, applicationContext)
 
             dgsComponent
                 .annotatedMethods<DgsCodeRegistry>()
@@ -406,7 +422,14 @@ class DgsSchemaProvider
                 throw InvalidDgsConfigurationException("Duplicate data fetchers registered for $parentType.$field")
             }
 
-            dataFetcherInfo.dataFetchers += DataFetcherReference(dgsComponent.instance, method, mergedAnnotations, parentType, field)
+            dataFetcherInfo.dataFetchers +=
+                DataFetcherReference(
+                    dgsComponent.instance,
+                    method,
+                    mergedAnnotations,
+                    parentType,
+                    field,
+                )
 
             val enableTracingInstrumentation =
                 if (method.isAnnotationPresent(DgsEnableDataFetcherInstrumentation::class.java)) {
@@ -468,7 +491,8 @@ class DgsSchemaProvider
                             // register the base implementation for interfaces
                             val coordinates = FieldCoordinates.coordinates(implType.name, field)
                             if (!codeRegistryBuilder.hasDataFetcher(coordinates)) {
-                                val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent.instance, method, coordinates)
+                                val dataFetcher =
+                                    methodDataFetcherFactory.createDataFetcher(dgsComponent.instance, method, coordinates)
                                 codeRegistryBuilder.dataFetcher(coordinates, dataFetcher)
                                 if (enableTracingInstrumentation) {
                                     dataFetcherInfo.tracingEnabled += coordinates.toString()
@@ -479,10 +503,12 @@ class DgsSchemaProvider
                             }
                         }
                     }
+
                     is UnionTypeDefinition -> {
                         typeDefinition.memberTypes.asSequence().filterIsInstance<TypeName>().forEach { memberType ->
                             val coordinates = FieldCoordinates.coordinates(memberType.name, field)
-                            val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent.instance, method, coordinates)
+                            val dataFetcher =
+                                methodDataFetcherFactory.createDataFetcher(dgsComponent.instance, method, coordinates)
                             codeRegistryBuilder.dataFetcher(coordinates, dataFetcher)
                             if (enableTracingInstrumentation) {
                                 dataFetcherInfo.tracingEnabled += coordinates.toString()
@@ -492,6 +518,7 @@ class DgsSchemaProvider
                             }
                         }
                     }
+
                     is ObjectTypeDefinition -> {
                         if (schemaWiringValidationEnabled) {
                             val matchingField =
@@ -512,9 +539,11 @@ class DgsSchemaProvider
                         }
 
                         val coordinates = FieldCoordinates.coordinates(parentType, field)
-                        val dataFetcher = methodDataFetcherFactory.createDataFetcher(dgsComponent.instance, method, coordinates)
+                        val dataFetcher =
+                            methodDataFetcherFactory.createDataFetcher(dgsComponent.instance, method, coordinates)
                         codeRegistryBuilder.dataFetcher(coordinates, dataFetcher)
                     }
+
                     else -> {
                         throw InvalidDgsConfigurationException(
                             "Parent type $parentType referenced on $methodClassName in " +
@@ -587,7 +616,11 @@ class DgsSchemaProvider
                         val paramName = m.parameterName ?: return@forEach
                         val arguments =
                             if (argumentNames.isNotEmpty()) {
-                                "Found the following argument(s) in the schema: " + argumentNames.joinToString(prefix = "[", postfix = "]")
+                                "Found the following argument(s) in the schema: " +
+                                    argumentNames.joinToString(
+                                        prefix = "[",
+                                        postfix = "]",
+                                    )
                             } else {
                                 "No arguments on the field are defined in the schema."
                             }
@@ -689,7 +722,13 @@ class DgsSchemaProvider
                                             paths
                                                 .asSequence()
                                                 .mapNotNull { path ->
-                                                    val coercing = traverseType(path.iterator(), typeDefinition, registry, runtimeWiring)
+                                                    val coercing =
+                                                        traverseType(
+                                                            path.iterator(),
+                                                            typeDefinition,
+                                                            registry,
+                                                            runtimeWiring,
+                                                        )
                                                     if (coercing != null) {
                                                         path to coercing
                                                     } else {
@@ -779,7 +818,11 @@ class DgsSchemaProvider
                                     .newTypeWiring(annotation.name)
                                     .typeResolver { env: TypeResolutionEnvironment ->
                                         val typeName: String? =
-                                            ReflectionUtils.invokeMethod(method, dgsComponentInstance, env.getObject()) as String?
+                                            ReflectionUtils.invokeMethod(
+                                                method,
+                                                dgsComponentInstance,
+                                                env.getObject(),
+                                            ) as String?
                                         if (typeName != null) {
                                             env.schema.getObjectType(typeName)
                                         } else {
@@ -850,6 +893,7 @@ class DgsSchemaProvider
                                 .coercing(scalarComponent)
                                 .build(),
                         )
+
                     else -> throw RuntimeException("Invalid @DgsScalar type: the class must implement graphql.schema.Coercing")
                 }
             }
@@ -868,6 +912,7 @@ class DgsSchemaProvider
                         } else {
                             runtimeWiringBuilder.directiveWiring(directiveComponent)
                         }
+
                     else -> throw RuntimeException(
                         "Invalid @DgsDirective type: the class must implement graphql.schema.idl.SchemaDirectiveWiring",
                     )
@@ -918,7 +963,8 @@ class DgsSchemaProvider
                 val instance: Any,
                 val targetClass: Class<*> = AopUtils.getTargetClass(instance),
             ) {
-                private val cachedMethods = ReflectionUtils.getUniqueDeclaredMethods(targetClass, ReflectionUtils.USER_DECLARED_METHODS)
+                private val cachedMethods =
+                    ReflectionUtils.getUniqueDeclaredMethods(targetClass, ReflectionUtils.USER_DECLARED_METHODS)
                 val methods: Sequence<Method> get() = cachedMethods.asSequence()
 
                 inline fun <reified T : Annotation> annotatedMethods(): Sequence<Method> =

@@ -30,7 +30,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import org.springframework.context.ApplicationContext
-import java.util.*
+import java.util.Optional
 
 internal class SourceArgumentTest {
     private val contextRunner = ApplicationContextRunner()

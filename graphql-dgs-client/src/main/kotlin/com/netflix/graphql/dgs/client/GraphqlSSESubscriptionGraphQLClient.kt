@@ -65,7 +65,7 @@ class GraphqlSSESubscriptionGraphQLClient(
                 .flatMapMany {
                     val headers = it.headers
                     it.body?.map { serverSentEvent ->
-                        sink.tryEmitNext(GraphQLResponse(json = serverSentEvent, headers = headers, options = options))
+                        sink.tryEmitNext(GraphQLResponse(json = serverSentEvent, headers = headers, options))
                     } ?: Flux.empty()
                 }.onErrorResume {
                     Flux.just(sink.tryEmitError(it))

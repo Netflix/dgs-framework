@@ -16,7 +16,12 @@
 
 package com.netflix.graphql.dgs.autoconfig
 
-import com.netflix.graphql.dgs.*
+import com.netflix.graphql.dgs.DgsComponent
+import com.netflix.graphql.dgs.DgsMutation
+import com.netflix.graphql.dgs.DgsQuery
+import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.DgsTypeDefinitionRegistry
+import com.netflix.graphql.dgs.InputArgument
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.assertj.core.api.Assertions.assertThat

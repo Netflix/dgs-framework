@@ -35,7 +35,7 @@ import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.OffsetTime
 import java.time.ZoneOffset
-import java.util.*
+import java.util.Locale
 
 @SpringBootTest(classes = [DgsExtendedScalarsSmokeTest.LocalApp::class])
 @EnableAutoConfiguration

@@ -30,7 +30,7 @@ import org.assertj.core.api.InstanceOfAssertFactories
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
-import java.util.*
+import java.util.Optional
 
 @ExtendWith(MockKExtension::class)
 class DataFetcherWithDirectivesTest {

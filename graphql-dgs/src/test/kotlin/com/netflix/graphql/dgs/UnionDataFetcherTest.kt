@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
-import java.util.*
+import java.util.Optional
 import kotlin.random.Random
 
 @ExtendWith(MockKExtension::class)

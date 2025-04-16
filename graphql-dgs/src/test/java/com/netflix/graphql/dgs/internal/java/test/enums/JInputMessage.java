@@ -17,7 +17,6 @@
 package com.netflix.graphql.dgs.internal.java.test.enums;
 
 import graphql.scalars.country.code.CountryCode;
-
 import java.util.List;
 
 public class JInputMessage {

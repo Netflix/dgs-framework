@@ -27,7 +27,8 @@ import org.springframework.boot.actuate.metrics.AutoTimer
 import org.springframework.cache.Cache
 import org.springframework.cache.CacheManager
 import org.springframework.cache.caffeine.CaffeineCacheManager
-import java.util.*
+import java.util.Objects
+import java.util.Optional
 
 /**
  * Implementation of a [QuerySignatureRepository] that will _cache_ the [QuerySignatureRepository.QuerySignature],

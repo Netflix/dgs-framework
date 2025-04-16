@@ -1,9 +1,12 @@
 package com.netflix.graphql.dgs.metrics.micrometer
 
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
-import com.netflix.graphql.dgs.metrics.micrometer.DgsGraphQLMicrometerAutoConfiguration.Companion.AUTO_CONF_PREFIX
 import com.netflix.graphql.dgs.metrics.micrometer.dataloader.DgsDataLoaderInstrumentationProvider
-import com.netflix.graphql.dgs.metrics.micrometer.tagging.*
+import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsContextualTagCustomizer
+import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsExecutionTagCustomizer
+import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsFieldFetchTagCustomizer
+import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsGraphQLMetricsTagsProvider
+import com.netflix.graphql.dgs.metrics.micrometer.tagging.SimpleGqlOutcomeTagCustomizer
 import com.netflix.graphql.dgs.metrics.micrometer.utils.CacheableQuerySignatureRepository
 import com.netflix.graphql.dgs.metrics.micrometer.utils.QuerySignatureRepository
 import com.netflix.graphql.dgs.metrics.micrometer.utils.SimpleQuerySignatureRepository

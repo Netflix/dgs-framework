@@ -45,7 +45,7 @@ import org.openjdk.jmh.annotations.TearDown
 import org.openjdk.jmh.annotations.Warmup
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.mock.env.MockEnvironment
-import java.util.*
+import java.util.Optional
 import java.util.concurrent.TimeUnit
 
 @State(Scope.Benchmark)

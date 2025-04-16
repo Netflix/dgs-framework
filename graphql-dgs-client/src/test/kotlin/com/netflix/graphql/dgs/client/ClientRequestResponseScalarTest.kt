@@ -39,7 +39,7 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.client.RestClient
 import org.springframework.web.reactive.function.client.WebClient
-import java.util.*
+import java.util.UUID
 
 @Suppress("GraphQLUnresolvedReference")
 @SpringBootTest(

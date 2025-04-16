@@ -24,7 +24,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.web.reactive.function.server.ServerRequest
 import reactor.core.publisher.Mono
-import java.util.*
+import java.util.Optional
 
 open class DefaultDgsReactiveGraphQLContextBuilder(
     private val dgsReactiveCustomContextBuilderWithRequest: Optional<DgsReactiveCustomContextBuilderWithRequest<*>> = Optional.empty(),

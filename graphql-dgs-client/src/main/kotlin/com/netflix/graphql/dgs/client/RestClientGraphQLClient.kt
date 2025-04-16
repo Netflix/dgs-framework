@@ -122,6 +122,6 @@ class RestClientGraphQLClient(
             )
         }
 
-        return GraphQLResponse(json = responseEntity.body ?: "", headers = responseEntity.headers, options = options)
+        return GraphQLResponse(json = responseEntity.body ?: "", headers = responseEntity.headers, options)
     }
 }

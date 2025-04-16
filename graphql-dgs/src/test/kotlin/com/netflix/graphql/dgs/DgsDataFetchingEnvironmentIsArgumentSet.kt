@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
-import java.util.*
+import java.util.Optional
 
 class DgsDataFetchingEnvironmentIsArgumentSet {
     private val contextRunner = ApplicationContextRunner()

@@ -25,7 +25,7 @@ import org.springframework.web.reactive.function.client.toEntityFlux
 import reactor.core.publisher.Flux
 import reactor.core.scheduler.Schedulers
 import java.nio.charset.StandardCharsets
-import java.util.*
+import java.util.Base64
 
 /*
  * This client can be used for servers which are following the subscriptions-transport-sse specification, which can be found here:

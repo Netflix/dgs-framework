@@ -23,7 +23,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.web.context.request.WebRequest
-import java.util.*
+import java.util.Optional
 import kotlin.time.measureTimedValue
 
 open class DefaultDgsGraphQLContextBuilder(

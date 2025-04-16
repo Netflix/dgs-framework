@@ -25,7 +25,7 @@ import org.springframework.core.annotation.Order
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.MapPropertySource
 import org.springframework.core.env.MutablePropertySources
-import java.util.*
+import java.util.Collections
 import java.util.stream.Collectors
 
 /**

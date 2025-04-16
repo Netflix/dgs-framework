@@ -47,7 +47,7 @@ import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestClient
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
 
 @SpringBootTest(
     classes = [
