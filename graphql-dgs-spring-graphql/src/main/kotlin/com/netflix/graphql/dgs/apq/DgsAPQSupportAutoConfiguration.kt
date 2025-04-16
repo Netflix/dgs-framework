@@ -42,10 +42,10 @@ import java.util.*
 @AutoConfiguration
 @AutoConfigureAfter(DgsSpringGraphQLAutoConfiguration::class)
 @ConditionalOnProperty(
-    prefix = DgsAPQSupportProperties.PREFIX,
+    prefix = "dgs.graphql.apq",
     name = ["enabled"],
     havingValue = "true",
-    matchIfMissing = DgsAPQSupportProperties.DEFAULT_ENABLED,
+    matchIfMissing = false,
 )
 @EnableConfigurationProperties(DgsAPQSupportProperties::class)
 open class DgsAPQSupportAutoConfiguration {

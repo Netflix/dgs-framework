@@ -20,7 +20,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
 
-@ConfigurationProperties(prefix = DgsAPQSupportProperties.PREFIX)
+@ConfigurationProperties(prefix = "dgs.graphql.apq")
 data class DgsAPQSupportProperties(
     /** Enables/Disables support for Automated Persisted Queries (APQ). */
     @DefaultValue("$DEFAULT_ENABLED")

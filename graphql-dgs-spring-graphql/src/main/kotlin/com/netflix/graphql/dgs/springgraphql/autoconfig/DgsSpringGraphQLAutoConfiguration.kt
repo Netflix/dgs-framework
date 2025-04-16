@@ -73,6 +73,7 @@ import graphql.introspection.Introspection
 import graphql.schema.DataFetcherFactory
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLCodeRegistry
+import graphql.schema.TypeResolver
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.TypeDefinitionRegistry
 import io.micrometer.context.ContextRegistry
@@ -291,6 +292,7 @@ open class DgsSpringGraphQLAutoConfiguration(
         entityFetcherRegistry: EntityFetcherRegistry,
         defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty(),
         methodDataFetcherFactory: MethodDataFetcherFactory,
+        fallbackTypeResolver: TypeResolver? = null,
     ): DgsSchemaProvider =
         DgsSchemaProvider(
             applicationContext = applicationContext,
@@ -304,6 +306,7 @@ open class DgsSpringGraphQLAutoConfiguration(
             methodDataFetcherFactory = methodDataFetcherFactory,
             schemaWiringValidationEnabled = configProps.schemaWiringValidationEnabled,
             enableEntityFetcherCustomScalarParsing = configProps.enableEntityFetcherCustomScalarParsing,
+            fallbackTypeResolver = fallbackTypeResolver,
         )
 
     @Bean

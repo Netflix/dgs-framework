@@ -22,6 +22,7 @@ import com.netflix.graphql.dgs.exceptions.DataFetcherInputArgumentSchemaMismatch
 import com.netflix.graphql.dgs.exceptions.DataFetcherSchemaMismatchException
 import com.netflix.graphql.dgs.exceptions.DuplicateEntityFetcherException
 import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
+import com.netflix.graphql.dgs.exceptions.InvalidDgsEntityFetcher
 import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
 import com.netflix.graphql.dgs.federation.DefaultDgsFederationResolver
@@ -45,6 +46,7 @@ import graphql.schema.FieldCoordinates
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.GraphQLScalarType
 import graphql.schema.GraphQLSchema
+import graphql.schema.TypeResolver
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.SchemaDirectiveWiring
 import graphql.schema.idl.SchemaGenerator
@@ -96,6 +98,7 @@ class DgsSchemaProvider
         private val componentFilter: ((Any) -> Boolean)? = null,
         private val schemaWiringValidationEnabled: Boolean = true,
         private val enableEntityFetcherCustomScalarParsing: Boolean = false,
+        private val fallbackTypeResolver: TypeResolver? = null,
     ) {
         @Suppress("UNUSED_PARAMETER")
         @Deprecated("The mockProviders argument is no longer supported")
@@ -611,6 +614,28 @@ class DgsSchemaProvider
                     .forEach { method ->
                         val dgsEntityFetcherAnnotation = method.getAnnotation(DgsEntityFetcher::class.java)
 
+                        if (method.parameterCount > 2) {
+                            throw InvalidDgsEntityFetcher(
+                                "@DgsEntityFetcher ${dgsComponent::class.java.name}.${method.name} is invalid. A DgsEntityFetcher can only accept up to 2 arguments",
+                            )
+                        }
+
+                        if (!method.parameterTypes.any { it.isAssignableFrom(Map::class.java) }) {
+                            throw InvalidDgsEntityFetcher(
+                                "@DgsEntityFetcher ${dgsComponent::class.java.name}.${method.name} is invalid. A DgsEntityFetcher must accept an argument of type Map<String, Object>",
+                            )
+                        }
+
+                        if (method.parameterTypes.any {
+                                !it.isAssignableFrom(Map::class.java) &&
+                                    !it.isAssignableFrom(DgsDataFetchingEnvironment::class.java)
+                            }
+                        ) {
+                            throw InvalidDgsEntityFetcher(
+                                "@DgsEntityFetcher ${dgsComponent::class.java.name}.${method.name} is invalid. A DgsEntityFetcher can only accept arguments of type Map<String, Object> or DgsDataFetchingEnvironment",
+                            )
+                        }
+
                         val entityFetcherTypeName = dgsEntityFetcherAnnotation.name
                         val coordinateName = "_entities.$entityFetcherTypeName"
 
@@ -801,7 +826,7 @@ class DgsSchemaProvider
                         .typeResolver { env: TypeResolutionEnvironment ->
                             val instance = env.getObject<Any>()
                             val resolvedType = env.schema.getObjectType(instance::class.java.simpleName)
-                            resolvedType
+                            resolvedType ?: fallbackTypeResolver?.getType(env)
                                 ?: throw InvalidTypeResolverException(
                                     "The default type resolver could not find a suitable Java type for GraphQL $typeName type `$it`. Provide a @DgsTypeResolver for `${instance::class.java.simpleName}`.",
                                 )
@@ -815,7 +840,7 @@ class DgsSchemaProvider
             runtimeWiringBuilder: RuntimeWiring.Builder,
         ) {
             applicationContext.getBeansWithAnnotation<DgsScalar>().values.forEach { scalarComponent ->
-                val annotation = scalarComponent::class.java.getAnnotation(DgsScalar::class.java)
+                val annotation = AopUtils.getTargetClass(scalarComponent).getAnnotation(DgsScalar::class.java)
                 when (scalarComponent) {
                     is Coercing<*, *> ->
                         runtimeWiringBuilder.scalar(

@@ -343,9 +343,6 @@
         }
     },
     "kotlinCompilerPluginClasspathJmh": {
-        "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.9.20"
-        },
         "org.jetbrains.kotlin:kotlin-script-runtime": {
             "locked": "1.9.20",
             "transitive": [
@@ -391,9 +388,6 @@
         }
     },
     "kotlinCompilerPluginClasspathMain": {
-        "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.9.20"
-        },
         "org.jetbrains.kotlin:kotlin-script-runtime": {
             "locked": "1.9.20",
             "transitive": [
@@ -439,9 +433,6 @@
         }
     },
     "kotlinCompilerPluginClasspathTest": {
-        "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.9.20"
-        },
         "org.jetbrains.kotlin:kotlin-script-runtime": {
             "locked": "1.9.20",
             "transitive": [
@@ -478,20 +469,6 @@
                 "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable",
                 "org.jetbrains.kotlin:kotlin-scripting-jvm"
             ]
-        },
-        "org.jetbrains:annotations": {
-            "locked": "13.0",
-            "transitive": [
-                "org.jetbrains.kotlin:kotlin-stdlib"
-            ]
-        }
-    },
-    "kotlinKaptWorkerDependencies": {
-        "org.jetbrains.kotlin:kotlin-annotation-processing-gradle": {
-            "locked": "1.9.20"
-        },
-        "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
         },
         "org.jetbrains:annotations": {
             "locked": "13.0",

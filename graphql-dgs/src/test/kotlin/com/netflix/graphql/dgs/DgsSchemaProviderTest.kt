@@ -36,6 +36,7 @@ import graphql.language.TypeName
 import graphql.schema.DataFetcher
 import graphql.schema.FieldCoordinates
 import graphql.schema.GraphQLCodeRegistry
+import graphql.schema.TypeResolver
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatNoException
@@ -81,6 +82,7 @@ internal class DgsSchemaProviderTest {
         componentFilter: ((Any) -> Boolean)? = null,
         schemaWiringValidationEnabled: Boolean = true,
         dataFetcherResultProcessors: List<DataFetcherResultProcessor> = emptyList(),
+        fallbackTypeResolver: TypeResolver? = null,
     ): DgsSchemaProvider =
         DgsSchemaProvider(
             applicationContext = applicationContext,
@@ -97,6 +99,7 @@ internal class DgsSchemaProviderTest {
             componentFilter = componentFilter,
             schemaWiringValidationEnabled = schemaWiringValidationEnabled,
             dataFetcherResultProcessors = dataFetcherResultProcessors,
+            fallbackTypeResolver = fallbackTypeResolver,
         )
 
     @DgsComponent
@@ -427,7 +430,89 @@ internal class DgsSchemaProviderTest {
         contextRunner.withBean(FetcherWithDefaultResolver::class.java).withBean(VideoFetcher::class.java).run { context ->
             assertThatNoException().isThrownBy {
                 // verify that it should not trigger a build failure
-                GraphQL.newGraphQL(schemaProvider(applicationContext = context).schema(schema).graphQLSchema).build()
+                GraphQL
+                    .newGraphQL(
+                        schemaProvider(applicationContext = context).schema(schema).graphQLSchema,
+                    ).build()
+                    .execute("{video{title}}")
+            }
+        }
+    }
+
+    @Test
+    fun `Use fallback type resolver when no @DgsTypeResolver is present`() {
+        val schema =
+            """
+            type Query {
+                video: Video
+            }
+
+            interface Video {
+                title: String
+            }
+            type Show implements Video {
+                title: String
+            }
+            """.trimIndent()
+
+        class MyTypeResolverConfig {
+            fun myTypeResolver(): TypeResolver = TypeResolver { env -> env.schema.getObjectType("Show") }
+        }
+
+        contextRunner.withBean(VideoFetcher::class.java).run { context ->
+            assertThatNoException().isThrownBy {
+                // verify that it should not trigger a build failure
+                GraphQL
+                    .newGraphQL(
+                        schemaProvider(
+                            applicationContext = context,
+                            fallbackTypeResolver = MyTypeResolverConfig().myTypeResolver(),
+                        ).schema(schema).graphQLSchema,
+                    ).build()
+                    .execute("{video{title}}")
+            }
+        }
+    }
+
+    @Test
+    fun `@DgsTypeResolver should be preferred over fallback type resolver`() {
+        val schema =
+            """
+            type Query {
+                video: Video
+            }
+
+            interface Video {
+                title: String
+            }
+            type Show implements Video {
+                title: String
+            }
+            """.trimIndent()
+
+        class MyTypeResolverConfig {
+            fun myTypeResolver(): TypeResolver = TypeResolver { env -> env.schema.getObjectType("FakeType") }
+        }
+
+        @DgsComponent
+        class FetcherWithResolver {
+            @DgsTypeResolver(name = "Video")
+            fun resolveType(
+                @Suppress("unused_parameter") type: Any,
+            ): String? = null
+        }
+
+        contextRunner.withBean(FetcherWithResolver::class.java).withBean(VideoFetcher::class.java).run { context ->
+            assertThatNoException().isThrownBy {
+                // verify that it should not trigger a build failure
+                GraphQL
+                    .newGraphQL(
+                        schemaProvider(
+                            applicationContext = context,
+                            fallbackTypeResolver = MyTypeResolverConfig().myTypeResolver(),
+                        ).schema(schema).graphQLSchema,
+                    ).build()
+                    .execute("{video{title}}")
             }
         }
     }

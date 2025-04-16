@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-dependencies {
-    api("com.graphql-java:graphql-java")
-    compileOnly("com.fasterxml.jackson.core:jackson-annotations")
-}
+package com.netflix.graphql.dgs;
 
-tasks.withType<JavaCompile>().configureEach {
-    options.compilerArgs.addAll(listOf("--patch-module", "com.netflix.graphql.dgs.errortypes=${sourceSets["main"].output.asPath}"))
+import java.lang.annotation.*;
+
+@Target(ElementType.PARAMETER)
+@Retention(RetentionPolicy.RUNTIME)
+@Inherited
+public @interface Source {
 }

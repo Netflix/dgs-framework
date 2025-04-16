@@ -31,7 +31,7 @@ import java.util.Optional
  */
 @ConditionalOnClass(MetricsAutoConfiguration::class, MeterRegistry::class)
 @AutoConfiguration(after = [CompositeMeterRegistryAutoConfiguration::class])
-@ConditionalOnProperty(prefix = AUTO_CONF_PREFIX, name = ["enabled"], havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "management.metrics.dgs-graphql", name = ["enabled"], havingValue = "true", matchIfMissing = true)
 open class DgsGraphQLMicrometerAutoConfiguration {
     companion object {
         const val AUTO_CONF_PREFIX = "management.metrics.dgs-graphql"
