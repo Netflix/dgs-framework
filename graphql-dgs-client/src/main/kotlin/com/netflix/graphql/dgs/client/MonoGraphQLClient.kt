@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,5 +105,18 @@ interface MonoGraphQLClient {
             webClient: WebClient,
             headersConsumer: Consumer<HttpHeaders>,
         ) = WebClientGraphQLClient(webClient, headersConsumer)
+
+        @JvmStatic
+        fun createWithWebClient(
+            webClient: WebClient,
+            options: GraphQLResponse.GraphQLResponseOptions,
+        ) = WebClientGraphQLClient(webClient, { }, options)
+
+        @JvmStatic
+        fun createWithWebClient(
+            webClient: WebClient,
+            headersConsumer: Consumer<HttpHeaders>,
+            options: GraphQLResponse.GraphQLResponseOptions,
+        ) = WebClientGraphQLClient(webClient, headersConsumer, options)
     }
 }

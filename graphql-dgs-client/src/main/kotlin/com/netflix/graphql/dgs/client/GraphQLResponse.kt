@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,16 @@
 package com.netflix.graphql.dgs.client
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
-import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule
 import com.jayway.jsonpath.Configuration
@@ -32,9 +36,12 @@ import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
+import graphql.GraphQLContext
+import graphql.schema.Coercing
 import org.intellij.lang.annotations.Language
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.util.*
 
 /**
  * Representation of a GraphQL response, which may contain GraphQL errors.
@@ -75,8 +82,21 @@ data class GraphQLResponse(
     ) : this(
         json,
         headers,
-        // default object mapper instead no instance is passed in the constructor
-        DEFAULT_MAPPER,
+        null,
+    )
+    constructor(
+        @Language("json") json: String,
+        headers: Map<String, List<String>>,
+        options: GraphQLResponseOptions? = null,
+    ) : this(
+        json,
+        headers,
+        createCustomObjectMapper(options),
+    )
+
+    class GraphQLResponseOptions(
+        val scalars: Map<Class<*>, Coercing<*, *>> = emptyMap(),
+        val graphQLContext: GraphQLContext = GraphQLContext.getDefault(),
     )
 
     /**
@@ -144,17 +164,39 @@ data class GraphQLResponse(
 
     fun hasErrors(): Boolean = errors.isNotEmpty()
 
+    /**
+     * Helper class to wrap a scaler deserializer into a Jackson JsonDeserializer
+     */
+    class CustomScalarDeserializer<T>(
+        private val coercing: Coercing<*, *>,
+        private val graphQLContext: GraphQLContext,
+    ) : JsonDeserializer<T>() {
+        override fun deserialize(
+            p: JsonParser,
+            ctxt: DeserializationContext,
+        ): T {
+            val value = p.readValueAsTree<JsonNode>()
+            return coercing.parseValue(value.asText(), graphQLContext, Locale.getDefault()) as T
+        }
+    }
+
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(GraphQLResponse::class.java)
 
-        internal val DEFAULT_MAPPER: ObjectMapper =
-            jsonMapper {
-                addModule(kotlinModule { enable(KotlinFeature.NullIsSameAsDefault) })
-                addModule(JavaTimeModule())
-                addModule(ParameterNamesModule())
-                addModule(Jdk8Module())
-                enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+        fun createCustomObjectMapper(options: GraphQLResponseOptions? = null): ObjectMapper {
+            val mapper = ObjectMapper()
+            mapper.registerModule(kotlinModule { enable(KotlinFeature.NullIsSameAsDefault) })
+            mapper.registerModule(JavaTimeModule())
+            mapper.registerModule(ParameterNamesModule())
+            mapper.registerModule(Jdk8Module())
+            mapper.enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+
+            // Register custom deserializers if scalars are provided
+            options?.scalars?.forEach { (clazz, coercing) ->
+                mapper.registerModule(SimpleModule().addDeserializer(clazz, CustomScalarDeserializer(coercing, options.graphQLContext)))
             }
+            return mapper
+        }
 
         fun getDataPath(path: String): String =
             if (path == "data" || path.startsWith("data.")) {

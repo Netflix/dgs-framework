@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.netflix.graphql.dgs.client.GraphQLResponse.GraphQLResponseOptions
 import org.intellij.lang.annotations.Language
 import org.springframework.http.HttpHeaders
 import org.springframework.web.client.RestClient
@@ -42,6 +43,7 @@ class RestClientGraphQLClient(
     private val restClient: RestClient,
     private val headersConsumer: Consumer<HttpHeaders>,
     private val mapper: ObjectMapper,
+    private val options: GraphQLResponseOptions? = null,
 ) : GraphQLClient {
     constructor(restClient: RestClient) : this(restClient, Consumer { })
 
@@ -51,7 +53,22 @@ class RestClientGraphQLClient(
         GraphQLClients.objectMapper,
     )
 
+    constructor(restClient: RestClient, options: GraphQLResponseOptions? = null) : this(
+        restClient,
+        Consumer { },
+        GraphQLClients.objectMapper,
+        options,
+    )
+
     constructor(restClient: RestClient, mapper: ObjectMapper) : this(restClient, Consumer { }, mapper)
+
+    constructor(restClient: RestClient, mapper: ObjectMapper, options: GraphQLResponseOptions? = null) : this(
+        restClient,
+        Consumer {
+        },
+        mapper,
+        options,
+    )
 
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
@@ -105,6 +122,6 @@ class RestClientGraphQLClient(
             )
         }
 
-        return GraphQLResponse(json = responseEntity.body ?: "", headers = responseEntity.headers)
+        return GraphQLResponse(json = responseEntity.body ?: "", headers = responseEntity.headers, options = options)
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.netflix.graphql.dgs.client.GraphQLResponse.GraphQLResponseOptions
 import org.intellij.lang.annotations.Language
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
@@ -44,6 +45,7 @@ class WebClientGraphQLClient(
     private val webclient: WebClient,
     private val headersConsumer: Consumer<HttpHeaders>,
     private val mapper: ObjectMapper,
+    private val options: GraphQLResponseOptions? = null,
 ) : MonoGraphQLClient {
     constructor(webclient: WebClient) : this(webclient, Consumer {})
 
@@ -54,6 +56,17 @@ class WebClientGraphQLClient(
     )
 
     constructor(webclient: WebClient, mapper: ObjectMapper) : this(webclient, Consumer {}, mapper)
+
+    constructor(
+        webclient: WebClient,
+        options: GraphQLResponseOptions? = null,
+    ) : this(webclient, Consumer {}, GraphQLClients.objectMapper, options)
+
+    constructor(
+        webclient: WebClient,
+        headersConsumer: Consumer<HttpHeaders>,
+        options: GraphQLResponseOptions? = null,
+    ) : this(webclient, headersConsumer, GraphQLClients.objectMapper, options)
 
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
@@ -140,7 +153,7 @@ class WebClientGraphQLClient(
             )
         }
 
-        return GraphQLResponse(json = response.body ?: "", headers = response.headers)
+        return GraphQLResponse(json = response.body ?: "", headers = response.headers, options = options)
     }
 
     companion object {

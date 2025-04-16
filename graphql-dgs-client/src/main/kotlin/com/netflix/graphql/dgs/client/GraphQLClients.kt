@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.client
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.netflix.graphql.dgs.client.GraphQLResponse.GraphQLResponseOptions
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.MediaType
@@ -47,6 +48,13 @@ internal object GraphQLClients {
         response: HttpResponse,
         requestBody: String,
         url: String,
+    ): GraphQLResponse = handleResponse(response, requestBody, url, null)
+
+    fun handleResponse(
+        response: HttpResponse,
+        requestBody: String,
+        url: String,
+        options: GraphQLResponseOptions? = null,
     ): GraphQLResponse {
         val (statusCode, body) = response
         val headers = response.headers
@@ -54,7 +62,7 @@ internal object GraphQLClients {
             throw GraphQLClientException(statusCode, url, body ?: "", requestBody)
         }
 
-        return GraphQLResponse(body ?: "", headers)
+        return GraphQLResponse(body ?: "", headers, options)
     }
 
     internal fun toRequestMap(
