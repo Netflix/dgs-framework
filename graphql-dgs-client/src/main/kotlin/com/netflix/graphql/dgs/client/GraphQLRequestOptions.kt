@@ -35,6 +35,10 @@ import graphql.GraphQLContext
 import graphql.schema.Coercing
 import java.util.Locale
 
+/**
+ * Options for GraphQL requests, including custom scalars and GraphQL context and providing unified
+ * ObjectMapper for marshalling and unmarshalling.
+ */
 class GraphQLRequestOptions(
     val scalars: Map<Class<*>, Coercing<*, *>> = emptyMap(),
     val graphQLContext: GraphQLContext = GraphQLContext.getDefault(),

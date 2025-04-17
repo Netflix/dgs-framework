@@ -25,7 +25,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 
 internal object GraphQLClients {
-    @Deprecated("Use GraphQLRequestOptions.createCustomObjectMapper instead")
+    @Deprecated(message = "Use GraphQLRequestOptions.createCustomObjectMapper instead")
     internal val objectMapper: ObjectMapper =
         Jackson2ObjectMapperBuilder
             .json()
