@@ -55,17 +55,24 @@ class WebClientGraphQLClient(
         GraphQLRequestOptions.createCustomObjectMapper(),
     )
 
-    constructor(webclient: WebClient, mapper: ObjectMapper) : this(webclient, Consumer {}, mapper)
-
     constructor(
         webclient: WebClient,
-        options: GraphQLRequestOptions? = null,
+        options: GraphQLRequestOptions,
     ) : this(webclient, Consumer {}, GraphQLRequestOptions.createCustomObjectMapper(options), options)
+
+    constructor(webclient: WebClient, mapper: ObjectMapper) : this(webclient, Consumer {}, mapper)
+
+    constructor(webclient: WebClient, headersConsumer: Consumer<HttpHeaders>, mapper: ObjectMapper) : this(
+        webclient,
+        headersConsumer,
+        mapper,
+        options = null,
+    )
 
     constructor(
         webclient: WebClient,
         headersConsumer: Consumer<HttpHeaders>,
-        options: GraphQLRequestOptions? = null,
+        options: GraphQLRequestOptions,
     ) : this(webclient, headersConsumer, GraphQLRequestOptions.createCustomObjectMapper(options), options)
 
     /**

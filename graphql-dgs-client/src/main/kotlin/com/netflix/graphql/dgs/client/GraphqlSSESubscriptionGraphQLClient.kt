@@ -34,6 +34,8 @@ class GraphqlSSESubscriptionGraphQLClient(
     private val webClient: WebClient,
     private val options: GraphQLRequestOptions? = null,
 ) : ReactiveGraphQLClient {
+    constructor(url: String, webClient: WebClient) : this(url, webClient, null)
+
     private val mapper = GraphQLRequestOptions.createCustomObjectMapper(options)
 
     override fun reactiveExecuteQuery(

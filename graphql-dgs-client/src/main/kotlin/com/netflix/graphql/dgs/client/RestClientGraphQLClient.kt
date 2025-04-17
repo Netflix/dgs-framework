@@ -46,26 +46,25 @@ class RestClientGraphQLClient(
 ) : GraphQLClient {
     constructor(restClient: RestClient) : this(restClient, Consumer { })
 
+    constructor(restClient: RestClient, mapper: ObjectMapper) : this(restClient, Consumer { }, mapper)
+
     constructor(restClient: RestClient, headersConsumer: Consumer<HttpHeaders>) : this(
         restClient,
         headersConsumer,
         GraphQLRequestOptions.createCustomObjectMapper(),
     )
 
+    constructor(restClient: RestClient, headersConsumer: Consumer<HttpHeaders>, mapper: ObjectMapper) : this(
+        restClient,
+        headersConsumer,
+        mapper,
+        options = null,
+    )
+
     constructor(restClient: RestClient, options: GraphQLRequestOptions? = null) : this(
         restClient,
         Consumer { },
         GraphQLRequestOptions.createCustomObjectMapper(options),
-        options,
-    )
-
-    constructor(restClient: RestClient, mapper: ObjectMapper) : this(restClient, Consumer { }, mapper)
-
-    constructor(restClient: RestClient, mapper: ObjectMapper, options: GraphQLRequestOptions? = null) : this(
-        restClient,
-        Consumer {
-        },
-        mapper,
         options,
     )
 

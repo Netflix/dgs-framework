@@ -43,7 +43,8 @@ class GraphQLRequestOptions(
     val scalars: Map<Class<*>, Coercing<*, *>> = emptyMap(),
     val graphQLContext: GraphQLContext = GraphQLContext.getDefault(),
 ) {
-    // Secondary constructor for Java compatibility
+    constructor() : this(emptyMap())
+
     constructor(scalars: Map<Class<*>, Coercing<*, *>>) : this(scalars, GraphQLContext.getDefault())
 
     /**
@@ -107,5 +108,9 @@ class GraphQLRequestOptions(
             }
             return mapper
         }
+
+        // Overloaded method for Java compatibility
+        @JvmStatic
+        fun createCustomObjectMapper(): ObjectMapper = createCustomObjectMapper(null)
     }
 }

@@ -70,14 +70,16 @@ data class GraphQLResponse(
     constructor(
         @Language("json") json: String,
     ) : this(json, emptyMap())
+
     constructor(
         @Language("json") json: String,
         headers: Map<String, List<String>>,
     ) : this(
         json,
         headers,
-        null,
+        createCustomObjectMapper(),
     )
+
     constructor(
         @Language("json") json: String,
         headers: Map<String, List<String>>,

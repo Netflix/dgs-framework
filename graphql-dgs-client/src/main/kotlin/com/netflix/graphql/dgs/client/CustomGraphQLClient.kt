@@ -30,9 +30,14 @@ class CustomGraphQLClient(
     private val mapper: ObjectMapper,
     private val options: GraphQLRequestOptions? = null,
 ) : GraphQLClient {
-    constructor(url: String, requestExecutor: RequestExecutor) : this(url, requestExecutor, null)
+    constructor(
+        url: String,
+        requestExecutor: RequestExecutor,
+    ) : this(url, requestExecutor, GraphQLRequestOptions.createCustomObjectMapper())
 
-    constructor(url: String, requestExecutor: RequestExecutor, options: GraphQLRequestOptions? = null) : this(
+    constructor(url: String, requestExecutor: RequestExecutor, mapper: ObjectMapper) : this(url, requestExecutor, mapper, null)
+
+    constructor(url: String, requestExecutor: RequestExecutor, options: GraphQLRequestOptions) : this(
         url,
         requestExecutor,
         GraphQLRequestOptions.createCustomObjectMapper(options),

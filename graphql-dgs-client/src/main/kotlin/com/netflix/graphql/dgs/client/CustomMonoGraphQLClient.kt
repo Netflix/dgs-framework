@@ -31,9 +31,14 @@ class CustomMonoGraphQLClient(
     private val mapper: ObjectMapper,
     private val options: GraphQLRequestOptions? = null,
 ) : MonoGraphQLClient {
-    constructor(url: String, monoRequestExecutor: MonoRequestExecutor) : this (url, monoRequestExecutor, null)
+    constructor(
+        url: String,
+        monoRequestExecutor: MonoRequestExecutor,
+    ) : this (url, monoRequestExecutor, GraphQLRequestOptions.createCustomObjectMapper())
 
-    constructor(url: String, monoRequestExecutor: MonoRequestExecutor, options: GraphQLRequestOptions? = null) : this(
+    constructor(url: String, monoRequestExecutor: MonoRequestExecutor, mapper: ObjectMapper) : this(url, monoRequestExecutor, mapper, null)
+
+    constructor(url: String, monoRequestExecutor: MonoRequestExecutor, options: GraphQLRequestOptions) : this(
         url,
         monoRequestExecutor,
         GraphQLRequestOptions.createCustomObjectMapper(options),
