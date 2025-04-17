@@ -95,22 +95,4 @@ public class DataFetcherRequestResponseTest {
         );
         Assertions.assertThat(result.extractValueAsObject("echoTime", LocalTime.class)).isEqualTo(theTimeIs);
     }
-
-    @Test
-    public void CustomClientScalarsCanBeProvided() {
-        RestClient client = restClientBuilder.baseUrl("http://localhost:" + port + "/graphql").build();
-        RestClientGraphQLClient restClient = new RestClientGraphQLClient(
-                client,
-                new GraphQLRequestOptions(
-                        Map.of(LocalTime.class, ExtendedScalars.LocalTime.getCoercing())
-                )
-        );
-
-        LocalTime theTimeIs = LocalTime.of(9, 2, 1);
-        GraphQLResponse result = restClient.executeQuery(
-                "query EchoTimeQuery($input: LocalTime!) { echoTime(time: $input) }",
-                Map.of("input", theTimeIs)
-        );
-        Assertions.assertThat(result.extractValueAsObject("echoTime", LocalTime.class)).isEqualTo(theTimeIs);
-    }
 }
