@@ -19,6 +19,7 @@ package com.netflix.graphql.client;
 import com.netflix.graphql.dgs.client.CustomGraphQLClient;
 import com.netflix.graphql.dgs.client.CustomMonoGraphQLClient;
 import com.netflix.graphql.dgs.client.GraphQLClient;
+import com.netflix.graphql.dgs.client.GraphQLRequestOptions;
 import com.netflix.graphql.dgs.client.GraphQLResponse;
 import com.netflix.graphql.dgs.client.HttpResponse;
 import com.netflix.graphql.dgs.client.MonoGraphQLClient;
@@ -118,6 +119,21 @@ public class GraphQLResponseJavaTest {
                 .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
 
         CustomGraphQLClient client = GraphQLClient.createCustom(url, requestExecutor);
+        GraphQLResponse graphQLResponse = client.executeQuery(query, emptyMap(), "SubmitReview");
+        String submittedBy = graphQLResponse.extractValueAsObject("submitReview.submittedBy", String.class);
+        assertThat(submittedBy).isEqualTo("abc@netflix.com");
+        server.verify();
+    }
+
+    @Test
+    public void testCustomWithOptions() {
+        server.expect(requestTo(url))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{\"operationName\":\"SubmitReview\"}"))
+                .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
+
+        CustomGraphQLClient client = GraphQLClient.createCustom(url, requestExecutor, new GraphQLRequestOptions());
         GraphQLResponse graphQLResponse = client.executeQuery(query, emptyMap(), "SubmitReview");
         String submittedBy = graphQLResponse.extractValueAsObject("submitReview.submittedBy", String.class);
         assertThat(submittedBy).isEqualTo("abc@netflix.com");

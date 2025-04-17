@@ -37,4 +37,11 @@ public class CurrentTimeDateFetcher {
         System.out.println(time);
         return true;
     }
+
+    @DgsData(parentType = "Query", field = "echoTime")
+    public LocalTime echoTime(DataFetchingEnvironment env) {
+        LocalTime time = env.getArgument("time");
+        System.out.println(time);
+        return time;
+    }
 }

@@ -28,8 +28,16 @@ class CustomGraphQLClient(
     private val url: String,
     private val requestExecutor: RequestExecutor,
     private val mapper: ObjectMapper,
+    private val options: GraphQLRequestOptions? = null,
 ) : GraphQLClient {
-    constructor(url: String, requestExecutor: RequestExecutor) : this(url, requestExecutor, GraphQLClients.objectMapper)
+    constructor(url: String, requestExecutor: RequestExecutor) : this(url, requestExecutor, null)
+
+    constructor(url: String, requestExecutor: RequestExecutor, options: GraphQLRequestOptions? = null) : this(
+        url,
+        requestExecutor,
+        GraphQLRequestOptions.createCustomObjectMapper(options),
+        options,
+    )
 
     override fun executeQuery(
         @Language("graphql") query: String,
@@ -51,6 +59,6 @@ class CustomGraphQLClient(
             )
 
         val response = requestExecutor.execute(url, GraphQLClients.defaultHeaders, serializedRequest)
-        return GraphQLClients.handleResponse(response, serializedRequest, url)
+        return GraphQLClients.handleResponse(response, serializedRequest, url, options)
     }
 }

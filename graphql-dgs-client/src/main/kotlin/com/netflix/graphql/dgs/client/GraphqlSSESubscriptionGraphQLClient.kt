@@ -16,8 +16,6 @@
 
 package com.netflix.graphql.dgs.client
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.netflix.graphql.dgs.client.GraphQLResponse.GraphQLResponseOptions
 import com.netflix.graphql.types.subscription.QueryPayload
 import org.intellij.lang.annotations.Language
 import org.springframework.http.MediaType
@@ -34,9 +32,9 @@ import reactor.core.scheduler.Schedulers
 class GraphqlSSESubscriptionGraphQLClient(
     private val url: String,
     private val webClient: WebClient,
-    private val options: GraphQLResponseOptions? = null,
+    private val options: GraphQLRequestOptions? = null,
 ) : ReactiveGraphQLClient {
-    private val mapper = jacksonObjectMapper()
+    private val mapper = GraphQLRequestOptions.createCustomObjectMapper(options)
 
     override fun reactiveExecuteQuery(
         @Language("graphql") query: String,

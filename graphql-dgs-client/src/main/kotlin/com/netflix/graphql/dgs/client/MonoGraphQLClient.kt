@@ -92,6 +92,13 @@ interface MonoGraphQLClient {
         ) = CustomMonoGraphQLClient(url, requestExecutor)
 
         @JvmStatic
+        fun createCustomReactive(
+            @Language("url") url: String,
+            requestExecutor: MonoRequestExecutor,
+            options: GraphQLRequestOptions,
+        ) = CustomMonoGraphQLClient(url, requestExecutor, options)
+
+        @JvmStatic
         fun createWithWebClient(webClient: WebClient) = WebClientGraphQLClient(webClient)
 
         @JvmStatic
@@ -109,14 +116,14 @@ interface MonoGraphQLClient {
         @JvmStatic
         fun createWithWebClient(
             webClient: WebClient,
-            options: GraphQLResponse.GraphQLResponseOptions,
+            options: GraphQLRequestOptions,
         ) = WebClientGraphQLClient(webClient, { }, options)
 
         @JvmStatic
         fun createWithWebClient(
             webClient: WebClient,
             headersConsumer: Consumer<HttpHeaders>,
-            options: GraphQLResponse.GraphQLResponseOptions,
+            options: GraphQLRequestOptions,
         ) = WebClientGraphQLClient(webClient, headersConsumer, options)
     }
 }

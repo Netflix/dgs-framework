@@ -17,7 +17,6 @@
 package com.netflix.graphql.dgs.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.netflix.graphql.dgs.client.GraphQLResponse.GraphQLResponseOptions
 import org.intellij.lang.annotations.Language
 import org.springframework.http.HttpHeaders
 import org.springframework.web.client.RestClient
@@ -43,26 +42,26 @@ class RestClientGraphQLClient(
     private val restClient: RestClient,
     private val headersConsumer: Consumer<HttpHeaders>,
     private val mapper: ObjectMapper,
-    private val options: GraphQLResponseOptions? = null,
+    private val options: GraphQLRequestOptions? = null,
 ) : GraphQLClient {
     constructor(restClient: RestClient) : this(restClient, Consumer { })
 
     constructor(restClient: RestClient, headersConsumer: Consumer<HttpHeaders>) : this(
         restClient,
         headersConsumer,
-        GraphQLClients.objectMapper,
+        GraphQLRequestOptions.createCustomObjectMapper(),
     )
 
-    constructor(restClient: RestClient, options: GraphQLResponseOptions? = null) : this(
+    constructor(restClient: RestClient, options: GraphQLRequestOptions? = null) : this(
         restClient,
         Consumer { },
-        GraphQLClients.objectMapper,
+        GraphQLRequestOptions.createCustomObjectMapper(options),
         options,
     )
 
     constructor(restClient: RestClient, mapper: ObjectMapper) : this(restClient, Consumer { }, mapper)
 
-    constructor(restClient: RestClient, mapper: ObjectMapper, options: GraphQLResponseOptions? = null) : this(
+    constructor(restClient: RestClient, mapper: ObjectMapper, options: GraphQLRequestOptions? = null) : this(
         restClient,
         Consumer {
         },

@@ -90,5 +90,12 @@ interface GraphQLClient {
             requestExecutor: RequestExecutor,
             mapper: ObjectMapper,
         ) = CustomGraphQLClient(url, requestExecutor, mapper)
+
+        @JvmStatic
+        fun createCustom(
+            url: String,
+            requestExecutor: RequestExecutor,
+            options: GraphQLRequestOptions,
+        ) = CustomGraphQLClient(url, requestExecutor, options)
     }
 }

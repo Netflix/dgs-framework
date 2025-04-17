@@ -19,13 +19,13 @@ package com.netflix.graphql.dgs.client
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.netflix.graphql.dgs.client.GraphQLResponse.GraphQLResponseOptions
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.MediaType
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 
 internal object GraphQLClients {
+    @Deprecated("Use GraphQLRequestOptions.createCustomObjectMapper instead")
     internal val objectMapper: ObjectMapper =
         Jackson2ObjectMapperBuilder
             .json()
@@ -54,7 +54,7 @@ internal object GraphQLClients {
         response: HttpResponse,
         requestBody: String,
         url: String,
-        options: GraphQLResponseOptions? = null,
+        options: GraphQLRequestOptions? = null,
     ): GraphQLResponse {
         val (statusCode, body) = response
         val headers = response.headers

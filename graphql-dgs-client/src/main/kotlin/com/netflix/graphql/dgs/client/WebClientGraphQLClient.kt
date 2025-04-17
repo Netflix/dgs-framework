@@ -17,7 +17,6 @@
 package com.netflix.graphql.dgs.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.netflix.graphql.dgs.client.GraphQLResponse.GraphQLResponseOptions
 import com.netflix.graphql.dgs.client.WebClientGraphQLClient.RequestBodyUriCustomizer
 import org.intellij.lang.annotations.Language
 import org.springframework.http.HttpHeaders
@@ -46,28 +45,28 @@ class WebClientGraphQLClient(
     private val webclient: WebClient,
     private val headersConsumer: Consumer<HttpHeaders>,
     private val mapper: ObjectMapper,
-    private val options: GraphQLResponseOptions? = null,
+    private val options: GraphQLRequestOptions? = null,
 ) : MonoGraphQLClient {
     constructor(webclient: WebClient) : this(webclient, Consumer {})
 
     constructor(webclient: WebClient, headersConsumer: Consumer<HttpHeaders>) : this(
         webclient,
         headersConsumer,
-        GraphQLClients.objectMapper,
+        GraphQLRequestOptions.createCustomObjectMapper(),
     )
 
     constructor(webclient: WebClient, mapper: ObjectMapper) : this(webclient, Consumer {}, mapper)
 
     constructor(
         webclient: WebClient,
-        options: GraphQLResponseOptions? = null,
-    ) : this(webclient, Consumer {}, GraphQLClients.objectMapper, options)
+        options: GraphQLRequestOptions? = null,
+    ) : this(webclient, Consumer {}, GraphQLRequestOptions.createCustomObjectMapper(options), options)
 
     constructor(
         webclient: WebClient,
         headersConsumer: Consumer<HttpHeaders>,
-        options: GraphQLResponseOptions? = null,
-    ) : this(webclient, headersConsumer, GraphQLClients.objectMapper, options)
+        options: GraphQLRequestOptions? = null,
+    ) : this(webclient, headersConsumer, GraphQLRequestOptions.createCustomObjectMapper(options), options)
 
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
