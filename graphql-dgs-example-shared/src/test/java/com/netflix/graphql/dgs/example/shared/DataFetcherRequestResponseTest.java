@@ -17,9 +17,13 @@
 package com.netflix.graphql.dgs.example.shared;
 
 import com.netflix.graphql.dgs.autoconfig.DgsExtendedScalarsAutoConfiguration;
+import com.netflix.graphql.dgs.client.CustomGraphQLClient;
 import com.netflix.graphql.dgs.client.GraphQLRequestOptions;
 import com.netflix.graphql.dgs.client.GraphQLResponse;
+import com.netflix.graphql.dgs.client.GraphqlSSESubscriptionGraphQLClient;
+import com.netflix.graphql.dgs.client.HttpResponse;
 import com.netflix.graphql.dgs.client.MonoGraphQLClient;
+import com.netflix.graphql.dgs.client.RequestExecutor;
 import com.netflix.graphql.dgs.client.RestClientGraphQLClient;
 import com.netflix.graphql.dgs.example.datafetcher.HelloDataFetcher;
 import com.netflix.graphql.dgs.example.shared.dataLoader.MessageDataLoaderWithDispatchPredicate;
@@ -33,6 +37,7 @@ import com.netflix.graphql.dgs.scalars.UploadScalar;
 import com.netflix.graphql.dgs.test.EnableDgsTest;
 import graphql.scalars.ExtendedScalars;
 import org.assertj.core.api.Assertions;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -42,6 +47,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -94,5 +100,21 @@ public class DataFetcherRequestResponseTest {
                 Map.of("input", theTimeIs)
         );
         Assertions.assertThat(result.extractValueAsObject("echoTime", LocalTime.class)).isEqualTo(theTimeIs);
+    }
+
+    @Test
+    public void clientConstructorTest() {
+        String url = "http://localhost:" + port + "/graphql";
+        GraphQLRequestOptions options = new GraphQLRequestOptions(Map.of(LocalTime.class, ExtendedScalars.LocalTime.getCoercing()));
+        GraphqlSSESubscriptionGraphQLClient subscriptionGraphQLClient = new GraphqlSSESubscriptionGraphQLClient(url, WebClient.create(url), options);
+        GraphqlSSESubscriptionGraphQLClient subscriptionGraphQLClientWithOptions = new GraphqlSSESubscriptionGraphQLClient(url,
+                WebClient.create(url), options);
+        RequestExecutor dummyExecutor = new RequestExecutor() {
+            @Override
+            public @NotNull HttpResponse execute(@NotNull String url, @NotNull Map<String, ? extends List<String>> headers, @NotNull String body) {
+                return null;
+            }
+        };
+        CustomGraphQLClient customGraphQLClient = new CustomGraphQLClient(url, dummyExecutor, options);
     }
 }

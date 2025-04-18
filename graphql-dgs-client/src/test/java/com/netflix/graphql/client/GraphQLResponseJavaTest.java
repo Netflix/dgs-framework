@@ -66,7 +66,7 @@ public class GraphQLResponseJavaTest {
         return new HttpResponse(exchange.getStatusCode().value(), exchange.getBody(), exchange.getHeaders());
     };
 
-    CustomGraphQLClient client = new CustomGraphQLClient(url, requestExecutor);
+    CustomGraphQLClient client = new CustomGraphQLClient(url, requestExecutor, new GraphQLRequestOptions());
 
     @Test
     public void responseWithoutHeaders() {
@@ -153,7 +153,7 @@ public class GraphQLResponseJavaTest {
             headers.forEach(httpHeaders::addAll);
             ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(body, httpHeaders), String.class);
             return Mono.just(new HttpResponse(exchange.getStatusCode().value(), exchange.getBody(), exchange.getHeaders()));
-        });
+        }, new GraphQLRequestOptions());
         Mono<GraphQLResponse> graphQLResponse = client.reactiveExecuteQuery(query, emptyMap(), "SubmitReview");
         String submittedBy = graphQLResponse.map(r -> r.extractValueAsObject("submitReview.submittedBy", String.class)).block();
         assertThat(submittedBy).isEqualTo("abc@netflix.com");
