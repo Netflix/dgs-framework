@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,8 @@ import org.springframework.boot.actuate.metrics.AutoTimer
 import org.springframework.cache.Cache
 import org.springframework.cache.CacheManager
 import org.springframework.cache.caffeine.CaffeineCacheManager
-import java.util.*
+import java.util.Objects
+import java.util.Optional
 
 /**
  * Implementation of a [QuerySignatureRepository] that will _cache_ the [QuerySignatureRepository.QuerySignature],

@@ -21,7 +21,7 @@ import graphql.execution.preparsed.PreparsedDocumentEntry
 import graphql.execution.preparsed.PreparsedDocumentProvider
 import graphql.execution.preparsed.persisted.ApolloPersistedQuerySupport
 import graphql.execution.preparsed.persisted.PersistedQueryCache
-import java.util.*
+import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function
 

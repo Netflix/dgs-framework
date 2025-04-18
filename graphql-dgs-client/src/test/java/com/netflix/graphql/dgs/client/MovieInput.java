@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package com.netflix.graphql.dgs.client;
 
 import com.netflix.graphql.dgs.client.scalar.DateRange;
-
 import java.util.List;
 
 public class MovieInput {

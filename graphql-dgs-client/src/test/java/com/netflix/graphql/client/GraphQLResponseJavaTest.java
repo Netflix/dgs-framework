@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,28 @@
 
 package com.netflix.graphql.client;
 
-import com.netflix.graphql.dgs.client.*;
+import com.netflix.graphql.dgs.client.CustomGraphQLClient;
+import com.netflix.graphql.dgs.client.CustomMonoGraphQLClient;
+import com.netflix.graphql.dgs.client.GraphQLClient;
+import com.netflix.graphql.dgs.client.GraphQLRequestOptions;
+import com.netflix.graphql.dgs.client.GraphQLResponse;
+import com.netflix.graphql.dgs.client.HttpResponse;
+import com.netflix.graphql.dgs.client.MonoGraphQLClient;
+import com.netflix.graphql.dgs.client.RequestExecutor;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Mono;
-
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 public class GraphQLResponseJavaTest {
@@ -54,7 +66,7 @@ public class GraphQLResponseJavaTest {
         return new HttpResponse(exchange.getStatusCode().value(), exchange.getBody(), exchange.getHeaders());
     };
 
-    CustomGraphQLClient client = new CustomGraphQLClient(url, requestExecutor);
+    CustomGraphQLClient client = new CustomGraphQLClient(url, requestExecutor, new GraphQLRequestOptions());
 
     @Test
     public void responseWithoutHeaders() {
@@ -114,6 +126,21 @@ public class GraphQLResponseJavaTest {
     }
 
     @Test
+    public void testCustomWithOptions() {
+        server.expect(requestTo(url))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{\"operationName\":\"SubmitReview\"}"))
+                .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
+
+        CustomGraphQLClient client = GraphQLClient.createCustom(url, requestExecutor, new GraphQLRequestOptions());
+        GraphQLResponse graphQLResponse = client.executeQuery(query, emptyMap(), "SubmitReview");
+        String submittedBy = graphQLResponse.extractValueAsObject("submitReview.submittedBy", String.class);
+        assertThat(submittedBy).isEqualTo("abc@netflix.com");
+        server.verify();
+    }
+
+    @Test
     public void testCustomMono() {
         server.expect(requestTo(url))
                 .andExpect(method(HttpMethod.POST))
@@ -126,7 +153,7 @@ public class GraphQLResponseJavaTest {
             headers.forEach(httpHeaders::addAll);
             ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(body, httpHeaders), String.class);
             return Mono.just(new HttpResponse(exchange.getStatusCode().value(), exchange.getBody(), exchange.getHeaders()));
-        });
+        }, new GraphQLRequestOptions());
         Mono<GraphQLResponse> graphQLResponse = client.reactiveExecuteQuery(query, emptyMap(), "SubmitReview");
         String submittedBy = graphQLResponse.map(r -> r.extractValueAsObject("submitReview.submittedBy", String.class)).block();
         assertThat(submittedBy).isEqualTo("abc@netflix.com");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package com.netflix.graphql.dgs;
 
-import org.dataloader.MappedBatchLoader;
-
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
+import org.dataloader.MappedBatchLoader;
 
 @DgsComponent
 public class ExampleMappedBatchLoaderFromField {

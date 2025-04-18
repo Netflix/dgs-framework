@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
+import com.netflix.graphql.dgs.client.GraphQLRequestOptions.Companion.createCustomObjectMapper
 import org.intellij.lang.annotations.Language
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -69,14 +70,24 @@ data class GraphQLResponse(
     constructor(
         @Language("json") json: String,
     ) : this(json, emptyMap())
+
     constructor(
         @Language("json") json: String,
         headers: Map<String, List<String>>,
     ) : this(
         json,
         headers,
-        // default object mapper instead no instance is passed in the constructor
-        DEFAULT_MAPPER,
+        createCustomObjectMapper(),
+    )
+
+    constructor(
+        @Language("json") json: String,
+        headers: Map<String, List<String>>,
+        options: GraphQLRequestOptions? = null,
+    ) : this(
+        json,
+        headers,
+        createCustomObjectMapper(options),
     )
 
     /**
@@ -147,6 +158,7 @@ data class GraphQLResponse(
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(GraphQLResponse::class.java)
 
+        @Deprecated(message = "use GraphQLRequestOptions.createCustomObjectMapper")
         internal val DEFAULT_MAPPER: ObjectMapper =
             jsonMapper {
                 addModule(kotlinModule { enable(KotlinFeature.NullIsSameAsDefault) })

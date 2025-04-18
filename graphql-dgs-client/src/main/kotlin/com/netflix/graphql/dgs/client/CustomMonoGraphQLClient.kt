@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,21 @@ class CustomMonoGraphQLClient(
     private val url: String,
     private val monoRequestExecutor: MonoRequestExecutor,
     private val mapper: ObjectMapper,
+    private val options: GraphQLRequestOptions? = null,
 ) : MonoGraphQLClient {
-    constructor(url: String, monoRequestExecutor: MonoRequestExecutor) : this (url, monoRequestExecutor, GraphQLClients.objectMapper)
+    constructor(
+        url: String,
+        monoRequestExecutor: MonoRequestExecutor,
+    ) : this (url, monoRequestExecutor, GraphQLRequestOptions.createCustomObjectMapper())
+
+    constructor(url: String, monoRequestExecutor: MonoRequestExecutor, mapper: ObjectMapper) : this(url, monoRequestExecutor, mapper, null)
+
+    constructor(url: String, monoRequestExecutor: MonoRequestExecutor, options: GraphQLRequestOptions) : this(
+        url,
+        monoRequestExecutor,
+        GraphQLRequestOptions.createCustomObjectMapper(options),
+        options,
+    )
 
     override fun reactiveExecuteQuery(
         @Language("graphql") query: String,
@@ -51,7 +64,7 @@ class CustomMonoGraphQLClient(
                 GraphQLClients.toRequestMap(query = query, operationName = operationName, variables = variables),
             )
         return monoRequestExecutor.execute(url, GraphQLClients.defaultHeaders, serializedRequest).map { response ->
-            GraphQLClients.handleResponse(response, serializedRequest, url)
+            GraphQLClients.handleResponse(response, serializedRequest, url, options)
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,5 +36,12 @@ public class CurrentTimeDateFetcher {
         LocalTime time = env.getArgument("time");
         System.out.println(time);
         return true;
+    }
+
+    @DgsData(parentType = "Query", field = "echoTime")
+    public LocalTime echoTime(DataFetchingEnvironment env) {
+        LocalTime time = env.getArgument("time");
+        System.out.println(time);
+        return time;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,16 +42,31 @@ class RestClientGraphQLClient(
     private val restClient: RestClient,
     private val headersConsumer: Consumer<HttpHeaders>,
     private val mapper: ObjectMapper,
+    private val options: GraphQLRequestOptions? = null,
 ) : GraphQLClient {
     constructor(restClient: RestClient) : this(restClient, Consumer { })
+
+    constructor(restClient: RestClient, mapper: ObjectMapper) : this(restClient, Consumer { }, mapper)
 
     constructor(restClient: RestClient, headersConsumer: Consumer<HttpHeaders>) : this(
         restClient,
         headersConsumer,
-        GraphQLClients.objectMapper,
+        GraphQLRequestOptions.createCustomObjectMapper(),
     )
 
-    constructor(restClient: RestClient, mapper: ObjectMapper) : this(restClient, Consumer { }, mapper)
+    constructor(restClient: RestClient, headersConsumer: Consumer<HttpHeaders>, mapper: ObjectMapper) : this(
+        restClient,
+        headersConsumer,
+        mapper,
+        options = null,
+    )
+
+    constructor(restClient: RestClient, options: GraphQLRequestOptions? = null) : this(
+        restClient,
+        Consumer { },
+        GraphQLRequestOptions.createCustomObjectMapper(options),
+        options,
+    )
 
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
@@ -105,6 +120,6 @@ class RestClientGraphQLClient(
             )
         }
 
-        return GraphQLResponse(json = responseEntity.body ?: "", headers = responseEntity.headers)
+        return GraphQLResponse(json = responseEntity.body ?: "", headers = responseEntity.headers, options)
     }
 }
