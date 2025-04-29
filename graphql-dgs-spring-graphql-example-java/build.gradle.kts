@@ -29,7 +29,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
     testImplementation(project(":graphql-dgs-client"))
     testImplementation("io.projectreactor:reactor-test")
-    testImplementation("org.springframework.graphql:spring-graphql-test:1.3.4")
+    testImplementation("org.springframework.graphql:spring-graphql-test:1.3.5")
     testImplementation(project(":graphql-dgs-pagination"))
     testImplementation(project(":graphql-dgs-extended-scalars"))
     testImplementation(project(":graphql-dgs-spring-graphql-starter-test"))
