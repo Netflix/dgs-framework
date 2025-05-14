@@ -18,10 +18,14 @@
 
 package com.netflix.graphql.dgs.client
 
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.springframework.http.HttpEntity
@@ -45,7 +49,8 @@ class GraphQLResponseTest {
             val httpHeaders = HttpHeaders()
             headers.forEach { httpHeaders.addAll(it.key, it.value) }
 
-            val response = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
+            val response =
+                restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
             HttpResponse(statusCode = response.statusCode.value(), body = response.body, headers = response.headers)
         }
 
@@ -119,7 +124,8 @@ class GraphQLResponseTest {
                 emptyMap(),
             )
 
-        val offsetDateTime = graphQLResponse.extractValueAsObject("submitReview.edges[0].node.postedDate", OffsetDateTime::class.java)
+        val offsetDateTime =
+            graphQLResponse.extractValueAsObject("submitReview.edges[0].node.postedDate", OffsetDateTime::class.java)
         assertThat(offsetDateTime).isInstanceOf(OffsetDateTime::class.java)
         assertThat(offsetDateTime.dayOfMonth).isEqualTo(29)
         server.verify()
@@ -274,6 +280,7 @@ class GraphQLResponseTest {
         data class Response(
             val submitReview: Map<String, String>,
         )
+
         val response = GraphQLResponse("""{"data": {"submitReview": {"submittedBy": "abc@netflix.com"}}}""")
         val result = response.dataAsObject(Response::class.java)
         assertEquals(Response(submitReview = mapOf("submittedBy" to "abc@netflix.com")), result)
@@ -347,5 +354,31 @@ class GraphQLResponseTest {
         assertThat(response.errors).hasSize(1)
         assertThat(response.errors[0].message).isEqualTo("An error occurred")
         assertThat(response.errors[0].path).isEmpty()
+    }
+
+    @Test
+    fun testResponseWithExtraData() {
+        data class Response(
+            val foo: String,
+        )
+
+        val response = GraphQLResponse("""{"data": {"foo": "bar", "extra": "baz"}}""")
+        assertThrows<IllegalArgumentException> { response.dataAsObject(Response::class.java) }
+    }
+
+    @Test
+    fun testResponseWithExtraDataCustomObjectMapper() {
+        val objectMapper =
+            ObjectMapper()
+                .findAndRegisterModules()
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+
+        data class Response(
+            val foo: String,
+        )
+
+        val response = GraphQLResponse("""{"data": {"foo": "bar", "extra": "baz"}}""", objectMapper)
+        val deserialized = assertDoesNotThrow { response.dataAsObject(Response::class.java) }
+        assertThat(deserialized).isEqualTo(Response("bar"))
     }
 }
