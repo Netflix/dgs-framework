@@ -69,26 +69,12 @@ data class GraphQLResponse(
 
     constructor(
         @Language("json") json: String,
-    ) : this(json, emptyMap())
+        objectMapper: ObjectMapper,
+    ) : this(json, emptyMap(), objectMapper)
 
     constructor(
         @Language("json") json: String,
-        headers: Map<String, List<String>>,
-    ) : this(
-        json,
-        headers,
-        createCustomObjectMapper(),
-    )
-
-    constructor(
-        @Language("json") json: String,
-        headers: Map<String, List<String>>,
-        options: GraphQLRequestOptions? = null,
-    ) : this(
-        json,
-        headers,
-        createCustomObjectMapper(options),
-    )
+    ) : this(json, createCustomObjectMapper())
 
     /**
      * Deserialize data into the given class.

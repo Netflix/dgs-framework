@@ -48,13 +48,7 @@ internal object GraphQLClients {
         response: HttpResponse,
         requestBody: String,
         url: String,
-    ): GraphQLResponse = handleResponse(response, requestBody, url, null)
-
-    fun handleResponse(
-        response: HttpResponse,
-        requestBody: String,
-        url: String,
-        options: GraphQLRequestOptions? = null,
+        mapper: ObjectMapper,
     ): GraphQLResponse {
         val (statusCode, body) = response
         val headers = response.headers
@@ -62,7 +56,7 @@ internal object GraphQLClients {
             throw GraphQLClientException(statusCode, url, body ?: "", requestBody)
         }
 
-        return GraphQLResponse(body ?: "", headers, options)
+        return GraphQLResponse(body ?: "", headers, mapper)
     }
 
     internal fun toRequestMap(

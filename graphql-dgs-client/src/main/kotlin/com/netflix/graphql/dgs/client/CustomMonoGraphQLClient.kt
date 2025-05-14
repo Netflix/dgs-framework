@@ -29,20 +29,16 @@ class CustomMonoGraphQLClient(
     private val url: String,
     private val monoRequestExecutor: MonoRequestExecutor,
     private val mapper: ObjectMapper,
-    private val options: GraphQLRequestOptions? = null,
 ) : MonoGraphQLClient {
     constructor(
         url: String,
         monoRequestExecutor: MonoRequestExecutor,
-    ) : this (url, monoRequestExecutor, GraphQLRequestOptions.createCustomObjectMapper())
-
-    constructor(url: String, monoRequestExecutor: MonoRequestExecutor, mapper: ObjectMapper) : this(url, monoRequestExecutor, mapper, null)
+    ) : this(url, monoRequestExecutor, GraphQLRequestOptions.createCustomObjectMapper())
 
     constructor(url: String, monoRequestExecutor: MonoRequestExecutor, options: GraphQLRequestOptions) : this(
         url,
         monoRequestExecutor,
         GraphQLRequestOptions.createCustomObjectMapper(options),
-        options,
     )
 
     override fun reactiveExecuteQuery(
@@ -64,7 +60,7 @@ class CustomMonoGraphQLClient(
                 GraphQLClients.toRequestMap(query = query, operationName = operationName, variables = variables),
             )
         return monoRequestExecutor.execute(url, GraphQLClients.defaultHeaders, serializedRequest).map { response ->
-            GraphQLClients.handleResponse(response, serializedRequest, url, options)
+            GraphQLClients.handleResponse(response, serializedRequest, url, mapper)
         }
     }
 }

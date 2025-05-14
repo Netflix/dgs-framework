@@ -32,7 +32,7 @@ import reactor.core.scheduler.Schedulers
 class GraphqlSSESubscriptionGraphQLClient(
     private val url: String,
     private val webClient: WebClient,
-    private val options: GraphQLRequestOptions? = null,
+    options: GraphQLRequestOptions? = null,
 ) : ReactiveGraphQLClient {
     constructor(url: String, webClient: WebClient) : this(url, webClient, null)
 
@@ -65,7 +65,7 @@ class GraphqlSSESubscriptionGraphQLClient(
                 .flatMapMany {
                     val headers = it.headers
                     it.body?.map { serverSentEvent ->
-                        sink.tryEmitNext(GraphQLResponse(json = serverSentEvent, headers = headers, options))
+                        sink.tryEmitNext(GraphQLResponse(json = serverSentEvent, headers = headers, mapper))
                     } ?: Flux.empty()
                 }.onErrorResume {
                     Flux.just(sink.tryEmitError(it))
