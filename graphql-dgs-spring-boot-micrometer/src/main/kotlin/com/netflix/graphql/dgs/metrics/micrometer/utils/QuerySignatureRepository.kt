@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import graphql.language.AstSignature
 import graphql.language.Document
 import org.apache.commons.codec.digest.DigestUtils
 import org.intellij.lang.annotations.Language
-import java.util.*
+import java.util.Optional
 
 /**
  * Interface that defines a _provider_ of a [QuerySignature].

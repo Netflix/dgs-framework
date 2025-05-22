@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.OffsetTime
 import java.time.ZoneOffset
-import java.util.*
+import java.util.Locale
 
 @SpringBootTest(classes = [DgsExtendedScalarsSmokeTest.LocalApp::class])
 @EnableAutoConfiguration

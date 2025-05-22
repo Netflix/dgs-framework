@@ -1,9 +1,15 @@
 [{*.kt,*.kts}]
+# Kotlin specific settings
 ij_kotlin_code_style_defaults = KOTLIN_OFFICIAL
 indent_size = 4
-ktlint_standard_no-wildcard-imports = disabled
+ktlint_standard_no-wildcard-imports = enabled
+ij_kotlin_packages_to_use_import_on_demand = no-wildcard-imports
+ij_kotlin_add_unambiguous_imports_on_the_fly = true
+ij_kotlin_imports_with_stars_count = 99
+ij_kotlin_name_count_to_use_star_import_for_members = 99
 
-[*.{java,kt}]
-ij_java_names_count_to_use_import_on_demand = 12
-ij_kotlin_name_count_to_use_star_import = 12
-ij_kotlin_name_count_to_use_star_import_for_members = 12
+[*.java]
+# Java specific settings
+ij_java_add_unambiguous_imports_on_the_fly = true
+ij_java_class_count_to_use_import_on_demand = 99
+ij_java_names_count_to_use_import_on_demand = 99

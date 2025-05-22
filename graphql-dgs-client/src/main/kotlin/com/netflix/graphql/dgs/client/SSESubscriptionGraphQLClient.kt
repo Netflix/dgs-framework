@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.springframework.web.reactive.function.client.toEntityFlux
 import reactor.core.publisher.Flux
 import reactor.core.scheduler.Schedulers
 import java.nio.charset.StandardCharsets
-import java.util.*
+import java.util.Base64
 
 /*
  * This client can be used for servers which are following the subscriptions-transport-sse specification, which can be found here:

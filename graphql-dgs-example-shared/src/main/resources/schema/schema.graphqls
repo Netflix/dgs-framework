@@ -1,4 +1,5 @@
 
+
 type Query {
     hello(name: String): String
     withContext: String
@@ -13,6 +14,7 @@ type Query {
 
     #Custom scalar example
     now: LocalTime
+    echoTime(time: LocalTime): LocalTime
     schedule(time: LocalTime): Boolean
 
     #To show how exceptions are handled

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import graphql.GraphQLError;
 import static com.netflix.graphql.types.errors.ErrorType.*;
 
 /**
- * The ErrorDetail is an optional field which will provide more fine grained information on the error condition.
+ * The ErrorDetail is an optional field which will provide more fine-grained information on the error condition.
  * This allows the ErrorType enumeration to be small and mostly static so that application branching logic
  * can depend on it. The ErrorDetail provides a more specific cause for the error. This enumeration will
  * be much larger and likely change/grow over time.
@@ -59,10 +59,19 @@ public interface ErrorDetail extends ErrorClassification {
          * The server detected that the client is exhibiting a behavior that
          * might be generating excessive load.
          * <p>
-         * HTTP Mapping: 429 Too Many Requests or 420 Enhance Your Calm
+         * HTTP Mapping: 420 Enhance Your Calm
          * Error Type: UNAVAILABLE
          */
         ENHANCE_YOUR_CALM(UNAVAILABLE),
+
+        /**
+         * The server detected that the client is exhibiting a behavior that
+         * might be generating excessive load.
+         * <p>
+         * HTTP Mapping: 429 Too Many Requests
+         * Error Type: UNAVAILABLE
+         */
+        TOO_MANY_REQUESTS(UNAVAILABLE),
 
         /**
          * The requested field is not found in the schema.

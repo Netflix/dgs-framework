@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,21 @@ import com.netflix.graphql.dgs.InputArgument
 import com.netflix.graphql.dgs.internal.DataFetcherReference
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.SchemaProviderResult
-import graphql.schema.*
+import graphql.schema.DataFetcher
+import graphql.schema.DataFetchingEnvironment
+import graphql.schema.GraphQLSchema
+import graphql.schema.TypeResolver
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.springframework.core.ResolvableType
 import org.springframework.core.io.Resource
-import org.springframework.graphql.execution.*
+import org.springframework.graphql.execution.AbstractGraphQlSourceBuilder
 import org.springframework.graphql.execution.GraphQlSource.SchemaResourceBuilder
+import org.springframework.graphql.execution.RuntimeWiringConfigurer
+import org.springframework.graphql.execution.SchemaMappingInspector
+import org.springframework.graphql.execution.SchemaReport
+import org.springframework.graphql.execution.SelfDescribingDataFetcher
+import org.springframework.graphql.execution.TypeDefinitionConfigurer
 import org.springframework.lang.Nullable
 import java.util.function.BiFunction
 import java.util.function.Consumer

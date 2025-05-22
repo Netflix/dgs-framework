@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,14 @@ import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
-import com.netflix.graphql.types.subscription.*
+import com.netflix.graphql.types.subscription.DataPayload
+import com.netflix.graphql.types.subscription.EmptyPayload
+import com.netflix.graphql.types.subscription.GQL_CONNECTION_INIT
+import com.netflix.graphql.types.subscription.GQL_DATA
+import com.netflix.graphql.types.subscription.GQL_START
+import com.netflix.graphql.types.subscription.GQL_STOP
+import com.netflix.graphql.types.subscription.OperationMessage
+import com.netflix.graphql.types.subscription.QueryPayload
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

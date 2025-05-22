@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,21 @@ class CustomGraphQLClient(
     private val url: String,
     private val requestExecutor: RequestExecutor,
     private val mapper: ObjectMapper,
+    private val options: GraphQLRequestOptions? = null,
 ) : GraphQLClient {
-    constructor(url: String, requestExecutor: RequestExecutor) : this(url, requestExecutor, GraphQLClients.objectMapper)
+    constructor(
+        url: String,
+        requestExecutor: RequestExecutor,
+    ) : this(url, requestExecutor, GraphQLRequestOptions.createCustomObjectMapper())
+
+    constructor(url: String, requestExecutor: RequestExecutor, mapper: ObjectMapper) : this(url, requestExecutor, mapper, null)
+
+    constructor(url: String, requestExecutor: RequestExecutor, options: GraphQLRequestOptions) : this(
+        url,
+        requestExecutor,
+        GraphQLRequestOptions.createCustomObjectMapper(options),
+        options,
+    )
 
     override fun executeQuery(
         @Language("graphql") query: String,
@@ -51,6 +64,6 @@ class CustomGraphQLClient(
             )
 
         val response = requestExecutor.execute(url, GraphQLClients.defaultHeaders, serializedRequest)
-        return GraphQLClients.handleResponse(response, serializedRequest, url)
+        return GraphQLClients.handleResponse(response, serializedRequest, url, options)
     }
 }

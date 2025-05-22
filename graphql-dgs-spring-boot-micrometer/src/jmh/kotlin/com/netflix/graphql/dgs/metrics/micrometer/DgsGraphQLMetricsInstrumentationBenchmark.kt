@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ import org.openjdk.jmh.annotations.TearDown
 import org.openjdk.jmh.annotations.Warmup
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.mock.env.MockEnvironment
-import java.util.*
+import java.util.Optional
 import java.util.concurrent.TimeUnit
 
 @State(Scope.Benchmark)

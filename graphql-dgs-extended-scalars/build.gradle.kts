@@ -20,6 +20,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-autoconfigure")
 
     testImplementation(project(":graphql-dgs-spring-graphql-starter"))
+    testImplementation(project(":graphql-dgs-client"))
 }
 
 tasks.withType<JavaCompile>().configureEach {

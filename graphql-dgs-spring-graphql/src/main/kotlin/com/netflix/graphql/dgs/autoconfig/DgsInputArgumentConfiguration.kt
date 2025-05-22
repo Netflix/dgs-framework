@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import com.netflix.graphql.dgs.internal.method.ContinuationArgumentResolver
 import com.netflix.graphql.dgs.internal.method.DataFetchingEnvironmentArgumentResolver
 import com.netflix.graphql.dgs.internal.method.FallbackEnvironmentArgumentResolver
 import com.netflix.graphql.dgs.internal.method.InputArgumentResolver
+import com.netflix.graphql.dgs.internal.method.SourceArgumentResolver
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
@@ -50,4 +51,7 @@ open class DgsInputArgumentConfiguration {
     @Bean
     @ConditionalOnMissingBean
     open fun defaultInputObjectMapper(): InputObjectMapper = DefaultInputObjectMapper()
+
+    @Bean
+    open fun sourceArgumentResolver(): ArgumentResolver = SourceArgumentResolver()
 }

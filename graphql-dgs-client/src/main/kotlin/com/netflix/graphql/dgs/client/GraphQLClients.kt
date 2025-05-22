@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Netflix, Inc.
+ * Copyright 2025 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 
 internal object GraphQLClients {
+    @Deprecated(message = "Use GraphQLRequestOptions.createCustomObjectMapper instead")
     internal val objectMapper: ObjectMapper =
         Jackson2ObjectMapperBuilder
             .json()
@@ -47,6 +48,13 @@ internal object GraphQLClients {
         response: HttpResponse,
         requestBody: String,
         url: String,
+    ): GraphQLResponse = handleResponse(response, requestBody, url, null)
+
+    fun handleResponse(
+        response: HttpResponse,
+        requestBody: String,
+        url: String,
+        options: GraphQLRequestOptions? = null,
     ): GraphQLResponse {
         val (statusCode, body) = response
         val headers = response.headers
@@ -54,7 +62,7 @@ internal object GraphQLClients {
             throw GraphQLClientException(statusCode, url, body ?: "", requestBody)
         }
 
-        return GraphQLResponse(body ?: "", headers)
+        return GraphQLResponse(body ?: "", headers, options)
     }
 
     internal fun toRequestMap(
