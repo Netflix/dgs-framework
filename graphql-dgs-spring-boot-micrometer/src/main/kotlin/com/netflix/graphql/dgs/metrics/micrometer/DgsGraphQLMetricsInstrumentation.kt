@@ -181,7 +181,7 @@ class DgsGraphQLMetricsInstrumentation(
                             state,
                             parameters,
                             checkResponseForErrors(value, error),
-                            baseTags
+                            baseTags,
                         )
                     }
                 } else {
@@ -195,9 +195,14 @@ class DgsGraphQLMetricsInstrumentation(
         }
     }
 
-    private fun checkResponseForErrors(value: Any?, error: Throwable?): Throwable? = error
-        ?: (value as? DataFetcherResult<*>)?.takeIf { it.hasErrors() }
-            ?.let { GraphQLException("GraphQL errors in response: ${it.errors}") }
+    private fun checkResponseForErrors(
+        value: Any?,
+        error: Throwable?,
+    ): Throwable? =
+        error
+            ?: (value as? DataFetcherResult<*>)
+                ?.takeIf { it.hasErrors() }
+                ?.let { GraphQLException("GraphQL errors in response: ${it.errors}") }
 
     /**
      * Port the implementation from MaxQueryComplexityInstrumentation in graphql-java and store the computed complexity

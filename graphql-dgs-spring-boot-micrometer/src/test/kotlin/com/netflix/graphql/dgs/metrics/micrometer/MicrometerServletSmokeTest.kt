@@ -711,21 +711,21 @@ class MicrometerServletSmokeTest {
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
                 Tags
-                    .of("outcome", "failure")
+                    .of("outcome", "failure"),
             )
 
         assertThat(meters["gql.query"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
         assertThat(meters["gql.query"]?.first()?.id?.tags)
             .containsAll(
                 Tags
-                    .of("outcome", "failure")
+                    .of("outcome", "failure"),
             )
 
         assertThat(meters["gql.resolver"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
         assertThat(meters["gql.resolver"]?.first()?.id?.tags)
             .containsAll(
                 Tags
-                    .of("outcome", "failure")
+                    .of("outcome", "failure"),
             )
     }
 
@@ -761,21 +761,21 @@ class MicrometerServletSmokeTest {
         assertThat(meters["gql.error"]?.first()?.id?.tags)
             .containsAll(
                 Tags
-                    .of("outcome", "failure")
+                    .of("outcome", "failure"),
             )
 
         assertThat(meters["gql.query"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
         assertThat(meters["gql.query"]?.first()?.id?.tags)
             .containsAll(
                 Tags
-                    .of("outcome", "failure")
+                    .of("outcome", "failure"),
             )
 
         assertThat(meters["gql.resolver"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
         assertThat(meters["gql.resolver"]?.first()?.id?.tags)
             .containsAll(
                 Tags
-                    .of("outcome", "failure")
+                    .of("outcome", "failure"),
             )
     }
 
@@ -1060,16 +1060,22 @@ class MicrometerServletSmokeTest {
             fun triggerBadRequestFailure(): String = throw DgsBadRequestException("Exception triggered.")
 
             @DgsQuery
-            fun triggerSuccessfulRequestWithErrorAsync(): CompletableFuture<DataFetcherResult<String>> = CompletableFuture.supplyAsync { DataFetcherResult.newResult<String>()
-                .data("Some data...")
-                .error(TypedGraphQLError("Exception triggered.", null, null, null, null))
-                .build()}
+            fun triggerSuccessfulRequestWithErrorAsync(): CompletableFuture<DataFetcherResult<String>> =
+                CompletableFuture.supplyAsync {
+                    DataFetcherResult
+                        .newResult<String>()
+                        .data("Some data...")
+                        .error(TypedGraphQLError("Exception triggered.", null, null, null, null))
+                        .build()
+                }
 
             @DgsQuery
-            fun triggerSuccessfulRequestWithErrorSync(): DataFetcherResult<String> = DataFetcherResult.newResult<String>()
-                .data("Some data...")
-                .error(TypedGraphQLError("Exception triggered.", null, null, null, null))
-                .build()
+            fun triggerSuccessfulRequestWithErrorSync(): DataFetcherResult<String> =
+                DataFetcherResult
+                    .newResult<String>()
+                    .data("Some data...")
+                    .error(TypedGraphQLError("Exception triggered.", null, null, null, null))
+                    .build()
 
             @DgsQuery
             fun triggerCustomFailure(): String = throw CustomException("Exception triggered.")
