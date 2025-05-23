@@ -28,9 +28,9 @@ import io.micrometer.core.instrument.binder.cache.CaffeineCacheMetrics
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.graphql.GraphQlSourceBuilderCustomizer
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -93,7 +93,6 @@ open class DgsAPQSupportAutoConfiguration {
     )
     open class APQMicrometerMeteredCaffeineCacheConfiguration {
         @Bean
-        @ConditionalOnBean(io.micrometer.core.instrument.MeterRegistry::class)
         @ConditionalOnMissingBean(PersistedQueryCache::class)
         open fun meteredPersistedQueryCache(
             @Qualifier(BEAN_APQ_CAFFEINE_CACHE_NAME) appCaffeine: Cache<String, PreparsedDocumentEntry>,
@@ -105,9 +104,11 @@ open class DgsAPQSupportAutoConfiguration {
         }
     }
 
+    // We want this version only if there is no micrometer meter registry
     @Configuration
     @ConditionalOnMissingBean(APQMicrometerMeteredCaffeineCacheConfiguration::class)
     @ConditionalOnClass(name = ["com.github.benmanes.caffeine.cache.Cache"])
+    @ConditionalOnMissingClass("io.micrometer.core.instrument.MeterRegistry")
     open class APQBasicCaffeineCacheConfiguration {
         @Bean
         @ConditionalOnMissingBean(PersistedQueryCache::class)
