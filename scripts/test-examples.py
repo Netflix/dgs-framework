@@ -104,13 +104,17 @@ def find_replace_version(content, version):
     regex = re.compile(r"graphql-dgs-platform-dependencies:([0-9\w\-.]+)")
     return re.sub(regex, f"graphql-dgs-platform-dependencies:{version}", content)
 
+def find_replace_oss_plugin_version(content, version):
+    regex = re.compile(r'id$"org\.springframework\.boot"$ version "([^"]+)"')
+    return re.sub(regex, f'id("org.springframework.boot") version "{version}"', content)
 
-def update_build(build_file, version):
+def update_build(build_file, version, oss_version):
     file = open(build_file, 'r')
     file_data = file.read()
     file.close()
 
     file_data = find_replace_version(file_data, version)
+    file_data = find_replace_oss_plugin_version(file_data, oss_version)
 
     file = open(build_file, 'w')
     file.write(file_data)
@@ -205,7 +209,7 @@ def main(argv):
         Out.info(f"Processing project [{project_root}]...")
         build_file = infer_build_file(project_root)
         settings_file = infer_gradle_settings_file(project_root)
-        update_build(build_file, p_version)
+        update_build(build_file, p_version, "3.5.0")
         run_example_build(project_root, build_file=build_file, settings_file=settings_file)
 
     if not keep_project_dir:
