@@ -31,6 +31,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.graphql.GraphQlSourceBuilderCustomizer
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -110,7 +111,11 @@ open class DgsAPQSupportAutoConfiguration {
 
     // We want this version only if there is no micrometer meter registry
     @Configuration
-    @ConditionalOnMissingBean(APQMicrometerMeteredCaffeineCacheConfiguration::class)
+    @ConditionalOnMissingBean(
+        APQMicrometerMeteredCaffeineCacheConfiguration::class,
+        name = ["io.micrometer.core.instrument.MeterRegistry::class"],
+    )
+    @ConditionalOnMissingClass("io.micrometer.core.instrument.MeterRegistry::class")
     @ConditionalOnClass(name = ["com.github.benmanes.caffeine.cache.Cache"])
     open class APQBasicCaffeineCacheConfiguration {
         @Bean
