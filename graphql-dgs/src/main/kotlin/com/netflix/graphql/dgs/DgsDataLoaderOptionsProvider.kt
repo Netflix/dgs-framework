@@ -22,5 +22,5 @@ fun interface DgsDataLoaderOptionsProvider {
     fun getOptions(
         dataLoaderName: String,
         annotation: DgsDataLoader,
-    ): DataLoaderOptions
+    ): DataLoaderOptions.Builder
 }

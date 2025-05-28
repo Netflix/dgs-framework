@@ -229,7 +229,7 @@ class DgsDataLoaderProvider(
         }
 
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dataLoaderName, extensionProviders)
-        return DataLoaderFactory.newDataLoader(extendedBatchLoader, options)
+        return DataLoaderFactory.newDataLoader(extendedBatchLoader, options.build())
     }
 
     private fun createDataLoader(
@@ -246,7 +246,7 @@ class DgsDataLoaderProvider(
         }
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dataLoaderName, extensionProviders)
 
-        return DataLoaderFactory.newMappedDataLoader(extendedBatchLoader, options)
+        return DataLoaderFactory.newMappedDataLoader(extendedBatchLoader, options.build())
     }
 
     private fun <T> createDataLoader(
@@ -267,7 +267,7 @@ class DgsDataLoaderProvider(
         }
 
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dataLoaderName, extensionProviders)
-        return DataLoaderFactory.newDataLoader(extendedBatchLoader, options)
+        return DataLoaderFactory.newDataLoader(extendedBatchLoader, options.build())
     }
 
     private fun <T> createDataLoader(
@@ -288,7 +288,7 @@ class DgsDataLoaderProvider(
         }
 
         val extendedBatchLoader = wrappedDataLoader(batchLoader, dataLoaderName, extensionProviders)
-        return DataLoaderFactory.newMappedDataLoader(extendedBatchLoader, options)
+        return DataLoaderFactory.newMappedDataLoader(extendedBatchLoader, options.build())
     }
 
     private fun registerDataLoader(

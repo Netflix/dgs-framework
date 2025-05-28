@@ -167,7 +167,7 @@ class GraphQLJavaErrorInstrumentationTest {
                     .extensions.keys
                     .containsAll(listOf("classification", "errorDetail", "errorType")),
             ).isTrue()
-        Assertions.assertThat(result.errors[0].extensions["classification"]).isEqualTo("OperationNotSupported")
+        Assertions.assertThat(result.errors[0].extensions["classification"]).isEqualTo("ValidationError")
         Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("BAD_REQUEST")
         Assertions.assertThat(result.errors[0].extensions["errorDetail"]).isEqualTo("INVALID_ARGUMENT")
     }
