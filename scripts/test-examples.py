@@ -99,6 +99,13 @@ def infer_gradle_settings_file(project_dir):
         file = ""
     return file
 
+def infer_spring_boot_version(content):
+    pattern = r'extra\s*\[\s*["\']sb\.version["\']\s*\]\s*=\s*["\']([^"\']+)["\']'
+
+    match = re.search(pattern, content)
+    if match:
+        return match.group(1)
+    return None
 
 def find_replace_version(content, version):
     regex = re.compile(r"graphql-dgs-platform-dependencies:([0-9\w\-.]+)")
@@ -111,13 +118,15 @@ def find_replace_oss_plugin_version(content, version):
 
     return modified_content
 
-def update_build(build_file, version, oss_version):
+def update_build(build_file, version):
     file = open(build_file, 'r')
     file_data = file.read()
     file.close()
 
+    spring_boot_version = infer_spring_boot_version(file_data)
+    print("using spring boot version " + spring_boot_version)
     file_data = find_replace_version(file_data, version)
-    file_data = find_replace_oss_plugin_version(file_data, oss_version)
+    file_data = find_replace_oss_plugin_version(file_data, spring_boot_version)
     print("after version updates")
     print(file_data)
 
@@ -214,7 +223,7 @@ def main(argv):
         Out.info(f"Processing project [{project_root}]...")
         build_file = infer_build_file(project_root)
         settings_file = infer_gradle_settings_file(project_root)
-        update_build(build_file, p_version, "3.5.0")
+        update_build(build_file, p_version)
         run_example_build(project_root, build_file=build_file, settings_file=settings_file)
 
     if not keep_project_dir:
