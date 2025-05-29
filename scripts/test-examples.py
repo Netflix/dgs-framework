@@ -105,8 +105,11 @@ def find_replace_version(content, version):
     return re.sub(regex, f"graphql-dgs-platform-dependencies:{version}", content)
 
 def find_replace_oss_plugin_version(content, version):
-    regex = re.compile(r'id$"org\.springframework\.boot"$ version "([^"]+)"')
-    return re.sub(regex, f'id("org.springframework.boot") version "{version}"', content)
+    pattern = r'(\s*id\s*\(\s*["\']org\.springframework\.boot["\']\s*\)\s*version\s+["\'])[^"\']+(["\'])'
+    replacement = r'\g<1>' + version + r'\g<2>'
+    modified_content = re.sub(pattern, replacement, content)
+
+    return modified_content
 
 def update_build(build_file, version, oss_version):
     file = open(build_file, 'r')
@@ -114,10 +117,8 @@ def update_build(build_file, version, oss_version):
     file.close()
 
     file_data = find_replace_version(file_data, version)
-    print("after replace version")
-    print(file_data)
     file_data = find_replace_oss_plugin_version(file_data, oss_version)
-    print("after replace oss plugin version")
+    print("after version updates")
     print(file_data)
 
     file = open(build_file, 'w')
