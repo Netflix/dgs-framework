@@ -99,25 +99,6 @@ def infer_gradle_settings_file(project_dir):
         file = ""
     return file
 
-def infer_spring_boot_version(content):
-    lines = content.split('\n')
-    for line in lines:
-            # Strip all whitespace from the line
-            stripped_line = line.replace(' ', '').replace('\t', '')
-
-            # Check if this line contains our target pattern
-            if 'extra["sb.version"]=' in stripped_line:
-                # Find the equals sign and get everything after it
-                equals_index = stripped_line.find('=')
-                if equals_index != -1:
-                    # Get the part after the equals sign
-                    value_part = stripped_line[equals_index + 1:]
-                    # Remove quotes (both single and double)
-                    version = value_part.strip('"').strip("'")
-                    return version
-
-    return None
-
 def find_replace_version(content, version):
     regex = re.compile(r"graphql-dgs-platform-dependencies:([0-9\w\-.]+)")
     return re.sub(regex, f"graphql-dgs-platform-dependencies:{version}", content)
@@ -129,16 +110,13 @@ def find_replace_oss_plugin_version(content, version):
 
     return modified_content
 
-def update_build(build_file, version):
+def update_build(build_file, version, spring_boot_version):
     file = open(build_file, 'r')
     file_data = file.read()
     file.close()
 
     file_data = find_replace_version(file_data, version)
-    spring_boot_version = infer_spring_boot_version(file_data)
-    if (spring_boot_version is not None):
-        print("using spring boot version " + spring_boot_version)
-        file_data = find_replace_oss_plugin_version(file_data, spring_boot_version)
+    file_data = find_replace_oss_plugin_version(file_data, spring_boot_version)
     print("after version updates")
     print(file_data)
 
@@ -186,6 +164,7 @@ def main(argv):
 
     projects_dir = examples_path
     p_version = ""
+    p_spring_boot_version = "3.5.0" # TODO: Determine this dynamically
     git_clone_projects = False
     keep_project_dir = False
     try:
@@ -235,7 +214,7 @@ def main(argv):
         Out.info(f"Processing project [{project_root}]...")
         build_file = infer_build_file(project_root)
         settings_file = infer_gradle_settings_file(project_root)
-        update_build(build_file, p_version)
+        update_build(build_file, p_version, p_spring_boot_version)
         run_example_build(project_root, build_file=build_file, settings_file=settings_file)
 
     if not keep_project_dir:
