@@ -114,7 +114,11 @@ def update_build(build_file, version, oss_version):
     file.close()
 
     file_data = find_replace_version(file_data, version)
+    print("after replace version")
+    print(file_data)
     file_data = find_replace_oss_plugin_version(file_data, oss_version)
+    print("after replace oss plugin version")
+    print(file_data)
 
     file = open(build_file, 'w')
     file.write(file_data)
