@@ -116,7 +116,7 @@ def infer_spring_boot_version(content):
                     version = value_part.strip('"').strip("'")
                     return version
 
-        return None
+    return None
 
 def find_replace_version(content, version):
     regex = re.compile(r"graphql-dgs-platform-dependencies:([0-9\w\-.]+)")
