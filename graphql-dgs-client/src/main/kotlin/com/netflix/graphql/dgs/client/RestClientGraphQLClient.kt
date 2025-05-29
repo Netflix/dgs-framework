@@ -42,7 +42,6 @@ class RestClientGraphQLClient(
     private val restClient: RestClient,
     private val headersConsumer: Consumer<HttpHeaders>,
     private val mapper: ObjectMapper,
-    private val options: GraphQLRequestOptions? = null,
 ) : GraphQLClient {
     constructor(restClient: RestClient) : this(restClient, Consumer { })
 
@@ -54,18 +53,10 @@ class RestClientGraphQLClient(
         GraphQLRequestOptions.createCustomObjectMapper(),
     )
 
-    constructor(restClient: RestClient, headersConsumer: Consumer<HttpHeaders>, mapper: ObjectMapper) : this(
-        restClient,
-        headersConsumer,
-        mapper,
-        options = null,
-    )
-
     constructor(restClient: RestClient, options: GraphQLRequestOptions? = null) : this(
         restClient,
         Consumer { },
         GraphQLRequestOptions.createCustomObjectMapper(options),
-        options,
     )
 
     /**
@@ -120,6 +111,6 @@ class RestClientGraphQLClient(
             )
         }
 
-        return GraphQLResponse(json = responseEntity.body ?: "", headers = responseEntity.headers, options)
+        return GraphQLResponse(json = responseEntity.body ?: "", headers = responseEntity.headers, mapper)
     }
 }

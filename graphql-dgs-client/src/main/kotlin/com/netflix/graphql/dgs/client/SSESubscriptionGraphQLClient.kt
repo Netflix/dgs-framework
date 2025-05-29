@@ -64,7 +64,7 @@ class SSESubscriptionGraphQLClient(
             .toEntityFlux<String>()
             .flatMapMany { response ->
                 val headers = response.headers
-                response.body?.map { body -> GraphQLResponse(json = body, headers = headers) }
+                response.body?.map { body -> GraphQLResponse(json = body, headers = headers, mapper) }
                     ?: Flux.empty()
             }.publishOn(Schedulers.single())
     }
