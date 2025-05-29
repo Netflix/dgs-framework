@@ -100,22 +100,23 @@ def infer_gradle_settings_file(project_dir):
     return file
 
 def infer_spring_boot_version(content):
-    # Pattern to match extra["sb.version"] = "version"
-    # Uses DOTALL flag to handle multiline content and more flexible matching
-    # This handles the exact format in your file: extra["sb.version"] = "3.5.0"
-    pattern = r'extra\s*\[\s*["\']sb\.version["\']\s*\]\s*=\s*["\']([^"\']+)["\']'
+    lines = content.split('\n')
+    for line in lines:
+            # Strip all whitespace from the line
+            stripped_line = line.replace(' ', '').replace('\t', '')
 
-    match = re.search(pattern, content, re.DOTALL)
-    if match:
-        return match.group(1)
+            # Check if this line contains our target pattern
+            if 'extra["sb.version"]=' in stripped_line:
+                # Find the equals sign and get everything after it
+                equals_index = stripped_line.find('=')
+                if equals_index != -1:
+                    # Get the part after the equals sign
+                    value_part = stripped_line[equals_index + 1:]
+                    # Remove quotes (both single and double)
+                    version = value_part.strip('"').strip("'")
+                    return version
 
-    # Debug: Let's also try to find any line containing sb.version for troubleshooting
-    debug_pattern = r'.*sb\.version.*'
-    debug_matches = re.findall(debug_pattern, content)
-    if debug_matches:
-        print(f"Debug: Found lines containing 'sb.version': {debug_matches}")
-
-    return None
+        return None
 
 def find_replace_version(content, version):
     regex = re.compile(r"graphql-dgs-platform-dependencies:([0-9\w\-.]+)")
@@ -133,10 +134,11 @@ def update_build(build_file, version):
     file_data = file.read()
     file.close()
 
-    spring_boot_version = infer_spring_boot_version(file_data)
-    print("using spring boot version " + spring_boot_version)
     file_data = find_replace_version(file_data, version)
-    file_data = find_replace_oss_plugin_version(file_data, spring_boot_version)
+    spring_boot_version = infer_spring_boot_version(file_data)
+    if (spring_boot_version is not None):
+        print("using spring boot version " + spring_boot_version)
+        file_data = find_replace_oss_plugin_version(file_data, spring_boot_version)
     print("after version updates")
     print(file_data)
 
