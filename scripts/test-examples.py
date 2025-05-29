@@ -100,11 +100,21 @@ def infer_gradle_settings_file(project_dir):
     return file
 
 def infer_spring_boot_version(content):
+    # Pattern to match extra["sb.version"] = "version"
+    # Uses DOTALL flag to handle multiline content and more flexible matching
+    # This handles the exact format in your file: extra["sb.version"] = "3.5.0"
     pattern = r'extra\s*\[\s*["\']sb\.version["\']\s*\]\s*=\s*["\']([^"\']+)["\']'
 
-    match = re.search(pattern, content)
+    match = re.search(pattern, content, re.DOTALL)
     if match:
         return match.group(1)
+
+    # Debug: Let's also try to find any line containing sb.version for troubleshooting
+    debug_pattern = r'.*sb\.version.*'
+    debug_matches = re.findall(debug_pattern, content)
+    if debug_matches:
+        print(f"Debug: Found lines containing 'sb.version': {debug_matches}")
+
     return None
 
 def find_replace_version(content, version):
