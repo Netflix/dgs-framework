@@ -33,7 +33,7 @@ config_file = os.path.abspath(f"{base_path}/config.yml")
 
 examples_path = os.path.abspath(f"{base_path}/../build/examples")
 settings_gradle_kts_template = os.path.abspath(f"{base_path}/settings.gradle.kts")
-root_gradle_kts_file = os.path.abspath(f"{base_path}/build.gradle.kts")
+root_gradle_kts_file = os.path.abspath(f"{base_path}/../build.gradle.kts")
 
 gradle_wd = os.path.abspath(f"{base_path}/..")
 gradlew = os.path.abspath(f"{base_path}/../gradlew")
