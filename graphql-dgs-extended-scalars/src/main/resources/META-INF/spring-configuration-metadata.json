@@ -35,6 +35,12 @@
       "name": "dgs.graphql.extensions.scalars.chars.enabled",
       "type": "java.lang.Boolean",
       "description": "Enabled by default, if dgs.graphql.extensions.scalars.enabled is enabled, will register the GraphQLChar extension."
+    },
+    {
+      "name": "dgs.graphql.extensions.scalars.strict-mode.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": "false",
+      "description": "Enables strict mode for scalar extensions; this will throw an exception if the scalar type is already registered."
     }
   ],
   "hints": []
