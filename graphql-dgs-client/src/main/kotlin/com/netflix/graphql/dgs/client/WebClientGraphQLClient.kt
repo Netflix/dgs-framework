@@ -45,7 +45,6 @@ class WebClientGraphQLClient(
     private val webclient: WebClient,
     private val headersConsumer: Consumer<HttpHeaders>,
     private val mapper: ObjectMapper,
-    private val options: GraphQLRequestOptions? = null,
 ) : MonoGraphQLClient {
     constructor(webclient: WebClient) : this(webclient, Consumer {})
 
@@ -58,22 +57,15 @@ class WebClientGraphQLClient(
     constructor(
         webclient: WebClient,
         options: GraphQLRequestOptions,
-    ) : this(webclient, Consumer {}, GraphQLRequestOptions.createCustomObjectMapper(options), options)
+    ) : this(webclient, Consumer {}, GraphQLRequestOptions.createCustomObjectMapper(options))
 
     constructor(webclient: WebClient, mapper: ObjectMapper) : this(webclient, Consumer {}, mapper)
-
-    constructor(webclient: WebClient, headersConsumer: Consumer<HttpHeaders>, mapper: ObjectMapper) : this(
-        webclient,
-        headersConsumer,
-        mapper,
-        options = null,
-    )
 
     constructor(
         webclient: WebClient,
         headersConsumer: Consumer<HttpHeaders>,
         options: GraphQLRequestOptions,
-    ) : this(webclient, headersConsumer, GraphQLRequestOptions.createCustomObjectMapper(options), options)
+    ) : this(webclient, headersConsumer, GraphQLRequestOptions.createCustomObjectMapper(options))
 
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
@@ -160,7 +152,7 @@ class WebClientGraphQLClient(
             )
         }
 
-        return GraphQLResponse(json = response.body ?: "", headers = response.headers, options)
+        return GraphQLResponse(json = response.body ?: "", headers = response.headers, mapper)
     }
 
     companion object {

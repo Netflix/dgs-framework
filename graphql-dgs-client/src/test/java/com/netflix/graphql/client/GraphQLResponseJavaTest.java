@@ -16,6 +16,9 @@
 
 package com.netflix.graphql.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.kotlin.KotlinFeature;
+import com.fasterxml.jackson.module.kotlin.KotlinModule;
 import com.netflix.graphql.dgs.client.CustomGraphQLClient;
 import com.netflix.graphql.dgs.client.CustomMonoGraphQLClient;
 import com.netflix.graphql.dgs.client.GraphQLClient;
@@ -30,11 +33,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Mono;
+
+import java.lang.reflect.Field;
+
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -139,6 +147,44 @@ public class GraphQLResponseJavaTest {
         assertThat(submittedBy).isEqualTo("abc@netflix.com");
         server.verify();
     }
+
+    @Test
+    public void testCustomObjectMapperIsRetained() {
+        server.expect(requestTo(url))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{\"operationName\":\"SubmitReview\"}"))
+                .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
+
+        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder
+                .json()
+                .modulesToInstall(
+                        new KotlinModule.Builder()
+                                .enable(KotlinFeature.NullIsSameAsDefault)
+                                .build()
+                )
+                .build();
+
+        CustomGraphQLClient client = GraphQLClient.createCustom(url, requestExecutor, objectMapper);
+        GraphQLResponse graphQLResponse = client.executeQuery(query, emptyMap(), "SubmitReview");
+        String submittedBy = graphQLResponse.extractValueAsObject("submitReview.submittedBy", String.class);
+        assertThat(submittedBy).isEqualTo("abc@netflix.com");
+        server.verify();
+
+        try {
+            // Use reflection to access the private 'mapper' field in GraphQLResponse
+            Field mapperField = GraphQLResponse.class.getDeclaredField("mapper");
+            mapperField.setAccessible(true);
+            ObjectMapper responseMapper = (ObjectMapper) mapperField.get(graphQLResponse);
+
+            // Assert that the ObjectMapper in the response is the same as the custom one
+            assertThat(responseMapper).isSameAs(objectMapper);
+        } catch (Exception e) {
+           fail("Shouldn't fail", e);
+        }
+
+    }
+
 
     @Test
     public void testCustomMono() {
