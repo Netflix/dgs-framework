@@ -112,6 +112,7 @@ class DgsSchemaProvider
         private val schemaWiringValidationEnabled: Boolean = true,
         private val enableEntityFetcherCustomScalarParsing: Boolean = false,
         private val fallbackTypeResolver: TypeResolver? = null,
+        private val enableStrictMode: Boolean = false,
     ) {
         @Suppress("UNUSED_PARAMETER")
         @Deprecated("The mockProviders argument is no longer supported")
@@ -230,7 +231,11 @@ class DgsSchemaProvider
             }
 
             val runtimeWiringBuilder =
-                RuntimeWiring.newRuntimeWiring().codeRegistry(codeRegistryBuilder).fieldVisibility(fieldVisibility)
+                RuntimeWiring
+                    .newRuntimeWiring()
+                    .strictMode(enableStrictMode)
+                    .codeRegistry(codeRegistryBuilder)
+                    .fieldVisibility(fieldVisibility)
 
             val dgsCodeRegistryBuilder =
                 DgsCodeRegistryBuilder(dataFetcherResultProcessors, codeRegistryBuilder, applicationContext)

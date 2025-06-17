@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.springgraphql.autoconfig
 
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import com.netflix.graphql.dgs.autoconfig.DgsConfigurationProperties
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.mvc.internal.method.HandlerMethodArgumentResolverAdapter
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
@@ -322,6 +323,33 @@ class DgsSpringGraphQlAutoConfigurationTest {
                     assertThat(response.errors.size).isEqualTo(0)
                     assertThat(response.isDataPresent).isTrue()
                 }
+            }
+    }
+
+    @Test
+    fun loadsDefaultStrictmodeConfiguration() {
+        ApplicationContextRunner()
+            .withConfiguration(autoConfigurations)
+            .run { context ->
+                assertThat(
+                    context
+                        .getBean(DgsConfigurationProperties::class.java)
+                        .strictmode.enabled,
+                ).isTrue()
+            }
+    }
+
+    @Test
+    fun loadsStrictmodeConfiguration() {
+        ApplicationContextRunner()
+            .withConfiguration(autoConfigurations)
+            .withPropertyValues("dgs.graphql.strictmode.enabled=false")
+            .run { context ->
+                assertThat(
+                    context
+                        .getBean(DgsConfigurationProperties::class.java)
+                        .strictmode.enabled,
+                ).isFalse()
             }
     }
 }

@@ -32,6 +32,7 @@ data class DgsConfigurationProperties(
     val preparsedDocumentProvider: DgsPreparsedDocumentProviderConfigurationProperties =
         DgsPreparsedDocumentProviderConfigurationProperties(),
     val introspection: DgsIntrospectionConfigurationProperties = DgsIntrospectionConfigurationProperties(),
+    val strictmode: DgsStrictModeProperties = DgsStrictModeProperties(),
 ) {
     data class DgsPreparsedDocumentProviderConfigurationProperties(
         val enabled: Boolean = false,
@@ -44,5 +45,9 @@ data class DgsConfigurationProperties(
         /** Due to legacy reasons, SDL comments (i.e. # comments) are shown in introspection queries by default.
          * This property toggles that visibility. */
         val showSdlComments: Boolean = true,
+    )
+
+    data class DgsStrictModeProperties(
+        val enabled: Boolean = true,
     )
 }
