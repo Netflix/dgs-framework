@@ -36,8 +36,11 @@ import graphql.language.TypeName
 import graphql.schema.DataFetcher
 import graphql.schema.FieldCoordinates
 import graphql.schema.GraphQLCodeRegistry
+import graphql.schema.GraphQLScalarType
 import graphql.schema.TypeResolver
+import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.TypeDefinitionRegistry
+import graphql.schema.idl.errors.StrictModeWiringException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatNoException
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -83,6 +86,7 @@ internal class DgsSchemaProviderTest {
         schemaWiringValidationEnabled: Boolean = true,
         dataFetcherResultProcessors: List<DataFetcherResultProcessor> = emptyList(),
         fallbackTypeResolver: TypeResolver? = null,
+        strictMode: Boolean = true,
     ): DgsSchemaProvider =
         DgsSchemaProvider(
             applicationContext = applicationContext,
@@ -100,6 +104,7 @@ internal class DgsSchemaProviderTest {
             schemaWiringValidationEnabled = schemaWiringValidationEnabled,
             dataFetcherResultProcessors = dataFetcherResultProcessors,
             fallbackTypeResolver = fallbackTypeResolver,
+            enableStrictMode = strictMode,
         )
 
     @DgsComponent
@@ -1341,6 +1346,49 @@ internal class DgsSchemaProviderTest {
 
             assert(descriptionCommentsInResult.isNotEmpty())
             assert(sdlCommentsInResult.isEmpty())
+        }
+    }
+
+    @Test
+    fun `StrictMode should fail when enabled and duplicate scalars are registered`() {
+        contextRunner.withBeans(DuplicateScalarWiring::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context, strictMode = true)
+            assertThrows<StrictModeWiringException> { schemaProvider.schema() }
+        }
+    }
+
+    @Test
+    fun `StrictMode should not fail when disabled and duplicate scalars are registered`() {
+        contextRunner.withBeans(DuplicateScalarWiring::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context, strictMode = false)
+            assertDoesNotThrow { schemaProvider.schema() }
+        }
+    }
+
+    @DgsComponent
+    class DuplicateScalarWiring {
+        @DgsRuntimeWiring
+        fun customWiring(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
+            builder.scalar(
+                GraphQLScalarType
+                    .Builder()
+                    .name("Test")
+                    .coercing(LocalDateTimeScalar())
+                    .build(),
+            )
+            return builder
+        }
+
+        @DgsRuntimeWiring
+        fun customWiring2(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
+            builder.scalar(
+                GraphQLScalarType
+                    .Builder()
+                    .name("Test")
+                    .coercing(LocalDateTimeScalar())
+                    .build(),
+            )
+            return builder
         }
     }
 }
