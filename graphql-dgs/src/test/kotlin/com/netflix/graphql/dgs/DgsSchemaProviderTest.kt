@@ -86,7 +86,7 @@ internal class DgsSchemaProviderTest {
         schemaWiringValidationEnabled: Boolean = true,
         dataFetcherResultProcessors: List<DataFetcherResultProcessor> = emptyList(),
         fallbackTypeResolver: TypeResolver? = null,
-        strictMode: Boolean = false,
+        strictMode: Boolean = true,
     ): DgsSchemaProvider =
         DgsSchemaProvider(
             applicationContext = applicationContext,
