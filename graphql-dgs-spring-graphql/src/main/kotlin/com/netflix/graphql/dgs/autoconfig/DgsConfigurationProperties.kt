@@ -32,7 +32,7 @@ data class DgsConfigurationProperties(
     val preparsedDocumentProvider: DgsPreparsedDocumentProviderConfigurationProperties =
         DgsPreparsedDocumentProviderConfigurationProperties(),
     val introspection: DgsIntrospectionConfigurationProperties = DgsIntrospectionConfigurationProperties(),
-    val strictmode: DgsStrictModeProperties = DgsStrictModeProperties(),
+    val strictMode: DgsStrictModeProperties = DgsStrictModeProperties(),
 ) {
     data class DgsPreparsedDocumentProviderConfigurationProperties(
         val enabled: Boolean = false,

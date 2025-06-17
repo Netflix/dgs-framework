@@ -97,7 +97,7 @@
       "description": "Enable async dispatching in the request handling. This can reduce the number of server working threads required, but requires all filters to be async aware, and tests to handle async correctly."
     },
     {
-      "name": "dgs.graphql.strictmode.enabled",
+      "name": "dgs.graphql.strict-mode.enabled",
       "defaultValue": "true",
       "type": "java.lang.Boolean",
       "description": "Enable GraphQL Java strict mode on RuntimeWiring.Builder."

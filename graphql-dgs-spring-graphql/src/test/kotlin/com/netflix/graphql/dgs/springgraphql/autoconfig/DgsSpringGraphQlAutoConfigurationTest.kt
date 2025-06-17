@@ -334,7 +334,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
                 assertThat(
                     context
                         .getBean(DgsConfigurationProperties::class.java)
-                        .strictmode.enabled,
+                        .strictMode.enabled,
                 ).isTrue()
             }
     }
@@ -343,12 +343,12 @@ class DgsSpringGraphQlAutoConfigurationTest {
     fun loadsStrictmodeConfiguration() {
         ApplicationContextRunner()
             .withConfiguration(autoConfigurations)
-            .withPropertyValues("dgs.graphql.strictmode.enabled=false")
+            .withPropertyValues("dgs.graphql.strict-mode.enabled=false")
             .run { context ->
                 assertThat(
                     context
                         .getBean(DgsConfigurationProperties::class.java)
-                        .strictmode.enabled,
+                        .strictMode.enabled,
                 ).isFalse()
             }
     }

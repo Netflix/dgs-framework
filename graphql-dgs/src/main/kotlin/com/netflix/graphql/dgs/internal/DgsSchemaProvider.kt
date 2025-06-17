@@ -112,7 +112,7 @@ class DgsSchemaProvider
         private val schemaWiringValidationEnabled: Boolean = true,
         private val enableEntityFetcherCustomScalarParsing: Boolean = false,
         private val fallbackTypeResolver: TypeResolver? = null,
-        private val enableStrictMode: Boolean = false,
+        private val enableStrictMode: Boolean = true,
     ) {
         @Suppress("UNUSED_PARAMETER")
         @Deprecated("The mockProviders argument is no longer supported")

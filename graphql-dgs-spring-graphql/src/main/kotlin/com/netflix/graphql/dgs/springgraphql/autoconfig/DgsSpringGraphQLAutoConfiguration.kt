@@ -307,7 +307,7 @@ open class DgsSpringGraphQLAutoConfiguration(
             schemaWiringValidationEnabled = configProps.schemaWiringValidationEnabled,
             enableEntityFetcherCustomScalarParsing = configProps.enableEntityFetcherCustomScalarParsing,
             fallbackTypeResolver = fallbackTypeResolver,
-            enableStrictMode = configProps.strictmode.enabled,
+            enableStrictMode = configProps.strictMode.enabled,
         )
 
     @Bean
