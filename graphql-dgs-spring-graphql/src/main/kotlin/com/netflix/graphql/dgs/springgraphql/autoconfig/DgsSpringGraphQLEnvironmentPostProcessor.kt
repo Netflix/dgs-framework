@@ -51,7 +51,7 @@ class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
 
         properties["spring.graphql.graphiql.enabled"] = environment.getProperty("dgs.graphql.graphiql.enabled") ?: true
         properties["spring.graphql.graphiql.path"] = environment.getProperty("dgs.graphql.graphiql.path") ?: "/graphiql"
-        properties["spring.graphql.path"] = environment.getProperty("dgs.graphql.path") ?: "/graphql"
+        properties["spring.graphql.http.path"] = environment.getProperty("dgs.graphql.path") ?: "/graphql"
         properties["spring.graphql.websocket.connection-init-timeout"] =
             environment.getProperty("dgs.graphql.websocket.connection-init-timeout") ?: "10s"
 
