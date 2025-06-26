@@ -7,6 +7,7 @@ import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Timer
 import org.slf4j.LoggerFactory
 import java.lang.reflect.InvocationHandler
+import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.util.concurrent.CompletionStage
 
@@ -50,6 +51,8 @@ internal class BatchLoaderWithContextInterceptor(
                             ).register(registry),
                     )
                 }
+            } catch (exception: InvocationTargetException) {
+                throw exception.targetException
             } catch (exception: Exception) {
                 logger.warn("Error creating timer interceptor '{}' for {} with exception {}", ID, javaClass.simpleName, exception.message)
                 @Suppress("UNCHECKED_CAST")
