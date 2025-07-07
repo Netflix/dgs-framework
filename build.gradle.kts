@@ -26,10 +26,10 @@ plugins {
     `java-library`
     id("nebula.dependency-recommender") version "11.0.0"
 
-    id("nebula.netflixoss") version "11.4.0"
+    id("nebula.netflixoss") version "11.6.0"
     id("io.spring.dependency-management") version "1.1.7"
 
-    id("org.jmailen.kotlinter") version "5.0.+"
+    id("org.jmailen.kotlinter") version "5.1.+"
     id("me.champeau.jmh") version "0.7.3"
 
     kotlin("jvm") version Versions.KOTLIN_VERSION
@@ -51,7 +51,7 @@ allprojects {
     // and suggest an upgrade. The only exception currently are those defined
     // in buildSrc, most likely because the variables are used in plugins as well
     // as dependencies. e.g. KOTLIN_VERSION
-    extra["sb.version"] = "3.4.5"
+    extra["sb.version"] = "3.5.0"
     extra["kotlin.version"] = Versions.KOTLIN_VERSION
 }
 val internalBomModules by extra(
@@ -96,9 +96,14 @@ configure(subprojects.filterNot { it in internalBomModules }) {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         }
 
-
+        implementation("org.slf4j:slf4j-api:2.0.17")
         implementation("org.jetbrains:annotations:26.0.2")
         testImplementation("io.mockk:mockk:1.+")
+
+        // JUnit 5 dependencies
+        testImplementation(platform("org.junit:junit-bom:5.13.2"))
+        testImplementation("org.junit.jupiter:junit-jupiter")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     }
 
     jmh {

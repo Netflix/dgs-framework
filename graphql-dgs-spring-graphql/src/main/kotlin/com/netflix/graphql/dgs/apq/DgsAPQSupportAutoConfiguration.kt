@@ -31,6 +31,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.graphql.GraphQlSourceBuilderCustomizer
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -40,7 +41,10 @@ import java.time.Duration
 import java.util.Optional
 
 @AutoConfiguration
-@AutoConfigureAfter(DgsSpringGraphQLAutoConfiguration::class)
+@AutoConfigureAfter(
+    DgsSpringGraphQLAutoConfiguration::class,
+    name = ["org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration"],
+)
 @ConditionalOnProperty(
     prefix = "dgs.graphql.apq",
     name = ["enabled"],
@@ -89,11 +93,11 @@ open class DgsAPQSupportAutoConfiguration {
 
     @Configuration
     @ConditionalOnClass(
-        name = ["io.micrometer.core.instrument.MeterRegistry", "com.github.benmanes.caffeine.cache.Cache"],
+        name = ["com.github.benmanes.caffeine.cache.Cache"],
     )
+    @ConditionalOnBean(io.micrometer.core.instrument.MeterRegistry::class)
     open class APQMicrometerMeteredCaffeineCacheConfiguration {
         @Bean
-        @ConditionalOnBean(io.micrometer.core.instrument.MeterRegistry::class)
         @ConditionalOnMissingBean(PersistedQueryCache::class)
         open fun meteredPersistedQueryCache(
             @Qualifier(BEAN_APQ_CAFFEINE_CACHE_NAME) appCaffeine: Cache<String, PreparsedDocumentEntry>,
@@ -105,8 +109,13 @@ open class DgsAPQSupportAutoConfiguration {
         }
     }
 
+    // We want this version only if there is no micrometer meter registry
     @Configuration
-    @ConditionalOnMissingBean(APQMicrometerMeteredCaffeineCacheConfiguration::class)
+    @ConditionalOnMissingBean(
+        APQMicrometerMeteredCaffeineCacheConfiguration::class,
+        name = ["io.micrometer.core.instrument.MeterRegistry::class"],
+    )
+    @ConditionalOnMissingClass("io.micrometer.core.instrument.MeterRegistry::class")
     @ConditionalOnClass(name = ["com.github.benmanes.caffeine.cache.Cache"])
     open class APQBasicCaffeineCacheConfiguration {
         @Bean

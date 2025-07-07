@@ -33,6 +33,7 @@ config_file = os.path.abspath(f"{base_path}/config.yml")
 
 examples_path = os.path.abspath(f"{base_path}/../build/examples")
 settings_gradle_kts_template = os.path.abspath(f"{base_path}/settings.gradle.kts")
+root_gradle_kts_file = os.path.abspath(f"{base_path}/../build.gradle.kts")
 
 gradle_wd = os.path.abspath(f"{base_path}/..")
 gradlew = os.path.abspath(f"{base_path}/../gradlew")
@@ -44,6 +45,31 @@ def load_config():
     Out.debug(f"Configuration loaded from [{config_file}]:\n{config}\n", State.verbose)
     return config
 
+def load_root_build_file(file_path):
+    print("root build file: " + file_path)
+    file = open(file_path, 'r')
+    file_data = file.read()
+    file.close()
+    return file_data
+
+def infer_spring_boot_version(content):
+    lines = content.split('\n')
+    for line in lines:
+        # Strip all whitespace from the line
+        stripped_line = line.replace(' ', '').replace('\t', '')
+
+        # Check if this line contains our target pattern
+        if 'extra["sb.version"]=' in stripped_line:
+            # Find the equals sign and get everything after it
+            equals_index = stripped_line.find('=')
+            if equals_index != -1:
+                # Get the part after the equals sign
+                value_part = stripped_line[equals_index + 1:]
+                # Remove quotes (both single and double)
+                version = value_part.strip('"').strip("'")
+                return version
+
+    return None
 
 def clone_repos(config, target):
     if not target:
@@ -99,18 +125,27 @@ def infer_gradle_settings_file(project_dir):
         file = ""
     return file
 
-
 def find_replace_version(content, version):
     regex = re.compile(r"graphql-dgs-platform-dependencies:([0-9\w\-.]+)")
     return re.sub(regex, f"graphql-dgs-platform-dependencies:{version}", content)
 
+def find_replace_oss_plugin_version(content, version):
+    pattern = r'(\s*id\s*\(\s*["\']org\.springframework\.boot["\']\s*\)\s*version\s+["\'])[^"\']+(["\'])'
+    replacement = r'\g<1>' + version + r'\g<2>'
+    modified_content = re.sub(pattern, replacement, content)
 
-def update_build(build_file, version):
+    return modified_content
+
+def update_build(build_file, version, spring_boot_version):
     file = open(build_file, 'r')
     file_data = file.read()
     file.close()
 
     file_data = find_replace_version(file_data, version)
+    if (spring_boot_version is not None):
+        file_data = find_replace_oss_plugin_version(file_data, spring_boot_version)
+    print("after version updates")
+    print(file_data)
 
     file = open(build_file, 'w')
     file.write(file_data)
@@ -200,12 +235,14 @@ def main(argv):
         Out.error(f"No projects available at [{projects_dir}]!")
         exit(2)
 
+    spring_boot_version = infer_spring_boot_version(load_root_build_file(root_gradle_kts_file))
+
     for project in projects:
         project_root = f"{projects_dir}/{project}"
         Out.info(f"Processing project [{project_root}]...")
         build_file = infer_build_file(project_root)
         settings_file = infer_gradle_settings_file(project_root)
-        update_build(build_file, p_version)
+        update_build(build_file, p_version, spring_boot_version)
         run_example_build(project_root, build_file=build_file, settings_file=settings_file)
 
     if not keep_project_dir:

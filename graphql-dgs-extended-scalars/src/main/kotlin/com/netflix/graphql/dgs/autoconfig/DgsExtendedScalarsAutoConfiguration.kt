@@ -21,6 +21,7 @@ import com.netflix.graphql.dgs.DgsRuntimeWiring
 import graphql.scalars.ExtendedScalars
 import graphql.schema.GraphQLScalarType
 import graphql.schema.idl.RuntimeWiring
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.AllNestedConditions
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
@@ -239,7 +240,15 @@ open class DgsExtendedScalarsAutoConfiguration {
     }
 
     abstract class AbstractExtendedScalarRegistrar : ExtendedScalarRegistrar {
+        /**
+         * Provide a mechanism to disable strict mode for scalar extensions; this will throw an exception if the scalar type is already registered.
+         * @see {@link https://github.com/graphql-java/graphql-java/commit/09f6a88c36affb1de56b3fe74b2a792b50ed941c}
+         */
+        @Value("\${dgs.graphql.extensions.scalars.strict-mode.enabled:false}")
+        private val strictModeEnabled: Boolean = false
+
         @DgsRuntimeWiring
-        fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder = getScalars().foldRight(builder) { a, acc -> acc.scalar(a) }
+        fun addScalar(builder: RuntimeWiring.Builder): RuntimeWiring.Builder =
+            getScalars().foldRight(builder.strictMode(strictModeEnabled)) { a, acc -> acc.scalar(a) }
     }
 }

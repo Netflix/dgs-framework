@@ -24,9 +24,10 @@ class DefaultDataLoaderOptionsProvider : DgsDataLoaderOptionsProvider {
     override fun getOptions(
         dataLoaderName: String,
         annotation: DgsDataLoader,
-    ): DataLoaderOptions {
+    ): DataLoaderOptions.Builder {
         val options =
-            DataLoaderOptions()
+            DataLoaderOptions
+                .newOptions()
                 .setBatchingEnabled(annotation.batching)
                 .setCachingEnabled(annotation.caching)
         if (annotation.maxBatchSize > 0) {

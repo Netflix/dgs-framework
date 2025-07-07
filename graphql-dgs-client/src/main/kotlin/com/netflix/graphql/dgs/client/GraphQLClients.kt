@@ -54,6 +54,21 @@ internal object GraphQLClients {
         response: HttpResponse,
         requestBody: String,
         url: String,
+        mapper: ObjectMapper,
+    ): GraphQLResponse {
+        val (statusCode, body) = response
+        val headers = response.headers
+        if (HttpStatusCode.valueOf(response.statusCode).isError) {
+            throw GraphQLClientException(statusCode, url, body ?: "", requestBody)
+        }
+
+        return GraphQLResponse(body ?: "", headers, mapper)
+    }
+
+    fun handleResponse(
+        response: HttpResponse,
+        requestBody: String,
+        url: String,
         options: GraphQLRequestOptions? = null,
     ): GraphQLResponse {
         val (statusCode, body) = response

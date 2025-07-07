@@ -1,14 +1,14 @@
 {
     "apiDependenciesMetadata": {
         "com.graphql-java:graphql-java": {
-            "locked": "22.3",
+            "locked": "24.0",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
         },
         "com.graphql-java:java-dataloader": {
-            "locked": "3.3.0",
+            "locked": "5.0.0",
             "transitive": [
                 "com.graphql-java:graphql-java",
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
@@ -38,15 +38,17 @@
                 "com.netflix.graphql.dgs:graphql-error-types"
             ]
         },
+        "org.jspecify:jspecify": {
+            "locked": "1.0.0",
+            "transitive": [
+                "com.graphql-java:graphql-java",
+                "com.graphql-java:java-dataloader"
+            ]
+        },
         "org.reactivestreams:reactive-streams": {
             "locked": "1.0.4",
             "transitive": [
-                "com.graphql-java:graphql-java"
-            ]
-        },
-        "org.slf4j:slf4j-api": {
-            "locked": "2.0.17",
-            "transitive": [
+                "com.graphql-java:graphql-java",
                 "com.graphql-java:java-dataloader"
             ]
         }
@@ -59,7 +61,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -68,7 +70,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-core": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -76,7 +78,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
@@ -84,19 +86,19 @@
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom"
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom"
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
@@ -106,10 +108,10 @@
             ]
         },
         "com.github.ben-manes.caffeine:caffeine": {
-            "locked": "3.1.8"
+            "locked": "3.2.0"
         },
         "com.google.errorprone:error_prone_annotations": {
-            "locked": "2.21.1",
+            "locked": "2.36.0",
             "transitive": [
                 "com.github.ben-manes.caffeine:caffeine"
             ]
@@ -121,7 +123,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "22.3",
+            "locked": "24.0",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
@@ -129,7 +131,7 @@
             ]
         },
         "com.graphql-java:java-dataloader": {
-            "locked": "3.3.0",
+            "locked": "5.0.0",
             "transitive": [
                 "com.graphql-java:graphql-java",
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
@@ -160,13 +162,13 @@
             ]
         },
         "io.micrometer:micrometer-commons": {
-            "locked": "1.14.6",
+            "locked": "1.15.0",
             "transitive": [
                 "io.micrometer:micrometer-observation"
             ]
         },
         "io.micrometer:micrometer-observation": {
-            "locked": "1.14.6",
+            "locked": "1.15.0",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context",
@@ -174,7 +176,7 @@
             ]
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.7.5",
+            "locked": "3.7.6",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactor"
@@ -182,12 +184,6 @@
         },
         "jakarta.annotation:jakarta.annotation-api": {
             "locked": "2.1.1"
-        },
-        "org.checkerframework:checker-qual": {
-            "locked": "3.37.0",
-            "transitive": [
-                "com.github.ben-manes.caffeine:caffeine"
-            ]
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "locked": "1.9.20",
@@ -248,10 +244,19 @@
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm"
             ]
         },
+        "org.jspecify:jspecify": {
+            "locked": "1.0.0",
+            "transitive": [
+                "com.github.ben-manes.caffeine:caffeine",
+                "com.graphql-java:graphql-java",
+                "com.graphql-java:java-dataloader"
+            ]
+        },
         "org.reactivestreams:reactive-streams": {
             "locked": "1.0.4",
             "transitive": [
                 "com.graphql-java:graphql-java",
+                "com.graphql-java:java-dataloader",
                 "io.projectreactor:reactor-core",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactive"
             ]
@@ -259,28 +264,27 @@
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17",
             "transitive": [
-                "com.apollographql.federation:federation-graphql-java-support",
-                "com.graphql-java:java-dataloader"
+                "com.apollographql.federation:federation-graphql-java-support"
             ]
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "6.4.5"
+            "locked": "6.5.0"
         },
         "org.springframework.security:spring-security-crypto": {
-            "locked": "6.4.5",
+            "locked": "6.5.0",
             "transitive": [
                 "org.springframework.security:spring-security-core"
             ]
         },
         "org.springframework:spring-aop": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-beans": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-aop",
@@ -289,13 +293,13 @@
             ]
         },
         "org.springframework:spring-context": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core"
             ]
         },
         "org.springframework:spring-core": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-aop",
@@ -306,53 +310,53 @@
             ]
         },
         "org.springframework:spring-expression": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-jcl": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework:spring-core"
             ]
         },
         "org.springframework:spring-web": {
-            "locked": "6.2.6"
+            "locked": "6.2.7"
         }
     },
     "compileOnlyDependenciesMetadata": {
         "com.github.ben-manes.caffeine:caffeine": {
-            "locked": "3.1.8"
+            "locked": "3.2.0"
         },
         "com.google.errorprone:error_prone_annotations": {
-            "locked": "2.21.1",
+            "locked": "2.36.0",
             "transitive": [
                 "com.github.ben-manes.caffeine:caffeine"
             ]
         },
         "io.micrometer:micrometer-commons": {
-            "locked": "1.14.6",
+            "locked": "1.15.0",
             "transitive": [
                 "io.micrometer:micrometer-observation"
             ]
         },
         "io.micrometer:micrometer-observation": {
-            "locked": "1.14.6",
+            "locked": "1.15.0",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context"
             ]
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.7.5"
+            "locked": "3.7.6"
         },
         "jakarta.annotation:jakarta.annotation-api": {
             "locked": "2.1.1"
         },
-        "org.checkerframework:checker-qual": {
-            "locked": "3.37.0",
+        "org.jspecify:jspecify": {
+            "locked": "1.0.0",
             "transitive": [
                 "com.github.ben-manes.caffeine:caffeine"
             ]
@@ -364,23 +368,23 @@
             ]
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "6.4.5"
+            "locked": "6.5.0"
         },
         "org.springframework.security:spring-security-crypto": {
-            "locked": "6.4.5",
+            "locked": "6.5.0",
             "transitive": [
                 "org.springframework.security:spring-security-core"
             ]
         },
         "org.springframework:spring-aop": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-beans": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-aop",
@@ -388,13 +392,13 @@
             ]
         },
         "org.springframework:spring-context": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core"
             ]
         },
         "org.springframework:spring-core": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-aop",
@@ -404,14 +408,14 @@
             ]
         },
         "org.springframework:spring-expression": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-jcl": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework:spring-core"
             ]
@@ -425,7 +429,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -434,7 +438,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-core": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -442,7 +446,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
@@ -450,19 +454,19 @@
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom"
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom"
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
@@ -478,7 +482,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "22.3",
+            "locked": "24.0",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
@@ -486,7 +490,7 @@
             ]
         },
         "com.graphql-java:java-dataloader": {
-            "locked": "3.3.0",
+            "locked": "5.0.0",
             "transitive": [
                 "com.graphql-java:graphql-java",
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
@@ -517,20 +521,20 @@
             ]
         },
         "io.micrometer:micrometer-commons": {
-            "locked": "1.14.6",
+            "locked": "1.15.0",
             "transitive": [
                 "io.micrometer:micrometer-observation"
             ]
         },
         "io.micrometer:micrometer-observation": {
-            "locked": "1.14.6",
+            "locked": "1.15.0",
             "transitive": [
                 "org.springframework:spring-context",
                 "org.springframework:spring-web"
             ]
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.7.5",
+            "locked": "3.7.6",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactor"
@@ -598,10 +602,18 @@
         "org.jetbrains:annotations": {
             "locked": "26.0.2"
         },
+        "org.jspecify:jspecify": {
+            "locked": "1.0.0",
+            "transitive": [
+                "com.graphql-java:graphql-java",
+                "com.graphql-java:java-dataloader"
+            ]
+        },
         "org.reactivestreams:reactive-streams": {
             "locked": "1.0.4",
             "transitive": [
                 "com.graphql-java:graphql-java",
+                "com.graphql-java:java-dataloader",
                 "io.projectreactor:reactor-core",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactive"
             ]
@@ -609,18 +621,17 @@
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17",
             "transitive": [
-                "com.apollographql.federation:federation-graphql-java-support",
-                "com.graphql-java:java-dataloader"
+                "com.apollographql.federation:federation-graphql-java-support"
             ]
         },
         "org.springframework:spring-aop": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-beans": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework:spring-aop",
                 "org.springframework:spring-context",
@@ -628,10 +639,10 @@
             ]
         },
         "org.springframework:spring-context": {
-            "locked": "6.2.6"
+            "locked": "6.2.7"
         },
         "org.springframework:spring-core": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework:spring-aop",
                 "org.springframework:spring-beans",
@@ -641,19 +652,19 @@
             ]
         },
         "org.springframework:spring-expression": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-jcl": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework:spring-core"
             ]
         },
         "org.springframework:spring-web": {
-            "locked": "6.2.6"
+            "locked": "6.2.7"
         }
     },
     "jmh": {
@@ -717,7 +728,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -726,7 +737,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-core": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -734,7 +745,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
@@ -742,19 +753,19 @@
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom"
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom"
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
@@ -764,10 +775,10 @@
             ]
         },
         "com.github.ben-manes.caffeine:caffeine": {
-            "locked": "3.1.8"
+            "locked": "3.2.0"
         },
         "com.google.errorprone:error_prone_annotations": {
-            "locked": "2.21.1",
+            "locked": "2.36.0",
             "transitive": [
                 "com.github.ben-manes.caffeine:caffeine"
             ]
@@ -779,7 +790,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "22.3",
+            "locked": "24.0",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
@@ -787,7 +798,7 @@
             ]
         },
         "com.graphql-java:java-dataloader": {
-            "locked": "3.3.0",
+            "locked": "5.0.0",
             "transitive": [
                 "com.graphql-java:graphql-java",
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
@@ -818,13 +829,13 @@
             ]
         },
         "io.micrometer:micrometer-commons": {
-            "locked": "1.14.6",
+            "locked": "1.15.0",
             "transitive": [
                 "io.micrometer:micrometer-observation"
             ]
         },
         "io.micrometer:micrometer-observation": {
-            "locked": "1.14.6",
+            "locked": "1.15.0",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context",
@@ -832,7 +843,7 @@
             ]
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.7.5",
+            "locked": "3.7.6",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactor"
@@ -851,12 +862,6 @@
             "locked": "3.6.1",
             "transitive": [
                 "org.openjdk.jmh:jmh-core"
-            ]
-        },
-        "org.checkerframework:checker-qual": {
-            "locked": "3.37.0",
-            "transitive": [
-                "com.github.ben-manes.caffeine:caffeine"
             ]
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
@@ -918,6 +923,14 @@
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm"
             ]
         },
+        "org.jspecify:jspecify": {
+            "locked": "1.0.0",
+            "transitive": [
+                "com.github.ben-manes.caffeine:caffeine",
+                "com.graphql-java:graphql-java",
+                "com.graphql-java:java-dataloader"
+            ]
+        },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.37",
             "transitive": [
@@ -956,6 +969,7 @@
             "locked": "1.0.4",
             "transitive": [
                 "com.graphql-java:graphql-java",
+                "com.graphql-java:java-dataloader",
                 "io.projectreactor:reactor-core",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactive"
             ]
@@ -963,28 +977,27 @@
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17",
             "transitive": [
-                "com.apollographql.federation:federation-graphql-java-support",
-                "com.graphql-java:java-dataloader"
+                "com.apollographql.federation:federation-graphql-java-support"
             ]
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "6.4.5"
+            "locked": "6.5.0"
         },
         "org.springframework.security:spring-security-crypto": {
-            "locked": "6.4.5",
+            "locked": "6.5.0",
             "transitive": [
                 "org.springframework.security:spring-security-core"
             ]
         },
         "org.springframework:spring-aop": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-beans": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-aop",
@@ -993,13 +1006,13 @@
             ]
         },
         "org.springframework:spring-context": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core"
             ]
         },
         "org.springframework:spring-core": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-aop",
@@ -1010,20 +1023,20 @@
             ]
         },
         "org.springframework:spring-expression": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-jcl": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework:spring-core"
             ]
         },
         "org.springframework:spring-web": {
-            "locked": "6.2.6"
+            "locked": "6.2.7"
         }
     },
     "jmhImplementationDependenciesMetadata": {
@@ -1097,7 +1110,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -1106,7 +1119,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-core": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -1114,7 +1127,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
@@ -1122,19 +1135,19 @@
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom"
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom"
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
@@ -1150,7 +1163,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "22.3",
+            "locked": "24.0",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.graphql-java:graphql-java-extended-scalars",
@@ -1165,7 +1178,7 @@
             ]
         },
         "com.graphql-java:java-dataloader": {
-            "locked": "3.3.0",
+            "locked": "5.0.0",
             "transitive": [
                 "com.graphql-java:graphql-java",
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
@@ -1203,13 +1216,13 @@
             ]
         },
         "io.micrometer:micrometer-commons": {
-            "locked": "1.14.6",
+            "locked": "1.15.0",
             "transitive": [
                 "io.micrometer:micrometer-observation"
             ]
         },
         "io.micrometer:micrometer-observation": {
-            "locked": "1.14.6",
+            "locked": "1.15.0",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context",
@@ -1217,35 +1230,35 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.14.0"
+            "locked": "1.14.2"
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api-jvm": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-agent-api"
             ]
         },
         "io.mockk:mockk-agent-jvm": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-dsl-jvm",
@@ -1253,31 +1266,31 @@
             ]
         },
         "io.mockk:mockk-core-jvm": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-core"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-dsl-jvm": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-dsl"
             ]
         },
         "io.mockk:mockk-jvm": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk"
             ]
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.7.5",
+            "locked": "3.7.6",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "io.projectreactor:reactor-test",
@@ -1285,7 +1298,7 @@
             ]
         },
         "io.projectreactor:reactor-test": {
-            "locked": "3.7.5",
+            "locked": "3.7.6",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
@@ -1315,7 +1328,7 @@
             ]
         },
         "net.bytebuddy:byte-buddy": {
-            "locked": "1.15.11",
+            "locked": "1.17.5",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "org.assertj:assertj-core",
@@ -1323,7 +1336,7 @@
             ]
         },
         "net.bytebuddy:byte-buddy-agent": {
-            "locked": "1.15.11",
+            "locked": "1.17.5",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "org.mockito:mockito-core"
@@ -1369,19 +1382,19 @@
             ]
         },
         "org.assertj:assertj-core": {
-            "locked": "3.26.3",
+            "locked": "3.27.3",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.awaitility:awaitility": {
-            "locked": "4.2.2",
+            "locked": "4.3.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.hamcrest:hamcrest": {
-            "locked": "2.2",
+            "locked": "3.0",
             "transitive": [
                 "org.awaitility:awaitility",
                 "org.hamcrest:hamcrest-core",
@@ -1389,7 +1402,7 @@
             ]
         },
         "org.hamcrest:hamcrest-core": {
-            "locked": "2.2",
+            "locked": "3.0",
             "transitive": [
                 "junit:junit"
             ]
@@ -1484,8 +1497,15 @@
                 "org.jetbrains.kotlinx:kotlinx-coroutines-test-jvm"
             ]
         },
+        "org.jspecify:jspecify": {
+            "locked": "1.0.0",
+            "transitive": [
+                "com.graphql-java:graphql-java",
+                "com.graphql-java:java-dataloader"
+            ]
+        },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.11.4",
+            "locked": "5.12.2",
             "transitive": [
                 "io.mockk:mockk-jvm",
                 "org.junit:junit-bom",
@@ -1493,7 +1513,7 @@
             ]
         },
         "org.junit.jupiter:junit-jupiter-api": {
-            "locked": "5.11.4",
+            "locked": "5.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter",
                 "org.junit.jupiter:junit-jupiter-engine",
@@ -1503,21 +1523,21 @@
             ]
         },
         "org.junit.jupiter:junit-jupiter-engine": {
-            "locked": "5.11.4",
+            "locked": "5.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter",
                 "org.junit:junit-bom"
             ]
         },
         "org.junit.jupiter:junit-jupiter-params": {
-            "locked": "5.11.4",
+            "locked": "5.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter",
                 "org.junit:junit-bom"
             ]
         },
         "org.junit.platform:junit-platform-commons": {
-            "locked": "1.11.4",
+            "locked": "1.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter-api",
                 "org.junit.platform:junit-platform-engine",
@@ -1525,32 +1545,40 @@
             ]
         },
         "org.junit.platform:junit-platform-engine": {
-            "locked": "1.11.4",
+            "locked": "1.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter-engine",
+                "org.junit.platform:junit-platform-launcher",
+                "org.junit:junit-bom"
+            ]
+        },
+        "org.junit.platform:junit-platform-launcher": {
+            "locked": "1.12.2",
+            "transitive": [
                 "org.junit:junit-bom"
             ]
         },
         "org.junit:junit-bom": {
-            "locked": "5.11.4",
+            "locked": "5.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter",
                 "org.junit.jupiter:junit-jupiter-api",
                 "org.junit.jupiter:junit-jupiter-engine",
                 "org.junit.jupiter:junit-jupiter-params",
                 "org.junit.platform:junit-platform-commons",
-                "org.junit.platform:junit-platform-engine"
+                "org.junit.platform:junit-platform-engine",
+                "org.junit.platform:junit-platform-launcher"
             ]
         },
         "org.mockito:mockito-core": {
-            "locked": "5.14.2",
+            "locked": "5.17.0",
             "transitive": [
                 "org.mockito:mockito-junit-jupiter",
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.mockito:mockito-junit-jupiter": {
-            "locked": "5.14.2",
+            "locked": "5.17.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
@@ -1608,6 +1636,7 @@
             "locked": "1.0.4",
             "transitive": [
                 "com.graphql-java:graphql-java",
+                "com.graphql-java:java-dataloader",
                 "io.projectreactor:reactor-core",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactive"
             ]
@@ -1629,14 +1658,14 @@
             "transitive": [
                 "ch.qos.logback:logback-classic",
                 "com.apollographql.federation:federation-graphql-java-support",
-                "com.graphql-java:java-dataloader",
                 "com.jayway.jsonpath:json-path",
+                "com.netflix.graphql.dgs:graphql-error-types",
                 "org.apache.logging.log4j:log4j-to-slf4j",
                 "org.slf4j:jul-to-slf4j"
             ]
         },
         "org.springframework.boot:spring-boot": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-autoconfigure",
                 "org.springframework.boot:spring-boot-starter",
@@ -1645,58 +1674,58 @@
             ]
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter",
                 "org.springframework.boot:spring-boot-test-autoconfigure"
             ]
         },
         "org.springframework.boot:spring-boot-starter": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.springframework.boot:spring-boot-starter-logging": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter"
             ]
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "3.4.5"
+            "locked": "3.5.0"
         },
         "org.springframework.boot:spring-boot-test": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test",
                 "org.springframework.boot:spring-boot-test-autoconfigure"
             ]
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "6.4.5"
+            "locked": "6.5.0"
         },
         "org.springframework.security:spring-security-crypto": {
-            "locked": "6.4.5",
+            "locked": "6.5.0",
             "transitive": [
                 "org.springframework.security:spring-security-core"
             ]
         },
         "org.springframework:spring-aop": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-beans": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-aop",
@@ -1705,14 +1734,14 @@
             ]
         },
         "org.springframework:spring-context": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.boot:spring-boot",
                 "org.springframework.security:spring-security-core"
             ]
         },
         "org.springframework:spring-core": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.boot:spring-boot",
                 "org.springframework.boot:spring-boot-starter",
@@ -1727,36 +1756,36 @@
             ]
         },
         "org.springframework:spring-expression": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-jcl": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework:spring-core"
             ]
         },
         "org.springframework:spring-test": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test",
                 "org.springframework.boot:spring-boot-test"
             ]
         },
         "org.springframework:spring-web": {
-            "locked": "6.2.6"
+            "locked": "6.2.7"
         },
         "org.xmlunit:xmlunit-core": {
-            "locked": "2.10.0",
+            "locked": "2.10.1",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.yaml:snakeyaml": {
-            "locked": "2.3",
+            "locked": "2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter"
             ]
@@ -2278,7 +2307,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -2287,7 +2316,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-core": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -2295,7 +2324,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
@@ -2303,19 +2332,19 @@
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom"
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom"
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
@@ -2331,7 +2360,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "22.3",
+            "locked": "24.0",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
@@ -2339,7 +2368,7 @@
             ]
         },
         "com.graphql-java:java-dataloader": {
-            "locked": "3.3.0",
+            "locked": "5.0.0",
             "transitive": [
                 "com.graphql-java:graphql-java",
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
@@ -2370,20 +2399,20 @@
             ]
         },
         "io.micrometer:micrometer-commons": {
-            "locked": "1.14.6",
+            "locked": "1.15.0",
             "transitive": [
                 "io.micrometer:micrometer-observation"
             ]
         },
         "io.micrometer:micrometer-observation": {
-            "locked": "1.14.6",
+            "locked": "1.15.0",
             "transitive": [
                 "org.springframework:spring-context",
                 "org.springframework:spring-web"
             ]
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.7.5",
+            "locked": "3.7.6",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactor"
@@ -2461,6 +2490,13 @@
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm"
             ]
         },
+        "org.jspecify:jspecify": {
+            "locked": "1.0.0",
+            "transitive": [
+                "com.graphql-java:graphql-java",
+                "com.graphql-java:java-dataloader"
+            ]
+        },
         "org.ow2.asm:asm": {
             "locked": "9.7.1",
             "transitive": [
@@ -2471,6 +2507,7 @@
             "locked": "1.0.4",
             "transitive": [
                 "com.graphql-java:graphql-java",
+                "com.graphql-java:java-dataloader",
                 "io.projectreactor:reactor-core",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactive"
             ]
@@ -2479,18 +2516,18 @@
             "locked": "2.0.17",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
-                "com.graphql-java:java-dataloader",
-                "com.jayway.jsonpath:json-path"
+                "com.jayway.jsonpath:json-path",
+                "com.netflix.graphql.dgs:graphql-error-types"
             ]
         },
         "org.springframework:spring-aop": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-beans": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework:spring-aop",
                 "org.springframework:spring-context",
@@ -2498,10 +2535,10 @@
             ]
         },
         "org.springframework:spring-context": {
-            "locked": "6.2.6"
+            "locked": "6.2.7"
         },
         "org.springframework:spring-core": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework:spring-aop",
                 "org.springframework:spring-beans",
@@ -2511,19 +2548,19 @@
             ]
         },
         "org.springframework:spring-expression": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-jcl": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework:spring-core"
             ]
         },
         "org.springframework:spring-web": {
-            "locked": "6.2.6"
+            "locked": "6.2.7"
         }
     },
     "testCompileClasspath": {
@@ -2546,7 +2583,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -2555,7 +2592,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-core": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -2563,7 +2600,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
@@ -2571,19 +2608,19 @@
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom"
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom"
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
@@ -2599,7 +2636,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "22.3",
+            "locked": "24.0",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
@@ -2613,7 +2650,7 @@
             ]
         },
         "com.graphql-java:java-dataloader": {
-            "locked": "3.3.0",
+            "locked": "5.0.0",
             "transitive": [
                 "com.graphql-java:graphql-java",
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
@@ -2651,13 +2688,13 @@
             ]
         },
         "io.micrometer:micrometer-commons": {
-            "locked": "1.14.6",
+            "locked": "1.15.0",
             "transitive": [
                 "io.micrometer:micrometer-observation"
             ]
         },
         "io.micrometer:micrometer-observation": {
-            "locked": "1.14.6",
+            "locked": "1.15.0",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context",
@@ -2665,65 +2702,65 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.14.0"
+            "locked": "1.14.2"
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api-jvm": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-agent-api"
             ]
         },
         "io.mockk:mockk-agent-jvm": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-core-jvm": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-core"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-dsl-jvm": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-dsl"
             ]
         },
         "io.mockk:mockk-jvm": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk"
             ]
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.7.5",
+            "locked": "3.7.6",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "io.projectreactor:reactor-test",
@@ -2731,7 +2768,7 @@
             ]
         },
         "io.projectreactor:reactor-test": {
-            "locked": "3.7.5",
+            "locked": "3.7.6",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
@@ -2755,7 +2792,7 @@
             ]
         },
         "net.bytebuddy:byte-buddy": {
-            "locked": "1.15.11",
+            "locked": "1.17.5",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "org.assertj:assertj-core",
@@ -2763,7 +2800,7 @@
             ]
         },
         "net.bytebuddy:byte-buddy-agent": {
-            "locked": "1.15.11",
+            "locked": "1.17.5",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "org.mockito:mockito-core"
@@ -2804,19 +2841,19 @@
             ]
         },
         "org.assertj:assertj-core": {
-            "locked": "3.26.3",
+            "locked": "3.27.3",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.awaitility:awaitility": {
-            "locked": "4.2.2",
+            "locked": "4.3.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.hamcrest:hamcrest": {
-            "locked": "2.2",
+            "locked": "3.0",
             "transitive": [
                 "org.awaitility:awaitility",
                 "org.springframework.boot:spring-boot-starter-test"
@@ -2903,15 +2940,22 @@
                 "org.jetbrains.kotlinx:kotlinx-coroutines-test-jvm"
             ]
         },
+        "org.jspecify:jspecify": {
+            "locked": "1.0.0",
+            "transitive": [
+                "com.graphql-java:graphql-java",
+                "com.graphql-java:java-dataloader"
+            ]
+        },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.11.4",
+            "locked": "5.12.2",
             "transitive": [
                 "org.junit:junit-bom",
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.junit.jupiter:junit-jupiter-api": {
-            "locked": "5.11.4",
+            "locked": "5.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter",
                 "org.junit.jupiter:junit-jupiter-params",
@@ -2919,21 +2963,21 @@
             ]
         },
         "org.junit.jupiter:junit-jupiter-params": {
-            "locked": "5.11.4",
+            "locked": "5.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter",
                 "org.junit:junit-bom"
             ]
         },
         "org.junit.platform:junit-platform-commons": {
-            "locked": "1.11.4",
+            "locked": "1.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter-api",
                 "org.junit:junit-bom"
             ]
         },
         "org.junit:junit-bom": {
-            "locked": "5.11.4",
+            "locked": "5.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter",
                 "org.junit.jupiter:junit-jupiter-api",
@@ -2942,14 +2986,14 @@
             ]
         },
         "org.mockito:mockito-core": {
-            "locked": "5.14.2",
+            "locked": "5.17.0",
             "transitive": [
                 "org.mockito:mockito-junit-jupiter",
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.mockito:mockito-junit-jupiter": {
-            "locked": "5.14.2",
+            "locked": "5.17.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
@@ -2976,6 +3020,7 @@
             "locked": "1.0.4",
             "transitive": [
                 "com.graphql-java:graphql-java",
+                "com.graphql-java:java-dataloader",
                 "io.projectreactor:reactor-core",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactive"
             ]
@@ -2997,13 +3042,12 @@
             "transitive": [
                 "ch.qos.logback:logback-classic",
                 "com.apollographql.federation:federation-graphql-java-support",
-                "com.graphql-java:java-dataloader",
                 "org.apache.logging.log4j:log4j-to-slf4j",
                 "org.slf4j:jul-to-slf4j"
             ]
         },
         "org.springframework.boot:spring-boot": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-autoconfigure",
                 "org.springframework.boot:spring-boot-starter",
@@ -3012,58 +3056,58 @@
             ]
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter",
                 "org.springframework.boot:spring-boot-test-autoconfigure"
             ]
         },
         "org.springframework.boot:spring-boot-starter": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.springframework.boot:spring-boot-starter-logging": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter"
             ]
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "3.4.5"
+            "locked": "3.5.0"
         },
         "org.springframework.boot:spring-boot-test": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test",
                 "org.springframework.boot:spring-boot-test-autoconfigure"
             ]
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "6.4.5"
+            "locked": "6.5.0"
         },
         "org.springframework.security:spring-security-crypto": {
-            "locked": "6.4.5",
+            "locked": "6.5.0",
             "transitive": [
                 "org.springframework.security:spring-security-core"
             ]
         },
         "org.springframework:spring-aop": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-beans": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-aop",
@@ -3072,14 +3116,14 @@
             ]
         },
         "org.springframework:spring-context": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.boot:spring-boot",
                 "org.springframework.security:spring-security-core"
             ]
         },
         "org.springframework:spring-core": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.boot:spring-boot",
                 "org.springframework.boot:spring-boot-starter",
@@ -3094,36 +3138,36 @@
             ]
         },
         "org.springframework:spring-expression": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-jcl": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework:spring-core"
             ]
         },
         "org.springframework:spring-test": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test",
                 "org.springframework.boot:spring-boot-test"
             ]
         },
         "org.springframework:spring-web": {
-            "locked": "6.2.6"
+            "locked": "6.2.7"
         },
         "org.xmlunit:xmlunit-core": {
-            "locked": "2.10.0",
+            "locked": "2.10.1",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.yaml:snakeyaml": {
-            "locked": "2.3",
+            "locked": "2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter"
             ]
@@ -3149,7 +3193,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -3158,7 +3202,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-core": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -3166,7 +3210,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
@@ -3174,19 +3218,19 @@
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom"
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom"
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
@@ -3202,7 +3246,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "22.3",
+            "locked": "24.0",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
@@ -3216,7 +3260,7 @@
             ]
         },
         "com.graphql-java:java-dataloader": {
-            "locked": "3.3.0",
+            "locked": "5.0.0",
             "transitive": [
                 "com.graphql-java:graphql-java",
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
@@ -3254,13 +3298,13 @@
             ]
         },
         "io.micrometer:micrometer-commons": {
-            "locked": "1.14.6",
+            "locked": "1.15.0",
             "transitive": [
                 "io.micrometer:micrometer-observation"
             ]
         },
         "io.micrometer:micrometer-observation": {
-            "locked": "1.14.6",
+            "locked": "1.15.0",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context",
@@ -3268,35 +3312,35 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.14.0"
+            "locked": "1.14.2"
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk",
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk"
             ]
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.7.5",
+            "locked": "3.7.6",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "io.projectreactor:reactor-test",
@@ -3304,7 +3348,7 @@
             ]
         },
         "io.projectreactor:reactor-test": {
-            "locked": "3.7.5",
+            "locked": "3.7.6",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
@@ -3328,14 +3372,14 @@
             ]
         },
         "net.bytebuddy:byte-buddy": {
-            "locked": "1.15.11",
+            "locked": "1.17.5",
             "transitive": [
                 "org.assertj:assertj-core",
                 "org.mockito:mockito-core"
             ]
         },
         "net.bytebuddy:byte-buddy-agent": {
-            "locked": "1.15.11",
+            "locked": "1.17.5",
             "transitive": [
                 "org.mockito:mockito-core"
             ]
@@ -3375,19 +3419,19 @@
             ]
         },
         "org.assertj:assertj-core": {
-            "locked": "3.26.3",
+            "locked": "3.27.3",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.awaitility:awaitility": {
-            "locked": "4.2.2",
+            "locked": "4.3.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.hamcrest:hamcrest": {
-            "locked": "2.2",
+            "locked": "3.0",
             "transitive": [
                 "org.awaitility:awaitility",
                 "org.springframework.boot:spring-boot-starter-test"
@@ -3469,15 +3513,22 @@
         "org.jetbrains:annotations": {
             "locked": "26.0.2"
         },
+        "org.jspecify:jspecify": {
+            "locked": "1.0.0",
+            "transitive": [
+                "com.graphql-java:graphql-java",
+                "com.graphql-java:java-dataloader"
+            ]
+        },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.11.4",
+            "locked": "5.12.2",
             "transitive": [
                 "org.junit:junit-bom",
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.junit.jupiter:junit-jupiter-api": {
-            "locked": "5.11.4",
+            "locked": "5.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter",
                 "org.junit.jupiter:junit-jupiter-params",
@@ -3485,21 +3536,21 @@
             ]
         },
         "org.junit.jupiter:junit-jupiter-params": {
-            "locked": "5.11.4",
+            "locked": "5.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter",
                 "org.junit:junit-bom"
             ]
         },
         "org.junit.platform:junit-platform-commons": {
-            "locked": "1.11.4",
+            "locked": "1.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter-api",
                 "org.junit:junit-bom"
             ]
         },
         "org.junit:junit-bom": {
-            "locked": "5.11.4",
+            "locked": "5.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter",
                 "org.junit.jupiter:junit-jupiter-api",
@@ -3508,14 +3559,14 @@
             ]
         },
         "org.mockito:mockito-core": {
-            "locked": "5.14.2",
+            "locked": "5.17.0",
             "transitive": [
                 "org.mockito:mockito-junit-jupiter",
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.mockito:mockito-junit-jupiter": {
-            "locked": "5.14.2",
+            "locked": "5.17.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
@@ -3536,6 +3587,7 @@
             "locked": "1.0.4",
             "transitive": [
                 "com.graphql-java:graphql-java",
+                "com.graphql-java:java-dataloader",
                 "io.projectreactor:reactor-core",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactive"
             ]
@@ -3557,13 +3609,12 @@
             "transitive": [
                 "ch.qos.logback:logback-classic",
                 "com.apollographql.federation:federation-graphql-java-support",
-                "com.graphql-java:java-dataloader",
                 "org.apache.logging.log4j:log4j-to-slf4j",
                 "org.slf4j:jul-to-slf4j"
             ]
         },
         "org.springframework.boot:spring-boot": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-autoconfigure",
                 "org.springframework.boot:spring-boot-starter",
@@ -3572,58 +3623,58 @@
             ]
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter",
                 "org.springframework.boot:spring-boot-test-autoconfigure"
             ]
         },
         "org.springframework.boot:spring-boot-starter": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.springframework.boot:spring-boot-starter-logging": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter"
             ]
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "3.4.5"
+            "locked": "3.5.0"
         },
         "org.springframework.boot:spring-boot-test": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test",
                 "org.springframework.boot:spring-boot-test-autoconfigure"
             ]
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "6.4.5"
+            "locked": "6.5.0"
         },
         "org.springframework.security:spring-security-crypto": {
-            "locked": "6.4.5",
+            "locked": "6.5.0",
             "transitive": [
                 "org.springframework.security:spring-security-core"
             ]
         },
         "org.springframework:spring-aop": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-beans": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-aop",
@@ -3632,14 +3683,14 @@
             ]
         },
         "org.springframework:spring-context": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.boot:spring-boot",
                 "org.springframework.security:spring-security-core"
             ]
         },
         "org.springframework:spring-core": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.boot:spring-boot",
                 "org.springframework.boot:spring-boot-starter",
@@ -3654,36 +3705,36 @@
             ]
         },
         "org.springframework:spring-expression": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-jcl": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework:spring-core"
             ]
         },
         "org.springframework:spring-test": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test",
                 "org.springframework.boot:spring-boot-test"
             ]
         },
         "org.springframework:spring-web": {
-            "locked": "6.2.6"
+            "locked": "6.2.7"
         },
         "org.xmlunit:xmlunit-core": {
-            "locked": "2.10.0",
+            "locked": "2.10.1",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.yaml:snakeyaml": {
-            "locked": "2.3",
+            "locked": "2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter"
             ]
@@ -3709,7 +3760,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -3718,7 +3769,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-core": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
@@ -3726,7 +3777,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.datatype:jackson-datatype-jsr310",
                 "com.fasterxml.jackson.module:jackson-module-kotlin",
@@ -3734,19 +3785,19 @@
             ]
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom"
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson:jackson-bom"
             ]
         },
         "com.fasterxml.jackson:jackson-bom": {
-            "locked": "2.18.3",
+            "locked": "2.19.0",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-annotations",
                 "com.fasterxml.jackson.core:jackson-core",
@@ -3762,7 +3813,7 @@
             ]
         },
         "com.graphql-java:graphql-java": {
-            "locked": "22.3",
+            "locked": "24.0",
             "transitive": [
                 "com.apollographql.federation:federation-graphql-java-support",
                 "com.graphql-java:graphql-java-extended-scalars",
@@ -3777,7 +3828,7 @@
             ]
         },
         "com.graphql-java:java-dataloader": {
-            "locked": "3.3.0",
+            "locked": "5.0.0",
             "transitive": [
                 "com.graphql-java:graphql-java",
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
@@ -3815,13 +3866,13 @@
             ]
         },
         "io.micrometer:micrometer-commons": {
-            "locked": "1.14.6",
+            "locked": "1.15.0",
             "transitive": [
                 "io.micrometer:micrometer-observation"
             ]
         },
         "io.micrometer:micrometer-observation": {
-            "locked": "1.14.6",
+            "locked": "1.15.0",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context",
@@ -3829,35 +3880,35 @@
             ]
         },
         "io.mockk:mockk": {
-            "locked": "1.14.0"
+            "locked": "1.14.2"
         },
         "io.mockk:mockk-agent": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-agent-api-jvm": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-agent-api"
             ]
         },
         "io.mockk:mockk-agent-jvm": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-agent"
             ]
         },
         "io.mockk:mockk-core": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "io.mockk:mockk-dsl-jvm",
@@ -3865,31 +3916,31 @@
             ]
         },
         "io.mockk:mockk-core-jvm": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-core"
             ]
         },
         "io.mockk:mockk-dsl": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-jvm"
             ]
         },
         "io.mockk:mockk-dsl-jvm": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk-dsl"
             ]
         },
         "io.mockk:mockk-jvm": {
-            "locked": "1.14.0",
+            "locked": "1.14.2",
             "transitive": [
                 "io.mockk:mockk"
             ]
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.7.5",
+            "locked": "3.7.6",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform",
                 "io.projectreactor:reactor-test",
@@ -3897,7 +3948,7 @@
             ]
         },
         "io.projectreactor:reactor-test": {
-            "locked": "3.7.5",
+            "locked": "3.7.6",
             "transitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-platform"
             ]
@@ -3927,7 +3978,7 @@
             ]
         },
         "net.bytebuddy:byte-buddy": {
-            "locked": "1.15.11",
+            "locked": "1.17.5",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "org.assertj:assertj-core",
@@ -3935,7 +3986,7 @@
             ]
         },
         "net.bytebuddy:byte-buddy-agent": {
-            "locked": "1.15.11",
+            "locked": "1.17.5",
             "transitive": [
                 "io.mockk:mockk-agent-jvm",
                 "org.mockito:mockito-core"
@@ -3969,19 +4020,19 @@
             ]
         },
         "org.assertj:assertj-core": {
-            "locked": "3.26.3",
+            "locked": "3.27.3",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.awaitility:awaitility": {
-            "locked": "4.2.2",
+            "locked": "4.3.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.hamcrest:hamcrest": {
-            "locked": "2.2",
+            "locked": "3.0",
             "transitive": [
                 "org.awaitility:awaitility",
                 "org.hamcrest:hamcrest-core",
@@ -3989,7 +4040,7 @@
             ]
         },
         "org.hamcrest:hamcrest-core": {
-            "locked": "2.2",
+            "locked": "3.0",
             "transitive": [
                 "junit:junit"
             ]
@@ -4084,8 +4135,15 @@
                 "org.jetbrains.kotlinx:kotlinx-coroutines-test-jvm"
             ]
         },
+        "org.jspecify:jspecify": {
+            "locked": "1.0.0",
+            "transitive": [
+                "com.graphql-java:graphql-java",
+                "com.graphql-java:java-dataloader"
+            ]
+        },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.11.4",
+            "locked": "5.12.2",
             "transitive": [
                 "io.mockk:mockk-jvm",
                 "org.junit:junit-bom",
@@ -4093,7 +4151,7 @@
             ]
         },
         "org.junit.jupiter:junit-jupiter-api": {
-            "locked": "5.11.4",
+            "locked": "5.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter",
                 "org.junit.jupiter:junit-jupiter-engine",
@@ -4103,21 +4161,21 @@
             ]
         },
         "org.junit.jupiter:junit-jupiter-engine": {
-            "locked": "5.11.4",
+            "locked": "5.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter",
                 "org.junit:junit-bom"
             ]
         },
         "org.junit.jupiter:junit-jupiter-params": {
-            "locked": "5.11.4",
+            "locked": "5.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter",
                 "org.junit:junit-bom"
             ]
         },
         "org.junit.platform:junit-platform-commons": {
-            "locked": "1.11.4",
+            "locked": "1.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter-api",
                 "org.junit.platform:junit-platform-engine",
@@ -4125,32 +4183,40 @@
             ]
         },
         "org.junit.platform:junit-platform-engine": {
-            "locked": "1.11.4",
+            "locked": "1.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter-engine",
+                "org.junit.platform:junit-platform-launcher",
+                "org.junit:junit-bom"
+            ]
+        },
+        "org.junit.platform:junit-platform-launcher": {
+            "locked": "1.12.2",
+            "transitive": [
                 "org.junit:junit-bom"
             ]
         },
         "org.junit:junit-bom": {
-            "locked": "5.11.4",
+            "locked": "5.12.2",
             "transitive": [
                 "org.junit.jupiter:junit-jupiter",
                 "org.junit.jupiter:junit-jupiter-api",
                 "org.junit.jupiter:junit-jupiter-engine",
                 "org.junit.jupiter:junit-jupiter-params",
                 "org.junit.platform:junit-platform-commons",
-                "org.junit.platform:junit-platform-engine"
+                "org.junit.platform:junit-platform-engine",
+                "org.junit.platform:junit-platform-launcher"
             ]
         },
         "org.mockito:mockito-core": {
-            "locked": "5.14.2",
+            "locked": "5.17.0",
             "transitive": [
                 "org.mockito:mockito-junit-jupiter",
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.mockito:mockito-junit-jupiter": {
-            "locked": "5.14.2",
+            "locked": "5.17.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
@@ -4179,6 +4245,7 @@
             "locked": "1.0.4",
             "transitive": [
                 "com.graphql-java:graphql-java",
+                "com.graphql-java:java-dataloader",
                 "io.projectreactor:reactor-core",
                 "org.jetbrains.kotlinx:kotlinx-coroutines-reactive"
             ]
@@ -4200,14 +4267,14 @@
             "transitive": [
                 "ch.qos.logback:logback-classic",
                 "com.apollographql.federation:federation-graphql-java-support",
-                "com.graphql-java:java-dataloader",
                 "com.jayway.jsonpath:json-path",
+                "com.netflix.graphql.dgs:graphql-error-types",
                 "org.apache.logging.log4j:log4j-to-slf4j",
                 "org.slf4j:jul-to-slf4j"
             ]
         },
         "org.springframework.boot:spring-boot": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-autoconfigure",
                 "org.springframework.boot:spring-boot-starter",
@@ -4216,58 +4283,58 @@
             ]
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter",
                 "org.springframework.boot:spring-boot-test-autoconfigure"
             ]
         },
         "org.springframework.boot:spring-boot-starter": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.springframework.boot:spring-boot-starter-logging": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter"
             ]
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "3.4.5"
+            "locked": "3.5.0"
         },
         "org.springframework.boot:spring-boot-test": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test",
                 "org.springframework.boot:spring-boot-test-autoconfigure"
             ]
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
-            "locked": "3.4.5",
+            "locked": "3.5.0",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "6.4.5"
+            "locked": "6.5.0"
         },
         "org.springframework.security:spring-security-crypto": {
-            "locked": "6.4.5",
+            "locked": "6.5.0",
             "transitive": [
                 "org.springframework.security:spring-security-core"
             ]
         },
         "org.springframework:spring-aop": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-beans": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-aop",
@@ -4276,14 +4343,14 @@
             ]
         },
         "org.springframework:spring-context": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.boot:spring-boot",
                 "org.springframework.security:spring-security-core"
             ]
         },
         "org.springframework:spring-core": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.boot:spring-boot",
                 "org.springframework.boot:spring-boot-starter",
@@ -4298,36 +4365,36 @@
             ]
         },
         "org.springframework:spring-expression": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.security:spring-security-core",
                 "org.springframework:spring-context"
             ]
         },
         "org.springframework:spring-jcl": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework:spring-core"
             ]
         },
         "org.springframework:spring-test": {
-            "locked": "6.2.6",
+            "locked": "6.2.7",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test",
                 "org.springframework.boot:spring-boot-test"
             ]
         },
         "org.springframework:spring-web": {
-            "locked": "6.2.6"
+            "locked": "6.2.7"
         },
         "org.xmlunit:xmlunit-core": {
-            "locked": "2.10.0",
+            "locked": "2.10.1",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter-test"
             ]
         },
         "org.yaml:snakeyaml": {
-            "locked": "2.3",
+            "locked": "2.4",
             "transitive": [
                 "org.springframework.boot:spring-boot-starter"
             ]
