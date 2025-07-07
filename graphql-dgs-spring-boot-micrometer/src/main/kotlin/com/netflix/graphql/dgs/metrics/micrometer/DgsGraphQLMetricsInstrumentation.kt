@@ -10,9 +10,11 @@ import com.netflix.graphql.types.errors.ErrorType
 import graphql.ExecutionInput
 import graphql.ExecutionResult
 import graphql.GraphQLError
+import graphql.GraphQLException
 import graphql.InvalidSyntaxError
 import graphql.analysis.FieldComplexityCalculator
 import graphql.analysis.QueryComplexityCalculator
+import graphql.execution.DataFetcherResult
 import graphql.execution.ExecutionContext
 import graphql.execution.instrumentation.InstrumentationContext
 import graphql.execution.instrumentation.InstrumentationState
@@ -172,18 +174,18 @@ class DgsGraphQLMetricsInstrumentation(
             try {
                 val result = dataFetcher.get(environment)
                 if (result is CompletionStage<*>) {
-                    result.whenComplete { _, error ->
+                    result.whenComplete { value, error ->
                         recordDataFetcherMetrics(
                             registry,
                             sampler,
                             state,
                             parameters,
-                            error,
+                            checkResponseForErrors(value, error),
                             baseTags,
                         )
                     }
                 } else {
-                    recordDataFetcherMetrics(registry, sampler, state, parameters, null, baseTags)
+                    recordDataFetcherMetrics(registry, sampler, state, parameters, checkResponseForErrors(result, null), baseTags)
                 }
                 result
             } catch (exc: Exception) {
@@ -192,6 +194,15 @@ class DgsGraphQLMetricsInstrumentation(
             }
         }
     }
+
+    private fun checkResponseForErrors(
+        value: Any?,
+        error: Throwable?,
+    ): Throwable? =
+        error
+            ?: (value as? DataFetcherResult<*>)
+                ?.takeIf { it.hasErrors() }
+                ?.let { GraphQLException("GraphQL errors in response: ${it.errors}") }
 
     /**
      * Port the implementation from MaxQueryComplexityInstrumentation in graphql-java and store the computed complexity

@@ -39,6 +39,7 @@ import graphql.GraphQLError
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherExceptionHandlerParameters
 import graphql.execution.DataFetcherExceptionHandlerResult
+import graphql.execution.DataFetcherResult
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
@@ -679,6 +680,106 @@ class MicrometerServletSmokeTest {
     }
 
     @Test
+    fun `Assert metrics for a successful async response with errors`() {
+        mvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post("/graphql")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{ "query": "{triggerSuccessfulRequestWithErrorAsync}" }"""),
+            ).andExpect(status().isOk)
+            .andExpect(
+                content().json(
+                    """
+                        |{
+                        |   "errors":[
+                        |      {"message":"Exception triggered."}
+                        |   ],
+                        |   "data":{"triggerSuccessfulRequestWithErrorAsync":"Some data..."}
+                        |}
+                    """.trimMargin(),
+                    false,
+                ),
+            )
+
+        val meters = fetchMeters("gql.")
+
+        assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
+
+        assertThat(meters["gql.error"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
+        assertThat(meters["gql.error"]?.first()?.id?.tags)
+            .containsAll(
+                Tags
+                    .of("outcome", "failure"),
+            )
+
+        assertThat(meters["gql.query"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat(meters["gql.query"]?.first()?.id?.tags)
+            .containsAll(
+                Tags
+                    .of("outcome", "failure"),
+            )
+
+        assertThat(meters["gql.resolver"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat(meters["gql.resolver"]?.first()?.id?.tags)
+            .containsAll(
+                Tags
+                    .of("outcome", "failure"),
+            )
+    }
+
+    @Test
+    fun `Assert metrics for a successful sync response with errors`() {
+        mvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post("/graphql")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{ "query": "{triggerSuccessfulRequestWithErrorSync}" }"""),
+            ).andExpect(status().isOk)
+            .andExpect(
+                content().json(
+                    """
+                        |{
+                        |   "errors":[
+                        |      {"message":"Exception triggered."}
+                        |   ],
+                        |   "data":{"triggerSuccessfulRequestWithErrorSync":"Some data..."}
+                        |}
+                    """.trimMargin(),
+                    false,
+                ),
+            )
+
+        val meters = fetchMeters("gql.")
+
+        assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
+
+        assertThat(meters["gql.error"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
+        assertThat(meters["gql.error"]?.first()?.id?.tags)
+            .containsAll(
+                Tags
+                    .of("outcome", "failure"),
+            )
+
+        assertThat(meters["gql.query"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat(meters["gql.query"]?.first()?.id?.tags)
+            .containsAll(
+                Tags
+                    .of("outcome", "failure"),
+            )
+
+        assertThat(meters["gql.resolver"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat(meters["gql.resolver"]?.first()?.id?.tags)
+            .containsAll(
+                Tags
+                    .of("outcome", "failure"),
+            )
+    }
+
+    @Test
     fun `Assert metrics for custom error`() {
         mvc
             .perform(
@@ -914,6 +1015,8 @@ class MicrometerServletSmokeTest {
                 |    triggerInternalFailure: String
                 |    triggerBadRequestFailure:String
                 |    triggerCustomFailure: String
+                |    triggerSuccessfulRequestWithErrorAsync:String
+                |    triggerSuccessfulRequestWithErrorSync:String
                 |}
                 |
                 |type Mutation{
@@ -955,6 +1058,24 @@ class MicrometerServletSmokeTest {
 
             @DgsQuery
             fun triggerBadRequestFailure(): String = throw DgsBadRequestException("Exception triggered.")
+
+            @DgsQuery
+            fun triggerSuccessfulRequestWithErrorAsync(): CompletableFuture<DataFetcherResult<String>> =
+                CompletableFuture.supplyAsync {
+                    DataFetcherResult
+                        .newResult<String>()
+                        .data("Some data...")
+                        .error(TypedGraphQLError("Exception triggered.", null, null, null, null))
+                        .build()
+                }
+
+            @DgsQuery
+            fun triggerSuccessfulRequestWithErrorSync(): DataFetcherResult<String> =
+                DataFetcherResult
+                    .newResult<String>()
+                    .data("Some data...")
+                    .error(TypedGraphQLError("Exception triggered.", null, null, null, null))
+                    .build()
 
             @DgsQuery
             fun triggerCustomFailure(): String = throw CustomException("Exception triggered.")
