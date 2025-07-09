@@ -262,6 +262,7 @@ class DgsSchemaProvider
             runtimeWiringBuilder.codeRegistry(codeRegistryBuilder.build())
 
             dgsComponents.forEach { dgsComponent -> invokeDgsRuntimeWiring(dgsComponent, runtimeWiringBuilder) }
+            checkUnregisteredTypeResolvers(runtimeWiringBuilder, mergedRegistry)
 
             val runtimeWiring = runtimeWiringBuilder.build()
 
@@ -782,8 +783,6 @@ class DgsSchemaProvider
             runtimeWiringBuilder: RuntimeWiring.Builder,
             mergedRegistry: TypeDefinitionRegistry,
         ) {
-            val registeredTypeResolvers = mutableSetOf<String>()
-
             dgsComponents.forEach { dgsComponent ->
                 dgsComponent
                     .annotatedMethods<DgsTypeResolver>()
@@ -815,8 +814,6 @@ class DgsSchemaProvider
                         }
                         // do not add the default resolver if another resolver with the same name is present
                         if (defaultTypeResolver == null || !overrideTypeResolver) {
-                            registeredTypeResolvers += annotation.name
-
                             val dgsComponentInstance = dgsComponent.instance
                             runtimeWiringBuilder.type(
                                 TypeRuntimeWiring
@@ -838,6 +835,15 @@ class DgsSchemaProvider
                         }
                     }
             }
+        }
+
+        private fun checkUnregisteredTypeResolvers(
+            runtimeWiringBuilder: RuntimeWiring.Builder,
+            mergedRegistry: TypeDefinitionRegistry,
+        ) {
+            // Build the RuntimeWiring to get access to registered type resolvers
+            val runtimeWiring = runtimeWiringBuilder.build()
+            val registeredTypeResolvers = runtimeWiring.typeResolvers.keys
 
             // Add a fallback type resolver for types that don't have a type resolver registered.
             // This works when the Java type has the same name as the GraphQL type.

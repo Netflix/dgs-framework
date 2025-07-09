@@ -1365,6 +1365,15 @@ internal class DgsSchemaProviderTest {
         }
     }
 
+    @Test
+    fun `StrictMode should not fail when enabled and @DgsRuntimeWiring registers type resolver`() {
+        val locations = listOf("classpath:union/union.graphqls")
+        contextRunner.withBeans(RegisterTypeResolverWithRuntimeWiring::class).run { context ->
+            val schemaProvider = schemaProvider(applicationContext = context, schemaLocations = locations, strictMode = true)
+            assertDoesNotThrow { schemaProvider.schema() }
+        }
+    }
+
     @DgsComponent
     class DuplicateScalarWiring {
         @DgsRuntimeWiring
@@ -1388,6 +1397,24 @@ internal class DgsSchemaProviderTest {
                     .coercing(LocalDateTimeScalar())
                     .build(),
             )
+            return builder
+        }
+    }
+
+    @DgsComponent
+    class RegisterTypeResolverWithRuntimeWiring {
+        @DgsRuntimeWiring
+        fun customWiring(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
+            builder.type("RequestType") { type ->
+                type.typeResolver { env ->
+                    env.schema.getObjectType("RequestType")
+                }
+            }
+            builder.type("ResultType") { type ->
+                type.typeResolver { env ->
+                    env.schema.getObjectType("ResultType")
+                }
+            }
             return builder
         }
     }
