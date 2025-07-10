@@ -86,10 +86,10 @@ dependencies {
             version { require("3.6.1") }
         }
         // CVEs
-        api("org.apache.logging.log4j:log4j-to-slf4j:2.24.3") {
+        api("org.apache.logging.log4j:log4j-to-slf4j:2.25.0") {
             because("Refer to CVE-2021-44228; https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228")
          }
-         api("org.apache.logging.log4j:log4j-api:2.24.3") {
+         api("org.apache.logging.log4j:log4j-api:2.25.0") {
             because("Refer to CVE-2021-44228; https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228")
          }
         api("io.micrometer:context-propagation") {
