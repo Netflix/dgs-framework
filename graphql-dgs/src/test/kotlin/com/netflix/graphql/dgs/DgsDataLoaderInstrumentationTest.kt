@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs
 
+import com.netflix.graphql.dgs.internal.DefaultDgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsDataLoaderInstrumentationDataLoaderCustomizer
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsWrapWithContextDataLoaderCustomizer
@@ -44,7 +45,7 @@ import java.util.concurrent.atomic.AtomicInteger
 class DgsDataLoaderInstrumentationTest {
     private val applicationContextRunner: ApplicationContextRunner =
         ApplicationContextRunner()
-            .withBean(DgsDataLoaderProvider::class.java)
+            .withBean(DefaultDgsDataLoaderProvider::class.java)
 
     @Test
     fun instrumentationIsCorrectlyCalled() {
@@ -126,37 +127,37 @@ class DgsDataLoaderInstrumentationTest {
                     }.join()
             }
     }
-}
 
-class TestDataLoaderInstrumentation(
-    private val beforeCounter: AtomicInteger,
-    private val afterCounter: AtomicInteger,
-    private val exceptionCounter: AtomicInteger,
-) : DgsDataLoaderInstrumentation {
-    class TestDataLoaderInstrumentationContext(
+    class TestDataLoaderInstrumentation(
+        private val beforeCounter: AtomicInteger,
         private val afterCounter: AtomicInteger,
         private val exceptionCounter: AtomicInteger,
-    ) : DgsDataLoaderInstrumentationContext {
-        override fun onComplete(
-            result: Any?,
-            exception: Any?,
-        ) {
-            if (result != null) {
-                afterCounter.addAndGet(1)
-            }
+    ) : DgsDataLoaderInstrumentation {
+        class TestDataLoaderInstrumentationContext(
+            private val afterCounter: AtomicInteger,
+            private val exceptionCounter: AtomicInteger,
+        ) : DgsDataLoaderInstrumentationContext {
+            override fun onComplete(
+                result: Any?,
+                exception: Any?,
+            ) {
+                if (result != null) {
+                    afterCounter.addAndGet(1)
+                }
 
-            if (exception != null) {
-                exceptionCounter.addAndGet(1)
+                if (exception != null) {
+                    exceptionCounter.addAndGet(1)
+                }
             }
         }
-    }
 
-    override fun onDispatch(
-        name: String,
-        keys: List<Any>,
-        batchLoaderEnvironment: BatchLoaderEnvironment,
-    ): TestDataLoaderInstrumentationContext {
-        beforeCounter.addAndGet(1)
-        return TestDataLoaderInstrumentationContext(afterCounter, exceptionCounter)
+        override fun onDispatch(
+            name: String,
+            keys: List<Any>,
+            batchLoaderEnvironment: BatchLoaderEnvironment,
+        ): TestDataLoaderInstrumentationContext {
+            beforeCounter.addAndGet(1)
+            return TestDataLoaderInstrumentationContext(afterCounter, exceptionCounter)
+        }
     }
 }

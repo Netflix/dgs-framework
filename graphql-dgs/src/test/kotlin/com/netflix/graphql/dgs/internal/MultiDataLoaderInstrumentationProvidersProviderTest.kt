@@ -80,7 +80,7 @@ internal class MultiDataLoaderInstrumentationProvidersProviderTest {
             applicationContext: ApplicationContext,
             extensionProviders: List<DataLoaderInstrumentationExtensionProvider>,
         ): DgsDataLoaderProvider =
-            DgsDataLoaderProvider(
+            DefaultDgsDataLoaderProvider(
                 applicationContext = applicationContext,
                 extensionProviders = extensionProviders,
             )

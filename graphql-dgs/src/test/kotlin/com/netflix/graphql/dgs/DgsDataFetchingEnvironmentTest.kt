@@ -16,7 +16,7 @@
 
 package com.netflix.graphql.dgs
 
-import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
+import com.netflix.graphql.dgs.internal.DefaultDgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.method.DataFetchingEnvironmentArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
@@ -121,7 +121,7 @@ internal class DgsDataFetchingEnvironmentTest {
     }
 
     private fun validateDataLoader(context: ApplicationContext) {
-        val provider = DgsDataLoaderProvider(context)
+        val provider = DefaultDgsDataLoaderProvider(context)
         provider.findDataLoaders()
         val dataLoaderRegistry = provider.buildRegistry()
 
@@ -172,7 +172,7 @@ internal class DgsDataFetchingEnvironmentTest {
     @Test
     fun getMultipleDataLoadersFromField() {
         contextRunner.withBeans(HelloFetcherWithMultipleField::class, ExampleMultipleBatchLoadersAsField::class).run { context ->
-            val provider = DgsDataLoaderProvider(context)
+            val provider = DefaultDgsDataLoaderProvider(context)
             provider.findDataLoaders()
             val dataLoaderRegistry = provider.buildRegistry()
 
@@ -201,8 +201,7 @@ internal class DgsDataFetchingEnvironmentTest {
     @Test
     fun getMappedDataLoader() {
         contextRunner.withBeans(HelloFetcherMapped::class, ExampleMappedBatchLoader::class).run { context ->
-
-            val provider = DgsDataLoaderProvider(context)
+            val provider = DefaultDgsDataLoaderProvider(context)
             provider.findDataLoaders()
             val dataLoaderRegistry = provider.buildRegistry()
 
@@ -233,7 +232,7 @@ internal class DgsDataFetchingEnvironmentTest {
     @Test
     fun getMappedDataLoaderFromField() {
         contextRunner.withBeans(HelloFetcherWithFieldMapped::class, ExampleMappedBatchLoaderFromField::class).run { context ->
-            val provider = DgsDataLoaderProvider(context)
+            val provider = DefaultDgsDataLoaderProvider(context)
             provider.findDataLoaders()
             val dataLoaderRegistry = provider.buildRegistry()
 

@@ -21,6 +21,7 @@ import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsDataLoaderCustomizer
 import com.netflix.graphql.dgs.DgsDataLoaderInstrumentation
 import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
+import com.netflix.graphql.dgs.DgsDataLoaderReloadController
 import com.netflix.graphql.dgs.DgsDefaultPreparsedDocumentProvider
 import com.netflix.graphql.dgs.DgsExecutionResult
 import com.netflix.graphql.dgs.DgsFederationResolver
@@ -38,6 +39,8 @@ import com.netflix.graphql.dgs.context.GraphQLContextContributorInstrumentation
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
 import com.netflix.graphql.dgs.internal.DataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.DefaultDataLoaderOptionsProvider
+import com.netflix.graphql.dgs.internal.DefaultDgsDataLoaderProvider
+import com.netflix.graphql.dgs.internal.DefaultDgsDataLoaderReloadController
 import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
 import com.netflix.graphql.dgs.internal.DgsDataLoaderInstrumentationDataLoaderCustomizer
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
@@ -50,6 +53,7 @@ import com.netflix.graphql.dgs.internal.FluxDataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.GraphQLJavaErrorInstrumentation
 import com.netflix.graphql.dgs.internal.MonoDataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.QueryValueCustomizer
+import com.netflix.graphql.dgs.internal.ReloadableDgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.method.ArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import com.netflix.graphql.dgs.mvc.internal.method.HandlerMethodArgumentResolverAdapter
@@ -61,6 +65,8 @@ import com.netflix.graphql.dgs.springgraphql.DgsGraphQLSourceBuilder
 import com.netflix.graphql.dgs.springgraphql.ReloadableGraphQLSource
 import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsReactiveQueryExecutor
+import com.netflix.graphql.dgs.springgraphql.conditions.ConditionalOnDgsReload
+import com.netflix.graphql.dgs.springgraphql.conditions.OnDgsReloadCondition
 import com.netflix.graphql.dgs.springgraphql.webflux.DgsWebFluxGraphQLInterceptor
 import com.netflix.graphql.dgs.springgraphql.webmvc.DgsWebMvcGraphQLInterceptor
 import graphql.GraphQLError
@@ -100,6 +106,7 @@ import org.springframework.boot.system.JavaVersion
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import org.springframework.core.DefaultParameterNameDiscoverer
 import org.springframework.core.Ordered
 import org.springframework.core.PriorityOrdered
@@ -144,7 +151,7 @@ import java.util.function.Consumer
 import java.util.stream.Collectors
 
 /**
- * Framework auto configuration based on open source Spring only, without Netflix integrations.
+ * Framework autoconfiguration based on open source Spring only, without Netflix integrations.
  * This does NOT have logging, tracing, metrics and security integration.
  */
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
@@ -221,15 +228,81 @@ open class DgsSpringGraphQLAutoConfiguration(
         extensionProviders: List<DataLoaderInstrumentationExtensionProvider>,
         customizers: List<DgsDataLoaderCustomizer>,
     ): DgsDataLoaderProvider =
-        DgsDataLoaderProvider(
+        DefaultDgsDataLoaderProvider(
             applicationContext = applicationContext,
             extensionProviders = extensionProviders,
+            customizers = customizers,
             dataLoaderOptionsProvider = dataloaderOptionProvider,
             scheduledExecutorService = dgsScheduledExecutorService,
             scheduleDuration = dataloaderConfigProps.scheduleDuration,
             enableTickerMode = dataloaderConfigProps.tickerModeEnabled,
-            customizers = customizers,
         )
+
+    /**
+     * Autoconfiguration for DGS Data Loader reloading.
+     *
+     * This configuration is only activated when the 'dgs.reload' property is set to `true`.
+     * It provides the necessary beans for data loader reloading, including:
+     * - [ReloadableDgsDataLoaderProvider] that wraps the default provider implementation, the [DefaultDgsDataLoaderProvider].
+     * - An implementation of a [DgsDataLoaderReloadController] that can be used ot force reloading of _Data Loaders_.
+     *
+     * **The reloading functionality is designed to be used primarily in development**,
+     * it is discouraged to be used in production.
+     */
+    @AutoConfiguration
+    @ConditionalOnDgsReload
+    open class DgsDataLoaderReloadAutoConfiguration(
+        private val dataloaderConfigProps: DgsDataloaderConfigurationProperties,
+    ) {
+        /**
+         * Creates a [ReloadableDgsDataLoaderProvider] that wraps the standard [DgsDataLoaderProvider].
+         *
+         * This provider supports dynamic reloading of data loaders based on the [DgsReloadDataLoadersIndicator].
+         * It maintains the same interface as the standard provider but adds reload capabilities.
+         *
+         * The `@Primary` annotation ensures this bean takes precedence over the standard `DgsDataLoaderProvider`
+         * when reload functionality is enabled.
+         *
+         */
+        @Bean
+        @Primary
+        open fun reloadableDgsDataLoaderProvider(
+            applicationContext: ApplicationContext,
+            dataLoaderOptionProvider: DgsDataLoaderOptionsProvider,
+            @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService,
+            extensionProviders: List<DataLoaderInstrumentationExtensionProvider>,
+            customizers: List<DgsDataLoaderCustomizer>,
+        ): DgsDataLoaderProvider {
+            LOG.info("Creating reloadable data loader provider with reload support enabled")
+            return ReloadableDgsDataLoaderProvider(
+                applicationContext = applicationContext,
+                extensionProviders = extensionProviders,
+                customizers = customizers,
+                dataLoaderOptionsProvider = dataLoaderOptionProvider,
+                scheduledExecutorService = dgsScheduledExecutorService,
+                scheduleDuration = dataloaderConfigProps.scheduleDuration,
+                enableTickerMode = dataloaderConfigProps.tickerModeEnabled,
+            )
+        }
+
+        /**
+         * Creates the default data loader reload controller.
+         *
+         * This controller provides a programmatic API for triggering data loader reloads
+         * and accessing reload statistics. It's only available when reload functionality is enabled.
+         *
+         * @return DgsDataLoaderReloadController instance
+         */
+        @Bean
+        @ConditionalOnMissingBean
+        open fun dgsDataLoaderReloadController(
+            reloadableDgsDataLoaderProvider: ReloadableDgsDataLoaderProvider,
+        ): DgsDataLoaderReloadController {
+            LOG.info("Creating data loader reload controller")
+            // Get the actual ReloadableDgsDataLoaderProvider instance from the context
+            return DefaultDgsDataLoaderReloadController(reloadableDgsDataLoaderProvider)
+        }
+    }
 
     @Bean
     open fun entityFetcherRegistry(): EntityFetcherRegistry = EntityFetcherRegistry()
@@ -272,9 +345,7 @@ open class DgsSpringGraphQLAutoConfiguration(
     @Bean
     @ConditionalOnMissingBean
     open fun defaultReloadSchemaIndicator(environment: Environment): ReloadSchemaIndicator {
-        val isLaptopProfile = environment.activeProfiles.contains("laptop")
-        val hotReloadSetting = environment.getProperty("dgs.reload", Boolean::class.java, isLaptopProfile)
-
+        val hotReloadSetting = OnDgsReloadCondition.evaluate(environment)
         return ReloadSchemaIndicator {
             hotReloadSetting
         }
