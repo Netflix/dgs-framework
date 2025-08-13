@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs
 import com.netflix.graphql.dgs.exceptions.DgsUnnamedDataLoaderOnFieldException
 import com.netflix.graphql.dgs.exceptions.InvalidDataLoaderTypeException
 import com.netflix.graphql.dgs.exceptions.MultipleDataLoadersDefinedException
+import com.netflix.graphql.dgs.internal.DefaultDgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsWrapWithContextDataLoaderCustomizer
 import graphql.schema.DataFetchingEnvironmentImpl
@@ -38,10 +39,10 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
-class DgsDataLoaderProviderTest {
+class DefaultDgsDataLoaderProviderTest {
     private val applicationContextRunner: ApplicationContextRunner =
         ApplicationContextRunner()
-            .withBean(DgsDataLoaderProvider::class.java)
+            .withBean(DefaultDgsDataLoaderProvider::class.java)
 
     @Test
     fun findDataLoaders() {
