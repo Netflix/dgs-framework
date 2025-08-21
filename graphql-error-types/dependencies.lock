@@ -7,7 +7,7 @@
             "project": true
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "compileClasspath": {
@@ -21,7 +21,7 @@
             "project": true
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.jetbrains:annotations": {
             "locked": "26.0.2"
@@ -43,7 +43,7 @@
             "project": true
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.jetbrains:annotations": {
             "locked": "26.0.2"
@@ -65,7 +65,7 @@
     },
     "jmhApiDependenciesMetadata": {
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "jmhCompileClasspath": {
@@ -79,7 +79,7 @@
             "project": true
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.jetbrains:annotations": {
             "locked": "26.0.2"
@@ -99,7 +99,7 @@
     },
     "jmhImplementationDependenciesMetadata": {
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.37"
@@ -122,7 +122,7 @@
             "locked": "1.14.5"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.jetbrains:annotations": {
             "locked": "26.0.2"
@@ -154,53 +154,53 @@
     },
     "kotlinCompilerClasspath": {
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "kotlinCompilerPluginClasspathJmh": {
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "kotlinKlibCommonizerClasspath": {
         "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "ktlint": {
         "com.pinterest.ktlint:ktlint-cli-reporter-checkstyle": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-cli-reporter-core": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-cli-reporter-html": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-cli-reporter-json": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-cli-reporter-plain": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-cli-reporter-sarif": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-rule-engine": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-ruleset-standard": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         }
     },
     "runtimeClasspath": {
@@ -211,7 +211,7 @@
             "project": true
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.jetbrains:annotations": {
             "locked": "26.0.2"
@@ -231,7 +231,7 @@
             "locked": "1.14.5"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.jetbrains:annotations": {
             "locked": "26.0.2"
@@ -260,7 +260,7 @@
             "locked": "1.14.5"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.jetbrains:annotations": {
             "locked": "26.0.2"
@@ -289,7 +289,7 @@
             "locked": "1.14.5"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.jetbrains:annotations": {
             "locked": "26.0.2"

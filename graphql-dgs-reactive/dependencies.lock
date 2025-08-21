@@ -40,7 +40,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "compileClasspath": {
@@ -90,7 +90,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
             "locked": "1.8.1"
@@ -163,7 +163,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
             "locked": "1.8.1"
@@ -188,7 +188,7 @@
     },
     "jmhApiDependenciesMetadata": {
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "jmhCompileClasspath": {
@@ -238,7 +238,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
             "locked": "1.8.1"
@@ -267,7 +267,7 @@
     },
     "jmhImplementationDependenciesMetadata": {
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.37"
@@ -352,14 +352,14 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
             "firstLevelTransitive": [
@@ -423,53 +423,53 @@
     },
     "kotlinCompilerClasspath": {
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "kotlinCompilerPluginClasspathJmh": {
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "kotlinKlibCommonizerClasspath": {
         "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "ktlint": {
         "com.pinterest.ktlint:ktlint-cli-reporter-checkstyle": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-cli-reporter-core": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-cli-reporter-html": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-cli-reporter-json": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-cli-reporter-plain": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-cli-reporter-sarif": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-rule-engine": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-ruleset-standard": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         }
     },
     "runtimeClasspath": {
@@ -539,14 +539,14 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
             "firstLevelTransitive": [
@@ -640,7 +640,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
             "locked": "1.8.1"
@@ -714,7 +714,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
             "locked": "1.8.1"
@@ -808,14 +808,14 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
             "firstLevelTransitive": [

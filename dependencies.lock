@@ -1,17 +1,17 @@
 {
     "apiDependenciesMetadata": {
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "compileClasspath": {
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "implementationDependenciesMetadata": {
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "jmh": {
@@ -24,12 +24,12 @@
     },
     "jmhApiDependenciesMetadata": {
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "jmhCompileClasspath": {
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.36"
@@ -40,7 +40,7 @@
     },
     "jmhImplementationDependenciesMetadata": {
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.36"
@@ -51,7 +51,7 @@
     },
     "jmhRuntimeClasspath": {
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.36"
@@ -62,73 +62,73 @@
     },
     "kotlinCompilerClasspath": {
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "kotlinCompilerPluginClasspathJmh": {
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "kotlinKlibCommonizerClasspath": {
         "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "ktlint": {
         "com.pinterest.ktlint:ktlint-cli-reporter-checkstyle": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-cli-reporter-core": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-cli-reporter-html": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-cli-reporter-json": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-cli-reporter-plain": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-cli-reporter-sarif": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-rule-engine": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         },
         "com.pinterest.ktlint:ktlint-ruleset-standard": {
-            "locked": "1.6.0"
+            "locked": "1.7.1"
         }
     },
     "runtimeClasspath": {
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "testCompileClasspath": {
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "testImplementationDependenciesMetadata": {
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     },
     "testRuntimeClasspath": {
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.20"
+            "locked": "1.9.25"
         }
     }
 }
