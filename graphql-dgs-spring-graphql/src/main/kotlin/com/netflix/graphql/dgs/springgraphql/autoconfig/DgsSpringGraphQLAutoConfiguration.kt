@@ -257,12 +257,11 @@ open class DgsSpringGraphQLAutoConfiguration(
         /**
          * Creates a [ReloadableDgsDataLoaderProvider] that wraps the standard [DgsDataLoaderProvider].
          *
-         * This provider supports dynamic reloading of data loaders based on the [DgsReloadDataLoadersIndicator].
+         * This provider supports dynamic reloading of data loaders based on the [DgsDataLoaderReloadController].
          * It maintains the same interface as the standard provider but adds reload capabilities.
          *
          * The `@Primary` annotation ensures this bean takes precedence over the standard `DgsDataLoaderProvider`
          * when reload functionality is enabled.
-         *
          */
         @Bean
         @Primary
@@ -272,7 +271,7 @@ open class DgsSpringGraphQLAutoConfiguration(
             @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService,
             extensionProviders: List<DataLoaderInstrumentationExtensionProvider>,
             customizers: List<DgsDataLoaderCustomizer>,
-        ): DgsDataLoaderProvider {
+        ): ReloadableDgsDataLoaderProvider {
             LOG.info("Creating reloadable data loader provider with reload support enabled")
             return ReloadableDgsDataLoaderProvider(
                 applicationContext = applicationContext,
