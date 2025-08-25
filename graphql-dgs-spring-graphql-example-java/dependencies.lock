@@ -919,32 +919,6 @@
             "locked": "1.9.25"
         }
     },
-    "ktlint": {
-        "com.pinterest.ktlint:ktlint-cli-reporter-checkstyle": {
-            "locked": "1.7.1"
-        },
-        "com.pinterest.ktlint:ktlint-cli-reporter-core": {
-            "locked": "1.7.1"
-        },
-        "com.pinterest.ktlint:ktlint-cli-reporter-html": {
-            "locked": "1.7.1"
-        },
-        "com.pinterest.ktlint:ktlint-cli-reporter-json": {
-            "locked": "1.7.1"
-        },
-        "com.pinterest.ktlint:ktlint-cli-reporter-plain": {
-            "locked": "1.7.1"
-        },
-        "com.pinterest.ktlint:ktlint-cli-reporter-sarif": {
-            "locked": "1.7.1"
-        },
-        "com.pinterest.ktlint:ktlint-rule-engine": {
-            "locked": "1.7.1"
-        },
-        "com.pinterest.ktlint:ktlint-ruleset-standard": {
-            "locked": "1.7.1"
-        }
-    },
     "runtimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
             "firstLevelTransitive": [

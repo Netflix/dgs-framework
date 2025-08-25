@@ -29,7 +29,7 @@ plugins {
     id("nebula.netflixoss") version "11.6.0"
     id("io.spring.dependency-management") version "1.1.7"
 
-    id("org.jmailen.kotlinter") version "5.2.+"
+//    id("org.jmailen.kotlinter") version "5.2.+"
     id("me.champeau.jmh") version "0.7.3"
 
     kotlin("jvm") version Versions.KOTLIN_VERSION
@@ -66,7 +66,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     apply {
         plugin("java-library")
         plugin("kotlin")
-        plugin("org.jmailen.kotlinter")
+//        plugin("org.jmailen.kotlinter")
         plugin("me.champeau.jmh")
         plugin("io.spring.dependency-management")
     }
@@ -145,7 +145,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         }
     }
 
-    kotlinter {
-        reporters = arrayOf("checkstyle", "plain")
-    }
+//    kotlinter {
+//        reporters = arrayOf("checkstyle", "plain")
+//    }
 }
