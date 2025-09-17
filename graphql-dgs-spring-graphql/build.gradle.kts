@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 dependencies {
     implementation(project(":graphql-dgs"))
     implementation(project(":graphql-dgs-reactive"))

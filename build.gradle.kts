@@ -28,8 +28,7 @@ plugins {
 
     id("nebula.netflixoss") version "11.6.0"
     id("io.spring.dependency-management") version "1.1.7"
-
-//    id("org.jmailen.kotlinter") version "5.2.+"
+    id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
     id("me.champeau.jmh") version "0.7.3"
 
     kotlin("jvm") version Versions.KOTLIN_VERSION
@@ -57,8 +56,8 @@ allprojects {
 val internalBomModules by extra(
     listOf(
         project(":graphql-dgs-platform"),
-        project(":graphql-dgs-platform-dependencies")
-    )
+        project(":graphql-dgs-platform-dependencies"),
+    ),
 )
 
 configure(subprojects.filterNot { it in internalBomModules }) {
@@ -66,7 +65,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     apply {
         plugin("java-library")
         plugin("kotlin")
-//        plugin("org.jmailen.kotlinter")
+        plugin("org.jlleitschuh.gradle.ktlint")
         plugin("me.champeau.jmh")
         plugin("io.spring.dependency-management")
     }
@@ -77,7 +76,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     dependencyManagement {
         imports {
             mavenBom("org.jetbrains.kotlin:kotlin-bom:${Versions.KOTLIN_VERSION}")
-            mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+            mavenBom("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
         }
     }
 
@@ -89,8 +88,8 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         // Please refer to the following links for further reference.
         // * https://github.com/melix/jmh-gradle-plugin
         // * https://openjdk.java.net/projects/code-tools/jmh/
-        jmh("org.openjdk.jmh:jmh-core:${jmhVersion}")
-        jmh("org.openjdk.jmh:jmh-generator-annprocess:${jmhVersion}")
+        jmh("org.openjdk.jmh:jmh-core:$jmhVersion")
+        jmh("org.openjdk.jmh:jmh-generator-annprocess:$jmhVersion")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test") {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
@@ -140,12 +139,8 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     kotlin {
         jvmToolchain(17)
         compilerOptions {
-           javaParameters = true
+            javaParameters = true
             freeCompilerArgs.addAll("-Xjvm-default=all-compatibility", "-java-parameters")
         }
     }
-
-//    kotlinter {
-//        reporters = arrayOf("checkstyle", "plain")
-//    }
 }

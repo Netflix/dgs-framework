@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 dependencies {
     api(project(":graphql-dgs-spring-graphql"))
     api(project(":graphql-dgs-client"))
