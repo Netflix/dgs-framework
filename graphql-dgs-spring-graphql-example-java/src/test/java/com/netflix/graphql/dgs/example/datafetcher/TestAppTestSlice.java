@@ -25,6 +25,7 @@ import com.netflix.graphql.dgs.example.shared.dataLoader.MessageDataLoader;
 import com.netflix.graphql.dgs.example.shared.instrumentation.ExampleInstrumentationDependingOnContextContributor;
 import com.netflix.graphql.dgs.pagination.DgsPaginationAutoConfiguration;
 import com.netflix.graphql.dgs.scalars.UploadScalar;
+import name.nkonev.multipart.springboot.graphql.server.SchemaAutoconfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
@@ -42,6 +43,6 @@ import java.lang.annotation.*;
         ExampleInstrumentationDependingOnContextContributor.class,
         MyContextBuilder.class
         })
-@ImportAutoConfiguration({DgsPaginationAutoConfiguration.class, DgsExtendedScalarsAutoConfiguration.class})
+@ImportAutoConfiguration({DgsPaginationAutoConfiguration.class, DgsExtendedScalarsAutoConfiguration.class, SchemaAutoconfiguration.class})
 public @interface TestAppTestSlice {
 }

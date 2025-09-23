@@ -24,32 +24,33 @@ import com.netflix.graphql.dgs.pagination.DgsPaginationAutoConfiguration;
 import com.netflix.graphql.dgs.scalars.UploadScalar;
 import com.netflix.graphql.dgs.test.EnableDgsTest;
 import graphql.ExecutionResult;
+import name.nkonev.multipart.springboot.graphql.server.SchemaAutoconfiguration;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import reactor.test.StepVerifier;
-import reactor.test.scheduler.VirtualTimeScheduler;
 
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {SubscriptionDataFetcher.class, DgsExtendedScalarsAutoConfiguration.class, DgsPaginationAutoConfiguration.class, UploadScalar.class})
+@SpringBootTest(classes = {SubscriptionDataFetcher.class, UploadScalar.class})
 @EnableDgsTest
+@Import({DgsExtendedScalarsAutoConfiguration.class, SchemaAutoconfiguration.class, DgsPaginationAutoConfiguration.class})
 class SubscriptionDataFetcherTest {
 
     @Autowired
-    DgsQueryExecutor queryExecutor;
+    private DgsQueryExecutor queryExecutor;
 
-    ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     void stocks() {
         ExecutionResult executionResult = queryExecutor.execute("subscription Stocks { stocks { name, price } }");
         Publisher<ExecutionResult> publisher = executionResult.getData();
 
-        VirtualTimeScheduler virtualTimeScheduler = VirtualTimeScheduler.create();
         StepVerifier.withVirtualTime(() -> publisher, 3)
                 .expectSubscription()
                 .thenRequest(3)
