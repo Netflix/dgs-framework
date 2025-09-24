@@ -29,7 +29,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8")
     implementation("com.graphql-java:graphql-java")
 
-    implementation("org.jetbrains:annotations:26.0.2")
+    implementation("org.jetbrains:annotations:26.0.2-1")
 
     testImplementation("org.springframework.boot:spring-boot-starter-web")
     testImplementation("org.springframework:spring-test")
