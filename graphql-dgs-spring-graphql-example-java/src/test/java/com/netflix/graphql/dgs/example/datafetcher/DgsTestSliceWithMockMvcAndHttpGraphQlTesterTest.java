@@ -16,10 +16,6 @@
 
 package com.netflix.graphql.dgs.example.datafetcher;
 
-import com.netflix.graphql.dgs.autoconfig.DgsExtendedScalarsAutoConfiguration;
-import com.netflix.graphql.dgs.example.shared.dataLoader.MessageDataLoader;
-import com.netflix.graphql.dgs.pagination.DgsPaginationAutoConfiguration;
-import com.netflix.graphql.dgs.scalars.UploadScalar;
 import com.netflix.graphql.dgs.test.EnableDgsMockMvcTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

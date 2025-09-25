@@ -23,7 +23,9 @@ import com.netflix.graphql.dgs.example.shared.datafetcher.*;
 import com.netflix.graphql.dgs.pagination.DgsPaginationAutoConfiguration;
 import com.netflix.graphql.dgs.scalars.UploadScalar;
 import com.netflix.graphql.dgs.test.EnableDgsTest;
+import name.nkonev.multipart.springboot.graphql.server.SchemaAutoconfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -32,7 +34,8 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@SpringBootTest(classes = {HelloDataFetcher.class, MovieDataFetcher.class, ConcurrentDataFetcher.class, RequestHeadersDataFetcher.class, RatingMutation.class, CurrentTimeDateFetcher.class, DgsExtendedScalarsAutoConfiguration.class, DgsPaginationAutoConfiguration.class, MessageDataLoaderWithDispatchPredicate.class, UploadScalar.class})
+@SpringBootTest(classes = {HelloDataFetcher.class, MovieDataFetcher.class, ConcurrentDataFetcher.class, RequestHeadersDataFetcher.class, RatingMutation.class, CurrentTimeDateFetcher.class, MessageDataLoaderWithDispatchPredicate.class, UploadScalar.class})
 @EnableDgsTest
+@Import({DgsExtendedScalarsAutoConfiguration.class, DgsPaginationAutoConfiguration.class, SchemaAutoconfiguration.class})
 public @interface ExampleSpringBootTest {
 }
