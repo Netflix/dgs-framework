@@ -1,8 +1,14 @@
 type Query {
     shows: [Show]
+    movies: [Movie]
 }
 
 type Show {
+    title: String
+    description: String
+}
+
+type Movie {
     title: String
     description: String
 }
