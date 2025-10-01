@@ -54,11 +54,6 @@ import java.util.UUID
         ClientRequestResponseScalarTest.TestApp::class,
     ],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = [
-        // TODO (SBN4) Re-enable when Spring GraphQL 2.0.0-M3 bug is fixed
-        // Workaround for NullPointerException in SchemaMappingInspector when inspecting schemas with custom scalars
-        "spring.graphql.schema.inspection.enabled=false",
-    ],
 )
 @EnableDgsTest
 class ClientRequestResponseScalarTest {

@@ -66,24 +66,46 @@ internal class BatchLoaderWithContextInstrumentationDriver<K : Any, V>(
         val future = original.load(keys, environment)
 
         /*
+         * TODO: Investigate potential OSS bug in CompletableFuture callback behavior with immediately-failing futures
+         *
          * DataLoader instrumentation race condition fix:
          *
+         * PROBLEM:
          * When DataLoader batch operations complete exceptionally very quickly (e.g., throwing immediately
          * in CompletableFuture.supplyAsync), there's a race condition where the CompletableFuture is already
-         * completed by the time we attach our whenComplete() callback. In such cases, the callback may not
-         * be invoked at all, causing instrumentation events to be missed.
+         * completed by the time we attach our handle() or whenComplete() callback. In such cases, the callback
+         * may not be invoked at all, causing instrumentation events to be missed.
          *
+         * TEST REPRODUCTION:
+         * See DgsDataLoaderInstrumentationTest:
+         * - testDataLoaderInstrumentationIsInvokedWhenDataLoaderThrowsException()
+         *   Uses ExampleBatchLoaderThatThrows which throws immediately via CompletableFuture.supplyAsync { throw ... }
+         * - testDataLoaderInstrumentationIsInvokedWhenDataLoaderThrowsExceptionWithDelay()
+         *   Uses ExampleBatchLoaderThatThrowsWithDelay which delays 50ms before throwing
+         *
+         * Both tests verify that instrumentation's onComplete() is called with the exception. Without this fix,
+         * the immediate-throw case fails because the callback is never invoked - the future completes before
+         * the callback is attached.
+         *
+         * IMPACT:
          * This is particularly problematic for:
-         * 1. Exception tracking in monitoring/metrics systems
-         * 2. Distributed tracing spans that need to be closed properly
-         * 3. Any instrumentation that relies on onComplete() being called
+         * 1. Exception tracking in monitoring/metrics systems - exceptions are silently dropped
+         * 2. Distributed tracing spans that need to be closed properly - spans remain open
+         * 3. Any instrumentation that relies on onComplete() being called for cleanup
          *
-         * The solution implements a fallback mechanism that:
-         * 1. Tracks whether the normal whenComplete() callback was invoked
-         * 2. Checks if the future is already completed but the callback wasn't called
-         * 3. Manually triggers the instrumentation in such cases
+         * SOLUTION:
+         * The fix implements a fallback mechanism that:
+         * 1. Tracks whether the normal handle() callback was invoked via a boolean flag
+         * 2. Checks if the future is already completed (isDone) but the callback wasn't called (!callbackInvoked)
+         * 3. Manually triggers the instrumentation onComplete() in such cases
          *
          * This ensures instrumentation consistency regardless of DataLoader execution timing.
+         *
+         * INVESTIGATION NEEDED:
+         * This appears to be a potential bug in Java's CompletableFuture implementation where callbacks
+         * attached via handle()/whenComplete() are not invoked if the future is already completed at
+         * attachment time. This should be investigated and potentially reported as a JDK bug, or we may
+         * be misunderstanding the CompletableFuture contract.
          */
         val cf = future.toCompletableFuture()
         var callbackInvoked = false
@@ -190,8 +212,27 @@ internal class MappedBatchLoaderWithContextInstrumentationDriver<K : Any, V>(
         val future = original.load(keys, environment)
 
         /*
-         * Apply the same race condition fix as BatchLoaderWithContextInstrumentationDriver
-         * to ensure consistent instrumentation behavior across all DataLoader types.
+         * TODO: Investigate potential OSS bug in CompletableFuture callback behavior with immediately-failing futures
+         *
+         * DataLoader instrumentation race condition fix (MappedBatchLoader variant):
+         *
+         * This applies the same race condition fix as BatchLoaderWithContextInstrumentationDriver
+         * to ensure consistent instrumentation behavior across all DataLoader types (BatchLoader and MappedBatchLoader).
+         *
+         * PROBLEM:
+         * When MappedBatchLoader operations complete exceptionally very quickly (e.g., throwing immediately
+         * in CompletableFuture.supplyAsync), there's a race condition where the CompletableFuture is already
+         * completed by the time we attach our whenComplete() callback. In such cases, the callback may not
+         * be invoked at all, causing instrumentation events to be missed.
+         *
+         * SOLUTION:
+         * The fix implements a fallback mechanism that:
+         * 1. Tracks whether the normal whenComplete() callback was invoked via a boolean flag
+         * 2. Checks if the future is already completed (isDone) but the callback wasn't called (!whenCompleteInvoked)
+         * 3. Manually triggers the instrumentation onComplete() in such cases
+         *
+         * This ensures instrumentation consistency regardless of DataLoader execution timing.
+         * See BatchLoaderWithContextInstrumentationDriver for full details on the race condition and test reproduction.
          */
         val cf = future.toCompletableFuture()
         var whenCompleteInvoked = false
