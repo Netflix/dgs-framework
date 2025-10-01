@@ -16,12 +16,10 @@
 
 package com.netflix.graphql.dgs.client
 
-import org.springframework.http.HttpHeaders
-
 data class HttpResponse(
     val statusCode: Int,
     val body: String?,
-    val headers: HttpHeaders,
+    val headers: Map<String, List<String>>,
 ) {
-    constructor(statusCode: Int, body: String?) : this(statusCode, body, HttpHeaders())
+    constructor(statusCode: Int, body: String?) : this(statusCode, body, emptyMap())
 }

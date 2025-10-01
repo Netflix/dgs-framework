@@ -64,7 +64,7 @@ class GraphqlSSESubscriptionGraphQLClient(
                 .retrieve()
                 .toEntityFlux<String>()
                 .flatMapMany {
-                    val headers = HttpHeaders.copyOf(it.headers)
+                    val headers = it.headers.toMap()
                     it.body
                         // TODO (SBN4) Investigate why Spring's SSE implementation sends empty events.
                         // Filter out empty SSE events (keepalive or completion signals) before parsing as JSON.
@@ -84,4 +84,10 @@ class GraphqlSSESubscriptionGraphQLClient(
             dis.dispose()
         }
     }
+}
+
+private fun HttpHeaders.toMap(): Map<String, List<String>> {
+    val result = mutableMapOf<String, List<String>>()
+    this.forEach { key, values -> result[key] = values }
+    return result
 }

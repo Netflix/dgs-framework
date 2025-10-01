@@ -16,13 +16,11 @@
 
 package com.netflix.graphql.dgs.client
 
-import org.springframework.http.HttpHeaders
-
 /**
  * Code responsible for executing the HTTP request for a GraphQL query.
  * Typically provided as a lambda.
  * @param url The URL the client was configured with
- * @param headers HttpHeaders object containing request headers. The client sets some default headers such as Accept and Content-Type.
+ * @param headers Map of request headers. The client sets some default headers such as Accept and Content-Type.
  * @param body The request body
  * @returns HttpResponse which is a representation of the HTTP status code and the response body as a String.
  */
@@ -30,7 +28,7 @@ import org.springframework.http.HttpHeaders
 fun interface RequestExecutor {
     fun execute(
         url: String,
-        headers: HttpHeaders,
+        headers: Map<String, List<String>>,
         body: String,
     ): HttpResponse
 }

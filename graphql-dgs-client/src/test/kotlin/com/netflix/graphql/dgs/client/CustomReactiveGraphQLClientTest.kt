@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.test.LocalServerPort
+import org.springframework.http.HttpHeaders
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.toEntity
 import reactor.test.StepVerifier
@@ -47,19 +48,22 @@ class CustomReactiveGraphQLClientTest {
     fun setup() {
         requireNotNull(port) { "port not set" }
         client =
-            MonoGraphQLClient.createCustomReactive("http://localhost:$port/graphql") { url, _, body ->
+            MonoGraphQLClient.createCustomReactive("http://localhost:$port/graphql") { url, headers, body ->
+                val httpHeaders = org.springframework.http.HttpHeaders()
+                headers.forEach { key, values -> httpHeaders.addAll(key, values) }
+
                 WebClient
                     .create(url)
                     .post()
                     .bodyValue(body)
-                    .headers { headers -> headers.addAll(GraphQLClients.defaultHeaders) }
+                    .headers { it.addAll(httpHeaders) }
                     .retrieve()
                     .toEntity<String>()
                     .map { response ->
                         HttpResponse(
                             statusCode = response.statusCode.value(),
                             body = response.body,
-                            headers = response.headers,
+                            headers = response.headers.toMap(),
                         )
                     }
             }
@@ -120,4 +124,10 @@ class CustomReactiveGraphQLClientTest {
             }
         }
     }
+}
+
+private fun HttpHeaders.toMap(): Map<String, List<String>> {
+    val result = mutableMapOf<String, List<String>>()
+    this.forEach { key, values -> result[key] = values }
+    return result
 }

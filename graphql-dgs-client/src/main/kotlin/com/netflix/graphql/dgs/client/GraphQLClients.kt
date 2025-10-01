@@ -19,7 +19,6 @@ package com.netflix.graphql.dgs.client
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.MediaType
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
@@ -36,12 +35,10 @@ internal object GraphQLClients {
                     .build(),
             ).build()
 
-    internal val defaultHeaders: HttpHeaders =
-        HttpHeaders.readOnlyHttpHeaders(
-            HttpHeaders().apply {
-                accept = listOf(MediaType.APPLICATION_JSON)
-                contentType = MediaType.APPLICATION_JSON
-            },
+    internal val defaultHeaders: Map<String, List<String>> =
+        mapOf(
+            "Accept" to listOf(MediaType.APPLICATION_JSON.toString()),
+            "Content-Type" to listOf(MediaType.APPLICATION_JSON.toString()),
         )
 
     fun handleResponse(
@@ -58,13 +55,11 @@ internal object GraphQLClients {
     ): GraphQLResponse {
         val statusCode = response.statusCode
         val body = response.body
-        val headers = HttpHeaders()
-        response.headers.forEach { key, values -> headers.put(key, values) }
         if (HttpStatusCode.valueOf(response.statusCode).isError) {
             throw GraphQLClientException(statusCode, url, body ?: "", requestBody)
         }
 
-        return GraphQLResponse(body ?: "", headers, mapper)
+        return GraphQLResponse(body ?: "", response.headers, mapper)
     }
 
     fun handleResponse(
@@ -75,13 +70,11 @@ internal object GraphQLClients {
     ): GraphQLResponse {
         val statusCode = response.statusCode
         val body = response.body
-        val headers = HttpHeaders()
-        response.headers.forEach { key, values -> headers.put(key, values) }
         if (HttpStatusCode.valueOf(response.statusCode).isError) {
             throw GraphQLClientException(statusCode, url, body ?: "", requestBody)
         }
 
-        return GraphQLResponse(body ?: "", headers, options)
+        return GraphQLResponse(body ?: "", response.headers, options)
     }
 
     internal fun toRequestMap(

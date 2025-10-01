@@ -41,6 +41,9 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -74,7 +77,7 @@ public class GraphQLResponseJavaTest {
         HttpHeaders httpHeaders = new HttpHeaders();
         headers.forEach(httpHeaders::addAll);
         ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(body, httpHeaders), String.class);
-        return new HttpResponse(exchange.getStatusCode().value(), exchange.getBody(), exchange.getHeaders());
+        return new HttpResponse(exchange.getStatusCode().value(), exchange.getBody(), toMap(exchange.getHeaders()));
     };
 
     CustomGraphQLClient client = new CustomGraphQLClient(url, requestExecutor, new GraphQLRequestOptions());
@@ -203,11 +206,17 @@ public class GraphQLResponseJavaTest {
             HttpHeaders httpHeaders = new HttpHeaders();
             headers.forEach(httpHeaders::addAll);
             ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(body, httpHeaders), String.class);
-            return Mono.just(new HttpResponse(exchange.getStatusCode().value(), exchange.getBody(), exchange.getHeaders()));
+            return Mono.just(new HttpResponse(exchange.getStatusCode().value(), exchange.getBody(), toMap(exchange.getHeaders())));
         }, new GraphQLRequestOptions());
         Mono<GraphQLResponse> graphQLResponse = client.reactiveExecuteQuery(query, emptyMap(), "SubmitReview");
         String submittedBy = graphQLResponse.map(r -> r.extractValueAsObject("submitReview.submittedBy", String.class)).block();
         assertThat(submittedBy).isEqualTo("abc@netflix.com");
         server.verify();
+    }
+
+    private static Map<String, List<String>> toMap(HttpHeaders headers) {
+        Map<String, List<String>> result = new HashMap<>();
+        headers.forEach(result::put);
+        return result;
     }
 }

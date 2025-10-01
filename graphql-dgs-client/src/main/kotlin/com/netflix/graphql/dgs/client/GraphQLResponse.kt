@@ -36,7 +36,6 @@ import com.netflix.graphql.dgs.client.GraphQLRequestOptions.Companion.createCust
 import org.intellij.lang.annotations.Language
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpHeaders
 
 /**
  * Representation of a GraphQL response, which may contain GraphQL errors.
@@ -44,7 +43,7 @@ import org.springframework.http.HttpHeaders
  */
 data class GraphQLResponse(
     @Language("json") val json: String,
-    val headers: HttpHeaders,
+    val headers: Map<String, List<String>>,
     private val mapper: ObjectMapper,
 ) {
     /**
@@ -70,11 +69,11 @@ data class GraphQLResponse(
 
     constructor(
         @Language("json") json: String,
-    ) : this(json, HttpHeaders.EMPTY)
+    ) : this(json, emptyMap())
 
     constructor(
         @Language("json") json: String,
-        headers: HttpHeaders,
+        headers: Map<String, List<String>>,
     ) : this(
         json,
         headers,
@@ -83,7 +82,7 @@ data class GraphQLResponse(
 
     constructor(
         @Language("json") json: String,
-        headers: HttpHeaders,
+        headers: Map<String, List<String>>,
         options: GraphQLRequestOptions? = null,
     ) : this(
         json,

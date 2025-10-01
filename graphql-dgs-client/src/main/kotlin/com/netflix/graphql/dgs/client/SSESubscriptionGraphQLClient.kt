@@ -64,7 +64,7 @@ class SSESubscriptionGraphQLClient(
             .retrieve()
             .toEntityFlux<String>()
             .flatMapMany { response ->
-                val headers = HttpHeaders.copyOf(response.headers)
+                val headers = response.headers.toMap()
                 response.body?.map { body -> GraphQLResponse(json = body, headers = headers) }
                     ?: Flux.empty()
             }.publishOn(Schedulers.single())
@@ -73,4 +73,10 @@ class SSESubscriptionGraphQLClient(
     private fun encodeQuery(
         @Language("graphql") query: String,
     ): String? = Base64.getEncoder().encodeToString(query.toByteArray(StandardCharsets.UTF_8))
+}
+
+private fun org.springframework.http.HttpHeaders.toMap(): Map<String, List<String>> {
+    val result = mutableMapOf<String, List<String>>()
+    this.forEach { key, values -> result[key] = values }
+    return result
 }
