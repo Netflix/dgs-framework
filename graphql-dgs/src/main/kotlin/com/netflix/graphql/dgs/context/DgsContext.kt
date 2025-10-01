@@ -80,7 +80,7 @@ open class DgsContext(
             when (val context = batchLoaderEnvironment.getContext<Any>()) {
                 is GraphQLContext -> from(context)
                 is DgsContext -> context
-                else -> throw RuntimeException("Cannot resolve DgsContext from ${context::class.java.name}.")
+                else -> throw RuntimeException("Cannot resolve DgsContext from ${context?.let { it::class.java.name } ?: "null"}.")
             }
 
         @JvmStatic
@@ -103,7 +103,9 @@ open class DgsContext(
 
         @JvmStatic
         fun <T> getCustomContext(batchLoaderEnvironment: BatchLoaderEnvironment): T {
-            val context = batchLoaderEnvironment.getContext<Any>()
+            val context =
+                batchLoaderEnvironment.getContext<Any>()
+                    ?: throw RuntimeException("BatchLoaderEnvironment context is null")
             return getCustomContext(context)
         }
 

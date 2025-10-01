@@ -21,13 +21,13 @@
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         },
         "org.springframework.graphql:spring-graphql-test": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter-test"
             ],
-            "locked": "1.4.1"
+            "locked": "2.0.0-M3"
         }
     },
     "compileClasspath": {
@@ -52,10 +52,10 @@
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17"
@@ -64,7 +64,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter-test"
             ],
-            "locked": "1.4.1"
+            "locked": "2.0.0-M3"
         }
     },
     "implementationDependenciesMetadata": {
@@ -89,10 +89,10 @@
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17"
@@ -101,7 +101,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter-test"
             ],
-            "locked": "1.4.1"
+            "locked": "2.0.0-M3"
         }
     },
     "jmh": {
@@ -116,8 +116,34 @@
         }
     },
     "jmhApiDependenciesMetadata": {
+        "com.netflix.graphql.dgs:dgs-starter-test": {
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:dgs-starter-test",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
+            ],
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:dgs-starter-test"
+            ],
+            "project": true
+        },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25"
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:dgs-starter-test",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
+            ],
+            "locked": "2.2.20"
+        },
+        "org.springframework.graphql:spring-graphql-test": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:dgs-starter-test"
+            ],
+            "locked": "2.0.0-M3"
         }
     },
     "jmhCompileClasspath": {
@@ -142,10 +168,10 @@
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.37"
@@ -163,12 +189,35 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter-test"
             ],
-            "locked": "1.4.1"
+            "locked": "2.0.0-M3"
         }
     },
     "jmhImplementationDependenciesMetadata": {
+        "com.netflix.graphql.dgs:dgs-starter-test": {
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:dgs-starter-test",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
+            ],
+            "project": true
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:dgs-starter-test"
+            ],
+            "project": true
+        },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25"
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:dgs-starter-test",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
+            ],
+            "locked": "2.2.20"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "26.0.2-1"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.37"
@@ -178,6 +227,15 @@
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.36"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "2.0.17"
+        },
+        "org.springframework.graphql:spring-graphql-test": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:dgs-starter-test"
+            ],
+            "locked": "2.0.0-M3"
         }
     },
     "jmhRuntimeClasspath": {
@@ -198,30 +256,30 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.5"
+            "locked": "1.14.6"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.12.2"
+            "locked": "5.13.4"
         },
         "org.junit.platform:junit-platform-launcher": {
-            "locked": "1.12.2"
+            "locked": "1.13.4"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.2"
+            "locked": "5.13.4"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.37"
@@ -243,47 +301,104 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "3.5.5"
+            "locked": "4.0.0-M3"
+        },
+        "org.springframework.boot:spring-boot-starter-graphql": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
+            ],
+            "locked": "4.0.0-M3"
+        },
+        "org.springframework.boot:spring-boot-starter-restclient": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
+            ],
+            "locked": "4.0.0-M3"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "3.5.5"
+            "locked": "4.0.0-M3"
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "3.5.5"
+            "locked": "4.0.0-M3"
         },
         "org.springframework.graphql:spring-graphql-test": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter-test"
             ],
-            "locked": "1.4.1"
+            "locked": "2.0.0-M3"
+        }
+    },
+    "kotlinBouncyCastleConfiguration": {
+        "org.bouncycastle:bcpg-jdk18on": {
+            "locked": "1.80"
+        },
+        "org.bouncycastle:bcpkix-jdk18on": {
+            "locked": "1.80"
         }
     },
     "kotlinCompilerClasspath": {
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         }
     },
     "kotlinCompilerPluginClasspathJmh": {
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
+        }
+    },
+    "kotlinInternalAbiValidation": {
+        "org.jetbrains.kotlin:abi-tools": {
+            "locked": "2.2.20"
         }
     },
     "kotlinKlibCommonizerClasspath": {
         "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
+        }
+    },
+    "ktlint": {
+        "com.pinterest.ktlint:ktlint-cli": {
+            "locked": "1.5.0"
+        },
+        "io.github.detekt.sarif4k:sarif4k": {
+            "locked": "0.5.0"
+        },
+        "io.github.oshai:kotlin-logging": {
+            "locked": "5.1.0"
+        }
+    },
+    "ktlintBaselineReporter": {
+        "com.pinterest.ktlint:ktlint-cli-reporter-baseline": {
+            "locked": "1.5.0"
+        },
+        "io.github.oshai:kotlin-logging": {
+            "locked": "5.1.0"
+        }
+    },
+    "ktlintReporter": {
+        "io.github.detekt.sarif4k:sarif4k": {
+            "locked": "0.5.0"
+        },
+        "io.github.oshai:kotlin-logging": {
+            "locked": "5.1.0"
+        }
+    },
+    "ktlintRuleset": {
+        "com.pinterest.ktlint:ktlint-ruleset-standard": {
+            "locked": "1.5.0"
         }
     },
     "runtimeClasspath": {
@@ -308,14 +423,14 @@
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
@@ -328,19 +443,36 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "3.5.5"
+            "locked": "4.0.0-M3"
+        },
+        "org.springframework.boot:spring-boot-starter-graphql": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
+            ],
+            "locked": "4.0.0-M3"
+        },
+        "org.springframework.boot:spring-boot-starter-restclient": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
+            ],
+            "locked": "4.0.0-M3"
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "3.5.5"
+            "locked": "4.0.0-M3"
         },
         "org.springframework.graphql:spring-graphql-test": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter-test"
             ],
-            "locked": "1.4.1"
+            "locked": "2.0.0-M3"
+        }
+    },
+    "swiftExportClasspathResolvable": {
+        "org.jetbrains.kotlin:swift-export-embeddable": {
+            "locked": "2.2.20"
         }
     },
     "testCompileClasspath": {
@@ -361,35 +493,35 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.5"
+            "locked": "1.14.6"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.12.2"
+            "locked": "5.13.4"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.2"
+            "locked": "5.13.4"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "3.5.5"
+            "locked": "4.0.0-M3"
         },
         "org.springframework.graphql:spring-graphql-test": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter-test"
             ],
-            "locked": "1.4.1"
+            "locked": "2.0.0-M3"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -410,35 +542,35 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.5"
+            "locked": "1.14.6"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.12.2"
+            "locked": "5.13.4"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.2"
+            "locked": "5.13.4"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "3.5.5"
+            "locked": "4.0.0-M3"
         },
         "org.springframework.graphql:spring-graphql-test": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter-test"
             ],
-            "locked": "1.4.1"
+            "locked": "2.0.0-M3"
         }
     },
     "testRuntimeClasspath": {
@@ -459,30 +591,30 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.5"
+            "locked": "1.14.6"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.12.2"
+            "locked": "5.13.4"
         },
         "org.junit.platform:junit-platform-launcher": {
-            "locked": "1.12.2"
+            "locked": "1.13.4"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.2"
+            "locked": "5.13.4"
         },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
@@ -495,22 +627,34 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "3.5.5"
+            "locked": "4.0.0-M3"
+        },
+        "org.springframework.boot:spring-boot-starter-graphql": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
+            ],
+            "locked": "4.0.0-M3"
+        },
+        "org.springframework.boot:spring-boot-starter-restclient": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
+            ],
+            "locked": "4.0.0-M3"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "3.5.5"
+            "locked": "4.0.0-M3"
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "3.5.5"
+            "locked": "4.0.0-M3"
         },
         "org.springframework.graphql:spring-graphql-test": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter-test"
             ],
-            "locked": "1.4.1"
+            "locked": "2.0.0-M3"
         }
     }
 }

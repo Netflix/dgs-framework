@@ -32,7 +32,13 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@SpringBootTest(classes = {HelloDataFetcher.class, MovieDataFetcher.class, ConcurrentDataFetcher.class, RequestHeadersDataFetcher.class, RatingMutation.class, CurrentTimeDateFetcher.class, DgsExtendedScalarsAutoConfiguration.class, DgsPaginationAutoConfiguration.class, MessageDataLoaderWithDispatchPredicate.class, UploadScalar.class})
+@SpringBootTest(
+    classes = {HelloDataFetcher.class, MovieDataFetcher.class, ConcurrentDataFetcher.class, RequestHeadersDataFetcher.class, RatingMutation.class, CurrentTimeDateFetcher.class, DgsExtendedScalarsAutoConfiguration.class, DgsPaginationAutoConfiguration.class, MessageDataLoaderWithDispatchPredicate.class, UploadScalar.class},
+    properties = {
+        // Enable ticker mode for scheduled data loader dispatches (required for dispatchIfLongerThan predicates)
+        "dgs.graphql.dataloader.ticker-mode-enabled=true"
+    }
+)
 @EnableDgsTest
 public @interface ExampleSpringBootTest {
 }

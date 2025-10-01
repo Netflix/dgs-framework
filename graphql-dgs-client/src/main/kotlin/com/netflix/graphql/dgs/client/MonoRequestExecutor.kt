@@ -16,13 +16,14 @@
 
 package com.netflix.graphql.dgs.client
 
+import org.springframework.http.HttpHeaders
 import reactor.core.publisher.Mono
 
 /**
  * Code responsible for executing the HTTP request for a GraphQL query.
  * Typically provided as a lambda.  Reactive version (Mono)
  * @param url The URL the client was configured with
- * @param headers A map of headers. The client sets some default headers such as Accept and Content-Type.
+ * @param headers HttpHeaders object containing request headers. The client sets some default headers such as Accept and Content-Type.
  * @param body The request body
  * @returns Mono<HttpResponse> which is a representation of the HTTP status code and the response body as a String.
  */
@@ -30,7 +31,7 @@ import reactor.core.publisher.Mono
 fun interface MonoRequestExecutor {
     fun execute(
         url: String,
-        headers: Map<String, List<String>>,
+        headers: HttpHeaders,
         body: String,
     ): Mono<HttpResponse>
 }

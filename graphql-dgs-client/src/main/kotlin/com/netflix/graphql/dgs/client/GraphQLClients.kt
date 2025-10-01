@@ -56,8 +56,10 @@ internal object GraphQLClients {
         url: String,
         mapper: ObjectMapper,
     ): GraphQLResponse {
-        val (statusCode, body) = response
-        val headers = response.headers
+        val statusCode = response.statusCode
+        val body = response.body
+        val headers = HttpHeaders()
+        response.headers.forEach { key, values -> headers.put(key, values) }
         if (HttpStatusCode.valueOf(response.statusCode).isError) {
             throw GraphQLClientException(statusCode, url, body ?: "", requestBody)
         }
@@ -71,8 +73,10 @@ internal object GraphQLClients {
         url: String,
         options: GraphQLRequestOptions? = null,
     ): GraphQLResponse {
-        val (statusCode, body) = response
-        val headers = response.headers
+        val statusCode = response.statusCode
+        val body = response.body
+        val headers = HttpHeaders()
+        response.headers.forEach { key, values -> headers.put(key, values) }
         if (HttpStatusCode.valueOf(response.statusCode).isError) {
             throw GraphQLClientException(statusCode, url, body ?: "", requestBody)
         }

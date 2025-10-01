@@ -18,17 +18,21 @@ package com.netflix.graphql.dgs.example.reactive;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.netflix.graphql.dgs.scalars.UploadScalar;
 import graphql.execution.preparsed.PreparsedDocumentEntry;
 import graphql.execution.preparsed.PreparsedDocumentProvider;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 @SpringBootApplication(scanBasePackages = {"com.netflix.graphql.dgs.example.shared", "com.netflix.graphql.dgs.example"})
+// TODO (SBN4) Remove UploadScalar import after multipart-spring-graphql dependency is updated and provides Upload scalar
+@Import(UploadScalar.class)
 public class ReactiveSpringGraphQLExampleApp {
     public static void main(String[] args) {
         SpringApplication.run(ReactiveSpringGraphQLExampleApp.class, args);

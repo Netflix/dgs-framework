@@ -43,7 +43,7 @@ class GraphQLResponseTest {
     private val requestExecutor =
         RequestExecutor { url, headers, body ->
             val httpHeaders = HttpHeaders()
-            headers.forEach { httpHeaders.addAll(it.key, it.value) }
+            headers.forEach { key, values -> httpHeaders.addAll(key, values) }
 
             val response = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
             HttpResponse(statusCode = response.statusCode.value(), body = response.body, headers = response.headers)

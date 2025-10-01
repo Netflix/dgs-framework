@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.boot.web.server.test.LocalServerPort
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.client.RestClient
 import org.springframework.web.reactive.function.client.WebClient
@@ -54,6 +54,11 @@ import java.util.UUID
         ClientRequestResponseScalarTest.TestApp::class,
     ],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = [
+        // TODO (SBN4) Re-enable when Spring GraphQL 2.0.0-M3 bug is fixed
+        // Workaround for NullPointerException in SchemaMappingInspector when inspecting schemas with custom scalars
+        "spring.graphql.schema.inspection.enabled=false",
+    ],
 )
 @EnableDgsTest
 class ClientRequestResponseScalarTest {

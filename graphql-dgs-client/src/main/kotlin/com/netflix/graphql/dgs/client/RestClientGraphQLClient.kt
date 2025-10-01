@@ -111,6 +111,6 @@ class RestClientGraphQLClient(
             )
         }
 
-        return GraphQLResponse(json = responseEntity.body ?: "", headers = responseEntity.headers, mapper)
+        return GraphQLResponse(json = responseEntity.body ?: "", headers = HttpHeaders.copyOf(responseEntity.headers), mapper)
     }
 }

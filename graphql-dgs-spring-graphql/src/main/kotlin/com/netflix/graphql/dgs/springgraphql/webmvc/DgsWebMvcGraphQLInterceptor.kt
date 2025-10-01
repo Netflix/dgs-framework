@@ -64,7 +64,6 @@ class DgsWebMvcGraphQLInterceptor(
                 dgsDataLoaderProvider.buildRegistryWithContextSupplier { e.graphQLContext }
 
             builder
-                .context(dgsContext)
                 .graphQLContext(dgsContext)
                 .dataLoaderRegistry(dataLoaderRegistry)
                 .build()

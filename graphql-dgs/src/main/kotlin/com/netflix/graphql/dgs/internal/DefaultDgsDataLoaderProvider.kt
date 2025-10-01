@@ -249,7 +249,7 @@ class DefaultDgsDataLoaderProvider(
         return DataLoaderFactory.newMappedDataLoader(extendedBatchLoader, options.build())
     }
 
-    private fun <T> createDataLoader(
+    private fun <T : Any> createDataLoader(
         batchLoader: BatchLoaderWithContext<*, *>,
         dgsDataLoader: DgsDataLoader,
         dataLoaderName: String,
@@ -270,7 +270,7 @@ class DefaultDgsDataLoaderProvider(
         return DataLoaderFactory.newDataLoader(dataLoaderName, extendedBatchLoader, options.build())
     }
 
-    private fun <T> createDataLoader(
+    private fun <T : Any> createDataLoader(
         batchLoader: MappedBatchLoaderWithContext<*, *>,
         dgsDataLoader: DgsDataLoader,
         dataLoaderName: String,

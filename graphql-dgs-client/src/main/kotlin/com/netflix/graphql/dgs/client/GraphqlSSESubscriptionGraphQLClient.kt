@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.client
 
 import com.netflix.graphql.types.subscription.QueryPayload
 import org.intellij.lang.annotations.Language
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.toEntityFlux
@@ -63,10 +64,16 @@ class GraphqlSSESubscriptionGraphQLClient(
                 .retrieve()
                 .toEntityFlux<String>()
                 .flatMapMany {
-                    val headers = it.headers
-                    it.body?.map { serverSentEvent ->
-                        sink.tryEmitNext(GraphQLResponse(json = serverSentEvent, headers = headers, mapper))
-                    } ?: Flux.empty()
+                    val headers = HttpHeaders.copyOf(it.headers)
+                    it.body
+                        // TODO (SBN4) Investigate why Spring's SSE implementation sends empty events.
+                        // Filter out empty SSE events (keepalive or completion signals) before parsing as JSON.
+                        // Without this filter, GraphQLResponse constructor throws IllegalArgumentException
+                        // "json string can not be null or empty" when encountering blank SSE events.
+                        ?.filter { serverSentEvent -> serverSentEvent.isNotBlank() }
+                        ?.map { serverSentEvent ->
+                            sink.tryEmitNext(GraphQLResponse(json = serverSentEvent, headers = headers, mapper))
+                        } ?: Flux.empty()
                 }.onErrorResume {
                     Flux.just(sink.tryEmitError(it))
                 }.doFinally {

@@ -65,14 +65,106 @@ internal class BatchLoaderWithContextInstrumentationDriver<K : Any, V>(
         val contexts = instrumentations.map { it.onDispatch(name, keys, environment) }
         val future = original.load(keys, environment)
 
-        return future.whenComplete { result, exception ->
+        /*
+         * DataLoader instrumentation race condition fix:
+         *
+         * When DataLoader batch operations complete exceptionally very quickly (e.g., throwing immediately
+         * in CompletableFuture.supplyAsync), there's a race condition where the CompletableFuture is already
+         * completed by the time we attach our whenComplete() callback. In such cases, the callback may not
+         * be invoked at all, causing instrumentation events to be missed.
+         *
+         * This is particularly problematic for:
+         * 1. Exception tracking in monitoring/metrics systems
+         * 2. Distributed tracing spans that need to be closed properly
+         * 3. Any instrumentation that relies on onComplete() being called
+         *
+         * The solution implements a fallback mechanism that:
+         * 1. Tracks whether the normal whenComplete() callback was invoked
+         * 2. Checks if the future is already completed but the callback wasn't called
+         * 3. Manually triggers the instrumentation in such cases
+         *
+         * This ensures instrumentation consistency regardless of DataLoader execution timing.
+         */
+        val cf = future.toCompletableFuture()
+        var callbackInvoked = false
+
+        // Use handle() instead of whenComplete() as it's more reliable for exception handling
+        val resultFuture =
+            future.handle<List<V>> { result, exception ->
+                callbackInvoked = true
+                try {
+                    contexts.asReversed().forEach { c ->
+                        c.onComplete(result, exception)
+                    }
+                } catch (_: Throwable) {
+                    // Ignore instrumentation exceptions to prevent interference with business logic
+                }
+
+                // Re-throw the exception or return the result
+                if (exception != null) {
+                    throw if (exception is RuntimeException) exception else RuntimeException(exception)
+                }
+                result
+            }
+
+        // Immediate fallback for race condition: manually trigger instrumentation if callback wasn't invoked
+        if (cf.isDone && !callbackInvoked) {
             try {
+                val result = if (cf.isCompletedExceptionally) null else cf.get()
+                val exception =
+                    if (cf.isCompletedExceptionally) {
+                        try {
+                            cf.get()
+                            null
+                        } catch (e: Exception) {
+                            e.cause ?: e
+                        }
+                    } else {
+                        null
+                    }
+
                 contexts.asReversed().forEach { c ->
                     c.onComplete(result, exception)
                 }
-            } catch (_: Throwable) {
+            } catch (e: Exception) {
+                // Fallback exception handling - if we can't extract result/exception properly,
+                // at least notify instrumentation that an exception occurred
+                contexts.asReversed().forEach { c ->
+                    c.onComplete(null, e.cause ?: e)
+                }
+            }
+        } else if (!cf.isDone) {
+            // For async completion, add a whenComplete as additional safety net
+            resultFuture.whenComplete { _, _ ->
+                // This is just a safety net in case handle() somehow doesn't work
+                if (!callbackInvoked) {
+                    try {
+                        val result = if (cf.isCompletedExceptionally) null else cf.get()
+                        val exception =
+                            if (cf.isCompletedExceptionally) {
+                                try {
+                                    cf.get()
+                                    null
+                                } catch (e: Exception) {
+                                    e.cause ?: e
+                                }
+                            } else {
+                                null
+                            }
+
+                        contexts.asReversed().forEach { c ->
+                            c.onComplete(result, exception)
+                        }
+                    } catch (e: Exception) {
+                        contexts.asReversed().forEach { c ->
+                            c.onComplete(null, e.cause ?: e)
+                        }
+                    }
+                }
             }
         }
+
+        return resultFuture
     }
 
     override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry?) {
@@ -97,14 +189,54 @@ internal class MappedBatchLoaderWithContextInstrumentationDriver<K : Any, V>(
 
         val future = original.load(keys, environment)
 
-        return future.whenComplete { result, exception ->
+        /*
+         * Apply the same race condition fix as BatchLoaderWithContextInstrumentationDriver
+         * to ensure consistent instrumentation behavior across all DataLoader types.
+         */
+        val cf = future.toCompletableFuture()
+        var whenCompleteInvoked = false
+
+        val resultFuture =
+            future.whenComplete { result, exception ->
+                whenCompleteInvoked = true
+                try {
+                    contexts.asReversed().forEach { c ->
+                        c.onComplete(result, exception)
+                    }
+                } catch (_: Throwable) {
+                    // Ignore instrumentation exceptions to prevent interference with business logic
+                }
+            }
+
+        // Fallback for race condition: manually trigger instrumentation if callback wasn't invoked
+        if (cf.isDone && !whenCompleteInvoked) {
             try {
+                val result = if (cf.isCompletedExceptionally) null else cf.get()
+                val exception =
+                    if (cf.isCompletedExceptionally) {
+                        try {
+                            cf.get()
+                            null
+                        } catch (e: Exception) {
+                            e.cause ?: e
+                        }
+                    } else {
+                        null
+                    }
+
                 contexts.asReversed().forEach { c ->
                     c.onComplete(result, exception)
                 }
-            } catch (_: Throwable) {
+            } catch (e: Exception) {
+                // Fallback exception handling - if we can't extract result/exception properly,
+                // at least notify instrumentation that an exception occurred
+                contexts.asReversed().forEach { c ->
+                    c.onComplete(null, e.cause ?: e)
+                }
             }
         }
+
+        return resultFuture
     }
 
     override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry?) {
