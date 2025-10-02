@@ -26,6 +26,9 @@ import graphql.schema.GraphQLSchema
 import graphql.schema.TypeResolver
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.TypeDefinitionRegistry
+import org.jspecify.annotations.Nullable
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.core.ResolvableType
 import org.springframework.core.io.Resource
 import org.springframework.graphql.execution.AbstractGraphQlSourceBuilder
@@ -35,7 +38,6 @@ import org.springframework.graphql.execution.SchemaMappingInspector
 import org.springframework.graphql.execution.SchemaReport
 import org.springframework.graphql.execution.SelfDescribingDataFetcher
 import org.springframework.graphql.execution.TypeDefinitionConfigurer
-import org.springframework.lang.Nullable
 import java.util.function.BiFunction
 import java.util.function.Consumer
 
@@ -44,19 +46,20 @@ class DgsGraphQLSourceBuilder(
     private val showSdlComments: Boolean,
 ) : AbstractGraphQlSourceBuilder<SchemaResourceBuilder>(),
     SchemaResourceBuilder {
+    companion object {
+        private val LOG: Logger = LoggerFactory.getLogger(DgsGraphQLSourceBuilder::class.java)
+    }
+
     private val typeDefinitionConfigurers = mutableListOf<TypeDefinitionConfigurer>()
     private val runtimeWiringConfigurers = mutableListOf<RuntimeWiringConfigurer>()
 
     private val schemaResources: Set<Resource> = LinkedHashSet()
 
-    @Nullable
-    private var typeResolver: TypeResolver? = null
+    private var typeResolver: @Nullable TypeResolver? = null
 
-    @Nullable
-    private var schemaReportConsumer: Consumer<SchemaReport>? = null
+    private var schemaReportConsumer: @Nullable Consumer<SchemaReport>? = null
 
-    @Nullable
-    private var initializerConsumer: Consumer<SchemaMappingInspector.Initializer>? = null
+    private var initializerConsumer: @Nullable Consumer<SchemaMappingInspector.Initializer>? = null
 
     override fun initGraphQlSchema(): GraphQLSchema {
         val schema = dgsSchemaProvider.schema(schemaResources = schemaResources, showSdlComments = showSdlComments)
@@ -64,7 +67,7 @@ class DgsGraphQLSourceBuilder(
         return schema.graphQLSchema
     }
 
-    override fun schemaResources(vararg resources: Resource?): SchemaResourceBuilder {
+    override fun schemaResources(vararg resources: Resource): SchemaResourceBuilder {
         schemaResources.plus(listOf(*resources))
         return this
     }
@@ -157,8 +160,21 @@ class DgsGraphQLSourceBuilder(
         }
         if (schemaReportConsumer != null) {
             configureGraphQl {
-                val report = SchemaMappingInspector.inspect(schema.graphQLSchema, mergedDataFetchers)
-                schemaReportConsumer!!.accept(report)
+                try {
+                    val report = SchemaMappingInspector.inspect(schema.graphQLSchema, mergedDataFetchers)
+                    schemaReportConsumer!!.accept(report)
+                } catch (e: NullPointerException) {
+                    // TODO (SBN4) Spring GraphQL 2.0.0-M3 has a bug in SchemaMappingInspector
+                    // where it calls getDefinition() on GraphQLFieldDefinition which can return null
+                    // for custom scalars and introspection fields, then tries to call .getType() on the null result.
+                    // Log the error and disable schema inspection to work around this issue.
+                    LOG.warn(
+                        "Schema inspection failed due to Spring GraphQL bug. " +
+                            "This is a known issue in Spring GraphQL 2.0.0-M3 with custom scalars. " +
+                            "To disable this warning, set spring.graphql.schema.inspection.enabled=false",
+                        e,
+                    )
+                }
             }
         }
     }

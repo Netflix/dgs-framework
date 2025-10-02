@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration
+import org.springframework.boot.cache.autoconfigure.CacheAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.EnableCaching

@@ -38,7 +38,7 @@ abstract class AbstractInputArgumentResolver(
     }
 
     private val conversionService = DefaultConversionService()
-    private val argumentNameCache: ConcurrentMap<MethodParameter, String> = ConcurrentHashMap()
+    private val argumentNameCache: ConcurrentMap<MethodParameter, String?> = ConcurrentHashMap()
 
     init {
         conversionService.addConverter(InputObjectMapperConverter(inputObjectMapper))
@@ -48,8 +48,8 @@ abstract class AbstractInputArgumentResolver(
         parameter: MethodParameter,
         dfe: DataFetchingEnvironment,
     ): Any? {
-        val argumentName = getArgumentName(parameter)
-        val value = dfe.getArgument<Any?>(argumentName)
+        val argumentName = getArgumentName(parameter) ?: return null
+        val value = dfe.getArgument<Any>(argumentName)
 
         val kfunc = parameter.method?.kotlinFunction
         if (kfunc != null) {
@@ -81,9 +81,8 @@ abstract class AbstractInputArgumentResolver(
     internal abstract fun resolveArgumentName(parameter: MethodParameter): String?
 
     private fun getArgumentName(parameter: MethodParameter): String? {
-        val cachedName = argumentNameCache[parameter]
-        if (cachedName != null) {
-            return cachedName
+        if (argumentNameCache.containsKey(parameter)) {
+            return argumentNameCache[parameter]
         }
         val name = resolveArgumentName(parameter)
         argumentNameCache[parameter] = name

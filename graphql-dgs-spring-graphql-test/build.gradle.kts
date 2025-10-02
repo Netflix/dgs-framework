@@ -17,4 +17,6 @@
 dependencies {
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+    implementation("org.springframework.boot:spring-boot-starter-graphql")
+    implementation("org.springframework.boot:spring-boot-starter-restclient")
 }

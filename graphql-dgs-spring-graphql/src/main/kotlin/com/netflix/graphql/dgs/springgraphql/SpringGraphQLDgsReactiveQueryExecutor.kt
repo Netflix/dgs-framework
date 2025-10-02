@@ -66,7 +66,6 @@ class SpringGraphQLDgsReactiveQueryExecutor(
             .flatMap { context ->
                 request.configureExecutionInput { _, builder ->
                     builder
-                        .context(context)
                         .graphQLContext(context)
                         .dataLoaderRegistry(dataLoaderRegistry)
                         .build()

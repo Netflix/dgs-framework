@@ -17,28 +17,25 @@
 package com.netflix.graphql.dgs.example.datafetcher;
 
 import com.netflix.graphql.dgs.example.shared.types.Stock;
+import com.netflix.graphql.dgs.scalars.UploadScalar;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.graphql.tester.AutoConfigureGraphQlTester;
-import org.springframework.boot.test.autoconfigure.graphql.tester.AutoConfigureHttpGraphQlTester;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.boot.web.server.test.LocalServerPort;
+import org.springframework.context.annotation.Import;
 import org.springframework.graphql.test.tester.GraphQlTester;
-import org.springframework.graphql.test.tester.HttpGraphQlTester;
 import org.springframework.graphql.test.tester.WebSocketGraphQlTester;
 import org.springframework.web.reactive.socket.client.ReactorNettyWebSocketClient;
-import org.springframework.web.reactive.socket.client.WebSocketClient;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 import java.net.URI;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+// TODO (SBN4) Remove this import after upgrading multipart-spring-graphql
+@Import(UploadScalar.class)
 public class SubscriptionsGraphQlTesterTest {
 
     @LocalServerPort

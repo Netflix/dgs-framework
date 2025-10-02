@@ -98,10 +98,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnJava
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties
-import org.springframework.boot.autoconfigure.graphql.GraphQlSourceBuilderCustomizer
-import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.boot.graphql.autoconfigure.GraphQlProperties
+import org.springframework.boot.graphql.autoconfigure.GraphQlSourceBuilderCustomizer
+import org.springframework.boot.jackson.autoconfigure.JacksonAutoConfiguration
 import org.springframework.boot.system.JavaVersion
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
@@ -117,7 +117,6 @@ import org.springframework.core.task.AsyncTaskExecutor
 import org.springframework.core.task.SimpleAsyncTaskExecutor
 import org.springframework.core.task.support.ContextPropagatingTaskDecorator
 import org.springframework.graphql.ExecutionGraphQlService
-import org.springframework.graphql.execution.ConnectionTypeDefinitionConfigurer
 import org.springframework.graphql.execution.DataFetcherExceptionResolver
 import org.springframework.graphql.execution.DataFetcherExceptionResolverAdapter
 import org.springframework.graphql.execution.GraphQlSource
@@ -156,7 +155,7 @@ import java.util.stream.Collectors
  */
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @AutoConfiguration(
-    beforeName = ["org.springframework.boot.autoconfigure.graphql.GraphQlAutoConfiguration"],
+    beforeName = ["org.springframework.boot.graphql.autoconfigure.GraphQlAutoConfiguration"],
     afterName = ["org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration"],
 )
 @EnableConfigurationProperties(
@@ -512,7 +511,7 @@ open class DgsSpringGraphQLAutoConfiguration(
                 request: WebRequest?,
                 headers: HttpHeaders?,
             ): WebRequest? {
-                if (headers.isNullOrEmpty() || request !is NativeWebRequest) {
+                if (headers == null || headers.isEmpty || request !is NativeWebRequest) {
                     return request
                 }
                 val mockRequest =
@@ -557,7 +556,10 @@ open class DgsSpringGraphQLAutoConfiguration(
         @DgsTypeDefinitionRegistry
         fun typeDefinitionRegistry(typeDefinitionRegistry: TypeDefinitionRegistry): TypeDefinitionRegistry {
             val newTypeDefinitionRegistry = TypeDefinitionRegistry()
-            ConnectionTypeDefinitionConfigurer().configure(typeDefinitionRegistry)
+            // TODO (SBN4) Spring GraphQL 2.0 automatically adds ConnectionTypeDefinitionConfigurer
+            // in GraphQlAutoConfiguration.graphQlSource(), so we no longer need to add it here.
+            // Previously this was needed, but now it causes duplicate MessageConnection and MessageEdge types.
+            // ConnectionTypeDefinitionConfigurer().configure(typeDefinitionRegistry)
             return newTypeDefinitionRegistry
         }
     }
