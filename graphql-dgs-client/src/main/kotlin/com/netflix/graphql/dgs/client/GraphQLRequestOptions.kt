@@ -42,6 +42,7 @@ import java.util.Locale
 class GraphQLRequestOptions(
     val scalars: Map<Class<*>, Coercing<*, *>> = emptyMap(),
     val graphQLContext: GraphQLContext = GraphQLContext.getDefault(),
+    val useMessageConverters: Boolean = false
 ) {
     constructor() : this(emptyMap())
 

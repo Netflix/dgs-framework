@@ -42,21 +42,26 @@ class RestClientGraphQLClient(
     private val restClient: RestClient,
     private val headersConsumer: Consumer<HttpHeaders>,
     private val mapper: ObjectMapper,
+    private val useMessageConverters: Boolean = false
 ) : GraphQLClient {
-    constructor(restClient: RestClient) : this(restClient, Consumer { })
+    constructor(restClient: RestClient) : this(restClient, Consumer {}, false)
 
-    constructor(restClient: RestClient, mapper: ObjectMapper) : this(restClient, Consumer { }, mapper)
+    constructor(restClient: RestClient, mapper: ObjectMapper) : this(restClient, Consumer { }, mapper, false)
 
-    constructor(restClient: RestClient, headersConsumer: Consumer<HttpHeaders>) : this(
+    constructor(restClient: RestClient, headersConsumer: Consumer<HttpHeaders>) : this(restClient, headersConsumer, false)
+
+    constructor(restClient: RestClient, headersConsumer: Consumer<HttpHeaders>, useMessageConverters: Boolean) : this(
         restClient,
         headersConsumer,
         GraphQLRequestOptions.createCustomObjectMapper(),
+        useMessageConverters = useMessageConverters
     )
 
     constructor(restClient: RestClient, options: GraphQLRequestOptions? = null) : this(
         restClient,
         Consumer { },
         GraphQLRequestOptions.createCustomObjectMapper(options),
+        useMessageConverters = options?.useMessageConverters?:false
     )
 
     /**
@@ -88,9 +93,10 @@ class RestClientGraphQLClient(
         variables: Map<String, Any>,
         operationName: String?,
     ): GraphQLResponse {
+        val requestMap = GraphQLClients.toRequestMap(query = query, operationName = operationName, variables = variables)
         val serializedRequest =
             mapper.writeValueAsString(
-                GraphQLClients.toRequestMap(query = query, operationName = operationName, variables = variables),
+                requestMap,
             )
 
         val responseEntity =
@@ -98,7 +104,7 @@ class RestClientGraphQLClient(
                 .post()
                 .headers { headers -> headers.addAll(GraphQLClients.defaultHeaders) }
                 .headers(this.headersConsumer)
-                .body(serializedRequest)
+                .body(if(useMessageConverters) requestMap else serializedRequest)
                 .retrieve()
                 .toEntity(String::class.java)
 
