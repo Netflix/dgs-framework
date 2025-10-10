@@ -6,6 +6,9 @@ dependencies {
     implementation("com.netflix.spectator:spectator-api:1.8.+")
     implementation("com.github.ben-manes.caffeine:caffeine")
     implementation("org.springframework:spring-context-support")
+    implementation("org.springframework.boot:spring-boot-data-commons")
+    implementation("org.springframework.boot:spring-boot-micrometer-metrics")
+    implementation("org.springframework.boot:spring-boot-cache")
 
     compileOnly("org.springframework.boot:spring-boot-actuator-autoconfigure")
     compileOnly("org.springframework.boot:spring-boot-starter-web")

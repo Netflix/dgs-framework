@@ -24,6 +24,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("io.micrometer:context-propagation")
+    implementation("org.springframework.boot:spring-boot-starter-graphql")
 
     compileOnly("io.micrometer:micrometer-core")
     compileOnly("jakarta.servlet:jakarta.servlet-api")

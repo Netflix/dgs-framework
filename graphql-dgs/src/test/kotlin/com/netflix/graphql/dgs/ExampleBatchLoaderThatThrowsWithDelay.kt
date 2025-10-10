@@ -20,7 +20,11 @@ import org.dataloader.BatchLoader
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
-@DgsDataLoader
-class ExampleBatchLoaderWithoutName : BatchLoader<String, String> {
-    override fun load(keys: List<String>): CompletionStage<List<String>> = CompletableFuture.supplyAsync { mutableListOf("a", "b", "c") }
+@DgsDataLoader(name = "exampleLoaderThatThrowsWithDelay")
+class ExampleBatchLoaderThatThrowsWithDelay : BatchLoader<String, String> {
+    override fun load(keys: List<String>): CompletionStage<List<String>> =
+        CompletableFuture.supplyAsync {
+            Thread.sleep(50) // Small delay before throwing
+            throw RuntimeException("an error after delay!")
+        }
 }

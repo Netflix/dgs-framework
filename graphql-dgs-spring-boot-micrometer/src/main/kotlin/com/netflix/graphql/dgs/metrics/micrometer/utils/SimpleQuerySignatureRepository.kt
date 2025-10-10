@@ -28,7 +28,7 @@ import io.micrometer.core.instrument.Timer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.InitializingBean
-import org.springframework.boot.actuate.metrics.AutoTimer
+import org.springframework.boot.data.metrics.AutoTimer
 import java.util.Optional
 
 /**

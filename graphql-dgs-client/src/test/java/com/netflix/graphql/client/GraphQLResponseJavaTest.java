@@ -27,18 +27,23 @@ import com.netflix.graphql.dgs.client.GraphQLResponse;
 import com.netflix.graphql.dgs.client.HttpResponse;
 import com.netflix.graphql.dgs.client.MonoGraphQLClient;
 import com.netflix.graphql.dgs.client.RequestExecutor;
+import kotlin.Unit;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Mono;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,6 +52,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static com.fasterxml.jackson.module.kotlin.ExtensionsKt.kotlinModule;
 
 public class GraphQLResponseJavaTest {
 
@@ -71,7 +77,7 @@ public class GraphQLResponseJavaTest {
         HttpHeaders httpHeaders = new HttpHeaders();
         headers.forEach(httpHeaders::addAll);
         ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(body, httpHeaders), String.class);
-        return new HttpResponse(exchange.getStatusCode().value(), exchange.getBody(), exchange.getHeaders());
+        return new HttpResponse(exchange.getStatusCode().value(), exchange.getBody(), toMap(exchange.getHeaders()));
     };
 
     CustomGraphQLClient client = new CustomGraphQLClient(url, requestExecutor, new GraphQLRequestOptions());
@@ -156,6 +162,8 @@ public class GraphQLResponseJavaTest {
                 .andExpect(content().json("{\"operationName\":\"SubmitReview\"}"))
                 .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
 
+
+        @SuppressWarnings("deprecation") // TODO (sbn4) Use Jackson 3 types when Jackson 3 is GA.
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder
                 .json()
                 .modulesToInstall(
@@ -198,11 +206,17 @@ public class GraphQLResponseJavaTest {
             HttpHeaders httpHeaders = new HttpHeaders();
             headers.forEach(httpHeaders::addAll);
             ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(body, httpHeaders), String.class);
-            return Mono.just(new HttpResponse(exchange.getStatusCode().value(), exchange.getBody(), exchange.getHeaders()));
+            return Mono.just(new HttpResponse(exchange.getStatusCode().value(), exchange.getBody(), toMap(exchange.getHeaders())));
         }, new GraphQLRequestOptions());
         Mono<GraphQLResponse> graphQLResponse = client.reactiveExecuteQuery(query, emptyMap(), "SubmitReview");
         String submittedBy = graphQLResponse.map(r -> r.extractValueAsObject("submitReview.submittedBy", String.class)).block();
         assertThat(submittedBy).isEqualTo("abc@netflix.com");
         server.verify();
+    }
+
+    private static Map<String, List<String>> toMap(HttpHeaders headers) {
+        Map<String, List<String>> result = new HashMap<>();
+        headers.forEach(result::put);
+        return result;
     }
 }
