@@ -29,6 +29,5 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-web-server-test")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
-    // TODO (SBN4) Update to compatible spring-graphql version
-    // testImplementation("name.nkonev.multipart-spring-graphql:multipart-spring-graphql:1.+")
+    testImplementation("name.nkonev.multipart-spring-graphql:multipart-spring-graphql:2.0.0-RC2")
 }

@@ -573,6 +573,9 @@
         "io.projectreactor:reactor-test": {
             "locked": "3.8.0-M7"
         },
+        "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
+            "locked": "2.0.0-RC2"
+        },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
@@ -1106,6 +1109,9 @@
         "io.projectreactor:reactor-test": {
             "locked": "3.8.0-M7"
         },
+        "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
+            "locked": "2.0.0-RC2"
+        },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter",
@@ -1306,6 +1312,9 @@
         },
         "io.projectreactor:reactor-test": {
             "locked": "3.8.0-M7"
+        },
+        "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
+            "locked": "2.0.0-RC2"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -1559,6 +1568,9 @@
         },
         "io.projectreactor:reactor-test": {
             "locked": "3.8.0-M7"
+        },
+        "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
+            "locked": "2.0.0-RC2"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "firstLevelTransitive": [

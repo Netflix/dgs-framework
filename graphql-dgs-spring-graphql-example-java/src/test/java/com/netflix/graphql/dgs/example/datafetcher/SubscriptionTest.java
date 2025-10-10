@@ -19,13 +19,11 @@ package com.netflix.graphql.dgs.example.datafetcher;
 
 import com.netflix.graphql.dgs.DgsQueryExecutor;
 import com.netflix.graphql.dgs.example.shared.types.Stock;
-import com.netflix.graphql.dgs.scalars.UploadScalar;
 import graphql.ExecutionResult;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import reactor.test.StepVerifier;
 import tools.jackson.databind.ObjectMapper;
 
@@ -34,8 +32,6 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-// TODO (SBN4) Remove this import after upgrading multipart-spring-graphql
-@Import(UploadScalar.class)
 public class SubscriptionTest {
 
     @Autowired

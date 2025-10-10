@@ -24,8 +24,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation(project(":graphql-dgs-spring-boot-micrometer"))
     implementation("com.github.ben-manes.caffeine:caffeine")
-    // TODO (SBN4) Update to compatible spring-graphql version
-    // implementation("name.nkonev.multipart-spring-graphql:multipart-spring-graphql:1.+")
+    implementation("name.nkonev.multipart-spring-graphql:multipart-spring-graphql:2.0.0-RC2")
 
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
     testImplementation(project(":graphql-dgs-client"))

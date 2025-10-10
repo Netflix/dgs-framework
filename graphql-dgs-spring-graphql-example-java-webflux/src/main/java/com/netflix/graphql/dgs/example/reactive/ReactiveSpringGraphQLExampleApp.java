@@ -31,8 +31,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 @SpringBootApplication(scanBasePackages = {"com.netflix.graphql.dgs.example.shared", "com.netflix.graphql.dgs.example"})
-// TODO (SBN4) Remove UploadScalar import after multipart-spring-graphql dependency is updated and provides Upload scalar
-@Import(UploadScalar.class)
 public class ReactiveSpringGraphQLExampleApp {
     public static void main(String[] args) {
         SpringApplication.run(ReactiveSpringGraphQLExampleApp.class, args);
