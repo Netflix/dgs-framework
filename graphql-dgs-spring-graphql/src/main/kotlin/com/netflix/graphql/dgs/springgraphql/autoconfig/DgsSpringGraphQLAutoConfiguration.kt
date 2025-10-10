@@ -117,6 +117,7 @@ import org.springframework.core.task.AsyncTaskExecutor
 import org.springframework.core.task.SimpleAsyncTaskExecutor
 import org.springframework.core.task.support.ContextPropagatingTaskDecorator
 import org.springframework.graphql.ExecutionGraphQlService
+import org.springframework.graphql.execution.ConnectionTypeDefinitionConfigurer
 import org.springframework.graphql.execution.DataFetcherExceptionResolver
 import org.springframework.graphql.execution.DataFetcherExceptionResolverAdapter
 import org.springframework.graphql.execution.GraphQlSource
@@ -556,10 +557,7 @@ open class DgsSpringGraphQLAutoConfiguration(
         @DgsTypeDefinitionRegistry
         fun typeDefinitionRegistry(typeDefinitionRegistry: TypeDefinitionRegistry): TypeDefinitionRegistry {
             val newTypeDefinitionRegistry = TypeDefinitionRegistry()
-            // TODO (SBN4) Spring GraphQL 2.0 automatically adds ConnectionTypeDefinitionConfigurer
-            // in GraphQlAutoConfiguration.graphQlSource(), so we no longer need to add it here.
-            // Previously this was needed, but now it causes duplicate MessageConnection and MessageEdge types.
-            // ConnectionTypeDefinitionConfigurer().configure(typeDefinitionRegistry)
+            ConnectionTypeDefinitionConfigurer().configure(typeDefinitionRegistry)
             return newTypeDefinitionRegistry
         }
     }
