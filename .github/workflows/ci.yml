@@ -65,13 +65,14 @@ jobs:
         with:
           repository: Netflix/dgs-examples-java
           path: build/examples/dgs-examples-java
+          ref: boot4
 
       - name: Clone dgs-examples-kotlin
         uses: actions/checkout@v5.0.0
         with:
           repository: Netflix/dgs-examples-kotlin
           path: build/examples/dgs-examples-kotlin
-
+          ref: boot4
       - name: Build Examples
         run: |
           find /home/runner/.m2/repository/ -type f -name "*graphql-dgs-codegen-gradle*"
