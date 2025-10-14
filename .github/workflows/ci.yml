@@ -54,11 +54,11 @@ jobs:
 
       - name: Check
         run: |
-          ./gradlew --info --no-watch-fs check
+          ./gradlew --no-watch-fs check
 
       - name: Publish Locally
         run: |
-          ./gradlew --info --no-watch-fs publishToMavenLocal --warning-mode all
+          ./gradlew --no-watch-fs publishToMavenLocal --warning-mode all
 
       - name: Clone dgs-examples-java
         uses: actions/checkout@v5.0.0
