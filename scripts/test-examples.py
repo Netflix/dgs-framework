@@ -71,7 +71,7 @@ def infer_spring_boot_version(content):
 
     return None
 
-def clone_repos(config, target):
+def clone_repos(config, target, spring_boot_version):
     if not target:
         Out.error("Unable to determine the target path for the cloned repos,"
                   " make sure the config defines a target value.")
@@ -90,6 +90,8 @@ def clone_repos(config, target):
         try:
             cloned_repo = git.Git(target).clone(g_uri)
             if cloned_repo:
+                if spring_boot_version.startsWith("4"):
+                    git.Git(target).checkout("boot4")
                 cloned_repos.append(cloned_repo)
                 Out.info(f"Repository [{g_uri}] cloned to [{target}].")
         except git.exc.GitCommandError as git_error:
@@ -222,9 +224,11 @@ def main(argv):
             Out.error("Unable to resolved a version!")
             exit(2)
 
+    spring_boot_version = infer_spring_boot_version(load_root_build_file(root_gradle_kts_file))
+
     if git_clone_projects:
         Out.info(f"Cloning example repositories to {projects_dir}...")
-        clone_repos(load_config(), projects_dir)
+        clone_repos(load_config(), projects_dir, spring_boot_version)
 
     if not os.path.exists(projects_dir):
         Out.error(f"Can not find projects to build, the path {projects_dir} doesn't exist!")
@@ -235,7 +239,6 @@ def main(argv):
         Out.error(f"No projects available at [{projects_dir}]!")
         exit(2)
 
-    spring_boot_version = infer_spring_boot_version(load_root_build_file(root_gradle_kts_file))
 
     for project in projects:
         project_root = f"{projects_dir}/{project}"
