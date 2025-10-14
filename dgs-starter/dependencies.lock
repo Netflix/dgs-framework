@@ -15,6 +15,12 @@
             ],
             "locked": "25.0.beta-5"
         },
+        "com.graphql-java:java-dataloader": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "5.0.3"
+        },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -96,6 +102,12 @@
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "25.0.beta-5"
+        },
+        "com.graphql-java:java-dataloader": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "5.0.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -184,6 +196,12 @@
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "25.0.beta-5"
+        },
+        "com.graphql-java:java-dataloader": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "5.0.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -284,6 +302,12 @@
             ],
             "locked": "25.0.beta-5"
         },
+        "com.graphql-java:java-dataloader": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "5.0.3"
+        },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -365,6 +389,12 @@
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "25.0.beta-5"
+        },
+        "com.graphql-java:java-dataloader": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "5.0.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -462,6 +492,12 @@
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "25.0.beta-5"
+        },
+        "com.graphql-java:java-dataloader": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "5.0.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -595,6 +631,12 @@
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "25.0.beta-5"
+        },
+        "com.graphql-java:java-dataloader": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "5.0.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -901,6 +943,12 @@
             ],
             "locked": "25.0.beta-5"
         },
+        "com.graphql-java:java-dataloader": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "5.0.3"
+        },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
@@ -1081,6 +1129,12 @@
             ],
             "locked": "25.0.beta-5"
         },
+        "com.graphql-java:java-dataloader": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "5.0.3"
+        },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
@@ -1179,6 +1233,12 @@
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "25.0.beta-5"
+        },
+        "com.graphql-java:java-dataloader": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "5.0.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
@@ -1314,6 +1374,12 @@
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "25.0.beta-5"
+        },
+        "com.graphql-java:java-dataloader": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "locked": "5.0.3"
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [

@@ -41,6 +41,9 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven {
+            url = uri("https://repo.spring.io/milestone/")
+        }
     }
 
     apply(plugin = "nebula.netflixoss")
