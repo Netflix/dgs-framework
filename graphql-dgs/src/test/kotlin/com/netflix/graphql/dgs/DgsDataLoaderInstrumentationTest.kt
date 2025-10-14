@@ -117,22 +117,14 @@ class DgsDataLoaderInstrumentationTest {
                 val dataLoaderRegistry = provider.buildRegistry()
 
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleLoaderThatThrows")
-                val loadFuture = dataLoader?.load("test")
-                dataLoader?.dispatch()
-
-                // Wait for the actual load operation to complete, not just dispatch
-                try {
-                    loadFuture?.toCompletableFuture()?.join()
-                } catch (e: Exception) {
-                    // Expected to throw
-                }
-
-                // Give some time for async callbacks to complete
-                Thread.sleep(100)
-
-                assertThat(beforeCounter.get()).isEqualTo(1)
-                assertThat(afterCounter.get()).isEqualTo(0)
-                assertThat(exceptionCounter.get()).isEqualTo(1)
+                dataLoader!!.load("test")
+                dataLoader
+                    .dispatch()
+                    .whenComplete { _, e ->
+                        assertThat(beforeCounter.get()).isEqualTo(1)
+                        assertThat(afterCounter.get()).isEqualTo(0)
+                        assertThat(exceptionCounter.get()).isEqualTo(1)
+                    }.join()
             }
     }
 
