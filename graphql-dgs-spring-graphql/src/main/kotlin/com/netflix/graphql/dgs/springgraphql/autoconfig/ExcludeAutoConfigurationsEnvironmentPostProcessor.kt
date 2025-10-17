@@ -82,11 +82,11 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
             mapOf(
                 Pair(
                     "dgs.springgraphql.autoconfiguration.graphqlobservation.enabled",
-                    "org.springframework.boot.actuate.autoconfigure.observation.graphql.GraphQlObservationAutoConfiguration",
+                    "org.springframework.boot.graphql.autoconfigure.observation.GraphQlObservationAutoConfiguration",
                 ),
                 Pair(
                     "dgs.springgraphql.autoconfiguration.graphqlwebmvcsecurity.enabled",
-                    "org.springframework.boot.autoconfigure.graphql.security.GraphQlWebMvcSecurityAutoConfiguration",
+                    "org.springframework.boot.graphql.autoconfigure.security.GraphQlWebMvcSecurityAutoConfiguration",
                 ),
             )
 
