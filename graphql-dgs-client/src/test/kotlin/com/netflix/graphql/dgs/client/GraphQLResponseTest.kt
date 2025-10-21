@@ -43,10 +43,10 @@ class GraphQLResponseTest {
     private val requestExecutor =
         RequestExecutor { url, headers, body ->
             val httpHeaders = HttpHeaders()
-            headers.forEach { httpHeaders.addAll(it.key, it.value) }
+            headers.forEach { key, values -> httpHeaders.addAll(key, values) }
 
             val response = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
-            HttpResponse(statusCode = response.statusCode.value(), body = response.body, headers = response.headers)
+            HttpResponse(statusCode = response.statusCode.value(), body = response.body, headers = response.headers.toMap())
         }
 
     private val url = "http://localhost:8080/graphql"
@@ -348,4 +348,10 @@ class GraphQLResponseTest {
         assertThat(response.errors[0].message).isEqualTo("An error occurred")
         assertThat(response.errors[0].path).isEmpty()
     }
+}
+
+private fun HttpHeaders.toMap(): Map<String, List<String>> {
+    val result = mutableMapOf<String, List<String>>()
+    this.forEach { key, values -> result[key] = values }
+    return result
 }

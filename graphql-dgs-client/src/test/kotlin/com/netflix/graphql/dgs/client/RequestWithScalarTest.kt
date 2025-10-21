@@ -18,9 +18,11 @@ package com.netflix.graphql.dgs.client
 
 import com.netflix.graphql.dgs.client.scalar.DateRange
 import com.netflix.graphql.dgs.client.scalar.DateRangeScalar
+import graphql.GraphQLContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.util.Locale
 
 class RequestWithScalarTest {
     @Test
@@ -33,6 +35,8 @@ class RequestWithScalarTest {
                             from = LocalDate.now(),
                             to = LocalDate.now().plusDays(1),
                         ),
+                        GraphQLContext.newContext().build(),
+                        Locale.getDefault(),
                     ),
             )
         val client =

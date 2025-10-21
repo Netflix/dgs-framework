@@ -1,2 +1,3 @@
 com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLAutoConfiguration
-org.springframework.boot.autoconfigure.graphql.GraphQlAutoConfiguration
+org.springframework.boot.graphql.autoconfigure.GraphQlAutoConfiguration
+org.springframework.boot.restclient.autoconfigure.RestClientAutoConfiguration

@@ -70,6 +70,7 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
 import org.springframework.http.MediaType
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
+import org.springframework.test.json.JsonCompareMode
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -122,7 +123,7 @@ class MicrometerServletSmokeTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""{ "query": "query my_op_1{ping}" }"""),
             ).andExpect(status().isOk)
-            .andExpect(content().json("""{"data":{"ping":"pong"}}""", false))
+            .andExpect(content().json("""{"data":{"ping":"pong"}}""", JsonCompareMode.LENIENT))
 
         val meters = fetchMeters()
 
@@ -167,7 +168,7 @@ class MicrometerServletSmokeTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""{ "query": " mutation my_op_1{buzz}" }""".trimMargin()),
             ).andExpect(status().isOk)
-            .andExpect(content().json("""{"data":{"buzz":"buzz"}}""", false))
+            .andExpect(content().json("""{"data":{"buzz":"buzz"}}""", JsonCompareMode.LENIENT))
 
         val meters = fetchMeters()
 
@@ -219,7 +220,7 @@ class MicrometerServletSmokeTest {
                         """.trimMargin(),
                     ),
             ).andExpect(status().isOk)
-            .andExpect(content().json("""{"data":{"ping":"pong"}}""", false))
+            .andExpect(content().json("""{"data":{"ping":"pong"}}""", JsonCompareMode.LENIENT))
 
         val meters = fetchMeters()
 
@@ -279,7 +280,7 @@ class MicrometerServletSmokeTest {
                     |     ]
                     |   }
                     """.trimMargin(),
-                    false,
+                    JsonCompareMode.LENIENT,
                 ),
             )
         val meters = fetchMeters("gql.")
@@ -437,7 +438,7 @@ class MicrometerServletSmokeTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""{ "query": "{someTrivialThings}" }"""),
             ).andExpect(status().isOk)
-            .andExpect(content().json("""{"data":{"someTrivialThings":"some insignificance"}}""", false))
+            .andExpect(content().json("""{"data":{"someTrivialThings":"some insignificance"}}""", JsonCompareMode.LENIENT))
 
         val meters = fetchMeters()
 
@@ -484,7 +485,7 @@ class MicrometerServletSmokeTest {
                     |     ]
                     |   }
                     """.trimMargin(),
-                    false,
+                    JsonCompareMode.LENIENT,
                 ),
             )
         val meters = fetchMeters("gql.")
@@ -547,7 +548,7 @@ class MicrometerServletSmokeTest {
                        |    "data":{"triggerInternalFailure":null}
                        |}
                     """.trimMargin(),
-                    false,
+                    JsonCompareMode.LENIENT,
                 ),
             )
 
@@ -625,7 +626,7 @@ class MicrometerServletSmokeTest {
                         |   "data":{"triggerBadRequestFailure":null}
                         |}
                     """.trimMargin(),
-                    false,
+                    JsonCompareMode.LENIENT,
                 ),
             )
 
@@ -698,7 +699,7 @@ class MicrometerServletSmokeTest {
                         |   "data":{"triggerSuccessfulRequestWithErrorAsync":"Some data..."}
                         |}
                     """.trimMargin(),
-                    false,
+                    JsonCompareMode.LENIENT,
                 ),
             )
 
@@ -748,7 +749,7 @@ class MicrometerServletSmokeTest {
                         |   "data":{"triggerSuccessfulRequestWithErrorSync":"Some data..."}
                         |}
                     """.trimMargin(),
-                    false,
+                    JsonCompareMode.LENIENT,
                 ),
             )
 
@@ -802,7 +803,7 @@ class MicrometerServletSmokeTest {
                     |   "data":{"triggerCustomFailure":null}
                     |}
                     """.trimMargin(),
-                    false,
+                    JsonCompareMode.LENIENT,
                 ),
             )
 
@@ -875,7 +876,7 @@ class MicrometerServletSmokeTest {
                     |  ],
                     |  "data":{"triggerInternalFailure":null,"triggerBadRequestFailure":null,"triggerCustomFailure":null}}
                     """.trimMargin(),
-                    false,
+                    JsonCompareMode.LENIENT,
                 ),
             )
 
@@ -1065,8 +1066,14 @@ class MicrometerServletSmokeTest {
                     DataFetcherResult
                         .newResult<String>()
                         .data("Some data...")
-                        .error(TypedGraphQLError("Exception triggered.", null, null, null, null))
-                        .build()
+                        // TODO (SBN4) Spring GraphQL 2.0.0-M3 requires non-null error classification
+                        .error(
+                            TypedGraphQLError
+                                .newBuilder()
+                                .message("Exception triggered.")
+                                .errorType(ErrorType.INTERNAL)
+                                .build(),
+                        ).build()
                 }
 
             @DgsQuery
@@ -1074,8 +1081,14 @@ class MicrometerServletSmokeTest {
                 DataFetcherResult
                     .newResult<String>()
                     .data("Some data...")
-                    .error(TypedGraphQLError("Exception triggered.", null, null, null, null))
-                    .build()
+                    // TODO (SBN4) Spring GraphQL 2.0.0-M3 requires non-null error classification
+                    .error(
+                        TypedGraphQLError
+                            .newBuilder()
+                            .message("Exception triggered.")
+                            .errorType(ErrorType.INTERNAL)
+                            .build(),
+                    ).build()
 
             @DgsQuery
             fun triggerCustomFailure(): String = throw CustomException("Exception triggered.")

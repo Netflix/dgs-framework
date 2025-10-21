@@ -26,12 +26,12 @@ import graphql.execution.instrumentation.SimplePerformantInstrumentation
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.graphql.GraphQlAutoConfiguration
-import org.springframework.boot.autoconfigure.graphql.servlet.GraphQlWebMvcAutoConfiguration
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration
+import org.springframework.boot.graphql.autoconfigure.GraphQlAutoConfiguration
+import org.springframework.boot.graphql.autoconfigure.servlet.GraphQlWebMvcAutoConfiguration
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.boot.webmvc.autoconfigure.WebMvcAutoConfiguration
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component

@@ -182,7 +182,7 @@ class DefaultDgsDataLoaderProviderTest {
 
             // Use the dataloader's "load" method to check if the registry was set correctly, because the dataloader instance isn't itself a DgsDataLoaderRegistryConsumer
             val dataLoader = registry.getDataLoader<String, String>("withRegistry")
-            val load = dataLoader.load("")
+            val load = dataLoader!!.load("")
             dataLoader.dispatch()
             val loaderKeys = load.get()
             assertThat(loaderKeys).isEqualTo(registry.keys.first())

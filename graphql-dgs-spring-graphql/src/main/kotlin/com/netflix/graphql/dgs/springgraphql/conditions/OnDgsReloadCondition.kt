@@ -36,10 +36,10 @@ class OnDgsReloadCondition : SpringBootCondition() {
     }
 
     override fun getMatchOutcome(
-        context: ConditionContext?,
-        metadata: AnnotatedTypeMetadata?,
-    ): ConditionOutcome? {
-        val environment = context!!.environment
+        context: ConditionContext,
+        metadata: AnnotatedTypeMetadata,
+    ): ConditionOutcome {
+        val environment = context.environment
         val reloadEnabled = evaluate(environment)
         return if (reloadEnabled) {
             ConditionOutcome.match("DgsReload enabled.")

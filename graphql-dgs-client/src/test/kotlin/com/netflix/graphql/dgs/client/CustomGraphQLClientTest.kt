@@ -29,7 +29,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.boot.web.server.test.LocalServerPort
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -53,7 +53,7 @@ class CustomGraphQLClientTest {
         client =
             GraphQLClient.createCustom("http://localhost:$port/graphql") { url, headers, body ->
                 val httpHeaders = HttpHeaders()
-                headers.forEach { httpHeaders.addAll(it.key, it.value) }
+                headers.forEach { key, values -> httpHeaders.addAll(key, values) }
 
                 val exchange = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
                 HttpResponse(exchange.statusCode.value(), exchange.body)

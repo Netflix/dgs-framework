@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.client
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.types.subscription.QueryPayload
 import org.intellij.lang.annotations.Language
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.toEntityFlux
@@ -63,7 +64,7 @@ class SSESubscriptionGraphQLClient(
             .retrieve()
             .toEntityFlux<String>()
             .flatMapMany { response ->
-                val headers = response.headers
+                val headers = response.headers.toMap()
                 response.body?.map { body -> GraphQLResponse(json = body, headers = headers) }
                     ?: Flux.empty()
             }.publishOn(Schedulers.single())
@@ -72,4 +73,10 @@ class SSESubscriptionGraphQLClient(
     private fun encodeQuery(
         @Language("graphql") query: String,
     ): String? = Base64.getEncoder().encodeToString(query.toByteArray(StandardCharsets.UTF_8))
+}
+
+private fun org.springframework.http.HttpHeaders.toMap(): Map<String, List<String>> {
+    val result = mutableMapOf<String, List<String>>()
+    this.forEach { key, values -> result[key] = values }
+    return result
 }

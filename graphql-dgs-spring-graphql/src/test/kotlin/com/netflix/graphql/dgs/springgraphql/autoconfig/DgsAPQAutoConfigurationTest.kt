@@ -21,7 +21,7 @@ import graphql.execution.preparsed.persisted.PersistedQueryCache
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.AutoConfigurations
-import org.springframework.boot.autoconfigure.graphql.GraphQlAutoConfiguration
+import org.springframework.boot.graphql.autoconfigure.GraphQlAutoConfiguration
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
 
 class DgsAPQAutoConfigurationTest {

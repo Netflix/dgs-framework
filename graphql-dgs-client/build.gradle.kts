@@ -32,8 +32,10 @@ dependencies {
     implementation("org.jetbrains:annotations:26.0.2-1")
 
     testImplementation("org.springframework.boot:spring-boot-starter-web")
+    testImplementation("org.springframework.boot:spring-boot-starter-graphql")
     testImplementation("org.springframework:spring-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
+    testImplementation("org.springframework.boot:spring-boot-web-server-test")
     testImplementation("com.graphql-java:graphql-java-extended-scalars")
     testImplementation("io.projectreactor:reactor-test")
 
