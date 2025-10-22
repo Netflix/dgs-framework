@@ -47,7 +47,7 @@ class DgsGraphQLSourceBuilder(
     private val typeDefinitionConfigurers = mutableListOf<TypeDefinitionConfigurer>()
     private val runtimeWiringConfigurers = mutableListOf<RuntimeWiringConfigurer>()
 
-    private val schemaResources: Set<Resource> = LinkedHashSet()
+    private val schemaResources = mutableSetOf<Resource>()
 
     @Nullable
     private var typeResolver: TypeResolver? = null
@@ -64,18 +64,18 @@ class DgsGraphQLSourceBuilder(
         return schema.graphQLSchema
     }
 
-    override fun schemaResources(vararg resources: Resource?): SchemaResourceBuilder {
-        schemaResources.plus(listOf(*resources))
+    override fun schemaResources(vararg resources: Resource): SchemaResourceBuilder {
+        schemaResources += resources
         return this
     }
 
     override fun configureTypeDefinitions(configurer: TypeDefinitionConfigurer): SchemaResourceBuilder {
-        this.typeDefinitionConfigurers.add(configurer)
+        this.typeDefinitionConfigurers += configurer
         return this
     }
 
     override fun configureRuntimeWiring(configurer: RuntimeWiringConfigurer): SchemaResourceBuilder {
-        this.runtimeWiringConfigurers.add(configurer)
+        this.runtimeWiringConfigurers += configurer
         return this
     }
 
@@ -112,14 +112,14 @@ class DgsGraphQLSourceBuilder(
 
         override fun getReturnType(): ResolvableType = ResolvableType.forMethodReturnType(dataFetcher.method)
 
-        override fun getArguments(): Map<String, ResolvableType> {
-            return dataFetcher.method.parameters
+        override fun getArguments(): Map<String, ResolvableType> =
+            dataFetcher.method.parameters
+                .asSequence()
                 .filter { it.isAnnotationPresent(InputArgument::class.java) }
                 .associate {
                     val name = it.getAnnotation(InputArgument::class.java).name.ifEmpty { it.name }
-                    return@associate name to ResolvableType.forClass(it.type)
+                    name to ResolvableType.forClass(it.type)
                 }
-        }
     }
 
     private fun wrapDataFetchers(dataFetchers: List<DataFetcherReference>): Map<String, Map<String, SelfDescribingDataFetcher<Any>>> {

@@ -87,7 +87,6 @@ type Stock {
     price: Float
 }
 
-scalar Upload
 scalar LocalTime
 
 directive @connection on OBJECT
