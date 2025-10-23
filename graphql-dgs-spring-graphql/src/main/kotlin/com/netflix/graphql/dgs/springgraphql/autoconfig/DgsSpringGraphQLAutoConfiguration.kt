@@ -63,6 +63,7 @@ import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContex
 import com.netflix.graphql.dgs.reactive.internal.method.SyncHandlerMethodArgumentResolverAdapter
 import com.netflix.graphql.dgs.springgraphql.DgsGraphQLSourceBuilder
 import com.netflix.graphql.dgs.springgraphql.ReloadableGraphQLSource
+import com.netflix.graphql.dgs.springgraphql.RequestContextHolderAccessor
 import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.conditions.ConditionalOnDgsReload
@@ -475,6 +476,7 @@ open class DgsSpringGraphQLAutoConfiguration(
                 .loadContextAccessors()
                 .loadThreadLocalAccessors()
                 .registerThreadLocalAccessor(Slf4jThreadLocalAccessor())
+                .registerThreadLocalAccessor(RequestContextHolderAccessor())
 
         val executor = SimpleAsyncTaskExecutor("dgs-virtual-thread-")
         executor.setVirtualThreads(true)
