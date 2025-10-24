@@ -63,7 +63,6 @@ import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContex
 import com.netflix.graphql.dgs.reactive.internal.method.SyncHandlerMethodArgumentResolverAdapter
 import com.netflix.graphql.dgs.springgraphql.DgsGraphQLSourceBuilder
 import com.netflix.graphql.dgs.springgraphql.ReloadableGraphQLSource
-import com.netflix.graphql.dgs.springgraphql.RequestContextHolderAccessor
 import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.SpringGraphQLDgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.springgraphql.conditions.ConditionalOnDgsReload
@@ -132,6 +131,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest
+import org.springframework.web.context.request.RequestAttributesThreadLocalAccessor
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.filter.reactive.ServerWebExchangeContextFilter
 import org.springframework.web.method.annotation.RequestHeaderMapMethodArgumentResolver
@@ -476,7 +476,7 @@ open class DgsSpringGraphQLAutoConfiguration(
                 .loadContextAccessors()
                 .loadThreadLocalAccessors()
                 .registerThreadLocalAccessor(Slf4jThreadLocalAccessor())
-                .registerThreadLocalAccessor(RequestContextHolderAccessor())
+                .registerThreadLocalAccessor(RequestAttributesThreadLocalAccessor())
 
         val executor = SimpleAsyncTaskExecutor("dgs-virtual-thread-")
         executor.setVirtualThreads(true)
