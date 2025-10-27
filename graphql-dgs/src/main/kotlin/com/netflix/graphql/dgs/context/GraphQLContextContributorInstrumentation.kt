@@ -39,7 +39,13 @@ class GraphQLContextContributorInstrumentation(
         val graphqlContext = parameters.executionInput.graphQLContext
         if (graphqlContext != null && graphQLContextContributors.isNotEmpty()) {
             val extensions = parameters.executionInput.extensions
-            val requestData = DgsContext.from(graphqlContext).requestData
+
+            // Use null-safe access because DgsContext may not be available yet during
+            // subscription callback initialization (Apollo Federation HTTP callback protocol).
+            // The CallbackWebGraphQLInterceptor runs at LOWEST_PRECEDENCE, so DgsContext
+            // won't be set until after this instrumentation's createState() is called.
+            val requestData = DgsContext.fromOrNull(graphqlContext)?.requestData
+
             val builderForContributors = GraphQLContext.newContext()
             graphQLContextContributors.forEach { it.contribute(builderForContributors, extensions, requestData) }
             graphqlContext.putAll(builderForContributors)
