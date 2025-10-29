@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.example.shared;
 import com.netflix.graphql.dgs.DgsQueryExecutor;
 import com.netflix.graphql.dgs.exceptions.QueryException;
 import org.assertj.core.util.Maps;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

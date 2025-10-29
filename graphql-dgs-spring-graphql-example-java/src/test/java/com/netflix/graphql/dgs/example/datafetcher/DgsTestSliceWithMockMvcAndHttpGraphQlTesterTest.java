@@ -23,13 +23,14 @@ import com.netflix.graphql.dgs.scalars.UploadScalar;
 import com.netflix.graphql.dgs.test.EnableDgsMockMvcTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.graphql.tester.AutoConfigureHttpGraphQlTester;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.graphql.test.autoconfigure.tester.AutoConfigureHttpGraphQlTester;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.graphql.test.tester.HttpGraphQlTester;
 
 @SpringBootTest(classes = {com.netflix.graphql.dgs.example.datafetcher.HelloDataFetcher.class,
-        SpringGraphQLDataFetchers.class}
+        SpringGraphQLDataFetchers.class},
+        properties= {"debug=true"}
 )
 @TestAppTestSlice
 @EnableDgsMockMvcTest

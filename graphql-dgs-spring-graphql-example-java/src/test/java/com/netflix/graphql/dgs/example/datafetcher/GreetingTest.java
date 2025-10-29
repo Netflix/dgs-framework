@@ -88,7 +88,7 @@ public class GreetingTest {
 
     @Test
     void headers() {
-        var headers = HttpHeaders.writableHttpHeaders(HttpHeaders.EMPTY);
+        var headers = new HttpHeaders();
         headers.add("my-header", "DGS rocks!");
         headers.add("referer", "Test");
 
@@ -131,7 +131,7 @@ public class GreetingTest {
     @Test
     void jsonPathWithHeaders() {
         String query = "{ headers }";
-        var headers = HttpHeaders.writableHttpHeaders(HttpHeaders.EMPTY);
+        var headers = new HttpHeaders();
         headers.add("my-header", "DGS rocks!");
         headers.add("referer", "Test");
 

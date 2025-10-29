@@ -41,7 +41,7 @@ import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Timer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.boot.actuate.metrics.AutoTimer
+import org.springframework.boot.data.metrics.AutoTimer
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage

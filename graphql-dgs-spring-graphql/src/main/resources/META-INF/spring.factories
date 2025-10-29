@@ -1,4 +1,4 @@
-org.springframework.boot.env.EnvironmentPostProcessor=\
+org.springframework.boot.EnvironmentPostProcessor=\
   com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLEnvironmentPostProcessor,\
   com.netflix.graphql.dgs.springgraphql.autoconfig.ExcludeAutoConfigurationsEnvironmentPostProcessor
 org.springframework.boot.diagnostics.FailureAnalyzer=\

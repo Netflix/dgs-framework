@@ -27,11 +27,11 @@ import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration
-import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration
 import org.springframework.boot.autoconfigure.AutoConfigurations
-import org.springframework.boot.autoconfigure.graphql.GraphQlAutoConfiguration
 import org.springframework.boot.context.annotation.UserConfigurations
+import org.springframework.boot.graphql.autoconfigure.GraphQlAutoConfiguration
+import org.springframework.boot.micrometer.metrics.autoconfigure.CompositeMeterRegistryAutoConfiguration
+import org.springframework.boot.micrometer.metrics.autoconfigure.MetricsAutoConfiguration
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import org.springframework.context.annotation.Bean
