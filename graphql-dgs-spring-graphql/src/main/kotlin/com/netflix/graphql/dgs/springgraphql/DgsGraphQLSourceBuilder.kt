@@ -160,21 +160,8 @@ class DgsGraphQLSourceBuilder(
         }
         if (schemaReportConsumer != null) {
             configureGraphQl {
-                try {
-                    val report = SchemaMappingInspector.inspect(schema.graphQLSchema, mergedDataFetchers)
-                    schemaReportConsumer!!.accept(report)
-                } catch (e: NullPointerException) {
-                    // TODO (SBN4) Spring GraphQL 2.0.0-M3 has a bug in SchemaMappingInspector
-                    // where it calls getDefinition() on GraphQLFieldDefinition which can return null
-                    // for custom scalars and introspection fields, then tries to call .getType() on the null result.
-                    // Log the error and disable schema inspection to work around this issue.
-                    LOG.warn(
-                        "Schema inspection failed due to Spring GraphQL bug. " +
-                            "This is a known issue in Spring GraphQL 2.0.0-M3 with custom scalars. " +
-                            "To disable this warning, set spring.graphql.schema.inspection.enabled=false",
-                        e,
-                    )
-                }
+                val report = SchemaMappingInspector.inspect(schema.graphQLSchema, mergedDataFetchers)
+                schemaReportConsumer!!.accept(report)
             }
         }
     }

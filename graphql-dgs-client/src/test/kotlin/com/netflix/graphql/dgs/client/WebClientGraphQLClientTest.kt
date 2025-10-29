@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.web.server.test.LocalServerPort
+import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.web.bind.annotation.RequestHeader

@@ -1,7 +1,7 @@
 {
     "apiDependenciesMetadata": {
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -15,7 +15,7 @@
             "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -37,7 +37,7 @@
     },
     "implementationDependenciesMetadata": {
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -65,7 +65,7 @@
     },
     "jmhApiDependenciesMetadata": {
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -79,7 +79,7 @@
             "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -110,7 +110,7 @@
     },
     "jmhImplementationDependenciesMetadata": {
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -136,7 +136,7 @@
     },
     "jmhRuntimeClasspath": {
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -151,10 +151,10 @@
             "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.13.4"
+            "locked": "6.0.0"
         },
         "org.junit.platform:junit-platform-launcher": {
-            "locked": "1.13.4"
+            "locked": "6.0.0"
         },
         "org.junit:junit-bom": {
             "locked": "5.13.4"
@@ -172,7 +172,7 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0-M3"
+            "locked": "4.0.0-RC1"
         }
     },
     "kotlinBouncyCastleConfiguration": {
@@ -247,7 +247,7 @@
     },
     "runtimeClasspath": {
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -269,7 +269,7 @@
     },
     "testCompileClasspath": {
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -284,7 +284,7 @@
             "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.13.4"
+            "locked": "6.0.0"
         },
         "org.junit:junit-bom": {
             "locked": "5.13.4"
@@ -293,12 +293,12 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0-M3"
+            "locked": "4.0.0-RC1"
         }
     },
     "testImplementationDependenciesMetadata": {
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -313,7 +313,7 @@
             "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.13.4"
+            "locked": "6.0.0"
         },
         "org.junit:junit-bom": {
             "locked": "5.13.4"
@@ -322,12 +322,12 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0-M3"
+            "locked": "4.0.0-RC1"
         }
     },
     "testRuntimeClasspath": {
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -342,10 +342,10 @@
             "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.13.4"
+            "locked": "6.0.0"
         },
         "org.junit.platform:junit-platform-launcher": {
-            "locked": "1.13.4"
+            "locked": "6.0.0"
         },
         "org.junit:junit-bom": {
             "locked": "5.13.4"
@@ -354,7 +354,7 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0-M3"
+            "locked": "4.0.0-RC1"
         }
     }
 }

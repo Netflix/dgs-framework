@@ -16,6 +16,8 @@ dependencies {
     testImplementation(project(":graphql-dgs-spring-graphql-starter"))
     testImplementation("org.springframework.boot:spring-boot-actuator-autoconfigure")
     testImplementation("org.springframework.boot:spring-boot-starter-web")
+    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
 }
 
 tasks.withType<JavaCompile>().configureEach {

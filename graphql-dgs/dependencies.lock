@@ -4,7 +4,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.graphql-java:java-dataloader": {
             "locked": "5.0.3"
@@ -45,7 +45,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.graphql-java:java-dataloader": {
             "locked": "5.0.3"
@@ -63,10 +63,10 @@
             "project": true
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.2.0-M1"
+            "locked": "1.2.0-RC1"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.8.0-M7"
+            "locked": "3.8.0-RC1"
         },
         "jakarta.annotation:jakarta.annotation-api": {
             "locked": "3.0.0"
@@ -93,13 +93,13 @@
             "locked": "2.0.17"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "7.0.0-M3"
+            "locked": "7.0.0-RC1"
         },
         "org.springframework:spring-context": {
-            "locked": "7.0.0-M9"
+            "locked": "7.0.0-RC2"
         },
         "org.springframework:spring-web": {
-            "locked": "7.0.0-M9"
+            "locked": "7.0.0-RC2"
         }
     },
     "compileOnlyDependenciesMetadata": {
@@ -107,13 +107,13 @@
             "locked": "3.2.2"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.8.0-M7"
+            "locked": "3.8.0-RC1"
         },
         "jakarta.annotation:jakarta.annotation-api": {
             "locked": "3.0.0"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "7.0.0-M3"
+            "locked": "7.0.0-RC1"
         }
     },
     "implementationDependenciesMetadata": {
@@ -130,7 +130,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.graphql-java:java-dataloader": {
             "locked": "5.0.3"
@@ -148,7 +148,7 @@
             "project": true
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.2.0-M1"
+            "locked": "1.2.0-RC1"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "locked": "2.2.20"
@@ -172,10 +172,10 @@
             "locked": "2.0.17"
         },
         "org.springframework:spring-context": {
-            "locked": "7.0.0-M9"
+            "locked": "7.0.0-RC2"
         },
         "org.springframework:spring-web": {
-            "locked": "7.0.0-M9"
+            "locked": "7.0.0-RC2"
         }
     },
     "jmh": {
@@ -194,7 +194,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.graphql-java:java-dataloader": {
             "locked": "5.0.3"
@@ -235,7 +235,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.graphql-java:java-dataloader": {
             "locked": "5.0.3"
@@ -253,10 +253,10 @@
             "project": true
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.2.0-M1"
+            "locked": "1.2.0-RC1"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.8.0-M7"
+            "locked": "3.8.0-RC1"
         },
         "jakarta.annotation:jakarta.annotation-api": {
             "locked": "3.0.0"
@@ -292,13 +292,13 @@
             "locked": "2.0.17"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "7.0.0-M3"
+            "locked": "7.0.0-RC1"
         },
         "org.springframework:spring-context": {
-            "locked": "7.0.0-M9"
+            "locked": "7.0.0-RC2"
         },
         "org.springframework:spring-web": {
-            "locked": "7.0.0-M9"
+            "locked": "7.0.0-RC2"
         }
     },
     "jmhCompileOnlyDependenciesMetadata": {
@@ -306,13 +306,13 @@
             "locked": "3.2.2"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.8.0-M7"
+            "locked": "3.8.0-RC1"
         },
         "jakarta.annotation:jakarta.annotation-api": {
             "locked": "3.0.0"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "7.0.0-M3"
+            "locked": "7.0.0-RC1"
         }
     },
     "jmhImplementationDependenciesMetadata": {
@@ -329,7 +329,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.graphql-java:java-dataloader": {
             "locked": "5.0.3"
@@ -347,7 +347,7 @@
             "project": true
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.2.0-M1"
+            "locked": "1.2.0-RC1"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "locked": "2.2.20"
@@ -380,10 +380,10 @@
             "locked": "2.0.17"
         },
         "org.springframework:spring-context": {
-            "locked": "7.0.0-M9"
+            "locked": "7.0.0-RC2"
         },
         "org.springframework:spring-web": {
-            "locked": "7.0.0-M9"
+            "locked": "7.0.0-RC2"
         }
     },
     "jmhRuntimeClasspath": {
@@ -400,7 +400,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "22.0"
@@ -421,16 +421,16 @@
             "project": true
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.2.0-M1"
+            "locked": "1.2.0-RC1"
         },
         "io.mockk:mockk": {
             "locked": "1.14.6"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.8.0-M7"
+            "locked": "3.8.0-RC1"
         },
         "io.projectreactor:reactor-test": {
-            "locked": "3.8.0-M7"
+            "locked": "3.8.0-RC1"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "locked": "2.2.20"
@@ -457,10 +457,10 @@
             "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.13.4"
+            "locked": "6.0.0"
         },
         "org.junit.platform:junit-platform-launcher": {
-            "locked": "1.13.4"
+            "locked": "6.0.0"
         },
         "org.junit:junit-bom": {
             "locked": "5.13.4"
@@ -481,16 +481,16 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0-M3"
+            "locked": "4.0.0-RC1"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "7.0.0-M3"
+            "locked": "7.0.0-RC1"
         },
         "org.springframework:spring-context": {
-            "locked": "7.0.0-M9"
+            "locked": "7.0.0-RC2"
         },
         "org.springframework:spring-web": {
-            "locked": "7.0.0-M9"
+            "locked": "7.0.0-RC2"
         }
     },
     "kotlinBouncyCastleConfiguration": {
@@ -577,7 +577,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.graphql-java:java-dataloader": {
             "locked": "5.0.3"
@@ -595,7 +595,7 @@
             "project": true
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.2.0-M1"
+            "locked": "1.2.0-RC1"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "locked": "2.2.20"
@@ -625,10 +625,10 @@
             "locked": "2.0.17"
         },
         "org.springframework:spring-context": {
-            "locked": "7.0.0-M9"
+            "locked": "7.0.0-RC2"
         },
         "org.springframework:spring-web": {
-            "locked": "7.0.0-M9"
+            "locked": "7.0.0-RC2"
         }
     },
     "swiftExportClasspathResolvable": {
@@ -650,7 +650,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "22.0"
@@ -671,16 +671,16 @@
             "project": true
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.2.0-M1"
+            "locked": "1.2.0-RC1"
         },
         "io.mockk:mockk": {
             "locked": "1.14.6"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.8.0-M7"
+            "locked": "3.8.0-RC1"
         },
         "io.projectreactor:reactor-test": {
-            "locked": "3.8.0-M7"
+            "locked": "3.8.0-RC1"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "locked": "2.2.20"
@@ -704,7 +704,7 @@
             "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.13.4"
+            "locked": "6.0.0"
         },
         "org.junit:junit-bom": {
             "locked": "5.13.4"
@@ -713,16 +713,16 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0-M3"
+            "locked": "4.0.0-RC1"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "7.0.0-M3"
+            "locked": "7.0.0-RC1"
         },
         "org.springframework:spring-context": {
-            "locked": "7.0.0-M9"
+            "locked": "7.0.0-RC2"
         },
         "org.springframework:spring-web": {
-            "locked": "7.0.0-M9"
+            "locked": "7.0.0-RC2"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -739,7 +739,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "22.0"
@@ -760,16 +760,16 @@
             "project": true
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.2.0-M1"
+            "locked": "1.2.0-RC1"
         },
         "io.mockk:mockk": {
             "locked": "1.14.6"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.8.0-M7"
+            "locked": "3.8.0-RC1"
         },
         "io.projectreactor:reactor-test": {
-            "locked": "3.8.0-M7"
+            "locked": "3.8.0-RC1"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "locked": "2.2.20"
@@ -793,7 +793,7 @@
             "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.13.4"
+            "locked": "6.0.0"
         },
         "org.junit:junit-bom": {
             "locked": "5.13.4"
@@ -802,16 +802,16 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0-M3"
+            "locked": "4.0.0-RC1"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "7.0.0-M3"
+            "locked": "7.0.0-RC1"
         },
         "org.springframework:spring-context": {
-            "locked": "7.0.0-M9"
+            "locked": "7.0.0-RC2"
         },
         "org.springframework:spring-web": {
-            "locked": "7.0.0-M9"
+            "locked": "7.0.0-RC2"
         }
     },
     "testRuntimeClasspath": {
@@ -828,7 +828,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0.beta-5"
+            "locked": "24.3"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "22.0"
@@ -849,16 +849,16 @@
             "project": true
         },
         "io.micrometer:context-propagation": {
-            "locked": "1.2.0-M1"
+            "locked": "1.2.0-RC1"
         },
         "io.mockk:mockk": {
             "locked": "1.14.6"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.8.0-M7"
+            "locked": "3.8.0-RC1"
         },
         "io.projectreactor:reactor-test": {
-            "locked": "3.8.0-M7"
+            "locked": "3.8.0-RC1"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "locked": "2.2.20"
@@ -885,10 +885,10 @@
             "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.13.4"
+            "locked": "6.0.0"
         },
         "org.junit.platform:junit-platform-launcher": {
-            "locked": "1.13.4"
+            "locked": "6.0.0"
         },
         "org.junit:junit-bom": {
             "locked": "5.13.4"
@@ -900,16 +900,16 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0-M3"
+            "locked": "4.0.0-RC1"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "7.0.0-M3"
+            "locked": "7.0.0-RC1"
         },
         "org.springframework:spring-context": {
-            "locked": "7.0.0-M9"
+            "locked": "7.0.0-RC2"
         },
         "org.springframework:spring-web": {
-            "locked": "7.0.0-M9"
+            "locked": "7.0.0-RC2"
         }
     }
 }

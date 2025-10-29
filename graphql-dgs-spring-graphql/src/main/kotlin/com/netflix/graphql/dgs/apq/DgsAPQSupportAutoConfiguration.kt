@@ -43,7 +43,7 @@ import java.util.Optional
 @AutoConfiguration
 @AutoConfigureAfter(
     DgsSpringGraphQLAutoConfiguration::class,
-    name = ["org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration"],
+    name = ["org.springframework.boot.micrometer.metrics.autoconfigure.CompositeMeterRegistryAutoConfiguration"],
 )
 @ConditionalOnProperty(
     prefix = "dgs.graphql.apq",

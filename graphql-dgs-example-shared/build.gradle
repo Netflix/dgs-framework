@@ -26,7 +26,7 @@ dependencies {
     testImplementation(project(":graphql-dgs-spring-graphql-starter"))
     testImplementation ('io.projectreactor:reactor-test')
     testImplementation("org.springframework.boot:spring-boot-starter-web")
-    testImplementation("org.springframework.boot:spring-boot-web-server-test")
+//    testImplementation("org.springframework.boot:spring-boot-web-server-test")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
     testImplementation("name.nkonev.multipart-spring-graphql:multipart-spring-graphql:2.0.0-RC2")

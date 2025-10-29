@@ -63,7 +63,6 @@ class HelloDataFetcherTest {
     }
 
     @Test
-    @Disabled("TODO (SBN4) dgs.graphql.dataloader.ticker-mode-enabled doesn't seem to delay data loader execution when set. Check OSS Impl")
     void messageLoaderWithScheduledDispatch() {
         LocalDateTime now = LocalDateTime.now();
         String message = queryExecutor.executeAndExtractJsonPath("{ messageFromBatchLoaderWithScheduledDispatch }", "data.messageFromBatchLoaderWithScheduledDispatch");
