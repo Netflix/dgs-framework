@@ -54,24 +54,25 @@ jobs:
 
       - name: Check
         run: |
-          ./gradlew --info --no-watch-fs check
+          ./gradlew --no-watch-fs check
 
       - name: Publish Locally
         run: |
-          ./gradlew --info --no-watch-fs publishToMavenLocal --warning-mode all
+          ./gradlew --no-watch-fs publishToMavenLocal --warning-mode all
 
       - name: Clone dgs-examples-java
         uses: actions/checkout@v5.0.0
         with:
           repository: Netflix/dgs-examples-java
           path: build/examples/dgs-examples-java
+          ref: boot4
 
       - name: Clone dgs-examples-kotlin
         uses: actions/checkout@v5.0.0
         with:
           repository: Netflix/dgs-examples-kotlin
           path: build/examples/dgs-examples-kotlin
-
+          ref: boot4
       - name: Build Examples
         run: |
           find /home/runner/.m2/repository/ -type f -name "*graphql-dgs-codegen-gradle*"

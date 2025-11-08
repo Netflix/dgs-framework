@@ -41,7 +41,7 @@ class DgsDataFetchingEnvironment(
      */
     fun <T> getSourceOrThrow(): T = getSource() ?: throw IllegalStateException("source is null")
 
-    fun <K, V> getDataLoader(loaderClass: Class<*>): DataLoader<K, V> {
+    fun <K : Any, V : Any> getDataLoader(loaderClass: Class<*>): DataLoader<K, V> {
         val annotation = loaderClass.getAnnotation(DgsDataLoader::class.java)
         val loaderName =
             if (annotation != null) {
@@ -101,7 +101,7 @@ class DgsDataFetchingEnvironment(
     fun isArgumentSet(vararg path: String): Boolean = isArgumentSet(path.asSequence())
 
     private fun isArgumentSet(keys: Sequence<String>): Boolean {
-        var args: Map<*, *> = dfe.executionStepInfo.arguments
+        var args: Map<String, Any?> = dfe.executionStepInfo.arguments
         var value: Any?
         for (key in keys) {
             // Explicitly check contains to support explicit null values
@@ -110,7 +110,8 @@ class DgsDataFetchingEnvironment(
             if (value !is Map<*, *>) {
                 return true
             }
-            args = value
+            @Suppress("UNCHECKED_CAST")
+            args = value as Map<String, Any?>
         }
         return true
     }

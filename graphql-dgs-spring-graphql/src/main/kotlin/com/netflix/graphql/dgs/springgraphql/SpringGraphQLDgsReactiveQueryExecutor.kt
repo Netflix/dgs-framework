@@ -66,7 +66,6 @@ class SpringGraphQLDgsReactiveQueryExecutor(
             .flatMap { context ->
                 request.configureExecutionInput { _, builder ->
                     builder
-                        .context(context)
                         .graphQLContext(context)
                         .dataLoaderRegistry(dataLoaderRegistry)
                         .build()
@@ -94,7 +93,7 @@ class SpringGraphQLDgsReactiveQueryExecutor(
         variables: Map<String, Any>,
     ): Mono<DocumentContext> = getJsonResult(query, variables, null).map(BaseDgsQueryExecutor.parseContext::parse)
 
-    override fun <T : Any?> executeAndExtractJsonPathAsObject(
+    override fun <T : Any> executeAndExtractJsonPathAsObject(
         @Language("graphql") query: String,
         jsonPath: String,
         variables: Map<String, Any>,
@@ -110,7 +109,7 @@ class SpringGraphQLDgsReactiveQueryExecutor(
                 }
             }
 
-    override fun <T : Any?> executeAndExtractJsonPathAsObject(
+    override fun <T : Any> executeAndExtractJsonPathAsObject(
         @Language("graphql") query: String,
         jsonPath: String,
         variables: Map<String, Any>,

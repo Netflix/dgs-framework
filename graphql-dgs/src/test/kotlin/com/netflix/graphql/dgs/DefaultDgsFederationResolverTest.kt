@@ -188,7 +188,7 @@ class DefaultDgsFederationResolverTest {
                 )
 
             assertThat(result).isNotNull
-            assertThat(result.get().data.size).isEqualTo(1)
+            assertThat(result.get().data!!.size).isEqualTo(1)
             assertThat(result.get().errors.size).isEqualTo(1)
             assertThat(result.get().errors[0].message).contains("MissingDgsEntityFetcherException")
         }
@@ -205,7 +205,7 @@ class DefaultDgsFederationResolverTest {
                 )
 
             assertThat(result).isNotNull
-            assertThat(result.get().data.size).isEqualTo(1)
+            assertThat(result.get().data!!.size).isEqualTo(1)
             assertThat(result.get().errors)
                 .hasSize(1)
                 .first()
@@ -319,7 +319,7 @@ class DefaultDgsFederationResolverTest {
 
             assertThat(result).isNotNull
             assertThat(result.get().data).hasSize(1).first().isInstanceOf(Movie::class.java)
-            assertThat(result.get().data.first() as Movie).extracting { it.createdAt.toString() }.isEqualTo("2020-01-01T11:22:33")
+            assertThat(result.get().data!!.first() as Movie).extracting { it.createdAt.toString() }.isEqualTo("2020-01-01T11:22:33")
         }
 
         @Test
@@ -379,7 +379,7 @@ class DefaultDgsFederationResolverTest {
 
             assertThat(result).isNotNull
             assertThat(result.get().data).hasSize(1).first().isInstanceOf(Movie::class.java)
-            assertThat(result.get().data.first() as Movie).extracting { it.createdAt.toString() }.isEqualTo("2020-01-01T11:22:33")
+            assertThat(result.get().data!!.first() as Movie).extracting { it.createdAt.toString() }.isEqualTo("2020-01-01T11:22:33")
         }
 
         @Test
@@ -450,7 +450,7 @@ class DefaultDgsFederationResolverTest {
 
             assertThat(result).isNotNull
             assertThat(result.get().data).hasSize(1).first().isInstanceOf(Movie::class.java)
-            assertThat(result.get().data.first() as Movie).extracting { it.movieId }.isEqualTo("1")
+            assertThat(result.get().data!!.first() as Movie).extracting { it.movieId }.isEqualTo("1")
         }
 
         private fun testEntityFetcherWithoutExceptionHandler(movieEntityFetcher: Any) {
@@ -477,7 +477,7 @@ class DefaultDgsFederationResolverTest {
 
             assertThat(result).isNotNull
             assertThat(result.get().data).hasSize(1).first().isInstanceOf(Movie::class.java)
-            assertThat(result.get().data.first() as Movie).extracting { it.movieId }.isEqualTo("1")
+            assertThat(result.get().data?.first() as Movie).extracting { it.movieId }.isEqualTo("1")
         }
     }
 

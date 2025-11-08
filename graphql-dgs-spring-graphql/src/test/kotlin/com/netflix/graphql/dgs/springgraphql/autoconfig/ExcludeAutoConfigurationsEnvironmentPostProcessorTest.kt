@@ -14,8 +14,8 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessorTest {
         assertThat(
             env.getProperty("spring.autoconfigure.exclude"),
         ).contains(
-            "org.springframework.boot.actuate.autoconfigure.observation.graphql.GraphQlObservationAutoConfiguration",
-            "org.springframework.boot.autoconfigure.graphql.security.GraphQlWebMvcSecurityAutoConfiguration",
+            "org.springframework.boot.graphql.autoconfigure.observation.GraphQlObservationAutoConfiguration",
+            "org.springframework.boot.graphql.autoconfigure.security.GraphQlWebMvcSecurityAutoConfiguration",
         )
     }
 
@@ -31,8 +31,8 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessorTest {
 
         ExcludeAutoConfigurationsEnvironmentPostProcessor().postProcessEnvironment(env, SpringApplication())
         assertThat(env.getProperty("spring.autoconfigure.exclude"))
-            .contains("org.springframework.boot.actuate.autoconfigure.observation.graphql.GraphQlObservationAutoConfiguration")
-            .doesNotContain("org.springframework.boot.autoconfigure.graphql.security.GraphQlWebMvcSecurityAutoConfiguration")
+            .contains("org.springframework.boot.graphql.autoconfigure.observation.GraphQlObservationAutoConfiguration")
+            .doesNotContain("org.springframework.boot.graphql.autoconfigure.security.GraphQlWebMvcSecurityAutoConfiguration")
     }
 
     @Test
@@ -44,8 +44,8 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessorTest {
 
         ExcludeAutoConfigurationsEnvironmentPostProcessor().postProcessEnvironment(env, SpringApplication())
         assertThat(env.getProperty("spring.autoconfigure.exclude"))
-            .contains("org.springframework.boot.autoconfigure.graphql.security.GraphQlWebMvcSecurityAutoConfiguration")
-            .doesNotContain("org.springframework.boot.actuate.autoconfigure.observation.graphql.GraphQlObservationAutoConfiguration")
+            .contains("org.springframework.boot.graphql.autoconfigure.security.GraphQlWebMvcSecurityAutoConfiguration")
+            .doesNotContain("org.springframework.boot.graphql.autoconfigure.observation.GraphQlObservationAutoConfiguration")
     }
 
     @Test
@@ -57,8 +57,8 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessorTest {
         assertThat(env.getProperty("spring.autoconfigure.exclude"))
             .contains(
                 "someexclude",
-                "org.springframework.boot.actuate.autoconfigure.observation.graphql.GraphQlObservationAutoConfiguration",
-                "org.springframework.boot.autoconfigure.graphql.security.GraphQlWebMvcSecurityAutoConfiguration",
+                "org.springframework.boot.graphql.autoconfigure.observation.GraphQlObservationAutoConfiguration",
+                "org.springframework.boot.graphql.autoconfigure.security.GraphQlWebMvcSecurityAutoConfiguration",
             )
     }
 
@@ -74,8 +74,8 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessorTest {
         assertThat(env.getProperty("spring.autoconfigure.exclude"))
             .contains(
                 "someotherexclude",
-                "org.springframework.boot.actuate.autoconfigure.observation.graphql.GraphQlObservationAutoConfiguration",
-                "org.springframework.boot.autoconfigure.graphql.security.GraphQlWebMvcSecurityAutoConfiguration",
+                "org.springframework.boot.graphql.autoconfigure.observation.GraphQlObservationAutoConfiguration",
+                "org.springframework.boot.graphql.autoconfigure.security.GraphQlWebMvcSecurityAutoConfiguration",
             )
 
         assertThat(env.getProperty("spring.autoconfigure.exclude"))

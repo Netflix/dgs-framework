@@ -2492,7 +2492,7 @@ internal class InputArgumentTest {
                 variables: CoercedVariables,
                 graphQLContext: GraphQLContext,
                 locale: Locale,
-            ): ValueClass = ValueClass((input as StringValue).value)
+            ): ValueClass = ValueClass((input as StringValue).value!!)
         }
 
         contextRunner.withBeans(Component::class, ValueScalar::class).run { applicationContext ->
