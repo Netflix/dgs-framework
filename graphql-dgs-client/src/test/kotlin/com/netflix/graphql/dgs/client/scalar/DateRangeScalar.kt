@@ -60,7 +60,7 @@ class DateRangeScalar : Coercing<DateRange, String> {
         graphQLContext: GraphQLContext,
         locale: Locale,
     ): DateRange {
-        val split = (input as StringValue).value.split("-").toTypedArray()
+        val split = (input as StringValue).value!!.split("-").toTypedArray()
         val from = LocalDate.parse(split[0], formatter)
         val to = LocalDate.parse(split[1], formatter)
         return DateRange(from, to)

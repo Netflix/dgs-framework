@@ -722,7 +722,7 @@ class DgsSchemaProvider
 
                                     if (fields != null && fields.value is StringValue) {
                                         val fieldsSelection = (fields.value as StringValue).value
-                                        val paths = SelectionSetUtil.toPaths(fieldsSelection)
+                                        val paths = fieldsSelection?.let { SelectionSetUtil.toPaths(it) } ?: emptyList()
 
                                         entityFetcherRegistry.entityFetcherInputMappings[entityFetcherTypeName] =
                                             paths
