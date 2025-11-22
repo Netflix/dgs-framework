@@ -19,7 +19,6 @@ package com.netflix.graphql.dgs.example.shared;
 import com.netflix.graphql.dgs.DgsQueryExecutor;
 import com.netflix.graphql.dgs.exceptions.QueryException;
 import org.assertj.core.util.Maps;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -60,7 +59,6 @@ class HelloDataFetcherTest {
     }
 
     @Test
-    @Disabled("TODO (SPRING BOOT 4): Investigate changes in graphql-java that causes delayed dispatch to fail. https://github.com/graphql-java/graphql-java/compare/v24.3...v25.0.beta-9")
     void messageLoaderWithScheduledDispatch() {
         LocalDateTime now = LocalDateTime.now();
         String message = queryExecutor.executeAndExtractJsonPath("{ messageFromBatchLoaderWithScheduledDispatch }", "data.messageFromBatchLoaderWithScheduledDispatch");

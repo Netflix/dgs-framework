@@ -4,7 +4,7 @@
             "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-9"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -18,7 +18,7 @@
             "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-9"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -33,7 +33,7 @@
             "locked": "2.0.17"
         },
         "org.springframework:spring-websocket": {
-            "locked": "7.0.0-RC3"
+            "locked": "7.0.1"
         }
     },
     "implementationDependenciesMetadata": {
@@ -41,7 +41,7 @@
             "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-9"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -56,7 +56,7 @@
             "locked": "2.0.17"
         },
         "org.springframework:spring-websocket": {
-            "locked": "7.0.0-RC3"
+            "locked": "7.0.1"
         }
     },
     "jmh": {
@@ -75,7 +75,7 @@
             "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-9"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -89,7 +89,7 @@
             "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-9"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -113,7 +113,7 @@
             "locked": "2.0.17"
         },
         "org.springframework:spring-websocket": {
-            "locked": "7.0.0-RC3"
+            "locked": "7.0.1"
         }
     },
     "jmhImplementationDependenciesMetadata": {
@@ -121,7 +121,7 @@
             "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-9"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -145,7 +145,7 @@
             "locked": "2.0.17"
         },
         "org.springframework:spring-websocket": {
-            "locked": "7.0.0-RC3"
+            "locked": "7.0.1"
         }
     },
     "jmhRuntimeClasspath": {
@@ -156,7 +156,7 @@
             "locked": "2.20.1"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-9"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -192,10 +192,10 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework:spring-websocket": {
-            "locked": "7.0.0-RC3"
+            "locked": "7.0.1"
         }
     },
     "kotlinBouncyCastleConfiguration": {
@@ -273,7 +273,7 @@
             "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-9"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -288,7 +288,7 @@
             "locked": "2.0.17"
         },
         "org.springframework:spring-websocket": {
-            "locked": "7.0.0-RC3"
+            "locked": "7.0.1"
         }
     },
     "swiftExportClasspathResolvable": {
@@ -304,7 +304,7 @@
             "locked": "2.20.1"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-9"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -328,10 +328,10 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework:spring-websocket": {
-            "locked": "7.0.0-RC3"
+            "locked": "7.0.1"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -342,7 +342,7 @@
             "locked": "2.20.1"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-9"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -366,10 +366,10 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework:spring-websocket": {
-            "locked": "7.0.0-RC3"
+            "locked": "7.0.1"
         }
     },
     "testRuntimeClasspath": {
@@ -380,7 +380,7 @@
             "locked": "2.20.1"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "25.0.beta-9"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -407,10 +407,10 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework:spring-websocket": {
-            "locked": "7.0.0-RC3"
+            "locked": "7.0.1"
         }
     }
 }

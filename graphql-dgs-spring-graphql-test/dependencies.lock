@@ -21,19 +21,19 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-restclient": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-webmvc-test": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         }
     },
     "implementationDependenciesMetadata": {
@@ -50,19 +50,19 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-restclient": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-webmvc-test": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         }
     },
     "jmh": {
@@ -107,19 +107,19 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-restclient": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-webmvc-test": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         }
     },
     "jmhImplementationDependenciesMetadata": {
@@ -145,19 +145,19 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-restclient": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-webmvc-test": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         }
     },
     "jmhRuntimeClasspath": {
@@ -195,22 +195,22 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-restclient": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-webmvc-test": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         }
     },
     "kotlinBouncyCastleConfiguration": {
@@ -297,19 +297,19 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-restclient": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-webmvc-test": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         }
     },
     "swiftExportClasspathResolvable": {
@@ -340,22 +340,22 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-restclient": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-webmvc-test": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -381,22 +381,22 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-restclient": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-webmvc-test": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         }
     },
     "testRuntimeClasspath": {
@@ -425,22 +425,22 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-restclient": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         },
         "org.springframework.boot:spring-boot-webmvc-test": {
-            "locked": "4.0.0-RC2"
+            "locked": "4.0.0"
         }
     }
 }
