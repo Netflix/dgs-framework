@@ -89,6 +89,9 @@
         "org.jetbrains:annotations": {
             "locked": "26.0.2-1"
         },
+        "org.jspecify:jspecify": {
+            "locked": "1.0.0"
+        },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17"
         },
@@ -111,6 +114,9 @@
         },
         "jakarta.annotation:jakarta.annotation-api": {
             "locked": "3.0.0"
+        },
+        "org.jspecify:jspecify": {
+            "locked": "1.0.0"
         },
         "org.springframework.security:spring-security-core": {
             "locked": "7.0.0"
@@ -279,6 +285,9 @@
         "org.jetbrains:annotations": {
             "locked": "26.0.2-1"
         },
+        "org.jspecify:jspecify": {
+            "locked": "1.0.0"
+        },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.37"
         },
@@ -310,6 +319,9 @@
         },
         "jakarta.annotation:jakarta.annotation-api": {
             "locked": "3.0.0"
+        },
+        "org.jspecify:jspecify": {
+            "locked": "1.0.0"
         },
         "org.springframework.security:spring-security-core": {
             "locked": "7.0.0"
