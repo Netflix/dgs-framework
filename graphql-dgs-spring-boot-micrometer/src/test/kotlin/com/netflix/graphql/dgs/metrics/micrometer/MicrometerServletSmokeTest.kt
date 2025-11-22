@@ -1066,7 +1066,6 @@ class MicrometerServletSmokeTest {
                     DataFetcherResult
                         .newResult<String>()
                         .data("Some data...")
-                        // TODO (SBN4) Spring GraphQL 2.0.0-M3 requires non-null error classification
                         .error(
                             TypedGraphQLError
                                 .newBuilder()
@@ -1081,7 +1080,6 @@ class MicrometerServletSmokeTest {
                 DataFetcherResult
                     .newResult<String>()
                     .data("Some data...")
-                    // TODO (SBN4) Spring GraphQL 2.0.0-M3 requires non-null error classification
                     .error(
                         TypedGraphQLError
                             .newBuilder()

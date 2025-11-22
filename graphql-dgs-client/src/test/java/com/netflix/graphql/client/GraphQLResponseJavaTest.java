@@ -163,7 +163,7 @@ public class GraphQLResponseJavaTest {
                 .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
 
 
-        @SuppressWarnings("deprecation") // TODO (sbn4) Use Jackson 3 types when Jackson 3 is GA.
+        @SuppressWarnings("deprecation")
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder
                 .json()
                 .modulesToInstall(

@@ -66,10 +66,6 @@ class GraphqlSSESubscriptionGraphQLClient(
                 .flatMapMany {
                     val headers = it.headers.toMap()
                     it.body
-                        // TODO (SBN4) Investigate why Spring's SSE implementation sends empty events.
-                        // Filter out empty SSE events (keepalive or completion signals) before parsing as JSON.
-                        // Without this filter, GraphQLResponse constructor throws IllegalArgumentException
-                        // "json string can not be null or empty" when encountering blank SSE events.
                         ?.filter { serverSentEvent -> serverSentEvent.isNotBlank() }
                         ?.map { serverSentEvent ->
                             sink.tryEmitNext(GraphQLResponse(json = serverSentEvent, headers = headers, mapper))
