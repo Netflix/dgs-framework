@@ -28,5 +28,5 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-web")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
-    testImplementation("name.nkonev.multipart-spring-graphql:multipart-spring-graphql:2.0.0-RC2")
+    testImplementation("name.nkonev.multipart-spring-graphql:multipart-spring-graphql:2.0.0")
 }
