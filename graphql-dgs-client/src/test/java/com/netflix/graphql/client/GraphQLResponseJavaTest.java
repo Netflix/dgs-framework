@@ -38,7 +38,6 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Mono;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import tools.jackson.databind.json.JsonMapper;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;

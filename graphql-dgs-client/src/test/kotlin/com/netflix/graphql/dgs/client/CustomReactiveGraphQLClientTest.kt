@@ -49,7 +49,7 @@ class CustomReactiveGraphQLClientTest {
         requireNotNull(port) { "port not set" }
         client =
             MonoGraphQLClient.createCustomReactive("http://localhost:$port/graphql") { url, headers, body ->
-                val httpHeaders = org.springframework.http.HttpHeaders()
+                val httpHeaders = HttpHeaders()
                 headers.forEach { key, values -> httpHeaders.addAll(key, values) }
 
                 WebClient

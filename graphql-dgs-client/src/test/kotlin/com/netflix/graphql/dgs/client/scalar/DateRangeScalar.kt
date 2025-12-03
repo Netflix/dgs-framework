@@ -60,7 +60,10 @@ class DateRangeScalar : Coercing<DateRange, String> {
         graphQLContext: GraphQLContext,
         locale: Locale,
     ): DateRange {
-        val split = (input as StringValue).value!!.split("-").toTypedArray()
+        val value =
+            (input as StringValue).value
+                ?: throw CoercingParseLiteralException("Expected non-null value for DateRange")
+        val split = value.split("-").toTypedArray()
         val from = LocalDate.parse(split[0], formatter)
         val to = LocalDate.parse(split[1], formatter)
         return DateRange(from, to)

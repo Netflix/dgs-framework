@@ -27,18 +27,18 @@ import java.util.Locale
 class RequestWithScalarTest {
     @Test
     fun `Creating a request with a date-time scalar as a variable should serialize correctly`() {
-        val variables =
-            mapOf(
-                "currentDateTime" to
-                    DateRangeScalar().serialize(
-                        DateRange(
-                            from = LocalDate.now(),
-                            to = LocalDate.now().plusDays(1),
-                        ),
-                        GraphQLContext.newContext().build(),
-                        Locale.getDefault(),
-                    ),
+        val scalar = DateRangeScalar()
+        val context = GraphQLContext.newContext().build()
+        val locale = Locale.getDefault()
+        val originalRange =
+            DateRange(
+                from = LocalDate.now(),
+                to = LocalDate.now().plusDays(1),
             )
+
+        val serialized = scalar.serialize(originalRange, context, locale)
+        val variables = mapOf("currentDateTime" to serialized)
+
         val client =
             CustomGraphQLClient(
                 url = "",
@@ -55,5 +55,10 @@ class RequestWithScalarTest {
             )
 
         assertThat(graphQLResponse).isNotNull
+
+        // Verify round-trip: serialize then parse should give back the same dates
+        val parsedRange = scalar.parseValue(serialized, context, locale)
+        assertThat(parsedRange.from).isEqualTo(originalRange.from)
+        assertThat(parsedRange.to).isEqualTo(originalRange.to)
     }
 }

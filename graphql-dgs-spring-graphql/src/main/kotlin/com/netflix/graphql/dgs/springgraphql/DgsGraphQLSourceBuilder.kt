@@ -27,8 +27,6 @@ import graphql.schema.TypeResolver
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.jspecify.annotations.Nullable
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.core.ResolvableType
 import org.springframework.core.io.Resource
 import org.springframework.graphql.execution.AbstractGraphQlSourceBuilder
@@ -46,10 +44,6 @@ class DgsGraphQLSourceBuilder(
     private val showSdlComments: Boolean,
 ) : AbstractGraphQlSourceBuilder<SchemaResourceBuilder>(),
     SchemaResourceBuilder {
-    companion object {
-        private val LOG: Logger = LoggerFactory.getLogger(DgsGraphQLSourceBuilder::class.java)
-    }
-
     private val typeDefinitionConfigurers = mutableListOf<TypeDefinitionConfigurer>()
     private val runtimeWiringConfigurers = mutableListOf<RuntimeWiringConfigurer>()
 
