@@ -38,6 +38,7 @@ plugins {
 
 allprojects {
     group = "com.netflix.graphql.dgs"
+
     repositories {
         mavenCentral()
     }
@@ -50,7 +51,7 @@ allprojects {
     // and suggest an upgrade. The only exception currently are those defined
     // in buildSrc, most likely because the variables are used in plugins as well
     // as dependencies. e.g. KOTLIN_VERSION
-    extra["sb.version"] = "3.5.5"
+    extra["sb.version"] = "4.0.0"
     extra["kotlin.version"] = Versions.KOTLIN_VERSION
 }
 val internalBomModules by extra(

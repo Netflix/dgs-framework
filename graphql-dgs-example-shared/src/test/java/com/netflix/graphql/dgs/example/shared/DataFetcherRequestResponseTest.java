@@ -43,6 +43,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.graphql.test.tester.GraphQlTester;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -110,8 +112,9 @@ public class DataFetcherRequestResponseTest {
         GraphqlSSESubscriptionGraphQLClient subscriptionGraphQLClientWithOptions = new GraphqlSSESubscriptionGraphQLClient(url,
                 WebClient.create(url), options);
         RequestExecutor dummyExecutor = new RequestExecutor() {
+
             @Override
-            public @NotNull HttpResponse execute(@NotNull String url, @NotNull Map<String, ? extends List<String>> headers, @NotNull String body) {
+            public @NotNull HttpResponse execute(@NotNull String url, @NotNull Map<@NotNull String, ? extends @NotNull List<@NotNull String>> headers, @NotNull String body) {
                 return null;
             }
         };

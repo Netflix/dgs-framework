@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.client
 
 import com.netflix.graphql.types.subscription.QueryPayload
 import org.intellij.lang.annotations.Language
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.toEntityFlux
@@ -63,10 +64,12 @@ class GraphqlSSESubscriptionGraphQLClient(
                 .retrieve()
                 .toEntityFlux<String>()
                 .flatMapMany {
-                    val headers = it.headers
-                    it.body?.map { serverSentEvent ->
-                        sink.tryEmitNext(GraphQLResponse(json = serverSentEvent, headers = headers, mapper))
-                    } ?: Flux.empty()
+                    val headers = it.headers.toMap()
+                    it.body
+                        ?.filter { serverSentEvent -> serverSentEvent.isNotBlank() }
+                        ?.map { serverSentEvent ->
+                            sink.tryEmitNext(GraphQLResponse(json = serverSentEvent, headers = headers, mapper))
+                        } ?: Flux.empty()
                 }.onErrorResume {
                     Flux.just(sink.tryEmitError(it))
                 }.doFinally {
@@ -77,4 +80,10 @@ class GraphqlSSESubscriptionGraphQLClient(
             dis.dispose()
         }
     }
+}
+
+private fun HttpHeaders.toMap(): Map<String, List<String>> {
+    val result = mutableMapOf<String, List<String>>()
+    this.forEach { key, values -> result[key] = values }
+    return result
 }

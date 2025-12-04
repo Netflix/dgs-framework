@@ -1,62 +1,62 @@
 {
     "apiDependenciesMetadata": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.19.2"
+            "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "24.1"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         }
     },
     "compileClasspath": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.19.2"
+            "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "24.1"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17"
         },
         "org.springframework:spring-websocket": {
-            "locked": "6.2.10"
+            "locked": "7.0.1"
         }
     },
     "implementationDependenciesMetadata": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.19.2"
+            "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "24.1"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17"
         },
         "org.springframework:spring-websocket": {
-            "locked": "6.2.10"
+            "locked": "7.0.1"
         }
     },
     "jmh": {
@@ -71,25 +71,34 @@
         }
     },
     "jmhApiDependenciesMetadata": {
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "locked": "2.20"
+        },
+        "com.graphql-java:graphql-java": {
+            "locked": "25.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
+        },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         }
     },
     "jmhCompileClasspath": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.19.2"
+            "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "24.1"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.37"
@@ -104,12 +113,24 @@
             "locked": "2.0.17"
         },
         "org.springframework:spring-websocket": {
-            "locked": "6.2.10"
+            "locked": "7.0.1"
         }
     },
     "jmhImplementationDependenciesMetadata": {
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "locked": "2.20"
+        },
+        "com.graphql-java:graphql-java": {
+            "locked": "25.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
+        },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "26.0.2-1"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.37"
@@ -119,38 +140,44 @@
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
             "locked": "1.36"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "2.0.17"
+        },
+        "org.springframework:spring-websocket": {
+            "locked": "7.0.1"
         }
     },
     "jmhRuntimeClasspath": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.19.2"
+            "locked": "2.20"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.19.2"
+            "locked": "2.20.1"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "24.1"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.5"
+            "locked": "1.14.6"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.12.2"
+            "locked": "6.0.1"
         },
         "org.junit.platform:junit-platform-launcher": {
-            "locked": "1.12.2"
+            "locked": "6.0.1"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.2"
+            "locked": "5.13.4"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.37"
@@ -165,175 +192,225 @@
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "3.5.5"
+            "locked": "4.0.0"
         },
         "org.springframework:spring-websocket": {
-            "locked": "6.2.10"
+            "locked": "7.0.1"
+        }
+    },
+    "kotlinBouncyCastleConfiguration": {
+        "org.bouncycastle:bcpg-jdk18on": {
+            "locked": "1.80"
+        },
+        "org.bouncycastle:bcpkix-jdk18on": {
+            "locked": "1.80"
         }
     },
     "kotlinCompilerClasspath": {
         "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         }
     },
     "kotlinCompilerPluginClasspathJmh": {
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         }
     },
     "kotlinCompilerPluginClasspathMain": {
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         }
     },
     "kotlinCompilerPluginClasspathTest": {
         "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
+        }
+    },
+    "kotlinInternalAbiValidation": {
+        "org.jetbrains.kotlin:abi-tools": {
+            "locked": "2.2.20"
         }
     },
     "kotlinKlibCommonizerClasspath": {
         "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
+        }
+    },
+    "ktlint": {
+        "com.pinterest.ktlint:ktlint-cli": {
+            "locked": "1.5.0"
+        },
+        "io.github.detekt.sarif4k:sarif4k": {
+            "locked": "0.5.0"
+        },
+        "io.github.oshai:kotlin-logging": {
+            "locked": "5.1.0"
+        }
+    },
+    "ktlintBaselineReporter": {
+        "com.pinterest.ktlint:ktlint-cli-reporter-baseline": {
+            "locked": "1.5.0"
+        },
+        "io.github.oshai:kotlin-logging": {
+            "locked": "5.1.0"
+        }
+    },
+    "ktlintReporter": {
+        "io.github.detekt.sarif4k:sarif4k": {
+            "locked": "0.5.0"
+        },
+        "io.github.oshai:kotlin-logging": {
+            "locked": "5.1.0"
+        }
+    },
+    "ktlintRuleset": {
+        "com.pinterest.ktlint:ktlint-ruleset-standard": {
+            "locked": "1.5.0"
         }
     },
     "runtimeClasspath": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.19.2"
+            "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "24.1"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17"
         },
         "org.springframework:spring-websocket": {
-            "locked": "6.2.10"
+            "locked": "7.0.1"
+        }
+    },
+    "swiftExportClasspathResolvable": {
+        "org.jetbrains.kotlin:swift-export-embeddable": {
+            "locked": "2.2.20"
         }
     },
     "testCompileClasspath": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.19.2"
+            "locked": "2.20"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.19.2"
+            "locked": "2.20.1"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "24.1"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.5"
+            "locked": "1.14.6"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.12.2"
+            "locked": "6.0.1"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.2"
+            "locked": "5.13.4"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "3.5.5"
+            "locked": "4.0.0"
         },
         "org.springframework:spring-websocket": {
-            "locked": "6.2.10"
+            "locked": "7.0.1"
         }
     },
     "testImplementationDependenciesMetadata": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.19.2"
+            "locked": "2.20"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.19.2"
+            "locked": "2.20.1"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "24.1"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.5"
+            "locked": "1.14.6"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.12.2"
+            "locked": "6.0.1"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.2"
+            "locked": "5.13.4"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "3.5.5"
+            "locked": "4.0.0"
         },
         "org.springframework:spring-websocket": {
-            "locked": "6.2.10"
+            "locked": "7.0.1"
         }
     },
     "testRuntimeClasspath": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.19.2"
+            "locked": "2.20"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.19.2"
+            "locked": "2.20.1"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "24.1"
+            "locked": "25.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.5"
+            "locked": "1.14.6"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.9.25"
+            "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "5.12.2"
+            "locked": "6.0.1"
         },
         "org.junit.platform:junit-platform-launcher": {
-            "locked": "1.12.2"
+            "locked": "6.0.1"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.2"
+            "locked": "5.13.4"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "3.5.5"
+            "locked": "4.0.0"
         },
         "org.springframework:spring-websocket": {
-            "locked": "6.2.10"
+            "locked": "7.0.1"
         }
     }
 }
