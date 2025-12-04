@@ -87,7 +87,7 @@
             "locked": "1.8.1"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17"
@@ -166,7 +166,7 @@
             "locked": "1.8.1"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17"
@@ -253,7 +253,7 @@
             "locked": "1.8.1"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.37"
@@ -329,7 +329,7 @@
             "locked": "1.1.3"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.5"
+            "locked": "1.14.6"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.7.9"
@@ -359,7 +359,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
             "locked": "5.12.2"
@@ -368,7 +368,7 @@
             "locked": "1.12.2"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.2"
+            "locked": "5.13.4"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.37"
@@ -421,6 +421,38 @@
     "kotlinKlibCommonizerClasspath": {
         "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
             "locked": "1.9.25"
+        }
+    },
+    "ktlint": {
+        "com.pinterest.ktlint:ktlint-cli": {
+            "locked": "1.5.0"
+        },
+        "io.github.detekt.sarif4k:sarif4k": {
+            "locked": "0.5.0"
+        },
+        "io.github.oshai:kotlin-logging": {
+            "locked": "5.1.0"
+        }
+    },
+    "ktlintBaselineReporter": {
+        "com.pinterest.ktlint:ktlint-cli-reporter-baseline": {
+            "locked": "1.5.0"
+        },
+        "io.github.oshai:kotlin-logging": {
+            "locked": "5.1.0"
+        }
+    },
+    "ktlintReporter": {
+        "io.github.detekt.sarif4k:sarif4k": {
+            "locked": "0.5.0"
+        },
+        "io.github.oshai:kotlin-logging": {
+            "locked": "5.1.0"
+        }
+    },
+    "ktlintRuleset": {
+        "com.pinterest.ktlint:ktlint-ruleset-standard": {
+            "locked": "1.5.0"
         }
     },
     "runtimeClasspath": {
@@ -476,7 +508,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
@@ -529,7 +561,7 @@
             "locked": "1.1.3"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.5"
+            "locked": "1.14.6"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.7.9"
@@ -556,13 +588,13 @@
             "locked": "1.8.1"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
             "locked": "5.12.2"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.2"
+            "locked": "5.13.4"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17"
@@ -618,7 +650,7 @@
             "locked": "1.1.3"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.5"
+            "locked": "1.14.6"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.7.9"
@@ -645,13 +677,13 @@
             "locked": "1.8.1"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
             "locked": "5.12.2"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.2"
+            "locked": "5.13.4"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17"
@@ -707,7 +739,7 @@
             "locked": "1.1.3"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.5"
+            "locked": "1.14.6"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.7.9"
@@ -737,7 +769,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
             "locked": "5.12.2"
@@ -746,7 +778,7 @@
             "locked": "1.12.2"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.2"
+            "locked": "5.13.4"
         },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
