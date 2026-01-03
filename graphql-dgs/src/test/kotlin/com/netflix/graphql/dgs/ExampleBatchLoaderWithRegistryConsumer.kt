@@ -27,16 +27,16 @@ class ExampleBatchLoaderWithRegistryConsumer :
     DgsDataLoaderRegistryConsumer {
     private var dataLoaderRegistry: DataLoaderRegistry? = null
 
-    override fun load(keys: MutableList<String>?): CompletionStage<MutableList<String>> {
-        if (dataLoaderRegistry == null) {
-            throw IllegalStateException("DataLoaderRegistry is not set")
-        }
-        return CompletableFuture.supplyAsync { mutableListOf("a", "b", "c") }
-    }
-
     override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry?) {
         dataLoaderRegistry?.let {
             this.dataLoaderRegistry = it
         }
+    }
+
+    override fun load(keys: List<String>): CompletionStage<List<String>> {
+        if (dataLoaderRegistry == null) {
+            throw IllegalStateException("DataLoaderRegistry is not set")
+        }
+        return CompletableFuture.supplyAsync { mutableListOf("a", "b", "c") }
     }
 }

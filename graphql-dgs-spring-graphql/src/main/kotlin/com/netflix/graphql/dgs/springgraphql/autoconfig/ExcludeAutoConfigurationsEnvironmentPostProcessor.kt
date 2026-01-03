@@ -16,10 +16,9 @@
 
 package com.netflix.graphql.dgs.springgraphql.autoconfig
 
+import org.springframework.boot.EnvironmentPostProcessor
 import org.springframework.boot.SpringApplication
-import org.springframework.boot.context.properties.bind.Binder
 import org.springframework.boot.context.properties.source.ConfigurationPropertySources
-import org.springframework.boot.env.EnvironmentPostProcessor
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.ConfigurableEnvironment
@@ -68,14 +67,14 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
         return propertySources
             .stream()
             .filter { src -> !ConfigurationPropertySources.isAttachedConfigurationPropertySource(src) }
-            .map { src ->
-                Binder(ConfigurationPropertySources.from(src))
-                    .bind(EXCLUDE, Array<String>::class.java)
-                    .map {
-                        it.toList()
-                    }.orElse(emptyList())
-            }.flatMap { it.stream() }
-            .collect(Collectors.joining(","))
+            .flatMap<String> { src ->
+                val property = src.getProperty(EXCLUDE)
+                when (property) {
+                    is String -> property.split(",").filter { it.isNotBlank() }.stream()
+                    is Array<*> -> property.filterIsInstance<String>().filter { it.isNotBlank() }.stream()
+                    else -> emptyList<String>().stream()
+                }
+            }.collect(Collectors.joining(","))
     }
 
     companion object {
@@ -83,11 +82,11 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
             mapOf(
                 Pair(
                     "dgs.springgraphql.autoconfiguration.graphqlobservation.enabled",
-                    "org.springframework.boot.actuate.autoconfigure.observation.graphql.GraphQlObservationAutoConfiguration",
+                    "org.springframework.boot.graphql.autoconfigure.observation.GraphQlObservationAutoConfiguration",
                 ),
                 Pair(
                     "dgs.springgraphql.autoconfiguration.graphqlwebmvcsecurity.enabled",
-                    "org.springframework.boot.autoconfigure.graphql.security.GraphQlWebMvcSecurityAutoConfiguration",
+                    "org.springframework.boot.graphql.autoconfigure.security.GraphQlWebMvcSecurityAutoConfiguration",
                 ),
             )
 

@@ -16,6 +16,7 @@ module com.netflix.graphql.dgs.core {
     requires json.path;
     requires org.dataloader;
     requires org.jetbrains.annotations;
+    requires static org.jspecify;
     requires spring.aop;
     requires spring.beans;
     requires spring.core;

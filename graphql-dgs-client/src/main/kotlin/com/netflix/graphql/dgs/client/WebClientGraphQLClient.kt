@@ -131,8 +131,11 @@ class WebClientGraphQLClient(
 
         return requestBodyUriCustomizer
             .apply(webclient.post())
-            .headers { headers -> headers.addAll(GraphQLClients.defaultHeaders) }
-            .headers(this.headersConsumer)
+            .headers { headers ->
+                GraphQLClients.defaultHeaders.forEach { (key, values) ->
+                    headers.addAll(key, values)
+                }
+            }.headers(this.headersConsumer)
             .bodyValue(serializedRequest)
             .retrieve()
             .toEntity<String>()
@@ -152,11 +155,7 @@ class WebClientGraphQLClient(
             )
         }
 
-        return GraphQLResponse(json = response.body ?: "", headers = response.headers, mapper)
-    }
-
-    companion object {
-        private val REQUEST_BODY_URI_CUSTOMIZER_IDENTITY = RequestBodyUriCustomizer { it }
+        return GraphQLResponse(json = response.body ?: "", headers = response.headers.toMap(), mapper)
     }
 
     @FunctionalInterface
@@ -178,4 +177,14 @@ class WebClientGraphQLClient(
     fun interface RequestBodyUriCustomizer {
         fun apply(spec: WebClient.RequestBodyUriSpec): RequestBodySpec
     }
+
+    companion object {
+        private val REQUEST_BODY_URI_CUSTOMIZER_IDENTITY = RequestBodyUriCustomizer { it }
+    }
+}
+
+private fun HttpHeaders.toMap(): Map<String, List<String>> {
+    val result = mutableMapOf<String, List<String>>()
+    this.forEach { key, values -> result[key] = values }
+    return result
 }

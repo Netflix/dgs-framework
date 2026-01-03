@@ -96,8 +96,11 @@ class RestClientGraphQLClient(
         val responseEntity =
             restClient
                 .post()
-                .headers { headers -> headers.addAll(GraphQLClients.defaultHeaders) }
-                .headers(this.headersConsumer)
+                .headers { headers ->
+                    GraphQLClients.defaultHeaders.forEach { (key, values) ->
+                        headers.addAll(key, values)
+                    }
+                }.headers(this.headersConsumer)
                 .body(serializedRequest)
                 .retrieve()
                 .toEntity(String::class.java)
@@ -111,6 +114,12 @@ class RestClientGraphQLClient(
             )
         }
 
-        return GraphQLResponse(json = responseEntity.body ?: "", headers = responseEntity.headers, mapper)
+        return GraphQLResponse(json = responseEntity.body ?: "", headers = responseEntity.headers.toMap(), mapper)
     }
+}
+
+private fun HttpHeaders.toMap(): Map<String, List<String>> {
+    val result = mutableMapOf<String, List<String>>()
+    this.forEach { key, values -> result[key] = values }
+    return result
 }

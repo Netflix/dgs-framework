@@ -46,7 +46,7 @@ class ReactiveWebClientTest {
                 }.build()
                 .post()
                 .uri(url)
-                .headers { consumer -> headers.forEach { consumer.addAll(it.key, it.value) } }
+                .headers { consumer -> headers.forEach { key, values -> consumer.addAll(key, values) } }
                 .bodyValue(body)
                 .retrieve()
                 .toEntity(String::class.java)

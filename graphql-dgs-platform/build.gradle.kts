@@ -49,14 +49,13 @@ dependencies {
         // GraphQL Platform
         api("com.graphql-java:graphql-java") {
             version {
-                require("24.0")
-                reject("[20.6, 19.5, 18.2]")
+                require("25.0")
             }
 
         }
         api("com.graphql-java:java-dataloader") {
             version {
-                require("5.0.0")
+                require("6.0.0")
                 reject("[3.2.1]")
             }
 
@@ -93,7 +92,7 @@ dependencies {
             because("Refer to CVE-2021-44228; https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228")
          }
         api("io.micrometer:context-propagation") {
-            version { require("1.1.1") }
+            version { require("1.2.0") }
         }
     }
 }
