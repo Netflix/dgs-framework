@@ -17,6 +17,7 @@
 dependencies {
     implementation(project(":graphql-dgs"))
     implementation(project(":graphql-dgs-reactive"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     implementation("org.springframework:spring-web")
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("io.micrometer:context-propagation")
