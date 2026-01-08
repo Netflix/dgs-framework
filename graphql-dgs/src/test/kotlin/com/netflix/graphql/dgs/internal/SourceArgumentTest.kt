@@ -52,9 +52,17 @@ internal class SourceArgumentTest {
                 ),
         )
 
+    interface Entertainment {
+        val title: String
+    }
+
     data class Show(
-        val title: String,
-    )
+        override val title: String,
+    ) : Entertainment
+
+    data class Movie(
+        override val title: String,
+    ) : Entertainment
 
     @Test
     fun `@Source argument`() {
@@ -93,6 +101,60 @@ internal class SourceArgumentTest {
             val showData = (data["shows"] as List<Map<*, *>>)[0]
             assertThat(showData["title"]).isEqualTo("Stranger Things")
             assertThat(showData["description"]).isEqualTo("Description of Stranger Things")
+        }
+    }
+
+    @Test
+    fun `@Source argument with interface type`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsQuery
+            fun shows(): List<Show> = listOf(Show("Stranger Things"))
+
+            @DgsQuery
+            fun movies(): List<Movie> = listOf(Movie("Batman"))
+
+            @DgsData(parentType = "Show")
+            @DgsData(parentType = "Movie")
+            fun description(
+                @Source entertainment: Entertainment,
+            ): String = "Description of ${entertainment.title}"
+        }
+
+        contextRunner.withBean(Fetcher::class.java).run { context ->
+            val provider = schemaProvider(context)
+            val schema = provider.schema().graphQLSchema
+
+            val build = GraphQL.newGraphQL(schema).build()
+            val executionResult =
+                build.execute(
+                    """{
+                |   shows {
+                |       title
+                |       description
+                |   }
+                |   
+                |   movies {
+                |       title
+                |       description
+                |   }
+                |}
+                    """.trimMargin(),
+                )
+
+            assertThat(executionResult.errors).isEmpty()
+            assertThat(executionResult.isDataPresent).isTrue
+            val data = executionResult.getData<Map<String, *>>()
+
+            @Suppress("UNCHECKED_CAST")
+            val showData = (data["shows"] as List<Map<*, *>>)[0]
+            assertThat(showData["title"]).isEqualTo("Stranger Things")
+            assertThat(showData["description"]).isEqualTo("Description of Stranger Things")
+
+            @Suppress("UNCHECKED_CAST")
+            val movieData = (data["movies"] as List<Map<*, *>>)[0]
+            assertThat(movieData["title"]).isEqualTo("Batman")
+            assertThat(movieData["description"]).isEqualTo("Description of Batman")
         }
     }
 
