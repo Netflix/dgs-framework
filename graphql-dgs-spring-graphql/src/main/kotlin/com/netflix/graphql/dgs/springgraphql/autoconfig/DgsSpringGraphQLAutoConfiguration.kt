@@ -229,7 +229,7 @@ open class DgsSpringGraphQLAutoConfiguration(
         @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService,
         extensionProviders: List<DataLoaderInstrumentationExtensionProvider>,
         customizers: List<DgsDataLoaderCustomizer>,
-    ): DgsDataLoaderProvider =
+    ): DefaultDgsDataLoaderProvider =
         DefaultDgsDataLoaderProvider(
             applicationContext = applicationContext,
             extensionProviders = extensionProviders,
