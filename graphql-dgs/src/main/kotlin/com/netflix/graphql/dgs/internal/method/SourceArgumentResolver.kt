@@ -32,7 +32,7 @@ class SourceArgumentResolver : ArgumentResolver {
             throw IllegalArgumentException("Source is null. Are you trying to use @Source on a root field (e.g. @DgsQuery)?")
         }
 
-        if (parameter.parameterType == source.javaClass) {
+        if (parameter.parameterType.isAssignableFrom(source.javaClass)) {
             return source
         } else {
             throw IllegalArgumentException(
