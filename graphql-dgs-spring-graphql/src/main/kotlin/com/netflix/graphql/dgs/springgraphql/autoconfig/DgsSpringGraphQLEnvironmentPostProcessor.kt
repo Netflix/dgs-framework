@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.springgraphql.autoconfig
 
 import org.springframework.boot.SpringApplication
+import org.springframework.boot.SpringBootVersion
 import org.springframework.boot.env.EnvironmentPostProcessor
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.MapPropertySource
@@ -32,6 +33,7 @@ class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
         environment: ConfigurableEnvironment,
         application: SpringApplication,
     ) {
+        springBootVersionCheck()
         val properties = mutableMapOf<String, Any>()
 
         if (environment.getProperty(SPRING_GRAPHQL_SCHEMA_INTROSPECTION_ENABLED) != null &&
@@ -71,5 +73,12 @@ class DgsSpringGraphQLEnvironmentPostProcessor : EnvironmentPostProcessor {
                 properties,
             ),
         )
+    }
+
+    private fun springBootVersionCheck() {
+        val majorVersion = SpringBootVersion.getVersion().split(".")[0]
+        if (majorVersion.toInt() > 3) {
+            throw RuntimeException("DGS 10.x is only compatible with Spring Boot 3. For Spring Boot 4 compatibility use DGS 11+")
+        }
     }
 }
