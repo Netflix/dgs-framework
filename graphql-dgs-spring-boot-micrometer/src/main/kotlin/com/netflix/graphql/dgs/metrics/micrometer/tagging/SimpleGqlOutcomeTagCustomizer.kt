@@ -51,7 +51,7 @@ class SimpleGqlOutcomeTagCustomizer :
         parameters: InstrumentationFieldFetchParameters,
         dataFetcherResult: DataFetcherResult<*>?
     ): Iterable<Tag> =
-        if (dataFetcherResult?.errors.isNullOrEmpty()) {
+        if (dataFetcherResult == null || !dataFetcherResult.hasErrors()) {
             listOf(DgsMetrics.CommonTags.SUCCESS.tag)
         } else {
             listOf(DgsMetrics.CommonTags.FAILURE.tag)
