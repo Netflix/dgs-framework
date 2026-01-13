@@ -146,57 +146,6 @@ class DgsGraphQLMetricsInstrumentation(
         return CompletableFuture.completedFuture(executionResult)
     }
 
-    override fun instrumentDataFetcher(
-        dataFetcher: DataFetcher<*>,
-        parameters: InstrumentationFieldFetchParameters,
-        state: InstrumentationState,
-    ): DataFetcher<*> {
-        require(state is MetricsInstrumentationState)
-        val gqlField = TagUtils.resolveDataFetcherTagValue(parameters)
-
-        if (parameters.isTrivialDataFetcher ||
-            state.isIntrospectionQuery ||
-            TagUtils.shouldIgnoreTag(gqlField) ||
-            !schemaProvider.isFieldMetricsInstrumentationEnabled(gqlField) ||
-            !properties.resolver.enabled
-        ) {
-            return dataFetcher
-        }
-
-        return DataFetcher { environment ->
-            val registry = registrySupplier.get()
-            val baseTags =
-                buildList {
-                    add(Tag.of(GqlTag.FIELD.key, gqlField))
-                    addAll(tagsProvider.getContextualTags())
-                    addAll(state.tags())
-                }
-
-            val sampler = Timer.start(registry)
-            try {
-                val result = dataFetcher.get(environment)
-                if (result is CompletionStage<*>) {
-                    result.whenComplete { value, error ->
-                        recordDataFetcherMetrics(
-                            registry,
-                            sampler,
-                            state,
-                            parameters,
-                            checkResponseForErrors(value, error),
-                            baseTags,
-                        )
-                    }
-                } else {
-                    recordDataFetcherMetrics(registry, sampler, state, parameters, checkResponseForErrors(result, null), baseTags)
-                }
-                result
-            } catch (exc: Exception) {
-                recordDataFetcherMetrics(registry, sampler, state, parameters, exc, baseTags)
-                throw exc
-            }
-        }
-    }
-
     private fun checkResponseForErrors(
         value: Any?,
         error: Throwable?,
@@ -299,7 +248,7 @@ class DgsGraphQLMetricsInstrumentation(
                 val allTags = baseTags.toMutableList()
 
                 // to preserve backwards compatibility, we add the field fetch tag that are based on the data fetcher exception
-                allTags += tagsProvider.getFieldFetchTags(state, parameters, t)
+                allTags += tagsProvider.getFieldFetchTags(state, parameters, checkResponseForErrors(result, t))
 
                 // add any tags based on the data fetcher result
                 dataFetcherResultTags?.let { allTags.addAll(it) }
@@ -350,24 +299,6 @@ class DgsGraphQLMetricsInstrumentation(
                 null -> "-noSelections" // This should never happen, but it's possible
                 else -> throw RuntimeException("Unknown Selection type: $selection")
             }
-
-    private fun recordDataFetcherMetrics(
-        registry: MeterRegistry,
-        timerSampler: Timer.Sample,
-        state: MetricsInstrumentationState,
-        parameters: InstrumentationFieldFetchParameters,
-        error: Throwable?,
-        baseTags: Iterable<Tag>,
-    ) {
-        val recordedTags = baseTags + tagsProvider.getFieldFetchTags(state, parameters, error)
-
-        timerSampler.stop(
-            autoTimer
-                .builder(GqlMetric.RESOLVER.key)
-                .tags(recordedTags)
-                .register(registry),
-        )
-    }
 
     enum class PersistedQueryType {
         NOT_APQ,
