@@ -16,6 +16,7 @@ import graphql.analysis.FieldComplexityCalculator
 import graphql.analysis.QueryComplexityCalculator
 import graphql.execution.DataFetcherResult
 import graphql.execution.ExecutionContext
+import graphql.execution.instrumentation.FieldFetchingInstrumentationContext
 import graphql.execution.instrumentation.InstrumentationContext
 import graphql.execution.instrumentation.InstrumentationState
 import graphql.execution.instrumentation.SimpleInstrumentationContext
@@ -42,6 +43,7 @@ import io.micrometer.core.instrument.Timer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.data.metrics.AutoTimer
+import org.springframework.util.Assert.state
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
@@ -243,6 +245,92 @@ class DgsGraphQLMetricsInstrumentation(
         }
         return super.beginExecuteOperation(parameters, state)
     }
+
+    override fun beginFieldFetching(
+        parameters: InstrumentationFieldFetchParameters,
+        state: InstrumentationState,
+    ): FieldFetchingInstrumentationContext? {
+        require(state is MetricsInstrumentationState)
+
+        val gqlField = TagUtils.resolveDataFetcherTagValue(parameters)
+
+        if (parameters.isTrivialDataFetcher ||
+            state.isIntrospectionQuery ||
+            TagUtils.shouldIgnoreTag(gqlField) ||
+            !schemaProvider.isFieldMetricsInstrumentationEnabled(gqlField) ||
+            !properties.resolver.enabled
+        ) {
+            return super.beginFieldFetching(parameters, state)
+        }
+
+        val registry = registrySupplier.get()
+        val baseTags =
+            buildList {
+                add(Tag.of(GqlTag.FIELD.key, gqlField))
+                addAll(tagsProvider.getContextualTags())
+                addAll(state.tags())
+            }
+
+
+        return object : FieldFetchingInstrumentationContext {
+            var sampler: Timer.Sample? = null
+            var dataFetcherResultTags : Iterable<Tag>? = null
+
+            override fun onDispatched() {
+                sampler = Timer.start(registry)
+            }
+
+            override fun onExceptionHandled(dataFetcherResult: DataFetcherResult<Any?>) {
+                dataFetcherResult.let { result ->
+                    dataFetcherResultTags = tagsProvider.getFieldFetchDataFetcherResultTags(state, parameters, result)
+                }
+            }
+
+            override fun onCompleted(result: Any?, t: Throwable?) {
+                // if no throwable was raised during data fetching, the data fetcher might have returned a DataFetcherResult explicitly
+                if (t == null) {
+                    // offer the opportunity to add tags based on an explicitly returned data fetcher result by the data fetcher
+                    // in case a raw object or null was returned by the data fetcher, use null, this
+                    //  means no graphql errors were present
+                    val dfResult: DataFetcherResult<*>? = result as? DataFetcherResult<*>
+                    dataFetcherResultTags = tagsProvider.getFieldFetchDataFetcherResultTags(state, parameters, dfResult)
+                }
+
+                val allTags = baseTags.toMutableList()
+
+                // to preserve backwards compatibility, we add the field fetch tag that are based on the data fetcher exception
+                allTags += tagsProvider.getFieldFetchTags(state, parameters, t)
+
+                // add any tags based on the data fetcher result
+                dataFetcherResultTags?.let { allTags.addAll(it) }
+
+                sampler?.stop(
+                    autoTimer
+                        .builder(GqlMetric.RESOLVER.key)
+                        .tags(allTags)
+                        .register(registry),
+                )
+            }
+        }
+    }
+
+//    private fun collectDataFetcherTags(dataFetcherResult: DataFetcherResult<*>?): Map<String, String> {
+//        val errorTags: MutableMap<String, String> = mutableMapOf()
+//        // representing errors from the final shaped data fetcher result
+//        // after the exception handler has processed exceptions.
+//        errorTags["gql.isError"] = gqlErrors.isNotEmpty().toString()
+//        if (gqlErrors.isNotEmpty()) {
+//            // we could add custom tags here based on the errors present in the fetched value
+//            // and emit them as part of the gql.resolver metric
+//            val statusDetail = if (gqlErrors.any { it.errorType == ErrorType.UNAVAILABLE || it.errorType == ErrorType.INTERNAL || it.errorType == ErrorType.UNKNOWN }) {
+//                "gql_server_error"
+//            } else {
+//                "gql_client_error"
+//            }
+//            errorTags["ipc.status.detail"] = statusDetail
+//        }
+//        return errorTags
+//    }
 
     /**
      * Returns a fallback name if the operation is unnamed.

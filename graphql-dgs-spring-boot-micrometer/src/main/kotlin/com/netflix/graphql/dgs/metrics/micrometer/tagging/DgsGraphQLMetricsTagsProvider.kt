@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.metrics.micrometer.tagging
 
 import com.netflix.graphql.dgs.metrics.micrometer.DgsGraphQLMetricsInstrumentation
 import graphql.ExecutionResult
+import graphql.execution.DataFetcherResult
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import io.micrometer.core.instrument.Tag
@@ -36,5 +37,11 @@ interface DgsGraphQLMetricsTagsProvider {
         state: DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState,
         parameters: InstrumentationFieldFetchParameters,
         exception: Throwable?,
+    ): Iterable<Tag> = emptyList()
+
+    fun getFieldFetchDataFetcherResultTags(
+        state: DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState,
+        parameters: InstrumentationFieldFetchParameters,
+        dataFetcherResult: DataFetcherResult<*>?
     ): Iterable<Tag> = emptyList()
 }
