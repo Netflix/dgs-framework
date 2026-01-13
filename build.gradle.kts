@@ -79,11 +79,13 @@ configure(subprojects.filterNot { it in internalBomModules }) {
             mavenBom("org.jetbrains.kotlin:kotlin-bom:${Versions.KOTLIN_VERSION}")
             mavenBom("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
         }
+        // Override Spring Boot's graphql-java version using the dependency management plugin's extension mechanism
+        ext["graphql-java.version"] = "0.0.0-2026-01-13T02-32-23-c465601"
     }
 
     dependencies {
-        // Apply the BOM to applicable subprojects.
-        api(platform(project(":graphql-dgs-platform")))
+        // Apply the BOM to applicable subprojects with enforcedPlatform to override Spring Boot's managed versions
+        api(enforcedPlatform(project(":graphql-dgs-platform")))
 
         // Sets the JMH version to use across modules.
         // Please refer to the following links for further reference.
