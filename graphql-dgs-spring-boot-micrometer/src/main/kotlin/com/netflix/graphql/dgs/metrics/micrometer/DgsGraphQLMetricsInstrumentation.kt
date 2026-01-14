@@ -230,9 +230,7 @@ class DgsGraphQLMetricsInstrumentation(
             }
 
             override fun onExceptionHandled(dataFetcherResult: DataFetcherResult<Any?>) {
-                dataFetcherResult.let { result ->
-                    dataFetcherResultTags = tagsProvider.getFieldFetchDataFetcherResultTags(state, parameters, result)
-                }
+                dataFetcherResultTags = tagsProvider.getFieldFetchDataFetcherResultTags(state, parameters, dataFetcherResult)
             }
 
             override fun onCompleted(result: Any?, t: Throwable?) {
@@ -262,24 +260,6 @@ class DgsGraphQLMetricsInstrumentation(
             }
         }
     }
-
-//    private fun collectDataFetcherTags(dataFetcherResult: DataFetcherResult<*>?): Map<String, String> {
-//        val errorTags: MutableMap<String, String> = mutableMapOf()
-//        // representing errors from the final shaped data fetcher result
-//        // after the exception handler has processed exceptions.
-//        errorTags["gql.isError"] = gqlErrors.isNotEmpty().toString()
-//        if (gqlErrors.isNotEmpty()) {
-//            // we could add custom tags here based on the errors present in the fetched value
-//            // and emit them as part of the gql.resolver metric
-//            val statusDetail = if (gqlErrors.any { it.errorType == ErrorType.UNAVAILABLE || it.errorType == ErrorType.INTERNAL || it.errorType == ErrorType.UNKNOWN }) {
-//                "gql_server_error"
-//            } else {
-//                "gql_client_error"
-//            }
-//            errorTags["ipc.status.detail"] = statusDetail
-//        }
-//        return errorTags
-//    }
 
     /**
      * Returns a fallback name if the operation is unnamed.
