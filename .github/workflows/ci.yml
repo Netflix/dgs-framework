@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5.0.0
+      - uses: actions/checkout@v6.0.1
 
       - name: Setup Java ${{ matrix.jdk-version }}
         uses: actions/setup-java@v5
@@ -28,7 +28,7 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f scripts/requirements.txt ]; then pip install -r scripts/requirements.txt; fi
 
-      - uses: actions/cache@v4.2.4
+      - uses: actions/cache@v5.0.1
         id: gradle-wrapper-cache
         with:
           path: ~/.gradle/wrapper
@@ -36,14 +36,14 @@ jobs:
           restore-keys: ${{ runner.os }}-gradlewrapper-
 
       - name: Cache Gradle packages
-        uses: actions/cache@v4.2.4
+        uses: actions/cache@v5.0.1
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
       - name: Maven cache
-        uses: actions/cache@v4.2.4
+        uses: actions/cache@v5.0.1
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -61,14 +61,14 @@ jobs:
           ./gradlew --no-watch-fs publishToMavenLocal --warning-mode all
 
       - name: Clone dgs-examples-java
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.1
         with:
           repository: Netflix/dgs-examples-java
           path: build/examples/dgs-examples-java
           ref: boot4
 
       - name: Clone dgs-examples-kotlin
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.1
         with:
           repository: Netflix/dgs-examples-kotlin
           path: build/examples/dgs-examples-kotlin
@@ -79,7 +79,7 @@ jobs:
           ./scripts/test-examples.py -v -k --path=./build/examples
 
       - name: Upload JUnit Tests
-        uses: actions/upload-artifact@v4  # upload test results
+        uses: actions/upload-artifact@v6  # upload test results
         if: success() || failure()        # run this step even if previous step failed
         with:
           name: test-results

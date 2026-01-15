@@ -54,7 +54,9 @@ internal class SourceArgumentTest {
 
     data class Show(
         val title: String,
-    )
+    ) : BaseShow()
+
+    open class BaseShow
 
     @Test
     fun `@Source argument`() {
@@ -67,6 +69,46 @@ internal class SourceArgumentTest {
             fun description(
                 @Source show: Show,
             ): String = "Description of ${show.title}"
+        }
+
+        contextRunner.withBean(Fetcher::class.java).run { context ->
+            val provider = schemaProvider(context)
+            val schema = provider.schema().graphQLSchema
+
+            val build = GraphQL.newGraphQL(schema).build()
+            val executionResult =
+                build.execute(
+                    """{
+                |   shows {
+                |       title
+                |       description
+                |   }
+                |}
+                    """.trimMargin(),
+                )
+
+            assertThat(executionResult.errors).isEmpty()
+            assertThat(executionResult.isDataPresent).isTrue
+            val data = executionResult.getData<Map<String, *>>()
+
+            @Suppress("UNCHECKED_CAST")
+            val showData = (data["shows"] as List<Map<*, *>>)[0]
+            assertThat(showData["title"]).isEqualTo("Stranger Things")
+            assertThat(showData["description"]).isEqualTo("Description of Stranger Things")
+        }
+    }
+
+    @Test
+    fun `@Source argument could be a base type`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsQuery
+            fun shows(): List<Show> = listOf(Show("Stranger Things"))
+
+            @DgsData(parentType = "Show")
+            fun description(
+                @Source show: BaseShow,
+            ): String = "Description of ${(show as Show).title}"
         }
 
         contextRunner.withBean(Fetcher::class.java).run { context ->

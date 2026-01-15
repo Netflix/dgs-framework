@@ -85,6 +85,8 @@ import graphql.schema.idl.TypeDefinitionRegistry
 import io.micrometer.context.ContextRegistry
 import io.micrometer.context.ContextSnapshotFactory
 import io.micrometer.context.integration.Slf4jThreadLocalAccessor
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import org.reactivestreams.Publisher
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -227,7 +229,7 @@ open class DgsSpringGraphQLAutoConfiguration(
         @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService,
         extensionProviders: List<DataLoaderInstrumentationExtensionProvider>,
         customizers: List<DgsDataLoaderCustomizer>,
-    ): DgsDataLoaderProvider =
+    ): DefaultDgsDataLoaderProvider =
         DefaultDgsDataLoaderProvider(
             applicationContext = applicationContext,
             extensionProviders = extensionProviders,
@@ -484,10 +486,21 @@ open class DgsSpringGraphQLAutoConfiguration(
         return executor
     }
 
+    /**
+     * Default CoroutineDispatcher used for executing Kotlin suspend functions in data fetchers.
+     * Defaults to [Dispatchers.Unconfined] which runs coroutines immediately on the calling thread.
+     * Override this bean to customize the dispatcher for your specific use case.
+     */
+    @Bean
+    @Qualifier("dgsCoroutineDispatcher")
+    @ConditionalOnMissingBean(name = ["dgsCoroutineDispatcher"])
+    open fun dgsCoroutineDispatcher(): CoroutineDispatcher = Dispatchers.Unconfined
+
     @Bean
     open fun methodDataFetcherFactory(
         argumentResolvers: ObjectProvider<ArgumentResolver>,
         @Qualifier("dgsAsyncTaskExecutor") taskExecutorOptional: Optional<AsyncTaskExecutor>,
+        @Qualifier("dgsCoroutineDispatcher") coroutineDispatcher: CoroutineDispatcher,
     ): MethodDataFetcherFactory {
         val taskExecutor =
             if (taskExecutorOptional.isPresent) {
@@ -496,7 +509,12 @@ open class DgsSpringGraphQLAutoConfiguration(
                 null
             }
 
-        return MethodDataFetcherFactory(argumentResolvers.orderedStream().toList(), DefaultParameterNameDiscoverer(), taskExecutor)
+        return MethodDataFetcherFactory(
+            argumentResolvers.orderedStream().toList(),
+            DefaultParameterNameDiscoverer(),
+            taskExecutor,
+            coroutineDispatcher,
+        )
     }
 
     @Bean

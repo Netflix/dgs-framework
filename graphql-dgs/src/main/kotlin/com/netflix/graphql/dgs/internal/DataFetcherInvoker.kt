@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.internal
 import com.netflix.graphql.dgs.internal.method.ArgumentResolverComposite
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.reactor.mono
 import org.springframework.core.BridgeMethodResolver
@@ -43,6 +44,7 @@ class DataFetcherInvoker internal constructor(
     private val resolvers: ArgumentResolverComposite,
     parameterNameDiscoverer: ParameterNameDiscoverer,
     taskExecutor: AsyncTaskExecutor?,
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.Unconfined,
 ) : DataFetcher<Any?> {
     private val bridgedMethod: Method = BridgeMethodResolver.findBridgedMethod(method)
     private val kotlinFunction: KFunction<*>? =
@@ -131,7 +133,7 @@ class DataFetcherInvoker internal constructor(
         }
 
         if (kFunc.isSuspend) {
-            return mono(Dispatchers.Unconfined) {
+            return mono(coroutineDispatcher) {
                 kFunc.callSuspendBy(argsByName)
             }.onErrorMap(InvocationTargetException::class.java) { it.targetException }
         }
