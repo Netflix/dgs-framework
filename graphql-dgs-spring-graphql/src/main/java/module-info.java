@@ -9,6 +9,7 @@ module com.netflix.graphql.dgs.springgraphql {
     requires static spring.webflux;
     requires kotlin.stdlib;
     requires org.slf4j;
+    requires spring.core;
 
 
     exports com.netflix.graphql.dgs.autoconfig to kotlin.reflect, spring.beans, spring.core;

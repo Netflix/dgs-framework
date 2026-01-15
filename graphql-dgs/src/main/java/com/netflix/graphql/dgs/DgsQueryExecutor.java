@@ -23,8 +23,8 @@ import java.util.Collections;
 import java.util.Map;
 import org.intellij.lang.annotations.Language;
 import org.springframework.http.HttpHeaders;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 

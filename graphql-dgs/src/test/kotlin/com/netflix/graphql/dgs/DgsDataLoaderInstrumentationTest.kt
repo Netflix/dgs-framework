@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs
 
+import com.netflix.graphql.dgs.internal.DefaultDgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsDataLoaderInstrumentationDataLoaderCustomizer
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsWrapWithContextDataLoaderCustomizer
@@ -44,7 +45,7 @@ import java.util.concurrent.atomic.AtomicInteger
 class DgsDataLoaderInstrumentationTest {
     private val applicationContextRunner: ApplicationContextRunner =
         ApplicationContextRunner()
-            .withBean(DgsDataLoaderProvider::class.java)
+            .withBean(DefaultDgsDataLoaderProvider::class.java)
 
     @Test
     fun instrumentationIsCorrectlyCalled() {
@@ -62,7 +63,7 @@ class DgsDataLoaderInstrumentationTest {
                 val dataLoaderRegistry = provider.buildRegistry()
 
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("ExampleBatchLoaderWithoutName")
-                dataLoader.load("test")
+                dataLoader!!.load("test")
                 dataLoader
                     .dispatch()
                     .whenComplete { _, _ ->
@@ -89,7 +90,7 @@ class DgsDataLoaderInstrumentationTest {
                 val dataLoaderRegistry = provider.buildRegistry()
 
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleBatchLoaderWithRegistryConsumer")
-                dataLoader.load("test")
+                dataLoader!!.load("test")
                 dataLoader
                     .dispatch()
                     .whenComplete { _, _ ->
@@ -116,47 +117,82 @@ class DgsDataLoaderInstrumentationTest {
                 val dataLoaderRegistry = provider.buildRegistry()
 
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleLoaderThatThrows")
-                dataLoader.load("test")
+                dataLoader!!.load("test")
                 dataLoader
                     .dispatch()
-                    .whenComplete { _, _ ->
+                    .whenComplete { _, e ->
                         assertThat(beforeCounter.get()).isEqualTo(1)
                         assertThat(afterCounter.get()).isEqualTo(0)
                         assertThat(exceptionCounter.get()).isEqualTo(1)
                     }.join()
             }
     }
-}
 
-class TestDataLoaderInstrumentation(
-    private val beforeCounter: AtomicInteger,
-    private val afterCounter: AtomicInteger,
-    private val exceptionCounter: AtomicInteger,
-) : DgsDataLoaderInstrumentation {
-    class TestDataLoaderInstrumentationContext(
-        private val afterCounter: AtomicInteger,
-        private val exceptionCounter: AtomicInteger,
-    ) : DgsDataLoaderInstrumentationContext {
-        override fun onComplete(
-            result: Any?,
-            exception: Any?,
-        ) {
-            if (result != null) {
-                afterCounter.addAndGet(1)
-            }
+    @Test
+    fun canDetectWhenDataLoaderThrowsWithDelay() {
+        val beforeCounter = AtomicInteger(0)
+        val afterCounter = AtomicInteger(0)
+        val exceptionCounter = AtomicInteger(0)
 
-            if (exception != null) {
-                exceptionCounter.addAndGet(1)
+        applicationContextRunner
+            .withBean(ExampleBatchLoaderThatThrowsWithDelay::class.java)
+            .withBean(DgsWrapWithContextDataLoaderCustomizer::class.java)
+            .withBean(DgsDataLoaderInstrumentationDataLoaderCustomizer::class.java)
+            .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter)
+            .run { context ->
+                val provider = context.getBean(DgsDataLoaderProvider::class.java)
+                val dataLoaderRegistry = provider.buildRegistry()
+
+                val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleLoaderThatThrowsWithDelay")
+                val loadFuture = dataLoader?.load("test")
+                dataLoader?.dispatch()
+
+                // Wait for the load operation to complete with exception
+                try {
+                    loadFuture?.toCompletableFuture()?.join()
+                } catch (e: Exception) {
+                    // Expected to throw
+                }
+
+                // Give some time for async callbacks to complete
+                Thread.sleep(100)
+
+                assertThat(beforeCounter.get()).isEqualTo(1)
+                assertThat(afterCounter.get()).isEqualTo(0)
+                assertThat(exceptionCounter.get()).isEqualTo(1)
             }
-        }
     }
 
-    override fun onDispatch(
-        name: String,
-        keys: List<Any>,
-        batchLoaderEnvironment: BatchLoaderEnvironment,
-    ): TestDataLoaderInstrumentationContext {
-        beforeCounter.addAndGet(1)
-        return TestDataLoaderInstrumentationContext(afterCounter, exceptionCounter)
+    class TestDataLoaderInstrumentation(
+        private val beforeCounter: AtomicInteger,
+        private val afterCounter: AtomicInteger,
+        private val exceptionCounter: AtomicInteger,
+    ) : DgsDataLoaderInstrumentation {
+        class TestDataLoaderInstrumentationContext(
+            private val afterCounter: AtomicInteger,
+            private val exceptionCounter: AtomicInteger,
+        ) : DgsDataLoaderInstrumentationContext {
+            override fun onComplete(
+                result: Any?,
+                exception: Any?,
+            ) {
+                if (result != null) {
+                    afterCounter.addAndGet(1)
+                }
+
+                if (exception != null) {
+                    exceptionCounter.addAndGet(1)
+                }
+            }
+        }
+
+        override fun onDispatch(
+            name: String,
+            keys: List<Any>,
+            batchLoaderEnvironment: BatchLoaderEnvironment,
+        ): TestDataLoaderInstrumentationContext {
+            beforeCounter.addAndGet(1)
+            return TestDataLoaderInstrumentationContext(afterCounter, exceptionCounter)
+        }
     }
 }

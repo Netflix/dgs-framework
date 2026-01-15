@@ -29,6 +29,7 @@ dependencies {
     compileOnly("io.projectreactor:reactor-core")
     compileOnly("jakarta.annotation:jakarta.annotation-api")
     compileOnly("com.github.ben-manes.caffeine:caffeine")
+    compileOnly("org.jspecify:jspecify")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")

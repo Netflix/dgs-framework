@@ -16,9 +16,13 @@
 
 package com.netflix.graphql.dgs.springgraphql.autoconfig
 
+import com.netflix.graphql.dgs.DgsDataLoaderReloadController
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.autoconfig.DgsConfigurationProperties
+import com.netflix.graphql.dgs.internal.DefaultDgsDataLoaderProvider
+import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
+import com.netflix.graphql.dgs.internal.ReloadableDgsDataLoaderProvider
 import com.netflix.graphql.dgs.mvc.internal.method.HandlerMethodArgumentResolverAdapter
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
@@ -30,8 +34,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.AutoConfigurations
-import org.springframework.boot.autoconfigure.graphql.GraphQlAutoConfiguration
-import org.springframework.boot.autoconfigure.graphql.GraphQlSourceBuilderCustomizer
+import org.springframework.boot.graphql.autoconfigure.GraphQlAutoConfiguration
+import org.springframework.boot.graphql.autoconfigure.GraphQlSourceBuilderCustomizer
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import org.springframework.boot.test.context.runner.ReactiveWebApplicationContextRunner
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner
@@ -176,6 +180,44 @@ class DgsSpringGraphQlAutoConfigurationTest {
                         .getBean(DgsSpringGraphQLConfigurationProperties::class.java)
                         .webmvc.asyncdispatch.enabled,
                 ).isFalse()
+            }
+    }
+
+    @Test
+    fun supportsReloadableDataLoaders() {
+        // when dgs reload is disabled
+        ApplicationContextRunner()
+            .withConfiguration(autoConfigurations)
+            .withPropertyValues("dgs.reload=false")
+            .run { context ->
+                assertThat(context)
+                    .doesNotHaveBean(DgsSpringGraphQLAutoConfiguration.DgsDataLoaderReloadAutoConfiguration::class.java)
+                assertThat(context)
+                    .doesNotHaveBean(ReloadableDgsDataLoaderProvider::class.java)
+                assertThat(context)
+                    .doesNotHaveBean(DgsDataLoaderReloadController::class.java)
+                assertThat(context)
+                    .getBean(DgsDataLoaderProvider::class.java)
+                    .describedAs { "The primary DgsDataLoaderProvider " }
+                    .isNotNull
+                    .isInstanceOf(DefaultDgsDataLoaderProvider::class.java)
+            }
+        // when dgs reload is enabled
+        ApplicationContextRunner()
+            .withConfiguration(autoConfigurations)
+            .withPropertyValues("dgs.reload=true")
+            .run { context ->
+                assertThat(context)
+                    .hasSingleBean(DgsSpringGraphQLAutoConfiguration.DgsDataLoaderReloadAutoConfiguration::class.java)
+                assertThat(context)
+                    .hasSingleBean(ReloadableDgsDataLoaderProvider::class.java)
+                assertThat(context)
+                    .hasSingleBean(DgsDataLoaderReloadController::class.java)
+                assertThat(context)
+                    .getBean(DgsDataLoaderProvider::class.java)
+                    .describedAs { "The primary DgsDataLoaderProvider " }
+                    .isNotNull
+                    .isInstanceOf(ReloadableDgsDataLoaderProvider::class.java)
             }
     }
 

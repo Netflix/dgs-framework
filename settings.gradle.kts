@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 plugins {
-    id("com.gradle.enterprise") version("3.14.1")
+    id("com.gradle.enterprise") version ("3.14.1")
 }
 
 gradleEnterprise {
@@ -25,7 +25,6 @@ gradleEnterprise {
     }
 }
 rootProject.name = "dgs-framework"
-
 
 include("graphql-dgs")
 include("dgs-starter")

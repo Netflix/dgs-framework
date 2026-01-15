@@ -29,7 +29,6 @@ import org.springframework.core.convert.converter.ConditionalGenericConverter
 import org.springframework.core.convert.converter.GenericConverter
 import org.springframework.core.convert.support.DefaultConversionService
 import org.springframework.util.CollectionUtils
-import org.springframework.util.ReflectionUtils
 import java.lang.reflect.Constructor
 import java.lang.reflect.Type
 import java.util.Optional
@@ -169,7 +168,9 @@ class DefaultInputObjectMapper(
             return handleRecordClass(inputMap, targetClass)
         }
 
-        val ctor = ReflectionUtils.accessibleConstructor(targetClass)
+        @Suppress("UNCHECKED_CAST")
+        val ctor = targetClass.getDeclaredConstructor() as Constructor<T>
+        ctor.trySetAccessible()
         val instance = ctor.newInstance()
         val setterAccessor = setterAccessor(instance)
         val fieldAccessor = fieldAccessor(instance)

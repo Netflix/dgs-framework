@@ -28,8 +28,7 @@ plugins {
 
     id("nebula.netflixoss") version "11.6.0"
     id("io.spring.dependency-management") version "1.1.7"
-
-    id("org.jmailen.kotlinter") version "5.1.+"
+    id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
     id("me.champeau.jmh") version "0.7.3"
 
     kotlin("jvm") version Versions.KOTLIN_VERSION
@@ -39,6 +38,7 @@ plugins {
 
 allprojects {
     group = "com.netflix.graphql.dgs"
+
     repositories {
         mavenCentral()
     }
@@ -51,14 +51,14 @@ allprojects {
     // and suggest an upgrade. The only exception currently are those defined
     // in buildSrc, most likely because the variables are used in plugins as well
     // as dependencies. e.g. KOTLIN_VERSION
-    extra["sb.version"] = "3.5.0"
+    extra["sb.version"] = "4.0.0"
     extra["kotlin.version"] = Versions.KOTLIN_VERSION
 }
 val internalBomModules by extra(
     listOf(
         project(":graphql-dgs-platform"),
-        project(":graphql-dgs-platform-dependencies")
-    )
+        project(":graphql-dgs-platform-dependencies"),
+    ),
 )
 
 configure(subprojects.filterNot { it in internalBomModules }) {
@@ -66,7 +66,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     apply {
         plugin("java-library")
         plugin("kotlin")
-        plugin("org.jmailen.kotlinter")
+        plugin("org.jlleitschuh.gradle.ktlint")
         plugin("me.champeau.jmh")
         plugin("io.spring.dependency-management")
     }
@@ -77,7 +77,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     dependencyManagement {
         imports {
             mavenBom("org.jetbrains.kotlin:kotlin-bom:${Versions.KOTLIN_VERSION}")
-            mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+            mavenBom("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
         }
     }
 
@@ -89,19 +89,19 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         // Please refer to the following links for further reference.
         // * https://github.com/melix/jmh-gradle-plugin
         // * https://openjdk.java.net/projects/code-tools/jmh/
-        jmh("org.openjdk.jmh:jmh-core:${jmhVersion}")
-        jmh("org.openjdk.jmh:jmh-generator-annprocess:${jmhVersion}")
+        jmh("org.openjdk.jmh:jmh-core:$jmhVersion")
+        jmh("org.openjdk.jmh:jmh-generator-annprocess:$jmhVersion")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test") {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         }
 
         implementation("org.slf4j:slf4j-api:2.0.17")
-        implementation("org.jetbrains:annotations:26.0.2")
+        implementation("org.jetbrains:annotations:26.0.2-1")
         testImplementation("io.mockk:mockk:1.+")
 
         // JUnit 5 dependencies
-        testImplementation(platform("org.junit:junit-bom:5.13.2"))
+        testImplementation(platform("org.junit:junit-bom:5.13.4"))
         testImplementation("org.junit.jupiter:junit-jupiter")
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     }
@@ -140,12 +140,8 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     kotlin {
         jvmToolchain(17)
         compilerOptions {
-           javaParameters = true
+            javaParameters = true
             freeCompilerArgs.addAll("-Xjvm-default=all-compatibility", "-java-parameters")
         }
-    }
-
-    kotlinter {
-        reporters = arrayOf("checkstyle", "plain")
     }
 }

@@ -1,0 +1,33 @@
+interface RequestType {
+    name: String
+}
+
+type RequestType1 implements RequestType {
+    name: String
+    description: String
+}
+
+type RequestType2 implements RequestType {
+    name: String
+    flag: Boolean
+}
+
+type ResultType1 {
+    message: String
+}
+
+type ResultType2 {
+    code: String
+    description: String
+}
+
+type ResultType3 {
+    message: String
+    code: String
+    flag: Boolean
+}
+
+union ResultType =
+    ResultType1 |
+    ResultType2 |
+    ResultType3

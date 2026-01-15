@@ -39,6 +39,7 @@ import graphql.GraphQLError
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherExceptionHandlerParameters
 import graphql.execution.DataFetcherExceptionHandlerResult
+import graphql.execution.DataFetcherResult
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
@@ -61,14 +62,15 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
 import org.springframework.http.MediaType
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
+import org.springframework.test.json.JsonCompareMode
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -121,7 +123,7 @@ class MicrometerServletSmokeTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""{ "query": "query my_op_1{ping}" }"""),
             ).andExpect(status().isOk)
-            .andExpect(content().json("""{"data":{"ping":"pong"}}""", false))
+            .andExpect(content().json("""{"data":{"ping":"pong"}}""", JsonCompareMode.LENIENT))
 
         val meters = fetchMeters()
 
@@ -166,7 +168,7 @@ class MicrometerServletSmokeTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""{ "query": " mutation my_op_1{buzz}" }""".trimMargin()),
             ).andExpect(status().isOk)
-            .andExpect(content().json("""{"data":{"buzz":"buzz"}}""", false))
+            .andExpect(content().json("""{"data":{"buzz":"buzz"}}""", JsonCompareMode.LENIENT))
 
         val meters = fetchMeters()
 
@@ -218,7 +220,7 @@ class MicrometerServletSmokeTest {
                         """.trimMargin(),
                     ),
             ).andExpect(status().isOk)
-            .andExpect(content().json("""{"data":{"ping":"pong"}}""", false))
+            .andExpect(content().json("""{"data":{"ping":"pong"}}""", JsonCompareMode.LENIENT))
 
         val meters = fetchMeters()
 
@@ -278,7 +280,7 @@ class MicrometerServletSmokeTest {
                     |     ]
                     |   }
                     """.trimMargin(),
-                    false,
+                    JsonCompareMode.LENIENT,
                 ),
             )
         val meters = fetchMeters("gql.")
@@ -436,7 +438,7 @@ class MicrometerServletSmokeTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""{ "query": "{someTrivialThings}" }"""),
             ).andExpect(status().isOk)
-            .andExpect(content().json("""{"data":{"someTrivialThings":"some insignificance"}}""", false))
+            .andExpect(content().json("""{"data":{"someTrivialThings":"some insignificance"}}""", JsonCompareMode.LENIENT))
 
         val meters = fetchMeters()
 
@@ -483,7 +485,7 @@ class MicrometerServletSmokeTest {
                     |     ]
                     |   }
                     """.trimMargin(),
-                    false,
+                    JsonCompareMode.LENIENT,
                 ),
             )
         val meters = fetchMeters("gql.")
@@ -546,7 +548,7 @@ class MicrometerServletSmokeTest {
                        |    "data":{"triggerInternalFailure":null}
                        |}
                     """.trimMargin(),
-                    false,
+                    JsonCompareMode.LENIENT,
                 ),
             )
 
@@ -624,7 +626,7 @@ class MicrometerServletSmokeTest {
                         |   "data":{"triggerBadRequestFailure":null}
                         |}
                     """.trimMargin(),
-                    false,
+                    JsonCompareMode.LENIENT,
                 ),
             )
 
@@ -679,6 +681,106 @@ class MicrometerServletSmokeTest {
     }
 
     @Test
+    fun `Assert metrics for a successful async response with errors`() {
+        mvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post("/graphql")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{ "query": "{triggerSuccessfulRequestWithErrorAsync}" }"""),
+            ).andExpect(status().isOk)
+            .andExpect(
+                content().json(
+                    """
+                        |{
+                        |   "errors":[
+                        |      {"message":"Exception triggered."}
+                        |   ],
+                        |   "data":{"triggerSuccessfulRequestWithErrorAsync":"Some data..."}
+                        |}
+                    """.trimMargin(),
+                    JsonCompareMode.LENIENT,
+                ),
+            )
+
+        val meters = fetchMeters("gql.")
+
+        assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
+
+        assertThat(meters["gql.error"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
+        assertThat(meters["gql.error"]?.first()?.id?.tags)
+            .containsAll(
+                Tags
+                    .of("outcome", "failure"),
+            )
+
+        assertThat(meters["gql.query"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat(meters["gql.query"]?.first()?.id?.tags)
+            .containsAll(
+                Tags
+                    .of("outcome", "failure"),
+            )
+
+        assertThat(meters["gql.resolver"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat(meters["gql.resolver"]?.first()?.id?.tags)
+            .containsAll(
+                Tags
+                    .of("outcome", "failure"),
+            )
+    }
+
+    @Test
+    fun `Assert metrics for a successful sync response with errors`() {
+        mvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post("/graphql")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{ "query": "{triggerSuccessfulRequestWithErrorSync}" }"""),
+            ).andExpect(status().isOk)
+            .andExpect(
+                content().json(
+                    """
+                        |{
+                        |   "errors":[
+                        |      {"message":"Exception triggered."}
+                        |   ],
+                        |   "data":{"triggerSuccessfulRequestWithErrorSync":"Some data..."}
+                        |}
+                    """.trimMargin(),
+                    JsonCompareMode.LENIENT,
+                ),
+            )
+
+        val meters = fetchMeters("gql.")
+
+        assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")
+
+        assertThat(meters["gql.error"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat((meters["gql.error"]?.first() as CumulativeCounter).count()).isEqualTo(1.0)
+        assertThat(meters["gql.error"]?.first()?.id?.tags)
+            .containsAll(
+                Tags
+                    .of("outcome", "failure"),
+            )
+
+        assertThat(meters["gql.query"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat(meters["gql.query"]?.first()?.id?.tags)
+            .containsAll(
+                Tags
+                    .of("outcome", "failure"),
+            )
+
+        assertThat(meters["gql.resolver"]).isNotNull.hasSizeGreaterThanOrEqualTo(1)
+        assertThat(meters["gql.resolver"]?.first()?.id?.tags)
+            .containsAll(
+                Tags
+                    .of("outcome", "failure"),
+            )
+    }
+
+    @Test
     fun `Assert metrics for custom error`() {
         mvc
             .perform(
@@ -701,7 +803,7 @@ class MicrometerServletSmokeTest {
                     |   "data":{"triggerCustomFailure":null}
                     |}
                     """.trimMargin(),
-                    false,
+                    JsonCompareMode.LENIENT,
                 ),
             )
 
@@ -774,7 +876,7 @@ class MicrometerServletSmokeTest {
                     |  ],
                     |  "data":{"triggerInternalFailure":null,"triggerBadRequestFailure":null,"triggerCustomFailure":null}}
                     """.trimMargin(),
-                    false,
+                    JsonCompareMode.LENIENT,
                 ),
             )
 
@@ -914,6 +1016,8 @@ class MicrometerServletSmokeTest {
                 |    triggerInternalFailure: String
                 |    triggerBadRequestFailure:String
                 |    triggerCustomFailure: String
+                |    triggerSuccessfulRequestWithErrorAsync:String
+                |    triggerSuccessfulRequestWithErrorSync:String
                 |}
                 |
                 |type Mutation{
@@ -955,6 +1059,34 @@ class MicrometerServletSmokeTest {
 
             @DgsQuery
             fun triggerBadRequestFailure(): String = throw DgsBadRequestException("Exception triggered.")
+
+            @DgsQuery
+            fun triggerSuccessfulRequestWithErrorAsync(): CompletableFuture<DataFetcherResult<String>> =
+                CompletableFuture.supplyAsync {
+                    DataFetcherResult
+                        .newResult<String>()
+                        .data("Some data...")
+                        .error(
+                            TypedGraphQLError
+                                .newBuilder()
+                                .message("Exception triggered.")
+                                .errorType(ErrorType.INTERNAL)
+                                .build(),
+                        ).build()
+                }
+
+            @DgsQuery
+            fun triggerSuccessfulRequestWithErrorSync(): DataFetcherResult<String> =
+                DataFetcherResult
+                    .newResult<String>()
+                    .data("Some data...")
+                    .error(
+                        TypedGraphQLError
+                            .newBuilder()
+                            .message("Exception triggered.")
+                            .errorType(ErrorType.INTERNAL)
+                            .build(),
+                    ).build()
 
             @DgsQuery
             fun triggerCustomFailure(): String = throw CustomException("Exception triggered.")

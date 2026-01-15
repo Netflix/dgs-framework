@@ -16,36 +16,56 @@
 
 package com.netflix.graphql.dgs.client.scalar
 
+import graphql.GraphQLContext
+import graphql.execution.CoercedVariables
 import graphql.language.StringValue
+import graphql.language.Value
 import graphql.schema.Coercing
 import graphql.schema.CoercingParseLiteralException
 import graphql.schema.CoercingParseValueException
 import graphql.schema.CoercingSerializeException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class DateRangeScalar : Coercing<DateRange, String> {
     private var formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy")
 
     @Throws(CoercingSerializeException::class)
-    override fun serialize(dataFetcherResult: Any): String {
+    override fun serialize(
+        dataFetcherResult: Any,
+        graphQLContext: GraphQLContext,
+        locale: Locale,
+    ): String {
         val range: DateRange = dataFetcherResult as DateRange
         return range.from.format(formatter) + "-" + range.to.format(formatter)
     }
 
     @Throws(CoercingParseValueException::class)
-    override fun parseValue(input: Any): DateRange {
+    override fun parseValue(
+        input: Any,
+        graphQLContext: GraphQLContext,
+        locale: Locale,
+    ): DateRange {
         val split = (input as String).split("-").toTypedArray()
         val from = LocalDate.parse(split[0], formatter)
-        val to = LocalDate.parse(split[0], formatter)
+        val to = LocalDate.parse(split[1], formatter)
         return DateRange(from, to)
     }
 
     @Throws(CoercingParseLiteralException::class)
-    override fun parseLiteral(input: Any): DateRange {
-        val split = (input as StringValue).value.split("-").toTypedArray()
+    override fun parseLiteral(
+        input: Value<*>,
+        variables: CoercedVariables,
+        graphQLContext: GraphQLContext,
+        locale: Locale,
+    ): DateRange {
+        val value =
+            (input as StringValue).value
+                ?: throw CoercingParseLiteralException("Expected non-null value for DateRange")
+        val split = value.split("-").toTypedArray()
         val from = LocalDate.parse(split[0], formatter)
-        val to = LocalDate.parse(split[0], formatter)
+        val to = LocalDate.parse(split[1], formatter)
         return DateRange(from, to)
     }
 }
