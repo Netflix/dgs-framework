@@ -52,8 +52,9 @@ class DgsGraphQLCollatedMetricsTagsProvider(
     override fun getFieldFetchDataFetcherResultTags(
         state: DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState,
         parameters: InstrumentationFieldFetchParameters,
-        dataFetcherResult: DataFetcherResult<*>?
-    ): Iterable<Tag> = fieldFetchDataFetcherResultTagCustomizer.flatMap {
-        it.getFieldFetchDataFetcherResultTags(state, parameters, dataFetcherResult)
-    }
+        dataFetcherResult: DataFetcherResult<*>?,
+    ): Iterable<Tag> =
+        fieldFetchDataFetcherResultTagCustomizer.flatMap {
+            it.getFieldFetchDataFetcherResultTags(state, parameters, dataFetcherResult)
+        }
 }

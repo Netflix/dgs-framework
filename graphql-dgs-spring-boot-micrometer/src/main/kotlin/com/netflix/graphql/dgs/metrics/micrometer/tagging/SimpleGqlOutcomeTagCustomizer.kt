@@ -49,7 +49,7 @@ class SimpleGqlOutcomeTagCustomizer :
     override fun getFieldFetchDataFetcherResultTags(
         state: DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState,
         parameters: InstrumentationFieldFetchParameters,
-        dataFetcherResult: DataFetcherResult<*>?
+        dataFetcherResult: DataFetcherResult<*>?,
     ): Iterable<Tag> =
         if (dataFetcherResult == null || !dataFetcherResult.hasErrors()) {
             listOf(DgsMetrics.CommonTags.SUCCESS.tag)

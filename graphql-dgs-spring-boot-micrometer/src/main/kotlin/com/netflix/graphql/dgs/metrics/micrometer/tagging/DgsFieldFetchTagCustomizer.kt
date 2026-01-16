@@ -17,7 +17,6 @@
 package com.netflix.graphql.dgs.metrics.micrometer.tagging
 
 import com.netflix.graphql.dgs.metrics.micrometer.DgsGraphQLMetricsInstrumentation
-import graphql.execution.DataFetcherResult
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import io.micrometer.core.instrument.Tag
 

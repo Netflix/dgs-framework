@@ -42,6 +42,6 @@ interface DgsGraphQLMetricsTagsProvider {
     fun getFieldFetchDataFetcherResultTags(
         state: DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState,
         parameters: InstrumentationFieldFetchParameters,
-        dataFetcherResult: DataFetcherResult<*>?
+        dataFetcherResult: DataFetcherResult<*>?,
     ): Iterable<Tag> = emptyList()
 }

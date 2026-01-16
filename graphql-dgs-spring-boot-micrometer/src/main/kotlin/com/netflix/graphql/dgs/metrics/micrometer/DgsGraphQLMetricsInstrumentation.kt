@@ -33,7 +33,6 @@ import graphql.language.FragmentSpread
 import graphql.language.InlineFragment
 import graphql.language.OperationDefinition
 import graphql.language.OperationDefinition.Operation
-import graphql.schema.DataFetcher
 import graphql.schema.GraphQLNamedType
 import graphql.schema.GraphQLTypeUtil
 import graphql.validation.ValidationError
@@ -46,7 +45,6 @@ import org.springframework.boot.data.metrics.AutoTimer
 import org.springframework.util.Assert.state
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CompletionStage
 import kotlin.jvm.optionals.getOrNull
 
 class DgsGraphQLMetricsInstrumentation(
@@ -220,10 +218,9 @@ class DgsGraphQLMetricsInstrumentation(
                 addAll(state.tags())
             }
 
-
         return object : FieldFetchingInstrumentationContext {
             var sampler: Timer.Sample? = null
-            var dataFetcherResultTags : Iterable<Tag>? = null
+            var dataFetcherResultTags: Iterable<Tag>? = null
 
             override fun onDispatched() {
                 sampler = Timer.start(registry)
@@ -233,7 +230,10 @@ class DgsGraphQLMetricsInstrumentation(
                 dataFetcherResultTags = tagsProvider.getFieldFetchDataFetcherResultTags(state, parameters, dataFetcherResult)
             }
 
-            override fun onCompleted(result: Any?, t: Throwable?) {
+            override fun onCompleted(
+                result: Any?,
+                t: Throwable?,
+            ) {
                 // if no throwable was raised during data fetching, the data fetcher might have returned a DataFetcherResult explicitly
                 if (t == null) {
                     // offer the opportunity to add tags based on an explicitly returned data fetcher result by the data fetcher
