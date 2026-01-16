@@ -5,7 +5,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -52,7 +52,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -125,7 +125,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -192,7 +192,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -239,7 +239,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -321,7 +321,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -404,7 +404,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -616,7 +616,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -721,7 +721,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -795,7 +795,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -884,7 +884,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [

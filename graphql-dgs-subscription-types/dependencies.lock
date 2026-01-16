@@ -4,7 +4,7 @@
             "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -18,7 +18,7 @@
             "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -41,7 +41,7 @@
             "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -75,7 +75,7 @@
             "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -89,7 +89,7 @@
             "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -121,7 +121,7 @@
             "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -156,7 +156,7 @@
             "locked": "2.20.1"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -273,7 +273,7 @@
             "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -304,7 +304,7 @@
             "locked": "2.20.1"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -342,7 +342,7 @@
             "locked": "2.20.1"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -380,7 +380,7 @@
             "locked": "2.20.1"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "0.0.0-2026-01-13T02-32-23-c465601"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
