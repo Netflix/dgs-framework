@@ -17,15 +17,15 @@
 package com.netflix.graphql.dgs.metrics.micrometer.tagging
 
 import com.netflix.graphql.dgs.metrics.micrometer.DgsGraphQLMetricsInstrumentation
+import graphql.execution.DataFetcherResult
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import io.micrometer.core.instrument.Tag
 
-@Deprecated("Use DgsFieldFetchDataFetcherResultTagCustomizer instead")
 @FunctionalInterface
-fun interface DgsFieldFetchTagCustomizer {
-    fun getFieldFetchTags(
+fun interface DgsFieldFetchDataFetcherResultTagCustomizer {
+    fun getFieldFetchDataFetcherResultTags(
         state: DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState,
         parameters: InstrumentationFieldFetchParameters,
-        error: Throwable?,
+        dataFetcherResult: DataFetcherResult<*>?,
     ): Iterable<Tag>
 }

@@ -4,7 +4,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:java-dataloader": {
             "locked": "6.0.0"
@@ -45,7 +45,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:java-dataloader": {
             "locked": "6.0.0"
@@ -136,7 +136,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:java-dataloader": {
             "locked": "6.0.0"
@@ -200,7 +200,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:java-dataloader": {
             "locked": "6.0.0"
@@ -241,7 +241,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:java-dataloader": {
             "locked": "6.0.0"
@@ -341,7 +341,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:java-dataloader": {
             "locked": "6.0.0"
@@ -412,7 +412,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "22.0"
@@ -436,7 +436,7 @@
             "locked": "1.2.0"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.6"
+            "locked": "1.14.7"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.8.0"
@@ -589,7 +589,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:java-dataloader": {
             "locked": "6.0.0"
@@ -662,7 +662,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "22.0"
@@ -686,7 +686,7 @@
             "locked": "1.2.0"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.6"
+            "locked": "1.14.7"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.8.0"
@@ -751,7 +751,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "22.0"
@@ -775,7 +775,7 @@
             "locked": "1.2.0"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.6"
+            "locked": "1.14.7"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.8.0"
@@ -840,7 +840,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.graphql-java:graphql-java-extended-scalars": {
             "locked": "22.0"
@@ -864,7 +864,7 @@
             "locked": "1.2.0"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.6"
+            "locked": "1.14.7"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.8.0"
