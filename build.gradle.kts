@@ -80,7 +80,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
             mavenBom("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
         }
         // Override Spring Boot's graphql-java version using the dependency management plugin's extension mechanism
-        ext["graphql-java.version"] = "0.0.0-2026-01-13T02-32-23-c465601"
+        ext["graphql-java.version"] = "0.0.0-2026-01-15T04-25-04-7fb2729"
     }
 
     dependencies {
@@ -145,5 +145,11 @@ configure(subprojects.filterNot { it in internalBomModules }) {
             javaParameters = true
             freeCompilerArgs.addAll("-Xjvm-default=all-compatibility", "-java-parameters")
         }
+    }
+
+    tasks.withType<GenerateModuleMetadata> {
+        // The value 'enforced-platform' is provided in the validation
+        // error message you got
+        suppressedValidationErrors.add("enforced-platform")
     }
 }
