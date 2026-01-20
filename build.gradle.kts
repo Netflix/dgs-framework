@@ -28,7 +28,7 @@ plugins {
 
     id("nebula.netflixoss") version "11.6.0"
     id("io.spring.dependency-management") version "1.1.7"
-    id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
+    id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
     id("me.champeau.jmh") version "0.7.3"
 
     kotlin("jvm") version Versions.KOTLIN_VERSION
