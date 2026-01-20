@@ -113,6 +113,7 @@ class DgsSchemaProvider
         private val enableEntityFetcherCustomScalarParsing: Boolean = false,
         private val fallbackTypeResolver: TypeResolver? = null,
         private val enableStrictMode: Boolean = true,
+        private val federationEnabled: Boolean = true,
     ) {
         @Suppress("UNUSED_PARAMETER")
         @Deprecated("The mockProviders argument is no longer supported")
@@ -266,27 +267,32 @@ class DgsSchemaProvider
 
             val runtimeWiring = runtimeWiringBuilder.build()
 
-            findEntityFetchers(dgsComponents, mergedRegistry, runtimeWiring, dataFetcherInfo)
-
-            val federationResolverInstance =
-                federationResolver.orElseGet {
-                    DefaultDgsFederationResolver(
-                        entityFetcherRegistry,
-                        dataFetcherExceptionHandler,
-                        applicationContext,
-                    )
-                }
-
-            val entityFetcher = federationResolverInstance.entitiesFetcher()
-            val typeResolver = federationResolverInstance.typeResolver()
             val schemaOptions = SchemaGenerator.Options.defaultOptions().useCommentsAsDescriptions(showSdlComments)
 
-            var graphQLSchema =
-                Federation
-                    .transform(mergedRegistry, runtimeWiring, schemaOptions)
-                    .fetchEntities(entityFetcher)
-                    .resolveEntityType(typeResolver)
-                    .build()
+            val graphQLSchema =
+                if (federationEnabled) {
+                    findEntityFetchers(dgsComponents, mergedRegistry, runtimeWiring, dataFetcherInfo)
+
+                    val federationResolverInstance =
+                        federationResolver.orElseGet {
+                            DefaultDgsFederationResolver(
+                                entityFetcherRegistry,
+                                dataFetcherExceptionHandler,
+                                applicationContext,
+                            )
+                        }
+
+                    val entityFetcher = federationResolverInstance.entitiesFetcher()
+                    val typeResolver = federationResolverInstance.typeResolver()
+
+                    Federation
+                        .transform(mergedRegistry, runtimeWiring, schemaOptions)
+                        .fetchEntities(entityFetcher)
+                        .resolveEntityType(typeResolver)
+                        .build()
+                } else {
+                    SchemaGenerator().makeExecutableSchema(schemaOptions, mergedRegistry, runtimeWiring)
+                }
 
             val endTime = System.currentTimeMillis()
             val totalTime = endTime - startTime
