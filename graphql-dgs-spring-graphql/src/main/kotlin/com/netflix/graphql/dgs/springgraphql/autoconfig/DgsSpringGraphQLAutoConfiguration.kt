@@ -133,6 +133,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest
+import org.springframework.web.context.request.RequestAttributesThreadLocalAccessor
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.filter.reactive.ServerWebExchangeContextFilter
 import org.springframework.web.method.annotation.RequestHeaderMapMethodArgumentResolver
@@ -478,6 +479,7 @@ open class DgsSpringGraphQLAutoConfiguration(
                 .loadContextAccessors()
                 .loadThreadLocalAccessors()
                 .registerThreadLocalAccessor(Slf4jThreadLocalAccessor())
+                .registerThreadLocalAccessor(RequestAttributesThreadLocalAccessor())
 
         val executor = SimpleAsyncTaskExecutor("dgs-virtual-thread-")
         executor.setVirtualThreads(true)
