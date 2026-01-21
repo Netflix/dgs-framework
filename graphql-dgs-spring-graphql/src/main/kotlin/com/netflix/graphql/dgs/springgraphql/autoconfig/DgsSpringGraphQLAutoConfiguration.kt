@@ -380,6 +380,7 @@ open class DgsSpringGraphQLAutoConfiguration(
             enableEntityFetcherCustomScalarParsing = configProps.enableEntityFetcherCustomScalarParsing,
             fallbackTypeResolver = fallbackTypeResolver,
             enableStrictMode = configProps.strictMode.enabled,
+            federationEnabled = configProps.federation.enabled,
         )
 
     @Bean

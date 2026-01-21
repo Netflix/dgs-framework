@@ -87,6 +87,7 @@ internal class DgsSchemaProviderTest {
         dataFetcherResultProcessors: List<DataFetcherResultProcessor> = emptyList(),
         fallbackTypeResolver: TypeResolver? = null,
         strictMode: Boolean = true,
+        federationEnabled: Boolean = true,
     ): DgsSchemaProvider =
         DgsSchemaProvider(
             applicationContext = applicationContext,
@@ -105,6 +106,7 @@ internal class DgsSchemaProviderTest {
             dataFetcherResultProcessors = dataFetcherResultProcessors,
             fallbackTypeResolver = fallbackTypeResolver,
             enableStrictMode = strictMode,
+            federationEnabled = federationEnabled,
         )
 
     @DgsComponent
@@ -1416,6 +1418,104 @@ internal class DgsSchemaProviderTest {
                 }
             }
             return builder
+        }
+    }
+
+    @Test
+    fun `Federation enabled by default should include _service and _entities queries`() {
+        data class Movie(
+            val movieId: Int,
+            val title: String,
+        )
+
+        val schema =
+            """
+            type Query {
+                hello: String
+            }
+
+            type Movie @key(fields: "movieId") {
+                movieId: Int!
+                title: String
+            }
+            """.trimIndent()
+
+        @DgsComponent
+        class Fetcher {
+            @DgsData(parentType = "Query", field = "hello")
+            fun hello(): String = "Hello"
+
+            @DgsEntityFetcher(name = "Movie")
+            fun movieEntityFetcher(values: Map<String, Any>): Movie? {
+                val movieId = values["movieId"] as? Int ?: return null
+                return Movie(movieId, "Test Movie")
+            }
+        }
+
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val provider = schemaProvider(applicationContext = context, federationEnabled = true)
+            val graphQLSchema = provider.schema(schema).graphQLSchema
+
+            assertThat(graphQLSchema.queryType.getFieldDefinition("_service")).isNotNull
+            assertThat(graphQLSchema.queryType.getFieldDefinition("_entities")).isNotNull
+
+            assertThat(graphQLSchema.getType("_Entity")).isNotNull
+
+            val build = GraphQL.newGraphQL(graphQLSchema).build()
+            val executionResult = build.execute("{_service { sdl }}")
+            assertTrue(executionResult.isDataPresent)
+        }
+    }
+
+    @Test
+    fun `Federation disabled should NOT include _service and _entities queries`() {
+        data class Movie(
+            val movieId: Int,
+            val title: String,
+        )
+
+        val schema =
+            """
+            type Query {
+                hello: String
+            }
+
+            type Movie {
+                movieId: Int!
+                title: String
+            }
+            """.trimIndent()
+
+        @DgsComponent
+        class Fetcher {
+            @DgsData(parentType = "Query", field = "hello")
+            fun hello(): String = "Hello"
+
+            @DgsEntityFetcher(name = "Movie")
+            fun movieEntityFetcher(values: Map<String, Any>): Movie? {
+                val movieId = values["movieId"] as? Int ?: return null
+                return Movie(movieId, "Test Movie")
+            }
+        }
+
+        contextRunner.withBeans(Fetcher::class).run { context ->
+            val provider = schemaProvider(applicationContext = context, federationEnabled = false)
+            val graphQLSchema = provider.schema(schema).graphQLSchema
+
+            assertThat(graphQLSchema.queryType.getFieldDefinition("_service")).isNull()
+            assertThat(graphQLSchema.queryType.getFieldDefinition("_entities")).isNull()
+
+            assertThat(graphQLSchema.getType("_Entity")).isNull()
+
+            val build = GraphQL.newGraphQL(graphQLSchema).build()
+
+            val executionResult = build.execute("{hello}")
+            assertTrue(executionResult.isDataPresent)
+            val data = executionResult.getData<Map<String, *>>()
+            assertEquals("Hello", data["hello"])
+
+            val serviceResult = build.execute("{_service { sdl }}")
+            assertThat(serviceResult.errors).isNotEmpty
         }
     }
 }
