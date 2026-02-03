@@ -100,7 +100,9 @@ class DefaultDgsDataLoaderProvider(
                 mappedBatchLoaders.forEach { registerDataLoader(it, registry, contextSupplier, extensionProviders) }
                 mappedBatchLoadersWithContext.forEach { registerDataLoader(it, registry, contextSupplier, extensionProviders) }
             }
-        logger.debug("Created DGS dataloader registry in {}ms", totalTime)
+        if (logger.isDebugEnabled) {
+            logger.debug("Created DGS dataloader registry in {}ms", totalTime)
+        }
         return registry
     }
 
@@ -179,7 +181,7 @@ class DefaultDgsDataLoaderProvider(
         annotation: DgsDataLoader,
         dispatchPredicate: DispatchPredicate? = null,
     ) {
-        if (dataLoaders.contains(dataLoaderName)) {
+        if (dataLoaderName in dataLoaders) {
             throw MultipleDataLoadersDefinedException(dgsComponentClass, dataLoaders.getValue(dataLoaderName))
         }
         dataLoaders[dataLoaderName] = dgsComponentClass
@@ -187,10 +189,10 @@ class DefaultDgsDataLoaderProvider(
         fun <T : Any> createHolder(t: T): LoaderHolder<T> = LoaderHolder(t, annotation, dataLoaderName, dispatchPredicate)
 
         when (val customizedDataLoader = runCustomizers(dataLoader, dataLoaderName, dgsComponentClass)) {
-            is BatchLoader<*, *> -> batchLoaders.add(createHolder(customizedDataLoader))
-            is BatchLoaderWithContext<*, *> -> batchLoadersWithContext.add(createHolder(customizedDataLoader))
-            is MappedBatchLoader<*, *> -> mappedBatchLoaders.add(createHolder(customizedDataLoader))
-            is MappedBatchLoaderWithContext<*, *> -> mappedBatchLoadersWithContext.add(createHolder(customizedDataLoader))
+            is BatchLoader<*, *> -> batchLoaders += createHolder(customizedDataLoader)
+            is BatchLoaderWithContext<*, *> -> batchLoadersWithContext += createHolder(customizedDataLoader)
+            is MappedBatchLoader<*, *> -> mappedBatchLoaders += createHolder(customizedDataLoader)
+            is MappedBatchLoaderWithContext<*, *> -> mappedBatchLoadersWithContext += createHolder(customizedDataLoader)
             else -> throw InvalidDataLoaderTypeException(dgsComponentClass)
         }
     }
@@ -199,22 +201,16 @@ class DefaultDgsDataLoaderProvider(
         originalDataLoader: Any,
         name: String,
         dgsComponentClass: Class<*>,
-    ): Any {
-        var dataLoader = originalDataLoader
-
-        customizers.forEach {
-            dataLoader =
-                when (dataLoader) {
-                    is BatchLoader<*, *> -> it.provide(dataLoader as BatchLoader<*, *>, name)
-                    is BatchLoaderWithContext<*, *> -> it.provide(dataLoader as BatchLoaderWithContext<*, *>, name)
-                    is MappedBatchLoader<*, *> -> it.provide(dataLoader as MappedBatchLoader<*, *>, name)
-                    is MappedBatchLoaderWithContext<*, *> -> it.provide(dataLoader as MappedBatchLoaderWithContext<*, *>, name)
-                    else -> throw InvalidDataLoaderTypeException(dgsComponentClass)
-                }
+    ): Any =
+        customizers.fold(originalDataLoader) { dataLoader, customizer ->
+            when (dataLoader) {
+                is BatchLoader<*, *> -> customizer.provide(dataLoader, name)
+                is BatchLoaderWithContext<*, *> -> customizer.provide(dataLoader, name)
+                is MappedBatchLoader<*, *> -> customizer.provide(dataLoader, name)
+                is MappedBatchLoaderWithContext<*, *> -> customizer.provide(dataLoader, name)
+                else -> throw InvalidDataLoaderTypeException(dgsComponentClass)
+            }
         }
-
-        return dataLoader
-    }
 
     private fun createDataLoader(
         batchLoader: BatchLoader<*, *>,
@@ -341,15 +337,11 @@ class DefaultDgsDataLoaderProvider(
                 else -> throw IllegalArgumentException("Data loader ${holder.name} has unknown type")
             }
         // detect and throw an exception if multiple data loaders use the same name
-        if (registry.keys.contains(holder.name)) {
+        if (registry.getDataLoader<Any, Any>(holder.name) != null) {
             throw MultipleDataLoadersDefinedException(holder.theLoader.javaClass)
         }
 
-        if (holder.dispatchPredicate == null) {
-            registry.register(holder.name, loader, DispatchPredicate.DISPATCH_ALWAYS)
-        } else {
-            registry.register(holder.name, loader, holder.dispatchPredicate)
-        }
+        registry.register(holder.name, loader, holder.dispatchPredicate ?: DispatchPredicate.DISPATCH_ALWAYS)
     }
 
     private inline fun <reified T> wrappedDataLoader(
