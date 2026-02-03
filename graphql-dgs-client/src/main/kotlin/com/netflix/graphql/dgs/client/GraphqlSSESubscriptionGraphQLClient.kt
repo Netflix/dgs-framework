@@ -33,7 +33,7 @@ import reactor.core.scheduler.Schedulers
 class GraphqlSSESubscriptionGraphQLClient(
     private val url: String,
     private val webClient: WebClient,
-    private val options: GraphQLRequestOptions? = null,
+    options: GraphQLRequestOptions? = null,
 ) : ReactiveGraphQLClient {
     constructor(url: String, webClient: WebClient) : this(url, webClient, null)
 

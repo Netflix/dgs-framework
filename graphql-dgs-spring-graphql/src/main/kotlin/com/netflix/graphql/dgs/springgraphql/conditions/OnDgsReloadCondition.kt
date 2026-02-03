@@ -20,6 +20,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionOutcome
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition
 import org.springframework.context.annotation.ConditionContext
 import org.springframework.core.env.Environment
+import org.springframework.core.env.getProperty
 import org.springframework.core.type.AnnotatedTypeMetadata
 import kotlin.collections.contains
 
@@ -30,7 +31,7 @@ class OnDgsReloadCondition : SpringBootCondition() {
          */
         fun evaluate(environment: Environment): Boolean {
             val isLaptopProfile = environment.activeProfiles.contains("laptop")
-            val reloadEnabled = environment.getProperty("dgs.reload", Boolean::class.java, isLaptopProfile)
+            val reloadEnabled = environment.getProperty<Boolean>("dgs.reload", isLaptopProfile)
             return reloadEnabled
         }
     }

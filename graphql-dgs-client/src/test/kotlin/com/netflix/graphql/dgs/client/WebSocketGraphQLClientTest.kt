@@ -67,9 +67,9 @@ class WebSocketGraphQLClientTest {
     companion object {
         private val VERIFY_TIMEOUT = Duration.ofSeconds(10)
         private val CONNECTION_ACK_MESSAGE = OperationMessage(GQL_CONNECTION_ACK, null, null)
-        private val TEST_DATA_A = mapOf(Pair("a", 1), Pair("b", "hello"), Pair("c", false))
-        private val TEST_DATA_B = mapOf(Pair("a", 2), Pair("b", null), Pair("c", true))
-        private val TEST_DATA_C = mapOf(Pair("a", 3), Pair("b", "world"), Pair("c", false))
+        private val TEST_DATA_A = mapOf("a" to 1, "b" to "hello", "c" to false)
+        private val TEST_DATA_B = mapOf("a" to 2, "b" to null, "c" to true)
+        private val TEST_DATA_C = mapOf("a" to 3, "b" to "world", "c" to false)
     }
 
     lateinit var subscriptionsClient: OperationMessageWebSocketClient

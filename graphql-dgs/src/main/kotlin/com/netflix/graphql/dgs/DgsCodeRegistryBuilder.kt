@@ -66,11 +66,7 @@ class DgsCodeRegistryBuilder(
         }
         val processor = dataFetcherResultProcessors.find { it.supportsType(result) } ?: return result
         val env =
-            if (dfe is DgsDataFetchingEnvironment) {
-                dfe
-            } else {
-                DgsDataFetchingEnvironment(dfe, ctx)
-            }
+            dfe as? DgsDataFetchingEnvironment ?: DgsDataFetchingEnvironment(dfe, ctx)
         return processor.process(result, env)
     }
 }

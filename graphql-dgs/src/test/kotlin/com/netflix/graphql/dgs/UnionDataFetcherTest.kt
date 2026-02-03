@@ -25,6 +25,7 @@ import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.getBeansWithAnnotation
 import org.springframework.context.ApplicationContext
 import java.util.Optional
 import kotlin.random.Random
@@ -77,14 +78,14 @@ class UnionDataFetcherTest {
                 methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
             )
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+        every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns
             mapOf(
-                Pair("queryResolver", queryFetcher),
-                Pair("searchResultTypeResolver", searchResultTypeResolver),
-                Pair("imdbFetcher", imdbFetcher),
+                "queryResolver" to queryFetcher,
+                "searchResultTypeResolver" to searchResultTypeResolver,
+                "imdbFetcher" to imdbFetcher,
             )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation<DgsScalar>() } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
 
         val schema =
             provider

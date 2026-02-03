@@ -50,7 +50,7 @@ class CustomReactiveGraphQLClientTest {
         client =
             MonoGraphQLClient.createCustomReactive("http://localhost:$port/graphql") { url, headers, body ->
                 val httpHeaders = HttpHeaders()
-                headers.forEach { key, values -> httpHeaders.addAll(key, values) }
+                headers.forEach { (key, values) -> httpHeaders.addAll(key, values) }
 
                 WebClient
                     .create(url)

@@ -56,6 +56,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.getBeansWithAnnotation
 import org.springframework.context.ApplicationContext
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
@@ -281,15 +282,13 @@ class DefaultDgsFederationResolverTest {
                     }
                 }
 
-            every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns
+            every { applicationContextMock.getBeansWithAnnotation<DgsScalar>() } returns
                 mapOf(
-                    Pair(
-                        "localDateTimeScalar",
+                    "localDateTimeScalar" to
                         LocalDateTimeScalar(),
-                    ),
                 )
-            every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+            every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns
                 mapOf("MovieEntityFetcher" to movieEntityFetcher)
 
             dgsSchemaProvider.schema(
@@ -335,15 +334,12 @@ class DefaultDgsFederationResolverTest {
                     }
                 }
 
-            every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns
+            every { applicationContextMock.getBeansWithAnnotation<DgsScalar>() } returns
                 mapOf(
-                    Pair(
-                        "localDateTimeScalar",
-                        LocalDateTimeScalar(),
-                    ),
+                    "localDateTimeScalar" to LocalDateTimeScalar(),
                 )
-            every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+            every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns
                 mapOf("MovieEntityFetcher" to movieEntityFetcher)
 
             dgsSchemaProvider.schema(
@@ -428,9 +424,9 @@ class DefaultDgsFederationResolverTest {
         }
 
         private fun testEntityFetcher(movieEntityFetcher: Any) {
-            every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+            every { applicationContextMock.getBeansWithAnnotation<DgsScalar>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns
                 mapOf("MovieEntityFetcher" to movieEntityFetcher)
 
             dgsSchemaProvider.schema("""type Query {}""")
@@ -454,9 +450,9 @@ class DefaultDgsFederationResolverTest {
         }
 
         private fun testEntityFetcherWithoutExceptionHandler(movieEntityFetcher: Any) {
-            every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+            every { applicationContextMock.getBeansWithAnnotation<DgsScalar>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns
                 mapOf("MovieEntityFetcher" to movieEntityFetcher)
 
             dgsSchemaProvider.schema("""type Query {}""")
@@ -493,9 +489,9 @@ class DefaultDgsFederationResolverTest {
                     ): Movie? = null
                 }
 
-            every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+            every { applicationContextMock.getBeansWithAnnotation<DgsScalar>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns
                 mapOf("MovieEntityFetcher" to movieEntityFetcher)
 
             dgsSchemaProvider.schema("""type Query {}""")
@@ -565,9 +561,9 @@ class DefaultDgsFederationResolverTest {
         }
 
         private fun testExceptionEntityFetcher(movieEntityFetcher: Any) {
-            every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+            every { applicationContextMock.getBeansWithAnnotation<DgsScalar>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns
                 mapOf("MovieEntityFetcher" to movieEntityFetcher)
 
             dgsSchemaProvider.schema("""type Query {}""")
@@ -625,9 +621,9 @@ class DefaultDgsFederationResolverTest {
                         dfe: DataFetchingEnvironment,
                     ): Movie = Movie()
                 }
-            every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+            every { applicationContextMock.getBeansWithAnnotation<DgsScalar>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns
                 mapOf("MovieEntityFetcher" to movieEntityFetcher)
 
             assertThrows<InvalidDgsEntityFetcher> {
@@ -646,9 +642,9 @@ class DefaultDgsFederationResolverTest {
                         int: Int,
                     ): Movie = Movie()
                 }
-            every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+            every { applicationContextMock.getBeansWithAnnotation<DgsScalar>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns
                 mapOf("MovieEntityFetcher" to movieEntityFetcher)
 
             assertThrows<InvalidDgsEntityFetcher> {
@@ -674,9 +670,9 @@ class DefaultDgsFederationResolverTest {
                         return Movie(values["movieId"].toString())
                     }
                 }
-            every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+            every { applicationContextMock.getBeansWithAnnotation<DgsScalar>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns
                 mapOf("MovieEntityFetcher" to movieEntityFetcher)
 
             dgsSchemaProvider.schema("""type Query {}""")
@@ -729,9 +725,9 @@ class DefaultDgsFederationResolverTest {
                 }
 
             // Mock the ApplicationContext to return the mock entity fetchers
-            every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+            every { applicationContextMock.getBeansWithAnnotation<DgsScalar>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns
                 mapOf(
                     "MovieEntityFetcher" to movieEntityFetcher,
                     "ShowEntityFetcher" to showEntityFetcher,
@@ -821,9 +817,9 @@ class DefaultDgsFederationResolverTest {
                     }
                 }
 
-            every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
-            every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+            every { applicationContextMock.getBeansWithAnnotation<DgsScalar>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
+            every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns
                 mapOf("MovieEntityFetcher" to movieEntityFetcher)
 
             dgsSchemaProvider.schema("""type Query {}""")

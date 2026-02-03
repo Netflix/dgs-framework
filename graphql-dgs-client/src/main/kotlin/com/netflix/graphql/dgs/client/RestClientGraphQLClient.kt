@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.intellij.lang.annotations.Language
 import org.springframework.http.HttpHeaders
 import org.springframework.web.client.RestClient
+import org.springframework.web.client.toEntity
 import java.util.function.Consumer
 
 /**
@@ -103,7 +104,7 @@ class RestClientGraphQLClient(
                 }.headers(this.headersConsumer)
                 .body(serializedRequest)
                 .retrieve()
-                .toEntity(String::class.java)
+                .toEntity<String>()
 
         if (!responseEntity.statusCode.is2xxSuccessful) {
             throw GraphQLClientException(

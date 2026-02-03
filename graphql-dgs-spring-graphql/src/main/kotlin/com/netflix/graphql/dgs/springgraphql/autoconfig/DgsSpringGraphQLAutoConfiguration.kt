@@ -115,6 +115,7 @@ import org.springframework.core.PriorityOrdered
 import org.springframework.core.ReactiveAdapterRegistry
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
+import org.springframework.core.env.getProperty
 import org.springframework.core.task.AsyncTaskExecutor
 import org.springframework.core.task.SimpleAsyncTaskExecutor
 import org.springframework.core.task.support.ContextPropagatingTaskDecorator
@@ -591,7 +592,7 @@ open class DgsSpringGraphQLAutoConfiguration(
     ): GraphQlSourceBuilderCustomizer =
         GraphQlSourceBuilderCustomizer { builder ->
             builder.configureGraphQl { graphQlBuilder ->
-                val apqEnabled = environment.getProperty("dgs.graphql.apq.enabled", Boolean::class.java, false)
+                val apqEnabled = environment.getProperty<Boolean>("dgs.graphql.apq.enabled", false)
                 // If apq is enabled, we will not use this preparsedDocumentProvider and use DgsAPQPreparsedDocumentProviderWrapper instead
                 if (preparsedDocumentProvider.isPresent && !apqEnabled) {
                     graphQlBuilder.preparsedDocumentProvider(preparsedDocumentProvider.get())

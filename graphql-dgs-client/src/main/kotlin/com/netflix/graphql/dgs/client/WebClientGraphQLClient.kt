@@ -17,7 +17,6 @@
 package com.netflix.graphql.dgs.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.netflix.graphql.dgs.client.WebClientGraphQLClient.RequestBodyUriCustomizer
 import org.intellij.lang.annotations.Language
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity

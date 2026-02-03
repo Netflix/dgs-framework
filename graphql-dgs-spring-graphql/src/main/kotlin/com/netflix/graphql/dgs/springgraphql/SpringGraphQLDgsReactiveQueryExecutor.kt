@@ -132,7 +132,7 @@ class SpringGraphQLDgsReactiveQueryExecutor(
     ): Mono<String> {
         val httpHeaders = serverRequest?.headers()?.asHttpHeaders()
         return execute(query, variables, null, httpHeaders, null, serverRequest).map { executionResult ->
-            if (executionResult.errors.size > 0) {
+            if (executionResult.errors.isNotEmpty()) {
                 throw QueryException(executionResult.errors)
             }
 

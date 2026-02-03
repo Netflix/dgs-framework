@@ -20,6 +20,7 @@ import com.netflix.graphql.dgs.internal.DefaultDgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.method.DataFetchingEnvironmentArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
+import graphql.Assert.assertTrue
 import graphql.ExecutionInput
 import graphql.GraphQL
 import graphql.schema.DataFetchingEnvironment
@@ -194,7 +195,7 @@ internal class DgsDataFetchingEnvironmentTest {
                     .dataLoaderRegistry(dataLoaderRegistry)
                     .build()
             val executionResult = build.execute(executionInput)
-            assert(executionResult.errors.size > 0)
+            assertTrue(executionResult.errors.isNotEmpty())
         }
     }
 

@@ -64,7 +64,7 @@ class DgsExceptionTest {
         }
     }
 
-    private inner class CustomDgsException :
+    private class CustomDgsException :
         DgsException(
             message = FAKE_ERROR_MESSAGE,
         )
