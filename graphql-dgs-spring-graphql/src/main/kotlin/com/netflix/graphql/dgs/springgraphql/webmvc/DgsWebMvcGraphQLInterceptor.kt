@@ -42,7 +42,7 @@ class DgsWebMvcGraphQLInterceptor(
         chain: WebGraphQlInterceptor.Chain,
     ): Mono<WebGraphQlResponse> {
         // We need to pass in the original server request for the dgs context
-        val servletRequestAttributes = RequestContextHolder.currentRequestAttributes() as? ServletRequestAttributes
+        val servletRequestAttributes = RequestContextHolder.getRequestAttributes() as? ServletRequestAttributes
 
         val dgsContext =
             if (servletRequestAttributes != null) {
