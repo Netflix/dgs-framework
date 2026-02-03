@@ -23,6 +23,7 @@ import com.netflix.graphql.dgs.internal.DgsWrapWithContextDataLoaderCustomizer
 import org.assertj.core.api.Assertions.assertThat
 import org.dataloader.BatchLoaderEnvironment
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.getBean
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -59,7 +60,7 @@ class DgsDataLoaderInstrumentationTest {
             .withBean(DgsDataLoaderInstrumentationDataLoaderCustomizer::class.java)
             .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter)
             .run { context ->
-                val provider = context.getBean(DgsDataLoaderProvider::class.java)
+                val provider = context.getBean<DgsDataLoaderProvider>()
                 val dataLoaderRegistry = provider.buildRegistry()
 
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("ExampleBatchLoaderWithoutName")
@@ -86,7 +87,7 @@ class DgsDataLoaderInstrumentationTest {
             .withBean(DgsDataLoaderInstrumentationDataLoaderCustomizer::class.java)
             .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter)
             .run { context ->
-                val provider = context.getBean(DgsDataLoaderProvider::class.java)
+                val provider = context.getBean<DgsDataLoaderProvider>()
                 val dataLoaderRegistry = provider.buildRegistry()
 
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleBatchLoaderWithRegistryConsumer")
@@ -113,7 +114,7 @@ class DgsDataLoaderInstrumentationTest {
             .withBean(DgsDataLoaderInstrumentationDataLoaderCustomizer::class.java)
             .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter)
             .run { context ->
-                val provider = context.getBean(DgsDataLoaderProvider::class.java)
+                val provider = context.getBean<DgsDataLoaderProvider>()
                 val dataLoaderRegistry = provider.buildRegistry()
 
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleLoaderThatThrows")
@@ -140,7 +141,7 @@ class DgsDataLoaderInstrumentationTest {
             .withBean(DgsDataLoaderInstrumentationDataLoaderCustomizer::class.java)
             .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter)
             .run { context ->
-                val provider = context.getBean(DgsDataLoaderProvider::class.java)
+                val provider = context.getBean<DgsDataLoaderProvider>()
                 val dataLoaderRegistry = provider.buildRegistry()
 
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleLoaderThatThrowsWithDelay")

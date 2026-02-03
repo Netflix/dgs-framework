@@ -287,15 +287,14 @@ class DgsGraphQLMetricsInstrumentation(
         APQ,
     }
 
-    private fun getPersistedQueryType(executionInput: ExecutionInput): PersistedQueryType {
-        if (executionInput.query == "PersistedQueryMarker" && executionInput.extensions.containsKey("persistedQuery")) {
-            return PersistedQueryType.APQ
-        } else if (executionInput.query != "PersistedQueryMarker" && executionInput.extensions.containsKey("persistedQuery")) {
-            return PersistedQueryType.FULL_APQ
+    private fun getPersistedQueryType(executionInput: ExecutionInput): PersistedQueryType =
+        if (executionInput.query == "PersistedQueryMarker" && "persistedQuery" in executionInput.extensions) {
+            PersistedQueryType.APQ
+        } else if (executionInput.query != "PersistedQueryMarker" && "persistedQuery" in executionInput.extensions) {
+            PersistedQueryType.FULL_APQ
         } else {
-            return PersistedQueryType.NOT_APQ
+            PersistedQueryType.NOT_APQ
         }
-    }
 
     class MetricsInstrumentationState(
         private val registry: MeterRegistry,

@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.getBeansWithAnnotation
 import org.springframework.cglib.proxy.Enhancer
 import org.springframework.cglib.proxy.NoOp
 import org.springframework.context.ApplicationContext
@@ -49,13 +50,13 @@ class CustomDirectivesTest {
                 fun word(): String = "abcefg"
             }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to fetcher)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns mapOf()
+        every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns mapOf("helloFetcher" to fetcher)
+        every { applicationContextMock.getBeansWithAnnotation<DgsScalar>() } returns mapOf()
     }
 
     @Test
     fun testCustomDirectives() {
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns
+        every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns
             mapOf(
                 "uppercase" to UppercaseDirective(),
                 "wordfilter" to WordFilterDirective(),
@@ -118,7 +119,7 @@ class CustomDirectivesTest {
         enhancer.setCallback(NoOp.INSTANCE)
         val proxiedDirective = enhancer.create()
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns mapOf("proxied" to proxiedDirective)
+        every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns mapOf("proxied" to proxiedDirective)
 
         val provider =
             DgsSchemaProvider(

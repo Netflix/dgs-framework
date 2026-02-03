@@ -42,6 +42,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.aop.support.AopUtils
 import org.springframework.beans.factory.NoSuchBeanDefinitionException
+import org.springframework.beans.factory.getBeansWithAnnotation
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.core.type.StandardMethodMetadata
@@ -110,7 +111,7 @@ class DefaultDgsDataLoaderProvider(
     }
 
     private fun addDataLoaderFields() {
-        val dataLoaders = applicationContext.getBeansWithAnnotation(DgsComponent::class.java)
+        val dataLoaders = applicationContext.getBeansWithAnnotation<DgsComponent>()
         dataLoaders.values.forEach { dgsComponent ->
             val javaClass = AopUtils.getTargetClass(dgsComponent)
 
@@ -135,7 +136,7 @@ class DefaultDgsDataLoaderProvider(
     }
 
     private fun addDataLoaderComponents() {
-        val dataLoaders = applicationContext.getBeansWithAnnotation(DgsDataLoader::class.java)
+        val dataLoaders = applicationContext.getBeansWithAnnotation<DgsDataLoader>()
         dataLoaders.forEach { (beanName, beanInstance) ->
             val javaClass = AopUtils.getTargetClass(beanInstance)
 

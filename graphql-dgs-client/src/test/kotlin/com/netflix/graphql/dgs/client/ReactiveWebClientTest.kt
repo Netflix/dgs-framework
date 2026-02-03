@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.toEntity
 import reactor.core.publisher.Mono
 import java.time.Duration
 import java.time.LocalDate
@@ -46,10 +47,10 @@ class ReactiveWebClientTest {
                 }.build()
                 .post()
                 .uri(url)
-                .headers { consumer -> headers.forEach { key, values -> consumer.addAll(key, values) } }
+                .headers { consumer -> headers.forEach { (key, values) -> consumer.addAll(key, values) } }
                 .bodyValue(body)
                 .retrieve()
-                .toEntity(String::class.java)
+                .toEntity<String>()
                 .map { response -> HttpResponse(response.statusCode.value(), response.body) }
         }
 
@@ -65,7 +66,7 @@ class ReactiveWebClientTest {
         val mapper = ObjectMapper().registerModules(JavaTimeModule())
         val responseMono =
             CustomMonoGraphQLClient(url, requestExecutor, mapper).reactiveExecuteQuery(
-                "{ hello(${'$'}input: HelloInput!) }",
+                $$"{ hello($input: HelloInput!) }",
                 mapOf("foo" to LocalDate.now()),
             )
         val graphQLResponse = responseMono.block(Duration.ZERO) ?: fail("Expected non-null response")

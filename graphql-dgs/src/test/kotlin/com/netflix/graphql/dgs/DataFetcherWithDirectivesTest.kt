@@ -29,6 +29,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.InstanceOfAssertFactories
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.getBeansWithAnnotation
 import org.springframework.context.ApplicationContext
 import java.util.Optional
 
@@ -64,9 +65,9 @@ class DataFetcherWithDirectivesTest {
                 }
             }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf("helloFetcher" to queryFetcher)
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns mapOf("helloFetcher" to queryFetcher)
+        every { applicationContextMock.getBeansWithAnnotation<DgsScalar>() } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
 
         val provider =
             DgsSchemaProvider(

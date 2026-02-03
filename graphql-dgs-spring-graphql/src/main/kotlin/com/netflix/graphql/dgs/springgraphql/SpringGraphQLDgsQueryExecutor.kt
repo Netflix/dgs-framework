@@ -79,19 +79,19 @@ class SpringGraphQLDgsQueryExecutor(
         return response.executionResult
     }
 
-    override fun <T : Any?> executeAndExtractJsonPath(
+    override fun <T> executeAndExtractJsonPath(
         query: String,
         jsonPath: String,
         variables: MutableMap<String, Any>,
     ): T = JsonPath.read(getJsonResult(query, variables), jsonPath)
 
-    override fun <T : Any?> executeAndExtractJsonPath(
+    override fun <T> executeAndExtractJsonPath(
         query: String,
         jsonPath: String,
         headers: HttpHeaders,
     ): T = JsonPath.read(getJsonResult(query, emptyMap(), headers), jsonPath)
 
-    override fun <T : Any?> executeAndExtractJsonPath(
+    override fun <T> executeAndExtractJsonPath(
         query: String,
         jsonPath: String,
         servletWebRequest: ServletWebRequest,
@@ -115,7 +115,7 @@ class SpringGraphQLDgsQueryExecutor(
         headers: HttpHeaders?,
     ): DocumentContext = BaseDgsQueryExecutor.parseContext.parse(getJsonResult(query, variables, headers))
 
-    override fun <T : Any?> executeAndExtractJsonPathAsObject(
+    override fun <T> executeAndExtractJsonPathAsObject(
         query: String,
         jsonPath: String,
         variables: MutableMap<String, Any>,
@@ -130,7 +130,7 @@ class SpringGraphQLDgsQueryExecutor(
         }
     }
 
-    override fun <T : Any?> executeAndExtractJsonPathAsObject(
+    override fun <T> executeAndExtractJsonPathAsObject(
         query: String,
         jsonPath: String,
         variables: MutableMap<String, Any>,
@@ -153,7 +153,7 @@ class SpringGraphQLDgsQueryExecutor(
     ): String {
         val executionResult = execute(query, variables, null, headers, null, servletWebRequest)
 
-        if (executionResult.errors.size > 0) {
+        if (executionResult.errors.isNotEmpty()) {
             throw QueryException(executionResult.errors)
         }
 

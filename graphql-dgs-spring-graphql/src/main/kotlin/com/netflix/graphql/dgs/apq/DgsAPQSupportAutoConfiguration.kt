@@ -95,7 +95,7 @@ open class DgsAPQSupportAutoConfiguration {
     @ConditionalOnClass(
         name = ["com.github.benmanes.caffeine.cache.Cache"],
     )
-    @ConditionalOnBean(io.micrometer.core.instrument.MeterRegistry::class)
+    @ConditionalOnBean(MeterRegistry::class)
     open class APQMicrometerMeteredCaffeineCacheConfiguration {
         @Bean
         @ConditionalOnMissingBean(PersistedQueryCache::class)

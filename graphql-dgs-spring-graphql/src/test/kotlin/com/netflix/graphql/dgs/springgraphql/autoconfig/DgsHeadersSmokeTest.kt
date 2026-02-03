@@ -104,10 +104,8 @@ class DgsHeadersSmokeTest {
                         executionResult.transform { r ->
                             r.extensions(
                                 mapOf(
-                                    Pair(
-                                        "dgs-response-headers",
+                                    "dgs-response-headers" to
                                         extensionHeaders,
-                                    ),
                                 ),
                             )
                         }

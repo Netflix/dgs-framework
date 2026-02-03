@@ -23,6 +23,7 @@ import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.getBean
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
 
 class DuplicateEntityFetcherTest {
@@ -39,7 +40,7 @@ class DuplicateEntityFetcherTest {
 
             val exception =
                 catchThrowable {
-                    context.getBean(DgsSchemaProvider::class.java).schema("type Query {}")
+                    context.getBean<DgsSchemaProvider>().schema("type Query {}")
                 } as DuplicateEntityFetcherException
 
             assertThat(

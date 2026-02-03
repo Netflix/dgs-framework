@@ -20,6 +20,7 @@ import graphql.ExecutionResult
 import graphql.ExecutionResultImpl
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import java.util.function.Consumer
 
 class DgsExecutionResult(
     private val executionResult: ExecutionResult,
@@ -59,6 +60,9 @@ class DgsExecutionResult(
             private val DEFAULT_EXECUTION_RESULT = ExecutionResultImpl.newExecutionResult().build()
         }
     }
+
+    override fun transform(builderConsumer: Consumer<ExecutionResult.Builder<*>>): ExecutionResult =
+        executionResult.transform(builderConsumer)
 
     companion object {
         @JvmStatic
