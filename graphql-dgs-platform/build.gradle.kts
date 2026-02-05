@@ -49,7 +49,7 @@ dependencies {
         // GraphQL Platform
         api("com.graphql-java:graphql-java") {
             version {
-                require("25.0")
+                strictly("0.0.0-2026-01-15T04-25-04-7fb2729")
             }
 
         }
