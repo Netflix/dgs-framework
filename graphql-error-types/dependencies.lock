@@ -1,7 +1,7 @@
 {
     "apiDependenciesMetadata": {
         "com.graphql-java:graphql-java": {
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -15,7 +15,7 @@
             "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -37,7 +37,7 @@
     },
     "implementationDependenciesMetadata": {
         "com.graphql-java:graphql-java": {
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -65,7 +65,7 @@
     },
     "jmhApiDependenciesMetadata": {
         "com.graphql-java:graphql-java": {
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -79,7 +79,7 @@
             "locked": "2.20"
         },
         "com.graphql-java:graphql-java": {
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -110,7 +110,7 @@
     },
     "jmhImplementationDependenciesMetadata": {
         "com.graphql-java:graphql-java": {
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -136,13 +136,13 @@
     },
     "jmhRuntimeClasspath": {
         "com.graphql-java:graphql-java": {
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.6"
+            "locked": "1.14.7"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"
@@ -247,7 +247,7 @@
     },
     "runtimeClasspath": {
         "com.graphql-java:graphql-java": {
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
@@ -269,13 +269,13 @@
     },
     "testCompileClasspath": {
         "com.graphql-java:graphql-java": {
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.6"
+            "locked": "1.14.7"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"
@@ -298,13 +298,13 @@
     },
     "testImplementationDependenciesMetadata": {
         "com.graphql-java:graphql-java": {
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.6"
+            "locked": "1.14.7"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"
@@ -327,13 +327,13 @@
     },
     "testRuntimeClasspath": {
         "com.graphql-java:graphql-java": {
-            "locked": "25.0"
+            "locked": "0.0.0-2026-01-15T04-25-04-7fb2729"
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.6"
+            "locked": "1.14.7"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"

@@ -256,7 +256,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.6"
+            "locked": "1.14.7"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -505,7 +505,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.6"
+            "locked": "1.14.7"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -554,7 +554,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.6"
+            "locked": "1.14.7"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -603,7 +603,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.6"
+            "locked": "1.14.7"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [

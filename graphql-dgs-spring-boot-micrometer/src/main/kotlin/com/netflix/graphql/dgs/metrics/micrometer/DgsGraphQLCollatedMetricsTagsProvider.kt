@@ -18,9 +18,11 @@ package com.netflix.graphql.dgs.metrics.micrometer
 
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsContextualTagCustomizer
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsExecutionTagCustomizer
+import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsFieldFetchDataFetcherResultTagCustomizer
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsFieldFetchTagCustomizer
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsGraphQLMetricsTagsProvider
 import graphql.ExecutionResult
+import graphql.execution.DataFetcherResult
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import io.micrometer.core.instrument.Tag
@@ -30,6 +32,7 @@ class DgsGraphQLCollatedMetricsTagsProvider(
     private val contextualTagCustomizer: Collection<DgsContextualTagCustomizer> = Collections.emptyList(),
     private val executionTagCustomizer: Collection<DgsExecutionTagCustomizer> = Collections.emptyList(),
     private val fieldFetchTagCustomizer: Collection<DgsFieldFetchTagCustomizer> = Collections.emptyList(),
+    private val fieldFetchDataFetcherResultTagCustomizer: Collection<DgsFieldFetchDataFetcherResultTagCustomizer> = Collections.emptyList(),
 ) : DgsGraphQLMetricsTagsProvider {
     override fun getContextualTags(): Iterable<Tag> = contextualTagCustomizer.flatMap { it.getContextualTags() }
 
@@ -45,4 +48,13 @@ class DgsGraphQLCollatedMetricsTagsProvider(
         parameters: InstrumentationFieldFetchParameters,
         exception: Throwable?,
     ): Iterable<Tag> = fieldFetchTagCustomizer.flatMap { it.getFieldFetchTags(state, parameters, exception) }
+
+    override fun getFieldFetchDataFetcherResultTags(
+        state: DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState,
+        parameters: InstrumentationFieldFetchParameters,
+        dataFetcherResult: DataFetcherResult<*>?,
+    ): Iterable<Tag> =
+        fieldFetchDataFetcherResultTagCustomizer.flatMap {
+            it.getFieldFetchDataFetcherResultTags(state, parameters, dataFetcherResult)
+        }
 }

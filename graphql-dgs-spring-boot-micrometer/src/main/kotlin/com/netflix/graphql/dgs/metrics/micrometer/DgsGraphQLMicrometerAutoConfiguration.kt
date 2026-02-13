@@ -4,6 +4,7 @@ import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.metrics.micrometer.dataloader.DgsDataLoaderInstrumentationProvider
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsContextualTagCustomizer
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsExecutionTagCustomizer
+import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsFieldFetchDataFetcherResultTagCustomizer
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsFieldFetchTagCustomizer
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsGraphQLMetricsTagsProvider
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.SimpleGqlOutcomeTagCustomizer
@@ -83,11 +84,13 @@ open class DgsGraphQLMicrometerAutoConfiguration {
         contextualTagCustomizer: Collection<DgsContextualTagCustomizer>,
         executionTagCustomizer: Collection<DgsExecutionTagCustomizer>,
         fieldFetchTagCustomizer: Collection<DgsFieldFetchTagCustomizer>,
+        fieldFetchDataFetcherResultTagCustomizer: Collection<DgsFieldFetchDataFetcherResultTagCustomizer>,
     ): DgsGraphQLMetricsTagsProvider =
         DgsGraphQLCollatedMetricsTagsProvider(
             contextualTagCustomizer,
             executionTagCustomizer,
             fieldFetchTagCustomizer,
+            fieldFetchDataFetcherResultTagCustomizer,
         )
 
     @Bean
