@@ -8,7 +8,7 @@ jobs:
     timeout-minutes: 1
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/stale@v10.1.1
+    - uses: actions/stale@v10.2.0
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         stale-pr-message: 'This pull request has been marked as stale because it has been open 1 year with no activity. Remove stale label or comment or this will be closed in 7 days'
