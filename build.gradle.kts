@@ -24,9 +24,9 @@ group = "com.netflix.graphql.dgs"
 
 plugins {
     `java-library`
-    id("nebula.dependency-recommender") version "11.0.0"
+    id("com.netflix.nebula.dependency-recommender") version "14.0.0"
 
-    id("nebula.netflixoss") version "11.6.0"
+    id("nebula.netflixoss") version "13.0.0"
     id("io.spring.dependency-management") version "1.1.7"
     id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
     id("me.champeau.jmh") version "0.7.3"
@@ -44,7 +44,7 @@ allprojects {
     }
 
     apply(plugin = "nebula.netflixoss")
-    apply(plugin = "nebula.dependency-recommender")
+    apply(plugin = "com.netflix.nebula.dependency-recommender")
 
     // We are attempting to define the versions of the artifacts closest to the
     // place they are referenced such that dependabot can easily pick them up

@@ -19,15 +19,6 @@ plugins {
     `maven-publish`
 }
 
-publishing {
-    publications {
-        configure(containerWithType(MavenPublication::class.java)) {
-            nebulaDependencyManagement {
-                from(components["javaPlatform"])
-            }
-        }
-    }
-}
 
 description = "${rootProject.description} (Bill of Materials)"
 
