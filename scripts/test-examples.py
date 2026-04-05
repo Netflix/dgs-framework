@@ -152,8 +152,19 @@ def update_build(build_file, version, spring_boot_version):
     file.close()
 
 
+def infer_gradlew(project_dir):
+    project_gradlew = os.path.join(project_dir, "gradlew")
+    if os.path.isfile(project_gradlew):
+        os.chmod(project_gradlew, 0o755)
+        Out.info(f"Using project's own gradlew: {project_gradlew}")
+        return project_gradlew
+    Out.info(f"Project gradlew not found, falling back to framework gradlew: {gradlew}")
+    return gradlew
+
+
 def run_example_build(project_dir, build_file="", settings_file=""):
-    command = [gradlew, "-p", project_dir, "-s", "-w", "--info", "--stacktrace"]
+    project_gradlew = infer_gradlew(project_dir)
+    command = [project_gradlew, "-p", project_dir, "-s", "-w", "--info", "--stacktrace"]
 
     if settings_file:
         command.extend(["-c", settings_file])
