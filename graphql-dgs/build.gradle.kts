@@ -31,13 +31,20 @@ dependencies {
     compileOnly("com.github.ben-manes.caffeine:caffeine")
     compileOnly("org.jspecify:jspecify")
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    compileOnly("tools.jackson.core:jackson-databind")
+    compileOnly("tools.jackson.module:jackson-module-kotlin")
+
+    // Jackson 2 — compileOnly for deprecated backward-compat fields in BaseDgsQueryExecutor
+    compileOnly("com.fasterxml.jackson.core:jackson-databind")
+    compileOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
+    compileOnly("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.apollographql.federation:federation-graphql-java-support")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("io.micrometer:context-propagation")
 
+    testImplementation("tools.jackson.core:jackson-databind")
+    testImplementation("tools.jackson.module:jackson-module-kotlin")
     testImplementation("org.springframework.security:spring-security-core")
     testImplementation("io.projectreactor:reactor-core")
     testImplementation("io.projectreactor:reactor-test")

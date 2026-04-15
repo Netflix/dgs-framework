@@ -39,6 +39,7 @@ import java.util.function.Consumer
  *      }
  * ```
  */
+@Deprecated("Use Jackson3RestClientGraphQLClient for Jackson 3 support", ReplaceWith("Jackson3RestClientGraphQLClient"))
 class RestClientGraphQLClient(
     private val restClient: RestClient,
     private val headersConsumer: Consumer<HttpHeaders>,

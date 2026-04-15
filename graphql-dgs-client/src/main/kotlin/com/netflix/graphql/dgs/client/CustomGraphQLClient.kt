@@ -24,6 +24,7 @@ import org.intellij.lang.annotations.Language
  * The user is responsible for doing the actual HTTP request, making this pluggable with any HTTP client.
  * For a more convenient option, use [WebClientGraphQLClient] instead.
  */
+@Deprecated("Use Jackson3CustomGraphQLClient for Jackson 3 support", ReplaceWith("Jackson3CustomGraphQLClient"))
 class CustomGraphQLClient(
     private val url: String,
     private val requestExecutor: RequestExecutor,

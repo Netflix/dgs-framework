@@ -27,6 +27,7 @@ gradleEnterprise {
 rootProject.name = "dgs-framework"
 
 include("graphql-dgs")
+include("graphql-dgs-jackson2")
 include("dgs-starter")
 include("dgs-starter-test")
 include("graphql-error-types")
@@ -46,3 +47,6 @@ include("graphql-dgs-spring-graphql-starter")
 include("graphql-dgs-spring-graphql-starter-test")
 include("graphql-dgs-spring-graphql-example-java")
 include("graphql-dgs-spring-graphql-example-java-webflux")
+include("graphql-dgs-example-jackson3-only")
+include("graphql-dgs-example-jackson2-only")
+include("graphql-dgs-example-jackson-both")

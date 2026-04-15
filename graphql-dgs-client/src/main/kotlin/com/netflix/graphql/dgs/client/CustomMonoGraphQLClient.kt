@@ -25,6 +25,7 @@ import reactor.core.publisher.Mono
  * The user is responsible for doing the actual HTTP request, making this pluggable with any HTTP client.
  * For a more convenient option, use [WebClientGraphQLClient] instead.
  */
+@Deprecated("Use Jackson3CustomMonoGraphQLClient for Jackson 3 support", ReplaceWith("Jackson3CustomMonoGraphQLClient"))
 class CustomMonoGraphQLClient(
     private val url: String,
     private val monoRequestExecutor: MonoRequestExecutor,

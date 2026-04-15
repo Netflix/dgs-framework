@@ -17,19 +17,31 @@
 dependencies {
     api("com.jayway.jsonpath:json-path")
     api("io.projectreactor:reactor-core")
-    api("com.fasterxml.jackson.core:jackson-annotations")
     api(project(":graphql-dgs-subscription-types"))
 
     compileOnly("org.springframework:spring-webflux")
 
+    // Jackson 3 — app provides at runtime
+    compileOnly("tools.jackson.core:jackson-databind")
+    compileOnly("tools.jackson.module:jackson-module-kotlin")
+
+    // Jackson 2 — app provides at runtime (annotations come transitively from :graphql-dgs-subscription-types)
+    compileOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
+    compileOnly("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    compileOnly("com.fasterxml.jackson.module:jackson-module-parameter-names")
+    compileOnly("com.fasterxml.jackson.datatype:jackson-datatype-jdk8")
+
     implementation("org.springframework:spring-web")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-    implementation("com.fasterxml.jackson.module:jackson-module-parameter-names")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8")
     implementation("com.graphql-java:graphql-java")
 
     implementation("org.jetbrains:annotations:26.1.0")
+
+    testImplementation("tools.jackson.core:jackson-databind")
+    testImplementation("tools.jackson.module:jackson-module-kotlin")
+    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    testImplementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    testImplementation("com.fasterxml.jackson.module:jackson-module-parameter-names")
+    testImplementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8")
 
     testImplementation("org.springframework.boot:spring-boot-starter-web")
     testImplementation("org.springframework.boot:spring-boot-starter-graphql")

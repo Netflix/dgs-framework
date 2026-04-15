@@ -22,8 +22,8 @@ import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
-import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
+import com.netflix.graphql.dgs.internal.DgsJsonMapper
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
 import com.netflix.graphql.dgs.reactive.internal.DgsReactiveRequestData
@@ -40,6 +40,7 @@ class SpringGraphQLDgsReactiveQueryExecutor(
     private val executionService: ExecutionGraphQlService,
     private val dgsContextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
     private val dgsDataLoaderProvider: DgsDataLoaderProvider,
+    private val dgsJsonMapper: DgsJsonMapper,
 ) : DgsReactiveQueryExecutor {
     override fun execute(
         @Language("graphql") query: String,
@@ -91,7 +92,7 @@ class SpringGraphQLDgsReactiveQueryExecutor(
     override fun executeAndGetDocumentContext(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
-    ): Mono<DocumentContext> = getJsonResult(query, variables, null).map(BaseDgsQueryExecutor.parseContext::parse)
+    ): Mono<DocumentContext> = getJsonResult(query, variables, null).map(JsonPath.using(dgsJsonMapper.jsonPathConfiguration())::parse)
 
     override fun <T : Any> executeAndExtractJsonPathAsObject(
         @Language("graphql") query: String,
@@ -100,7 +101,7 @@ class SpringGraphQLDgsReactiveQueryExecutor(
         clazz: Class<T>,
     ): Mono<T> =
         getJsonResult(query, variables, null)
-            .map(BaseDgsQueryExecutor.parseContext::parse)
+            .map(JsonPath.using(dgsJsonMapper.jsonPathConfiguration())::parse)
             .map {
                 try {
                     it.read(jsonPath, clazz)
@@ -116,7 +117,7 @@ class SpringGraphQLDgsReactiveQueryExecutor(
         typeRef: TypeRef<T>,
     ): Mono<T> =
         getJsonResult(query, variables, null)
-            .map(BaseDgsQueryExecutor.parseContext::parse)
+            .map(JsonPath.using(dgsJsonMapper.jsonPathConfiguration())::parse)
             .map {
                 try {
                     it.read(jsonPath, typeRef)
@@ -136,7 +137,7 @@ class SpringGraphQLDgsReactiveQueryExecutor(
                 throw QueryException(executionResult.errors)
             }
 
-            BaseDgsQueryExecutor.objectMapper.writeValueAsString(executionResult.toSpecification())
+            dgsJsonMapper.writeValueAsString(executionResult.toSpecification())
         }
     }
 }
