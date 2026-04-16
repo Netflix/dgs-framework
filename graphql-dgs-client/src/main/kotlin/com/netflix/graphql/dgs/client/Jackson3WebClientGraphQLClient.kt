@@ -34,7 +34,7 @@ class Jackson3WebClientGraphQLClient(
     private val webclient: WebClient,
     private val headersConsumer: Consumer<HttpHeaders>,
     private val mapper: JsonMapper,
-) {
+) : DgsMonoGraphQLClient {
     constructor(webclient: WebClient) : this(webclient, Consumer {})
 
     constructor(webclient: WebClient, headersConsumer: Consumer<HttpHeaders>) : this(
@@ -60,41 +60,41 @@ class Jackson3WebClientGraphQLClient(
         options: Jackson3RequestOptions,
     ) : this(webclient, headersConsumer, Jackson3RequestOptions.createJsonMapper(options))
 
-    fun reactiveExecuteQuery(
+    override fun reactiveExecuteQuery(
         @Language("graphql") query: String,
-    ): Mono<Jackson3GraphQLResponse> = reactiveExecuteQuery(query, emptyMap(), null)
+    ): Mono<GraphQLClientResponse> = reactiveExecuteQuery(query, emptyMap(), null)
+
+    override fun reactiveExecuteQuery(
+        @Language("graphql") query: String,
+        variables: Map<String, Any>,
+    ): Mono<GraphQLClientResponse> = reactiveExecuteQuery(query, variables, null)
+
+    override fun reactiveExecuteQuery(
+        @Language("graphql") query: String,
+        variables: Map<String, Any>,
+        operationName: String?,
+    ): Mono<GraphQLClientResponse> = reactiveExecuteQuery(query, variables, operationName, REQUEST_BODY_URI_CUSTOMIZER_IDENTITY)
 
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
-        variables: Map<String, Any>,
-    ): Mono<Jackson3GraphQLResponse> = reactiveExecuteQuery(query, variables, null)
+        requestBodyUriCustomizer: RequestBodyUriCustomizer,
+    ): Mono<GraphQLClientResponse> = reactiveExecuteQuery(query, emptyMap(), null, requestBodyUriCustomizer)
 
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?,
-    ): Mono<Jackson3GraphQLResponse> = reactiveExecuteQuery(query, variables, operationName, REQUEST_BODY_URI_CUSTOMIZER_IDENTITY)
-
-    fun reactiveExecuteQuery(
-        @Language("graphql") query: String,
         requestBodyUriCustomizer: RequestBodyUriCustomizer,
-    ): Mono<Jackson3GraphQLResponse> = reactiveExecuteQuery(query, emptyMap(), null, requestBodyUriCustomizer)
-
-    fun reactiveExecuteQuery(
-        @Language("graphql") query: String,
-        variables: Map<String, Any>,
-        operationName: String?,
-        requestBodyUriCustomizer: RequestBodyUriCustomizer,
-    ): Mono<Jackson3GraphQLResponse> {
+    ): Mono<GraphQLClientResponse> {
         val serializedRequest =
             mapper.writeValueAsString(
-                Jackson3Clients.toRequestMap(query = query, operationName = operationName, variables = variables),
+                GraphQLClients.toRequestMap(query = query, operationName = operationName, variables = variables),
             )
 
         return requestBodyUriCustomizer
             .apply(webclient.post())
             .headers { headers ->
-                Jackson3Clients.defaultHeaders.forEach { (key, values) ->
+                GraphQLClients.defaultHeaders.forEach { (key, values) ->
                     headers.addAll(key, values)
                 }
             }.headers(this.headersConsumer)
@@ -107,7 +107,7 @@ class Jackson3WebClientGraphQLClient(
     private fun handleResponse(
         response: ResponseEntity<String>,
         requestBody: String,
-    ): Jackson3GraphQLResponse {
+    ): GraphQLClientResponse {
         if (!response.statusCode.is2xxSuccessful) {
             throw GraphQLClientException(
                 statusCode = response.statusCode.value(),

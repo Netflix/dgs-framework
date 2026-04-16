@@ -40,7 +40,10 @@ import java.util.function.Consumer
  *      message.subscribe();
  * ```
  */
-@Deprecated("Use Jackson3WebClientGraphQLClient for Jackson 3 support", ReplaceWith("Jackson3WebClientGraphQLClient"))
+@Deprecated(
+    "Use Jackson3WebClientGraphQLClient for Jackson 3 support",
+    ReplaceWith("Jackson3WebClientGraphQLClient", "com.netflix.graphql.dgs.client.Jackson3WebClientGraphQLClient"),
+)
 class WebClientGraphQLClient(
     private val webclient: WebClient,
     private val headersConsumer: Consumer<HttpHeaders>,

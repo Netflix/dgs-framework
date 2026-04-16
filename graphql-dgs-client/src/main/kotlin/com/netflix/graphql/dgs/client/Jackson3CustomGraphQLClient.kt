@@ -28,7 +28,7 @@ class Jackson3CustomGraphQLClient(
     private val url: String,
     private val requestExecutor: RequestExecutor,
     private val mapper: JsonMapper,
-) {
+) : DgsGraphQLClient {
     constructor(
         url: String,
         requestExecutor: RequestExecutor,
@@ -40,26 +40,26 @@ class Jackson3CustomGraphQLClient(
         Jackson3RequestOptions.createJsonMapper(options),
     )
 
-    fun executeQuery(
+    override fun executeQuery(
         @Language("graphql") query: String,
-    ): Jackson3GraphQLResponse = executeQuery(query, emptyMap(), null)
+    ): GraphQLClientResponse = executeQuery(query, emptyMap(), null)
 
-    fun executeQuery(
+    override fun executeQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
-    ): Jackson3GraphQLResponse = executeQuery(query, variables, null)
+    ): GraphQLClientResponse = executeQuery(query, variables, null)
 
-    fun executeQuery(
+    override fun executeQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?,
-    ): Jackson3GraphQLResponse {
+    ): GraphQLClientResponse {
         val serializedRequest =
             mapper.writeValueAsString(
-                Jackson3Clients.toRequestMap(query = query, operationName = operationName, variables = variables),
+                GraphQLClients.toRequestMap(query = query, operationName = operationName, variables = variables),
             )
 
-        val response = requestExecutor.execute(url, Jackson3Clients.defaultHeaders, serializedRequest)
+        val response = requestExecutor.execute(url, GraphQLClients.defaultHeaders, serializedRequest)
         return handleResponse(response, serializedRequest, url)
     }
 
@@ -67,7 +67,7 @@ class Jackson3CustomGraphQLClient(
         response: HttpResponse,
         requestBody: String,
         url: String,
-    ): Jackson3GraphQLResponse {
+    ): GraphQLClientResponse {
         if (HttpStatusCode.valueOf(response.statusCode).isError) {
             throw GraphQLClientException(response.statusCode, url, response.body ?: "", requestBody)
         }

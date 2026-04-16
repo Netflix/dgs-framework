@@ -29,7 +29,7 @@ class Jackson3CustomMonoGraphQLClient(
     private val url: String,
     private val monoRequestExecutor: MonoRequestExecutor,
     private val mapper: JsonMapper,
-) {
+) : DgsMonoGraphQLClient {
     constructor(
         url: String,
         monoRequestExecutor: MonoRequestExecutor,
@@ -41,25 +41,25 @@ class Jackson3CustomMonoGraphQLClient(
         Jackson3RequestOptions.createJsonMapper(options),
     )
 
-    fun reactiveExecuteQuery(
+    override fun reactiveExecuteQuery(
         @Language("graphql") query: String,
-    ): Mono<Jackson3GraphQLResponse> = reactiveExecuteQuery(query, emptyMap(), null)
+    ): Mono<GraphQLClientResponse> = reactiveExecuteQuery(query, emptyMap(), null)
 
-    fun reactiveExecuteQuery(
+    override fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
-    ): Mono<Jackson3GraphQLResponse> = reactiveExecuteQuery(query, variables, null)
+    ): Mono<GraphQLClientResponse> = reactiveExecuteQuery(query, variables, null)
 
-    fun reactiveExecuteQuery(
+    override fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?,
-    ): Mono<Jackson3GraphQLResponse> {
+    ): Mono<GraphQLClientResponse> {
         val serializedRequest =
             mapper.writeValueAsString(
-                Jackson3Clients.toRequestMap(query = query, operationName = operationName, variables = variables),
+                GraphQLClients.toRequestMap(query = query, operationName = operationName, variables = variables),
             )
-        return monoRequestExecutor.execute(url, Jackson3Clients.defaultHeaders, serializedRequest).map { response ->
+        return monoRequestExecutor.execute(url, GraphQLClients.defaultHeaders, serializedRequest).map { response ->
             handleResponse(response, serializedRequest, url)
         }
     }
@@ -68,7 +68,7 @@ class Jackson3CustomMonoGraphQLClient(
         response: HttpResponse,
         requestBody: String,
         url: String,
-    ): Jackson3GraphQLResponse {
+    ): GraphQLClientResponse {
         if (HttpStatusCode.valueOf(response.statusCode).isError) {
             throw GraphQLClientException(response.statusCode, url, response.body ?: "", requestBody)
         }

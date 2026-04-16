@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.client
 
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.TypeRef
+import org.slf4j.LoggerFactory
 
 /**
  * Common interface for GraphQL response types, providing Jackson-version-agnostic access
@@ -50,27 +51,53 @@ interface GraphQLClientResponse {
      * Extract values given a JsonPath. The return type will be whatever type you expect.
      * For JSON objects, a Map is returned. If you want to deserialize to a class, use [extractValueAsObject] instead.
      */
-    fun <T> extractValue(path: String): T
+    fun <T> extractValue(path: String): T {
+        val dataPath = getDataPath(path)
+        try {
+            return parsed.read(dataPath)
+        } catch (ex: Exception) {
+            logger.warn("Error extracting path '$path' from data: '$data'")
+            throw ex
+        }
+    }
 
     /** Extract values given a JsonPath and deserialize into the given class. */
     fun <T> extractValueAsObject(
         path: String,
         clazz: Class<T>,
-    ): T
+    ): T {
+        val dataPath = getDataPath(path)
+        try {
+            return parsed.read(dataPath, clazz)
+        } catch (ex: Exception) {
+            logger.warn("Error extracting path '$path' from data: '$data'")
+            throw ex
+        }
+    }
 
     /** Extract values given a JsonPath and deserialize into the given TypeRef. Use this for Lists of a specific type. */
     fun <T> extractValueAsObject(
         path: String,
         typeRef: TypeRef<T>,
-    ): T
+    ): T {
+        val dataPath = getDataPath(path)
+        try {
+            return parsed.read(dataPath, typeRef)
+        } catch (ex: Exception) {
+            logger.warn("Error extracting path '$path' from data: '$data'")
+            throw ex
+        }
+    }
 
     /** Extracts RequestDetails from the response if available. Returns null otherwise. */
-    fun getRequestDetails(): RequestDetails?
+    fun getRequestDetails(): RequestDetails? = extractValueAsObject("gatewayRequestDetails", RequestDetails::class.java)
 
     /** Returns true if the response contains errors. */
-    fun hasErrors(): Boolean
+    fun hasErrors(): Boolean = errors.isNotEmpty()
 
     companion object {
+        private val logger = LoggerFactory.getLogger(GraphQLClientResponse::class.java)
+
         fun getDataPath(path: String): String =
             if (path == "data" || path.startsWith("data.")) {
                 path

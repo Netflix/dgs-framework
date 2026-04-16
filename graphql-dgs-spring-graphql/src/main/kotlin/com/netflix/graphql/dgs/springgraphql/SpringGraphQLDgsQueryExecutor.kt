@@ -46,8 +46,7 @@ class SpringGraphQLDgsQueryExecutor(
     private val requestCustomizer: DgsQueryExecutorRequestCustomizer = DgsQueryExecutorRequestCustomizer.DEFAULT_REQUEST_CUSTOMIZER,
     private val graphQLContextContributors: List<GraphQLContextContributor>,
 ) : DgsQueryExecutor {
-    private val parseContext: ParseContext
-        get() = JsonPath.using(dgsJsonMapper.jsonPathConfiguration())
+    private val parseContext: ParseContext = JsonPath.using(dgsJsonMapper.jsonPathConfiguration())
 
     override fun execute(
         query: String,

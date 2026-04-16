@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.springgraphql
 
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
+import com.jayway.jsonpath.ParseContext
 import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
@@ -42,6 +43,8 @@ class SpringGraphQLDgsReactiveQueryExecutor(
     private val dgsDataLoaderProvider: DgsDataLoaderProvider,
     private val dgsJsonMapper: DgsJsonMapper,
 ) : DgsReactiveQueryExecutor {
+    private val parseContext: ParseContext = JsonPath.using(dgsJsonMapper.jsonPathConfiguration())
+
     override fun execute(
         @Language("graphql") query: String,
         variables: Map<String, Any>?,
@@ -92,7 +95,7 @@ class SpringGraphQLDgsReactiveQueryExecutor(
     override fun executeAndGetDocumentContext(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
-    ): Mono<DocumentContext> = getJsonResult(query, variables, null).map(JsonPath.using(dgsJsonMapper.jsonPathConfiguration())::parse)
+    ): Mono<DocumentContext> = getJsonResult(query, variables, null).map(parseContext::parse)
 
     override fun <T : Any> executeAndExtractJsonPathAsObject(
         @Language("graphql") query: String,
@@ -101,7 +104,7 @@ class SpringGraphQLDgsReactiveQueryExecutor(
         clazz: Class<T>,
     ): Mono<T> =
         getJsonResult(query, variables, null)
-            .map(JsonPath.using(dgsJsonMapper.jsonPathConfiguration())::parse)
+            .map(parseContext::parse)
             .map {
                 try {
                     it.read(jsonPath, clazz)
@@ -117,7 +120,7 @@ class SpringGraphQLDgsReactiveQueryExecutor(
         typeRef: TypeRef<T>,
     ): Mono<T> =
         getJsonResult(query, variables, null)
-            .map(JsonPath.using(dgsJsonMapper.jsonPathConfiguration())::parse)
+            .map(parseContext::parse)
             .map {
                 try {
                     it.read(jsonPath, typeRef)

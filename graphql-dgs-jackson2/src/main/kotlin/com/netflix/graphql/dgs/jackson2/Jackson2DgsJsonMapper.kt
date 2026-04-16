@@ -34,7 +34,7 @@ import com.netflix.graphql.dgs.internal.DgsJsonMapper
  * Used when consumers opt back into Jackson 2 via the `graphql-dgs-jackson2` module`.
  */
 class Jackson2DgsJsonMapper : DgsJsonMapper {
-    val objectMapper: ObjectMapper =
+    private val objectMapper: ObjectMapper =
         ObjectMapper()
             .registerModule(kotlinModule { enable(KotlinFeature.NullIsSameAsDefault) })
             .registerModule(JavaTimeModule())
@@ -42,6 +42,7 @@ class Jackson2DgsJsonMapper : DgsJsonMapper {
             .registerModule(Jdk8Module())
             .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
 
     override fun writeValueAsString(value: Any): String = objectMapper.writeValueAsString(value)
 

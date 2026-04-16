@@ -168,12 +168,11 @@ data class GraphQLResponse(
                 enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
             }
 
-        fun getDataPath(path: String): String =
-            if (path == "data" || path.startsWith("data.")) {
-                path
-            } else {
-                "data.$path"
-            }
+        @Deprecated(
+            "Use GraphQLClientResponse.getDataPath instead",
+            ReplaceWith("GraphQLClientResponse.getDataPath(path)", "com.netflix.graphql.dgs.client.GraphQLClientResponse"),
+        )
+        fun getDataPath(path: String): String = GraphQLClientResponse.getDataPath(path)
     }
 }
 

@@ -108,9 +108,7 @@ class Jackson3OnlyTest {
     }
 
     @Test
-    fun `Jackson 2 client classes cannot be loaded`() {
-        // The deprecated Jackson 2 client classes should NOT be usable since
-        // Jackson 2 runtime is excluded from the classpath
+    fun `Jackson 2 client classes fail with NoClassDefFoundError`() {
         val result =
             runCatching {
                 Class
@@ -118,9 +116,8 @@ class Jackson3OnlyTest {
                     .getDeclaredConstructor(RestClient::class.java)
                     .newInstance(RestClient.builder().baseUrl("http://localhost:$port/graphql").build())
             }
-        assertThat(result.isFailure)
-            .withFailMessage("Expected Jackson 2 RestClientGraphQLClient to fail, but it worked")
-            .isTrue()
+        assertThat(result.isFailure).isTrue()
+        assertThat(result.exceptionOrNull()).isInstanceOf(NoClassDefFoundError::class.java)
     }
 }
 

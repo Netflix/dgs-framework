@@ -31,7 +31,7 @@ class Jackson3RestClientGraphQLClient(
     private val restClient: RestClient,
     private val headersConsumer: Consumer<HttpHeaders>,
     private val mapper: JsonMapper,
-) {
+) : DgsGraphQLClient {
     constructor(restClient: RestClient) : this(restClient, Consumer { })
 
     constructor(restClient: RestClient, mapper: JsonMapper) : this(
@@ -46,36 +46,36 @@ class Jackson3RestClientGraphQLClient(
         Jackson3RequestOptions.createJsonMapper(),
     )
 
-    constructor(restClient: RestClient, options: Jackson3RequestOptions? = null) : this(
+    constructor(restClient: RestClient, options: Jackson3RequestOptions) : this(
         restClient,
         Consumer { },
         Jackson3RequestOptions.createJsonMapper(options),
     )
 
-    fun executeQuery(
+    override fun executeQuery(
         @Language("graphql") query: String,
-    ): Jackson3GraphQLResponse = executeQuery(query, emptyMap(), null)
+    ): GraphQLClientResponse = executeQuery(query, emptyMap(), null)
 
-    fun executeQuery(
+    override fun executeQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
-    ): Jackson3GraphQLResponse = executeQuery(query, variables, null)
+    ): GraphQLClientResponse = executeQuery(query, variables, null)
 
-    fun executeQuery(
+    override fun executeQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?,
-    ): Jackson3GraphQLResponse {
+    ): GraphQLClientResponse {
         val serializedRequest =
             mapper.writeValueAsString(
-                Jackson3Clients.toRequestMap(query = query, operationName = operationName, variables = variables),
+                GraphQLClients.toRequestMap(query = query, operationName = operationName, variables = variables),
             )
 
         val responseEntity =
             restClient
                 .post()
                 .headers { headers ->
-                    Jackson3Clients.defaultHeaders.forEach { (key, values) ->
+                    GraphQLClients.defaultHeaders.forEach { (key, values) ->
                         headers.addAll(key, values)
                     }
                 }.headers(this.headersConsumer)

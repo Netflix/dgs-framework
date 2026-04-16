@@ -196,6 +196,14 @@ open class DgsSpringGraphQLAutoConfiguration(
     }
 
     @Bean
+    @ConditionalOnMissingBean(DgsJsonMapper::class)
+    open fun dgsJsonMapperFallback(): DgsJsonMapper =
+        throw IllegalStateException(
+            "No DgsJsonMapper bean found. Either add tools.jackson.core:jackson-databind (Jackson 3) to " +
+                "your classpath, or add the graphql-dgs-jackson2 module for Jackson 2 support.",
+        )
+
+    @Bean
     @Order(PriorityOrdered.HIGHEST_PRECEDENCE)
     open fun graphQLContextContributionInstrumentation(
         graphQLContextContributors: ObjectProvider<GraphQLContextContributor>,
