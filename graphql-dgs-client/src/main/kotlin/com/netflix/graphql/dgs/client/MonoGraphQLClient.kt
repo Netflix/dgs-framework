@@ -26,14 +26,14 @@ import java.util.function.Consumer
 /**
  * GraphQL client interface for reactive clients.
  */
-interface MonoGraphQLClient {
+interface MonoGraphQLClient : DgsMonoGraphQLClient {
     /**
      * A reactive call to execute a query and parse its result.
      * Don't forget to subscribe() to actually send the query!
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
      * @return A [Mono] of [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
-    fun reactiveExecuteQuery(
+    override fun reactiveExecuteQuery(
         @Language("graphql") query: String,
     ): Mono<GraphQLResponse>
 
@@ -44,7 +44,7 @@ interface MonoGraphQLClient {
      * @param variables A map of input variables
      * @return A [Mono] of [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
-    fun reactiveExecuteQuery(
+    override fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
     ): Mono<GraphQLResponse>
@@ -57,7 +57,7 @@ interface MonoGraphQLClient {
      * @param operationName Name of the operation
      * @return A [Mono] of [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
-    fun reactiveExecuteQuery(
+    override fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?,

@@ -22,13 +22,13 @@ import org.intellij.lang.annotations.Language
 /**
  * GraphQL client interface for blocking clients.
  */
-interface GraphQLClient {
+interface GraphQLClient : DgsGraphQLClient {
     /**
      * A blocking call to execute a query and parse its result.
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
      * @return [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
-    fun executeQuery(
+    override fun executeQuery(
         @Language("graphql") query: String,
     ): GraphQLResponse
 
@@ -38,7 +38,7 @@ interface GraphQLClient {
      * @param variables A map of input variables
      * @return [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
-    fun executeQuery(
+    override fun executeQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
     ): GraphQLResponse
@@ -50,7 +50,7 @@ interface GraphQLClient {
      * @param operationName Name of the operation
      * @return [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
-    fun executeQuery(
+    override fun executeQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?,
