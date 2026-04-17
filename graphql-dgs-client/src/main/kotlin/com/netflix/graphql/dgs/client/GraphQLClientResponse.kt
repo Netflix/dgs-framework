@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory
 
 /**
  * Common interface for GraphQL response types, providing Jackson-version-agnostic access
- * to response data. Both [GraphQLResponse] (Jackson 2) and [Jackson3GraphQLResponse] (Jackson 3)
+ * to response data. Both [GraphQLResponse] (Jackson 2) and in DGS 11.x Jackson3GraphQLResponse (Jackson 3)
  * implement this interface.
  *
  * Users who want to write code that works with either Jackson version should program against
