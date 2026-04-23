@@ -20,7 +20,7 @@ import org.intellij.lang.annotations.Language
 
 /**
  * Jackson-version-agnostic interface for blocking GraphQL clients.
- * Returns [GraphQLClientResponse] which works with both Jackson 2 and Jackson 3.
+ * Returns [DgsGraphQLResponse] which works with both Jackson 2 and Jackson 3.
  *
  * Both [GraphQLClient] (Jackson 2) and the Jackson 3 client classes implement this interface,
  * allowing users to write code that is independent of the Jackson version.
@@ -28,31 +28,31 @@ import org.intellij.lang.annotations.Language
 interface DgsGraphQLClient {
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
-     * @return [GraphQLClientResponse] parses the response and gives easy access to data and errors.
+     * @return [DgsGraphQLResponse] parses the response and gives easy access to data and errors.
      */
     fun executeQuery(
         @Language("graphql") query: String,
-    ): GraphQLClientResponse
+    ): DgsGraphQLResponse
 
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
      * @param variables A map of input variables
-     * @return [GraphQLClientResponse] parses the response and gives easy access to data and errors.
+     * @return [DgsGraphQLResponse] parses the response and gives easy access to data and errors.
      */
     fun executeQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
-    ): GraphQLClientResponse
+    ): DgsGraphQLResponse
 
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
      * @param variables A map of input variables
      * @param operationName Name of the operation
-     * @return [GraphQLClientResponse] parses the response and gives easy access to data and errors.
+     * @return [DgsGraphQLResponse] parses the response and gives easy access to data and errors.
      */
     fun executeQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?,
-    ): GraphQLClientResponse
+    ): DgsGraphQLResponse
 }

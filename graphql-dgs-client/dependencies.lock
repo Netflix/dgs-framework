@@ -13,10 +13,17 @@
             "locked": "24.1"
         },
         "com.jayway.jsonpath:json-path": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
+            ],
             "locked": "2.9.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
             "project": true
@@ -29,6 +36,7 @@
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
             "locked": "1.9.25"
@@ -60,10 +68,17 @@
             "locked": "24.1"
         },
         "com.jayway.jsonpath:json-path": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
+            ],
             "locked": "2.9.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
             "project": true
@@ -76,12 +91,13 @@
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
             "locked": "1.9.25"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17"
@@ -124,10 +140,17 @@
             "locked": "24.1"
         },
         "com.jayway.jsonpath:json-path": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
+            ],
             "locked": "2.9.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
             "project": true
@@ -140,12 +163,13 @@
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
             "locked": "1.9.25"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17"
@@ -196,10 +220,17 @@
             "locked": "24.1"
         },
         "com.jayway.jsonpath:json-path": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
+            ],
             "locked": "2.9.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
             "project": true
@@ -212,12 +243,13 @@
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
             "locked": "1.9.25"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.37"
@@ -316,7 +348,8 @@
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "2.9.0"
         },
@@ -344,12 +377,19 @@
             ],
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter",
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter",
@@ -406,7 +446,7 @@
             "locked": "1.1.3"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.5"
+            "locked": "1.14.9"
         },
         "io.projectreactor.kotlin:reactor-kotlin-extensions": {
             "firstLevelTransitive": [
@@ -435,6 +475,7 @@
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter",
@@ -448,7 +489,8 @@
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-reactive"
+                "com.netflix.graphql.dgs:graphql-dgs-reactive",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
             ],
             "locked": "1.8.1"
         },
@@ -464,6 +506,7 @@
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter",
@@ -472,7 +515,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
             "locked": "5.12.2"
@@ -481,7 +524,7 @@
             "locked": "1.12.2"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.2"
+            "locked": "5.13.4"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.37"
@@ -498,6 +541,7 @@
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter",
@@ -597,6 +641,38 @@
             "locked": "1.9.25"
         }
     },
+    "ktlint": {
+        "com.pinterest.ktlint:ktlint-cli": {
+            "locked": "1.5.0"
+        },
+        "io.github.detekt.sarif4k:sarif4k": {
+            "locked": "0.5.0"
+        },
+        "io.github.oshai:kotlin-logging": {
+            "locked": "5.1.0"
+        }
+    },
+    "ktlintBaselineReporter": {
+        "com.pinterest.ktlint:ktlint-cli-reporter-baseline": {
+            "locked": "1.5.0"
+        },
+        "io.github.oshai:kotlin-logging": {
+            "locked": "5.1.0"
+        }
+    },
+    "ktlintReporter": {
+        "io.github.detekt.sarif4k:sarif4k": {
+            "locked": "0.5.0"
+        },
+        "io.github.oshai:kotlin-logging": {
+            "locked": "5.1.0"
+        }
+    },
+    "ktlintRuleset": {
+        "com.pinterest.ktlint:ktlint-ruleset-standard": {
+            "locked": "1.5.0"
+        }
+    },
     "runtimeClasspath": {
         "com.fasterxml.jackson.core:jackson-annotations": {
             "firstLevelTransitive": [
@@ -623,10 +699,17 @@
             "locked": "24.1"
         },
         "com.jayway.jsonpath:json-path": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
+            ],
             "locked": "2.9.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "project": true
         },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
             "project": true
@@ -639,18 +722,21 @@
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
             "locked": "1.9.25"
         },
         "org.jetbrains:annotations": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
             "locked": "2.0.17"
@@ -705,7 +791,8 @@
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "2.9.0"
         },
@@ -733,12 +820,19 @@
             ],
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter",
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter",
@@ -787,7 +881,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.5"
+            "locked": "1.14.9"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -804,6 +898,7 @@
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter",
@@ -815,13 +910,13 @@
             "locked": "1.9.25"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
             "locked": "5.12.2"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.2"
+            "locked": "5.13.4"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17"
@@ -894,7 +989,8 @@
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "2.9.0"
         },
@@ -922,12 +1018,19 @@
             ],
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter",
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter",
@@ -976,7 +1079,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.5"
+            "locked": "1.14.9"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -993,6 +1096,7 @@
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter",
@@ -1004,13 +1108,13 @@
             "locked": "1.9.25"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
             "locked": "5.12.2"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.2"
+            "locked": "5.13.4"
         },
         "org.slf4j:slf4j-api": {
             "locked": "2.0.17"
@@ -1107,7 +1211,8 @@
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "2.9.0"
         },
@@ -1135,12 +1240,19 @@
             ],
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter",
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter",
@@ -1197,7 +1309,7 @@
             "locked": "1.1.3"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.5"
+            "locked": "1.14.9"
         },
         "io.projectreactor.kotlin:reactor-kotlin-extensions": {
             "firstLevelTransitive": [
@@ -1226,6 +1338,7 @@
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter",
@@ -1239,7 +1352,8 @@
         "org.jetbrains.kotlinx:kotlinx-coroutines-core": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-reactive"
+                "com.netflix.graphql.dgs:graphql-dgs-reactive",
+                "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
             ],
             "locked": "1.8.1"
         },
@@ -1255,6 +1369,7 @@
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter",
@@ -1263,7 +1378,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "26.0.2"
+            "locked": "26.0.2-1"
         },
         "org.junit.jupiter:junit-jupiter": {
             "locked": "5.12.2"
@@ -1272,7 +1387,7 @@
             "locked": "1.12.2"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.2"
+            "locked": "5.13.4"
         },
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
@@ -1280,6 +1395,7 @@
                 "com.netflix.graphql.dgs:dgs-starter-test",
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter",

@@ -27,6 +27,7 @@ gradleEnterprise {
 rootProject.name = "dgs-framework"
 
 include("graphql-dgs")
+include("graphql-dgs-json-api")
 include("dgs-starter")
 include("dgs-starter-test")
 include("graphql-error-types")

@@ -21,35 +21,29 @@ import com.jayway.jsonpath.TypeRef
 import org.slf4j.LoggerFactory
 
 /**
- * Common interface for GraphQL response types, providing Jackson-version-agnostic access
- * to response data. Both [GraphQLResponse] (Jackson 2) and in DGS 11.x Jackson3GraphQLResponse (Jackson 3)
- * implement this interface.
+ * Canonical response contract for the DGS GraphQL client. Jackson-version-agnostic —
+ * program against this type and your code survives Jackson upgrades.
  *
- * Users who want to write code that works with either Jackson version should program against
- * this interface rather than the concrete response classes.
+ * Concrete implementations:
+ *  - [DefaultDgsGraphQLResponse] — default impl backed by any [com.netflix.graphql.dgs.json.DgsJsonMapper]. Construct directly when you need a response instance (e.g. in tests).
+ *  - [GraphQLResponse] (deprecated, Jackson 2) — kept for back-compat during the transition; will be removed in a future release
  */
-interface GraphQLClientResponse {
-    /** The raw JSON response string. */
+interface DgsGraphQLResponse {
     val json: String
 
-    /** HTTP response headers. */
     val headers: Map<String, List<String>>
 
-    /** A JsonPath DocumentContext for the parsed response. */
     val parsed: DocumentContext
 
-    /** Map representation of the response data. */
     val data: Map<String, Any>
 
-    /** List of GraphQL errors in the response. */
     val errors: List<GraphQLError>
 
-    /** Deserialize the response data into the given class. */
     fun <T> dataAsObject(clazz: Class<T>): T
 
     /**
-     * Extract values given a JsonPath. The return type will be whatever type you expect.
-     * For JSON objects, a Map is returned. If you want to deserialize to a class, use [extractValueAsObject] instead.
+     * Extract a value at [path]. Returns whatever type the caller binds to — for JSON objects
+     * this is a Map. Use [extractValueAsObject] to deserialize into a specific class instead.
      */
     fun <T> extractValue(path: String): T {
         val dataPath = getDataPath(path)
@@ -61,7 +55,6 @@ interface GraphQLClientResponse {
         }
     }
 
-    /** Extract values given a JsonPath and deserialize into the given class. */
     fun <T> extractValueAsObject(
         path: String,
         clazz: Class<T>,
@@ -75,7 +68,7 @@ interface GraphQLClientResponse {
         }
     }
 
-    /** Extract values given a JsonPath and deserialize into the given TypeRef. Use this for Lists of a specific type. */
+    /** Use this overload for generic types like `List<Foo>`. */
     fun <T> extractValueAsObject(
         path: String,
         typeRef: TypeRef<T>,
@@ -89,14 +82,12 @@ interface GraphQLClientResponse {
         }
     }
 
-    /** Extracts RequestDetails from the response if available. Returns null otherwise. */
     fun getRequestDetails(): RequestDetails? = extractValueAsObject("gatewayRequestDetails", RequestDetails::class.java)
 
-    /** Returns true if the response contains errors. */
     fun hasErrors(): Boolean = errors.isNotEmpty()
 
     companion object {
-        private val logger = LoggerFactory.getLogger(GraphQLClientResponse::class.java)
+        private val logger = LoggerFactory.getLogger(DgsGraphQLResponse::class.java)
 
         fun getDataPath(path: String): String =
             if (path == "data" || path.startsWith("data.")) {

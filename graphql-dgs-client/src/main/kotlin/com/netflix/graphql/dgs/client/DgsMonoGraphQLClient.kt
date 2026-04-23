@@ -21,7 +21,7 @@ import reactor.core.publisher.Mono
 
 /**
  * Jackson-version-agnostic interface for reactive GraphQL clients.
- * Returns [GraphQLClientResponse] which works with both Jackson 2 and Jackson 3.
+ * Returns [DgsGraphQLResponse] which works with both Jackson 2 and Jackson 3.
  *
  * Both [MonoGraphQLClient] (Jackson 2) and the Jackson 3 client classes implement this interface,
  * allowing users to write code that is independent of the Jackson version.
@@ -29,31 +29,31 @@ import reactor.core.publisher.Mono
 interface DgsMonoGraphQLClient {
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
-     * @return A [Mono] of [GraphQLClientResponse] parses the response and gives easy access to data and errors.
+     * @return A [Mono] of [DgsGraphQLResponse] parses the response and gives easy access to data and errors.
      */
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
-    ): Mono<out GraphQLClientResponse>
+    ): Mono<out DgsGraphQLResponse>
 
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
      * @param variables A map of input variables
-     * @return A [Mono] of [GraphQLClientResponse] parses the response and gives easy access to data and errors.
+     * @return A [Mono] of [DgsGraphQLResponse] parses the response and gives easy access to data and errors.
      */
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
-    ): Mono<out GraphQLClientResponse>
+    ): Mono<out DgsGraphQLResponse>
 
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
      * @param variables A map of input variables
      * @param operationName Name of the operation
-     * @return A [Mono] of [GraphQLClientResponse] parses the response and gives easy access to data and errors.
+     * @return A [Mono] of [DgsGraphQLResponse] parses the response and gives easy access to data and errors.
      */
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?,
-    ): Mono<out GraphQLClientResponse>
+    ): Mono<out DgsGraphQLResponse>
 }

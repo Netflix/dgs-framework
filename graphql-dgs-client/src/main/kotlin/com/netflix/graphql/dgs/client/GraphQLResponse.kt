@@ -45,7 +45,7 @@ data class GraphQLResponse(
     @Language("json") override val json: String,
     override val headers: Map<String, List<String>>,
     private val mapper: ObjectMapper,
-) : GraphQLClientResponse {
+) : DgsGraphQLResponse {
     /**
      * A JsonPath DocumentContext. Typically, only used internally.
      */
