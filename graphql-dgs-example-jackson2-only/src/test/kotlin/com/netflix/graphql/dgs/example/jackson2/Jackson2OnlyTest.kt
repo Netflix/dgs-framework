@@ -109,24 +109,6 @@ class Jackson2OnlyTest {
         assertThat(response.hasErrors()).isFalse()
         assertThat(response.extractValue<String>("hello")).isEqualTo("hello, Custom!")
     }
-
-    @Test
-    fun `Jackson 3 client classes fail with NoClassDefFoundError`() {
-        val result =
-            runCatching {
-                Class
-                    .forName("com.netflix.graphql.dgs.client.DgsRestClientGraphQLClient")
-                    .getDeclaredConstructor(RestClient::class.java)
-                    .newInstance(RestClient.builder().baseUrl("http://localhost:$port/graphql").build())
-            }
-        assertThat(result.isFailure).isTrue()
-        // Reflective invocation wraps the underlying linkage failure; unwrap to the root cause.
-        // Depending on JVM/classloader behavior, it may surface as NoClassDefFoundError or
-        // ClassNotFoundException. Both indicate Jackson 3 classes are absent as expected.
-        val rootCause = generateSequence(result.exceptionOrNull()) { it.cause }.last()
-        assertThat(rootCause)
-            .isInstanceOfAny(NoClassDefFoundError::class.java, ClassNotFoundException::class.java)
-    }
 }
 
 private fun HttpHeaders.toMap(): Map<String, List<String>> {

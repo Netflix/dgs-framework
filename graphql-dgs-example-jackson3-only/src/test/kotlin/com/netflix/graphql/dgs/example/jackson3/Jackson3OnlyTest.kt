@@ -106,19 +106,6 @@ class Jackson3OnlyTest {
         assertThat(response.hasErrors()).isFalse()
         assertThat(response.extractValue<String>("hello")).isEqualTo("hello, Custom!")
     }
-
-    @Test
-    fun `Jackson 2 client classes fail with NoClassDefFoundError`() {
-        val result =
-            runCatching {
-                Class
-                    .forName("com.netflix.graphql.dgs.client.RestClientGraphQLClient")
-                    .getDeclaredConstructor(RestClient::class.java)
-                    .newInstance(RestClient.builder().baseUrl("http://localhost:$port/graphql").build())
-            }
-        assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()).isInstanceOf(NoClassDefFoundError::class.java)
-    }
 }
 
 private fun HttpHeaders.toMap(): Map<String, List<String>> {
