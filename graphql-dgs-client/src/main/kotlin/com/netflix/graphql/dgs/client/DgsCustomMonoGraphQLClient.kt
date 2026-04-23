@@ -14,8 +14,7 @@ import reactor.core.publisher.Mono
 /**
  * Reactive GraphQL client that delegates the HTTP call to a user-supplied [MonoRequestExecutor].
  *
- * The no-arg convenience constructor uses Jackson 3 under the hood. Callers on Jackson 2
- * must pass [Jackson2DgsJsonMapperAdapter] explicitly.
+ * The no-arg convenience constructor uses Jackson 2 (the only Jackson available on DGS 10.x).
  */
 class DgsCustomMonoGraphQLClient(
     private val url: String,

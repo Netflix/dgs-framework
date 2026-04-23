@@ -22,6 +22,11 @@ import org.intellij.lang.annotations.Language
 /**
  * GraphQL client interface for blocking clients.
  */
+@Deprecated(
+    "Tied to Jackson 2 through GraphQLResponse. Program against DgsGraphQLClient instead. " +
+        "This interface will be removed in a future release.",
+    ReplaceWith("DgsGraphQLClient", "com.netflix.graphql.dgs.client.DgsGraphQLClient"),
+)
 interface GraphQLClient : DgsGraphQLClient {
     /**
      * A blocking call to execute a query and parse its result.

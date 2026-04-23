@@ -21,10 +21,9 @@ import reactor.core.publisher.Mono
 
 /**
  * Jackson-version-agnostic interface for reactive GraphQL clients.
- * Returns [DgsGraphQLResponse] which works with both Jackson 2 and Jackson 3.
+ * Returns [DgsGraphQLResponse], the Jackson-agnostic response contract.
  *
- * Both [MonoGraphQLClient] (Jackson 2) and the Jackson 3 client classes implement this interface,
- * allowing users to write code that is independent of the Jackson version.
+ * Implemented by the new Dgs* client classes and (for back-compat) by the deprecated [MonoGraphQLClient].
  */
 interface DgsMonoGraphQLClient {
     /**

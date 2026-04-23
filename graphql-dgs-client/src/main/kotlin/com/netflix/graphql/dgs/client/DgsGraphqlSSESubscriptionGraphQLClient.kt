@@ -21,8 +21,7 @@ import reactor.core.scheduler.Schedulers
  * Client for servers following the graphql-sse spec
  * (https://github.com/graphql/graphql-over-http/blob/d51ae80d62b5fd8802a3383793f01bdf306e8290/rfcs/GraphQLOverSSE.md).
  *
- * The no-arg-mapper convenience constructor uses Jackson 3 under the hood. Callers on Jackson 2
- * must pass [Jackson2DgsJsonMapperAdapter] explicitly.
+ * The no-arg-mapper convenience constructor uses Jackson 2 (the only Jackson available on DGS 10.x).
  */
 class DgsGraphqlSSESubscriptionGraphQLClient(
     private val url: String,

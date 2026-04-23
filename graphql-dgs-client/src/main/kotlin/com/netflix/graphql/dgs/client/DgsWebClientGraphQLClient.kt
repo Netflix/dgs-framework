@@ -19,8 +19,7 @@ import java.util.function.Consumer
 /**
  * WebClient-based reactive DGS client.
  *
- * The no-arg convenience constructor uses Jackson 3 under the hood. Callers on Jackson 2
- * must pass [Jackson2DgsJsonMapperAdapter] explicitly.
+ * The no-arg convenience constructor uses Jackson 2 (the only Jackson available on DGS 10.x).
  */
 class DgsWebClientGraphQLClient(
     private val webclient: WebClient,
