@@ -36,6 +36,7 @@ import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.context.GraphQLContextContributor
 import com.netflix.graphql.dgs.context.GraphQLContextContributorInstrumentation
+import com.netflix.graphql.dgs.diagnostics.DgsJsonMapperMissingException
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
 import com.netflix.graphql.dgs.internal.DataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.DefaultDataLoaderOptionsProvider
@@ -197,11 +198,7 @@ open class DgsSpringGraphQLAutoConfiguration(
 
     @Bean
     @ConditionalOnMissingBean(DgsJsonMapper::class)
-    open fun dgsJsonMapperFallback(): DgsJsonMapper =
-        throw IllegalStateException(
-            "No DgsJsonMapper bean found. Either add tools.jackson.core:jackson-databind (Jackson 3) to " +
-                "your classpath, or add the graphql-dgs-jackson2 module for Jackson 2 support.",
-        )
+    open fun dgsJsonMapperFallback(): DgsJsonMapper = throw DgsJsonMapperMissingException()
 
     @Bean
     @Order(PriorityOrdered.HIGHEST_PRECEDENCE)
