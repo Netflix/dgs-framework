@@ -2,20 +2,11 @@
  * Copyright 2026 Netflix, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package com.netflix.graphql.dgs.client
 
+import com.netflix.graphql.dgs.json.DgsJsonMapper
 import org.intellij.lang.annotations.Language
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
@@ -23,69 +14,56 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClient.RequestBodySpec
 import org.springframework.web.reactive.function.client.toEntity
 import reactor.core.publisher.Mono
-import tools.jackson.databind.json.JsonMapper
 import java.util.function.Consumer
 
 /**
- * A WebClient implementation of the DGS Client using Jackson 3 for serialization.
- * A WebClient instance configured for the graphql endpoint (at least an url) must be provided.
+ * WebClient-based reactive DGS client.
+ *
+ * The no-arg convenience constructor uses Jackson 3 under the hood. Callers on Jackson 2
+ * must pass [Jackson2DgsJsonMapperAdapter] explicitly.
  */
-class Jackson3WebClientGraphQLClient(
+class DgsWebClientGraphQLClient(
     private val webclient: WebClient,
     private val headersConsumer: Consumer<HttpHeaders>,
-    private val mapper: JsonMapper,
+    private val mapper: DgsJsonMapper,
 ) : DgsMonoGraphQLClient {
     constructor(webclient: WebClient) : this(webclient, Consumer {})
 
-    constructor(webclient: WebClient, headersConsumer: Consumer<HttpHeaders>) : this(
-        webclient,
-        headersConsumer,
-        Jackson3RequestOptions.createJsonMapper(),
-    )
+    constructor(webclient: WebClient, headersConsumer: Consumer<HttpHeaders>) :
+        this(webclient, headersConsumer, Jackson3DgsJsonMapperAdapter.default())
 
-    constructor(
-        webclient: WebClient,
-        options: Jackson3RequestOptions,
-    ) : this(webclient, Consumer {}, Jackson3RequestOptions.createJsonMapper(options))
+    constructor(webclient: WebClient, options: DgsGraphQLRequestOptions) :
+        this(webclient, Consumer {}, Jackson3DgsJsonMapperAdapter.fromOptions(options))
 
-    constructor(webclient: WebClient, mapper: JsonMapper) : this(
-        webclient,
-        Consumer {},
-        mapper,
-    )
-
-    constructor(
-        webclient: WebClient,
-        headersConsumer: Consumer<HttpHeaders>,
-        options: Jackson3RequestOptions,
-    ) : this(webclient, headersConsumer, Jackson3RequestOptions.createJsonMapper(options))
+    constructor(webclient: WebClient, headersConsumer: Consumer<HttpHeaders>, options: DgsGraphQLRequestOptions) :
+        this(webclient, headersConsumer, Jackson3DgsJsonMapperAdapter.fromOptions(options))
 
     override fun reactiveExecuteQuery(
         @Language("graphql") query: String,
-    ): Mono<GraphQLClientResponse> = reactiveExecuteQuery(query, emptyMap(), null)
+    ): Mono<DgsGraphQLResponse> = reactiveExecuteQuery(query, emptyMap(), null)
 
     override fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
-    ): Mono<GraphQLClientResponse> = reactiveExecuteQuery(query, variables, null)
+    ): Mono<DgsGraphQLResponse> = reactiveExecuteQuery(query, variables, null)
 
     override fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?,
-    ): Mono<GraphQLClientResponse> = reactiveExecuteQuery(query, variables, operationName, REQUEST_BODY_URI_CUSTOMIZER_IDENTITY)
+    ): Mono<DgsGraphQLResponse> = reactiveExecuteQuery(query, variables, operationName, REQUEST_BODY_URI_CUSTOMIZER_IDENTITY)
 
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         requestBodyUriCustomizer: RequestBodyUriCustomizer,
-    ): Mono<GraphQLClientResponse> = reactiveExecuteQuery(query, emptyMap(), null, requestBodyUriCustomizer)
+    ): Mono<DgsGraphQLResponse> = reactiveExecuteQuery(query, emptyMap(), null, requestBodyUriCustomizer)
 
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?,
         requestBodyUriCustomizer: RequestBodyUriCustomizer,
-    ): Mono<GraphQLClientResponse> {
+    ): Mono<DgsGraphQLResponse> {
         val serializedRequest =
             mapper.writeValueAsString(
                 GraphQLClients.toRequestMap(query = query, operationName = operationName, variables = variables),
@@ -107,7 +85,7 @@ class Jackson3WebClientGraphQLClient(
     private fun handleResponse(
         response: ResponseEntity<String>,
         requestBody: String,
-    ): GraphQLClientResponse {
+    ): DgsGraphQLResponse {
         if (!response.statusCode.is2xxSuccessful) {
             throw GraphQLClientException(
                 statusCode = response.statusCode.value(),
@@ -116,8 +94,7 @@ class Jackson3WebClientGraphQLClient(
                 request = requestBody,
             )
         }
-
-        return Jackson3GraphQLResponse(json = response.body ?: "", headers = response.headers.toMap(), mapper)
+        return DefaultDgsGraphQLResponse(json = response.body ?: "", headers = response.headers.toMap(), mapper)
     }
 
     @FunctionalInterface

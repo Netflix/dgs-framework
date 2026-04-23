@@ -24,7 +24,7 @@ import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
-import com.netflix.graphql.dgs.internal.DgsJsonMapper
+import com.netflix.graphql.dgs.json.DgsJsonMapper
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder
 import com.netflix.graphql.dgs.reactive.internal.DgsReactiveRequestData

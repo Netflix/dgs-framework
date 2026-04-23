@@ -1,7 +1,7 @@
 package com.netflix.graphql.dgs.example.jackson2
 
 import com.netflix.graphql.dgs.client.CustomGraphQLClient
-import com.netflix.graphql.dgs.client.GraphQLClientResponse
+import com.netflix.graphql.dgs.client.DgsGraphQLResponse
 import com.netflix.graphql.dgs.client.RestClientGraphQLClient
 import com.netflix.graphql.dgs.client.WebClientGraphQLClient
 import org.assertj.core.api.Assertions.assertThat
@@ -64,7 +64,7 @@ class Jackson2OnlyTest {
 
         val response = client.executeQuery("{ hello(name: \"RestClient\") }")
 
-        assertThat(response).isInstanceOf(GraphQLClientResponse::class.java)
+        assertThat(response).isInstanceOf(DgsGraphQLResponse::class.java)
         assertThat(response.hasErrors()).isFalse()
         assertThat(response.extractValue<String>("hello")).isEqualTo("hello, RestClient!")
     }
@@ -77,7 +77,7 @@ class Jackson2OnlyTest {
 
         val response = client.reactiveExecuteQuery("{ hello(name: \"WebClient\") }").block()!!
 
-        assertThat(response).isInstanceOf(GraphQLClientResponse::class.java)
+        assertThat(response).isInstanceOf(DgsGraphQLResponse::class.java)
         assertThat(response.hasErrors()).isFalse()
         assertThat(response.extractValue<String>("hello")).isEqualTo("hello, WebClient!")
     }
@@ -105,7 +105,7 @@ class Jackson2OnlyTest {
 
         val response = client.executeQuery("{ hello(name: \"Custom\") }")
 
-        assertThat(response).isInstanceOf(GraphQLClientResponse::class.java)
+        assertThat(response).isInstanceOf(DgsGraphQLResponse::class.java)
         assertThat(response.hasErrors()).isFalse()
         assertThat(response.extractValue<String>("hello")).isEqualTo("hello, Custom!")
     }
@@ -115,12 +115,17 @@ class Jackson2OnlyTest {
         val result =
             runCatching {
                 Class
-                    .forName("com.netflix.graphql.dgs.client.Jackson3RestClientGraphQLClient")
+                    .forName("com.netflix.graphql.dgs.client.DgsRestClientGraphQLClient")
                     .getDeclaredConstructor(RestClient::class.java)
                     .newInstance(RestClient.builder().baseUrl("http://localhost:$port/graphql").build())
             }
         assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()).isInstanceOf(NoClassDefFoundError::class.java)
+        // Reflective invocation wraps the underlying linkage failure; unwrap to the root cause.
+        // Depending on JVM/classloader behavior, it may surface as NoClassDefFoundError or
+        // ClassNotFoundException. Both indicate Jackson 3 classes are absent as expected.
+        val rootCause = generateSequence(result.exceptionOrNull()) { it.cause }.last()
+        assertThat(rootCause)
+            .isInstanceOfAny(NoClassDefFoundError::class.java, ClassNotFoundException::class.java)
     }
 }
 

@@ -16,6 +16,7 @@
 
 dependencies {
     api(project(":graphql-dgs"))
+    api(project(":graphql-dgs-json-api"))
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")

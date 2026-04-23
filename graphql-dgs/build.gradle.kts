@@ -16,6 +16,7 @@
 dependencies {
 
     api(project(":graphql-error-types"))
+    api(project(":graphql-dgs-json-api"))
     api("com.graphql-java:graphql-java")
     api("com.graphql-java:java-dataloader")
     api("com.jayway.jsonpath:json-path")

@@ -20,6 +20,7 @@ import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.spi.json.Jackson3JsonProvider
 import com.jayway.jsonpath.spi.mapper.Jackson3MappingProvider
+import com.netflix.graphql.dgs.json.DgsJsonMapper
 import tools.jackson.databind.DeserializationFeature
 import tools.jackson.databind.cfg.EnumFeature
 import tools.jackson.databind.json.JsonMapper

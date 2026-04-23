@@ -39,6 +39,12 @@ import java.util.Locale
  * Options for GraphQL requests, including custom scalars and GraphQL context and providing unified
  * ObjectMapper for marshalling and unmarshalling.
  */
+@Deprecated(
+    "Tied to Jackson 2 via createCustomObjectMapper() and the nested scalar serializers. " +
+        "Use DgsGraphQLRequestOptions, which is Jackson-agnostic. " +
+        "This class will be removed in a future release.",
+    ReplaceWith("DgsGraphQLRequestOptions", "com.netflix.graphql.dgs.client.DgsGraphQLRequestOptions"),
+)
 class GraphQLRequestOptions(
     val scalars: Map<Class<*>, Coercing<*, *>> = emptyMap(),
     val graphQLContext: GraphQLContext = GraphQLContext.getDefault(),

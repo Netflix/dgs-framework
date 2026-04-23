@@ -1,9 +1,9 @@
 package com.netflix.graphql.dgs.example.jacksonboth
 
-import com.netflix.graphql.dgs.client.GraphQLClientResponse
-import com.netflix.graphql.dgs.client.Jackson3RestClientGraphQLClient
+import com.netflix.graphql.dgs.client.DgsGraphQLResponse
+import com.netflix.graphql.dgs.client.DgsRestClientGraphQLClient
 import com.netflix.graphql.dgs.client.RestClientGraphQLClient
-import com.netflix.graphql.dgs.internal.DgsJsonMapper
+import com.netflix.graphql.dgs.json.DgsJsonMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -61,7 +61,7 @@ class JacksonBothTest {
 
         val response = client.executeQuery("{ hello(name: \"Jackson2Client\") }")
 
-        assertThat(response).isInstanceOf(GraphQLClientResponse::class.java)
+        assertThat(response).isInstanceOf(DgsGraphQLResponse::class.java)
         assertThat(response.hasErrors()).isFalse()
         assertThat(response.extractValue<String>("hello")).isEqualTo("hello, Jackson2Client!")
     }
@@ -69,11 +69,11 @@ class JacksonBothTest {
     @Test
     fun `Jackson 3 client classes work`() {
         val restClient = RestClient.builder().baseUrl("http://localhost:$port/graphql").build()
-        val client = Jackson3RestClientGraphQLClient(restClient)
+        val client = DgsRestClientGraphQLClient(restClient)
 
         val response = client.executeQuery("{ hello(name: \"Jackson3Client\") }")
 
-        assertThat(response).isInstanceOf(GraphQLClientResponse::class.java)
+        assertThat(response).isInstanceOf(DgsGraphQLResponse::class.java)
         assertThat(response.hasErrors()).isFalse()
         assertThat(response.extractValue<String>("hello")).isEqualTo("hello, Jackson3Client!")
     }

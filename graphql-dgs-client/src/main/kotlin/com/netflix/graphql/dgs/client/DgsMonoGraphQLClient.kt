@@ -20,25 +20,22 @@ import org.intellij.lang.annotations.Language
 import reactor.core.publisher.Mono
 
 /**
- * Jackson-version-agnostic interface for reactive GraphQL clients.
- * Returns [GraphQLClientResponse] which works with both Jackson 2 and Jackson 3.
- *
- * Both [MonoGraphQLClient] (Jackson 2) and the Jackson 3 client classes implement this interface,
- * allowing users to write code that is independent of the Jackson version.
+ * Jackson-agnostic reactive GraphQL client contract. Implemented by the new `Dgs*` client
+ * classes and (for back-compat) by the deprecated [MonoGraphQLClient].
  */
 interface DgsMonoGraphQLClient {
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
-    ): Mono<out GraphQLClientResponse>
+    ): Mono<out DgsGraphQLResponse>
 
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
-    ): Mono<out GraphQLClientResponse>
+    ): Mono<out DgsGraphQLResponse>
 
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?,
-    ): Mono<out GraphQLClientResponse>
+    ): Mono<out DgsGraphQLResponse>
 }

@@ -27,9 +27,9 @@ import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionExcepti
 import com.netflix.graphql.dgs.exceptions.QueryException
 import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
-import com.netflix.graphql.dgs.internal.DgsJsonMapper
 import com.netflix.graphql.dgs.internal.DgsQueryExecutorRequestCustomizer
 import com.netflix.graphql.dgs.internal.DgsWebMvcRequestData
+import com.netflix.graphql.dgs.json.DgsJsonMapper
 import graphql.ExecutionResult
 import org.springframework.graphql.ExecutionGraphQlService
 import org.springframework.graphql.support.DefaultExecutionGraphQlRequest

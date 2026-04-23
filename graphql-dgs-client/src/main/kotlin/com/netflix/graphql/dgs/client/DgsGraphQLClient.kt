@@ -19,25 +19,22 @@ package com.netflix.graphql.dgs.client
 import org.intellij.lang.annotations.Language
 
 /**
- * Jackson-version-agnostic interface for blocking GraphQL clients.
- * Returns [GraphQLClientResponse] which works with both Jackson 2 and Jackson 3.
- *
- * Both [GraphQLClient] (Jackson 2) and the Jackson 3 client classes implement this interface,
- * allowing users to write code that is independent of the Jackson version.
+ * Jackson-agnostic blocking GraphQL client contract. Implemented by the new `Dgs*` client
+ * classes and (for back-compat) by the deprecated [GraphQLClient].
  */
 interface DgsGraphQLClient {
     fun executeQuery(
         @Language("graphql") query: String,
-    ): GraphQLClientResponse
+    ): DgsGraphQLResponse
 
     fun executeQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
-    ): GraphQLClientResponse
+    ): DgsGraphQLResponse
 
     fun executeQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?,
-    ): GraphQLClientResponse
+    ): DgsGraphQLResponse
 }

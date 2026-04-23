@@ -1,9 +1,9 @@
 package com.netflix.graphql.dgs.example.jackson3
 
-import com.netflix.graphql.dgs.client.GraphQLClientResponse
-import com.netflix.graphql.dgs.client.Jackson3CustomGraphQLClient
-import com.netflix.graphql.dgs.client.Jackson3RestClientGraphQLClient
-import com.netflix.graphql.dgs.client.Jackson3WebClientGraphQLClient
+import com.netflix.graphql.dgs.client.DgsCustomGraphQLClient
+import com.netflix.graphql.dgs.client.DgsGraphQLResponse
+import com.netflix.graphql.dgs.client.DgsRestClientGraphQLClient
+import com.netflix.graphql.dgs.client.DgsWebClientGraphQLClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -57,33 +57,33 @@ class Jackson3OnlyTest {
     }
 
     @Test
-    fun `Jackson3RestClientGraphQLClient works`() {
+    fun `DgsRestClientGraphQLClient works`() {
         val restClient = RestClient.builder().baseUrl("http://localhost:$port/graphql").build()
-        val client = Jackson3RestClientGraphQLClient(restClient)
+        val client = DgsRestClientGraphQLClient(restClient)
 
         val response = client.executeQuery("{ hello(name: \"RestClient\") }")
 
-        assertThat(response).isInstanceOf(GraphQLClientResponse::class.java)
+        assertThat(response).isInstanceOf(DgsGraphQLResponse::class.java)
         assertThat(response.hasErrors()).isFalse()
         assertThat(response.extractValue<String>("hello")).isEqualTo("hello, RestClient!")
     }
 
     @Test
-    fun `Jackson3WebClientGraphQLClient works`() {
+    fun `DgsWebClientGraphQLClient works`() {
         val webClient = WebClient.create("http://localhost:$port/graphql")
-        val client = Jackson3WebClientGraphQLClient(webClient)
+        val client = DgsWebClientGraphQLClient(webClient)
 
         val response = client.reactiveExecuteQuery("{ hello(name: \"WebClient\") }").block()!!
 
-        assertThat(response).isInstanceOf(GraphQLClientResponse::class.java)
+        assertThat(response).isInstanceOf(DgsGraphQLResponse::class.java)
         assertThat(response.hasErrors()).isFalse()
         assertThat(response.extractValue<String>("hello")).isEqualTo("hello, WebClient!")
     }
 
     @Test
-    fun `Jackson3CustomGraphQLClient works`() {
+    fun `DgsCustomGraphQLClient works`() {
         val client =
-            Jackson3CustomGraphQLClient("http://localhost:$port/graphql") { url, headers, body ->
+            DgsCustomGraphQLClient("http://localhost:$port/graphql") { url, headers, body ->
                 val restClient = RestClient.builder().baseUrl(url).build()
                 val response =
                     restClient
@@ -102,7 +102,7 @@ class Jackson3OnlyTest {
 
         val response = client.executeQuery("{ hello(name: \"Custom\") }")
 
-        assertThat(response).isInstanceOf(GraphQLClientResponse::class.java)
+        assertThat(response).isInstanceOf(DgsGraphQLResponse::class.java)
         assertThat(response.hasErrors()).isFalse()
         assertThat(response.extractValue<String>("hello")).isEqualTo("hello, Custom!")
     }

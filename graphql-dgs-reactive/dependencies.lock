@@ -15,16 +15,24 @@
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
@@ -38,6 +46,7 @@
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "2.2.20"
@@ -59,16 +68,24 @@
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
@@ -85,6 +102,7 @@
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "2.2.20"
@@ -129,16 +147,24 @@
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
@@ -155,6 +181,7 @@
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "2.2.20"
@@ -196,16 +223,24 @@
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
@@ -219,6 +254,7 @@
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "2.2.20"
@@ -240,16 +276,24 @@
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
@@ -266,6 +310,7 @@
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "2.2.20"
@@ -319,16 +364,24 @@
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
@@ -345,6 +398,7 @@
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "2.2.20"
@@ -390,16 +444,24 @@
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
@@ -434,6 +496,7 @@
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "2.2.20"
@@ -453,6 +516,7 @@
         "org.jetbrains:annotations": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "26.1.0"
@@ -478,6 +542,7 @@
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "2.0.17"
@@ -686,16 +751,24 @@
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
@@ -724,6 +797,7 @@
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "2.2.20"
@@ -743,6 +817,7 @@
         "org.jetbrains:annotations": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "26.1.0"
@@ -750,6 +825,7 @@
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "2.0.17"
@@ -788,16 +864,24 @@
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
@@ -820,6 +904,7 @@
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "2.2.20"
@@ -859,16 +944,24 @@
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
@@ -891,6 +984,7 @@
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "2.2.20"
@@ -936,16 +1030,24 @@
         },
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
-                "com.netflix.graphql.dgs:graphql-dgs"
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
         "com.netflix.graphql.dgs:graphql-dgs": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "project": true
@@ -980,6 +1082,7 @@
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "2.2.20"
@@ -999,6 +1102,7 @@
         "org.jetbrains:annotations": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "26.1.0"
@@ -1015,6 +1119,7 @@
         "org.slf4j:slf4j-api": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
             "locked": "2.0.17"

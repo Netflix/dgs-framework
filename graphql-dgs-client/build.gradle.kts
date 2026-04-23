@@ -17,6 +17,7 @@
 dependencies {
     api("com.jayway.jsonpath:json-path")
     api("io.projectreactor:reactor-core")
+    api(project(":graphql-dgs-json-api"))
     api(project(":graphql-dgs-subscription-types"))
 
     compileOnly("org.springframework:spring-webflux")

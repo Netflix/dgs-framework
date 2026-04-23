@@ -44,7 +44,6 @@ import com.netflix.graphql.dgs.internal.DefaultDgsDataLoaderReloadController
 import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
 import com.netflix.graphql.dgs.internal.DgsDataLoaderInstrumentationDataLoaderCustomizer
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
-import com.netflix.graphql.dgs.internal.DgsJsonMapper
 import com.netflix.graphql.dgs.internal.DgsQueryExecutorRequestCustomizer
 import com.netflix.graphql.dgs.internal.DgsSchemaProvider
 import com.netflix.graphql.dgs.internal.DgsWrapWithContextDataLoaderCustomizer
@@ -58,6 +57,7 @@ import com.netflix.graphql.dgs.internal.QueryValueCustomizer
 import com.netflix.graphql.dgs.internal.ReloadableDgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.method.ArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
+import com.netflix.graphql.dgs.json.DgsJsonMapper
 import com.netflix.graphql.dgs.mvc.internal.method.HandlerMethodArgumentResolverAdapter
 import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor

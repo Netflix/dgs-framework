@@ -17,7 +17,7 @@
 package com.netflix.graphql.dgs.jackson2
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.netflix.graphql.dgs.internal.DgsJsonMapper
+import com.netflix.graphql.dgs.json.DgsJsonMapper
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean

@@ -27,7 +27,7 @@ import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
-import com.netflix.graphql.dgs.internal.DgsJsonMapper
+import com.netflix.graphql.dgs.json.DgsJsonMapper
 
 /**
  * Jackson 2 implementation of [DgsJsonMapper].

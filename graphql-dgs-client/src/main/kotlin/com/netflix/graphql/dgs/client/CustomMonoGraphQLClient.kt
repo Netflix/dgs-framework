@@ -27,8 +27,8 @@ import reactor.core.publisher.Mono
  * For a more convenient option, use [WebClientGraphQLClient] instead.
  */
 @Deprecated(
-    "Use Jackson3CustomMonoGraphQLClient for Jackson 3 support",
-    ReplaceWith("Jackson3CustomMonoGraphQLClient", "com.netflix.graphql.dgs.client.Jackson3CustomMonoGraphQLClient"),
+    "Tied to Jackson 2. Migrate to DgsCustomMonoGraphQLClient, which accepts any DgsJsonMapper (defaulting to Jackson 3). This class will be removed in a future release.",
+    ReplaceWith("DgsCustomMonoGraphQLClient", "com.netflix.graphql.dgs.client.DgsCustomMonoGraphQLClient"),
 )
 class CustomMonoGraphQLClient(
     private val url: String,

@@ -41,11 +41,16 @@ import org.slf4j.LoggerFactory
  * Representation of a GraphQL response, which may contain GraphQL errors.
  * This class gives convenient JSON parsing methods to get data out of the response.
  */
+@Deprecated(
+    "Tied to Jackson 2. Program against the DgsGraphQLResponse interface instead; the new " +
+        "Dgs* client classes return it. This class will be removed in a future release.",
+    ReplaceWith("DgsGraphQLResponse", "com.netflix.graphql.dgs.client.DgsGraphQLResponse"),
+)
 data class GraphQLResponse(
     @Language("json") override val json: String,
     override val headers: Map<String, List<String>>,
     private val mapper: ObjectMapper,
-) : GraphQLClientResponse {
+) : DgsGraphQLResponse {
     /**
      * A JsonPath DocumentContext. Typically, only used internally.
      */
@@ -169,10 +174,10 @@ data class GraphQLResponse(
             }
 
         @Deprecated(
-            "Use GraphQLClientResponse.getDataPath instead",
-            ReplaceWith("GraphQLClientResponse.getDataPath(path)", "com.netflix.graphql.dgs.client.GraphQLClientResponse"),
+            "Use DgsGraphQLResponse.getDataPath instead",
+            ReplaceWith("DgsGraphQLResponse.getDataPath(path)", "com.netflix.graphql.dgs.client.DgsGraphQLResponse"),
         )
-        fun getDataPath(path: String): String = GraphQLClientResponse.getDataPath(path)
+        fun getDataPath(path: String): String = DgsGraphQLResponse.getDataPath(path)
     }
 }
 

@@ -26,8 +26,8 @@ import org.springframework.http.HttpStatusCode
  * For a more convenient option, use [WebClientGraphQLClient] instead.
  */
 @Deprecated(
-    "Use Jackson3CustomGraphQLClient for Jackson 3 support",
-    ReplaceWith("Jackson3CustomGraphQLClient", "com.netflix.graphql.dgs.client.Jackson3CustomGraphQLClient"),
+    "Tied to Jackson 2. Migrate to DgsCustomGraphQLClient, which accepts any DgsJsonMapper (defaulting to Jackson 3). This class will be removed in a future release.",
+    ReplaceWith("DgsCustomGraphQLClient", "com.netflix.graphql.dgs.client.DgsCustomGraphQLClient"),
 )
 class CustomGraphQLClient(
     private val url: String,

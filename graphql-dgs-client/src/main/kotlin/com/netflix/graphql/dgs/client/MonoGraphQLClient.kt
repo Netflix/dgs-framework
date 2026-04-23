@@ -26,6 +26,11 @@ import java.util.function.Consumer
 /**
  * GraphQL client interface for reactive clients.
  */
+@Deprecated(
+    "Tied to Jackson 2 through GraphQLResponse. Program against DgsMonoGraphQLClient instead. " +
+        "This interface will be removed in a future release.",
+    ReplaceWith("DgsMonoGraphQLClient", "com.netflix.graphql.dgs.client.DgsMonoGraphQLClient"),
+)
 interface MonoGraphQLClient : DgsMonoGraphQLClient {
     /**
      * A reactive call to execute a query and parse its result.

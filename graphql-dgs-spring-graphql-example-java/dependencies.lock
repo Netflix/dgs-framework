@@ -34,7 +34,8 @@
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
@@ -60,12 +61,20 @@
         "com.netflix.graphql.dgs:graphql-dgs-example-shared": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter",
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -121,6 +130,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -185,7 +195,8 @@
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
@@ -211,12 +222,20 @@
         "com.netflix.graphql.dgs:graphql-dgs-example-shared": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter",
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -272,6 +291,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -355,7 +375,8 @@
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
@@ -381,12 +402,20 @@
         "com.netflix.graphql.dgs:graphql-dgs-example-shared": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter",
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -442,6 +471,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -515,7 +545,8 @@
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
@@ -541,12 +572,20 @@
         "com.netflix.graphql.dgs:graphql-dgs-example-shared": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-platform": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter",
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -602,6 +641,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql",
@@ -722,7 +762,8 @@
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
@@ -763,6 +804,13 @@
             ],
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-pagination": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared"
@@ -777,6 +825,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -891,6 +940,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -925,6 +975,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -963,6 +1014,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -1342,7 +1394,8 @@
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
@@ -1377,6 +1430,13 @@
             ],
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-pagination": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared"
@@ -1390,6 +1450,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -1486,6 +1547,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -1517,6 +1579,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -1534,6 +1597,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -1671,7 +1735,8 @@
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
@@ -1708,6 +1773,13 @@
         "com.netflix.graphql.dgs:graphql-dgs-extended-scalars": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-pagination": {
             "project": true
         },
@@ -1719,6 +1791,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -1794,6 +1867,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -1894,7 +1968,8 @@
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
@@ -1931,6 +2006,13 @@
         "com.netflix.graphql.dgs:graphql-dgs-extended-scalars": {
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-pagination": {
             "project": true
         },
@@ -1942,6 +2024,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -2017,6 +2100,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -2158,7 +2242,8 @@
         "com.jayway.jsonpath:json-path": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
-                "com.netflix.graphql.dgs:graphql-dgs-client"
+                "com.netflix.graphql.dgs:graphql-dgs-client",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api"
             ],
             "locked": "3.0.0"
         },
@@ -2199,6 +2284,13 @@
             ],
             "project": true
         },
+        "com.netflix.graphql.dgs:graphql-dgs-json-api": {
+            "firstLevelTransitive": [
+                "com.netflix.graphql.dgs:graphql-dgs",
+                "com.netflix.graphql.dgs:graphql-dgs-client"
+            ],
+            "project": true
+        },
         "com.netflix.graphql.dgs:graphql-dgs-pagination": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared"
@@ -2213,6 +2305,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -2327,6 +2420,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -2361,6 +2455,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",
@@ -2390,6 +2485,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-example-shared",
                 "com.netflix.graphql.dgs:graphql-dgs-extended-scalars",
+                "com.netflix.graphql.dgs:graphql-dgs-json-api",
                 "com.netflix.graphql.dgs:graphql-dgs-pagination",
                 "com.netflix.graphql.dgs:graphql-dgs-reactive",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer",

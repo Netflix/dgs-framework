@@ -40,8 +40,8 @@ import java.util.function.Consumer
  * ```
  */
 @Deprecated(
-    "Use Jackson3RestClientGraphQLClient for Jackson 3 support",
-    ReplaceWith("Jackson3RestClientGraphQLClient", "com.netflix.graphql.dgs.client.Jackson3RestClientGraphQLClient"),
+    "Tied to Jackson 2. Migrate to DgsRestClientGraphQLClient, which accepts any DgsJsonMapper (defaulting to Jackson 3). This class will be removed in a future release.",
+    ReplaceWith("DgsRestClientGraphQLClient", "com.netflix.graphql.dgs.client.DgsRestClientGraphQLClient"),
 )
 class RestClientGraphQLClient(
     private val restClient: RestClient,
