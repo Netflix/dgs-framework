@@ -17,25 +17,22 @@
 package com.netflix.graphql.dgs.client
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.KotlinFeature
-import com.fasterxml.jackson.module.kotlin.jsonMapper
-import com.fasterxml.jackson.module.kotlin.kotlinModule
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule
 import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.TypeRef
-import com.jayway.jsonpath.spi.json.JacksonJsonProvider
-import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
+import com.jayway.jsonpath.spi.json.Jackson3JsonProvider
+import com.jayway.jsonpath.spi.mapper.Jackson3MappingProvider
 import com.netflix.graphql.dgs.client.GraphQLRequestOptions.Companion.createCustomObjectMapper
 import org.intellij.lang.annotations.Language
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import tools.jackson.databind.cfg.EnumFeature
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.module.kotlin.KotlinFeature
+import tools.jackson.module.kotlin.jsonMapper
+import tools.jackson.module.kotlin.kotlinModule
 
 /**
  * Representation of a GraphQL response, which may contain GraphQL errors.
@@ -44,7 +41,7 @@ import org.slf4j.LoggerFactory
 data class GraphQLResponse(
     @Language("json") val json: String,
     val headers: Map<String, List<String>>,
-    private val mapper: ObjectMapper,
+    private val mapper: JsonMapper,
 ) {
     /**
      * A JsonPath DocumentContext. Typically, only used internally.
@@ -54,8 +51,8 @@ data class GraphQLResponse(
             .using(
                 Configuration
                     .builder()
-                    .jsonProvider(JacksonJsonProvider(mapper))
-                    .mappingProvider(JacksonMappingProvider(mapper))
+                    .jsonProvider(Jackson3JsonProvider(mapper))
+                    .mappingProvider(Jackson3MappingProvider(mapper))
                     .build()
                     .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL),
             ).parse(json)
@@ -159,13 +156,10 @@ data class GraphQLResponse(
         private val logger: Logger = LoggerFactory.getLogger(GraphQLResponse::class.java)
 
         @Deprecated(message = "use GraphQLRequestOptions.createCustomObjectMapper")
-        internal val DEFAULT_MAPPER: ObjectMapper =
+        internal val DEFAULT_MAPPER: JsonMapper =
             jsonMapper {
                 addModule(kotlinModule { enable(KotlinFeature.NullIsSameAsDefault) })
-                addModule(JavaTimeModule())
-                addModule(ParameterNamesModule())
-                addModule(Jdk8Module())
-                enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+                enable(EnumFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
             }
 
         fun getDataPath(path: String): String =

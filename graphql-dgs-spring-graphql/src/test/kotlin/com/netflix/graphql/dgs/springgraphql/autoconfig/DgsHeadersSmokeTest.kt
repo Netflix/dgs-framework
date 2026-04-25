@@ -16,7 +16,6 @@
 
 package com.netflix.graphql.dgs.springgraphql.autoconfig
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsExecutionResult
 import com.netflix.graphql.dgs.DgsQuery
@@ -37,6 +36,8 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.module.kotlin.KotlinModule
 import java.util.concurrent.CompletableFuture
 
 @SpringBootTest(
@@ -71,7 +72,12 @@ class DgsHeadersSmokeTest {
 
         mockMvc
             .post("/graphql") {
-                content = jacksonObjectMapper().writeValueAsString(GraphQlRequest(query))
+                content =
+                    JsonMapper
+                        .builder()
+                        .addModule(KotlinModule.Builder().build())
+                        .build()
+                        .writeValueAsString(GraphQlRequest(query))
                 accept = MediaType.APPLICATION_JSON
                 contentType = MediaType.APPLICATION_JSON
             }.andExpect {

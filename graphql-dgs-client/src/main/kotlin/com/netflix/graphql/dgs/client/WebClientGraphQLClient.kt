@@ -16,7 +16,6 @@
 
 package com.netflix.graphql.dgs.client
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.intellij.lang.annotations.Language
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
@@ -24,6 +23,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClient.RequestBodySpec
 import org.springframework.web.reactive.function.client.toEntity
 import reactor.core.publisher.Mono
+import tools.jackson.databind.json.JsonMapper
 import java.util.function.Consumer
 
 /**
@@ -43,7 +43,7 @@ import java.util.function.Consumer
 class WebClientGraphQLClient(
     private val webclient: WebClient,
     private val headersConsumer: Consumer<HttpHeaders>,
-    private val mapper: ObjectMapper,
+    private val mapper: JsonMapper,
 ) : MonoGraphQLClient {
     constructor(webclient: WebClient) : this(webclient, Consumer {})
 
@@ -58,7 +58,7 @@ class WebClientGraphQLClient(
         options: GraphQLRequestOptions,
     ) : this(webclient, Consumer {}, GraphQLRequestOptions.createCustomObjectMapper(options))
 
-    constructor(webclient: WebClient, mapper: ObjectMapper) : this(webclient, Consumer {}, mapper)
+    constructor(webclient: WebClient, mapper: JsonMapper) : this(webclient, Consumer {}, mapper)
 
     constructor(
         webclient: WebClient,

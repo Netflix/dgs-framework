@@ -53,6 +53,9 @@ allprojects {
     // as dependencies. e.g. KOTLIN_VERSION
     extra["sb.version"] = "4.0.0"
     extra["kotlin.version"] = Versions.KOTLIN_VERSION
+    // Override Spring Boot's json-path 2.9.0 with 3.0.0 which ships
+    // Jackson3JsonProvider/Jackson3MappingProvider for the Jackson 3 migration.
+    extra["json-path.version"] = "3.0.0"
 }
 val internalBomModules by extra(
     listOf(

@@ -20,7 +20,7 @@ dependencies {
 
     implementation("org.springframework:spring-websocket")
 
-    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    testImplementation("tools.jackson.module:jackson-module-kotlin")
 }
 
 tasks.withType<JavaCompile>().configureEach {

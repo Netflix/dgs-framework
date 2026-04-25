@@ -16,16 +16,12 @@
 
 package com.netflix.graphql.dgs.internal
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.ParseContext
-import com.jayway.jsonpath.spi.json.JacksonJsonProvider
-import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
+import com.jayway.jsonpath.spi.json.Jackson3JsonProvider
+import com.jayway.jsonpath.spi.mapper.Jackson3MappingProvider
 import com.netflix.graphql.dgs.DgsExecutionResult
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsBadRequestException
@@ -44,6 +40,10 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.util.StringUtils
+import tools.jackson.databind.DeserializationFeature
+import tools.jackson.databind.cfg.EnumFeature
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.module.kotlin.KotlinModule
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionException
@@ -51,18 +51,25 @@ import java.util.concurrent.CompletionException
 object BaseDgsQueryExecutor {
     private val logger: Logger = LoggerFactory.getLogger(BaseDgsQueryExecutor::class.java)
 
-    val objectMapper: ObjectMapper =
-        jacksonObjectMapper()
-            .registerModule(JavaTimeModule())
-            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+    val objectMapper: JsonMapper =
+        JsonMapper
+            .builder()
+            .addModule(KotlinModule.Builder().build())
+            .enable(EnumFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            // Jackson 3 flipped the default of FAIL_ON_NULL_FOR_PRIMITIVES to
+            // true. DGS GraphQL responses regularly omit non-selected primitive
+            // fields, which would otherwise break extractAsObject. Restore the
+            // Jackson 2 behaviour of mapping null to the primitive's zero.
+            .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+            .build()
 
     val parseContext: ParseContext =
         JsonPath.using(
             Configuration
                 .builder()
-                .jsonProvider(JacksonJsonProvider(jacksonObjectMapper()))
-                .mappingProvider(JacksonMappingProvider(objectMapper))
+                .jsonProvider(Jackson3JsonProvider(JsonMapper.builder().addModule(KotlinModule.Builder().build()).build()))
+                .mappingProvider(Jackson3MappingProvider(objectMapper))
                 .build()
                 .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL),
         )

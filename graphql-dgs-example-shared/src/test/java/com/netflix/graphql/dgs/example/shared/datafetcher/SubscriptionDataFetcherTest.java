@@ -16,7 +16,7 @@
 
 package com.netflix.graphql.dgs.example.shared.datafetcher;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import com.netflix.graphql.dgs.DgsQueryExecutor;
 import com.netflix.graphql.dgs.autoconfig.DgsExtendedScalarsAutoConfiguration;
 import com.netflix.graphql.dgs.example.shared.types.Stock;
@@ -42,7 +42,7 @@ class SubscriptionDataFetcherTest {
     @Autowired
     DgsQueryExecutor queryExecutor;
 
-    ObjectMapper objectMapper = new ObjectMapper();
+    JsonMapper objectMapper = JsonMapper.builder().build();
 
     @Test
     void stocks() {

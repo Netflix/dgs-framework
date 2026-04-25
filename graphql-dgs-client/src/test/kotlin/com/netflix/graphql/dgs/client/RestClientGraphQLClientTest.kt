@@ -16,8 +16,6 @@
 
 package com.netflix.graphql.dgs.client
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.DgsRuntimeWiring
@@ -40,11 +38,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestClient
+import tools.jackson.databind.cfg.DateTimeFeature
+import tools.jackson.databind.json.JsonMapper
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -135,10 +134,10 @@ class RestClientGraphQLClientTest {
 
     @Test
     fun `Custom ObjectMapper can be supplied to the client`() {
-        val mapper: ObjectMapper =
-            Jackson2ObjectMapperBuilder
-                .json()
-                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        val mapper: JsonMapper =
+            JsonMapper
+                .builder()
+                .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build()
         val now = LocalDateTime.parse("2024-12-12T12:12:12.12")
         val client = RestClientGraphQLClient(restClient, mapper)

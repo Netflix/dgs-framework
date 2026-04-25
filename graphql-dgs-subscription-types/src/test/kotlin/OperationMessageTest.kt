@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-import com.fasterxml.jackson.databind.JsonMappingException
-import com.fasterxml.jackson.databind.exc.MismatchedInputException
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.netflix.graphql.types.subscription.DataPayload
 import com.netflix.graphql.types.subscription.EmptyPayload
 import com.netflix.graphql.types.subscription.GQL_CONNECTION_INIT
@@ -32,6 +28,11 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import tools.jackson.core.JacksonException
+import tools.jackson.databind.exc.MismatchedInputException
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.module.kotlin.KotlinModule
+import tools.jackson.module.kotlin.jacksonTypeRef
 
 class OperationMessageTest {
     @Test
@@ -51,7 +52,7 @@ class OperationMessageTest {
 
     @Test
     fun rejectsQueryMessageWithoutQuery() {
-        assertFailsToDeserialize<JsonMappingException>(
+        assertFailsToDeserialize<JacksonException>(
             """
             {"type": "connection_init",
              "payload": {
@@ -71,7 +72,7 @@ class OperationMessageTest {
     private fun deserialize(message: String) = MAPPER.readValue(message, jacksonTypeRef<OperationMessage>())
 
     companion object {
-        val MAPPER = jacksonObjectMapper()
+        val MAPPER = JsonMapper.builder().addModule(KotlinModule.Builder().build()).build()
 
         @JvmStatic
         fun validMessages() =

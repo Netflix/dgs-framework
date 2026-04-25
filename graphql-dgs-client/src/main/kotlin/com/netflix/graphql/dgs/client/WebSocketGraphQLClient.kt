@@ -16,8 +16,6 @@
 
 package com.netflix.graphql.dgs.client
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.netflix.graphql.types.subscription.GQL_COMPLETE
 import com.netflix.graphql.types.subscription.GQL_CONNECTION_ACK
 import com.netflix.graphql.types.subscription.GQL_CONNECTION_ERROR
@@ -42,6 +40,9 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.publisher.Sinks
 import reactor.util.concurrent.Queues
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.module.kotlin.KotlinModule
+import tools.jackson.module.kotlin.jacksonTypeRef
 import java.net.URI
 import java.time.Duration
 import java.util.concurrent.atomic.AtomicLong
@@ -62,7 +63,7 @@ class WebSocketGraphQLClient(
     companion object {
         private val DEFAULT_ACKNOWLEDGEMENT_TIMEOUT = Duration.ofSeconds(30)
         private val CONNECTION_INIT_MESSAGE = OperationMessage(GQL_CONNECTION_INIT, null, null)
-        private val MAPPER = jacksonObjectMapper()
+        private val MAPPER = JsonMapper.builder().addModule(KotlinModule.Builder().build()).build()
     }
 
     constructor(
@@ -199,7 +200,7 @@ class OperationMessageWebSocketClient(
     private val client: WebSocketClient,
 ) {
     companion object {
-        private val MAPPER = jacksonObjectMapper()
+        private val MAPPER = JsonMapper.builder().addModule(KotlinModule.Builder().build()).build()
     }
 
     // Sinks are used as buffers, incoming messages from the server are

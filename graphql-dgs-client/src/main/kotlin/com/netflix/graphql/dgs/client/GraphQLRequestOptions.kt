@@ -16,23 +16,20 @@
 
 package com.netflix.graphql.dgs.client
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.JsonDeserializer
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.KotlinFeature
-import com.fasterxml.jackson.module.kotlin.kotlinModule
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule
 import graphql.GraphQLContext
 import graphql.schema.Coercing
+import tools.jackson.core.JsonGenerator
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.DeserializationContext
+import tools.jackson.databind.JsonNode
+import tools.jackson.databind.SerializationContext
+import tools.jackson.databind.ValueDeserializer
+import tools.jackson.databind.ValueSerializer
+import tools.jackson.databind.cfg.EnumFeature
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.databind.module.SimpleModule
+import tools.jackson.module.kotlin.KotlinFeature
+import tools.jackson.module.kotlin.kotlinModule
 import java.util.Locale
 
 /**
@@ -53,7 +50,7 @@ class GraphQLRequestOptions(
     class CustomScalarDeserializer<T>(
         private val coercing: Coercing<*, *>,
         private val graphQLContext: GraphQLContext,
-    ) : JsonDeserializer<T>() {
+    ) : ValueDeserializer<T>() {
         @Suppress("UNCHECKED_CAST")
         override fun deserialize(
             p: JsonParser,
@@ -65,16 +62,16 @@ class GraphQLRequestOptions(
     }
 
     /**
-     * Helper class to wrap a scalar serialization into a Jackson JsonSerializer
+     * Helper class to wrap a scalar serialization into a Jackson ValueSerializer
      */
     class CustomScalarSerializer<T>(
         private val coercing: Coercing<*, *>,
         private val graphQLContext: GraphQLContext,
-    ) : JsonSerializer<T>() {
+    ) : ValueSerializer<T>() {
         override fun serialize(
             value: T,
             gen: JsonGenerator,
-            serializers: SerializerProvider,
+            ctxt: SerializationContext,
         ) {
             val serializedValue = coercing.serialize(value as Any, graphQLContext, Locale.getDefault())
             gen.writeString(serializedValue.toString())
@@ -82,13 +79,10 @@ class GraphQLRequestOptions(
     }
 
     companion object {
-        fun createCustomObjectMapper(options: GraphQLRequestOptions? = null): ObjectMapper {
-            val mapper = ObjectMapper()
-            mapper.registerModule(kotlinModule { enable(KotlinFeature.NullIsSameAsDefault) })
-            mapper.registerModule(JavaTimeModule())
-            mapper.registerModule(ParameterNamesModule())
-            mapper.registerModule(Jdk8Module())
-            mapper.enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+        fun createCustomObjectMapper(options: GraphQLRequestOptions? = null): JsonMapper {
+            val builder = JsonMapper.builder()
+            builder.addModule(kotlinModule { enable(KotlinFeature.NullIsSameAsDefault) })
+            builder.enable(EnumFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
 
             // Register custom deserializers if scalars are provided
             options?.scalars?.forEach { (clazz, coercing) ->
@@ -104,13 +98,13 @@ class GraphQLRequestOptions(
                         options.graphQLContext,
                     ),
                 )
-                mapper.registerModule(module)
+                builder.addModule(module)
             }
-            return mapper
+            return builder.build()
         }
 
         // Overloaded method for Java compatibility
         @JvmStatic
-        fun createCustomObjectMapper(): ObjectMapper = createCustomObjectMapper(null)
+        fun createCustomObjectMapper(): JsonMapper = createCustomObjectMapper(null)
     }
 }

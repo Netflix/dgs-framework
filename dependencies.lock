@@ -113,21 +113,123 @@
         "com.pinterest.ktlint:ktlint-cli-reporter-baseline": {
             "locked": "1.5.0"
         },
+        "com.pinterest.ktlint:ktlint-cli-reporter-core": {
+            "locked": "1.5.0"
+        },
+        "com.pinterest.ktlint:ktlint-logger": {
+            "locked": "1.5.0"
+        },
+        "com.pinterest.ktlint:ktlint-rule-engine-core": {
+            "locked": "1.5.0"
+        },
+        "dev.drewhamilton.poko:poko-annotations": {
+            "locked": "0.18.0"
+        },
+        "dev.drewhamilton.poko:poko-annotations-jvm": {
+            "locked": "0.18.0"
+        },
         "io.github.oshai:kotlin-logging": {
             "locked": "5.1.0"
+        },
+        "io.github.oshai:kotlin-logging-jvm": {
+            "locked": "7.0.3"
+        },
+        "org.ec4j.core:ec4j-core": {
+            "locked": "1.1.0"
+        },
+        "org.jetbrains.intellij.deps:trove4j": {
+            "locked": "1.0.20200330"
+        },
+        "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
+            "locked": "2.1.0"
+        },
+        "org.jetbrains.kotlin:kotlin-daemon-embeddable": {
+            "locked": "2.1.0"
+        },
+        "org.jetbrains.kotlin:kotlin-reflect": {
+            "locked": "1.6.10"
+        },
+        "org.jetbrains.kotlin:kotlin-script-runtime": {
+            "locked": "2.1.0"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "2.1.0"
+        },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm": {
+            "locked": "1.6.4"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0"
         }
     },
     "ktlintReporter": {
         "io.github.detekt.sarif4k:sarif4k": {
             "locked": "0.5.0"
         },
+        "io.github.detekt.sarif4k:sarif4k-jvm": {
+            "locked": "0.5.0"
+        },
         "io.github.oshai:kotlin-logging": {
             "locked": "5.1.0"
+        },
+        "io.github.oshai:kotlin-logging-jvm": {
+            "locked": "7.0.3"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "2.1.0"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0"
         }
     },
     "ktlintRuleset": {
+        "com.pinterest.ktlint:ktlint-cli-ruleset-core": {
+            "locked": "1.5.0"
+        },
+        "com.pinterest.ktlint:ktlint-logger": {
+            "locked": "1.5.0"
+        },
+        "com.pinterest.ktlint:ktlint-rule-engine-core": {
+            "locked": "1.5.0"
+        },
         "com.pinterest.ktlint:ktlint-ruleset-standard": {
             "locked": "1.5.0"
+        },
+        "dev.drewhamilton.poko:poko-annotations": {
+            "locked": "0.18.0"
+        },
+        "dev.drewhamilton.poko:poko-annotations-jvm": {
+            "locked": "0.18.0"
+        },
+        "io.github.oshai:kotlin-logging-jvm": {
+            "locked": "7.0.3"
+        },
+        "org.ec4j.core:ec4j-core": {
+            "locked": "1.1.0"
+        },
+        "org.jetbrains.intellij.deps:trove4j": {
+            "locked": "1.0.20200330"
+        },
+        "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
+            "locked": "2.1.0"
+        },
+        "org.jetbrains.kotlin:kotlin-daemon-embeddable": {
+            "locked": "2.1.0"
+        },
+        "org.jetbrains.kotlin:kotlin-reflect": {
+            "locked": "1.6.10"
+        },
+        "org.jetbrains.kotlin:kotlin-script-runtime": {
+            "locked": "2.1.0"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "2.1.0"
+        },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm": {
+            "locked": "1.6.4"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0"
         }
     },
     "runtimeClasspath": {

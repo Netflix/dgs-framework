@@ -31,8 +31,7 @@ dependencies {
     compileOnly("com.github.ben-manes.caffeine:caffeine")
     compileOnly("org.jspecify:jspecify")
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation("tools.jackson.module:jackson-module-kotlin")
     implementation("com.apollographql.federation:federation-graphql-java-support")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")

@@ -66,8 +66,11 @@ dependencies {
             }
         }
         // ---
+        // json-path 3.0.0 ships Jackson 3 providers (Jackson3JsonProvider /
+        // Jackson3MappingProvider). Spring Boot 4 still pins json-path to
+        // 2.9.0 which is Jackson 2 only, so the DGS platform overrides it.
         api("com.jayway.jsonpath:json-path") {
-            version { require("2.9.0") }
+            version { strictly("3.0.0") }
         }
         api("io.projectreactor:reactor-core") {
             version { require("3.6.1") }

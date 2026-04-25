@@ -16,25 +16,25 @@
 
 package com.netflix.graphql.dgs.internal.utils
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.JsonProcessingException
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.fasterxml.jackson.databind.ser.std.StdSerializer
 import org.springframework.web.multipart.MultipartFile
+import tools.jackson.core.JacksonException
+import tools.jackson.core.JsonGenerator
+import tools.jackson.databind.SerializationContext
+import tools.jackson.databind.ser.std.StdSerializer
 import java.io.IOException
 
 /**
  * This class is used only for logging purposes since we cannot serialize a MultipartFile to json otherwise.
  */
 class MultipartFileSerializer : StdSerializer<MultipartFile>(MultipartFile::class.java) {
-    @Throws(IOException::class, JsonProcessingException::class)
+    @Throws(IOException::class, JacksonException::class)
     override fun serialize(
         value: MultipartFile,
         jgen: JsonGenerator,
-        provider: SerializerProvider,
+        provider: SerializationContext,
     ) {
         jgen.writeStartObject()
-        jgen.writeStringField("name", value.originalFilename)
+        jgen.writeStringProperty("name", value.originalFilename)
         jgen.writeEndObject()
     }
 }

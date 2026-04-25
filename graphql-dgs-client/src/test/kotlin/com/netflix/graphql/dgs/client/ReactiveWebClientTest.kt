@@ -16,8 +16,6 @@
 
 package com.netflix.graphql.dgs.client
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.Test
@@ -26,6 +24,7 @@ import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.toEntity
 import reactor.core.publisher.Mono
+import tools.jackson.databind.json.JsonMapper
 import java.time.Duration
 import java.time.LocalDate
 
@@ -63,7 +62,7 @@ class ReactiveWebClientTest {
 
     @Test
     fun testCustomObjectMapper() {
-        val mapper = ObjectMapper().registerModules(JavaTimeModule())
+        val mapper = JsonMapper.builder().build()
         val responseMono =
             CustomMonoGraphQLClient(url, requestExecutor, mapper).reactiveExecuteQuery(
                 $$"{ hello($input: HelloInput!) }",
