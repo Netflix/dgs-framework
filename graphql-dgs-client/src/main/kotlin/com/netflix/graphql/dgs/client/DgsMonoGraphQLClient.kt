@@ -20,36 +20,19 @@ import org.intellij.lang.annotations.Language
 import reactor.core.publisher.Mono
 
 /**
- * Jackson-version-agnostic interface for reactive GraphQL clients.
- * Returns [DgsGraphQLResponse], the Jackson-agnostic response contract.
- *
- * Implemented by the new Dgs* client classes and (for back-compat) by the deprecated [MonoGraphQLClient].
+ * Jackson-agnostic reactive GraphQL client contract. Implemented by the new `Dgs*` client
+ * classes and (for back-compat) by the deprecated [MonoGraphQLClient].
  */
 interface DgsMonoGraphQLClient {
-    /**
-     * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
-     * @return A [Mono] of [DgsGraphQLResponse] parses the response and gives easy access to data and errors.
-     */
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
     ): Mono<out DgsGraphQLResponse>
 
-    /**
-     * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
-     * @param variables A map of input variables
-     * @return A [Mono] of [DgsGraphQLResponse] parses the response and gives easy access to data and errors.
-     */
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
     ): Mono<out DgsGraphQLResponse>
 
-    /**
-     * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
-     * @param variables A map of input variables
-     * @param operationName Name of the operation
-     * @return A [Mono] of [DgsGraphQLResponse] parses the response and gives easy access to data and errors.
-     */
     fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,

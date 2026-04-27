@@ -19,36 +19,19 @@ package com.netflix.graphql.dgs.client
 import org.intellij.lang.annotations.Language
 
 /**
- * Jackson-version-agnostic interface for blocking GraphQL clients.
- * Returns [DgsGraphQLResponse], the Jackson-agnostic response contract.
- *
- * Implemented by the new Dgs* client classes and (for back-compat) by the deprecated [GraphQLClient].
+ * Jackson-agnostic blocking GraphQL client contract. Implemented by the new `Dgs*` client
+ * classes and (for back-compat) by the deprecated [GraphQLClient].
  */
 interface DgsGraphQLClient {
-    /**
-     * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
-     * @return [DgsGraphQLResponse] parses the response and gives easy access to data and errors.
-     */
     fun executeQuery(
         @Language("graphql") query: String,
     ): DgsGraphQLResponse
 
-    /**
-     * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
-     * @param variables A map of input variables
-     * @return [DgsGraphQLResponse] parses the response and gives easy access to data and errors.
-     */
     fun executeQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
     ): DgsGraphQLResponse
 
-    /**
-     * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
-     * @param variables A map of input variables
-     * @param operationName Name of the operation
-     * @return [DgsGraphQLResponse] parses the response and gives easy access to data and errors.
-     */
     fun executeQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
