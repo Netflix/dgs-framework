@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: Publish
     steps:
       - uses: actions/checkout@v5.0.0
       - name: Setup jdk 8
