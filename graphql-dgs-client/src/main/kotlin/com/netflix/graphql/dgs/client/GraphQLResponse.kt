@@ -41,15 +41,20 @@ import org.slf4j.LoggerFactory
  * Representation of a GraphQL response, which may contain GraphQL errors.
  * This class gives convenient JSON parsing methods to get data out of the response.
  */
+@Deprecated(
+    "Tied to Jackson 2. Program against the DgsGraphQLResponse interface instead; the new " +
+        "Dgs* client classes return it. This class will be removed in a future release.",
+    ReplaceWith("DgsGraphQLResponse", "com.netflix.graphql.dgs.client.DgsGraphQLResponse"),
+)
 data class GraphQLResponse(
-    @Language("json") val json: String,
-    val headers: Map<String, List<String>>,
+    @Language("json") override val json: String,
+    override val headers: Map<String, List<String>>,
     private val mapper: ObjectMapper,
-) {
+) : DgsGraphQLResponse {
     /**
      * A JsonPath DocumentContext. Typically, only used internally.
      */
-    val parsed: DocumentContext =
+    override val parsed: DocumentContext =
         JsonPath
             .using(
                 Configuration
@@ -64,8 +69,8 @@ data class GraphQLResponse(
      * Map representation of data
      */
 
-    val data: Map<String, Any> = parsed.read("data") ?: emptyMap()
-    val errors: List<GraphQLError> = parsed.read("errors", jsonTypeRef<List<GraphQLError>>()) ?: emptyList()
+    override val data: Map<String, Any> = parsed.read("data") ?: emptyMap()
+    override val errors: List<GraphQLError> = parsed.read("errors", jsonTypeRef<List<GraphQLError>>()) ?: emptyList()
 
     constructor(
         @Language("json") json: String,
@@ -94,14 +99,14 @@ data class GraphQLResponse(
      * Deserialize data into the given class.
      * The class may need Jackson annotations for correct mapping.
      */
-    fun <T> dataAsObject(clazz: Class<T>): T = mapper.convertValue(data, clazz)
+    override fun <T> dataAsObject(clazz: Class<T>): T = mapper.convertValue(data, clazz)
 
     /**
      * Extract values given a JsonPath. The return type will be whatever type you expect.
      * Although this looks type safe, it really isn't. Make sure values map to the expected type.
      * For JSON objects, a Map is returned. If you want to deserialize to a class, use #extractValueAsObject instead.
      */
-    fun <T> extractValue(path: String): T {
+    override fun <T> extractValue(path: String): T {
         val dataPath = getDataPath(path)
 
         try {
@@ -115,7 +120,7 @@ data class GraphQLResponse(
     /**
      * Extract values given a JsonPath and deserialize into the given class.
      */
-    fun <T> extractValueAsObject(
+    override fun <T> extractValueAsObject(
         path: String,
         clazz: Class<T>,
     ): T {
@@ -133,7 +138,7 @@ data class GraphQLResponse(
      * Extract values given a JsonPath and deserialize into the given TypeRef.
      * Use this for Lists of a specific type.
      */
-    fun <T> extractValueAsObject(
+    override fun <T> extractValueAsObject(
         path: String,
         typeRef: TypeRef<T>,
     ): T {
@@ -151,9 +156,9 @@ data class GraphQLResponse(
      * Extracts RequestDetails from the response if available.
      * Returns null otherwise.
      */
-    fun getRequestDetails(): RequestDetails? = extractValueAsObject("gatewayRequestDetails", RequestDetails::class.java)
+    override fun getRequestDetails(): RequestDetails? = extractValueAsObject("gatewayRequestDetails", RequestDetails::class.java)
 
-    fun hasErrors(): Boolean = errors.isNotEmpty()
+    override fun hasErrors(): Boolean = errors.isNotEmpty()
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(GraphQLResponse::class.java)
@@ -168,12 +173,11 @@ data class GraphQLResponse(
                 enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
             }
 
-        fun getDataPath(path: String): String =
-            if (path == "data" || path.startsWith("data.")) {
-                path
-            } else {
-                "data.$path"
-            }
+        @Deprecated(
+            "Use DgsGraphQLResponse.getDataPath instead",
+            ReplaceWith("DgsGraphQLResponse.getDataPath(path)", "com.netflix.graphql.dgs.client.DgsGraphQLResponse"),
+        )
+        fun getDataPath(path: String): String = DgsGraphQLResponse.getDataPath(path)
     }
 }
 

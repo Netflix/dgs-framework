@@ -53,6 +53,7 @@ allprojects {
     // as dependencies. e.g. KOTLIN_VERSION
     extra["sb.version"] = "4.0.0"
     extra["kotlin.version"] = Versions.KOTLIN_VERSION
+    extra["json-path.version"] = "3.0.0"
 }
 val internalBomModules by extra(
     listOf(
