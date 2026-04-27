@@ -25,6 +25,11 @@ import reactor.core.publisher.Mono
  * The user is responsible for doing the actual HTTP request, making this pluggable with any HTTP client.
  * For a more convenient option, use [WebClientGraphQLClient] instead.
  */
+@Deprecated(
+    "Tied to Jackson 2. Migrate to DgsCustomMonoGraphQLClient, which accepts any DgsJsonMapper. " +
+        "This class will be removed in a future release.",
+    ReplaceWith("DgsCustomMonoGraphQLClient", "com.netflix.graphql.dgs.client.DgsCustomMonoGraphQLClient"),
+)
 class CustomMonoGraphQLClient(
     private val url: String,
     private val monoRequestExecutor: MonoRequestExecutor,

@@ -22,13 +22,18 @@ import reactor.core.publisher.Flux
 /**
  * GraphQL client interface for reactive clients that support multiple results such as subscriptions.
  */
-interface ReactiveGraphQLClient {
+@Deprecated(
+    "Tied to Jackson 2 through GraphQLResponse. Program against DgsReactiveGraphQLClient instead. " +
+        "This interface will be removed in a future release.",
+    ReplaceWith("DgsReactiveGraphQLClient", "com.netflix.graphql.dgs.client.DgsReactiveGraphQLClient"),
+)
+interface ReactiveGraphQLClient : DgsReactiveGraphQLClient {
     /**
      * @param query The query string. Note that you can use [code generation](https://netflix.github.io/dgs/generating-code-from-schema/#generating-query-apis-for-external-services) for a type safe query!
      * @param variables A map of input variables
      * @return A [Flux] of [GraphQLResponse]. [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
-    fun reactiveExecuteQuery(
+    override fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
     ): Flux<GraphQLResponse>
@@ -39,7 +44,7 @@ interface ReactiveGraphQLClient {
      * @param operationName Operation name
      * @return A [Flux] of [GraphQLResponse]. [GraphQLResponse] parses the response and gives easy access to data and errors.
      */
-    fun reactiveExecuteQuery(
+    override fun reactiveExecuteQuery(
         @Language("graphql") query: String,
         variables: Map<String, Any>,
         operationName: String?,

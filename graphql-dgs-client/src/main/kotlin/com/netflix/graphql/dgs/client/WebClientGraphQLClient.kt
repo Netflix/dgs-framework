@@ -41,6 +41,11 @@ import java.util.function.Consumer
  *      message.subscribe();
  * ```
  */
+@Deprecated(
+    "Tied to Jackson 2. Migrate to DgsWebClientGraphQLClient, which accepts any DgsJsonMapper. " +
+        "This class will be removed in a future release.",
+    ReplaceWith("DgsWebClientGraphQLClient", "com.netflix.graphql.dgs.client.DgsWebClientGraphQLClient"),
+)
 class WebClientGraphQLClient(
     private val webclient: WebClient,
     private val headersConsumer: Consumer<HttpHeaders>,
