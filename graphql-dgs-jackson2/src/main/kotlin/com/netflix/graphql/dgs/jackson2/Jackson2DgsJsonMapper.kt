@@ -33,7 +33,7 @@ import com.netflix.graphql.dgs.json.DgsJsonMapper
  * Jackson 2 implementation of [DgsJsonMapper].
  * Used when consumers opt back into Jackson 2 via the `graphql-dgs-jackson2` module`.
  */
-class Jackson2DgsJsonMapper : DgsJsonMapper {
+internal class Jackson2DgsJsonMapper : DgsJsonMapper {
     private val objectMapper: ObjectMapper =
         ObjectMapper()
             .registerModule(kotlinModule { enable(KotlinFeature.NullIsSameAsDefault) })

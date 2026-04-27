@@ -6,4 +6,4 @@
 
 package com.netflix.graphql.dgs.diagnostics
 
-class DgsJsonMapperMissingException : RuntimeException()
+class DgsJsonMapperMissingException : RuntimeException("No DgsJsonMapper bean found")

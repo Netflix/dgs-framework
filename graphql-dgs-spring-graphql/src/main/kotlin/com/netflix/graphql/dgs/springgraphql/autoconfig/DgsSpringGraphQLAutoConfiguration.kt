@@ -190,10 +190,10 @@ open class DgsSpringGraphQLAutoConfiguration(
         havingValue = "jackson3",
         matchIfMissing = true,
     )
-    open class Jackson3DgsJsonMapperConfiguration {
+    internal class Jackson3DgsJsonMapperConfiguration {
         @Bean
         @ConditionalOnMissingBean(DgsJsonMapper::class)
-        open fun dgsJsonMapper(): DgsJsonMapper = Jackson3DgsJsonMapper()
+        fun dgsJsonMapper(): DgsJsonMapper = Jackson3DgsJsonMapper()
     }
 
     @Bean
