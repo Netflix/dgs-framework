@@ -516,7 +516,7 @@ open class DgsSpringGraphQLAutoConfiguration(
      * Defaults to [Dispatchers.Unconfined] which runs coroutines immediately on the calling thread.
      * Override this bean to customize the dispatcher for your specific use case.
      */
-    @Bean
+    @Bean(defaultCandidate = false)
     @Qualifier("dgsCoroutineDispatcher")
     @ConditionalOnMissingBean(name = ["dgsCoroutineDispatcher"])
     open fun dgsCoroutineDispatcher(): CoroutineDispatcher = Dispatchers.Unconfined
