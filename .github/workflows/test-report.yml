@@ -4,6 +4,10 @@ on:
     workflows: ['CI']                     # runs after CI workflow
     types:
       - completed
+
+permissions:
+  contents: read
+
 jobs:
   report:
     runs-on: ubuntu-latest
