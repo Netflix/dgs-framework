@@ -97,7 +97,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         }
 
-        implementation("org.slf4j:slf4j-api:2.0.17")
+        implementation("org.slf4j:slf4j-api:2.0.18")
         implementation("org.jetbrains:annotations:26.1.0")
         testImplementation("io.mockk:mockk:1.+")
 
