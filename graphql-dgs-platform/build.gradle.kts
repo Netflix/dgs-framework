@@ -72,10 +72,10 @@ dependencies {
             }
         }
         api("io.projectreactor:reactor-core") {
-            version { require("3.6.1") }
+            version { require("3.8.0") }
         }
         api("io.projectreactor:reactor-test"){
-            version { require("3.6.1") }
+            version { require("3.8.0") }
         }
         // CVEs
         api("org.apache.logging.log4j:log4j-to-slf4j:2.25.3") {
