@@ -46,7 +46,7 @@ internal class BatchLoaderWithContextInterceptor(
                             .tags(
                                 listOf(
                                     Tag.of(GqlTag.LOADER_NAME.key, name),
-                                    Tag.of(GqlTag.LOADER_BATCH_SIZE.key, resultSize.toString()),
+                                    Tag.of(GqlTag.LOADER_BATCH_SIZE.key, bucketBatchSize(resultSize).toString()),
                                 ),
                             ).register(registry),
                     )
@@ -65,5 +65,21 @@ internal class BatchLoaderWithContextInterceptor(
     companion object {
         private val ID = GqlMetric.DATA_LOADER.key
         private val logger = LoggerFactory.getLogger(BatchLoaderWithContextInterceptor::class.java)
+
+        private val BATCH_SIZE_BUCKETS = listOf(5, 10, 25, 50, 100, 200, 500, 1000, 2000, 5000, 10000)
+
+        /**
+         * Buckets the given batch size into a predefined range to limit metric cardinality.
+         * Uses the same bucketing approach as query complexity in [DgsGraphQLMetricsInstrumentation].
+         * Returns the smallest bucket that the size falls below, or [Int.MAX_VALUE] if it exceeds all buckets.
+         */
+        internal fun bucketBatchSize(size: Int): Int {
+            for (bucket in BATCH_SIZE_BUCKETS) {
+                if (size < bucket) {
+                    return bucket
+                }
+            }
+            return Int.MAX_VALUE
+        }
     }
 }
