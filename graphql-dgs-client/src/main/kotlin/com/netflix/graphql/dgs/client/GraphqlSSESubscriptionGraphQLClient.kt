@@ -30,6 +30,14 @@ import reactor.core.scheduler.Schedulers
  * This client can be used for servers which are following the graphql-sse specification, which can be found here:
  * https://github.com/graphql/graphql-over-http/blob/d51ae80d62b5fd8802a3383793f01bdf306e8290/rfcs/GraphQLOverSSE.md
  */
+@Deprecated(
+    "Tied to Jackson 2. Migrate to DgsGraphqlSSESubscriptionGraphQLClient, which accepts any " +
+        "DgsJsonMapper (defaulting to Jackson 3). This class will be removed in a future release.",
+    ReplaceWith(
+        "DgsGraphqlSSESubscriptionGraphQLClient",
+        "com.netflix.graphql.dgs.client.DgsGraphqlSSESubscriptionGraphQLClient",
+    ),
+)
 class GraphqlSSESubscriptionGraphQLClient(
     private val url: String,
     private val webClient: WebClient,

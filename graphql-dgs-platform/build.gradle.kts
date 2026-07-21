@@ -67,7 +67,9 @@ dependencies {
         }
         // ---
         api("com.jayway.jsonpath:json-path") {
-            version { require("2.9.0") }
+            version {
+                strictly("3.0.0")
+            }
         }
         api("io.projectreactor:reactor-core") {
             version { require("3.6.1") }
@@ -97,6 +99,9 @@ val ignoreInternalModules by extra(
         project(":graphql-dgs-example-shared"),
         project(":graphql-dgs-spring-graphql-example-java"),
         project(":graphql-dgs-spring-graphql-example-java-webflux"),
+        project(":graphql-dgs-example-jackson3-only"),
+        project(":graphql-dgs-example-jackson2-only"),
+        project(":graphql-dgs-example-jackson-both"),
         project(":graphql-dgs-platform-dependencies")
     )
 )

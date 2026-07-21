@@ -11,19 +11,19 @@ jobs:
     environment: Publish
     steps:
       - uses: actions/checkout@v6.0.2
-      - name: Setup jdk 8
+      - name: Setup jdk 17
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: 8
-      - uses: actions/cache@v5.0.4
+          java-version: 17
+      - uses: actions/cache@v5.0.5
         id: gradle-cache
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle/dependency-locks/*.lockfile') }}
           restore-keys: |
             - ${{ runner.os }}-gradle-
-      - uses: actions/cache@v5.0.4
+      - uses: actions/cache@v5.0.5
         id: gradle-wrapper-cache
         with:
           path: ~/.gradle/wrapper
