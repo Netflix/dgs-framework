@@ -30,7 +30,7 @@ class DgsWrapWithContextDataLoaderCustomizer : DgsDataLoaderCustomizer {
     override fun provide(
         original: BatchLoader<*, *>,
         name: String,
-    ): Any = BatchLoaderWithContextWrapper(original)
+    ): Any = BatchLoaderWithContextWrapper(original as BatchLoader<Any, Any>)
 
     override fun provide(
         original: BatchLoaderWithContext<*, *>,
@@ -40,7 +40,7 @@ class DgsWrapWithContextDataLoaderCustomizer : DgsDataLoaderCustomizer {
     override fun provide(
         original: MappedBatchLoader<*, *>,
         name: String,
-    ): Any = MappedBatchLoaderWithContextWrapper(original)
+    ): Any = MappedBatchLoaderWithContextWrapper(original as MappedBatchLoader<Any, Any>)
 
     override fun provide(
         original: MappedBatchLoaderWithContext<*, *>,
@@ -48,7 +48,7 @@ class DgsWrapWithContextDataLoaderCustomizer : DgsDataLoaderCustomizer {
     ): Any = original
 }
 
-internal class BatchLoaderWithContextWrapper<K, V>(
+internal class BatchLoaderWithContextWrapper<K : Any, V : Any>(
     private val original: BatchLoader<K, V>,
 ) : BatchLoaderWithContext<K, V>,
     DgsDataLoaderRegistryConsumer {
@@ -59,12 +59,12 @@ internal class BatchLoaderWithContextWrapper<K, V>(
 
     override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry?) {
         if (original is DgsDataLoaderRegistryConsumer) {
-            (original as DgsDataLoaderRegistryConsumer).setDataLoaderRegistry(dataLoaderRegistry)
+            original.setDataLoaderRegistry(dataLoaderRegistry)
         }
     }
 }
 
-internal class MappedBatchLoaderWithContextWrapper<K, V>(
+internal class MappedBatchLoaderWithContextWrapper<K : Any, V : Any>(
     private val original: MappedBatchLoader<K, V>,
 ) : MappedBatchLoaderWithContext<K, V>,
     DgsDataLoaderRegistryConsumer {
@@ -75,7 +75,7 @@ internal class MappedBatchLoaderWithContextWrapper<K, V>(
 
     override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry?) {
         if (original is DgsDataLoaderRegistryConsumer) {
-            (original as DgsDataLoaderRegistryConsumer).setDataLoaderRegistry(dataLoaderRegistry)
+            original.setDataLoaderRegistry(dataLoaderRegistry)
         }
     }
 }

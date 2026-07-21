@@ -32,10 +32,11 @@ import com.netflix.graphql.dgs.springgraphql.webmvc.DgsWebMvcGraphQLInterceptor
 import graphql.ErrorClassification
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.getBean
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.AutoConfigurations
-import org.springframework.boot.autoconfigure.graphql.GraphQlAutoConfiguration
-import org.springframework.boot.autoconfigure.graphql.GraphQlSourceBuilderCustomizer
+import org.springframework.boot.graphql.autoconfigure.GraphQlAutoConfiguration
+import org.springframework.boot.graphql.autoconfigure.GraphQlSourceBuilderCustomizer
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import org.springframework.boot.test.context.runner.ReactiveWebApplicationContextRunner
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner
@@ -149,7 +150,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
             .run { context ->
                 assertThat(
                     context
-                        .getBean(DgsSpringGraphQLConfigurationProperties::class.java)
+                        .getBean<DgsSpringGraphQLConfigurationProperties>()
                         .webmvc.asyncdispatch.enabled,
                 ).isFalse()
             }
@@ -163,7 +164,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
             .run { context ->
                 assertThat(
                     context
-                        .getBean(DgsSpringGraphQLConfigurationProperties::class.java)
+                        .getBean<DgsSpringGraphQLConfigurationProperties>()
                         .webmvc.asyncdispatch.enabled,
                 ).isTrue()
             }
@@ -177,7 +178,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
             .run { context ->
                 assertThat(
                     context
-                        .getBean(DgsSpringGraphQLConfigurationProperties::class.java)
+                        .getBean<DgsSpringGraphQLConfigurationProperties>()
                         .webmvc.asyncdispatch.enabled,
                 ).isFalse()
             }
@@ -375,7 +376,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
             .run { context ->
                 assertThat(
                     context
-                        .getBean(DgsConfigurationProperties::class.java)
+                        .getBean<DgsConfigurationProperties>()
                         .strictMode.enabled,
                 ).isTrue()
             }
@@ -389,7 +390,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
             .run { context ->
                 assertThat(
                     context
-                        .getBean(DgsConfigurationProperties::class.java)
+                        .getBean<DgsConfigurationProperties>()
                         .strictMode.enabled,
                 ).isFalse()
             }

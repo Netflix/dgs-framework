@@ -51,7 +51,6 @@ class DgsWebFluxGraphQLInterceptor(
                 request.configureExecutionInput { e, builder ->
                     dataLoaderRegistry = dgsDataLoaderProvider.buildRegistryWithContextSupplier { e.graphQLContext }
                     builder
-                        .context(dgsContext)
                         .graphQLContext(dgsContext)
                         .dataLoaderRegistry(dataLoaderRegistry)
                         .build()

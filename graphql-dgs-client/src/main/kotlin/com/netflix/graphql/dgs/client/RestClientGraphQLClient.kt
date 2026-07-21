@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.intellij.lang.annotations.Language
 import org.springframework.http.HttpHeaders
 import org.springframework.web.client.RestClient
+import org.springframework.web.client.toEntity
 import java.util.function.Consumer
 
 /**
@@ -38,6 +39,10 @@ import java.util.function.Consumer
  *      }
  * ```
  */
+@Deprecated(
+    "Tied to Jackson 2. Migrate to DgsRestClientGraphQLClient, which accepts any DgsJsonMapper (defaulting to Jackson 3). This class will be removed in a future release.",
+    ReplaceWith("DgsRestClientGraphQLClient", "com.netflix.graphql.dgs.client.DgsRestClientGraphQLClient"),
+)
 class RestClientGraphQLClient(
     private val restClient: RestClient,
     private val headersConsumer: Consumer<HttpHeaders>,
@@ -96,11 +101,14 @@ class RestClientGraphQLClient(
         val responseEntity =
             restClient
                 .post()
-                .headers { headers -> headers.addAll(GraphQLClients.defaultHeaders) }
-                .headers(this.headersConsumer)
+                .headers { headers ->
+                    GraphQLClients.defaultHeaders.forEach { (key, values) ->
+                        headers.addAll(key, values)
+                    }
+                }.headers(this.headersConsumer)
                 .body(serializedRequest)
                 .retrieve()
-                .toEntity(String::class.java)
+                .toEntity<String>()
 
         if (!responseEntity.statusCode.is2xxSuccessful) {
             throw GraphQLClientException(
@@ -111,6 +119,12 @@ class RestClientGraphQLClient(
             )
         }
 
-        return GraphQLResponse(json = responseEntity.body ?: "", headers = responseEntity.headers, mapper)
+        return GraphQLResponse(json = responseEntity.body ?: "", headers = responseEntity.headers.toMap(), mapper)
     }
+}
+
+private fun HttpHeaders.toMap(): Map<String, List<String>> {
+    val result = mutableMapOf<String, List<String>>()
+    this.forEach { key, values -> result[key] = values }
+    return result
 }

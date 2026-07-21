@@ -16,7 +16,7 @@
 
 package com.netflix.graphql.dgs.example.datafetcher;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.netflix.graphql.dgs.DgsQueryExecutor;
 import com.netflix.graphql.dgs.example.shared.types.Stock;
 import graphql.ExecutionResult;
@@ -25,6 +25,7 @@ import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import reactor.test.StepVerifier;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Map;
 

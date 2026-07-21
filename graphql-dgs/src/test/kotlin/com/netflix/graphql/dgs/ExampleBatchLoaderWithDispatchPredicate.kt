@@ -26,7 +26,7 @@ class ExampleBatchLoaderWithDispatchPredicate : BatchLoader<String, String> {
     @DgsDispatchPredicate
     val dgsPredicate: DispatchPredicate = DispatchPredicate.dispatchIfDepthGreaterThan(1)
 
-    override fun load(keys: MutableList<String>?): CompletionStage<MutableList<String>> =
+    override fun load(keys: List<String>): CompletionStage<List<String>> =
         CompletableFuture.supplyAsync {
             mutableListOf("a", "b", "c")
         }

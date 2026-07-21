@@ -37,7 +37,7 @@ class GraphQLContextContributorInstrumentation(
      */
     override fun createState(parameters: InstrumentationCreateStateParameters): InstrumentationState? {
         val graphqlContext = parameters.executionInput.graphQLContext
-        if (graphqlContext != null && graphQLContextContributors.isNotEmpty()) {
+        if (graphQLContextContributors.isNotEmpty()) {
             val extensions = parameters.executionInput.extensions
             val requestData = DgsContext.from(graphqlContext).requestData
             val builderForContributors = GraphQLContext.newContext()

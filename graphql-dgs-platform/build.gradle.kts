@@ -19,15 +19,6 @@ plugins {
     `maven-publish`
 }
 
-publishing {
-    publications {
-        configure(containerWithType(MavenPublication::class.java)) {
-            nebulaDependencyManagement {
-                from(components["javaPlatform"])
-            }
-        }
-    }
-}
 
 description = "${rootProject.description} (Bill of Materials)"
 
@@ -49,14 +40,13 @@ dependencies {
         // GraphQL Platform
         api("com.graphql-java:graphql-java") {
             version {
-                require("24.0")
-                reject("[20.6, 19.5, 18.2]")
+                require("25.0")
             }
 
         }
         api("com.graphql-java:java-dataloader") {
             version {
-                require("5.0.0")
+                require("6.0.0")
                 reject("[3.2.1]")
             }
 
@@ -77,7 +67,9 @@ dependencies {
         }
         // ---
         api("com.jayway.jsonpath:json-path") {
-            version { require("2.9.0") }
+            version {
+                strictly("3.0.0")
+            }
         }
         api("io.projectreactor:reactor-core") {
             version { require("3.6.1") }
@@ -86,14 +78,14 @@ dependencies {
             version { require("3.6.1") }
         }
         // CVEs
-        api("org.apache.logging.log4j:log4j-to-slf4j:2.25.2") {
+        api("org.apache.logging.log4j:log4j-to-slf4j:2.25.3") {
             because("Refer to CVE-2021-44228; https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228")
          }
-         api("org.apache.logging.log4j:log4j-api:2.25.2") {
+         api("org.apache.logging.log4j:log4j-api:2.25.3") {
             because("Refer to CVE-2021-44228; https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228")
          }
         api("io.micrometer:context-propagation") {
-            version { require("1.1.1") }
+            version { require("1.2.0") }
         }
     }
 }
@@ -107,6 +99,9 @@ val ignoreInternalModules by extra(
         project(":graphql-dgs-example-shared"),
         project(":graphql-dgs-spring-graphql-example-java"),
         project(":graphql-dgs-spring-graphql-example-java-webflux"),
+        project(":graphql-dgs-example-jackson3-only"),
+        project(":graphql-dgs-example-jackson2-only"),
+        project(":graphql-dgs-example-jackson-both"),
         project(":graphql-dgs-platform-dependencies")
     )
 )

@@ -16,17 +16,15 @@
 
 package com.netflix.graphql.dgs.springgraphql.autoconfig
 
+import org.springframework.boot.EnvironmentPostProcessor
 import org.springframework.boot.SpringApplication
-import org.springframework.boot.context.properties.bind.Binder
 import org.springframework.boot.context.properties.source.ConfigurationPropertySources
-import org.springframework.boot.env.EnvironmentPostProcessor
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.MapPropertySource
 import org.springframework.core.env.MutablePropertySources
-import java.util.Collections
-import java.util.stream.Collectors
+import org.springframework.core.env.getProperty
 
 /**
  * Globally disable AutoConfig's which cause problems in the Netflix environment
@@ -41,7 +39,7 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
         val disabled =
             DISABLE_AUTOCONFIG_PROPERTIES
                 .asSequence()
-                .filter { !environment.getProperty(it.key, Boolean::class.java, false) }
+                .filter { !environment.getProperty<Boolean>(it.key, false) }
                 .map { it.value }
                 .plus(existingExcludes)
                 .filter { it.isNotEmpty() }
@@ -51,9 +49,9 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
             .addFirst(
                 MapPropertySource(
                     "disableRefreshScope",
-                    Collections.singletonMap<String, Any>(
-                        "spring.autoconfigure.exclude",
-                        disabled,
+                    mapOf(
+                        "spring.autoconfigure.exclude" to
+                            disabled,
                     ),
                 ),
             )
@@ -66,29 +64,24 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
         }
 
         return propertySources
-            .stream()
+            .asSequence()
             .filter { src -> !ConfigurationPropertySources.isAttachedConfigurationPropertySource(src) }
-            .map { src ->
-                Binder(ConfigurationPropertySources.from(src))
-                    .bind(EXCLUDE, Array<String>::class.java)
-                    .map {
-                        it.toList()
-                    }.orElse(emptyList())
-            }.flatMap { it.stream() }
-            .collect(Collectors.joining(","))
+            .flatMap { src ->
+                when (val property = src.getProperty(EXCLUDE)) {
+                    is String -> property.splitToSequence(",").filter { it.isNotBlank() }
+                    is Array<*> -> property.asSequence().filterIsInstance<String>().filter { it.isNotBlank() }
+                    else -> emptySequence()
+                }
+            }.joinToString(",")
     }
 
     companion object {
         private val DISABLE_AUTOCONFIG_PROPERTIES =
             mapOf(
-                Pair(
-                    "dgs.springgraphql.autoconfiguration.graphqlobservation.enabled",
-                    "org.springframework.boot.actuate.autoconfigure.observation.graphql.GraphQlObservationAutoConfiguration",
-                ),
-                Pair(
-                    "dgs.springgraphql.autoconfiguration.graphqlwebmvcsecurity.enabled",
-                    "org.springframework.boot.autoconfigure.graphql.security.GraphQlWebMvcSecurityAutoConfiguration",
-                ),
+                "dgs.springgraphql.autoconfiguration.graphqlobservation.enabled" to
+                    "org.springframework.boot.graphql.autoconfigure.observation.GraphQlObservationAutoConfiguration",
+                "dgs.springgraphql.autoconfiguration.graphqlwebmvcsecurity.enabled" to
+                    "org.springframework.boot.graphql.autoconfigure.security.GraphQlWebMvcSecurityAutoConfiguration",
             )
 
         private const val EXCLUDE = "spring.autoconfigure.exclude"

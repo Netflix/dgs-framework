@@ -26,6 +26,7 @@ import graphql.schema.GraphQLSchema
 import graphql.schema.TypeResolver
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.TypeDefinitionRegistry
+import org.jspecify.annotations.Nullable
 import org.springframework.core.ResolvableType
 import org.springframework.core.io.Resource
 import org.springframework.graphql.execution.AbstractGraphQlSourceBuilder
@@ -35,7 +36,6 @@ import org.springframework.graphql.execution.SchemaMappingInspector
 import org.springframework.graphql.execution.SchemaReport
 import org.springframework.graphql.execution.SelfDescribingDataFetcher
 import org.springframework.graphql.execution.TypeDefinitionConfigurer
-import org.springframework.lang.Nullable
 import java.util.function.BiFunction
 import java.util.function.Consumer
 
@@ -49,14 +49,11 @@ class DgsGraphQLSourceBuilder(
 
     private val schemaResources: Set<Resource> = LinkedHashSet()
 
-    @Nullable
-    private var typeResolver: TypeResolver? = null
+    private var typeResolver: @Nullable TypeResolver? = null
 
-    @Nullable
-    private var schemaReportConsumer: Consumer<SchemaReport>? = null
+    private var schemaReportConsumer: @Nullable Consumer<SchemaReport>? = null
 
-    @Nullable
-    private var initializerConsumer: Consumer<SchemaMappingInspector.Initializer>? = null
+    private var initializerConsumer: @Nullable Consumer<SchemaMappingInspector.Initializer>? = null
 
     override fun initGraphQlSchema(): GraphQLSchema {
         val schema = dgsSchemaProvider.schema(schemaResources = schemaResources, showSdlComments = showSdlComments)
@@ -64,7 +61,7 @@ class DgsGraphQLSourceBuilder(
         return schema.graphQLSchema
     }
 
-    override fun schemaResources(vararg resources: Resource?): SchemaResourceBuilder {
+    override fun schemaResources(vararg resources: Resource): SchemaResourceBuilder {
         schemaResources.plus(listOf(*resources))
         return this
     }

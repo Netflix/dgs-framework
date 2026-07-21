@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.client
 
 import com.netflix.graphql.types.subscription.QueryPayload
 import org.intellij.lang.annotations.Language
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.toEntityFlux
@@ -29,10 +30,18 @@ import reactor.core.scheduler.Schedulers
  * This client can be used for servers which are following the graphql-sse specification, which can be found here:
  * https://github.com/graphql/graphql-over-http/blob/d51ae80d62b5fd8802a3383793f01bdf306e8290/rfcs/GraphQLOverSSE.md
  */
+@Deprecated(
+    "Tied to Jackson 2. Migrate to DgsGraphqlSSESubscriptionGraphQLClient, which accepts any " +
+        "DgsJsonMapper (defaulting to Jackson 3). This class will be removed in a future release.",
+    ReplaceWith(
+        "DgsGraphqlSSESubscriptionGraphQLClient",
+        "com.netflix.graphql.dgs.client.DgsGraphqlSSESubscriptionGraphQLClient",
+    ),
+)
 class GraphqlSSESubscriptionGraphQLClient(
     private val url: String,
     private val webClient: WebClient,
-    private val options: GraphQLRequestOptions? = null,
+    options: GraphQLRequestOptions? = null,
 ) : ReactiveGraphQLClient {
     constructor(url: String, webClient: WebClient) : this(url, webClient, null)
 
@@ -63,10 +72,12 @@ class GraphqlSSESubscriptionGraphQLClient(
                 .retrieve()
                 .toEntityFlux<String>()
                 .flatMapMany {
-                    val headers = it.headers
-                    it.body?.map { serverSentEvent ->
-                        sink.tryEmitNext(GraphQLResponse(json = serverSentEvent, headers = headers, mapper))
-                    } ?: Flux.empty()
+                    val headers = it.headers.toMap()
+                    it.body
+                        ?.filter { serverSentEvent -> serverSentEvent.isNotBlank() }
+                        ?.map { serverSentEvent ->
+                            sink.tryEmitNext(GraphQLResponse(json = serverSentEvent, headers = headers, mapper))
+                        } ?: Flux.empty()
                 }.onErrorResume {
                     Flux.just(sink.tryEmitError(it))
                 }.doFinally {
@@ -77,4 +88,10 @@ class GraphqlSSESubscriptionGraphQLClient(
             dis.dispose()
         }
     }
+}
+
+private fun HttpHeaders.toMap(): Map<String, List<String>> {
+    val result = mutableMapOf<String, List<String>>()
+    this.forEach { key, values -> result[key] = values }
+    return result
 }

@@ -22,6 +22,5 @@ import java.util.concurrent.CompletionStage
 
 @DgsDataLoader(name = "exampleLoader")
 class ExampleBatchLoader : BatchLoader<String, String> {
-    override fun load(keys: MutableList<String>?): CompletionStage<MutableList<String>> =
-        CompletableFuture.supplyAsync { mutableListOf("a", "b", "c") }
+    override fun load(keys: List<String>): CompletionStage<List<String>> = CompletableFuture.supplyAsync { mutableListOf("a", "b", "c") }
 }

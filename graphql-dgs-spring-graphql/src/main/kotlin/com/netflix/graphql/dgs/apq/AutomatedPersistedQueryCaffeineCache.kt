@@ -30,7 +30,7 @@ class AutomatedPersistedQueryCaffeineCache(
     override fun getFromCache(
         key: String,
         documentEntrySupplier: Supplier<PreparsedDocumentEntry>,
-    ): PreparsedDocumentEntry? =
+    ): PreparsedDocumentEntry =
         cache.get(key) {
             documentEntrySupplier.get()
         }

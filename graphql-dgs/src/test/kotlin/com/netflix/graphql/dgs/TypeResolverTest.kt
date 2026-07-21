@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.getBeansWithAnnotation
 import org.springframework.context.ApplicationContext
 import java.util.Optional
 
@@ -60,9 +61,9 @@ class TypeResolverTest {
 
     @Test
     fun testFallbackTypeResolver() {
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation<DgsScalar>() } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
 
         val provider =
             DgsSchemaProvider(
@@ -120,9 +121,9 @@ class TypeResolverTest {
      */
     @Test
     fun testFallbackTypeResolverError() {
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns mapOf(Pair("queryResolver", queryFetcher))
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns mapOf("queryResolver" to queryFetcher)
+        every { applicationContextMock.getBeansWithAnnotation<DgsScalar>() } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
 
         val provider =
             DgsSchemaProvider(
@@ -190,10 +191,10 @@ class TypeResolverTest {
             }
 
         val typeResolverSpy = spyk(movieTypeResolver)
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
-            mapOf(Pair("MovieTypeResolver", typeResolverSpy), Pair("queryResolver", queryFetcher))
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns
+            mapOf("MovieTypeResolver" to typeResolverSpy, "queryResolver" to queryFetcher)
+        every { applicationContextMock.getBeansWithAnnotation<DgsScalar>() } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
 
         val provider =
             DgsSchemaProvider(

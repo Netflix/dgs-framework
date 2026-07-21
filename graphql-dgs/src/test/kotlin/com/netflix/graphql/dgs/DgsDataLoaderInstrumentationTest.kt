@@ -23,6 +23,7 @@ import com.netflix.graphql.dgs.internal.DgsWrapWithContextDataLoaderCustomizer
 import org.assertj.core.api.Assertions.assertThat
 import org.dataloader.BatchLoaderEnvironment
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.getBean
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -59,11 +60,11 @@ class DgsDataLoaderInstrumentationTest {
             .withBean(DgsDataLoaderInstrumentationDataLoaderCustomizer::class.java)
             .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter)
             .run { context ->
-                val provider = context.getBean(DgsDataLoaderProvider::class.java)
+                val provider = context.getBean<DgsDataLoaderProvider>()
                 val dataLoaderRegistry = provider.buildRegistry()
 
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("ExampleBatchLoaderWithoutName")
-                dataLoader.load("test")
+                dataLoader!!.load("test")
                 dataLoader
                     .dispatch()
                     .whenComplete { _, _ ->
@@ -86,11 +87,11 @@ class DgsDataLoaderInstrumentationTest {
             .withBean(DgsDataLoaderInstrumentationDataLoaderCustomizer::class.java)
             .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter)
             .run { context ->
-                val provider = context.getBean(DgsDataLoaderProvider::class.java)
+                val provider = context.getBean<DgsDataLoaderProvider>()
                 val dataLoaderRegistry = provider.buildRegistry()
 
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleBatchLoaderWithRegistryConsumer")
-                dataLoader.load("test")
+                dataLoader!!.load("test")
                 dataLoader
                     .dispatch()
                     .whenComplete { _, _ ->
@@ -113,18 +114,53 @@ class DgsDataLoaderInstrumentationTest {
             .withBean(DgsDataLoaderInstrumentationDataLoaderCustomizer::class.java)
             .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter)
             .run { context ->
-                val provider = context.getBean(DgsDataLoaderProvider::class.java)
+                val provider = context.getBean<DgsDataLoaderProvider>()
                 val dataLoaderRegistry = provider.buildRegistry()
 
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleLoaderThatThrows")
-                dataLoader.load("test")
+                dataLoader!!.load("test")
                 dataLoader
                     .dispatch()
-                    .whenComplete { _, _ ->
+                    .whenComplete { _, e ->
                         assertThat(beforeCounter.get()).isEqualTo(1)
                         assertThat(afterCounter.get()).isEqualTo(0)
                         assertThat(exceptionCounter.get()).isEqualTo(1)
                     }.join()
+            }
+    }
+
+    @Test
+    fun canDetectWhenDataLoaderThrowsWithDelay() {
+        val beforeCounter = AtomicInteger(0)
+        val afterCounter = AtomicInteger(0)
+        val exceptionCounter = AtomicInteger(0)
+
+        applicationContextRunner
+            .withBean(ExampleBatchLoaderThatThrowsWithDelay::class.java)
+            .withBean(DgsWrapWithContextDataLoaderCustomizer::class.java)
+            .withBean(DgsDataLoaderInstrumentationDataLoaderCustomizer::class.java)
+            .withBean(TestDataLoaderInstrumentation::class.java, beforeCounter, afterCounter, exceptionCounter)
+            .run { context ->
+                val provider = context.getBean<DgsDataLoaderProvider>()
+                val dataLoaderRegistry = provider.buildRegistry()
+
+                val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleLoaderThatThrowsWithDelay")
+                val loadFuture = dataLoader?.load("test")
+                dataLoader?.dispatch()
+
+                // Wait for the load operation to complete with exception
+                try {
+                    loadFuture?.toCompletableFuture()?.join()
+                } catch (e: Exception) {
+                    // Expected to throw
+                }
+
+                // Give some time for async callbacks to complete
+                Thread.sleep(100)
+
+                assertThat(beforeCounter.get()).isEqualTo(1)
+                assertThat(afterCounter.get()).isEqualTo(0)
+                assertThat(exceptionCounter.get()).isEqualTo(1)
             }
     }
 

@@ -17,7 +17,6 @@
 package com.netflix.graphql.dgs.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.netflix.graphql.dgs.client.WebClientGraphQLClient.RequestBodyUriCustomizer
 import org.intellij.lang.annotations.Language
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
@@ -41,6 +40,10 @@ import java.util.function.Consumer
  *      message.subscribe();
  * ```
  */
+@Deprecated(
+    "Tied to Jackson 2. Migrate to DgsWebClientGraphQLClient, which accepts any DgsJsonMapper (defaulting to Jackson 3). This class will be removed in a future release.",
+    ReplaceWith("DgsWebClientGraphQLClient", "com.netflix.graphql.dgs.client.DgsWebClientGraphQLClient"),
+)
 class WebClientGraphQLClient(
     private val webclient: WebClient,
     private val headersConsumer: Consumer<HttpHeaders>,
@@ -131,8 +134,11 @@ class WebClientGraphQLClient(
 
         return requestBodyUriCustomizer
             .apply(webclient.post())
-            .headers { headers -> headers.addAll(GraphQLClients.defaultHeaders) }
-            .headers(this.headersConsumer)
+            .headers { headers ->
+                GraphQLClients.defaultHeaders.forEach { (key, values) ->
+                    headers.addAll(key, values)
+                }
+            }.headers(this.headersConsumer)
             .bodyValue(serializedRequest)
             .retrieve()
             .toEntity<String>()
@@ -152,11 +158,7 @@ class WebClientGraphQLClient(
             )
         }
 
-        return GraphQLResponse(json = response.body ?: "", headers = response.headers, mapper)
-    }
-
-    companion object {
-        private val REQUEST_BODY_URI_CUSTOMIZER_IDENTITY = RequestBodyUriCustomizer { it }
+        return GraphQLResponse(json = response.body ?: "", headers = response.headers.toMap(), mapper)
     }
 
     @FunctionalInterface
@@ -178,4 +180,14 @@ class WebClientGraphQLClient(
     fun interface RequestBodyUriCustomizer {
         fun apply(spec: WebClient.RequestBodyUriSpec): RequestBodySpec
     }
+
+    companion object {
+        private val REQUEST_BODY_URI_CUSTOMIZER_IDENTITY = RequestBodyUriCustomizer { it }
+    }
+}
+
+private fun HttpHeaders.toMap(): Map<String, List<String>> {
+    val result = mutableMapOf<String, List<String>>()
+    this.forEach { key, values -> result[key] = values }
+    return result
 }

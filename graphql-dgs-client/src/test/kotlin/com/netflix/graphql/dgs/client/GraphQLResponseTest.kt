@@ -34,6 +34,7 @@ import org.springframework.test.web.client.match.MockRestRequestMatchers.method
 import org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo
 import org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess
 import org.springframework.web.client.RestTemplate
+import org.springframework.web.client.exchange
 import java.time.OffsetDateTime
 
 class GraphQLResponseTest {
@@ -43,10 +44,10 @@ class GraphQLResponseTest {
     private val requestExecutor =
         RequestExecutor { url, headers, body ->
             val httpHeaders = HttpHeaders()
-            headers.forEach { httpHeaders.addAll(it.key, it.value) }
+            headers.forEach { (key, values) -> httpHeaders.addAll(key, values) }
 
-            val response = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
-            HttpResponse(statusCode = response.statusCode.value(), body = response.body, headers = response.headers)
+            val response = restTemplate.exchange<String>(url, HttpMethod.POST, HttpEntity(body, httpHeaders))
+            HttpResponse(statusCode = response.statusCode.value(), body = response.body, headers = response.headers.toMap())
         }
 
     private val url = "http://localhost:8080/graphql"
@@ -348,4 +349,10 @@ class GraphQLResponseTest {
         assertThat(response.errors[0].message).isEqualTo("An error occurred")
         assertThat(response.errors[0].path).isEmpty()
     }
+}
+
+private fun HttpHeaders.toMap(): Map<String, List<String>> {
+    val result = mutableMapOf<String, List<String>>()
+    this.forEach { key, values -> result[key] = values }
+    return result
 }

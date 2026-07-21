@@ -19,13 +19,13 @@ package com.netflix.graphql.dgs.client
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.types.subscription.QueryPayload
 import org.intellij.lang.annotations.Language
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.toEntityFlux
 import reactor.core.publisher.Flux
 import reactor.core.scheduler.Schedulers
-import java.nio.charset.StandardCharsets
-import java.util.Base64
+import kotlin.io.encoding.Base64
 
 /*
  * This client can be used for servers which are following the subscriptions-transport-sse specification, which can be found here:
@@ -63,7 +63,7 @@ class SSESubscriptionGraphQLClient(
             .retrieve()
             .toEntityFlux<String>()
             .flatMapMany { response ->
-                val headers = response.headers
+                val headers = response.headers.toMap()
                 response.body?.map { body -> GraphQLResponse(json = body, headers = headers) }
                     ?: Flux.empty()
             }.publishOn(Schedulers.single())
@@ -71,5 +71,11 @@ class SSESubscriptionGraphQLClient(
 
     private fun encodeQuery(
         @Language("graphql") query: String,
-    ): String? = Base64.getEncoder().encodeToString(query.toByteArray(StandardCharsets.UTF_8))
+    ): String = Base64.encode(query.encodeToByteArray())
+}
+
+private fun HttpHeaders.toMap(): Map<String, List<String>> {
+    val result = mutableMapOf<String, List<String>>()
+    this.forEach { key, values -> result[key] = values }
+    return result
 }

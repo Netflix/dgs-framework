@@ -20,7 +20,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.web.reactive.function.server.ServerRequest
 import reactor.core.publisher.Mono
 
-interface DgsReactiveCustomContextBuilderWithRequest<T> {
+interface DgsReactiveCustomContextBuilderWithRequest<T : Any> {
     fun build(
         extensions: Map<String, Any>?,
         headers: HttpHeaders?,

@@ -129,7 +129,7 @@ class WebSocketGraphQLClient(
         // Because handshake is cached it should have only been done once, all subsequent calls to
         // reactiveExecuteQuery() will proceed straight to client.receive()
         return handshake
-            .doOnSuccess { client.send(queryMessage) }
+            .then(Mono.fromRunnable { client.send(queryMessage) })
             .thenMany(
                 client
                     .receive()

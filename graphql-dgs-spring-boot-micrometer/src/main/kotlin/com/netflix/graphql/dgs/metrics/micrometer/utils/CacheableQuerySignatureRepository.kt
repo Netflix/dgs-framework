@@ -23,7 +23,7 @@ import graphql.language.Document
 import io.micrometer.core.instrument.binder.cache.CaffeineCacheMetrics
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.boot.actuate.metrics.AutoTimer
+import org.springframework.boot.data.metrics.AutoTimer
 import org.springframework.cache.Cache
 import org.springframework.cache.CacheManager
 import org.springframework.cache.caffeine.CaffeineCacheManager

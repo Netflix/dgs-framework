@@ -18,17 +18,18 @@ package com.netflix.graphql.dgs.springgraphql
 
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
+import com.jayway.jsonpath.ParseContext
 import com.jayway.jsonpath.TypeRef
 import com.jayway.jsonpath.spi.mapper.MappingException
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.context.GraphQLContextContributor
 import com.netflix.graphql.dgs.exceptions.DgsQueryExecutionDataExtractionException
 import com.netflix.graphql.dgs.exceptions.QueryException
-import com.netflix.graphql.dgs.internal.BaseDgsQueryExecutor
 import com.netflix.graphql.dgs.internal.DefaultDgsGraphQLContextBuilder
 import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.DgsQueryExecutorRequestCustomizer
 import com.netflix.graphql.dgs.internal.DgsWebMvcRequestData
+import com.netflix.graphql.dgs.json.DgsJsonMapper
 import graphql.ExecutionResult
 import org.springframework.graphql.ExecutionGraphQlService
 import org.springframework.graphql.support.DefaultExecutionGraphQlRequest
@@ -41,9 +42,12 @@ class SpringGraphQLDgsQueryExecutor(
     private val executionService: ExecutionGraphQlService,
     private val dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
     private val dgsDataLoaderProvider: DgsDataLoaderProvider,
+    private val dgsJsonMapper: DgsJsonMapper,
     private val requestCustomizer: DgsQueryExecutorRequestCustomizer = DgsQueryExecutorRequestCustomizer.DEFAULT_REQUEST_CUSTOMIZER,
     private val graphQLContextContributors: List<GraphQLContextContributor>,
 ) : DgsQueryExecutor {
+    private val parseContext: ParseContext = JsonPath.using(dgsJsonMapper.jsonPathConfiguration())
+
     override fun execute(
         query: String,
         variables: Map<String, Any>,
@@ -68,7 +72,6 @@ class SpringGraphQLDgsQueryExecutor(
         request.configureExecutionInput { e, builder ->
             val dataLoaderRegistry = dgsDataLoaderProvider.buildRegistryWithContextSupplier { e.graphQLContext }
             builder
-                .context(dgsContext)
                 .graphQLContext(dgsContext)
                 .dataLoaderRegistry(dataLoaderRegistry)
                 .build()
@@ -80,19 +83,19 @@ class SpringGraphQLDgsQueryExecutor(
         return response.executionResult
     }
 
-    override fun <T : Any?> executeAndExtractJsonPath(
+    override fun <T> executeAndExtractJsonPath(
         query: String,
         jsonPath: String,
         variables: MutableMap<String, Any>,
     ): T = JsonPath.read(getJsonResult(query, variables), jsonPath)
 
-    override fun <T : Any?> executeAndExtractJsonPath(
+    override fun <T> executeAndExtractJsonPath(
         query: String,
         jsonPath: String,
         headers: HttpHeaders,
     ): T = JsonPath.read(getJsonResult(query, emptyMap(), headers), jsonPath)
 
-    override fun <T : Any?> executeAndExtractJsonPath(
+    override fun <T> executeAndExtractJsonPath(
         query: String,
         jsonPath: String,
         servletWebRequest: ServletWebRequest,
@@ -108,15 +111,15 @@ class SpringGraphQLDgsQueryExecutor(
     override fun executeAndGetDocumentContext(
         query: String,
         variables: MutableMap<String, Any>,
-    ): DocumentContext = BaseDgsQueryExecutor.parseContext.parse(getJsonResult(query, variables))
+    ): DocumentContext = parseContext.parse(getJsonResult(query, variables))
 
     override fun executeAndGetDocumentContext(
         query: String,
         variables: MutableMap<String, Any>,
         headers: HttpHeaders?,
-    ): DocumentContext = BaseDgsQueryExecutor.parseContext.parse(getJsonResult(query, variables, headers))
+    ): DocumentContext = parseContext.parse(getJsonResult(query, variables, headers))
 
-    override fun <T : Any?> executeAndExtractJsonPathAsObject(
+    override fun <T> executeAndExtractJsonPathAsObject(
         query: String,
         jsonPath: String,
         variables: MutableMap<String, Any>,
@@ -125,13 +128,13 @@ class SpringGraphQLDgsQueryExecutor(
     ): T {
         val jsonResult = getJsonResult(query, variables, headers)
         return try {
-            BaseDgsQueryExecutor.parseContext.parse(jsonResult).read(jsonPath, clazz)
+            parseContext.parse(jsonResult).read(jsonPath, clazz)
         } catch (ex: MappingException) {
             throw DgsQueryExecutionDataExtractionException(ex, jsonResult, jsonPath, clazz)
         }
     }
 
-    override fun <T : Any?> executeAndExtractJsonPathAsObject(
+    override fun <T> executeAndExtractJsonPathAsObject(
         query: String,
         jsonPath: String,
         variables: MutableMap<String, Any>,
@@ -140,7 +143,7 @@ class SpringGraphQLDgsQueryExecutor(
     ): T {
         val jsonResult = getJsonResult(query, variables, headers)
         return try {
-            BaseDgsQueryExecutor.parseContext.parse(jsonResult).read(jsonPath, typeRef)
+            parseContext.parse(jsonResult).read(jsonPath, typeRef)
         } catch (ex: MappingException) {
             throw DgsQueryExecutionDataExtractionException(ex, jsonResult, jsonPath, typeRef)
         }
@@ -154,10 +157,10 @@ class SpringGraphQLDgsQueryExecutor(
     ): String {
         val executionResult = execute(query, variables, null, headers, null, servletWebRequest)
 
-        if (executionResult.errors.size > 0) {
+        if (executionResult.errors.isNotEmpty()) {
             throw QueryException(executionResult.errors)
         }
 
-        return BaseDgsQueryExecutor.objectMapper.writeValueAsString(executionResult.toSpecification())
+        return dgsJsonMapper.writeValueAsString(executionResult.toSpecification())
     }
 }

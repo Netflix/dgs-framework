@@ -48,8 +48,8 @@ abstract class AbstractInputArgumentResolver(
         parameter: MethodParameter,
         dfe: DataFetchingEnvironment,
     ): Any? {
-        val argumentName = getArgumentName(parameter)
-        val value = dfe.getArgument<Any?>(argumentName)
+        val argumentName = getArgumentName(parameter) ?: return null
+        val value = dfe.getArgument<Any>(argumentName)
 
         val kfunc = parameter.method?.kotlinFunction
         if (kfunc != null) {
@@ -81,11 +81,11 @@ abstract class AbstractInputArgumentResolver(
     internal abstract fun resolveArgumentName(parameter: MethodParameter): String?
 
     private fun getArgumentName(parameter: MethodParameter): String? {
-        val cachedName = argumentNameCache[parameter]
-        if (cachedName != null) {
-            return cachedName
+        val argumentName = argumentNameCache[parameter]
+        if (argumentName != null) {
+            return argumentName
         }
-        val name = resolveArgumentName(parameter)
+        val name = resolveArgumentName(parameter) ?: return null
         argumentNameCache[parameter] = name
         return name
     }

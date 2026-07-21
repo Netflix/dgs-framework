@@ -42,12 +42,7 @@ class DgsWebMvcGraphQLInterceptor(
         chain: WebGraphQlInterceptor.Chain,
     ): Mono<WebGraphQlResponse> {
         // We need to pass in the original server request for the dgs context
-        val servletRequestAttributes =
-            if (RequestContextHolder.getRequestAttributes() is ServletRequestAttributes) {
-                (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes)
-            } else {
-                null
-            }
+        val servletRequestAttributes = RequestContextHolder.getRequestAttributes() as? ServletRequestAttributes
 
         val dgsContext =
             if (servletRequestAttributes != null) {
@@ -64,7 +59,6 @@ class DgsWebMvcGraphQLInterceptor(
                 dgsDataLoaderProvider.buildRegistryWithContextSupplier { e.graphQLContext }
 
             builder
-                .context(dgsContext)
                 .graphQLContext(dgsContext)
                 .dataLoaderRegistry(dataLoaderRegistry)
                 .build()
@@ -82,7 +76,7 @@ class DgsWebMvcGraphQLInterceptor(
             if (dataLoaderRegistry is AutoCloseable) {
                 (dataLoaderRegistry as AutoCloseable).close()
             }
-            return Mono.just(response)
+            Mono.just(response)
         }
     }
 }
