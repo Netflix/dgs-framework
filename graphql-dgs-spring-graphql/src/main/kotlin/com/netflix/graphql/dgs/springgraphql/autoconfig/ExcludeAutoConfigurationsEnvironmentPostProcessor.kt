@@ -18,14 +18,12 @@ package com.netflix.graphql.dgs.springgraphql.autoconfig
 
 import org.springframework.boot.EnvironmentPostProcessor
 import org.springframework.boot.SpringApplication
-import org.springframework.boot.context.properties.source.ConfigurationPropertySources
+import org.springframework.boot.context.properties.bind.Binder
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.MapPropertySource
-import org.springframework.core.env.MutablePropertySources
 import java.util.Collections
-import java.util.stream.Collectors
 
 /**
  * Globally disable AutoConfig's which cause problems in the Netflix environment
@@ -36,7 +34,7 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
         environment: ConfigurableEnvironment,
         application: SpringApplication,
     ) {
-        val existingExcludes = extractAllExcludes(environment.propertySources)
+        val existingExcludes = extractAllExcludes(environment)
         val disabled =
             DISABLE_AUTOCONFIG_PROPERTIES
                 .asSequence()
@@ -58,23 +56,12 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
             )
     }
 
-    private fun extractAllExcludes(propertySources: MutablePropertySources): String {
-        val testExclude = propertySources.find { it.name == INLINED_TEST_PROPERTIES }?.getProperty(EXCLUDE)
-        if (testExclude != null && testExclude is String && testExclude.isNotBlank()) {
-            return testExclude
-        }
-
-        return propertySources
-            .stream()
-            .filter { src -> !ConfigurationPropertySources.isAttachedConfigurationPropertySource(src) }
-            .flatMap<String> { src ->
-                val property = src.getProperty(EXCLUDE)
-                when (property) {
-                    is String -> property.split(",").filter { it.isNotBlank() }.stream()
-                    is Array<*> -> property.filterIsInstance<String>().filter { it.isNotBlank() }.stream()
-                    else -> emptyList<String>().stream()
-                }
-            }.collect(Collectors.joining(","))
+    private fun extractAllExcludes(environment: ConfigurableEnvironment): String {
+        return Binder.get(environment)
+            .bind(EXCLUDE, Array<String>::class.java)
+            .orElse(emptyArray<String>())
+            ?.filter { it.isNotBlank() }
+            ?.joinToString(",") ?: ""
     }
 
     companion object {
@@ -91,6 +78,5 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
             )
 
         private const val EXCLUDE = "spring.autoconfigure.exclude"
-        private const val INLINED_TEST_PROPERTIES = "Inlined Test Properties"
     }
 }
