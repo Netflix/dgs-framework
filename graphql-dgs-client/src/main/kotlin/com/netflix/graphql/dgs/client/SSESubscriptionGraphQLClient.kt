@@ -25,8 +25,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.toEntityFlux
 import reactor.core.publisher.Flux
 import reactor.core.scheduler.Schedulers
-import java.nio.charset.StandardCharsets
-import java.util.Base64
+import kotlin.io.encoding.Base64
 
 /*
  * This client can be used for servers which are following the subscriptions-transport-sse specification, which can be found here:
@@ -72,10 +71,10 @@ class SSESubscriptionGraphQLClient(
 
     private fun encodeQuery(
         @Language("graphql") query: String,
-    ): String? = Base64.getEncoder().encodeToString(query.toByteArray(StandardCharsets.UTF_8))
+    ): String = Base64.encode(query.encodeToByteArray())
 }
 
-private fun org.springframework.http.HttpHeaders.toMap(): Map<String, List<String>> {
+private fun HttpHeaders.toMap(): Map<String, List<String>> {
     val result = mutableMapOf<String, List<String>>()
     this.forEach { key, values -> result[key] = values }
     return result

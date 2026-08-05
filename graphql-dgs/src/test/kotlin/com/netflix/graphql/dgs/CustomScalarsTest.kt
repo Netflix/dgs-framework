@@ -26,6 +26,7 @@ import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.getBeansWithAnnotation
 import org.springframework.context.ApplicationContext
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -51,21 +52,17 @@ class CustomScalarsTest {
                 }
             }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+        every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns
             mapOf(
-                Pair(
-                    "timeFetcher",
+                "timeFetcher" to
                     fetcher,
-                ),
             )
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns
+        every { applicationContextMock.getBeansWithAnnotation<DgsScalar>() } returns
             mapOf(
-                Pair(
-                    "localDateTimeScalar",
+                "localDateTimeScalar" to
                     LocalDateTimeScalar(),
-                ),
             )
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
 
         val provider =
             DgsSchemaProvider(

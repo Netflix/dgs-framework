@@ -36,6 +36,7 @@ import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.context.GraphQLContextContributor
 import com.netflix.graphql.dgs.context.GraphQLContextContributorInstrumentation
+import com.netflix.graphql.dgs.diagnostics.DgsJsonMapperMissingException
 import com.netflix.graphql.dgs.exceptions.DefaultDataFetcherExceptionHandler
 import com.netflix.graphql.dgs.internal.DataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.DefaultDataLoaderOptionsProvider
@@ -51,11 +52,13 @@ import com.netflix.graphql.dgs.internal.EntityFetcherRegistry
 import com.netflix.graphql.dgs.internal.FlowDataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.FluxDataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.GraphQLJavaErrorInstrumentation
+import com.netflix.graphql.dgs.internal.Jackson3DgsJsonMapper
 import com.netflix.graphql.dgs.internal.MonoDataFetcherResultProcessor
 import com.netflix.graphql.dgs.internal.QueryValueCustomizer
 import com.netflix.graphql.dgs.internal.ReloadableDgsDataLoaderProvider
 import com.netflix.graphql.dgs.internal.method.ArgumentResolver
 import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
+import com.netflix.graphql.dgs.json.DgsJsonMapper
 import com.netflix.graphql.dgs.mvc.internal.method.HandlerMethodArgumentResolverAdapter
 import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithRequest
 import com.netflix.graphql.dgs.reactive.DgsReactiveQueryExecutor
@@ -85,6 +88,8 @@ import graphql.schema.idl.TypeDefinitionRegistry
 import io.micrometer.context.ContextRegistry
 import io.micrometer.context.ContextSnapshotFactory
 import io.micrometer.context.integration.Slf4jThreadLocalAccessor
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import org.reactivestreams.Publisher
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -101,7 +106,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.graphql.autoconfigure.GraphQlProperties
 import org.springframework.boot.graphql.autoconfigure.GraphQlSourceBuilderCustomizer
-import org.springframework.boot.jackson.autoconfigure.JacksonAutoConfiguration
 import org.springframework.boot.system.JavaVersion
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
@@ -113,6 +117,7 @@ import org.springframework.core.PriorityOrdered
 import org.springframework.core.ReactiveAdapterRegistry
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
+import org.springframework.core.env.getProperty
 import org.springframework.core.task.AsyncTaskExecutor
 import org.springframework.core.task.SimpleAsyncTaskExecutor
 import org.springframework.core.task.support.ContextPropagatingTaskDecorator
@@ -157,14 +162,18 @@ import java.util.stream.Collectors
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @AutoConfiguration(
     beforeName = ["org.springframework.boot.graphql.autoconfigure.GraphQlAutoConfiguration"],
-    afterName = ["org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration"],
+    afterName = [
+        "org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration",
+        "org.springframework.boot.jackson.autoconfigure.JacksonAutoConfiguration",
+        "org.springframework.boot.jackson2.autoconfigure.Jackson2AutoConfiguration",
+    ],
 )
 @EnableConfigurationProperties(
     DgsSpringGraphQLConfigurationProperties::class,
     DgsConfigurationProperties::class,
     DgsDataloaderConfigurationProperties::class,
 )
-@ImportAutoConfiguration(classes = [JacksonAutoConfiguration::class, DgsInputArgumentConfiguration::class])
+@ImportAutoConfiguration(classes = [DgsInputArgumentConfiguration::class])
 open class DgsSpringGraphQLAutoConfiguration(
     private val configProps: DgsConfigurationProperties,
     private val dataloaderConfigProps: DgsDataloaderConfigurationProperties,
@@ -173,6 +182,23 @@ open class DgsSpringGraphQLAutoConfiguration(
         const val AUTO_CONF_PREFIX = "dgs.graphql"
         private val LOG: Logger = LoggerFactory.getLogger(DgsSpringGraphQLAutoConfiguration::class.java)
     }
+
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnClass(name = ["tools.jackson.databind.json.JsonMapper"])
+    @ConditionalOnProperty(
+        name = ["dgs.graphql.preferred-json-mapper"],
+        havingValue = "jackson3",
+        matchIfMissing = true,
+    )
+    internal class Jackson3DgsJsonMapperConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(DgsJsonMapper::class)
+        fun dgsJsonMapper(): DgsJsonMapper = Jackson3DgsJsonMapper()
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(DgsJsonMapper::class)
+    open fun dgsJsonMapperFallback(): DgsJsonMapper = throw DgsJsonMapperMissingException()
 
     @Bean
     @Order(PriorityOrdered.HIGHEST_PRECEDENCE)
@@ -227,7 +253,7 @@ open class DgsSpringGraphQLAutoConfiguration(
         @Qualifier("dgsScheduledExecutorService") dgsScheduledExecutorService: ScheduledExecutorService,
         extensionProviders: List<DataLoaderInstrumentationExtensionProvider>,
         customizers: List<DgsDataLoaderCustomizer>,
-    ): DgsDataLoaderProvider =
+    ): DefaultDgsDataLoaderProvider =
         DefaultDgsDataLoaderProvider(
             applicationContext = applicationContext,
             extensionProviders = extensionProviders,
@@ -378,6 +404,7 @@ open class DgsSpringGraphQLAutoConfiguration(
             enableEntityFetcherCustomScalarParsing = configProps.enableEntityFetcherCustomScalarParsing,
             fallbackTypeResolver = fallbackTypeResolver,
             enableStrictMode = configProps.strictMode.enabled,
+            federationEnabled = configProps.federation.enabled,
         )
 
     @Bean
@@ -484,10 +511,21 @@ open class DgsSpringGraphQLAutoConfiguration(
         return executor
     }
 
+    /**
+     * Default CoroutineDispatcher used for executing Kotlin suspend functions in data fetchers.
+     * Defaults to [Dispatchers.Unconfined] which runs coroutines immediately on the calling thread.
+     * Override this bean to customize the dispatcher for your specific use case.
+     */
+    @Bean(defaultCandidate = false)
+    @Qualifier("dgsCoroutineDispatcher")
+    @ConditionalOnMissingBean(name = ["dgsCoroutineDispatcher"])
+    open fun dgsCoroutineDispatcher(): CoroutineDispatcher = Dispatchers.Unconfined
+
     @Bean
     open fun methodDataFetcherFactory(
         argumentResolvers: ObjectProvider<ArgumentResolver>,
         @Qualifier("dgsAsyncTaskExecutor") taskExecutorOptional: Optional<AsyncTaskExecutor>,
+        @Qualifier("dgsCoroutineDispatcher") coroutineDispatcher: CoroutineDispatcher,
     ): MethodDataFetcherFactory {
         val taskExecutor =
             if (taskExecutorOptional.isPresent) {
@@ -496,7 +534,12 @@ open class DgsSpringGraphQLAutoConfiguration(
                 null
             }
 
-        return MethodDataFetcherFactory(argumentResolvers.orderedStream().toList(), DefaultParameterNameDiscoverer(), taskExecutor)
+        return MethodDataFetcherFactory(
+            argumentResolvers.orderedStream().toList(),
+            DefaultParameterNameDiscoverer(),
+            taskExecutor,
+            coroutineDispatcher,
+        )
     }
 
     @Bean
@@ -572,7 +615,7 @@ open class DgsSpringGraphQLAutoConfiguration(
     ): GraphQlSourceBuilderCustomizer =
         GraphQlSourceBuilderCustomizer { builder ->
             builder.configureGraphQl { graphQlBuilder ->
-                val apqEnabled = environment.getProperty("dgs.graphql.apq.enabled", Boolean::class.java, false)
+                val apqEnabled = environment.getProperty<Boolean>("dgs.graphql.apq.enabled", false)
                 // If apq is enabled, we will not use this preparsedDocumentProvider and use DgsAPQPreparsedDocumentProviderWrapper instead
                 if (preparsedDocumentProvider.isPresent && !apqEnabled) {
                     graphQlBuilder.preparsedDocumentProvider(preparsedDocumentProvider.get())
@@ -610,6 +653,7 @@ open class DgsSpringGraphQLAutoConfiguration(
         executionService: ExecutionGraphQlService,
         dgsContextBuilder: DefaultDgsGraphQLContextBuilder,
         dgsDataLoaderProvider: DgsDataLoaderProvider,
+        dgsJsonMapper: DgsJsonMapper,
         requestCustomizer: ObjectProvider<DgsQueryExecutorRequestCustomizer>,
         graphQLContextContributors: List<GraphQLContextContributor>,
     ): DgsQueryExecutor =
@@ -617,6 +661,7 @@ open class DgsSpringGraphQLAutoConfiguration(
             executionService,
             dgsContextBuilder,
             dgsDataLoaderProvider,
+            dgsJsonMapper,
             requestCustomizer = requestCustomizer.getIfAvailable(DgsQueryExecutorRequestCustomizer::DEFAULT_REQUEST_CUSTOMIZER),
             graphQLContextContributors,
         )
@@ -720,7 +765,9 @@ open class DgsSpringGraphQLAutoConfiguration(
             executionService: ExecutionGraphQlService,
             dgsContextBuilder: DefaultDgsReactiveGraphQLContextBuilder,
             dgsDataLoaderProvider: DgsDataLoaderProvider,
-        ): DgsReactiveQueryExecutor = SpringGraphQLDgsReactiveQueryExecutor(executionService, dgsContextBuilder, dgsDataLoaderProvider)
+            dgsJsonMapper: DgsJsonMapper,
+        ): DgsReactiveQueryExecutor =
+            SpringGraphQLDgsReactiveQueryExecutor(executionService, dgsContextBuilder, dgsDataLoaderProvider, dgsJsonMapper)
 
         @Bean
         @ConditionalOnMissingBean

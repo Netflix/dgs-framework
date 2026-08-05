@@ -23,7 +23,7 @@ import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.MapPropertySource
-import java.util.Collections
+import org.springframework.core.env.getProperty
 
 /**
  * Globally disable AutoConfig's which cause problems in the Netflix environment
@@ -38,7 +38,7 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
         val disabled =
             DISABLE_AUTOCONFIG_PROPERTIES
                 .asSequence()
-                .filter { !environment.getProperty(it.key, Boolean::class.java, false) }
+                .filter { !environment.getProperty<Boolean>(it.key, false) }
                 .map { it.value }
                 .plus(existingExcludes)
                 .filter { it.isNotEmpty() }
@@ -48,9 +48,9 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
             .addFirst(
                 MapPropertySource(
                     "disableRefreshScope",
-                    Collections.singletonMap<String, Any>(
-                        "spring.autoconfigure.exclude",
-                        disabled,
+                    mapOf(
+                        "spring.autoconfigure.exclude" to
+                            disabled,
                     ),
                 ),
             )
@@ -67,14 +67,10 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
     companion object {
         private val DISABLE_AUTOCONFIG_PROPERTIES =
             mapOf(
-                Pair(
-                    "dgs.springgraphql.autoconfiguration.graphqlobservation.enabled",
+                "dgs.springgraphql.autoconfiguration.graphqlobservation.enabled" to
                     "org.springframework.boot.graphql.autoconfigure.observation.GraphQlObservationAutoConfiguration",
-                ),
-                Pair(
-                    "dgs.springgraphql.autoconfiguration.graphqlwebmvcsecurity.enabled",
+                "dgs.springgraphql.autoconfiguration.graphqlwebmvcsecurity.enabled" to
                     "org.springframework.boot.graphql.autoconfigure.security.GraphQlWebMvcSecurityAutoConfiguration",
-                ),
             )
 
         private const val EXCLUDE = "spring.autoconfigure.exclude"

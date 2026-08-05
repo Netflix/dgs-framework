@@ -95,32 +95,32 @@ class DgsDataFetchingEnvironmentIsArgumentSet {
                     ).build()
             val executionResult = build.execute(executionInput)
             assertTrue(executionResult.isDataPresent)
-            val result = executionResult.getData() as Map<String, String>
+            val result = executionResult.getData() as Map<String, Any?>
             assertEquals(true, result["providedTopLevel"], "Explicitly provided top level argument")
             assertEquals(false, result["notProvidedTopLevel"], "Not provided top level argument")
             assertEquals(true, result["explicitNullTopLevel"], "Explicitly null value provided for top level argument")
             assertEquals(
-                mapOf(Pair("name", false), Pair("city", false)),
+                mapOf("name" to false, "city" to false),
                 result["noPersonProvided"] as Map<*, *>,
                 "Complex input type not provided at all",
             )
             assertEquals(
-                mapOf(Pair("name", true), Pair("city", false)),
+                mapOf("name" to true, "city" to false),
                 result["nameProvided"] as Map<*, *>,
                 "Complex input type with first level property provided",
             )
             assertEquals(
-                mapOf(Pair("name", true), Pair("city", true)),
+                mapOf("name" to true, "city" to true),
                 result["nameAndCityProvided"] as Map<*, *>,
                 "Complex input type with multiple levels of properties provided",
             )
             assertEquals(
-                mapOf(Pair("name", false), Pair("city", true)),
+                mapOf("name" to false, "city" to true),
                 result["explicitNullCity"] as Map<*, *>,
                 "Explicit null value for a nested property",
             )
             assertEquals(
-                mapOf(Pair("name", true), Pair("city", true)),
+                mapOf("name" to true, "city" to true),
                 result["complexInputTesterWithDelimiter"] as Map<*, *>,
                 "Paths can be expressed with . and ->",
             )

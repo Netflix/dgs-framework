@@ -18,6 +18,9 @@ package com.netflix.graphql.dgs.scalars
 
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsRuntimeWiring
+import graphql.GraphQLContext
+import graphql.execution.CoercedVariables
+import graphql.language.Value
 import graphql.schema.Coercing
 import graphql.schema.CoercingParseLiteralException
 import graphql.schema.CoercingParseValueException
@@ -25,6 +28,7 @@ import graphql.schema.CoercingSerializeException
 import graphql.schema.GraphQLScalarType
 import graphql.schema.idl.RuntimeWiring
 import org.springframework.web.multipart.MultipartFile
+import java.util.Locale
 
 @DgsComponent
 class UploadScalar {
@@ -37,25 +41,52 @@ class UploadScalar {
             .build()
 
     object MultipartFileCoercing : Coercing<MultipartFile, Void> {
+        @Deprecated("Deprecated in Java")
         @Throws(CoercingSerializeException::class)
         override fun serialize(dataFetcherResult: Any): Void = throw CoercingSerializeException("Upload is an input-only type")
 
+        override fun serialize(
+            dataFetcherResult: Any,
+            graphQLContext: GraphQLContext,
+            locale: Locale,
+        ): Nothing = throw CoercingSerializeException("Upload is an input-only type")
+
+        @Deprecated("Deprecated in Java")
         @Throws(CoercingParseValueException::class)
         override fun parseValue(input: Any): MultipartFile =
-            if (input is MultipartFile) {
-                input
-            } else {
-                run {
-                    throw CoercingParseValueException(
-                        "Expected type " +
-                            MultipartFile::class.java.name +
-                            " but was " +
-                            input.javaClass.name,
-                    )
-                }
-            }
+            input as? MultipartFile
+                ?: throw CoercingParseValueException(
+                    "Expected type " +
+                        MultipartFile::class.java.name +
+                        " but was " +
+                        input.javaClass.name,
+                )
 
+        override fun parseValue(
+            input: Any,
+            graphQLContext: GraphQLContext,
+            locale: Locale,
+        ): MultipartFile =
+            input as? MultipartFile
+                ?: throw CoercingParseValueException(
+                    "Expected type " +
+                        MultipartFile::class.java.name +
+                        " but was " +
+                        input.javaClass.name,
+                )
+
+        @Deprecated("Deprecated in Java")
         override fun parseLiteral(input: Any): MultipartFile =
+            throw CoercingParseLiteralException(
+                "Must use variables to specify Upload values",
+            )
+
+        override fun parseLiteral(
+            input: Value<*>,
+            variables: CoercedVariables,
+            graphQLContext: GraphQLContext,
+            locale: Locale,
+        ): MultipartFile =
             throw CoercingParseLiteralException(
                 "Must use variables to specify Upload values",
             )

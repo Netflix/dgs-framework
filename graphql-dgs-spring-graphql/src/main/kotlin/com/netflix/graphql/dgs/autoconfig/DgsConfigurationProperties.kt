@@ -33,6 +33,7 @@ data class DgsConfigurationProperties(
         DgsPreparsedDocumentProviderConfigurationProperties(),
     val introspection: DgsIntrospectionConfigurationProperties = DgsIntrospectionConfigurationProperties(),
     val strictMode: DgsStrictModeProperties = DgsStrictModeProperties(),
+    val federation: DgsFederationProperties = DgsFederationProperties(),
 ) {
     data class DgsPreparsedDocumentProviderConfigurationProperties(
         val enabled: Boolean = false,
@@ -48,6 +49,10 @@ data class DgsConfigurationProperties(
     )
 
     data class DgsStrictModeProperties(
+        val enabled: Boolean = true,
+    )
+
+    data class DgsFederationProperties(
         val enabled: Boolean = true,
     )
 }

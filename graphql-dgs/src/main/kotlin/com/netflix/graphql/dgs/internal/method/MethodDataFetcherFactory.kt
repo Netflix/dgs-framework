@@ -22,6 +22,8 @@ import graphql.TrivialDataFetcher
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.FieldCoordinates
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import org.springframework.core.DefaultParameterNameDiscoverer
 import org.springframework.core.MethodParameter
 import org.springframework.core.ParameterNameDiscoverer
@@ -39,6 +41,7 @@ class MethodDataFetcherFactory(
     argumentResolvers: List<ArgumentResolver>,
     internal val parameterNameDiscoverer: ParameterNameDiscoverer = DefaultParameterNameDiscoverer(),
     private val asyncTaskExecutor: AsyncTaskExecutor? = null,
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.Unconfined,
 ) {
     private val resolvers = ArgumentResolverComposite(argumentResolvers)
 
@@ -55,6 +58,7 @@ class MethodDataFetcherFactory(
                     resolvers = resolvers,
                     parameterNameDiscoverer = parameterNameDiscoverer,
                     taskExecutor = null,
+                    coroutineDispatcher = coroutineDispatcher,
                 )
             return object : TrivialDataFetcher<Any?> {
                 override fun get(environment: DataFetchingEnvironment): Any? = methodDataFetcher.get(environment)
@@ -69,6 +73,7 @@ class MethodDataFetcherFactory(
             resolvers = resolvers,
             parameterNameDiscoverer = parameterNameDiscoverer,
             taskExecutor = asyncTaskExecutor,
+            coroutineDispatcher = coroutineDispatcher,
         )
     }
 

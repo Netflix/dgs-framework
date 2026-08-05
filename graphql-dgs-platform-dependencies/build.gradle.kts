@@ -21,15 +21,6 @@ plugins {
 
 description = "${rootProject.description} (Bill of Materials with Dependencies)"
 
-publishing {
-    publications {
-        configure(containerWithType(MavenPublication::class.java)) {
-            nebulaDependencyManagement {
-                from(components["javaPlatform"])
-            }
-        }
-    }
-}
 
 configurations.all {
     // exclude group: "com.google.api", module: "gax-grpc"

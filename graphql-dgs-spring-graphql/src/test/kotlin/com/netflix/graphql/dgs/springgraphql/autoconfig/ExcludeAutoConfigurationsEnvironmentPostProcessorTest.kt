@@ -26,7 +26,7 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessorTest {
         env.propertySources.addLast(
             MapPropertySource(
                 "application-props",
-                mapOf(Pair("dgs.springgraphql.autoconfiguration.graphqlwebmvcsecurity.enabled", "true")),
+                mapOf("dgs.springgraphql.autoconfiguration.graphqlwebmvcsecurity.enabled" to "true"),
             ),
         )
 
@@ -40,7 +40,7 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessorTest {
     fun `Observation autoconfig can be enabled`() {
         val env = StandardEnvironment()
         env.propertySources.addLast(
-            MapPropertySource("application-props", mapOf(Pair("dgs.springgraphql.autoconfiguration.graphqlobservation.enabled", "true"))),
+            MapPropertySource("application-props", mapOf("dgs.springgraphql.autoconfiguration.graphqlobservation.enabled" to "true")),
         )
 
         ExcludeAutoConfigurationsEnvironmentPostProcessor().postProcessEnvironment(env, SpringApplication())
@@ -52,7 +52,7 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessorTest {
     @Test
     fun `does not override existing excludes`() {
         val env = StandardEnvironment()
-        env.propertySources.addLast(MapPropertySource("application-props", mapOf(Pair("spring.autoconfigure.exclude", "someexclude"))))
+        env.propertySources.addLast(MapPropertySource("application-props", mapOf("spring.autoconfigure.exclude" to "someexclude")))
 
         ExcludeAutoConfigurationsEnvironmentPostProcessor().postProcessEnvironment(env, SpringApplication())
         assertThat(env.getProperty("spring.autoconfigure.exclude"))

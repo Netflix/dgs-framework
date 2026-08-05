@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.BeanCreationException
+import org.springframework.beans.factory.getBean
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
@@ -51,7 +52,7 @@ class DefaultDgsDataLoaderProviderTest {
                 ExampleBatchLoader::class.java,
             ).withBean(ExampleBatchLoaderWithDispatchPredicate::class.java)
             .run { context ->
-                val provider = context.getBean(DgsDataLoaderProvider::class.java)
+                val provider = context.getBean<DgsDataLoaderProvider>()
                 val dataLoaderRegistry = provider.buildRegistry()
                 Assertions.assertEquals(2, dataLoaderRegistry.dataLoaders.size)
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleLoader")
@@ -68,7 +69,7 @@ class DefaultDgsDataLoaderProviderTest {
                 ExampleBatchLoaderWithContext::class.java,
             ).withBean(ExampleBatchLoaderWithContextAndDispatchPredicate::class.java)
             .run { context ->
-                val provider = context.getBean(DgsDataLoaderProvider::class.java)
+                val provider = context.getBean<DgsDataLoaderProvider>()
                 val dataLoaderRegistry = provider.buildRegistry()
                 Assertions.assertEquals(2, dataLoaderRegistry.dataLoaders.size)
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleLoaderWithContext")
@@ -83,7 +84,7 @@ class DefaultDgsDataLoaderProviderTest {
         applicationContextRunner.withBean(ExampleBatchLoader::class.java).withBean(ExampleDuplicateBatchLoader::class.java).run { context ->
             val exc =
                 assertThrows<IllegalStateException> {
-                    val provider = context.getBean(DgsDataLoaderProvider::class.java)
+                    val provider = context.getBean<DgsDataLoaderProvider>()
                     provider.buildRegistry()
                 }
 
@@ -103,7 +104,7 @@ class DefaultDgsDataLoaderProviderTest {
             .run { context ->
                 val exc =
                     assertThrows<IllegalStateException> {
-                        context.getBean(DgsDataLoaderProvider::class.java)
+                        context.getBean<DgsDataLoaderProvider>()
                     }
                 assertThat(exc.cause)
                     .isInstanceOf(BeanCreationException::class.java)
@@ -115,7 +116,7 @@ class DefaultDgsDataLoaderProviderTest {
     @Test
     fun findDataLoadersFromFields() {
         applicationContextRunner.withBean(ExampleBatchLoaderFromField::class.java).run { context ->
-            val provider = context.getBean(DgsDataLoaderProvider::class.java)
+            val provider = context.getBean<DgsDataLoaderProvider>()
             val dataLoaderRegistry = provider.buildRegistry()
             Assertions.assertEquals(2, dataLoaderRegistry.dataLoaders.size)
             val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleLoaderFromField")
@@ -133,7 +134,7 @@ class DefaultDgsDataLoaderProviderTest {
                 ExampleMappedBatchLoader::class.java,
             ).withBean(ExampleMappedBatchLoaderWithDispatchPredicate::class.java)
             .run { context ->
-                val provider = context.getBean(DgsDataLoaderProvider::class.java)
+                val provider = context.getBean<DgsDataLoaderProvider>()
                 val dataLoaderRegistry = provider.buildRegistry()
                 Assertions.assertEquals(2, dataLoaderRegistry.dataLoaders.size)
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleMappedLoader")
@@ -150,7 +151,7 @@ class DefaultDgsDataLoaderProviderTest {
                 ExampleMappedBatchLoaderWithContext::class.java,
             ).withBean(ExampleMappedBatchLoaderWithContextAndDispatchPredicate::class.java)
             .run { context ->
-                val provider = context.getBean(DgsDataLoaderProvider::class.java)
+                val provider = context.getBean<DgsDataLoaderProvider>()
                 val dataLoaderRegistry = provider.buildRegistry()
                 Assertions.assertEquals(2, dataLoaderRegistry.dataLoaders.size)
                 val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleMappedLoaderWithContext")
@@ -163,7 +164,7 @@ class DefaultDgsDataLoaderProviderTest {
     @Test
     fun findMappedDataLoadersFromFields() {
         applicationContextRunner.withBean(ExampleMappedBatchLoaderFromField::class.java).run { context ->
-            val provider = context.getBean(DgsDataLoaderProvider::class.java)
+            val provider = context.getBean<DgsDataLoaderProvider>()
             val dataLoaderRegistry = provider.buildRegistry()
             Assertions.assertEquals(2, dataLoaderRegistry.dataLoaders.size)
             val dataLoader = dataLoaderRegistry.getDataLoader<Any, Any>("exampleMappedLoaderFromField")
@@ -177,7 +178,7 @@ class DefaultDgsDataLoaderProviderTest {
     @Test
     fun dataLoaderConsumer() {
         applicationContextRunner.withBean(ExampleDataLoaderWithRegistry::class.java).run { context ->
-            val provider = context.getBean(DgsDataLoaderProvider::class.java)
+            val provider = context.getBean<DgsDataLoaderProvider>()
             val registry = provider.buildRegistry()
 
             // Use the dataloader's "load" method to check if the registry was set correctly, because the dataloader instance isn't itself a DgsDataLoaderRegistryConsumer
@@ -194,7 +195,7 @@ class DefaultDgsDataLoaderProviderTest {
         @Test
         fun findDataLoadersWithoutName() {
             applicationContextRunner.withBean(ExampleBatchLoaderWithoutName::class.java).run { context ->
-                val provider = context.getBean(DgsDataLoaderProvider::class.java)
+                val provider = context.getBean<DgsDataLoaderProvider>()
                 val dataLoaderRegistry = provider.buildRegistry()
                 Assertions.assertEquals(1, dataLoaderRegistry.dataLoaders.size)
                 val dataLoader =
@@ -206,7 +207,7 @@ class DefaultDgsDataLoaderProviderTest {
         @Test
         fun findDataLoadersWithoutNameByClass() {
             applicationContextRunner.withBean(ExampleBatchLoaderWithoutName::class.java).run { context ->
-                val provider = context.getBean(DgsDataLoaderProvider::class.java)
+                val provider = context.getBean<DgsDataLoaderProvider>()
                 val dataLoaderRegistry = provider.buildRegistry()
                 Assertions.assertEquals(1, dataLoaderRegistry.dataLoaders.size)
                 val dataLoader =
@@ -224,7 +225,7 @@ class DefaultDgsDataLoaderProviderTest {
         @Test
         fun findDataLoadersFromFieldsWithoutName() {
             applicationContextRunner.withBean(ExampleBatchLoaderWithoutNameFromField::class.java).run { context ->
-                assertThatThrownBy { context.getBean(DgsDataLoaderProvider::class.java) }
+                assertThatThrownBy { context.getBean<DgsDataLoaderProvider>() }
                     .rootCause()
                     .isInstanceOf(DgsUnnamedDataLoaderOnFieldException::class.java)
                     .hasMessage(
@@ -241,10 +242,10 @@ class DefaultDgsDataLoaderProviderTest {
                 ).withBean(DgsWrapWithContextDataLoaderCustomizer::class.java)
                 .withBean(DataLoaderCustomizerCounter::class.java)
                 .run { context ->
-                    val provider = context.getBean(DgsDataLoaderProvider::class.java)
+                    val provider = context.getBean<DgsDataLoaderProvider>()
                     val dataLoaderRegistry = provider.buildRegistry()
 
-                    val counter = context.getBean(DataLoaderCustomizerCounter::class.java)
+                    val counter = context.getBean<DataLoaderCustomizerCounter>()
 
                     assertThat(dataLoaderRegistry.dataLoaders.size).isEqualTo(1)
 

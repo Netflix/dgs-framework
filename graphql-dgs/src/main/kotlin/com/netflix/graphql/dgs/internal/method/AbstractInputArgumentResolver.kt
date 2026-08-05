@@ -38,7 +38,7 @@ abstract class AbstractInputArgumentResolver(
     }
 
     private val conversionService = DefaultConversionService()
-    private val argumentNameCache: ConcurrentMap<MethodParameter, String?> = ConcurrentHashMap()
+    private val argumentNameCache: ConcurrentMap<MethodParameter, String> = ConcurrentHashMap()
 
     init {
         conversionService.addConverter(InputObjectMapperConverter(inputObjectMapper))
@@ -81,10 +81,11 @@ abstract class AbstractInputArgumentResolver(
     internal abstract fun resolveArgumentName(parameter: MethodParameter): String?
 
     private fun getArgumentName(parameter: MethodParameter): String? {
-        if (argumentNameCache.containsKey(parameter)) {
-            return argumentNameCache[parameter]
+        val argumentName = argumentNameCache[parameter]
+        if (argumentName != null) {
+            return argumentName
         }
-        val name = resolveArgumentName(parameter)
+        val name = resolveArgumentName(parameter) ?: return null
         argumentNameCache[parameter] = name
         return name
     }
