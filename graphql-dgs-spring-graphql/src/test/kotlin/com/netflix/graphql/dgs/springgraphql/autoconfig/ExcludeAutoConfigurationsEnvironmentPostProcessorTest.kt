@@ -66,32 +66,52 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessorTest {
     @Test
     fun `array bindings via indexed properties should work`() {
         val env = StandardEnvironment()
-        env.propertySources.addLast(MapPropertySource("application-Dev-props", mapOf(
-            Pair("spring.autoconfigure.exclude[0]", "exclude-dev-1")
-        )))
-        env.propertySources.addLast(MapPropertySource("application-props", mapOf(
-            Pair("spring.autoconfigure.exclude[0]", "exclude-1"),
-            Pair("spring.autoconfigure.exclude[1]", "exclude-2")
-        )))
+        env.propertySources.addLast(
+            MapPropertySource(
+                "application-Dev-props",
+                mapOf(
+                    Pair("spring.autoconfigure.exclude[0]", "exclude-dev-1"),
+                ),
+            ),
+        )
+        env.propertySources.addLast(
+            MapPropertySource(
+                "application-props",
+                mapOf(
+                    Pair("spring.autoconfigure.exclude[0]", "exclude-1"),
+                    Pair("spring.autoconfigure.exclude[1]", "exclude-2"),
+                ),
+            ),
+        )
 
         ExcludeAutoConfigurationsEnvironmentPostProcessor().postProcessEnvironment(env, SpringApplication())
         assertThat(env.getProperty<Array<String>>("spring.autoconfigure.exclude"))
             .containsExactly(
                 "org.springframework.boot.graphql.autoconfigure.observation.GraphQlObservationAutoConfiguration",
                 "org.springframework.boot.graphql.autoconfigure.security.GraphQlWebMvcSecurityAutoConfiguration",
-                "exclude-dev-1"
+                "exclude-dev-1",
             )
     }
 
     @Test
     fun `array bindings via string property should work`() {
         val env = StandardEnvironment()
-        env.propertySources.addLast(MapPropertySource("application-Dev-props", mapOf(
-            Pair("spring.autoconfigure.exclude", "exclude-dev-1,exclude-dev-2")
-        )))
-        env.propertySources.addLast(MapPropertySource("application-props", mapOf(
-            Pair("spring.autoconfigure.exclude", "exclude-1")
-        )))
+        env.propertySources.addLast(
+            MapPropertySource(
+                "application-Dev-props",
+                mapOf(
+                    Pair("spring.autoconfigure.exclude", "exclude-dev-1,exclude-dev-2"),
+                ),
+            ),
+        )
+        env.propertySources.addLast(
+            MapPropertySource(
+                "application-props",
+                mapOf(
+                    Pair("spring.autoconfigure.exclude", "exclude-1"),
+                ),
+            ),
+        )
 
         ExcludeAutoConfigurationsEnvironmentPostProcessor().postProcessEnvironment(env, SpringApplication())
         assertThat(env.getProperty<Array<String>>("spring.autoconfigure.exclude"))

@@ -56,13 +56,13 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
             )
     }
 
-    private fun extractAllExcludes(environment: ConfigurableEnvironment): String {
-        return Binder.get(environment)
+    private fun extractAllExcludes(environment: ConfigurableEnvironment): String =
+        Binder
+            .get(environment)
             .bind(EXCLUDE, Array<String>::class.java)
             .orElse(emptyArray<String>())
             ?.filter { it.isNotBlank() }
             ?.joinToString(",") ?: ""
-    }
 
     companion object {
         private val DISABLE_AUTOCONFIG_PROPERTIES =
