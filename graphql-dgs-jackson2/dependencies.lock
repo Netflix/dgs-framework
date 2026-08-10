@@ -435,7 +435,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
             "locked": "2.20.1"
@@ -499,7 +499,7 @@
             "locked": "1.2.0"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.9"
+            "locked": "1.14.11"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "firstLevelTransitive": [
@@ -751,7 +751,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
             "locked": "2.20.1"
@@ -934,7 +934,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.9"
+            "locked": "1.14.11"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -1020,7 +1020,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.9"
+            "locked": "1.14.11"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -1054,7 +1054,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
             "locked": "2.20.1"
@@ -1118,7 +1118,7 @@
             "locked": "1.2.0"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.9"
+            "locked": "1.14.11"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "firstLevelTransitive": [

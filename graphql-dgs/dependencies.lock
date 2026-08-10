@@ -38,7 +38,7 @@
     },
     "compileClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.20.1"
@@ -164,7 +164,7 @@
     },
     "implementationDependenciesMetadata": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -276,7 +276,7 @@
     },
     "jmhCompileClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.20.1"
@@ -411,7 +411,7 @@
     },
     "jmhImplementationDependenciesMetadata": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -484,7 +484,7 @@
     },
     "jmhRuntimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -521,7 +521,7 @@
             "locked": "1.2.0"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.9"
+            "locked": "1.14.11"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.8.0"
@@ -767,7 +767,7 @@
     },
     "runtimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -844,7 +844,7 @@
     },
     "testCompileClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -881,7 +881,7 @@
             "locked": "1.2.0"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.9"
+            "locked": "1.14.11"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.8.0"
@@ -941,7 +941,7 @@
     },
     "testImplementationDependenciesMetadata": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -978,7 +978,7 @@
             "locked": "1.2.0"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.9"
+            "locked": "1.14.11"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.8.0"
@@ -1038,7 +1038,7 @@
     },
     "testRuntimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -1075,7 +1075,7 @@
             "locked": "1.2.0"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.9"
+            "locked": "1.14.11"
         },
         "io.projectreactor:reactor-core": {
             "locked": "3.8.0"
