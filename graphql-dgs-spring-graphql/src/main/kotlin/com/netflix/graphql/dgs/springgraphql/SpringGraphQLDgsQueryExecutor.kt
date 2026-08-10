@@ -31,6 +31,7 @@ import com.netflix.graphql.dgs.internal.DgsQueryExecutorRequestCustomizer
 import com.netflix.graphql.dgs.internal.DgsWebMvcRequestData
 import com.netflix.graphql.dgs.json.DgsJsonMapper
 import graphql.ExecutionResult
+import org.dataloader.DataLoaderRegistry
 import org.springframework.graphql.ExecutionGraphQlService
 import org.springframework.graphql.support.DefaultExecutionGraphQlRequest
 import org.springframework.http.HttpHeaders
@@ -69,16 +70,26 @@ class SpringGraphQLDgsQueryExecutor(
         val httpRequest = requestCustomizer.apply(webRequest ?: RequestContextHolder.getRequestAttributes() as? WebRequest, headers)
         val dgsContext = dgsContextBuilder.build(DgsWebMvcRequestData(request.extensions, headers, httpRequest))
 
+        // A ticker mode registry keeps rescheduling itself until it is closed, so the registry built
+        // for this request has to be closed once the request completes, the same way the webmvc and
+        // webflux interceptors do it. Otherwise every query leaves a task behind on the shared
+        // scheduled executor for the rest of the JVM's life.
+        var dataLoaderRegistry: DataLoaderRegistry? = null
+
         request.configureExecutionInput { e, builder ->
-            val dataLoaderRegistry = dgsDataLoaderProvider.buildRegistryWithContextSupplier { e.graphQLContext }
+            val registry = dgsDataLoaderProvider.buildRegistryWithContextSupplier { e.graphQLContext }
+            dataLoaderRegistry = registry
             builder
                 .graphQLContext(dgsContext)
-                .dataLoaderRegistry(dataLoaderRegistry)
+                .dataLoaderRegistry(registry)
                 .build()
         }
 
         val response =
-            executionService.execute(request).block() ?: throw IllegalStateException("Unexpected null response from Spring GraphQL client")
+            executionService
+                .execute(request)
+                .doFinally { (dataLoaderRegistry as? AutoCloseable)?.close() }
+                .block() ?: throw IllegalStateException("Unexpected null response from Spring GraphQL client")
 
         return response.executionResult
     }
