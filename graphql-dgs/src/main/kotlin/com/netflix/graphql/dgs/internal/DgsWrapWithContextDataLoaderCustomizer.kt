@@ -30,7 +30,7 @@ class DgsWrapWithContextDataLoaderCustomizer : DgsDataLoaderCustomizer {
     override fun provide(
         original: BatchLoader<*, *>,
         name: String,
-    ): Any = BatchLoaderWithContextWrapper<Any, Any>(original as BatchLoader<Any, Any>)
+    ): Any = BatchLoaderWithContextWrapper(original as BatchLoader<Any, Any>)
 
     override fun provide(
         original: BatchLoaderWithContext<*, *>,
@@ -40,7 +40,7 @@ class DgsWrapWithContextDataLoaderCustomizer : DgsDataLoaderCustomizer {
     override fun provide(
         original: MappedBatchLoader<*, *>,
         name: String,
-    ): Any = MappedBatchLoaderWithContextWrapper<Any, Any>(original as MappedBatchLoader<Any, Any>)
+    ): Any = MappedBatchLoaderWithContextWrapper(original as MappedBatchLoader<Any, Any>)
 
     override fun provide(
         original: MappedBatchLoaderWithContext<*, *>,
@@ -59,7 +59,7 @@ internal class BatchLoaderWithContextWrapper<K : Any, V : Any>(
 
     override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry?) {
         if (original is DgsDataLoaderRegistryConsumer) {
-            (original as DgsDataLoaderRegistryConsumer).setDataLoaderRegistry(dataLoaderRegistry)
+            original.setDataLoaderRegistry(dataLoaderRegistry)
         }
     }
 }
@@ -75,7 +75,7 @@ internal class MappedBatchLoaderWithContextWrapper<K : Any, V : Any>(
 
     override fun setDataLoaderRegistry(dataLoaderRegistry: DataLoaderRegistry?) {
         if (original is DgsDataLoaderRegistryConsumer) {
-            (original as DgsDataLoaderRegistryConsumer).setDataLoaderRegistry(dataLoaderRegistry)
+            original.setDataLoaderRegistry(dataLoaderRegistry)
         }
     }
 }

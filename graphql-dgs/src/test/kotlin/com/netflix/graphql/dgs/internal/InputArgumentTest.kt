@@ -60,7 +60,6 @@ import graphql.schema.DataFetchingEnvironment
 import graphql.schema.idl.RuntimeWiring
 import org.assertj.core.api.Assertions.LIST
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.InstanceOfAssertFactories
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -434,7 +433,7 @@ internal class InputArgumentTest {
             fun someFetcher(
                 @InputArgument("names") names: Optional<List<String>>,
             ): String {
-                assertThat(names).isNotEmpty.get(InstanceOfAssertFactories.LIST).containsOnly("tester 1", "tester 2")
+                assertThat(names).isNotEmpty.get(LIST).containsOnly("tester 1", "tester 2")
                 return "Hello, ${names.get().joinToString(", ")}"
             }
         }

@@ -27,7 +27,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 
-@ConditionalOnClass(graphql.validation.rules.ValidationRules::class)
+@ConditionalOnClass(ValidationRules::class)
 @ConditionalOnProperty(
     prefix = "dgs.graphql.extensions.validation",
     name = ["enabled"],

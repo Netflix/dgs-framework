@@ -151,7 +151,7 @@ class DefaultInputObjectMapper(
         try {
             return conversionService.convert(input, sourceType, targetType)
         } catch (exc: ConversionException) {
-            throw throw DgsInvalidInputArgumentException("Failed to convert value $input to $targetType", exc)
+            throw DgsInvalidInputArgumentException("Failed to convert value $input to $targetType", exc)
         }
     }
 

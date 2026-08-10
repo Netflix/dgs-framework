@@ -24,11 +24,11 @@ group = "com.netflix.graphql.dgs"
 
 plugins {
     `java-library`
-    id("nebula.dependency-recommender") version "11.0.0"
+    id("com.netflix.nebula.dependency-recommender") version "14.0.0"
 
-    id("nebula.netflixoss") version "11.6.0"
+    id("nebula.netflixoss") version "13.0.0"
     id("io.spring.dependency-management") version "1.1.7"
-    id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
+    id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     id("me.champeau.jmh") version "0.7.3"
 
     kotlin("jvm") version Versions.KOTLIN_VERSION
@@ -44,7 +44,7 @@ allprojects {
     }
 
     apply(plugin = "nebula.netflixoss")
-    apply(plugin = "nebula.dependency-recommender")
+    apply(plugin = "com.netflix.nebula.dependency-recommender")
 
     // We are attempting to define the versions of the artifacts closest to the
     // place they are referenced such that dependabot can easily pick them up
@@ -53,6 +53,7 @@ allprojects {
     // as dependencies. e.g. KOTLIN_VERSION
     extra["sb.version"] = "4.0.0"
     extra["kotlin.version"] = Versions.KOTLIN_VERSION
+    extra["json-path.version"] = "3.0.0"
 }
 val internalBomModules by extra(
     listOf(
@@ -96,12 +97,12 @@ configure(subprojects.filterNot { it in internalBomModules }) {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         }
 
-        implementation("org.slf4j:slf4j-api:2.0.17")
-        implementation("org.jetbrains:annotations:26.0.2-1")
+        implementation("org.slf4j:slf4j-api:2.0.18")
+        implementation("org.jetbrains:annotations:26.1.0")
         testImplementation("io.mockk:mockk:1.+")
 
         // JUnit 5 dependencies
-        testImplementation(platform("org.junit:junit-bom:5.13.4"))
+        testImplementation(platform("org.junit:junit-bom:6.1.0"))
         testImplementation("org.junit.jupiter:junit-jupiter")
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     }

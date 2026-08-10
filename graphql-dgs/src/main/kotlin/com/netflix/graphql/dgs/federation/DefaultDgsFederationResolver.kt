@@ -197,9 +197,9 @@ open class DefaultDgsFederationResolver() : DgsFederationResolver {
                         .flatMap { (idx, exc) ->
                             // extract exception from known wrapper types
                             val exception =
-                                when {
-                                    exc is InvocationTargetException -> exc.targetException
-                                    exc is CompletionException && exc.cause != null -> exc.cause!!
+                                when (exc) {
+                                    is InvocationTargetException -> exc.targetException
+                                    is CompletionException if exc.cause != null -> exc.cause!!
                                     else -> exc
                                 }
                             // handle the exception (using the custom handler if present)

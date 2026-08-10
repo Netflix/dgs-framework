@@ -28,6 +28,7 @@ import org.springframework.test.web.client.match.MockRestRequestMatchers.method
 import org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo
 import org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess
 import org.springframework.web.client.RestTemplate
+import org.springframework.web.client.exchange
 
 class ErrorsTest {
     private val restTemplate = RestTemplate()
@@ -36,9 +37,9 @@ class ErrorsTest {
     private val requestExecutor =
         RequestExecutor { url, headers, body ->
             val httpHeaders = HttpHeaders()
-            headers.forEach { key, values -> httpHeaders.addAll(key, values) }
+            headers.forEach { (key, values) -> httpHeaders.addAll(key, values) }
 
-            val exchange = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
+            val exchange = restTemplate.exchange<String>(url, HttpMethod.POST, HttpEntity(body, httpHeaders))
             HttpResponse(statusCode = exchange.statusCode.value(), body = exchange.body)
         }
 

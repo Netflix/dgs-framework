@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Conditional
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.ConfigurationCondition
 
-@ConditionalOnClass(graphql.scalars.ExtendedScalars::class)
+@ConditionalOnClass(ExtendedScalars::class)
 @ConditionalOnProperty(
     prefix = "dgs.graphql.extensions.scalars",
     name = ["enabled"],

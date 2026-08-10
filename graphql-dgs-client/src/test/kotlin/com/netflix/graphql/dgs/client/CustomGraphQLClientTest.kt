@@ -34,6 +34,7 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.web.client.RestTemplate
+import org.springframework.web.client.exchange
 
 @SpringBootTest(
     classes = [WebClientGraphQLClientTest.TestApp::class],
@@ -53,9 +54,9 @@ class CustomGraphQLClientTest {
         client =
             GraphQLClient.createCustom("http://localhost:$port/graphql") { url, headers, body ->
                 val httpHeaders = HttpHeaders()
-                headers.forEach { key, values -> httpHeaders.addAll(key, values) }
+                headers.forEach { (key, values) -> httpHeaders.addAll(key, values) }
 
-                val exchange = restTemplate.exchange(url, HttpMethod.POST, HttpEntity(body, httpHeaders), String::class.java)
+                val exchange = restTemplate.exchange<String>(url, HttpMethod.POST, HttpEntity(body, httpHeaders))
                 HttpResponse(exchange.statusCode.value(), exchange.body)
             }
     }

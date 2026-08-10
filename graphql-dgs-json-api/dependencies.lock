@@ -1,0 +1,440 @@
+{
+    "apiDependenciesMetadata": {
+        "com.jayway.jsonpath:json-path": {
+            "locked": "3.0.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "2.2.20"
+        }
+    },
+    "compileClasspath": {
+        "com.jayway.jsonpath:json-path": {
+            "locked": "3.0.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "26.1.0"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "2.0.17"
+        }
+    },
+    "implementationDependenciesMetadata": {
+        "com.jayway.jsonpath:json-path": {
+            "locked": "3.0.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "26.1.0"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "2.0.17"
+        }
+    },
+    "jmh": {
+        "org.openjdk.jmh:jmh-core": {
+            "locked": "1.37"
+        },
+        "org.openjdk.jmh:jmh-generator-annprocess": {
+            "locked": "1.37"
+        },
+        "org.openjdk.jmh:jmh-generator-bytecode": {
+            "locked": "1.36"
+        }
+    },
+    "jmhApiDependenciesMetadata": {
+        "com.jayway.jsonpath:json-path": {
+            "locked": "3.0.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "2.2.20"
+        }
+    },
+    "jmhCompileClasspath": {
+        "com.jayway.jsonpath:json-path": {
+            "locked": "3.0.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "26.1.0"
+        },
+        "org.openjdk.jmh:jmh-core": {
+            "locked": "1.37"
+        },
+        "org.openjdk.jmh:jmh-generator-annprocess": {
+            "locked": "1.37"
+        },
+        "org.openjdk.jmh:jmh-generator-bytecode": {
+            "locked": "1.36"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "2.0.17"
+        }
+    },
+    "jmhImplementationDependenciesMetadata": {
+        "com.jayway.jsonpath:json-path": {
+            "locked": "3.0.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "26.1.0"
+        },
+        "org.openjdk.jmh:jmh-core": {
+            "locked": "1.37"
+        },
+        "org.openjdk.jmh:jmh-generator-annprocess": {
+            "locked": "1.37"
+        },
+        "org.openjdk.jmh:jmh-generator-bytecode": {
+            "locked": "1.36"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "2.0.17"
+        }
+    },
+    "jmhRuntimeClasspath": {
+        "com.jayway.jsonpath:json-path": {
+            "locked": "3.0.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
+        },
+        "io.mockk:mockk": {
+            "locked": "1.14.9"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "26.1.0"
+        },
+        "org.junit.jupiter:junit-jupiter": {
+            "locked": "6.0.1"
+        },
+        "org.junit.platform:junit-platform-launcher": {
+            "locked": "6.0.1"
+        },
+        "org.junit:junit-bom": {
+            "locked": "5.13.4"
+        },
+        "org.openjdk.jmh:jmh-core": {
+            "locked": "1.37"
+        },
+        "org.openjdk.jmh:jmh-generator-annprocess": {
+            "locked": "1.37"
+        },
+        "org.openjdk.jmh:jmh-generator-bytecode": {
+            "locked": "1.36"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "2.0.17"
+        },
+        "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "4.0.0"
+        }
+    },
+    "kotlinBouncyCastleConfiguration": {
+        "org.bouncycastle:bcpg-jdk18on": {
+            "locked": "1.80"
+        },
+        "org.bouncycastle:bcpkix-jdk18on": {
+            "locked": "1.80"
+        }
+    },
+    "kotlinCompilerClasspath": {
+        "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
+            "locked": "2.2.20"
+        }
+    },
+    "kotlinCompilerPluginClasspathJmh": {
+        "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
+            "locked": "2.2.20"
+        }
+    },
+    "kotlinCompilerPluginClasspathMain": {
+        "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
+            "locked": "2.2.20"
+        }
+    },
+    "kotlinCompilerPluginClasspathTest": {
+        "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable": {
+            "locked": "2.2.20"
+        }
+    },
+    "kotlinInternalAbiValidation": {
+        "org.jetbrains.kotlin:abi-tools": {
+            "locked": "2.2.20"
+        }
+    },
+    "kotlinKlibCommonizerClasspath": {
+        "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable": {
+            "locked": "2.2.20"
+        }
+    },
+    "ktlint": {
+        "com.pinterest.ktlint:ktlint-cli": {
+            "locked": "1.5.0"
+        },
+        "io.github.detekt.sarif4k:sarif4k": {
+            "locked": "0.5.0"
+        },
+        "io.github.oshai:kotlin-logging": {
+            "locked": "5.1.0"
+        }
+    },
+    "ktlintBaselineReporter": {
+        "com.pinterest.ktlint:ktlint-cli-reporter-baseline": {
+            "locked": "1.5.0"
+        },
+        "com.pinterest.ktlint:ktlint-cli-reporter-core": {
+            "locked": "1.5.0"
+        },
+        "com.pinterest.ktlint:ktlint-logger": {
+            "locked": "1.5.0"
+        },
+        "com.pinterest.ktlint:ktlint-rule-engine-core": {
+            "locked": "1.5.0"
+        },
+        "dev.drewhamilton.poko:poko-annotations": {
+            "locked": "0.18.0"
+        },
+        "dev.drewhamilton.poko:poko-annotations-jvm": {
+            "locked": "0.18.0"
+        },
+        "io.github.oshai:kotlin-logging": {
+            "locked": "5.1.0"
+        },
+        "io.github.oshai:kotlin-logging-jvm": {
+            "locked": "7.0.3"
+        },
+        "org.ec4j.core:ec4j-core": {
+            "locked": "1.1.0"
+        },
+        "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains.kotlin:kotlin-daemon-embeddable": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains.kotlin:kotlin-reflect": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains.kotlin:kotlin-script-runtime": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm": {
+            "locked": "1.10.2"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0"
+        }
+    },
+    "ktlintReporter": {
+        "io.github.detekt.sarif4k:sarif4k": {
+            "locked": "0.5.0"
+        },
+        "io.github.detekt.sarif4k:sarif4k-jvm": {
+            "locked": "0.5.0"
+        },
+        "io.github.oshai:kotlin-logging": {
+            "locked": "5.1.0"
+        },
+        "io.github.oshai:kotlin-logging-jvm": {
+            "locked": "7.0.3"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0"
+        }
+    },
+    "ktlintRuleset": {
+        "com.pinterest.ktlint:ktlint-cli-ruleset-core": {
+            "locked": "1.5.0"
+        },
+        "com.pinterest.ktlint:ktlint-logger": {
+            "locked": "1.5.0"
+        },
+        "com.pinterest.ktlint:ktlint-rule-engine-core": {
+            "locked": "1.5.0"
+        },
+        "com.pinterest.ktlint:ktlint-ruleset-standard": {
+            "locked": "1.5.0"
+        },
+        "dev.drewhamilton.poko:poko-annotations": {
+            "locked": "0.18.0"
+        },
+        "dev.drewhamilton.poko:poko-annotations-jvm": {
+            "locked": "0.18.0"
+        },
+        "io.github.oshai:kotlin-logging-jvm": {
+            "locked": "7.0.3"
+        },
+        "org.ec4j.core:ec4j-core": {
+            "locked": "1.1.0"
+        },
+        "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains.kotlin:kotlin-daemon-embeddable": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains.kotlin:kotlin-reflect": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains.kotlin:kotlin-script-runtime": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm": {
+            "locked": "1.10.2"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "13.0"
+        }
+    },
+    "runtimeClasspath": {
+        "com.jayway.jsonpath:json-path": {
+            "locked": "3.0.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "26.1.0"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "2.0.17"
+        }
+    },
+    "swiftExportClasspathResolvable": {
+        "org.jetbrains.kotlin:swift-export-embeddable": {
+            "locked": "2.2.20"
+        }
+    },
+    "testCompileClasspath": {
+        "com.jayway.jsonpath:json-path": {
+            "locked": "3.0.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
+        },
+        "io.mockk:mockk": {
+            "locked": "1.14.9"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "26.1.0"
+        },
+        "org.junit.jupiter:junit-jupiter": {
+            "locked": "6.0.1"
+        },
+        "org.junit:junit-bom": {
+            "locked": "5.13.4"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "2.0.17"
+        },
+        "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "4.0.0"
+        }
+    },
+    "testImplementationDependenciesMetadata": {
+        "com.jayway.jsonpath:json-path": {
+            "locked": "3.0.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
+        },
+        "io.mockk:mockk": {
+            "locked": "1.14.9"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "26.1.0"
+        },
+        "org.junit.jupiter:junit-jupiter": {
+            "locked": "6.0.1"
+        },
+        "org.junit:junit-bom": {
+            "locked": "5.13.4"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "2.0.17"
+        },
+        "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "4.0.0"
+        }
+    },
+    "testRuntimeClasspath": {
+        "com.jayway.jsonpath:json-path": {
+            "locked": "3.0.0"
+        },
+        "com.netflix.graphql.dgs:graphql-dgs-platform": {
+            "project": true
+        },
+        "io.mockk:mockk": {
+            "locked": "1.14.9"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "2.2.20"
+        },
+        "org.jetbrains:annotations": {
+            "locked": "26.1.0"
+        },
+        "org.junit.jupiter:junit-jupiter": {
+            "locked": "6.0.1"
+        },
+        "org.junit.platform:junit-platform-launcher": {
+            "locked": "6.0.1"
+        },
+        "org.junit:junit-bom": {
+            "locked": "5.13.4"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "2.0.17"
+        },
+        "org.springframework.boot:spring-boot-starter-test": {
+            "locked": "4.0.0"
+        }
+    }
+}

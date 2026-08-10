@@ -24,8 +24,7 @@ import org.springframework.core.annotation.Order
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.MapPropertySource
 import org.springframework.core.env.MutablePropertySources
-import java.util.Collections
-import java.util.stream.Collectors
+import org.springframework.core.env.getProperty
 
 /**
  * Globally disable AutoConfig's which cause problems in the Netflix environment
@@ -40,7 +39,7 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
         val disabled =
             DISABLE_AUTOCONFIG_PROPERTIES
                 .asSequence()
-                .filter { !environment.getProperty(it.key, Boolean::class.java, false) }
+                .filter { !environment.getProperty<Boolean>(it.key, false) }
                 .map { it.value }
                 .plus(existingExcludes)
                 .filter { it.isNotEmpty() }
@@ -50,9 +49,9 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
             .addFirst(
                 MapPropertySource(
                     "disableRefreshScope",
-                    Collections.singletonMap<String, Any>(
-                        "spring.autoconfigure.exclude",
-                        disabled,
+                    mapOf(
+                        "spring.autoconfigure.exclude" to
+                            disabled,
                     ),
                 ),
             )
@@ -65,29 +64,24 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
         }
 
         return propertySources
-            .stream()
+            .asSequence()
             .filter { src -> !ConfigurationPropertySources.isAttachedConfigurationPropertySource(src) }
-            .flatMap<String> { src ->
-                val property = src.getProperty(EXCLUDE)
-                when (property) {
-                    is String -> property.split(",").filter { it.isNotBlank() }.stream()
-                    is Array<*> -> property.filterIsInstance<String>().filter { it.isNotBlank() }.stream()
-                    else -> emptyList<String>().stream()
+            .flatMap { src ->
+                when (val property = src.getProperty(EXCLUDE)) {
+                    is String -> property.splitToSequence(",").filter { it.isNotBlank() }
+                    is Array<*> -> property.asSequence().filterIsInstance<String>().filter { it.isNotBlank() }
+                    else -> emptySequence()
                 }
-            }.collect(Collectors.joining(","))
+            }.joinToString(",")
     }
 
     companion object {
         private val DISABLE_AUTOCONFIG_PROPERTIES =
             mapOf(
-                Pair(
-                    "dgs.springgraphql.autoconfiguration.graphqlobservation.enabled",
+                "dgs.springgraphql.autoconfiguration.graphqlobservation.enabled" to
                     "org.springframework.boot.graphql.autoconfigure.observation.GraphQlObservationAutoConfiguration",
-                ),
-                Pair(
-                    "dgs.springgraphql.autoconfiguration.graphqlwebmvcsecurity.enabled",
+                "dgs.springgraphql.autoconfiguration.graphqlwebmvcsecurity.enabled" to
                     "org.springframework.boot.graphql.autoconfigure.security.GraphQlWebMvcSecurityAutoConfiguration",
-                ),
             )
 
         private const val EXCLUDE = "spring.autoconfigure.exclude"

@@ -22,8 +22,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("io.micrometer:context-propagation")
     implementation("org.springframework.graphql:spring-graphql")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    compileOnly("tools.jackson.core:jackson-databind")
+    compileOnly("tools.jackson.module:jackson-module-kotlin")
     implementation("io.micrometer:context-propagation")
     implementation("org.springframework.boot:spring-boot-starter-graphql")
 
@@ -34,6 +34,8 @@ dependencies {
     compileOnly("org.springframework:spring-webflux")
     compileOnly("org.springframework:spring-test")
 
+    testImplementation("tools.jackson.core:jackson-databind")
+    testImplementation("tools.jackson.module:jackson-module-kotlin")
     testImplementation("org.springframework.boot:spring-boot-starter-graphql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-web")

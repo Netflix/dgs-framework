@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.getBeansWithAnnotation
 import org.springframework.context.ApplicationContext
 import java.util.Optional
 
@@ -84,15 +85,15 @@ class InterfaceDataFetchersTest {
                 fun movies(dfe: DataFetchingEnvironment): List<Movie> = listOf(ScaryMovie(), ActionMovie())
             }
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsComponent::class.java) } returns
+        every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns
             mapOf(
-                Pair("movieDirectorFetcher", fetcher),
-                Pair("movieTypeResolver", movieTypeResolver),
-                Pair("queryResolver", queryFetcher),
+                "movieDirectorFetcher" to fetcher,
+                "movieTypeResolver" to movieTypeResolver,
+                "queryResolver" to queryFetcher,
             )
 
-        every { applicationContextMock.getBeansWithAnnotation(DgsScalar::class.java) } returns emptyMap()
-        every { applicationContextMock.getBeansWithAnnotation(DgsDirective::class.java) } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation<DgsScalar>() } returns emptyMap()
+        every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
 
         val provider =
             DgsSchemaProvider(

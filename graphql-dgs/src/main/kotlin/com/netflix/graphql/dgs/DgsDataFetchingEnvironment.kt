@@ -115,4 +115,6 @@ class DgsDataFetchingEnvironment(
         }
         return true
     }
+
+    override fun toInternal(): Any = dfe.toInternal()
 }
