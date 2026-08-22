@@ -81,4 +81,47 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessorTest {
         assertThat(env.getProperty("spring.autoconfigure.exclude"))
             .doesNotContain("someexclude")
     }
+
+    @Test
+    fun `merges yaml list excludes instead of overriding them`() {
+        val env = StandardEnvironment()
+        env.propertySources.addLast(
+            MapPropertySource(
+                "application-yaml",
+                mapOf("spring.autoconfigure.exclude" to listOf("com.example.AutoconfigA", "com.example.AutoconfigB")),
+            ),
+        )
+
+        ExcludeAutoConfigurationsEnvironmentPostProcessor().postProcessEnvironment(env, SpringApplication())
+        assertThat(env.getProperty("spring.autoconfigure.exclude"))
+            .contains(
+                "com.example.AutoconfigA",
+                "com.example.AutoconfigB",
+                "org.springframework.boot.graphql.autoconfigure.observation.GraphQlObservationAutoConfiguration",
+                "org.springframework.boot.graphql.autoconfigure.security.GraphQlWebMvcSecurityAutoConfiguration",
+            )
+    }
+
+    @Test
+    fun `merges indexed excludes instead of overriding them`() {
+        val env = StandardEnvironment()
+        env.propertySources.addLast(
+            MapPropertySource(
+                "application-props",
+                mapOf(
+                    "spring.autoconfigure.exclude[0]" to "com.example.AutoconfigA",
+                    "spring.autoconfigure.exclude[1]" to "com.example.AutoconfigB",
+                ),
+            ),
+        )
+
+        ExcludeAutoConfigurationsEnvironmentPostProcessor().postProcessEnvironment(env, SpringApplication())
+        assertThat(env.getProperty("spring.autoconfigure.exclude"))
+            .contains(
+                "com.example.AutoconfigA",
+                "com.example.AutoconfigB",
+                "org.springframework.boot.graphql.autoconfigure.observation.GraphQlObservationAutoConfiguration",
+                "org.springframework.boot.graphql.autoconfigure.security.GraphQlWebMvcSecurityAutoConfiguration",
+            )
+    }
 }
