@@ -24,6 +24,7 @@ import org.springframework.core.annotation.Order
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.MapPropertySource
 import org.springframework.core.env.MutablePropertySources
+import org.springframework.core.env.PropertySource
 import org.springframework.core.env.getProperty
 
 /**
@@ -58,21 +59,50 @@ class ExcludeAutoConfigurationsEnvironmentPostProcessor : EnvironmentPostProcess
     }
 
     private fun extractAllExcludes(propertySources: MutablePropertySources): String {
-        val testExclude = propertySources.find { it.name == INLINED_TEST_PROPERTIES }?.getProperty(EXCLUDE)
-        if (testExclude != null && testExclude is String && testExclude.isNotBlank()) {
-            return testExclude
+        val testExclude = propertySources.find { it.name == INLINED_TEST_PROPERTIES }?.let { excludesFrom(it) }
+        if (!testExclude.isNullOrEmpty()) {
+            return testExclude.joinToString(",")
         }
 
         return propertySources
             .asSequence()
             .filter { src -> !ConfigurationPropertySources.isAttachedConfigurationPropertySource(src) }
-            .flatMap { src ->
-                when (val property = src.getProperty(EXCLUDE)) {
-                    is String -> property.splitToSequence(",").filter { it.isNotBlank() }
-                    is Array<*> -> property.asSequence().filterIsInstance<String>().filter { it.isNotBlank() }
-                    else -> emptySequence()
-                }
-            }.joinToString(",")
+            .flatMap { src -> excludesFrom(src).asSequence() }
+            .joinToString(",")
+    }
+
+    /**
+     * Collects exclude class names from a property source.
+     *
+     * Spring Boot accepts several representations of `spring.autoconfigure.exclude`:
+     * a comma-separated string, a YAML list (stored as a [Collection] or array),
+     * and index-based keys such as `spring.autoconfigure.exclude[0]`.
+     * Only the string/array forms were previously merged, so user YAML lists and
+     * indexed properties were overwritten by this post-processor.
+     */
+    private fun excludesFrom(src: PropertySource<*>): List<String> {
+        val fromDirect =
+            when (val property = src.getProperty(EXCLUDE)) {
+                is String -> property.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+                is Array<*> -> property.filterIsInstance<String>().map { it.trim() }.filter { it.isNotEmpty() }
+                is Collection<*> -> property.filterIsInstance<String>().map { it.trim() }.filter { it.isNotEmpty() }
+                else -> emptyList()
+            }
+        if (fromDirect.isNotEmpty()) {
+            return fromDirect
+        }
+
+        val indexed = mutableListOf<String>()
+        var i = 0
+        while (true) {
+            val value = src.getProperty("$EXCLUDE[$i]") ?: break
+            val str = value.toString().trim()
+            if (str.isNotEmpty()) {
+                indexed.add(str)
+            }
+            i++
+        }
+        return indexed
     }
 
     companion object {
