@@ -24,7 +24,7 @@ group = "com.netflix.graphql.dgs"
 
 plugins {
     `java-library`
-    id("com.netflix.nebula.dependency-recommender") version "14.0.0"
+    id("com.netflix.nebula.dependency-recommender") version "14.1.0"
 
     id("nebula.netflixoss") version "13.0.0"
     id("io.spring.dependency-management") version "1.1.7"
@@ -102,7 +102,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         testImplementation("io.mockk:mockk:1.+")
 
         // JUnit 5 dependencies
-        testImplementation(platform("org.junit:junit-bom:6.1.0"))
+        testImplementation(platform("org.junit:junit-bom:6.1.3"))
         testImplementation("org.junit.jupiter:junit-jupiter")
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     }
