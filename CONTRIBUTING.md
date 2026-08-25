@@ -86,9 +86,8 @@ The DGS codebases are Kotlin based. We strongly recommend using Intellij because
 Gradle. You can use the free [Intellij Community Edition](https://www.jetbrains.com/idea/download/).
 
 Clone and open the project using the "project from version control feature" and let Gradle import all dependencies. Note
-that we build on Java 8, so a Java 8 JDK is required. If you don't have a JDK, you can use [sdkman](https://sdkman.io/)
-or [Intellij](https://www.jetbrains.com/help/idea/sdk.html) to install one. Because almost all the code is Kotlin, we
-don't miss any language features of newer Java releases while supporting a broad range of older releases.
+that the build uses a Java 17 toolchain, so JDK 17 is required. If you don't have a JDK, you can use
+[sdkman](https://sdkman.io/) or [Intellij](https://www.jetbrains.com/help/idea/sdk.html) to install one.
 
 Code conventions
 -----
