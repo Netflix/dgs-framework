@@ -31,12 +31,13 @@ import java.util.function.Supplier
 class TrivialDataFetcherTest {
     private val application = GenericApplicationContext()
     private val schemaProvider =
-        DgsSchemaProvider(
-            applicationContext = application,
-            federationResolver = Optional.empty(),
-            existingTypeDefinitionRegistry = Optional.empty(),
-            methodDataFetcherFactory = MethodDataFetcherFactory(argumentResolvers = listOf()),
-        )
+        DgsSchemaProvider
+            .builder()
+            .applicationContext(application)
+            .federationResolver(Optional.empty())
+            .existingTypeDefinitionRegistry(Optional.empty())
+            .methodDataFetcherFactory(MethodDataFetcherFactory(listOf()))
+            .build()
 
     @Test
     fun `DgsData annotated method with trivial field set to true is registered as TrivialDataFetcher`() {

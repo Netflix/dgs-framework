@@ -79,11 +79,12 @@ internal class InputArgumentTest {
     private val contextRunner = ApplicationContextRunner()
 
     private fun schemaProvider(applicationContext: ApplicationContext) =
-        DgsSchemaProvider(
-            applicationContext = applicationContext,
-            federationResolver = Optional.empty(),
-            existingTypeDefinitionRegistry = Optional.empty(),
-            methodDataFetcherFactory =
+        DgsSchemaProvider
+            .builder()
+            .applicationContext(applicationContext)
+            .federationResolver(Optional.empty())
+            .existingTypeDefinitionRegistry(Optional.empty())
+            .methodDataFetcherFactory(
                 MethodDataFetcherFactory(
                     listOf(
                         InputArgumentResolver(DefaultInputObjectMapper()),
@@ -91,7 +92,7 @@ internal class InputArgumentTest {
                         FallbackEnvironmentArgumentResolver(DefaultInputObjectMapper()),
                     ),
                 ),
-        )
+            ).build()
 
     @Test
     fun `@InputArgument with name specified, on String argument`() {

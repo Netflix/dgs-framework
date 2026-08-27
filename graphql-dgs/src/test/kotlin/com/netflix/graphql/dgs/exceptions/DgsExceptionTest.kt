@@ -44,7 +44,7 @@ class DgsExceptionTest {
 
             assertThat(
                 CustomDgsException()
-                    .toGraphQlError(path = ResultPath.fromList(pathSegments))
+                    .toGraphQlError(ResultPath.fromList(pathSegments))
                     .path,
             ).containsAll(pathSegments)
         }
@@ -66,6 +66,6 @@ class DgsExceptionTest {
 
     private class CustomDgsException :
         DgsException(
-            message = FAKE_ERROR_MESSAGE,
+            FAKE_ERROR_MESSAGE,
         )
 }

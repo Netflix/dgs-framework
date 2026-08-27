@@ -36,12 +36,13 @@ internal class SourceArgumentTest {
     private val contextRunner = ApplicationContextRunner()
 
     private fun schemaProvider(applicationContext: ApplicationContext) =
-        DgsSchemaProvider(
-            applicationContext = applicationContext,
-            federationResolver = Optional.empty(),
-            existingTypeDefinitionRegistry = Optional.empty(),
-            schemaLocations = listOf("source-argument-test/schema.graphqls"),
-            methodDataFetcherFactory =
+        DgsSchemaProvider
+            .builder()
+            .applicationContext(applicationContext)
+            .federationResolver(Optional.empty())
+            .existingTypeDefinitionRegistry(Optional.empty())
+            .schemaLocations(listOf("source-argument-test/schema.graphqls"))
+            .methodDataFetcherFactory(
                 MethodDataFetcherFactory(
                     listOf(
                         InputArgumentResolver(DefaultInputObjectMapper()),
@@ -50,7 +51,7 @@ internal class SourceArgumentTest {
                         FallbackEnvironmentArgumentResolver(DefaultInputObjectMapper()),
                     ),
                 ),
-        )
+            ).build()
 
     data class Show(
         val title: String,

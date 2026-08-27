@@ -63,12 +63,13 @@ class CustomDirectivesTest {
             )
 
         val provider =
-            DgsSchemaProvider(
-                applicationContext = applicationContextMock,
-                federationResolver = Optional.empty(),
-                existingTypeDefinitionRegistry = Optional.empty(),
-                methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
-            )
+            DgsSchemaProvider
+                .builder()
+                .applicationContext(applicationContextMock)
+                .federationResolver(Optional.empty())
+                .existingTypeDefinitionRegistry(Optional.empty())
+                .methodDataFetcherFactory(MethodDataFetcherFactory(listOf()))
+                .build()
 
         val schema =
             provider
@@ -122,12 +123,13 @@ class CustomDirectivesTest {
         every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns mapOf("proxied" to proxiedDirective)
 
         val provider =
-            DgsSchemaProvider(
-                applicationContext = applicationContextMock,
-                federationResolver = Optional.empty(),
-                existingTypeDefinitionRegistry = Optional.empty(),
-                methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
-            )
+            DgsSchemaProvider
+                .builder()
+                .applicationContext(applicationContextMock)
+                .federationResolver(Optional.empty())
+                .existingTypeDefinitionRegistry(Optional.empty())
+                .methodDataFetcherFactory(MethodDataFetcherFactory(listOf()))
+                .build()
 
         assertDoesNotThrow {
             provider.schema(

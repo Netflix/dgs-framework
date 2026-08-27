@@ -27,11 +27,10 @@ internal class SpectatorLimitedTagMetricResolverTest {
 
     private val tagProps =
         DgsGraphQLMetricsProperties.TagsProperties(
-            limiter =
-                DgsGraphQLMetricsProperties.CardinalityLimiterProperties(
-                    kind = DgsGraphQLMetricsProperties.CardinalityLimiterKind.FIRST,
-                    limit = DEFAULT_LIMIT,
-                ),
+            DgsGraphQLMetricsProperties.CardinalityLimiterProperties(
+                DgsGraphQLMetricsProperties.CardinalityLimiterKind.FIRST,
+                DEFAULT_LIMIT,
+            ),
         )
 
     @Test

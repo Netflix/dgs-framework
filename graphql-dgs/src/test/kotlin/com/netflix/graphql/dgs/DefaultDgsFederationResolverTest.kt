@@ -79,15 +79,16 @@ class DefaultDgsFederationResolverTest {
     @BeforeEach
     fun setup() {
         dgsSchemaProvider =
-            DgsSchemaProvider(
-                applicationContext = applicationContextMock,
-                federationResolver = Optional.empty(),
-                existingTypeDefinitionRegistry = Optional.empty(),
-                dataFetcherExceptionHandler = Optional.of(dgsExceptionHandler),
-                entityFetcherRegistry = entityFetcherRegistry,
-                methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
-                enableEntityFetcherCustomScalarParsing = true,
-            )
+            DgsSchemaProvider
+                .builder()
+                .applicationContext(applicationContextMock)
+                .federationResolver(Optional.empty())
+                .existingTypeDefinitionRegistry(Optional.empty())
+                .dataFetcherExceptionHandler(Optional.of(dgsExceptionHandler))
+                .entityFetcherRegistry(entityFetcherRegistry)
+                .methodDataFetcherFactory(MethodDataFetcherFactory(listOf()))
+                .enableEntityFetcherCustomScalarParsing(true)
+                .build()
     }
 
     @Nested

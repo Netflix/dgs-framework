@@ -83,7 +83,7 @@ public class DgsDataLoaderInstrumentationDataLoaderCustomizer implements DgsData
         public CompletionStage<List<V>> load(List<K> keys, BatchLoaderEnvironment environment) {
             List<DgsDataLoaderInstrumentationContext> contexts =
                 instrumentations.stream()
-                    .map(it -> it.onDispatch(name, keys, environment))
+                    .map(it -> it.onDispatch(name, java.util.List.copyOf(keys), environment))
                     .toList();
 
             CompletionStage<List<V>> future = original.load(keys, environment).whenComplete((result, exception) -> {

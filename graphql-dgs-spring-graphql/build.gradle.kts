@@ -48,3 +48,9 @@ dependencies {
 tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.addAll(listOf("--patch-module", "com.netflix.graphql.dgs.springgraphql=${sourceSets["main"].output.asPath}"))
 }
+
+// Some dependencies are plain, non-modular jars that Gradle keeps on the classpath.
+// Allow this module to read them when compiling the module descriptor.
+tasks.compileJava {
+    options.compilerArgs.addAll(listOf("--add-reads", "com.netflix.graphql.dgs.springgraphql=ALL-UNNAMED"))
+}

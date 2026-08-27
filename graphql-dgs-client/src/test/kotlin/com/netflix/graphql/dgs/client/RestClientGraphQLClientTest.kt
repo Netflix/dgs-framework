@@ -118,7 +118,7 @@ class RestClientGraphQLClientTest {
         val result =
             client
                 .executeQuery(
-                    query = "{ withUriParam }",
+                    "{ withUriParam }",
                 ).extractValue<String>("withUriParam")
 
         assertThat(result).isEqualTo("Parameter q1: one")

@@ -151,7 +151,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
                 assertThat(
                     context
                         .getBean<DgsSpringGraphQLConfigurationProperties>()
-                        .webmvc.asyncdispatch.enabled,
+                        .webmvc.asyncdispatch.isEnabled,
                 ).isFalse()
             }
     }
@@ -165,7 +165,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
                 assertThat(
                     context
                         .getBean<DgsSpringGraphQLConfigurationProperties>()
-                        .webmvc.asyncdispatch.enabled,
+                        .webmvc.asyncdispatch.isEnabled,
                 ).isTrue()
             }
     }
@@ -179,7 +179,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
                 assertThat(
                     context
                         .getBean<DgsSpringGraphQLConfigurationProperties>()
-                        .webmvc.asyncdispatch.enabled,
+                        .webmvc.asyncdispatch.isEnabled,
                 ).isFalse()
             }
     }
@@ -377,7 +377,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
                 assertThat(
                     context
                         .getBean<DgsConfigurationProperties>()
-                        .strictMode.enabled,
+                        .strictMode.isEnabled,
                 ).isTrue()
             }
     }
@@ -391,7 +391,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
                 assertThat(
                     context
                         .getBean<DgsConfigurationProperties>()
-                        .strictMode.enabled,
+                        .strictMode.isEnabled,
                 ).isFalse()
             }
     }

@@ -41,8 +41,8 @@ class RequestWithScalarTest {
 
         val client =
             CustomGraphQLClient(
-                url = "",
-                requestExecutor = { _, _, _ -> HttpResponse(200, """{"data": null}""") },
+                "",
+                { _, _, _ -> HttpResponse(200, """{"data": null}""") },
             )
         val graphQLResponse =
             client.executeQuery(

@@ -42,10 +42,10 @@ internal class DgsGraphQLMetricsPropertiesTest {
             assertThat(props.tags).isNotNull
             assertThat(props.tags.limiter.kind).isEqualTo(DgsGraphQLMetricsProperties.CardinalityLimiterKind.FIRST)
             assertThat(props.tags.limiter.limit).isEqualTo(100)
-            assertThat(props.tags.complexity.enabled).isTrue()
+            assertThat(props.tags.complexity.isEnabled).isTrue()
 
-            assertThat(props.resolver.enabled).isTrue()
-            assertThat(props.query.enabled).isTrue()
+            assertThat(props.resolver.isEnabled).isTrue()
+            assertThat(props.query.isEnabled).isTrue()
         }
     }
 
@@ -72,7 +72,7 @@ internal class DgsGraphQLMetricsPropertiesTest {
             ).run { ctx ->
                 val props = ctx.getBean<DgsGraphQLMetricsProperties>()
 
-                assertThat(props.tags.complexity.enabled).isFalse()
+                assertThat(props.tags.complexity.isEnabled).isFalse()
             }
     }
 
@@ -84,7 +84,7 @@ internal class DgsGraphQLMetricsPropertiesTest {
             ).run { ctx ->
                 val props = ctx.getBean<DgsGraphQLMetricsProperties>()
 
-                assertThat(props.resolver.enabled).isFalse()
+                assertThat(props.resolver.isEnabled).isFalse()
             }
     }
 
@@ -96,7 +96,7 @@ internal class DgsGraphQLMetricsPropertiesTest {
             ).run { ctx ->
                 val props = ctx.getBean<DgsGraphQLMetricsProperties>()
 
-                assertThat(props.query.enabled).isFalse()
+                assertThat(props.query.isEnabled).isFalse()
             }
     }
 

@@ -18,6 +18,7 @@
 
 package com.netflix.graphql.dgs.client
 
+import com.jayway.jsonpath.TypeRef
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -47,11 +48,11 @@ class GraphQLResponseTest {
             headers.forEach { (key, values) -> httpHeaders.addAll(key, values) }
 
             val response = restTemplate.exchange<String>(url, HttpMethod.POST, HttpEntity(body, httpHeaders))
-            HttpResponse(statusCode = response.statusCode.value(), body = response.body, headers = response.headers.toMap())
+            HttpResponse(response.statusCode.value(), response.body, response.headers.toMap())
         }
 
     private val url = "http://localhost:8080/graphql"
-    private val client = CustomGraphQLClient(url = url, requestExecutor = requestExecutor)
+    private val client = CustomGraphQLClient(url, requestExecutor)
 
     @ParameterizedTest
     @CsvSource(
@@ -217,7 +218,7 @@ class GraphQLResponseTest {
         val listOfSubmittedBy =
             graphQLResponse.extractValueAsObject(
                 "submitReview.edges[*].node.submittedBy",
-                jsonTypeRef<List<String>>(),
+                object : TypeRef<List<String>>() {},
             )
         assertThat(listOfSubmittedBy).isInstanceOf(ArrayList::class.java)
         assertThat(listOfSubmittedBy.size).isEqualTo(2)

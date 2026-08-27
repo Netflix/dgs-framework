@@ -70,15 +70,16 @@ class DataFetcherWithDirectivesTest {
         every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
 
         val provider =
-            DgsSchemaProvider(
-                applicationContext = applicationContextMock,
-                federationResolver = Optional.empty(),
-                existingTypeDefinitionRegistry = Optional.empty(),
-                methodDataFetcherFactory =
+            DgsSchemaProvider
+                .builder()
+                .applicationContext(applicationContextMock)
+                .federationResolver(Optional.empty())
+                .existingTypeDefinitionRegistry(Optional.empty())
+                .methodDataFetcherFactory(
                     MethodDataFetcherFactory(
                         listOf(DataFetchingEnvironmentArgumentResolver(applicationContextMock)),
                     ),
-            )
+                ).build()
 
         val schema =
             provider

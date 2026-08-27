@@ -1,0 +1,70 @@
+/*
+ * Copyright 2025 Netflix, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.netflix.graphql.dgs.autoconfig;
+
+import com.netflix.graphql.dgs.DgsComponent;
+import com.netflix.graphql.dgs.DgsRuntimeWiring;
+import graphql.schema.idl.RuntimeWiring;
+import graphql.validation.rules.ValidationRules;
+import graphql.validation.schemawiring.ValidationSchemaWiring;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+
+@ConditionalOnClass(ValidationRules.class)
+@ConditionalOnProperty(
+        prefix = "dgs.graphql.extensions.validation",
+        name = "enabled",
+        havingValue = "true",
+        matchIfMissing = true)
+@AutoConfiguration
+public class DgsExtendedValidationAutoConfiguration {
+    @Bean
+    public ExtendedValidationRegistrar defaultExtendedValidationRegistrar(
+            ObjectProvider<ValidationRulesBuilderCustomizer> validationRulesCustomizerProvider) {
+        return new DefaultExtendedValidationRegistrar(validationRulesCustomizerProvider);
+    }
+
+    @DgsComponent
+    @FunctionalInterface
+    public interface ExtendedValidationRegistrar {
+        RuntimeWiring.Builder addValidationRules(RuntimeWiring.Builder builder);
+    }
+
+    public static class DefaultExtendedValidationRegistrar implements ExtendedValidationRegistrar {
+        private final ObjectProvider<ValidationRulesBuilderCustomizer> validationRulesCustomizerProvider;
+
+        public DefaultExtendedValidationRegistrar(
+                ObjectProvider<ValidationRulesBuilderCustomizer> validationRulesCustomizerProvider) {
+            this.validationRulesCustomizerProvider = validationRulesCustomizerProvider;
+        }
+
+        @DgsRuntimeWiring
+        @Override
+        public RuntimeWiring.Builder addValidationRules(RuntimeWiring.Builder builder) {
+            ValidationRules.Builder validationRulesBuilder = ValidationRules.newValidationRules();
+            validationRulesCustomizerProvider.ifAvailable(customizer -> customizer.customize(validationRulesBuilder));
+
+            ValidationRules validationRules = validationRulesBuilder.build();
+            ValidationSchemaWiring schemaWiring = new ValidationSchemaWiring(validationRules);
+            // we add this schema wiring to the graphql runtime
+            return builder.directiveWiring(schemaWiring);
+        }
+    }
+}

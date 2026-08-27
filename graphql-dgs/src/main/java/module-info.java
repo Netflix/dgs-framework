@@ -13,8 +13,16 @@ module com.netflix.graphql.dgs.core {
     opens com.netflix.graphql.dgs.internal to spring.beans;
 
     requires com.netflix.graphql.dgs.errortypes;
+    requires com.netflix.graphql.dgs.jsonapi;
+    requires static com.fasterxml.jackson.databind;
+    requires static com.fasterxml.jackson.datatype.jsr310;
+    requires tools.jackson.core;
+    requires tools.jackson.databind;
+    requires tools.jackson.module.kotlin;
+    requires static com.github.benmanes.caffeine;
     requires json.path;
     requires org.dataloader;
+    requires static jakarta.annotation;
     requires org.jetbrains.annotations;
     requires static org.jspecify;
     requires spring.aop;
@@ -26,6 +34,7 @@ module com.netflix.graphql.dgs.core {
     requires kotlin.reflect;
     requires kotlinx.coroutines.core;
     requires kotlinx.coroutines.reactive;
+    requires kotlinx.coroutines.reactor;
 
     requires org.slf4j;
     requires transitive com.graphqljava;

@@ -49,21 +49,21 @@ class CoroutineDataFetcherTest {
     private val context = GenericApplicationContext()
 
     private val schemaProvider by lazy {
-        DgsSchemaProvider(
-            applicationContext = context,
-            federationResolver = Optional.empty(),
-            existingTypeDefinitionRegistry = Optional.empty(),
-            methodDataFetcherFactory =
+        DgsSchemaProvider
+            .builder()
+            .applicationContext(context)
+            .federationResolver(Optional.empty())
+            .existingTypeDefinitionRegistry(Optional.empty())
+            .methodDataFetcherFactory(
                 MethodDataFetcherFactory(
-                    argumentResolvers =
-                        listOf(
-                            InputArgumentResolver(DefaultInputObjectMapper()),
-                            ContinuationArgumentResolver(),
-                            FallbackEnvironmentArgumentResolver(DefaultInputObjectMapper()),
-                        ),
+                    listOf(
+                        InputArgumentResolver(DefaultInputObjectMapper()),
+                        ContinuationArgumentResolver(),
+                        FallbackEnvironmentArgumentResolver(DefaultInputObjectMapper()),
+                    ),
                 ),
-            dataFetcherResultProcessors = listOf(stubDataFetcherResultProcessor),
-        )
+            ).dataFetcherResultProcessors(listOf(stubDataFetcherResultProcessor))
+            .build()
     }
 
     private val stubDataFetcherResultProcessor =

@@ -69,12 +69,13 @@ class DgsTypeRegistryDefinitionTest {
 
         contextRunner.withBeans(FetcherWithRegistry::class, Fetcher::class).run { context ->
             val provider =
-                DgsSchemaProvider(
-                    applicationContext = context,
-                    federationResolver = Optional.empty(),
-                    existingTypeDefinitionRegistry = Optional.empty(),
-                    methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
-                )
+                DgsSchemaProvider
+                    .builder()
+                    .applicationContext(context)
+                    .federationResolver(Optional.empty())
+                    .existingTypeDefinitionRegistry(Optional.empty())
+                    .methodDataFetcherFactory(MethodDataFetcherFactory(listOf()))
+                    .build()
 
             val schema = provider.schema().graphQLSchema
             val graphql = GraphQL.newGraphQL(schema).build()
@@ -162,12 +163,13 @@ class DgsTypeRegistryDefinitionTest {
                 NumberFetcher::class,
             ).run { context ->
                 val provider =
-                    DgsSchemaProvider(
-                        applicationContext = context,
-                        federationResolver = Optional.empty(),
-                        existingTypeDefinitionRegistry = Optional.empty(),
-                        methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
-                    )
+                    DgsSchemaProvider
+                        .builder()
+                        .applicationContext(context)
+                        .federationResolver(Optional.empty())
+                        .existingTypeDefinitionRegistry(Optional.empty())
+                        .methodDataFetcherFactory(MethodDataFetcherFactory(listOf()))
+                        .build()
 
                 val schema = provider.schema().graphQLSchema
                 val graphql = GraphQL.newGraphQL(schema).build()

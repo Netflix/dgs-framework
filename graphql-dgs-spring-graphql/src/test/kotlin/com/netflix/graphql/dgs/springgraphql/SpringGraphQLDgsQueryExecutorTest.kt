@@ -68,11 +68,11 @@ class SpringGraphQLDgsQueryExecutorTest {
 
     private fun queryExecutor(executionService: ExecutionGraphQlService): SpringGraphQLDgsQueryExecutor =
         SpringGraphQLDgsQueryExecutor(
-            executionService = executionService,
-            dgsContextBuilder = DefaultDgsGraphQLContextBuilder(Optional.empty()),
-            dgsDataLoaderProvider = dataLoaderProvider,
-            dgsJsonMapper = Jackson3DgsJsonMapper(),
-            graphQLContextContributors = emptyList(),
+            executionService,
+            DefaultDgsGraphQLContextBuilder(Optional.empty()),
+            dataLoaderProvider,
+            Jackson3DgsJsonMapper(),
+            emptyList(),
         )
 
     private fun responseFor(request: ExecutionGraphQlRequest): ExecutionGraphQlResponse {

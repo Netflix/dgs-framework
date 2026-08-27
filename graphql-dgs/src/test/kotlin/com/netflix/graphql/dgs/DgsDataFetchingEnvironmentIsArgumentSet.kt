@@ -36,11 +36,12 @@ class DgsDataFetchingEnvironmentIsArgumentSet {
     fun `DgsDataFetcherEnvironment isArgumentSet should support top level arguments, complex arguments, and explicit nulls`() {
         contextRunner.withBean(HelloFetcher::class.java).run { context ->
             val schemaProvider =
-                DgsSchemaProvider(
-                    applicationContext = context,
-                    federationResolver = Optional.empty(),
-                    existingTypeDefinitionRegistry = Optional.empty(),
-                    methodDataFetcherFactory =
+                DgsSchemaProvider
+                    .builder()
+                    .applicationContext(context)
+                    .federationResolver(Optional.empty())
+                    .existingTypeDefinitionRegistry(Optional.empty())
+                    .methodDataFetcherFactory(
                         MethodDataFetcherFactory(
                             listOf(
                                 DataFetchingEnvironmentArgumentResolver(context),
@@ -49,7 +50,7 @@ class DgsDataFetchingEnvironmentIsArgumentSet {
                                 ),
                             ),
                         ),
-                )
+                    ).build()
             val schema =
                 schemaProvider
                     .schema(
