@@ -64,7 +64,7 @@ public final class BaseDgsQueryExecutor {
 
         private static ObjectMapper createObjectMapper() {
             try {
-                return new ObjectMapper()
+                return Jackson2KotlinModuleSupport.registerIfAvailable(new ObjectMapper())
                         .registerModule(new JavaTimeModule())
                         .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
                         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);

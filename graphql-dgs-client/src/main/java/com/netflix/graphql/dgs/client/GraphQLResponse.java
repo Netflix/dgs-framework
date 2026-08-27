@@ -51,7 +51,7 @@ public class GraphQLResponse implements DgsGraphQLResponse {
      */
     @Deprecated
     static final ObjectMapper DEFAULT_MAPPER =
-            new ObjectMapper()
+            KotlinModuleSupport.registerIfAvailable(new ObjectMapper())
                     .registerModule(new JavaTimeModule())
                     .registerModule(new ParameterNamesModule())
                     .registerModule(new Jdk8Module())

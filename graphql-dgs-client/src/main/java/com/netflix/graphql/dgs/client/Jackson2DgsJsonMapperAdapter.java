@@ -107,7 +107,7 @@ public class Jackson2DgsJsonMapperAdapter implements DgsJsonMapper {
     @SuppressWarnings("unchecked")
     private static ObjectMapper buildObjectMapper(DgsGraphQLRequestOptions options) {
         ObjectMapper mapper =
-                new ObjectMapper()
+                KotlinModuleSupport.registerIfAvailable(new ObjectMapper())
                         .registerModule(new JavaTimeModule())
                         .registerModule(new ParameterNamesModule())
                         .registerModule(new Jdk8Module())

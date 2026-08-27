@@ -90,8 +90,8 @@ public class Jackson3DgsJsonMapperAdapter implements DgsJsonMapper {
     @SuppressWarnings("unchecked")
     private static JsonMapper buildJsonMapper(DgsGraphQLRequestOptions options) {
         JsonMapper.Builder builder =
-                JsonMapper
-                        .builder()
+                KotlinModuleSupport
+                        .addIfAvailable(JsonMapper.builder())
                         .enable(EnumFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
                         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                         .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES);

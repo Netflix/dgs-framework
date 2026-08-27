@@ -4,6 +4,7 @@ module com.netflix.graphql.dgs.client {
     requires com.fasterxml.jackson.datatype.jdk8;
     requires com.fasterxml.jackson.datatype.jsr310;
     requires com.fasterxml.jackson.module.paramnames;
+    requires static com.fasterxml.jackson.kotlin;
     requires com.graphqljava;
     requires com.netflix.graphql.dgs.jsonapi;
     requires com.netflix.graphql.dgs.subscriptiontypes;
@@ -16,6 +17,7 @@ module com.netflix.graphql.dgs.client {
     requires static spring.webflux;
     requires tools.jackson.core;
     requires tools.jackson.databind;
+    requires static tools.jackson.module.kotlin;
 
     exports com.netflix.graphql.dgs.client;
     exports com.netflix.graphql.dgs.client.exceptions;

@@ -16,6 +16,7 @@ module com.netflix.graphql.dgs.core {
     requires com.netflix.graphql.dgs.jsonapi;
     requires static com.fasterxml.jackson.databind;
     requires static com.fasterxml.jackson.datatype.jsr310;
+    requires static com.fasterxml.jackson.kotlin;
     requires tools.jackson.core;
     requires tools.jackson.databind;
     requires tools.jackson.module.kotlin;

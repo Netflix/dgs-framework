@@ -73,6 +73,7 @@ public class GraphQLRequestOptions {
     @SuppressWarnings("unchecked")
     public static ObjectMapper createCustomObjectMapper(GraphQLRequestOptions options) {
         ObjectMapper mapper = new ObjectMapper();
+        KotlinModuleSupport.registerIfAvailable(mapper);
         mapper.registerModule(new JavaTimeModule());
         mapper.registerModule(new ParameterNamesModule());
         mapper.registerModule(new Jdk8Module());
