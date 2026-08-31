@@ -32,6 +32,7 @@ import com.netflix.graphql.types.subscription.OperationMessage
 import com.netflix.graphql.types.subscription.QueryPayload
 import graphql.GraphQLException
 import org.intellij.lang.annotations.Language
+import org.slf4j.LoggerFactory
 import org.springframework.web.reactive.socket.WebSocketHandler
 import org.springframework.web.reactive.socket.WebSocketMessage
 import org.springframework.web.reactive.socket.WebSocketSession
@@ -60,6 +61,7 @@ class WebSocketGraphQLClient(
     private val acknowledgementTimeout: Duration = DEFAULT_ACKNOWLEDGEMENT_TIMEOUT,
 ) : ReactiveGraphQLClient {
     companion object {
+        private val logger = LoggerFactory.getLogger(WebSocketGraphQLClient::class.java)
         private val DEFAULT_ACKNOWLEDGEMENT_TIMEOUT = Duration.ofSeconds(30)
         private val CONNECTION_INIT_MESSAGE = OperationMessage(GQL_CONNECTION_INIT, null, null)
         private val MAPPER = jacksonObjectMapper()
@@ -149,14 +151,22 @@ class WebSocketGraphQLClient(
             client.send(CONNECTION_INIT_MESSAGE)
             client
                 .receive()
-                .take(1)
-                .map { message ->
-                    if (message.type == GQL_CONNECTION_ACK) {
-                        message
-                    } else {
-                        throw GraphQLException("Acknowledgement expected from server, received $message")
+                // Some servers (Hasura being a known example) emit keep-alive messages before
+                // the connection ack. Skip anything that isn't the ack and keep waiting for it,
+                // except a connection error, which fails the handshake right away.
+                .handle<OperationMessage> { message, sink ->
+                    when (message.type) {
+                        GQL_CONNECTION_ACK -> sink.next(message)
+                        GQL_CONNECTION_ERROR ->
+                            sink.error(GraphQLException("Connection rejected by server, received $message"))
+                        else ->
+                            logger.debug(
+                                "Skipping message received before connection acknowledgement: {}",
+                                message,
+                            )
                     }
-                }.timeout(acknowledgementTimeout)
+                }.next()
+                .timeout(acknowledgementTimeout)
                 .then()
         }
 

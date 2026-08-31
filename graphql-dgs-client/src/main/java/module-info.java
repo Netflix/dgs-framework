@@ -2,6 +2,7 @@ module com.netflix.graphql.dgs.client {
     requires kotlin.stdlib;
     requires com.fasterxml.jackson.databind;
     requires org.jetbrains.annotations;
+    requires org.slf4j;
     requires spring.web;
 
     requires reactor.core;
