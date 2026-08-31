@@ -158,7 +158,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val customDgsExceptionMessage = "Studio Search Who"
         val customDgsExceptionType = ErrorType.FAILED_PRECONDITION
 
-        class CustomDgsException : DgsException(message = customDgsExceptionMessage, errorType = customDgsExceptionType)
+        class CustomDgsException : DgsException(customDgsExceptionMessage, customDgsExceptionType)
 
         val handlerParameters =
             DataFetcherExceptionHandlerParameters
@@ -222,7 +222,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         every { loggerMock.atLevel(any()) } answers { NOPLoggingEventBuilder.singleton() }
 
         val mock = spyk<DefaultDataFetcherExceptionHandler>()
-        every { mock.getProperty("logger") } answers { loggerMock }
+        every { mock.logger } answers { loggerMock }
 
         val handlerParametersForDebugException =
             DataFetcherExceptionHandlerParameters

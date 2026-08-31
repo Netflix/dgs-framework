@@ -66,12 +66,13 @@ class TypeResolverTest {
         every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
 
         val provider =
-            DgsSchemaProvider(
-                applicationContext = applicationContextMock,
-                federationResolver = Optional.empty(),
-                existingTypeDefinitionRegistry = Optional.empty(),
-                methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
-            )
+            DgsSchemaProvider
+                .builder()
+                .applicationContext(applicationContextMock)
+                .federationResolver(Optional.empty())
+                .existingTypeDefinitionRegistry(Optional.empty())
+                .methodDataFetcherFactory(MethodDataFetcherFactory(listOf()))
+                .build()
         val schema =
             provider
                 .schema(
@@ -126,12 +127,13 @@ class TypeResolverTest {
         every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
 
         val provider =
-            DgsSchemaProvider(
-                applicationContext = applicationContextMock,
-                federationResolver = Optional.empty(),
-                existingTypeDefinitionRegistry = Optional.empty(),
-                methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
-            )
+            DgsSchemaProvider
+                .builder()
+                .applicationContext(applicationContextMock)
+                .federationResolver(Optional.empty())
+                .existingTypeDefinitionRegistry(Optional.empty())
+                .methodDataFetcherFactory(MethodDataFetcherFactory(listOf()))
+                .build()
         val schema =
             provider
                 .schema(
@@ -197,12 +199,13 @@ class TypeResolverTest {
         every { applicationContextMock.getBeansWithAnnotation<DgsDirective>() } returns emptyMap()
 
         val provider =
-            DgsSchemaProvider(
-                applicationContext = applicationContextMock,
-                federationResolver = Optional.empty(),
-                existingTypeDefinitionRegistry = Optional.empty(),
-                methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
-            )
+            DgsSchemaProvider
+                .builder()
+                .applicationContext(applicationContextMock)
+                .federationResolver(Optional.empty())
+                .existingTypeDefinitionRegistry(Optional.empty())
+                .methodDataFetcherFactory(MethodDataFetcherFactory(listOf()))
+                .build()
         val schema =
             provider
                 .schema(

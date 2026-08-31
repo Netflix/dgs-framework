@@ -40,7 +40,7 @@ class ErrorsTest {
             headers.forEach { (key, values) -> httpHeaders.addAll(key, values) }
 
             val exchange = restTemplate.exchange<String>(url, HttpMethod.POST, HttpEntity(body, httpHeaders))
-            HttpResponse(statusCode = exchange.statusCode.value(), body = exchange.body)
+            HttpResponse(exchange.statusCode.value(), exchange.body)
         }
 
     private val url = "http://localhost:8080/graphql"

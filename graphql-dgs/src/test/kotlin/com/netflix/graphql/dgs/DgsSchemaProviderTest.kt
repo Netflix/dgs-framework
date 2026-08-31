@@ -41,6 +41,7 @@ import graphql.schema.TypeResolver
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.idl.errors.StrictModeWiringException
+import graphql.schema.visibility.DefaultGraphqlFieldVisibility
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatNoException
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -89,25 +90,26 @@ internal class DgsSchemaProviderTest {
         strictMode: Boolean = true,
         federationEnabled: Boolean = true,
     ): DgsSchemaProvider =
-        DgsSchemaProvider(
-            applicationContext = applicationContext,
-            federationResolver = Optional.empty(),
-            schemaLocations = schemaLocations,
-            existingTypeDefinitionRegistry = Optional.ofNullable(typeDefinitionRegistry),
-            methodDataFetcherFactory =
+        DgsSchemaProvider
+            .builder()
+            .applicationContext(applicationContext)
+            .federationResolver(Optional.empty())
+            .schemaLocations(schemaLocations)
+            .existingTypeDefinitionRegistry(Optional.ofNullable(typeDefinitionRegistry))
+            .methodDataFetcherFactory(
                 MethodDataFetcherFactory(
                     listOf(
                         InputArgumentResolver(DefaultInputObjectMapper()),
                         DataFetchingEnvironmentArgumentResolver(applicationContext),
                     ),
                 ),
-            componentFilter = componentFilter,
-            schemaWiringValidationEnabled = schemaWiringValidationEnabled,
-            dataFetcherResultProcessors = dataFetcherResultProcessors,
-            fallbackTypeResolver = fallbackTypeResolver,
-            enableStrictMode = strictMode,
-            federationEnabled = federationEnabled,
-        )
+            ).componentFilter(componentFilter)
+            .schemaWiringValidationEnabled(schemaWiringValidationEnabled)
+            .dataFetcherResultProcessors(dataFetcherResultProcessors)
+            .fallbackTypeResolver(fallbackTypeResolver)
+            .enableStrictMode(strictMode)
+            .federationEnabled(federationEnabled)
+            .build()
 
     @DgsComponent
     class HelloFetcher {
@@ -1263,7 +1265,7 @@ internal class DgsSchemaProviderTest {
             val gqlSchema =
                 schemaProvider(
                     applicationContext = context,
-                ).schema(showSdlComments = true).graphQLSchema
+                ).schema(null, DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY, emptySet(), true).graphQLSchema
             val executableSchema = GraphQL.newGraphQL(gqlSchema).build()
 
             // Execute introspection query.
@@ -1310,7 +1312,7 @@ internal class DgsSchemaProviderTest {
             val gqlSchema =
                 schemaProvider(
                     applicationContext = context,
-                ).schema(showSdlComments = false).graphQLSchema
+                ).schema(null, DefaultGraphqlFieldVisibility.DEFAULT_FIELD_VISIBILITY, emptySet(), false).graphQLSchema
             val executableSchema = GraphQL.newGraphQL(gqlSchema).build()
 
             // Execute introspection query.

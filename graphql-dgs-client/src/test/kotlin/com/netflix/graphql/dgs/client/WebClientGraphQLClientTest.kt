@@ -111,8 +111,8 @@ class WebClientGraphQLClientTest {
         val result =
             client
                 .reactiveExecuteQuery(
-                    query = "{ withUriParam }",
-                    requestBodyUriCustomizer = {
+                    "{ withUriParam }",
+                    {
                         it.uri { uriBuilder ->
                             uriBuilder
                                 .queryParam("q1", "one")
@@ -148,8 +148,8 @@ class WebClientGraphQLClientTest {
         val now = LocalDateTime.parse("2024-12-12T12:12:12.12")
         val client =
             MonoGraphQLClient.createWithWebClient(
-                webClient = WebClient.create("http://localhost:$port/graphql"),
-                objectMapper = mapper,
+                WebClient.create("http://localhost:$port/graphql"),
+                mapper,
             )
         val result =
             client

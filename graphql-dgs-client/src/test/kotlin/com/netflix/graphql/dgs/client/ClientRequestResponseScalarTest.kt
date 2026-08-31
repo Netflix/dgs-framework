@@ -69,10 +69,9 @@ class ClientRequestResponseScalarTest {
         val client =
             MonoGraphQLClient.createWithWebClient(
                 WebClient.create("http://localhost:$port/graphql"),
-                options =
-                    GraphQLRequestOptions(
-                        scalars = mapOf(UUID::class.java to ExtendedScalars.UUID.coercing),
-                    ),
+                GraphQLRequestOptions(
+                    mapOf(UUID::class.java to ExtendedScalars.UUID.coercing),
+                ),
             )
         val randomUUID = UUID.randomUUID()
         val query = "query UUIDQuery(${'$'}input: UUID!) { echoUUID(uuid: ${'$'}input) }"
@@ -84,11 +83,10 @@ class ClientRequestResponseScalarTest {
     fun `WebClient - Extra Scalars and headers can be provided`() {
         val options =
             GraphQLRequestOptions(
-                scalars =
-                    mapOf(
-                        UUID::class.java to ExtendedScalars.UUID.coercing,
-                        LocalTime::class.java to ExtendedScalars.LocalTime.coercing,
-                    ),
+                mapOf(
+                    UUID::class.java to ExtendedScalars.UUID.coercing,
+                    LocalTime::class.java to ExtendedScalars.LocalTime.coercing,
+                ),
             )
         val client =
             MonoGraphQLClient.createWithWebClient(
@@ -114,11 +112,10 @@ class ClientRequestResponseScalarTest {
         val client = restClientBuilder.baseUrl("http://localhost:$port/graphql").build()
         val options =
             GraphQLRequestOptions(
-                scalars =
-                    mapOf(
-                        CountryCode::class.java to ExtendedScalars.CountryCode.coercing,
-                        LocalTime::class.java to ExtendedScalars.LocalTime.coercing,
-                    ),
+                mapOf(
+                    CountryCode::class.java to ExtendedScalars.CountryCode.coercing,
+                    LocalTime::class.java to ExtendedScalars.LocalTime.coercing,
+                ),
             )
         val restClient =
             RestClientGraphQLClient(

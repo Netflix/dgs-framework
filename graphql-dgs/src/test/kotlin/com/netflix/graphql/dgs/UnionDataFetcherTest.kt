@@ -71,12 +71,13 @@ class UnionDataFetcherTest {
     @Test
     fun testDataFetcherOnUnion() {
         val provider =
-            DgsSchemaProvider(
-                applicationContext = applicationContextMock,
-                federationResolver = Optional.empty(),
-                existingTypeDefinitionRegistry = Optional.empty(),
-                methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
-            )
+            DgsSchemaProvider
+                .builder()
+                .applicationContext(applicationContextMock)
+                .federationResolver(Optional.empty())
+                .existingTypeDefinitionRegistry(Optional.empty())
+                .methodDataFetcherFactory(MethodDataFetcherFactory(listOf()))
+                .build()
 
         every { applicationContextMock.getBeansWithAnnotation<DgsComponent>() } returns
             mapOf(

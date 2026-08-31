@@ -1,0 +1,60 @@
+/*
+ * Copyright 2025 Netflix, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.netflix.graphql.dgs.apq;
+
+import graphql.ExecutionInput;
+import graphql.execution.preparsed.PreparsedDocumentEntry;
+import graphql.execution.preparsed.persisted.PersistedQueryCache;
+import graphql.execution.preparsed.persisted.PersistedQueryCacheMiss;
+import graphql.execution.preparsed.persisted.PersistedQueryNotFound;
+import graphql.execution.preparsed.persisted.PersistedQuerySupport;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
+
+/**
+ * Adapter that is intended to facilitate the implementation of a {@link PersistedQueryCache} that can be used to
+ * store <em>Automated Persisted Queries</em>. Refer to {@link AutomatedPersistedQueryCaffeineCache} for an example.
+ *
+ * @see DgsAPQSupportAutoConfiguration
+ */
+public abstract class AutomatedPersistedQueryCacheAdapter implements PersistedQueryCache {
+    @Override
+    public CompletableFuture<PreparsedDocumentEntry> getPersistedQueryDocumentAsync(
+            Object persistedQueryId, ExecutionInput executionInput, PersistedQueryCacheMiss onCacheMiss) {
+        String key = persistedQueryId instanceof String stringId ? stringId : persistedQueryId.toString();
+        return CompletableFuture.completedFuture(getFromCache(key, () -> {
+            // Get the query from the execution input. Make sure it's not null, empty or the APQ marker.
+            String queryText = executionInput.getQuery();
+            if (queryText.isBlank() || queryText.equals(PersistedQuerySupport.PERSISTED_QUERY_MARKER)) {
+                throw new PersistedQueryNotFound(persistedQueryId);
+            }
+            return onCacheMiss.apply(queryText);
+        }));
+    }
+
+    /**
+     * Obtains the {@link PreparsedDocumentEntry} associated with the {@code key} from the cache that backs the
+     * implementation. If the document is missing, the {@code documentEntrySupplier} will provide one, which should be
+     * added to the cache then.
+     *
+     * @param key The hash of the requested query.
+     * @param documentEntrySupplier function that will supply the document in case there is a cache miss.
+     */
+    protected abstract PreparsedDocumentEntry getFromCache(
+            String key, Supplier<PreparsedDocumentEntry> documentEntrySupplier);
+}

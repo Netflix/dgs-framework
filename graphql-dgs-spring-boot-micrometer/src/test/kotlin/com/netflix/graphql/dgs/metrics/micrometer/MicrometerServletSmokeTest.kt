@@ -1177,5 +1177,5 @@ class MicrometerServletSmokeTest {
 
     class CustomException(
         message: String,
-    ) : DgsException(message = message, errorType = ErrorType.INTERNAL)
+    ) : DgsException(message, ErrorType.INTERNAL)
 }

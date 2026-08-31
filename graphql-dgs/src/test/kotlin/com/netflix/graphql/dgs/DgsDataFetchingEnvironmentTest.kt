@@ -127,12 +127,13 @@ internal class DgsDataFetchingEnvironmentTest {
         val dataLoaderRegistry = provider.buildRegistry()
 
         val schemaProvider =
-            DgsSchemaProvider(
-                applicationContext = context,
-                federationResolver = Optional.empty(),
-                existingTypeDefinitionRegistry = Optional.empty(),
-                methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver(context))),
-            )
+            DgsSchemaProvider
+                .builder()
+                .applicationContext(context)
+                .federationResolver(Optional.empty())
+                .existingTypeDefinitionRegistry(Optional.empty())
+                .methodDataFetcherFactory(MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver(context))))
+                .build()
         val schema = schemaProvider.schema().graphQLSchema
         val build = GraphQL.newGraphQL(schema).build()
 
@@ -178,12 +179,13 @@ internal class DgsDataFetchingEnvironmentTest {
             val dataLoaderRegistry = provider.buildRegistry()
 
             val schemaProvider =
-                DgsSchemaProvider(
-                    applicationContext = context,
-                    federationResolver = Optional.empty(),
-                    existingTypeDefinitionRegistry = Optional.empty(),
-                    methodDataFetcherFactory = MethodDataFetcherFactory(listOf()),
-                )
+                DgsSchemaProvider
+                    .builder()
+                    .applicationContext(context)
+                    .federationResolver(Optional.empty())
+                    .existingTypeDefinitionRegistry(Optional.empty())
+                    .methodDataFetcherFactory(MethodDataFetcherFactory(listOf()))
+                    .build()
 
             val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
@@ -207,12 +209,13 @@ internal class DgsDataFetchingEnvironmentTest {
             val dataLoaderRegistry = provider.buildRegistry()
 
             val schemaProvider =
-                DgsSchemaProvider(
-                    applicationContext = context,
-                    federationResolver = Optional.empty(),
-                    existingTypeDefinitionRegistry = Optional.empty(),
-                    methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver(context))),
-                )
+                DgsSchemaProvider
+                    .builder()
+                    .applicationContext(context)
+                    .federationResolver(Optional.empty())
+                    .existingTypeDefinitionRegistry(Optional.empty())
+                    .methodDataFetcherFactory(MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver(context))))
+                    .build()
 
             val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
@@ -238,12 +241,13 @@ internal class DgsDataFetchingEnvironmentTest {
             val dataLoaderRegistry = provider.buildRegistry()
 
             val schemaProvider =
-                DgsSchemaProvider(
-                    applicationContext = context,
-                    federationResolver = Optional.empty(),
-                    existingTypeDefinitionRegistry = Optional.empty(),
-                    methodDataFetcherFactory = MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver(context))),
-                )
+                DgsSchemaProvider
+                    .builder()
+                    .applicationContext(context)
+                    .federationResolver(Optional.empty())
+                    .existingTypeDefinitionRegistry(Optional.empty())
+                    .methodDataFetcherFactory(MethodDataFetcherFactory(listOf(DataFetchingEnvironmentArgumentResolver(context))))
+                    .build()
 
             val schema = schemaProvider.schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()

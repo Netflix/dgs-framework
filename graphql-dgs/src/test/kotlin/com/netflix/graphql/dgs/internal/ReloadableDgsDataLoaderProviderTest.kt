@@ -43,8 +43,8 @@ class ReloadableDgsDataLoaderProviderTest {
         primaryAppContextRunner().run { context ->
             val provider =
                 ReloadableDgsDataLoaderProvider(
-                    applicationContext = context,
-                    scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
+                    context,
+                    Executors.newSingleThreadScheduledExecutor(),
                 )
 
             // provider is initialized when the registry is built.
@@ -62,8 +62,8 @@ class ReloadableDgsDataLoaderProviderTest {
 
             val provider =
                 ReloadableDgsDataLoaderProvider(
-                    applicationContext = context,
-                    scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
+                    context,
+                    Executors.newSingleThreadScheduledExecutor(),
                 )
             // First call - should initialize
             assertRegistry(provider.buildRegistry())
@@ -81,8 +81,8 @@ class ReloadableDgsDataLoaderProviderTest {
         primaryAppContextRunner().run { context ->
             val provider =
                 ReloadableDgsDataLoaderProvider(
-                    applicationContext = context,
-                    scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
+                    context,
+                    Executors.newSingleThreadScheduledExecutor(),
                 )
 
             // Initialize provider
@@ -106,8 +106,8 @@ class ReloadableDgsDataLoaderProviderTest {
         primaryAppContextRunner().run { context ->
             val provider =
                 ReloadableDgsDataLoaderProvider(
-                    applicationContext = context,
-                    scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
+                    context,
+                    Executors.newSingleThreadScheduledExecutor(),
                 )
             assertRegistry(provider.buildRegistry())
             assertThat(provider.isInitialized()).isTrue
@@ -124,8 +124,8 @@ class ReloadableDgsDataLoaderProviderTest {
         primaryAppContextRunner().run { context ->
             val provider =
                 ReloadableDgsDataLoaderProvider(
-                    applicationContext = context,
-                    scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
+                    context,
+                    Executors.newSingleThreadScheduledExecutor(),
                 )
 
             // Test concurrent access
@@ -151,8 +151,8 @@ class ReloadableDgsDataLoaderProviderTest {
         primaryAppContextRunner().run { context ->
             val provider =
                 ReloadableDgsDataLoaderProvider(
-                    applicationContext = context,
-                    scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
+                    context,
+                    Executors.newSingleThreadScheduledExecutor(),
                 )
 
             val contextSupplier = mockk<Supplier<BatchLoaderContextProvider>>()
@@ -168,8 +168,8 @@ class ReloadableDgsDataLoaderProviderTest {
         primaryAppContextRunner().run { context ->
             val provider =
                 ReloadableDgsDataLoaderProvider(
-                    applicationContext = context,
-                    scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
+                    context,
+                    Executors.newSingleThreadScheduledExecutor(),
                 )
             assertRegistry(provider.buildRegistry())
             assertThat(provider.isInitialized()).isTrue

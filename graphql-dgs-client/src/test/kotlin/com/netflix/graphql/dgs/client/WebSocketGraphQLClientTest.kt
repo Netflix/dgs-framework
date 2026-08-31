@@ -32,14 +32,14 @@ package com.netflix.graphql.dgs.client
  * limitations under the License.
  */
 import com.netflix.graphql.types.subscription.DataPayload
-import com.netflix.graphql.types.subscription.GQL_COMPLETE
-import com.netflix.graphql.types.subscription.GQL_CONNECTION_ACK
-import com.netflix.graphql.types.subscription.GQL_CONNECTION_INIT
-import com.netflix.graphql.types.subscription.GQL_DATA
-import com.netflix.graphql.types.subscription.GQL_ERROR
-import com.netflix.graphql.types.subscription.GQL_START
-import com.netflix.graphql.types.subscription.GQL_STOP
 import com.netflix.graphql.types.subscription.OperationMessage
+import com.netflix.graphql.types.subscription.OperationMessageType.GQL_COMPLETE
+import com.netflix.graphql.types.subscription.OperationMessageType.GQL_CONNECTION_ACK
+import com.netflix.graphql.types.subscription.OperationMessageType.GQL_CONNECTION_INIT
+import com.netflix.graphql.types.subscription.OperationMessageType.GQL_DATA
+import com.netflix.graphql.types.subscription.OperationMessageType.GQL_ERROR
+import com.netflix.graphql.types.subscription.OperationMessageType.GQL_START
+import com.netflix.graphql.types.subscription.OperationMessageType.GQL_STOP
 import com.netflix.graphql.types.subscription.QueryPayload
 import graphql.GraphQLException
 import io.mockk.every

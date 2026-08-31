@@ -20,11 +20,11 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.netflix.graphql.types.subscription.DataPayload
 import com.netflix.graphql.types.subscription.EmptyPayload
-import com.netflix.graphql.types.subscription.GQL_CONNECTION_INIT
-import com.netflix.graphql.types.subscription.GQL_DATA
-import com.netflix.graphql.types.subscription.GQL_START
-import com.netflix.graphql.types.subscription.GQL_STOP
 import com.netflix.graphql.types.subscription.OperationMessage
+import com.netflix.graphql.types.subscription.OperationMessageType.GQL_CONNECTION_INIT
+import com.netflix.graphql.types.subscription.OperationMessageType.GQL_DATA
+import com.netflix.graphql.types.subscription.OperationMessageType.GQL_START
+import com.netflix.graphql.types.subscription.OperationMessageType.GQL_STOP
 import com.netflix.graphql.types.subscription.QueryPayload
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -85,7 +85,7 @@ class OperationMessageTest {
                     {"type": "connection_init",
                      "payload": {}}
                     """.trimIndent(),
-                    OperationMessage(GQL_CONNECTION_INIT, EmptyPayload),
+                    OperationMessage(GQL_CONNECTION_INIT, EmptyPayload.INSTANCE),
                 ),
                 Arguments.of(
                     """
@@ -109,7 +109,7 @@ class OperationMessageTest {
                      },
                      "id": "3"}
                     """.trimIndent(),
-                    OperationMessage(GQL_START, QueryPayload(query = "my-query"), "3"),
+                    OperationMessage(GQL_START, QueryPayload("my-query"), "3"),
                 ),
                 Arguments.of(
                     """
@@ -120,7 +120,7 @@ class OperationMessageTest {
                      },
                      "id": "3"}
                     """.trimIndent(),
-                    OperationMessage(GQL_START, QueryPayload(operationName = "query", query = "my-query"), "3"),
+                    OperationMessage(GQL_START, QueryPayload(emptyMap(), emptyMap(), "query", "my-query"), "3"),
                 ),
                 Arguments.of(
                     """
@@ -135,9 +135,10 @@ class OperationMessageTest {
                     OperationMessage(
                         GQL_START,
                         QueryPayload(
-                            extensions = mapOf("a" to "b"),
-                            operationName = "query",
-                            query = "my-query",
+                            emptyMap(),
+                            mapOf("a" to "b"),
+                            "query",
+                            "my-query",
                         ),
                         "3",
                     ),
@@ -156,10 +157,10 @@ class OperationMessageTest {
                     OperationMessage(
                         GQL_START,
                         QueryPayload(
-                            variables = mapOf("c" to "d"),
-                            extensions = mapOf("a" to "b"),
-                            operationName = "query",
-                            query = "my-query",
+                            mapOf("c" to "d"),
+                            mapOf("a" to "b"),
+                            "query",
+                            "my-query",
                         ),
                         "3",
                     ),
@@ -178,7 +179,7 @@ class OperationMessageTest {
                     """.trimIndent(),
                     OperationMessage(
                         GQL_DATA,
-                        DataPayload(data = mapOf("a" to 1, "b" to "hello", "c" to false)),
+                        DataPayload(mapOf("a" to 1, "b" to "hello", "c" to false)),
                         "3",
                     ),
                 ),
@@ -190,7 +191,7 @@ class OperationMessageTest {
                      },
                      "id": "3"}
                     """.trimIndent(),
-                    OperationMessage(GQL_DATA, DataPayload(data = null, listOf("an-error")), "3"),
+                    OperationMessage(GQL_DATA, DataPayload(null, listOf("an-error")), "3"),
                 ),
                 Arguments.of(
                     """

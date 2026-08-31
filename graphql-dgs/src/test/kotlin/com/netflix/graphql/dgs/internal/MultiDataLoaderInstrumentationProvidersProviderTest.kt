@@ -81,8 +81,8 @@ internal class MultiDataLoaderInstrumentationProvidersProviderTest {
             extensionProviders: List<DataLoaderInstrumentationExtensionProvider>,
         ): DgsDataLoaderProvider =
             DefaultDgsDataLoaderProvider(
-                applicationContext = applicationContext,
-                extensionProviders = extensionProviders,
+                applicationContext,
+                extensionProviders,
             )
 
         @Bean
