@@ -51,7 +51,7 @@ allprojects {
     // and suggest an upgrade. The only exception currently are those defined
     // in buildSrc, most likely because the variables are used in plugins as well
     // as dependencies. e.g. KOTLIN_VERSION
-    extra["sb.version"] = "4.0.0"
+    extra["sb.version"] = "4.0.8"
     extra["kotlin.version"] = Versions.KOTLIN_VERSION
     extra["json-path.version"] = "3.0.0"
 }
