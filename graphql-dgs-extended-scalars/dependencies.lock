@@ -405,7 +405,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "firstLevelTransitive": [
@@ -516,7 +516,7 @@
             "locked": "1.2.0"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.9"
+            "locked": "1.14.11"
         },
         "io.projectreactor.kotlin:reactor-kotlin-extensions": {
             "firstLevelTransitive": [
@@ -830,7 +830,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -1047,7 +1047,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.9"
+            "locked": "1.14.11"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -1200,7 +1200,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.9"
+            "locked": "1.14.11"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -1258,7 +1258,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "firstLevelTransitive": [
@@ -1369,7 +1369,7 @@
             "locked": "1.2.0"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.9"
+            "locked": "1.14.11"
         },
         "io.projectreactor.kotlin:reactor-kotlin-extensions": {
             "firstLevelTransitive": [
