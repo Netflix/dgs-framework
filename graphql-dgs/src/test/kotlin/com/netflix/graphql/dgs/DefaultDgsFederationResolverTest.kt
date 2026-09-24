@@ -847,8 +847,8 @@ class DefaultDgsFederationResolverTest {
                 .isNotNull
                 .hasFieldOrPropertyWithValue("movieId", movieEntityId3)
             assertThat(result.get().errors).hasSize(2).satisfiesExactly(
-                { error -> assertThat(error.path.contains("_entities, 0")) },
-                { error -> assertThat(error.path.contains("_entities, 1")) },
+                { error -> assertThat(error.path).containsExactly("/_entities", 0) },
+                { error -> assertThat(error.path).containsExactly("/_entities", 1) },
             )
         }
 

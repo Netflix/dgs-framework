@@ -144,7 +144,7 @@ internal class DgsDataFetchingEnvironmentTest {
                 .build()
         val executionResult = build.execute(executionInput)
         Assertions.assertTrue(executionResult.isDataPresent)
-        val result = executionResult.getData() as Map<String, String>
+        val result = executionResult.getData<Map<String, String>>()!!
         Assertions.assertEquals("c", result["hello"])
     }
 
@@ -225,7 +225,7 @@ internal class DgsDataFetchingEnvironmentTest {
                     .build()
             val executionResult = build.execute(executionInput)
             Assertions.assertTrue(executionResult.isDataPresent)
-            val result = executionResult.getData() as Map<String, String>
+            val result = executionResult.getData<Map<String, String>>()!!
             Assertions.assertEquals("C", result["hello"])
         }
     }
@@ -256,7 +256,7 @@ internal class DgsDataFetchingEnvironmentTest {
                     .build()
             val executionResult = build.execute(executionInput)
             Assertions.assertTrue(executionResult.isDataPresent)
-            val result = executionResult.getData() as Map<String, String>
+            val result = executionResult.getData<Map<String, String>>()!!
             Assertions.assertEquals("C", result["hello"])
         }
     }

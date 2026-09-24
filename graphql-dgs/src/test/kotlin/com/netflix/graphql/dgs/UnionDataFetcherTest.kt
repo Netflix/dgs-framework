@@ -133,7 +133,7 @@ class UnionDataFetcherTest {
             )
         Assertions.assertEquals(0, executionResult.errors.size)
         Assertions.assertTrue(executionResult.isDataPresent)
-        val data = executionResult.getData<Map<String, List<Map<String, *>>>>()
+        val data = executionResult.getData<Map<String, List<Map<String, *>>>>()!!
         Assertions.assertNotNull(data["search"]!![0]["imdbRating"])
     }
 }
