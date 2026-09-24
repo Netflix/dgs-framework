@@ -45,6 +45,18 @@ open class DgsContext(
         @JvmStatic
         fun from(graphQLContext: GraphQLContext): DgsContext = graphQLContext[GraphQLContextKey.DGS_CONTEXT_KEY]
 
+        /**
+         * Safely retrieves DgsContext from GraphQLContext, returning null if not present.
+         * This is useful in scenarios where DgsContext may not have been initialized yet,
+         * such as during subscription callback setup with Apollo Federation.
+         *
+         * @param graphQLContext The GraphQL context to retrieve DgsContext from
+         * @return DgsContext if present, null otherwise
+         */
+        @JvmStatic
+        fun fromOrNull(graphQLContext: GraphQLContext): DgsContext? =
+            graphQLContext.getOrDefault(GraphQLContextKey.DGS_CONTEXT_KEY, null)
+
         @JvmStatic
         fun from(dfe: DataFetchingEnvironment): DgsContext = from(dfe.graphQlContext)
 
