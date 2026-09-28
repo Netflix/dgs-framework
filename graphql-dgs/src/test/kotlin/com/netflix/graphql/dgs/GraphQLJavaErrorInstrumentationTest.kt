@@ -70,7 +70,7 @@ class GraphQLJavaErrorInstrumentationTest {
             )
 
         Assertions.assertThat(result.isDataPresent).isTrue
-        val data = result.getData<Map<String, String>>()
+        val data = result.getData<Map<String, String>>()!!
         Assertions.assertThat(data["hello"]).isEqualTo("hello there!")
     }
 
@@ -91,12 +91,13 @@ class GraphQLJavaErrorInstrumentationTest {
         Assertions
             .assertThat(
                 result.errors[0]
-                    .extensions.keys
+                    .extensions!!
+                    .keys
                     .containsAll(listOf("classification", "errorDetail", "errorType")),
             ).isTrue()
-        Assertions.assertThat(result.errors[0].extensions["classification"]).isEqualTo("ValidationError")
-        Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("BAD_REQUEST")
-        Assertions.assertThat(result.errors[0].extensions["errorDetail"]).isEqualTo("FIELD_NOT_FOUND")
+        Assertions.assertThat(result.errors[0].extensions!!["classification"]).isEqualTo("ValidationError")
+        Assertions.assertThat(result.errors[0].extensions!!["errorType"]).isEqualTo("BAD_REQUEST")
+        Assertions.assertThat(result.errors[0].extensions!!["errorDetail"]).isEqualTo("FIELD_NOT_FOUND")
     }
 
     @Test
@@ -116,11 +117,12 @@ class GraphQLJavaErrorInstrumentationTest {
         Assertions
             .assertThat(
                 result.errors[0]
-                    .extensions.keys
+                    .extensions!!
+                    .keys
                     .containsAll(listOf("classification", "errorType")),
             ).isTrue()
-        Assertions.assertThat(result.errors[0].extensions["classification"]).isEqualTo("ValidationError")
-        Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("BAD_REQUEST")
+        Assertions.assertThat(result.errors[0].extensions!!["classification"]).isEqualTo("ValidationError")
+        Assertions.assertThat(result.errors[0].extensions!!["errorType"]).isEqualTo("BAD_REQUEST")
     }
 
     @Test
@@ -140,11 +142,12 @@ class GraphQLJavaErrorInstrumentationTest {
         Assertions
             .assertThat(
                 result.errors[0]
-                    .extensions.keys
+                    .extensions!!
+                    .keys
                     .containsAll(listOf("classification", "errorType")),
             ).isTrue()
-        Assertions.assertThat(result.errors[0].extensions["classification"]).isEqualTo("InvalidSyntax")
-        Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("BAD_REQUEST")
+        Assertions.assertThat(result.errors[0].extensions!!["classification"]).isEqualTo("InvalidSyntax")
+        Assertions.assertThat(result.errors[0].extensions!!["errorType"]).isEqualTo("BAD_REQUEST")
     }
 
     @Test
@@ -164,12 +167,13 @@ class GraphQLJavaErrorInstrumentationTest {
         Assertions
             .assertThat(
                 result.errors[0]
-                    .extensions.keys
+                    .extensions!!
+                    .keys
                     .containsAll(listOf("classification", "errorDetail", "errorType")),
             ).isTrue()
-        Assertions.assertThat(result.errors[0].extensions["classification"]).isEqualTo("ValidationError")
-        Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("BAD_REQUEST")
-        Assertions.assertThat(result.errors[0].extensions["errorDetail"]).isEqualTo("INVALID_ARGUMENT")
+        Assertions.assertThat(result.errors[0].extensions!!["classification"]).isEqualTo("ValidationError")
+        Assertions.assertThat(result.errors[0].extensions!!["errorType"]).isEqualTo("BAD_REQUEST")
+        Assertions.assertThat(result.errors[0].extensions!!["errorDetail"]).isEqualTo("INVALID_ARGUMENT")
     }
 
     @Test
@@ -190,20 +194,22 @@ class GraphQLJavaErrorInstrumentationTest {
         Assertions
             .assertThat(
                 result.errors[0]
-                    .extensions.keys
+                    .extensions!!
+                    .keys
                     .containsAll(listOf("classification", "errorDetail", "errorType")),
             ).isTrue()
-        Assertions.assertThat(result.errors[0].extensions["classification"]).isEqualTo("ValidationError")
-        Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("BAD_REQUEST")
-        Assertions.assertThat(result.errors[0].extensions["errorDetail"]).isEqualTo("FIELD_NOT_FOUND")
+        Assertions.assertThat(result.errors[0].extensions!!["classification"]).isEqualTo("ValidationError")
+        Assertions.assertThat(result.errors[0].extensions!!["errorType"]).isEqualTo("BAD_REQUEST")
+        Assertions.assertThat(result.errors[0].extensions!!["errorDetail"]).isEqualTo("FIELD_NOT_FOUND")
         Assertions.assertThat(
             result.errors[1]
-                .extensions.keys
+                .extensions!!
+                .keys
                 .containsAll(listOf("class", "errorDetail", "errorType")),
         )
-        Assertions.assertThat(result.errors[1].extensions["classification"]).isEqualTo("ValidationError")
-        Assertions.assertThat(result.errors[1].extensions["errorType"]).isEqualTo("BAD_REQUEST")
-        Assertions.assertThat(result.errors[1].extensions["errorDetail"]).isEqualTo("FIELD_NOT_FOUND")
+        Assertions.assertThat(result.errors[1].extensions!!["classification"]).isEqualTo("ValidationError")
+        Assertions.assertThat(result.errors[1].extensions!!["errorType"]).isEqualTo("BAD_REQUEST")
+        Assertions.assertThat(result.errors[1].extensions!!["errorDetail"]).isEqualTo("FIELD_NOT_FOUND")
     }
 
     @Test
@@ -222,11 +228,12 @@ class GraphQLJavaErrorInstrumentationTest {
         Assertions
             .assertThat(
                 result.errors[0]
-                    .extensions.keys
+                    .extensions!!
+                    .keys
                     .containsAll(listOf("errorDetail", "errorType")),
             ).isTrue()
-        Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("INTERNAL")
-        Assertions.assertThat(result.errors[0].extensions["errorDetail"]).isEqualTo("SERIALIZATION_ERROR")
+        Assertions.assertThat(result.errors[0].extensions!!["errorType"]).isEqualTo("INTERNAL")
+        Assertions.assertThat(result.errors[0].extensions!!["errorDetail"]).isEqualTo("SERIALIZATION_ERROR")
     }
 
     @Test
@@ -244,11 +251,12 @@ class GraphQLJavaErrorInstrumentationTest {
         Assertions.assertThat(result.errors.size).isEqualTo(1)
         Assertions.assertThat(
             result.errors[0]
-                .extensions.keys
+                .extensions!!
+                .keys
                 .containsAll(listOf("errorDetail", "errorType")),
         )
-        Assertions.assertThat(result.errors[0].extensions["errorType"]).isEqualTo("BAD_REQUEST")
-        Assertions.assertThat(result.errors[0].extensions["errorDetail"]).isEqualTo("INVALID_ARGUMENT")
+        Assertions.assertThat(result.errors[0].extensions!!["errorType"]).isEqualTo("BAD_REQUEST")
+        Assertions.assertThat(result.errors[0].extensions!!["errorDetail"]).isEqualTo("INVALID_ARGUMENT")
     }
 
     private fun buildGraphQL(schema: String): GraphQL {

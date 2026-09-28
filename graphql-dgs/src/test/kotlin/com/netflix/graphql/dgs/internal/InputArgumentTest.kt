@@ -114,7 +114,7 @@ internal class InputArgumentTest {
             val executionResult = build.execute("""{hello(name: "tester")}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).containsEntry("hello", "Hello, tester")
         }
     }
@@ -140,7 +140,7 @@ internal class InputArgumentTest {
             val executionResult = build.execute("""{hello(name: "tester")}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).containsEntry("hello", "Hello, tester")
         }
     }
@@ -189,7 +189,7 @@ internal class InputArgumentTest {
             val executionResult = build.execute("""{hello(name: "tester")}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).containsEntry("hello", "Hello, tester")
         }
     }
@@ -234,7 +234,7 @@ internal class InputArgumentTest {
 
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).containsEntry("hello", "Hello, tester")
         }
     }
@@ -269,7 +269,7 @@ internal class InputArgumentTest {
             val executionResult = build.execute("""{hello(person: {name: "tester"})}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).containsEntry("hello", "Hello, tester")
         }
     }
@@ -308,7 +308,7 @@ internal class InputArgumentTest {
             val executionResult = build.execute("""{hello(person: {name: "tester"})}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).containsEntry("hello", "Hello, tester")
         }
     }
@@ -343,7 +343,7 @@ internal class InputArgumentTest {
             val executionResult = build.execute("""{hello(person: {name: "tester"})}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data["hello"]).isEqualTo("Hello, tester")
         }
     }
@@ -382,7 +382,7 @@ internal class InputArgumentTest {
             val executionResult = build.execute("""{hello(person: {name: "tester"})}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data["hello"]).isEqualTo("Hello, tester")
         }
     }
@@ -413,7 +413,7 @@ internal class InputArgumentTest {
             val executionResult = build.execute("""{hello(names: ["tester 1", "tester 2"])}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).containsEntry("hello", "Hello, tester 1, tester 2")
         }
     }
@@ -444,7 +444,7 @@ internal class InputArgumentTest {
             val executionResult = build.execute("""{hello(names: ["tester 1", "tester 2"])}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).containsEntry("hello", "Hello, tester 1, tester 2")
         }
     }
@@ -475,7 +475,7 @@ internal class InputArgumentTest {
             val executionResult = build.execute("""{hello(names: ["tester 1", "tester 2"])}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).containsEntry("hello", "Hello, tester 1, tester 2")
         }
     }
@@ -506,7 +506,7 @@ internal class InputArgumentTest {
             val executionResult = build.execute("""{hello(names: ["tester 1", "tester 2"])}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).containsEntry("hello", "Hello, tester 1, tester 2")
         }
     }
@@ -541,7 +541,7 @@ internal class InputArgumentTest {
             val executionResult = build.execute("""{hello(person: [{name: "tester 1"}, {name: "tester 2"}])}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data["hello"]).isEqualTo("Hello, tester 1, tester 2")
         }
     }
@@ -577,7 +577,7 @@ internal class InputArgumentTest {
             val executionResult = build.execute("""{hello(persons: [{name: "tester"}, {name: "tester 2"}])}""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data["hello"]).isEqualTo("Hello, tester, tester 2")
         }
     }
@@ -623,7 +623,7 @@ internal class InputArgumentTest {
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
 
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data["hello"]).isEqualTo("Hello, tester 1, tester 2")
         }
     }
@@ -669,7 +669,7 @@ internal class InputArgumentTest {
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
 
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data["hello"]).isEqualTo("Hello, tester 1, tester 2")
         }
     }
@@ -704,7 +704,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.isDataPresent).isTrue
 
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data["numbers"]).isEqualTo("Numbers are 1, 2, 3")
         }
     }
@@ -741,7 +741,7 @@ internal class InputArgumentTest {
             val executionResult = build.execute("""{titles(filter: {movieIds: [1, "two"]})}""")
             assertThat(executionResult).isNotNull
             Assertions.assertTrue(executionResult.isDataPresent)
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             Assertions.assertEquals("Title for 1, Title for two", data["titles"])
         }
     }
@@ -784,7 +784,7 @@ internal class InputArgumentTest {
                 build.execute("""{titles(input: {bars: [{name: "bar 1", value: 1}, {name: "bar 2", value: "two"}]})}""")
             assertThat(executionResult).isNotNull
             Assertions.assertTrue(executionResult.isDataPresent)
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             Assertions.assertEquals("bar 1: 1, bar 2: two", data["titles"])
         }
     }
@@ -827,7 +827,7 @@ internal class InputArgumentTest {
                 build.execute("""{titles(input: {bars: [{name: "bar 1", value: 1}, {name: "bar 2", value: "two"}]})}""")
             assertThat(executionResult).isNotNull
             Assertions.assertTrue(executionResult.isDataPresent)
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             Assertions.assertEquals("bar 1: 1, bar 2: two", data["titles"])
         }
     }
@@ -863,7 +863,7 @@ internal class InputArgumentTest {
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
 
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, tester, tester 2")
         }
     }
@@ -972,7 +972,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, Stranger")
         }
     }
@@ -1014,7 +1014,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, tester")
         }
     }
@@ -1064,7 +1064,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, tester!")
         }
     }
@@ -1110,7 +1110,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, tester!")
         }
     }
@@ -1150,7 +1150,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("upload").isEqualTo("Hello World")
         }
     }
@@ -1180,7 +1180,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, null")
         }
     }
@@ -1214,7 +1214,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("setDate").isEqualTo("The date is: 2021-01-27")
         }
     }
@@ -1251,7 +1251,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("setDate").isEqualTo("The future is now")
         }
     }
@@ -1285,7 +1285,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("setDate").isEqualTo("The date is: 2021-01-27")
         }
     }
@@ -1320,7 +1320,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("setDate").isEqualTo("The date is: 2021-01-27")
         }
     }
@@ -1353,7 +1353,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("setRatings").asInstanceOf(LIST).containsOnly(1, 2, 3)
         }
     }
@@ -1379,7 +1379,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, tester")
         }
     }
@@ -1419,7 +1419,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, tester")
         }
     }
@@ -1446,7 +1446,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, default value")
         }
     }
@@ -1484,7 +1484,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, this is a FRIENDLY greeting")
         }
     }
@@ -1522,7 +1522,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, this is a FRIENDLY greeting")
         }
     }
@@ -1612,7 +1612,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, this is a default greeting")
         }
     }
@@ -1649,7 +1649,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, this is a SAD greeting")
         }
     }
@@ -1686,7 +1686,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, this is a FRIENDLY greeting")
         }
     }
@@ -1723,7 +1723,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, this is a FRIENDLY greeting")
         }
     }
@@ -1760,7 +1760,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, this is a default greeting")
         }
     }
@@ -1811,7 +1811,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, this is a FRIENDLY greeting with [POLITE, FRIENDLY]")
         }
     }
@@ -1852,7 +1852,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, this is a SAD greeting")
         }
     }
@@ -1903,7 +1903,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, this is a FRIENDLY greeting with [POLITE, FRIENDLY]")
         }
     }
@@ -1927,7 +1927,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, tester")
         }
     }
@@ -1970,7 +1970,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Test 1: 1, Test 2: two")
         }
     }
@@ -2007,7 +2007,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("keyA: value A, keyB: value B")
         }
     }
@@ -2048,7 +2048,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("KFilter(query={and=[title, genre]})")
         }
     }
@@ -2091,7 +2091,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("and: [title, genre]")
         }
     }
@@ -2151,7 +2151,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("movies").isEqualTo("Sorted by: RELEASEDATE, TITLE")
         }
     }
@@ -2246,7 +2246,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).hasEntrySatisfying("lists") { assertThat(it).isEqualTo("Ok") }
             assertThat(data).hasEntrySatisfying("enums") { assertThat(it).isEqualTo("Ok") }
             assertThat(data).hasEntrySatisfying("strings") { assertThat(it).isEqualTo("Ok") }
@@ -2340,7 +2340,7 @@ internal class InputArgumentTest {
                 )
 
             assertThat(executionResult.errors).isEmpty()
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).hasEntrySatisfying("lists") { assertThat(it).isEqualTo("Ok") }
             assertThat(data).hasEntrySatisfying("enums") { assertThat(it).isEqualTo("Ok") }
             assertThat(data).hasEntrySatisfying("strings") { assertThat(it).isEqualTo("Ok") }
@@ -2377,7 +2377,7 @@ internal class InputArgumentTest {
             val executionResult = build.execute("""{ hello }""")
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data["hello"]).isEqualTo("Hello, Nobody")
         }
     }
@@ -2419,7 +2419,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, this is a US greeting")
         }
     }
@@ -2457,7 +2457,7 @@ internal class InputArgumentTest {
             assertThat(executionResult).isNotNull
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertThat(data).extracting("hello").isEqualTo("Hello, this is a ZW greeting")
         }
     }
@@ -2510,7 +2510,7 @@ internal class InputArgumentTest {
             val graphql = GraphQL.newGraphQL(schema).build()
             val result = graphql.execute("{ foo(input: \"input-value\") }")
             assertThat(result.errors).isEmpty()
-            assertThat(result.getData<Map<String, String>>()).containsEntry("foo", "input-value")
+            assertThat(result.getData<Map<String, String>>()!!).containsEntry("foo", "input-value")
         }
     }
 

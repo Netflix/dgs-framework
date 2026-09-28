@@ -69,7 +69,7 @@ class DgsGraphQLMetricsInstrumentation(
 
     override fun beginExecution(
         parameters: InstrumentationExecutionParameters,
-        state: InstrumentationState,
+        state: InstrumentationState?,
     ): InstrumentationContext<ExecutionResult> {
         if (!properties.query.enabled) {
             return noOp()
@@ -80,7 +80,7 @@ class DgsGraphQLMetricsInstrumentation(
         state.operationNameValue = parameters.operation
         state.isIntrospectionQuery = QueryUtils.isIntrospectionQuery(parameters.executionInput)
         state.queryTypeValue = getPersistedQueryType(parameters.executionInput).name
-        return SimpleInstrumentationContext.whenCompleted { result, exc ->
+        return SimpleInstrumentationContext.whenCompleted { result, exc: Throwable? ->
             val tags =
                 buildList {
                     addAll(tagsProvider.getContextualTags())
@@ -95,7 +95,7 @@ class DgsGraphQLMetricsInstrumentation(
     override fun instrumentExecutionResult(
         executionResult: ExecutionResult,
         parameters: InstrumentationExecutionParameters,
-        state: InstrumentationState,
+        state: InstrumentationState?,
     ): CompletableFuture<ExecutionResult> {
         require(state is MetricsInstrumentationState)
 
@@ -107,7 +107,7 @@ class DgsGraphQLMetricsInstrumentation(
             persistedQueryNotFoundErrors.forEach {
                 val errorTags =
                     buildList {
-                        add(Tag.of(GqlTag.PERSISTED_QUERY_ID.key, it.extensions["persistedQueryId"].toString()))
+                        add(Tag.of(GqlTag.PERSISTED_QUERY_ID.key, it.extensions?.get("persistedQueryId").toString()))
                     }
                 registry
                     .counter(GqlMetric.PERSISTED_QUERY_NOT_FOUND.key, errorTags)
@@ -147,7 +147,7 @@ class DgsGraphQLMetricsInstrumentation(
     override fun instrumentDataFetcher(
         dataFetcher: DataFetcher<*>,
         parameters: InstrumentationFieldFetchParameters,
-        state: InstrumentationState,
+        state: InstrumentationState?,
     ): DataFetcher<*> {
         require(state is MetricsInstrumentationState)
         val gqlField = TagUtils.resolveDataFetcherTagValue(parameters)
@@ -210,7 +210,7 @@ class DgsGraphQLMetricsInstrumentation(
      */
     override fun beginValidation(
         parameters: InstrumentationValidationParameters,
-        state: InstrumentationState,
+        state: InstrumentationState?,
     ): InstrumentationContext<List<ValidationError>> {
         require(state is MetricsInstrumentationState)
         val document =
@@ -220,7 +220,7 @@ class DgsGraphQLMetricsInstrumentation(
             optQuerySignatureRepository.getOrNull()
                 ?: return noOp()
 
-        return SimpleInstrumentationContext.whenCompleted { errors, throwable ->
+        return SimpleInstrumentationContext.whenCompleted { errors, throwable: Throwable? ->
             if (errors.isNullOrEmpty() && throwable == null) {
                 state.querySignatureValue = querySignatureRepository.get(document, parameters).getOrNull()
             }
@@ -229,7 +229,7 @@ class DgsGraphQLMetricsInstrumentation(
 
     override fun beginExecuteOperation(
         parameters: InstrumentationExecuteOperationParameters,
-        state: InstrumentationState,
+        state: InstrumentationState?,
     ): InstrumentationContext<ExecutionResult>? {
         require(state is MetricsInstrumentationState)
         if (parameters.executionContext.getRoot<Any>() == null) {
@@ -257,7 +257,7 @@ class DgsGraphQLMetricsInstrumentation(
         get() =
             name ?: when (val selection = selectionSet?.selections?.first()) {
                 is Field -> "-${selection.name}"
-                is InlineFragment -> "-${selection.typeCondition.name}"
+                is InlineFragment -> selection.typeCondition?.name?.let { "-$it" } ?: "-noTypeCondition"
                 is FragmentSpread -> "-${selection.name}"
                 null -> "-noSelections" // This should never happen, but it's possible
                 else -> throw RuntimeException("Unknown Selection type: $selection")
@@ -407,9 +407,12 @@ class DgsGraphQLMetricsInstrumentation(
         val TAG_VALUE_UNKNOWN = ErrorType.UNKNOWN.name
 
         fun resolveDataFetcherTagValue(parameters: InstrumentationFieldFetchParameters): String {
-            val type = parameters.executionStepInfo.parent.type
+            val executionStepInfo = parameters.executionStepInfo ?: return TAG_VALUE_UNKNOWN
+            val parent = executionStepInfo.parent ?: return TAG_VALUE_UNKNOWN
+            val type = parent.type
             val parentType = GraphQLTypeUtil.unwrapNonNullAs<GraphQLNamedType>(type)
-            return "${parentType.name}.${parameters.executionStepInfo.field.singleField.name}"
+            val field = executionStepInfo.field ?: return TAG_VALUE_UNKNOWN
+            return "${parentType.name}.${field.singleField.name}"
         }
 
         fun shouldIgnoreTag(tag: String): Boolean = instrumentationIgnores.any { tag.contains(it) }

@@ -651,12 +651,12 @@ internal class DgsSchemaProviderTest {
 
             val executionResult = build.execute("{myField}")
             assertTrue(executionResult.isDataPresent)
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertEquals("Runtime added field", data["myField"])
 
             val processedExecutionResult = build.execute("{myProcessedField}")
             assertTrue(processedExecutionResult.isDataPresent)
-            val processedData = processedExecutionResult.getData<Map<String, *>>()
+            val processedData = processedExecutionResult.getData<Map<String, *>>()!!
             assertEquals("Runtime added field [suffixFromProcessor]", processedData["myProcessedField"])
         }
 
@@ -686,7 +686,7 @@ internal class DgsSchemaProviderTest {
             val executionResult2 = build.execute("{myField}")
             assertTrue(executionResult2.isDataPresent)
 
-            val data = executionResult2.getData<Map<String, *>>()
+            val data = executionResult2.getData<Map<String, *>>()!!
             assertEquals("Runtime added field", data["myField"])
         }
     }
@@ -1103,7 +1103,7 @@ internal class DgsSchemaProviderTest {
             val build = GraphQL.newGraphQL(schema).build()
             val executionResult = build.execute("{world}")
             assertTrue(executionResult.isDataPresent)
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertEquals("World", data["world"])
         }
     }
@@ -1150,7 +1150,7 @@ internal class DgsSchemaProviderTest {
             val build = GraphQL.newGraphQL(schema).build()
             val executionResult = build.execute("{character { age }}")
             assertTrue(executionResult.isDataPresent)
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertNotNull(data["character"])
             assertEquals(42, (data["character"] as Map<*, *>)["age"])
         }
@@ -1188,7 +1188,7 @@ internal class DgsSchemaProviderTest {
             val build = GraphQL.newGraphQL(schema).build()
             val executionResult = build.execute("{world}")
             assertTrue(executionResult.isDataPresent)
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertEquals("World", data["world"])
         }
     }
@@ -1215,7 +1215,7 @@ internal class DgsSchemaProviderTest {
     private fun assertHello(build: GraphQL) {
         val executionResult = build.execute("{hello}")
         assertTrue(executionResult.isDataPresent)
-        val data = executionResult.getData<Map<String, *>>()
+        val data = executionResult.getData<Map<String, *>>()!!
         assertEquals("Hello", data["hello"])
     }
 
@@ -1223,7 +1223,7 @@ internal class DgsSchemaProviderTest {
         val executionResult = build.execute("{video{title}}")
         assertThat(executionResult.isDataPresent).isTrue
         assertThat(executionResult.errors).isEmpty()
-        val data = executionResult.getData<Map<String, *>>()
+        val data = executionResult.getData<Map<String, *>>()!!
         assertThat(data).containsKey("video")
         assertThat(data["video"] as Map<*, *>).hasFieldOrPropertyWithValue("title", "ShowA")
     }
@@ -1231,13 +1231,13 @@ internal class DgsSchemaProviderTest {
     private fun assertSubscription(build: GraphQL) {
         val executionResult = build.execute("subscription {messages}")
         assertTrue(executionResult.isDataPresent)
-        val data = executionResult.getData<Publisher<ExecutionResult>>()
+        val data = executionResult.getData<Publisher<ExecutionResult>>()!!
 
         StepVerifier
             .create(data)
             .expectSubscription()
             .assertNext { result ->
-                assertThat(result.getData<Map<String, String>>())
+                assertThat(result.getData<Map<String, String>>()!!)
                     .hasEntrySatisfying("messages") { value -> assertThat(value).isEqualTo("hello") }
             }.verifyComplete()
     }
@@ -1245,7 +1245,7 @@ internal class DgsSchemaProviderTest {
     private fun assertInputMessage(build: GraphQL) {
         val executionResult = build.execute("""mutation {addMessage(message: "hello")}""")
         assertTrue(executionResult.isDataPresent)
-        val data = executionResult.getData<Map<String, *>>()
+        val data = executionResult.getData<Map<String, *>>()!!
         assertEquals("hello", data["addMessage"])
     }
 
@@ -1285,8 +1285,8 @@ internal class DgsSchemaProviderTest {
                     """.trimIndent(),
                 )
             assertTrue(executionResult.isDataPresent)
-            val introspectedSchemaResult = executionResult.getData<Map<String, *>>()["__schema"] as Map<*, *>
-            val introspectedTypesResult = introspectedSchemaResult["types"] as ArrayList<*>
+            val introspectedSchemaResult = executionResult.getData<Map<String, *>>()!!["__schema"] as Map<*, *>
+            val introspectedTypesResult = introspectedSchemaResult["types"] as List<*>
 
             // Assert that SDL comments are present in the result. Description comments are always present.
             val sdlCommentKey = "SDL Comment"
@@ -1294,10 +1294,10 @@ internal class DgsSchemaProviderTest {
             assertThat(introspectedTypesResult).isNotNull
             val descriptionCommentsInResult =
                 introspectedTypesResult.filter {
-                    (it as LinkedHashMap<*, *>)["description"] ==
+                    (it as Map<*, *>)["description"] ==
                         descriptionCommentKey
                 }
-            val sdlCommentsInResult = introspectedTypesResult.filter { (it as LinkedHashMap<*, *>)["description"] == sdlCommentKey }
+            val sdlCommentsInResult = introspectedTypesResult.filter { (it as Map<*, *>)["description"] == sdlCommentKey }
 
             assert(descriptionCommentsInResult.isNotEmpty())
             assert(sdlCommentsInResult.isNotEmpty())
@@ -1332,8 +1332,8 @@ internal class DgsSchemaProviderTest {
                     """.trimIndent(),
                 )
             assertTrue(executionResult.isDataPresent)
-            val introspectedSchemaResult = executionResult.getData<Map<String, *>>()["__schema"] as Map<*, *>
-            val introspectedTypesResult = introspectedSchemaResult["types"] as ArrayList<*>
+            val introspectedSchemaResult = executionResult.getData<Map<String, *>>()!!["__schema"] as Map<*, *>
+            val introspectedTypesResult = introspectedSchemaResult["types"] as List<*>
 
             // Assert that SDL comments are not present in the result. Description comments are always present.
             val sdlCommentKey = "SDL Comment"
@@ -1341,10 +1341,10 @@ internal class DgsSchemaProviderTest {
             assertThat(introspectedTypesResult).isNotNull
             val descriptionCommentsInResult =
                 introspectedTypesResult.filter {
-                    (it as LinkedHashMap<*, *>)["description"] ==
+                    (it as Map<*, *>)["description"] ==
                         descriptionCommentKey
                 }
-            val sdlCommentsInResult = introspectedTypesResult.filter { (it as LinkedHashMap<*, *>)["description"] == sdlCommentKey }
+            val sdlCommentsInResult = introspectedTypesResult.filter { (it as Map<*, *>)["description"] == sdlCommentKey }
 
             assert(descriptionCommentsInResult.isNotEmpty())
             assert(sdlCommentsInResult.isEmpty())
@@ -1511,7 +1511,7 @@ internal class DgsSchemaProviderTest {
 
             val executionResult = build.execute("{hello}")
             assertTrue(executionResult.isDataPresent)
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
             assertEquals("Hello", data["hello"])
 
             val serviceResult = build.execute("{_service { sdl }}")
