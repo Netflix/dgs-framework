@@ -16,10 +16,12 @@
 
 package com.netflix.graphql.dgs.exceptions;
 
+import org.jetbrains.annotations.NotNull;
+
 public class UnsupportedSecuredDataLoaderException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public UnsupportedSecuredDataLoaderException(Class<?> clazz) {
+    public UnsupportedSecuredDataLoaderException(@NotNull Class<?> clazz) {
         super("Field level @DgsDataLoader is not supported on classes that use @Secured. "
                 + "Move your @DgsDataLoader to its own class. The offending field is in: " + clazz.getName());
     }

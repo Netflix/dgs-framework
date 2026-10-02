@@ -87,6 +87,7 @@ import io.micrometer.context.ContextSnapshotFactory;
 import io.micrometer.context.integration.Slf4jThreadLocalAccessor;
 import kotlinx.coroutines.CoroutineDispatcher;
 import kotlinx.coroutines.Dispatchers;
+import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -172,6 +173,7 @@ import java.util.function.Consumer;
 })
 @ImportAutoConfiguration(classes = DgsInputArgumentConfiguration.class)
 public class DgsSpringGraphQLAutoConfiguration {
+    @NotNull
     public static final String AUTO_CONF_PREFIX = "dgs.graphql";
 
     private static final Logger LOG = LoggerFactory.getLogger(DgsSpringGraphQLAutoConfiguration.class);
@@ -180,7 +182,7 @@ public class DgsSpringGraphQLAutoConfiguration {
     private final DgsDataloaderConfigurationProperties dataloaderConfigProps;
 
     public DgsSpringGraphQLAutoConfiguration(
-            DgsConfigurationProperties configProps, DgsDataloaderConfigurationProperties dataloaderConfigProps) {
+            @NotNull DgsConfigurationProperties configProps, @NotNull DgsDataloaderConfigurationProperties dataloaderConfigProps) {
         this.configProps = configProps;
         this.dataloaderConfigProps = dataloaderConfigProps;
     }
@@ -192,6 +194,7 @@ public class DgsSpringGraphQLAutoConfiguration {
             havingValue = "jackson3",
             matchIfMissing = true)
     static class Jackson3DgsJsonMapperConfiguration {
+        @NotNull
         @Bean
         @ConditionalOnMissingBean(DgsJsonMapper.class)
         public DgsJsonMapper dgsJsonMapper() {
@@ -199,21 +202,24 @@ public class DgsSpringGraphQLAutoConfiguration {
         }
     }
 
+    @NotNull
     @Bean
     @ConditionalOnMissingBean(DgsJsonMapper.class)
     public DgsJsonMapper dgsJsonMapperFallback() {
         throw new DgsJsonMapperMissingException();
     }
 
+    @NotNull
     @Bean
     @Order(PriorityOrdered.HIGHEST_PRECEDENCE)
     public Instrumentation graphQLContextContributionInstrumentation(
-            ObjectProvider<GraphQLContextContributor> graphQLContextContributors) {
+            @NotNull ObjectProvider<GraphQLContextContributor> graphQLContextContributors) {
         return new GraphQLContextContributorInstrumentation(
                 graphQLContextContributors.orderedStream().toList());
     }
 
     // This instrumentation needs to run before MetricsInstrumentation
+    @NotNull
     @Bean
     @Order(Ordered.LOWEST_PRECEDENCE - 1)
     @ConditionalOnProperty(
@@ -225,18 +231,21 @@ public class DgsSpringGraphQLAutoConfiguration {
         return new GraphQLJavaErrorInstrumentation();
     }
 
+    @NotNull
     @Bean
     @ConditionalOnMissingBean
     public QueryValueCustomizer defaultQueryValueCustomizer() {
         return query -> query;
     }
 
+    @NotNull
     @Bean
     @ConditionalOnMissingBean
     public DgsDataLoaderOptionsProvider dgsDataLoaderOptionsProvider() {
         return new DefaultDataLoaderOptionsProvider();
     }
 
+    @NotNull
     @Bean(destroyMethod = "shutdown")
     @ConditionalOnMissingBean(name = "dgsScheduledExecutorService")
     @Qualifier("dgsScheduledExecutorService")
@@ -244,6 +253,7 @@ public class DgsSpringGraphQLAutoConfiguration {
         return Executors.newSingleThreadScheduledExecutor();
     }
 
+    @NotNull
     @Bean
     @ConditionalOnProperty(
             prefix = AUTO_CONF_PREFIX + ".convertAllDataLoadersToWithContext",
@@ -255,20 +265,22 @@ public class DgsSpringGraphQLAutoConfiguration {
         return new DgsWrapWithContextDataLoaderCustomizer();
     }
 
+    @NotNull
     @Bean
     @Order(100)
     public DgsDataLoaderInstrumentationDataLoaderCustomizer dgsDataLoaderInstrumentationDataLoaderCustomizer(
-            List<DgsDataLoaderInstrumentation> instrumentations) {
+            @NotNull List<? extends DgsDataLoaderInstrumentation> instrumentations) {
         return new DgsDataLoaderInstrumentationDataLoaderCustomizer(instrumentations);
     }
 
+    @NotNull
     @Bean
     public DefaultDgsDataLoaderProvider dgsDataLoaderProvider(
-            ApplicationContext applicationContext,
-            DgsDataLoaderOptionsProvider dataloaderOptionProvider,
-            @Qualifier("dgsScheduledExecutorService") ScheduledExecutorService dgsScheduledExecutorService,
-            List<DataLoaderInstrumentationExtensionProvider> extensionProviders,
-            List<DgsDataLoaderCustomizer> customizers) {
+            @NotNull ApplicationContext applicationContext,
+            @NotNull DgsDataLoaderOptionsProvider dataloaderOptionProvider,
+            @NotNull @Qualifier("dgsScheduledExecutorService") ScheduledExecutorService dgsScheduledExecutorService,
+            @NotNull List<? extends DataLoaderInstrumentationExtensionProvider> extensionProviders,
+            @NotNull List<? extends DgsDataLoaderCustomizer> customizers) {
         return new DefaultDgsDataLoaderProvider(
                 applicationContext,
                 extensionProviders,
@@ -292,7 +304,7 @@ public class DgsSpringGraphQLAutoConfiguration {
     public static class DgsDataLoaderReloadAutoConfiguration {
         private final DgsDataloaderConfigurationProperties dataloaderConfigProps;
 
-        public DgsDataLoaderReloadAutoConfiguration(DgsDataloaderConfigurationProperties dataloaderConfigProps) {
+        public DgsDataLoaderReloadAutoConfiguration(@NotNull DgsDataloaderConfigurationProperties dataloaderConfigProps) {
             this.dataloaderConfigProps = dataloaderConfigProps;
         }
 
@@ -302,14 +314,15 @@ public class DgsSpringGraphQLAutoConfiguration {
          * <p>The {@code @Primary} annotation ensures this bean takes precedence over the standard
          * {@code DgsDataLoaderProvider} when reload functionality is enabled.
          */
+        @NotNull
         @Bean
         @Primary
         public ReloadableDgsDataLoaderProvider reloadableDgsDataLoaderProvider(
-                ApplicationContext applicationContext,
-                DgsDataLoaderOptionsProvider dataLoaderOptionProvider,
-                @Qualifier("dgsScheduledExecutorService") ScheduledExecutorService dgsScheduledExecutorService,
-                List<DataLoaderInstrumentationExtensionProvider> extensionProviders,
-                List<DgsDataLoaderCustomizer> customizers) {
+                @NotNull ApplicationContext applicationContext,
+                @NotNull DgsDataLoaderOptionsProvider dataLoaderOptionProvider,
+                @NotNull @Qualifier("dgsScheduledExecutorService") ScheduledExecutorService dgsScheduledExecutorService,
+                @NotNull List<? extends DataLoaderInstrumentationExtensionProvider> extensionProviders,
+                @NotNull List<? extends DgsDataLoaderCustomizer> customizers) {
             LOG.info("Creating reloadable data loader provider with reload support enabled");
             return new ReloadableDgsDataLoaderProvider(
                     applicationContext,
@@ -326,26 +339,30 @@ public class DgsSpringGraphQLAutoConfiguration {
          *
          * @return DgsDataLoaderReloadController instance
          */
+        @NotNull
         @Bean
         @ConditionalOnMissingBean
         public DgsDataLoaderReloadController dgsDataLoaderReloadController(
-                ReloadableDgsDataLoaderProvider reloadableDgsDataLoaderProvider) {
+                @NotNull ReloadableDgsDataLoaderProvider reloadableDgsDataLoaderProvider) {
             LOG.info("Creating data loader reload controller");
             return new DefaultDgsDataLoaderReloadController(reloadableDgsDataLoaderProvider);
         }
     }
 
+    @NotNull
     @Bean
     public EntityFetcherRegistry entityFetcherRegistry() {
         return new EntityFetcherRegistry();
     }
 
+    @NotNull
     @Bean
     @ConditionalOnMissingBean
     public DataFetcherExceptionHandler dataFetcherExceptionHandler() {
         return new DefaultDataFetcherExceptionHandler();
     }
 
+    @NotNull
     @Bean
     @ConditionalOnProperty(
             prefix = AUTO_CONF_PREFIX + ".preparsedDocumentProvider",
@@ -353,17 +370,18 @@ public class DgsSpringGraphQLAutoConfiguration {
             havingValue = "true",
             matchIfMissing = false)
     @ConditionalOnMissingBean
-    public PreparsedDocumentProvider preparsedDocumentProvider(DgsConfigurationProperties configProps) {
+    public PreparsedDocumentProvider preparsedDocumentProvider(@NotNull DgsConfigurationProperties configProps) {
         return new DgsDefaultPreparsedDocumentProvider(
                 configProps.getPreparsedDocumentProvider().getMaximumCacheSize(),
                 Duration.parse(configProps.getPreparsedDocumentProvider().getCacheValidityDuration()));
     }
 
+    @NotNull
     @Bean
     @ConditionalOnMissingBean
     public DefaultDgsGraphQLContextBuilder graphQLContextBuilder(
-            Optional<DgsCustomContextBuilder<?>> dgsCustomContextBuilder,
-            Optional<DgsCustomContextBuilderWithRequest<?>> dgsCustomContextBuilderWithRequest) {
+            @NotNull Optional<DgsCustomContextBuilder<?>> dgsCustomContextBuilder,
+            @NotNull Optional<DgsCustomContextBuilderWithRequest<?>> dgsCustomContextBuilderWithRequest) {
         return new DefaultDgsGraphQLContextBuilder(dgsCustomContextBuilder, dgsCustomContextBuilderWithRequest);
     }
 
@@ -372,9 +390,10 @@ public class DgsSpringGraphQLAutoConfiguration {
      * This implementation will return either the boolean value of the {@code dgs.reload} flag
      * or {@code true} if the {@code laptop} profile is an active Spring Boot profile.
      */
+    @NotNull
     @Bean
     @ConditionalOnMissingBean
-    public ReloadSchemaIndicator defaultReloadSchemaIndicator(Environment environment) {
+    public ReloadSchemaIndicator defaultReloadSchemaIndicator(@NotNull Environment environment) {
         boolean hotReloadSetting = OnDgsReloadCondition.evaluate(environment);
         return () -> hotReloadSetting;
     }
@@ -386,7 +405,7 @@ public class DgsSpringGraphQLAutoConfiguration {
             Optional<DgsFederationResolver> federationResolver,
             Optional<TypeDefinitionRegistry> existingTypeDefinitionFactory,
             Optional<GraphQLCodeRegistry> existingCodeRegistry,
-            List<DataFetcherResultProcessor> dataFetcherResultProcessors,
+            List<? extends DataFetcherResultProcessor> dataFetcherResultProcessors,
             Optional<DataFetcherExceptionHandler> dataFetcherExceptionHandler,
             EntityFetcherRegistry entityFetcherRegistry,
             Optional<DataFetcherFactory<?>> defaultDataFetcherFactory,
@@ -483,6 +502,7 @@ public class DgsSpringGraphQLAutoConfiguration {
         return new ReloadableGraphQLSource(builder, reloadSchemaIndicator);
     }
 
+    @NotNull
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnClass(name = "reactor.core.publisher.Mono")
@@ -490,6 +510,7 @@ public class DgsSpringGraphQLAutoConfiguration {
         return new MonoDataFetcherResultProcessor();
     }
 
+    @NotNull
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnClass(name = "kotlinx.coroutines.flow.Flow")
@@ -497,6 +518,7 @@ public class DgsSpringGraphQLAutoConfiguration {
         return new FlowDataFetcherResultProcessor();
     }
 
+    @NotNull
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnClass(name = "reactor.core.publisher.Flux")
@@ -508,6 +530,7 @@ public class DgsSpringGraphQLAutoConfiguration {
      * JDK 21+ only - Creates the dgsAsyncTaskExecutor which is used to run data fetchers automatically wrapped in
      * CompletableFuture. Can be provided by other frameworks to enable context propagation.
      */
+    @NotNull
     @Bean
     @Qualifier("dgsAsyncTaskExecutor")
     @ConditionalOnJava(JavaVersion.TWENTY_ONE)
@@ -537,6 +560,7 @@ public class DgsSpringGraphQLAutoConfiguration {
      * Defaults to {@code Dispatchers.Unconfined} which runs coroutines immediately on the calling thread.
      * Override this bean to customize the dispatcher for your specific use case.
      */
+    @NotNull
     @Bean(defaultCandidate = false)
     @Qualifier("dgsCoroutineDispatcher")
     @ConditionalOnMissingBean(name = "dgsCoroutineDispatcher")
@@ -544,11 +568,12 @@ public class DgsSpringGraphQLAutoConfiguration {
         return Dispatchers.getUnconfined();
     }
 
+    @NotNull
     @Bean
     public MethodDataFetcherFactory methodDataFetcherFactory(
-            ObjectProvider<ArgumentResolver> argumentResolvers,
-            @Qualifier("dgsAsyncTaskExecutor") Optional<AsyncTaskExecutor> taskExecutorOptional,
-            @Qualifier("dgsCoroutineDispatcher") CoroutineDispatcher coroutineDispatcher) {
+            @NotNull ObjectProvider<ArgumentResolver> argumentResolvers,
+            @NotNull @Qualifier("dgsAsyncTaskExecutor") Optional<AsyncTaskExecutor> taskExecutorOptional,
+            @NotNull @Qualifier("dgsCoroutineDispatcher") CoroutineDispatcher coroutineDispatcher) {
         AsyncTaskExecutor taskExecutor = taskExecutorOptional.orElse(null);
 
         return new MethodDataFetcherFactory(
@@ -562,6 +587,7 @@ public class DgsSpringGraphQLAutoConfiguration {
      * {@link DgsQueryExecutorRequestCustomizer} implementation which copies headers into the request if the request is
      * a {@link MockHttpServletRequest}; intended to support test use cases.
      */
+    @NotNull
     @Bean
     @ConditionalOnClass(name = "org.springframework.mock.web.MockHttpServletRequest")
     public DgsQueryExecutorRequestCustomizer mockRequestHeaderCustomizer() {
@@ -589,49 +615,55 @@ public class DgsSpringGraphQLAutoConfiguration {
         };
     }
 
+    @NotNull
     @Bean
     @DgsComponent
-    public DgsRuntimeWiringConfigurerBridge dgsRuntimeWiringConfigurerBridge(List<RuntimeWiringConfigurer> configurers) {
+    public DgsRuntimeWiringConfigurerBridge dgsRuntimeWiringConfigurerBridge(
+            @NotNull List<? extends RuntimeWiringConfigurer> configurers) {
         return new DgsRuntimeWiringConfigurerBridge(configurers);
     }
 
     public static class DgsRuntimeWiringConfigurerBridge {
-        private final List<RuntimeWiringConfigurer> configurers;
+        private final List<? extends RuntimeWiringConfigurer> configurers;
 
-        public DgsRuntimeWiringConfigurerBridge(List<RuntimeWiringConfigurer> configurers) {
+        public DgsRuntimeWiringConfigurerBridge(@NotNull List<? extends RuntimeWiringConfigurer> configurers) {
             this.configurers = configurers;
         }
 
+        @NotNull
         @DgsRuntimeWiring
-        public RuntimeWiring.Builder runtimeWiring(RuntimeWiring.Builder builder) {
+        public RuntimeWiring.Builder runtimeWiring(@NotNull RuntimeWiring.Builder builder) {
             configurers.forEach(configurer -> configurer.configure(builder));
             return builder;
         }
     }
 
+    @NotNull
     @Bean
     @ConditionalOnProperty(name = "dgs.springgraphql.pagination.enabled", havingValue = "true", matchIfMissing = true)
     @DgsComponent
-    public DgsTypeDefinitionConfigurerBridge dgsTypeDefinitionConfigurerBridge(Environment environment) {
+    public DgsTypeDefinitionConfigurerBridge dgsTypeDefinitionConfigurerBridge(@NotNull Environment environment) {
         return new DgsTypeDefinitionConfigurerBridge();
     }
 
     public static class DgsTypeDefinitionConfigurerBridge {
+        @NotNull
         @DgsTypeDefinitionRegistry
-        public TypeDefinitionRegistry typeDefinitionRegistry(TypeDefinitionRegistry typeDefinitionRegistry) {
+        public TypeDefinitionRegistry typeDefinitionRegistry(@NotNull TypeDefinitionRegistry typeDefinitionRegistry) {
             TypeDefinitionRegistry newTypeDefinitionRegistry = new TypeDefinitionRegistry();
             new ConnectionTypeDefinitionConfigurer().configure(typeDefinitionRegistry);
             return newTypeDefinitionRegistry;
         }
     }
 
+    @NotNull
     @Bean
     public GraphQlSourceBuilderCustomizer sourceBuilderCustomizer(
-            Optional<PreparsedDocumentProvider> preparsedDocumentProvider,
-            @Qualifier("query") Optional<ExecutionStrategy> providedQueryExecutionStrategy,
-            @Qualifier("mutation") Optional<ExecutionStrategy> providedMutationExecutionStrategy,
-            DataFetcherExceptionHandler dataFetcherExceptionHandler,
-            Environment environment) {
+            @NotNull Optional<PreparsedDocumentProvider> preparsedDocumentProvider,
+            @NotNull @Qualifier("query") Optional<ExecutionStrategy> providedQueryExecutionStrategy,
+            @NotNull @Qualifier("mutation") Optional<ExecutionStrategy> providedMutationExecutionStrategy,
+            @NotNull DataFetcherExceptionHandler dataFetcherExceptionHandler,
+            @NotNull Environment environment) {
         return builder -> builder.configureGraphQl(graphQlBuilder -> {
             boolean apqEnabled = environment.getProperty("dgs.graphql.apq.enabled", Boolean.class, false);
             // If apq is enabled, we will not use this preparsedDocumentProvider and use
@@ -650,6 +682,7 @@ public class DgsSpringGraphQLAutoConfiguration {
         });
     }
 
+    @NotNull
     @Bean
     @ConditionalOnProperty(
             name = "spring.graphql.schema.introspection.enabled",
@@ -659,14 +692,15 @@ public class DgsSpringGraphQLAutoConfiguration {
         return (builder, extensions, requestData) -> builder.put(Introspection.INTROSPECTION_DISABLED, true);
     }
 
+    @NotNull
     @Bean
     public DgsQueryExecutor springGraphQLDgsQueryExecutor(
-            ExecutionGraphQlService executionService,
-            DefaultDgsGraphQLContextBuilder dgsContextBuilder,
-            DgsDataLoaderProvider dgsDataLoaderProvider,
-            DgsJsonMapper dgsJsonMapper,
-            ObjectProvider<DgsQueryExecutorRequestCustomizer> requestCustomizer,
-            List<GraphQLContextContributor> graphQLContextContributors) {
+            @NotNull ExecutionGraphQlService executionService,
+            @NotNull DefaultDgsGraphQLContextBuilder dgsContextBuilder,
+            @NotNull DgsDataLoaderProvider dgsDataLoaderProvider,
+            @NotNull DgsJsonMapper dgsJsonMapper,
+            @NotNull ObjectProvider<DgsQueryExecutorRequestCustomizer> requestCustomizer,
+            @NotNull List<? extends GraphQLContextContributor> graphQLContextContributors) {
         return new SpringGraphQLDgsQueryExecutor(
                 executionService,
                 dgsContextBuilder,
@@ -681,6 +715,7 @@ public class DgsSpringGraphQLAutoConfiguration {
      * using DgsExecutionResult. While this can easily be done through a custom WebGraphQlInterceptor, this bean
      * provides backward compatibility with older code.
      */
+    @NotNull
     @Bean
     @ConditionalOnProperty(
             prefix = AUTO_CONF_PREFIX + ".dgs-response-headers",
@@ -704,15 +739,16 @@ public class DgsSpringGraphQLAutoConfiguration {
     public static class WebMvcConfiguration {
         private final DgsSpringGraphQLConfigurationProperties dgsSpringGraphQLConfigurationProperties;
 
-        public WebMvcConfiguration(DgsSpringGraphQLConfigurationProperties dgsSpringGraphQLConfigurationProperties) {
+        public WebMvcConfiguration(@NotNull DgsSpringGraphQLConfigurationProperties dgsSpringGraphQLConfigurationProperties) {
             this.dgsSpringGraphQLConfigurationProperties = dgsSpringGraphQLConfigurationProperties;
         }
 
+        @NotNull
         @Bean
         public DgsWebMvcGraphQLInterceptor dgsGraphQlInterceptor(
-                DgsDataLoaderProvider dgsDataLoaderProvider,
-                DefaultDgsGraphQLContextBuilder dgsDefaultContextBuilder,
-                List<GraphQLContextContributor> graphQLContextContributors) {
+                @NotNull DgsDataLoaderProvider dgsDataLoaderProvider,
+                @NotNull DefaultDgsGraphQLContextBuilder dgsDefaultContextBuilder,
+                @NotNull List<? extends GraphQLContextContributor> graphQLContextContributors) {
             return new DgsWebMvcGraphQLInterceptor(
                     dgsDataLoaderProvider,
                     dgsDefaultContextBuilder,
@@ -729,43 +765,49 @@ public class DgsSpringGraphQLAutoConfiguration {
         private @interface Dgs {
         }
 
+        @NotNull
         @Bean
         @Dgs
         public WebDataBinderFactory dgsWebDataBinderFactory(
-                @Qualifier("requestMappingHandlerAdapter") ObjectProvider<RequestMappingHandlerAdapter> adapter) {
+                @NotNull @Qualifier("requestMappingHandlerAdapter") ObjectProvider<RequestMappingHandlerAdapter> adapter) {
             RequestMappingHandlerAdapter handlerAdapter = adapter.getIfAvailable();
             return new ServletRequestDataBinderFactory(
                     List.of(), handlerAdapter != null ? handlerAdapter.getWebBindingInitializer() : null);
         }
 
+        @NotNull
         @Bean
-        public ArgumentResolver requestHeaderMapResolver(@Dgs WebDataBinderFactory dataBinderFactory) {
+        public ArgumentResolver requestHeaderMapResolver(@NotNull @Dgs WebDataBinderFactory dataBinderFactory) {
             return new HandlerMethodArgumentResolverAdapter(
                     new RequestHeaderMapMethodArgumentResolver(), dataBinderFactory);
         }
 
+        @NotNull
         @Bean
         public ArgumentResolver requestHeaderResolver(
-                ConfigurableBeanFactory beanFactory, @Dgs WebDataBinderFactory dataBinderFactory) {
+                @NotNull ConfigurableBeanFactory beanFactory, @NotNull @Dgs WebDataBinderFactory dataBinderFactory) {
             return new HandlerMethodArgumentResolverAdapter(
                     new RequestHeaderMethodArgumentResolver(beanFactory), dataBinderFactory);
         }
 
+        @NotNull
         @Bean
-        public ArgumentResolver requestParamResolver(@Dgs WebDataBinderFactory dataBinderFactory) {
+        public ArgumentResolver requestParamResolver(@NotNull @Dgs WebDataBinderFactory dataBinderFactory) {
             return new HandlerMethodArgumentResolverAdapter(
                     new RequestParamMethodArgumentResolver(false), dataBinderFactory);
         }
 
+        @NotNull
         @Bean
-        public ArgumentResolver requestParamMapResolver(@Dgs WebDataBinderFactory dataBinderFactory) {
+        public ArgumentResolver requestParamMapResolver(@NotNull @Dgs WebDataBinderFactory dataBinderFactory) {
             return new HandlerMethodArgumentResolverAdapter(
                     new RequestParamMapMethodArgumentResolver(), dataBinderFactory);
         }
 
+        @NotNull
         @Bean
         public ArgumentResolver cookieValueResolver(
-                ConfigurableBeanFactory beanFactory, @Dgs WebDataBinderFactory dataBinderFactory) {
+                @NotNull ConfigurableBeanFactory beanFactory, @NotNull @Dgs WebDataBinderFactory dataBinderFactory) {
             return new HandlerMethodArgumentResolverAdapter(
                     new ServletCookieValueMethodArgumentResolver(beanFactory), dataBinderFactory);
         }
@@ -774,23 +816,26 @@ public class DgsSpringGraphQLAutoConfiguration {
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass({Publisher.class, ServerRequest.class})
     public static class ReactiveConfiguration {
+        @NotNull
         @Bean
         public DgsReactiveQueryExecutor springGraphQLDgsReactiveQueryExecutor(
-                ExecutionGraphQlService executionService,
-                DefaultDgsReactiveGraphQLContextBuilder dgsContextBuilder,
-                DgsDataLoaderProvider dgsDataLoaderProvider,
-                DgsJsonMapper dgsJsonMapper) {
+                @NotNull ExecutionGraphQlService executionService,
+                @NotNull DefaultDgsReactiveGraphQLContextBuilder dgsContextBuilder,
+                @NotNull DgsDataLoaderProvider dgsDataLoaderProvider,
+                @NotNull DgsJsonMapper dgsJsonMapper) {
             return new SpringGraphQLDgsReactiveQueryExecutor(
                     executionService, dgsContextBuilder, dgsDataLoaderProvider, dgsJsonMapper);
         }
 
+        @NotNull
         @Bean
         @ConditionalOnMissingBean
         public DefaultDgsReactiveGraphQLContextBuilder reactiveGraphQlContextBuilder(
-                Optional<DgsReactiveCustomContextBuilderWithRequest<?>> dgsReactiveCustomContextBuilderWithRequest) {
+                @NotNull Optional<DgsReactiveCustomContextBuilderWithRequest<?>> dgsReactiveCustomContextBuilderWithRequest) {
             return new DefaultDgsReactiveGraphQLContextBuilder(dgsReactiveCustomContextBuilderWithRequest);
         }
 
+        @NotNull
         @Bean
         @ConditionalOnMissingBean
         public ServerWebExchangeContextFilter dgsServerWebExchangeContextFilter() {
@@ -801,10 +846,11 @@ public class DgsSpringGraphQLAutoConfiguration {
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
     public static class WebFluxConfiguration {
+        @NotNull
         @Bean
         public DgsWebFluxGraphQLInterceptor webFluxDgsGraphQLInterceptor(
-                DgsDataLoaderProvider dgsDataLoaderProvider,
-                DefaultDgsReactiveGraphQLContextBuilder defaultDgsReactiveGraphQLContextBuilder) {
+                @NotNull DgsDataLoaderProvider dgsDataLoaderProvider,
+                @NotNull DefaultDgsReactiveGraphQLContextBuilder defaultDgsReactiveGraphQLContextBuilder) {
             return new DgsWebFluxGraphQLInterceptor(dgsDataLoaderProvider, defaultDgsReactiveGraphQLContextBuilder);
         }
     }
@@ -817,43 +863,48 @@ public class DgsSpringGraphQLAutoConfiguration {
         private @interface Dgs {
         }
 
+        @NotNull
         @Dgs
         @Bean
         public BindingContext dgsBindingContext(
-                ObjectProvider<org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerAdapter>
+                @NotNull ObjectProvider<org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerAdapter>
                                 adapter) {
             var handlerAdapter = adapter.getIfAvailable();
             return new BindingContext(handlerAdapter != null ? handlerAdapter.getWebBindingInitializer() : null);
         }
 
+        @NotNull
         @Bean
         public ArgumentResolver cookieValueArgumentResolver(
-                ConfigurableBeanFactory beanFactory, ReactiveAdapterRegistry registry, @Dgs BindingContext bindingContext) {
+                @NotNull ConfigurableBeanFactory beanFactory, @NotNull ReactiveAdapterRegistry registry, @NotNull @Dgs BindingContext bindingContext) {
             return new SyncHandlerMethodArgumentResolverAdapter(
                     new CookieValueMethodArgumentResolver(beanFactory, registry), bindingContext);
         }
 
+        @NotNull
         @Bean
         public ArgumentResolver requestHeaderMapArgumentResolver(
-                ReactiveAdapterRegistry registry, @Dgs BindingContext bindingContext) {
+                @NotNull ReactiveAdapterRegistry registry, @NotNull @Dgs BindingContext bindingContext) {
             return new SyncHandlerMethodArgumentResolverAdapter(
                     new org.springframework.web.reactive.result.method.annotation
                             .RequestHeaderMapMethodArgumentResolver(registry),
                     bindingContext);
         }
 
+        @NotNull
         @Bean
         public ArgumentResolver requestHeaderArgumentResolver(
-                ConfigurableBeanFactory beanFactory, ReactiveAdapterRegistry registry, @Dgs BindingContext bindingContext) {
+                @NotNull ConfigurableBeanFactory beanFactory, @NotNull ReactiveAdapterRegistry registry, @NotNull @Dgs BindingContext bindingContext) {
             return new SyncHandlerMethodArgumentResolverAdapter(
                     new org.springframework.web.reactive.result.method.annotation.RequestHeaderMethodArgumentResolver(
                             beanFactory, registry),
                     bindingContext);
         }
 
+        @NotNull
         @Bean
         public ArgumentResolver requestParamArgumentResolver(
-                ConfigurableBeanFactory beanFactory, ReactiveAdapterRegistry registry, @Dgs BindingContext bindingContext) {
+                @NotNull ConfigurableBeanFactory beanFactory, @NotNull ReactiveAdapterRegistry registry, @NotNull @Dgs BindingContext bindingContext) {
             return new SyncHandlerMethodArgumentResolverAdapter(
                     new org.springframework.web.reactive.result.method.annotation.RequestParamMethodArgumentResolver(
                             beanFactory, registry, false),

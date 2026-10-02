@@ -24,20 +24,22 @@ import graphql.ExecutionResult;
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters;
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters;
 import io.micrometer.core.instrument.Tag;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class DgsGraphQLCollatedMetricsTagsProvider implements DgsGraphQLMetricsTagsProvider {
-    private final Collection<DgsContextualTagCustomizer> contextualTagCustomizer;
-    private final Collection<DgsExecutionTagCustomizer> executionTagCustomizer;
-    private final Collection<DgsFieldFetchTagCustomizer> fieldFetchTagCustomizer;
+    private final Collection<? extends DgsContextualTagCustomizer> contextualTagCustomizer;
+    private final Collection<? extends DgsExecutionTagCustomizer> executionTagCustomizer;
+    private final Collection<? extends DgsFieldFetchTagCustomizer> fieldFetchTagCustomizer;
 
     public DgsGraphQLCollatedMetricsTagsProvider(
-            Collection<DgsContextualTagCustomizer> contextualTagCustomizer,
-            Collection<DgsExecutionTagCustomizer> executionTagCustomizer,
-            Collection<DgsFieldFetchTagCustomizer> fieldFetchTagCustomizer) {
+            @NotNull Collection<? extends DgsContextualTagCustomizer> contextualTagCustomizer,
+            @NotNull Collection<? extends DgsExecutionTagCustomizer> executionTagCustomizer,
+            @NotNull Collection<? extends DgsFieldFetchTagCustomizer> fieldFetchTagCustomizer) {
         this.contextualTagCustomizer = contextualTagCustomizer;
         this.executionTagCustomizer = executionTagCustomizer;
         this.fieldFetchTagCustomizer = fieldFetchTagCustomizer;
@@ -47,6 +49,7 @@ public class DgsGraphQLCollatedMetricsTagsProvider implements DgsGraphQLMetricsT
         this(List.of(), List.of(), List.of());
     }
 
+    @NotNull
     @Override
     public Iterable<Tag> getContextualTags() {
         List<Tag> tags = new ArrayList<>();
@@ -56,12 +59,13 @@ public class DgsGraphQLCollatedMetricsTagsProvider implements DgsGraphQLMetricsT
         return tags;
     }
 
+    @NotNull
     @Override
     public Iterable<Tag> getExecutionTags(
-            DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState state,
-            InstrumentationExecutionParameters parameters,
-            ExecutionResult result,
-            Throwable exception) {
+            @NotNull DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState state,
+            @NotNull InstrumentationExecutionParameters parameters,
+            @NotNull ExecutionResult result,
+            @Nullable Throwable exception) {
         List<Tag> tags = new ArrayList<>();
         for (DgsExecutionTagCustomizer customizer : executionTagCustomizer) {
             customizer.getExecutionTags(state, parameters, result, exception).forEach(tags::add);
@@ -69,11 +73,12 @@ public class DgsGraphQLCollatedMetricsTagsProvider implements DgsGraphQLMetricsT
         return tags;
     }
 
+    @NotNull
     @Override
     public Iterable<Tag> getFieldFetchTags(
-            DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState state,
-            InstrumentationFieldFetchParameters parameters,
-            Throwable exception) {
+            @NotNull DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState state,
+            @NotNull InstrumentationFieldFetchParameters parameters,
+            @Nullable Throwable exception) {
         List<Tag> tags = new ArrayList<>();
         for (DgsFieldFetchTagCustomizer customizer : fieldFetchTagCustomizer) {
             customizer.getFieldFetchTags(state, parameters, exception).forEach(tags::add);

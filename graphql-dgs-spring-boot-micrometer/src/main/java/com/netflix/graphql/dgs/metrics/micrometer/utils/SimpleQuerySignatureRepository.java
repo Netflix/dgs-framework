@@ -25,6 +25,8 @@ import graphql.language.Document;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Timer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -48,13 +50,26 @@ public class SimpleQuerySignatureRepository implements QuerySignatureRepository,
 
     protected MeterRegistry meterRegistry;
 
-    public SimpleQuerySignatureRepository(AutoTimer autoTimer, DgsMeterRegistrySupplier meterRegistrySupplier) {
+    public SimpleQuerySignatureRepository(@NotNull AutoTimer autoTimer, @NotNull DgsMeterRegistrySupplier meterRegistrySupplier) {
         this.autoTimer = autoTimer;
         this.meterRegistrySupplier = meterRegistrySupplier;
     }
 
+    @NotNull
+    protected MeterRegistry getMeterRegistry() {
+        if (meterRegistry == null) {
+            throw new kotlin.UninitializedPropertyAccessException("lateinit property meterRegistry has not been initialized");
+        }
+        return meterRegistry;
+    }
+
+    protected void setMeterRegistry(@NotNull MeterRegistry meterRegistry) {
+        this.meterRegistry = java.util.Objects.requireNonNull(meterRegistry, "meterRegistry");
+    }
+
+    @NotNull
     @Override
-    public Optional<QuerySignature> get(Document document, InstrumentationExecutionParameters parameters) {
+    public Optional<QuerySignature> get(@NotNull Document document, @NotNull InstrumentationExecutionParameters parameters) {
         Timer.Sample timerSample = Timer.start(meterRegistry);
         List<Tag> tags = new ArrayList<>();
         String queryHash = QuerySignatureRepository.queryHash(parameters.getQuery());
@@ -81,7 +96,8 @@ public class SimpleQuerySignatureRepository implements QuerySignatureRepository,
         }
     }
 
-    protected QuerySignature computeQuerySignature(String queryHash, String queryName, Document document) {
+    @NotNull
+    protected QuerySignature computeQuerySignature(@NotNull String queryHash, @Nullable String queryName, @NotNull Document document) {
         return QuerySignatureRepository.computeSignature(document, queryName);
     }
 

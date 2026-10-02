@@ -36,6 +36,14 @@ public class DgsExceptionJavaTest {
         assertThat(new MyExceptionWithLevel("test", new IllegalArgumentException("test"), ErrorType.UNAVAILABLE, Level.DEBUG).getLogLevel()).isEqualTo(Level.DEBUG);
     }
 
+    @Test
+    void causeRetainsItsCovariantExceptionType() {
+        Exception cause = new IllegalArgumentException("cause");
+        Exception actualCause = new MyException("test", cause, ErrorType.UNAVAILABLE).getCause();
+
+        assertThat(actualCause).isSameAs(cause);
+    }
+
     static class MyException extends DgsException {
         public MyException(@NotNull String message, @Nullable Exception cause, @NotNull ErrorType errorType) {
             super(message, cause, errorType);

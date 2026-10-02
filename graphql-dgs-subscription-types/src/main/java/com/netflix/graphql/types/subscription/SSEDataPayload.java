@@ -18,54 +18,108 @@ package com.netflix.graphql.types.subscription;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
 
 public final class SSEDataPayload implements MessagePayload {
+    @JsonProperty("data")
     private final Object data;
+
+    @JsonProperty("errors")
     private final List<Object> errors;
+
+    @JsonProperty(value = "subId", required = true)
+    @JsonSetter(nulls = Nulls.FAIL)
     private final String subId;
+
+    @JsonProperty("type")
+    @JsonSetter(nulls = Nulls.FAIL)
     private final String type;
 
-    @JsonCreator
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     public SSEDataPayload(
-            @JsonProperty("data") Object data,
-            @JsonProperty("errors") List<Object> errors,
-            @JsonProperty("subId") String subId,
-            @JsonProperty("type") String type) {
+            @Nullable Object data,
+            @Nullable List<? extends Object> errors,
+            @NotNull String subId,
+            @NotNull String type) {
         this.data = data;
-        this.errors = errors == null ? List.of() : errors;
-        this.subId = subId;
-        this.type = type;
+        this.errors = asList(errors);
+        this.subId = Objects.requireNonNull(subId, "subId");
+        this.type = Objects.requireNonNull(type, "type");
     }
 
-    public SSEDataPayload(Object data, List<Object> errors, String subId) {
+    public SSEDataPayload(@Nullable Object data, @Nullable List<Object> errors, @NotNull String subId) {
         this(data, errors, subId, OperationMessageType.SSE_GQL_SUBSCRIPTION_DATA);
     }
 
-    public SSEDataPayload(Object data, String subId) {
+    @JsonCreator
+    public SSEDataPayload(
+            @Nullable @JsonProperty("data") Object data,
+            @NotNull @JsonProperty(value = "subId", required = true) String subId) {
         this(data, List.of(), subId, OperationMessageType.SSE_GQL_SUBSCRIPTION_DATA);
     }
 
+    @Nullable
     public Object getData() {
         return data;
     }
 
+    @Nullable
     public List<Object> getErrors() {
         return errors;
     }
 
+    @NotNull
     public String getSubId() {
         return subId;
     }
 
+    @NotNull
     public String getType() {
         return type;
     }
 
+    @Nullable
+    public Object component1() {
+        return data;
+    }
+
+    @Nullable
+    public List<Object> component2() {
+        return errors;
+    }
+
+    @NotNull
+    public String component3() {
+        return subId;
+    }
+
+    @NotNull
+    public String component4() {
+        return type;
+    }
+
+    @NotNull
+    public SSEDataPayload copy(@Nullable Object data, @Nullable List<? extends Object> errors, @NotNull String subId, @NotNull String type) {
+        return new SSEDataPayload(
+                data,
+                asList(errors),
+                Objects.requireNonNull(subId, "subId"),
+                Objects.requireNonNull(type, "type"));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> List<T> asList(List<? extends T> list) {
+        return (List<T>) list;
+    }
+
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         if (this == other) {
             return true;
         }
@@ -78,9 +132,14 @@ public final class SSEDataPayload implements MessagePayload {
 
     @Override
     public int hashCode() {
-        return Objects.hash(data, errors, subId, type);
+        int result = Objects.hashCode(data);
+        result = 31 * result + Objects.hashCode(errors);
+        result = 31 * result + Objects.hashCode(subId);
+        result = 31 * result + Objects.hashCode(type);
+        return result;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "SSEDataPayload(data=" + data + ", errors=" + errors + ", subId=" + subId + ", type=" + type + ")";

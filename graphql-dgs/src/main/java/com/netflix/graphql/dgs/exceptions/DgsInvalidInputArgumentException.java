@@ -17,15 +17,17 @@
 package com.netflix.graphql.dgs.exceptions;
 
 import com.netflix.graphql.types.errors.ErrorType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DgsInvalidInputArgumentException extends DgsException {
     private static final long serialVersionUID = 1L;
 
-    public DgsInvalidInputArgumentException(String message, Exception cause) {
+    public DgsInvalidInputArgumentException(@NotNull String message, @Nullable Exception cause) {
         super(message, cause, ErrorType.BAD_REQUEST);
     }
 
-    public DgsInvalidInputArgumentException(String message) {
+    public DgsInvalidInputArgumentException(@NotNull String message) {
         this(message, null);
     }
 }

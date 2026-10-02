@@ -18,6 +18,8 @@ package com.netflix.graphql.dgs.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -35,8 +37,9 @@ public interface GraphQLClient extends DgsGraphQLClient {
      * @param query The query string. Note that you can use code generation for a type safe query!
      * @return {@link GraphQLResponse} parses the response and gives easy access to data and errors.
      */
+    @NotNull
     @Override
-    GraphQLResponse executeQuery(@Language("graphql") String query);
+    GraphQLResponse executeQuery(@NotNull @Language("graphql") String query);
 
     /**
      * A blocking call to execute a query and parse its result.
@@ -45,8 +48,9 @@ public interface GraphQLClient extends DgsGraphQLClient {
      * @param variables A map of input variables
      * @return {@link GraphQLResponse} parses the response and gives easy access to data and errors.
      */
+    @NotNull
     @Override
-    GraphQLResponse executeQuery(@Language("graphql") String query, Map<String, Object> variables);
+    GraphQLResponse executeQuery(@NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables);
 
     /**
      * A blocking call to execute a query and parse its result.
@@ -56,17 +60,19 @@ public interface GraphQLClient extends DgsGraphQLClient {
      * @param operationName Name of the operation
      * @return {@link GraphQLResponse} parses the response and gives easy access to data and errors.
      */
+    @NotNull
     @Override
     GraphQLResponse executeQuery(
-            @Language("graphql") String query, Map<String, Object> variables, String operationName);
+            @NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables, @Nullable String operationName);
 
     /**
      * @deprecated The RequestExecutor should be provided while creating the implementation.
      *             Use CustomGraphQLClient/CustomMonoGraphQLClient instead.
      */
+    @NotNull
     @Deprecated
     default GraphQLResponse executeQuery(
-            String query, Map<String, Object> variables, RequestExecutor requestExecutor) {
+            @NotNull String query, @NotNull Map<String, ? extends Object> variables, @NotNull RequestExecutor requestExecutor) {
         throw new UnsupportedOperationException();
     }
 
@@ -74,25 +80,29 @@ public interface GraphQLClient extends DgsGraphQLClient {
      * @deprecated The RequestExecutor should be provided while creating the implementation.
      *             Use CustomGraphQLClient/CustomMonoGraphQLClient instead.
      */
+    @NotNull
     @Deprecated
     default GraphQLResponse executeQuery(
-            @Language("graphql") String query,
-            Map<String, Object> variables,
-            String operationName,
-            RequestExecutor requestExecutor) {
+            @NotNull @Language("graphql") String query,
+            @NotNull Map<String, ? extends Object> variables,
+            @Nullable String operationName,
+            @NotNull RequestExecutor requestExecutor) {
         throw new UnsupportedOperationException();
     }
 
-    static CustomGraphQLClient createCustom(String url, RequestExecutor requestExecutor) {
+    @NotNull
+    static CustomGraphQLClient createCustom(@NotNull String url, @NotNull RequestExecutor requestExecutor) {
         return new CustomGraphQLClient(url, requestExecutor);
     }
 
-    static CustomGraphQLClient createCustom(String url, RequestExecutor requestExecutor, ObjectMapper mapper) {
+    @NotNull
+    static CustomGraphQLClient createCustom(@NotNull String url, @NotNull RequestExecutor requestExecutor, @NotNull ObjectMapper mapper) {
         return new CustomGraphQLClient(url, requestExecutor, mapper);
     }
 
+    @NotNull
     static CustomGraphQLClient createCustom(
-            String url, RequestExecutor requestExecutor, GraphQLRequestOptions options) {
+            @NotNull String url, @NotNull RequestExecutor requestExecutor, @NotNull GraphQLRequestOptions options) {
         return new CustomGraphQLClient(url, requestExecutor, options);
     }
 }

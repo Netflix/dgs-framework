@@ -19,11 +19,14 @@ package com.netflix.graphql.dgs.metrics.micrometer.tagging;
 import com.netflix.graphql.dgs.metrics.micrometer.DgsGraphQLMetricsInstrumentation;
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters;
 import io.micrometer.core.instrument.Tag;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @FunctionalInterface
 public interface DgsFieldFetchTagCustomizer {
+    @NotNull
     Iterable<Tag> getFieldFetchTags(
-            DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState state,
-            InstrumentationFieldFetchParameters parameters,
-            Throwable error);
+            @NotNull DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState state,
+            @NotNull InstrumentationFieldFetchParameters parameters,
+            @Nullable Throwable error);
 }

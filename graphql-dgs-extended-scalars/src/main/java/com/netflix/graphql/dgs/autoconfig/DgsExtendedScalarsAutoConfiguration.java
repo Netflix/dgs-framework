@@ -21,6 +21,7 @@ import com.netflix.graphql.dgs.DgsRuntimeWiring;
 import graphql.scalars.ExtendedScalars;
 import graphql.schema.GraphQLScalarType;
 import graphql.schema.idl.RuntimeWiring;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
@@ -48,6 +49,7 @@ public class DgsExtendedScalarsAutoConfiguration {
             matchIfMissing = true)
     @Configuration(proxyBeanMethods = false)
     public static class TimeExtendedScalarsAutoConfiguration {
+        @NotNull
         @Bean
         public ExtendedScalarRegistrar timesExtendedScalarsRegistrar() {
             return new AbstractExtendedScalarRegistrar() {
@@ -70,6 +72,7 @@ public class DgsExtendedScalarsAutoConfiguration {
             matchIfMissing = true)
     @Configuration(proxyBeanMethods = false)
     public static class ObjectsExtendedScalarsAutoConfiguration {
+        @NotNull
         @Bean
         public ExtendedScalarRegistrar objectsExtendedScalarsRegistrar() {
             return new AbstractExtendedScalarRegistrar() {
@@ -92,6 +95,7 @@ public class DgsExtendedScalarsAutoConfiguration {
             matchIfMissing = true)
     @Configuration(proxyBeanMethods = false)
     public static class NumbersExtendedScalarsAutoConfiguration {
+        @NotNull
         @Bean
         public ExtendedScalarRegistrar numbersExtendedScalarsRegistrar() {
             return new AbstractExtendedScalarRegistrar() {
@@ -119,6 +123,7 @@ public class DgsExtendedScalarsAutoConfiguration {
         @Conditional(OnBigDecimalAndNumbers.class)
         @Configuration(proxyBeanMethods = false)
         public static class BigDecimalAutoConfiguration {
+            @NotNull
             @Bean
             public ExtendedScalarRegistrar bigDecimalExtendedScalarsRegistrar() {
                 return new AbstractExtendedScalarRegistrar() {
@@ -156,6 +161,7 @@ public class DgsExtendedScalarsAutoConfiguration {
         @Conditional(OnBigIntegerAndNumbers.class)
         @Configuration(proxyBeanMethods = false)
         public static class BigIntegerAutoConfiguration {
+            @NotNull
             @Bean
             public ExtendedScalarRegistrar bigIntegerExtendedScalarsRegistrar() {
                 return new AbstractExtendedScalarRegistrar() {
@@ -197,6 +203,7 @@ public class DgsExtendedScalarsAutoConfiguration {
             matchIfMissing = true)
     @Configuration(proxyBeanMethods = false)
     public static class CurrencyExtendedScalarsRegistrar {
+        @NotNull
         @Bean
         public ExtendedScalarRegistrar currencyExtendedScalarsRegistrar() {
             return new AbstractExtendedScalarRegistrar() {
@@ -215,6 +222,7 @@ public class DgsExtendedScalarsAutoConfiguration {
             matchIfMissing = true)
     @Configuration(proxyBeanMethods = false)
     public static class CountryExtendedScalarsRegistrar {
+        @NotNull
         @Bean
         public ExtendedScalarRegistrar countryCodeExtendedScalarsRegistrar() {
             return new AbstractExtendedScalarRegistrar() {
@@ -233,6 +241,7 @@ public class DgsExtendedScalarsAutoConfiguration {
             matchIfMissing = true)
     @Configuration(proxyBeanMethods = false)
     public static class CharsExtendedScalarsAutoConfiguration {
+        @NotNull
         @Bean
         public ExtendedScalarRegistrar charsExtendedScalarsRegistrar() {
             return new AbstractExtendedScalarRegistrar() {
@@ -251,6 +260,7 @@ public class DgsExtendedScalarsAutoConfiguration {
             matchIfMissing = true)
     @Configuration(proxyBeanMethods = false)
     public static class IDsExtendedScalarsAutoConfiguration {
+        @NotNull
         @Bean
         public ExtendedScalarRegistrar idsExtendedScalarsRegistrar() {
             return new AbstractExtendedScalarRegistrar() {
@@ -265,6 +275,7 @@ public class DgsExtendedScalarsAutoConfiguration {
     @DgsComponent
     @FunctionalInterface
     public interface ExtendedScalarRegistrar {
+        @NotNull
         List<GraphQLScalarType> getScalars();
     }
 
@@ -277,8 +288,9 @@ public class DgsExtendedScalarsAutoConfiguration {
         @Value("${dgs.graphql.extensions.scalars.strict-mode.enabled:false}")
         private boolean strictModeEnabled = false;
 
+        @NotNull
         @DgsRuntimeWiring
-        public RuntimeWiring.Builder addScalar(RuntimeWiring.Builder builder) {
+        public RuntimeWiring.Builder addScalar(@NotNull RuntimeWiring.Builder builder) {
             RuntimeWiring.Builder acc = builder.strictMode(strictModeEnabled);
             List<GraphQLScalarType> scalars = getScalars();
             for (int i = scalars.size() - 1; i >= 0; i--) {

@@ -33,6 +33,8 @@ import com.netflix.graphql.dgs.internal.DgsWebMvcRequestData;
 import com.netflix.graphql.dgs.json.DgsJsonMapper;
 import graphql.ExecutionResult;
 import org.dataloader.DataLoaderRegistry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.graphql.ExecutionGraphQlResponse;
 import org.springframework.graphql.ExecutionGraphQlService;
 import org.springframework.graphql.support.DefaultExecutionGraphQlRequest;
@@ -53,16 +55,16 @@ public class SpringGraphQLDgsQueryExecutor implements DgsQueryExecutor {
     private final DgsDataLoaderProvider dgsDataLoaderProvider;
     private final DgsJsonMapper dgsJsonMapper;
     private final DgsQueryExecutorRequestCustomizer requestCustomizer;
-    private final List<GraphQLContextContributor> graphQLContextContributors;
+    private final List<? extends GraphQLContextContributor> graphQLContextContributors;
     private final ParseContext parseContext;
 
     public SpringGraphQLDgsQueryExecutor(
-            ExecutionGraphQlService executionService,
-            DefaultDgsGraphQLContextBuilder dgsContextBuilder,
-            DgsDataLoaderProvider dgsDataLoaderProvider,
-            DgsJsonMapper dgsJsonMapper,
-            DgsQueryExecutorRequestCustomizer requestCustomizer,
-            List<GraphQLContextContributor> graphQLContextContributors) {
+            @NotNull ExecutionGraphQlService executionService,
+            @NotNull DefaultDgsGraphQLContextBuilder dgsContextBuilder,
+            @NotNull DgsDataLoaderProvider dgsDataLoaderProvider,
+            @NotNull DgsJsonMapper dgsJsonMapper,
+            @NotNull DgsQueryExecutorRequestCustomizer requestCustomizer,
+            @NotNull List<? extends GraphQLContextContributor> graphQLContextContributors) {
         this.executionService = executionService;
         this.dgsContextBuilder = dgsContextBuilder;
         this.dgsDataLoaderProvider = dgsDataLoaderProvider;
@@ -73,11 +75,11 @@ public class SpringGraphQLDgsQueryExecutor implements DgsQueryExecutor {
     }
 
     public SpringGraphQLDgsQueryExecutor(
-            ExecutionGraphQlService executionService,
-            DefaultDgsGraphQLContextBuilder dgsContextBuilder,
-            DgsDataLoaderProvider dgsDataLoaderProvider,
-            DgsJsonMapper dgsJsonMapper,
-            List<GraphQLContextContributor> graphQLContextContributors) {
+            @NotNull ExecutionGraphQlService executionService,
+            @NotNull DefaultDgsGraphQLContextBuilder dgsContextBuilder,
+            @NotNull DgsDataLoaderProvider dgsDataLoaderProvider,
+            @NotNull DgsJsonMapper dgsJsonMapper,
+            @NotNull List<? extends GraphQLContextContributor> graphQLContextContributors) {
         this(
                 executionService,
                 dgsContextBuilder,
@@ -87,16 +89,33 @@ public class SpringGraphQLDgsQueryExecutor implements DgsQueryExecutor {
                 graphQLContextContributors);
     }
 
+    /**
+     * Accepts typed variable and extension maps, as the original Kotlin implementation did.
+     * CharSequence avoids an erasure clash with the invariant maps required by DgsQueryExecutor.
+     */
+    @NotNull
+    public ExecutionResult execute(
+            @NotNull CharSequence query,
+            @NotNull Map<String, ? extends Object> variables,
+            @Nullable Map<String, ? extends Object> extensions,
+            @Nullable HttpHeaders headers,
+            @Nullable String operationName,
+            @Nullable WebRequest webRequest) {
+        return execute(query.toString(), castMap(variables), castMap(extensions), headers, operationName, webRequest);
+    }
+
+    @NotNull
     @Override
     public ExecutionResult execute(
-            String query,
-            Map<String, Object> variables,
-            Map<String, Object> extensions,
-            HttpHeaders headers,
-            String operationName,
-            WebRequest webRequest) {
+            @NotNull String query,
+            @NotNull Map<String, Object> variables,
+            @Nullable Map<String, Object> extensions,
+            @Nullable HttpHeaders headers,
+            @Nullable String operationName,
+            @Nullable WebRequest webRequest) {
         DefaultExecutionGraphQlRequest request =
-                new DefaultExecutionGraphQlRequest(query, operationName, variables, extensions, "", null);
+                new DefaultExecutionGraphQlRequest(
+                        query, operationName, castMap(variables), castMap(extensions), "", null);
 
         WebRequest currentRequest = webRequest;
         if (currentRequest == null) {
@@ -142,17 +161,17 @@ public class SpringGraphQLDgsQueryExecutor implements DgsQueryExecutor {
     }
 
     @Override
-    public <T> T executeAndExtractJsonPath(String query, String jsonPath, Map<String, Object> variables) {
+    public <T> T executeAndExtractJsonPath(@NotNull String query, @NotNull String jsonPath, @NotNull Map<String, Object> variables) {
         return JsonPath.read(getJsonResult(query, variables, null, null), jsonPath);
     }
 
     @Override
-    public <T> T executeAndExtractJsonPath(String query, String jsonPath, HttpHeaders headers) {
+    public <T> T executeAndExtractJsonPath(@NotNull String query, @NotNull String jsonPath, @NotNull HttpHeaders headers) {
         return JsonPath.read(getJsonResult(query, Map.of(), headers, null), jsonPath);
     }
 
     @Override
-    public <T> T executeAndExtractJsonPath(String query, String jsonPath, ServletWebRequest servletWebRequest) {
+    public <T> T executeAndExtractJsonPath(@NotNull String query, @NotNull String jsonPath, @NotNull ServletWebRequest servletWebRequest) {
         HttpHeaders httpHeaders = new HttpHeaders();
         Iterator<String> headerNames = servletWebRequest.getHeaderNames();
         while (headerNames.hasNext()) {
@@ -164,20 +183,22 @@ public class SpringGraphQLDgsQueryExecutor implements DgsQueryExecutor {
         return JsonPath.read(getJsonResult(query, Map.of(), httpHeaders, servletWebRequest), jsonPath);
     }
 
+    @NotNull
     @Override
-    public DocumentContext executeAndGetDocumentContext(String query, Map<String, Object> variables) {
+    public DocumentContext executeAndGetDocumentContext(@NotNull String query, @NotNull Map<String, Object> variables) {
         return parseContext.parse(getJsonResult(query, variables, null, null));
     }
 
+    @NotNull
     @Override
     public DocumentContext executeAndGetDocumentContext(
-            String query, Map<String, Object> variables, HttpHeaders headers) {
+            @NotNull String query, @NotNull Map<String, Object> variables, @Nullable HttpHeaders headers) {
         return parseContext.parse(getJsonResult(query, variables, headers, null));
     }
 
     @Override
     public <T> T executeAndExtractJsonPathAsObject(
-            String query, String jsonPath, Map<String, Object> variables, Class<T> clazz, HttpHeaders headers) {
+            @NotNull String query, @NotNull String jsonPath, @NotNull Map<String, Object> variables, @NotNull Class<T> clazz, @Nullable HttpHeaders headers) {
         String jsonResult = getJsonResult(query, variables, headers, null);
         try {
             return parseContext.parse(jsonResult).read(jsonPath, clazz);
@@ -188,7 +209,7 @@ public class SpringGraphQLDgsQueryExecutor implements DgsQueryExecutor {
 
     @Override
     public <T> T executeAndExtractJsonPathAsObject(
-            String query, String jsonPath, Map<String, Object> variables, TypeRef<T> typeRef, HttpHeaders headers) {
+            @NotNull String query, @NotNull String jsonPath, @NotNull Map<String, Object> variables, @NotNull TypeRef<T> typeRef, @Nullable HttpHeaders headers) {
         String jsonResult = getJsonResult(query, variables, headers, null);
         try {
             return parseContext.parse(jsonResult).read(jsonPath, typeRef);
@@ -206,5 +227,10 @@ public class SpringGraphQLDgsQueryExecutor implements DgsQueryExecutor {
         }
 
         return dgsJsonMapper.writeValueAsString(executionResult.toSpecification());
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> castMap(Map<String, ? extends Object> map) {
+        return (Map<String, Object>) (Map<?, ?>) map;
     }
 }

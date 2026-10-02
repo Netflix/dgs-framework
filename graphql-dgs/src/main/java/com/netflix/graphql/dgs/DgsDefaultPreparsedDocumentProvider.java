@@ -21,6 +21,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import graphql.ExecutionInput;
 import graphql.execution.preparsed.PreparsedDocumentEntry;
 import graphql.execution.preparsed.PreparsedDocumentProvider;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
@@ -29,7 +30,7 @@ import java.util.function.Function;
 public class DgsDefaultPreparsedDocumentProvider implements PreparsedDocumentProvider {
     private final Cache<String, PreparsedDocumentEntry> cache;
 
-    public DgsDefaultPreparsedDocumentProvider(long maximumSize, Duration expireAfterAccess) {
+    public DgsDefaultPreparsedDocumentProvider(long maximumSize, @NotNull Duration expireAfterAccess) {
         this.cache = Caffeine
                 .newBuilder()
                 .maximumSize(maximumSize)
@@ -37,14 +38,16 @@ public class DgsDefaultPreparsedDocumentProvider implements PreparsedDocumentPro
                 .build();
     }
 
+    @NotNull
     public Cache<String, PreparsedDocumentEntry> getCache() {
         return cache;
     }
 
+    @NotNull
     @Override
     public CompletableFuture<PreparsedDocumentEntry> getDocumentAsync(
-            ExecutionInput executionInput,
-            Function<ExecutionInput, PreparsedDocumentEntry> parseAndValidateFunction) {
+            @NotNull ExecutionInput executionInput,
+            @NotNull Function<ExecutionInput, PreparsedDocumentEntry> parseAndValidateFunction) {
         return CompletableFuture.completedFuture(
                 cache.get(executionInput.getQuery(), key -> parseAndValidateFunction.apply(executionInput)));
     }

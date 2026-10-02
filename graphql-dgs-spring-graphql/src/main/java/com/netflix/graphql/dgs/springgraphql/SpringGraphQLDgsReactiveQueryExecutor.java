@@ -32,6 +32,8 @@ import graphql.ExecutionResult;
 import graphql.GraphQLContext;
 import org.dataloader.DataLoaderRegistry;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.graphql.ExecutionGraphQlResponse;
 import org.springframework.graphql.ExecutionGraphQlService;
 import org.springframework.graphql.support.DefaultExecutionGraphQlRequest;
@@ -50,10 +52,10 @@ public class SpringGraphQLDgsReactiveQueryExecutor implements DgsReactiveQueryEx
     private final ParseContext parseContext;
 
     public SpringGraphQLDgsReactiveQueryExecutor(
-            ExecutionGraphQlService executionService,
-            DefaultDgsReactiveGraphQLContextBuilder dgsContextBuilder,
-            DgsDataLoaderProvider dgsDataLoaderProvider,
-            DgsJsonMapper dgsJsonMapper) {
+            @NotNull ExecutionGraphQlService executionService,
+            @NotNull DefaultDgsReactiveGraphQLContextBuilder dgsContextBuilder,
+            @NotNull DgsDataLoaderProvider dgsDataLoaderProvider,
+            @NotNull DgsJsonMapper dgsJsonMapper) {
         this.executionService = executionService;
         this.dgsContextBuilder = dgsContextBuilder;
         this.dgsDataLoaderProvider = dgsDataLoaderProvider;
@@ -61,16 +63,33 @@ public class SpringGraphQLDgsReactiveQueryExecutor implements DgsReactiveQueryEx
         this.parseContext = JsonPath.using(dgsJsonMapper.jsonPathConfiguration());
     }
 
+    /**
+     * Accepts typed variable and extension maps, as the original Kotlin implementation did.
+     * CharSequence avoids an erasure clash with the invariant maps required by DgsReactiveQueryExecutor.
+     */
+    @NotNull
+    public Mono<ExecutionResult> execute(
+            @NotNull @Language("graphql") CharSequence query,
+            @Nullable Map<String, ? extends Object> variables,
+            @Nullable Map<String, ? extends Object> extensions,
+            @Nullable HttpHeaders headers,
+            @Nullable String operationName,
+            @Nullable ServerRequest serverRequest) {
+        return execute(query.toString(), castMap(variables), castMap(extensions), headers, operationName, serverRequest);
+    }
+
+    @NotNull
     @Override
     public Mono<ExecutionResult> execute(
-            @Language("graphql") String query,
-            Map<String, Object> variables,
-            Map<String, Object> extensions,
-            HttpHeaders headers,
-            String operationName,
-            ServerRequest serverRequest) {
+            @NotNull @Language("graphql") String query,
+            @Nullable Map<String, Object> variables,
+            @Nullable Map<String, Object> extensions,
+            @Nullable HttpHeaders headers,
+            @Nullable String operationName,
+            @Nullable ServerRequest serverRequest) {
         DefaultExecutionGraphQlRequest request =
-                new DefaultExecutionGraphQlRequest(query, operationName, variables, extensions, "", null);
+                new DefaultExecutionGraphQlRequest(
+                        query, operationName, castMap(variables), castMap(extensions), "", null);
 
         AtomicReference<GraphQLContext> graphQLContext = new AtomicReference<>();
         DataLoaderRegistry dataLoaderRegistry =
@@ -89,24 +108,52 @@ public class SpringGraphQLDgsReactiveQueryExecutor implements DgsReactiveQueryEx
                 .map(ExecutionGraphQlResponse::getExecutionResult);
     }
 
+    /** Accepts typed variable maps without changing the executor interface's invariant signature. */
+    @NotNull
+    public <T> Mono<T> executeAndExtractJsonPath(
+            @NotNull @Language("graphql") CharSequence query,
+            @NotNull String jsonPath,
+            @Nullable Map<String, ? extends Object> variables,
+            @Nullable ServerRequest serverRequest) {
+        return executeAndExtractJsonPath(query.toString(), jsonPath, castMap(variables), serverRequest);
+    }
+
+    @NotNull
     @Override
     public <T> Mono<T> executeAndExtractJsonPath(
-            @Language("graphql") String query,
-            String jsonPath,
-            Map<String, Object> variables,
-            ServerRequest serverRequest) {
+            @NotNull @Language("graphql") String query,
+            @NotNull String jsonPath,
+            @Nullable Map<String, Object> variables,
+            @Nullable ServerRequest serverRequest) {
         return getJsonResult(query, variables, serverRequest).map(json -> JsonPath.read(json, jsonPath));
     }
 
+    /** Accepts typed variable maps without changing the executor interface's invariant signature. */
+    @NotNull
+    public Mono<DocumentContext> executeAndGetDocumentContext(
+            @NotNull @Language("graphql") CharSequence query, @NotNull Map<String, ? extends Object> variables) {
+        return executeAndGetDocumentContext(query.toString(), castMap(variables));
+    }
+
+    @NotNull
     @Override
     public Mono<DocumentContext> executeAndGetDocumentContext(
-            @Language("graphql") String query, Map<String, Object> variables) {
+            @NotNull @Language("graphql") String query, @NotNull Map<String, Object> variables) {
         return getJsonResult(query, variables, null).map(parseContext::parse);
     }
 
+    /** Accepts typed variable maps without changing the executor interface's invariant signature. */
+    @NotNull
+    public <T> Mono<T> executeAndExtractJsonPathAsObject(
+            @NotNull @Language("graphql") CharSequence query, @NotNull String jsonPath,
+            @NotNull Map<String, ? extends Object> variables, @NotNull Class<T> clazz) {
+        return executeAndExtractJsonPathAsObject(query.toString(), jsonPath, castMap(variables), clazz);
+    }
+
+    @NotNull
     @Override
     public <T> Mono<T> executeAndExtractJsonPathAsObject(
-            @Language("graphql") String query, String jsonPath, Map<String, Object> variables, Class<T> clazz) {
+            @NotNull @Language("graphql") String query, @NotNull String jsonPath, @NotNull Map<String, Object> variables, @NotNull Class<T> clazz) {
         return getJsonResult(query, variables, null).map(parseContext::parse).map(documentContext -> {
             try {
                 return documentContext.read(jsonPath, clazz);
@@ -117,9 +164,18 @@ public class SpringGraphQLDgsReactiveQueryExecutor implements DgsReactiveQueryEx
         });
     }
 
+    /** Accepts typed variable maps without changing the executor interface's invariant signature. */
+    @NotNull
+    public <T> Mono<T> executeAndExtractJsonPathAsObject(
+            @NotNull @Language("graphql") CharSequence query, @NotNull String jsonPath,
+            @NotNull Map<String, ? extends Object> variables, @NotNull TypeRef<T> typeRef) {
+        return executeAndExtractJsonPathAsObject(query.toString(), jsonPath, castMap(variables), typeRef);
+    }
+
+    @NotNull
     @Override
     public <T> Mono<T> executeAndExtractJsonPathAsObject(
-            @Language("graphql") String query, String jsonPath, Map<String, Object> variables, TypeRef<T> typeRef) {
+            @NotNull @Language("graphql") String query, @NotNull String jsonPath, @NotNull Map<String, Object> variables, @NotNull TypeRef<T> typeRef) {
         return getJsonResult(query, variables, null).map(parseContext::parse).map(documentContext -> {
             try {
                 return documentContext.read(jsonPath, typeRef);
@@ -140,5 +196,10 @@ public class SpringGraphQLDgsReactiveQueryExecutor implements DgsReactiveQueryEx
 
             return dgsJsonMapper.writeValueAsString(executionResult.toSpecification());
         });
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> castMap(Map<String, ? extends Object> map) {
+        return (Map<String, Object>) (Map<?, ?>) map;
     }
 }

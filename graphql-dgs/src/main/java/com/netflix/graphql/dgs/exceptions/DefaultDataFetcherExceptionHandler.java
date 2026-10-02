@@ -21,6 +21,7 @@ import graphql.GraphQLError;
 import graphql.execution.DataFetcherExceptionHandler;
 import graphql.execution.DataFetcherExceptionHandlerParameters;
 import graphql.execution.DataFetcherExceptionHandlerResult;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -41,9 +42,10 @@ public class DefaultDataFetcherExceptionHandler implements DataFetcherExceptionH
             "org.springframework.security.access.AccessDeniedException",
             DefaultDataFetcherExceptionHandler.class.getClassLoader());
 
+    @NotNull
     @Override
     public CompletableFuture<DataFetcherExceptionHandlerResult> handleException(
-            DataFetcherExceptionHandlerParameters handlerParameters) {
+            @NotNull DataFetcherExceptionHandlerParameters handlerParameters) {
         return CompletableFuture.completedFuture(doHandleException(handlerParameters));
     }
 
@@ -77,7 +79,7 @@ public class DefaultDataFetcherExceptionHandler implements DataFetcherExceptionH
     }
 
     protected void logException(
-            DataFetcherExceptionHandlerParameters handlerParameters, GraphQLError error, Throwable exception) {
+            @NotNull DataFetcherExceptionHandlerParameters handlerParameters, @NotNull GraphQLError error, @NotNull Throwable exception) {
         Level logLevel = exception instanceof DgsException dgsException ? dgsException.getLogLevel() : Level.ERROR;
 
         getLogger()
@@ -99,6 +101,7 @@ public class DefaultDataFetcherExceptionHandler implements DataFetcherExceptionH
         return e;
     }
 
+    @NotNull
     public Logger getLogger() {
         return LOGGER;
     }

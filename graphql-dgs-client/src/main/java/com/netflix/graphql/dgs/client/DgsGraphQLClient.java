@@ -17,6 +17,8 @@
 package com.netflix.graphql.dgs.client;
 
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -25,10 +27,13 @@ import java.util.Map;
  * classes and (for back-compat) by the deprecated {@link GraphQLClient}.
  */
 public interface DgsGraphQLClient {
-    DgsGraphQLResponse executeQuery(@Language("graphql") String query);
+    @NotNull
+    DgsGraphQLResponse executeQuery(@NotNull @Language("graphql") String query);
 
-    DgsGraphQLResponse executeQuery(@Language("graphql") String query, Map<String, Object> variables);
+    @NotNull
+    DgsGraphQLResponse executeQuery(@NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables);
 
+    @NotNull
     DgsGraphQLResponse executeQuery(
-            @Language("graphql") String query, Map<String, Object> variables, String operationName);
+            @NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables, @Nullable String operationName);
 }

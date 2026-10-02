@@ -34,6 +34,7 @@ import graphql.language.TypeDefinition;
 import graphql.language.TypeName;
 import graphql.language.UnionTypeDefinition;
 import graphql.schema.idl.TypeDefinitionRegistry;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +45,9 @@ public class DgsPaginationTypeDefinitionRegistry {
     private static final String CONNECTION_DIRECTIVE_NAME = "connection";
     private static final String PAGE_INFO_TYPE_NAME = "PageInfo";
 
+    @NotNull
     @DgsTypeDefinitionRegistry
-    public TypeDefinitionRegistry registry(TypeDefinitionRegistry schemaRegistry) {
+    public TypeDefinitionRegistry registry(@NotNull TypeDefinitionRegistry schemaRegistry) {
         List<SDLDefinition> connectionTypes = parseConnectionDirective(schemaRegistry);
 
         TypeDefinitionRegistry typeDefinitionRegistry = new TypeDefinitionRegistry();

@@ -18,6 +18,8 @@ package com.netflix.graphql.dgs.context;
 
 import com.netflix.graphql.dgs.internal.DgsRequestData;
 import graphql.GraphQLContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -28,5 +30,8 @@ import java.util.Map;
  */
 @FunctionalInterface
 public interface GraphQLContextContributor {
-    void contribute(GraphQLContext.Builder builder, Map<String, ?> extensions, DgsRequestData requestData);
+    void contribute(
+            @NotNull GraphQLContext.Builder builder,
+            @Nullable Map<String, ? extends Object> extensions,
+            @Nullable DgsRequestData requestData);
 }

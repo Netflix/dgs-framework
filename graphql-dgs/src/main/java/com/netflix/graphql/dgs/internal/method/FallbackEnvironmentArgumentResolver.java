@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.internal.method;
 
 import com.netflix.graphql.dgs.internal.InputObjectMapper;
 import graphql.schema.DataFetchingEnvironment;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -28,12 +29,12 @@ import org.springframework.core.annotation.Order;
  */
 @Order(Ordered.LOWEST_PRECEDENCE)
 public class FallbackEnvironmentArgumentResolver extends AbstractInputArgumentResolver {
-    public FallbackEnvironmentArgumentResolver(InputObjectMapper inputObjectMapper) {
+    public FallbackEnvironmentArgumentResolver(@NotNull InputObjectMapper inputObjectMapper) {
         super(inputObjectMapper);
     }
 
     @Override
-    public boolean supportsParameter(MethodParameter parameter) {
+    public boolean supportsParameter(@NotNull MethodParameter parameter) {
         return parameter.getParameterName() != null;
     }
 

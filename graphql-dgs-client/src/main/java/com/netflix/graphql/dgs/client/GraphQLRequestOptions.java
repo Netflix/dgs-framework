@@ -31,6 +31,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import graphql.GraphQLContext;
 import graphql.schema.Coercing;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -49,12 +50,13 @@ public class GraphQLRequestOptions {
     private final Map<Class<?>, Coercing<?, ?>> scalars;
     private final GraphQLContext graphQLContext;
 
-    public GraphQLRequestOptions(Map<Class<?>, Coercing<?, ?>> scalars, GraphQLContext graphQLContext) {
-        this.scalars = scalars;
+    public GraphQLRequestOptions(
+            @NotNull Map<Class<?>, ? extends Coercing<?, ?>> scalars, @NotNull GraphQLContext graphQLContext) {
+        this.scalars = castScalars(scalars);
         this.graphQLContext = graphQLContext;
     }
 
-    public GraphQLRequestOptions(Map<Class<?>, Coercing<?, ?>> scalars) {
+    public GraphQLRequestOptions(@NotNull Map<Class<?>, ? extends Coercing<?, ?>> scalars) {
         this(scalars, GraphQLContext.getDefault());
     }
 
@@ -62,10 +64,18 @@ public class GraphQLRequestOptions {
         this(Map.of(), GraphQLContext.getDefault());
     }
 
+    @NotNull
     public Map<Class<?>, Coercing<?, ?>> getScalars() {
         return scalars;
     }
 
+    @SuppressWarnings("unchecked")
+    private static Map<Class<?>, Coercing<?, ?>> castScalars(
+            Map<Class<?>, ? extends Coercing<?, ?>> scalars) {
+        return (Map<Class<?>, Coercing<?, ?>>) (Map<?, ?>) scalars;
+    }
+
+    @NotNull
     public GraphQLContext getGraphQLContext() {
         return graphQLContext;
     }
@@ -92,6 +102,7 @@ public class GraphQLRequestOptions {
         return mapper;
     }
 
+    @NotNull
     public static ObjectMapper createCustomObjectMapper() {
         return createCustomObjectMapper(null);
     }
@@ -101,14 +112,14 @@ public class GraphQLRequestOptions {
         private final Coercing<?, ?> coercing;
         private final GraphQLContext graphQLContext;
 
-        public CustomScalarDeserializer(Coercing<?, ?> coercing, GraphQLContext graphQLContext) {
+        public CustomScalarDeserializer(@NotNull Coercing<?, ?> coercing, @NotNull GraphQLContext graphQLContext) {
             this.coercing = coercing;
             this.graphQLContext = graphQLContext;
         }
 
         @Override
         @SuppressWarnings("unchecked")
-        public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+        public T deserialize(@NotNull JsonParser p, @NotNull DeserializationContext ctxt) throws IOException {
             JsonNode value = p.readValueAsTree();
             return (T) coercing.parseValue(value.asText(), graphQLContext, Locale.getDefault());
         }
@@ -119,13 +130,13 @@ public class GraphQLRequestOptions {
         private final Coercing<?, ?> coercing;
         private final GraphQLContext graphQLContext;
 
-        public CustomScalarSerializer(Coercing<?, ?> coercing, GraphQLContext graphQLContext) {
+        public CustomScalarSerializer(@NotNull Coercing<?, ?> coercing, @NotNull GraphQLContext graphQLContext) {
             this.coercing = coercing;
             this.graphQLContext = graphQLContext;
         }
 
         @Override
-        public void serialize(T value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        public void serialize(T value, @NotNull JsonGenerator gen, @NotNull SerializerProvider serializers) throws IOException {
             Object serializedValue = coercing.serialize(value, graphQLContext, Locale.getDefault());
             gen.writeString(serializedValue.toString());
         }

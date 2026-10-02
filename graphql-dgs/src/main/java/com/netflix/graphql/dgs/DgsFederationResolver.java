@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs;
 
 import graphql.schema.DataFetcher;
 import graphql.schema.TypeResolver;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Required only when federation is used.
@@ -26,7 +27,9 @@ import graphql.schema.TypeResolver;
  * the schema.
  */
 public interface DgsFederationResolver {
+    @NotNull
     DataFetcher<Object> entitiesFetcher();
 
+    @NotNull
     TypeResolver typeResolver();
 }

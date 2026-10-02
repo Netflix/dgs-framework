@@ -17,20 +17,23 @@
 package com.netflix.graphql.dgs.internal;
 
 import com.netflix.graphql.dgs.DgsDataFetchingEnvironment;
+import org.jetbrains.annotations.NotNull;
 
 public interface DataFetcherResultProcessor {
-    boolean supportsType(Object originalResult);
+    boolean supportsType(@NotNull Object originalResult);
 
+    @NotNull
     @SuppressWarnings("deprecation")
-    default Object process(Object originalResult, DgsDataFetchingEnvironment dfe) {
+    default Object process(@NotNull Object originalResult, @NotNull DgsDataFetchingEnvironment dfe) {
         return process(originalResult);
     }
 
     /**
      * @deprecated Replaced with {@link #process(Object, DgsDataFetchingEnvironment)}.
      */
+    @NotNull
     @Deprecated
-    default Object process(Object originalResult) {
+    default Object process(@NotNull Object originalResult) {
         return originalResult;
     }
 }

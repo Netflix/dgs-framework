@@ -23,6 +23,8 @@ import graphql.schema.GraphQLArgument;
 import kotlin.reflect.KFunction;
 import kotlin.reflect.KParameter;
 import kotlin.reflect.jvm.ReflectJvmMapping;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
@@ -40,12 +42,13 @@ public abstract class AbstractInputArgumentResolver implements ArgumentResolver 
     private final DefaultConversionService conversionService = new DefaultConversionService();
     private final ConcurrentMap<MethodParameter, String> argumentNameCache = new ConcurrentHashMap<>();
 
-    protected AbstractInputArgumentResolver(InputObjectMapper inputObjectMapper) {
+    protected AbstractInputArgumentResolver(@NotNull InputObjectMapper inputObjectMapper) {
         conversionService.addConverter(new InputObjectMapperConverter(inputObjectMapper));
     }
 
+    @Nullable
     @Override
-    public Object resolveArgument(MethodParameter parameter, DataFetchingEnvironment dfe) {
+    public Object resolveArgument(@NotNull MethodParameter parameter, @NotNull DataFetchingEnvironment dfe) {
         String argumentName = getArgumentName(parameter);
         if (argumentName == null) {
             return null;

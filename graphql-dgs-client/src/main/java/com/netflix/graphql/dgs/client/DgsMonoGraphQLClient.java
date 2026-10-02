@@ -17,6 +17,8 @@
 package com.netflix.graphql.dgs.client;
 
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
@@ -26,11 +28,14 @@ import java.util.Map;
  * classes and (for back-compat) by the deprecated {@link MonoGraphQLClient}.
  */
 public interface DgsMonoGraphQLClient {
-    Mono<? extends DgsGraphQLResponse> reactiveExecuteQuery(@Language("graphql") String query);
+    @NotNull
+    Mono<? extends DgsGraphQLResponse> reactiveExecuteQuery(@NotNull @Language("graphql") String query);
 
+    @NotNull
     Mono<? extends DgsGraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query, Map<String, Object> variables);
+            @NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables);
 
+    @NotNull
     Mono<? extends DgsGraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query, Map<String, Object> variables, String operationName);
+            @NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables, @Nullable String operationName);
 }

@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.diagnostics;
 
 import graphql.GraphQLError;
 import graphql.schema.idl.errors.SchemaProblem;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.diagnostics.AbstractFailureAnalyzer;
 import org.springframework.boot.diagnostics.FailureAnalysis;
 
@@ -25,8 +26,9 @@ import java.util.stream.Collectors;
 
 /** Spring failure analyzer that reports schema problems at startup in a more readable way. */
 public class SchemaFailureAnalyzer extends AbstractFailureAnalyzer<SchemaProblem> {
+    @NotNull
     @Override
-    protected FailureAnalysis analyze(Throwable rootFailure, SchemaProblem cause) {
+    protected FailureAnalysis analyze(@NotNull Throwable rootFailure, @NotNull SchemaProblem cause) {
         String errors = cause.getErrors().stream()
                 .map(GraphQLError::toString)
                 .collect(Collectors.joining("\n\t * ", "\t * ", "\n"));

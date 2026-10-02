@@ -21,6 +21,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -47,18 +49,30 @@ public abstract sealed class Message {
         this.type = type;
     }
 
+    @NotNull
     @JsonProperty("type")
     public String getType() {
         return type;
     }
 
+    @SuppressWarnings("unchecked")
+    private static <T> Map<String, T> asMap(Map<String, ? extends T> map) {
+        return (Map<String, T>) map;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> List<T> asList(List<? extends T> list) {
+        return (List<T>) list;
+    }
+
     /** Base for the messages that carry nothing but an optional connection payload. */
     private abstract static sealed class PayloadOnlyMessage extends Message {
+        @JsonProperty("payload")
         private final Map<String, Object> payload;
 
-        PayloadOnlyMessage(String type, Map<String, Object> payload) {
+        PayloadOnlyMessage(String type, Map<String, ? extends Object> payload) {
             super(type);
-            this.payload = payload == null ? Map.of() : payload;
+            this.payload = asMap(payload);
         }
 
         public Map<String, Object> getPayload() {
@@ -77,7 +91,7 @@ public abstract sealed class Message {
 
         @Override
         public int hashCode() {
-            return Objects.hash(getClass(), payload);
+            return Objects.hashCode(payload);
         }
 
         @Override
@@ -87,46 +101,158 @@ public abstract sealed class Message {
     }
 
     public static final class ConnectionInitMessage extends PayloadOnlyMessage {
-        @JsonCreator
-        public ConnectionInitMessage(@JsonProperty("payload") Map<String, Object> payload) {
+        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+        public ConnectionInitMessage(@Nullable Map<String, ? extends Object> payload) {
             super(MessageType.CONNECTION_INIT, payload);
         }
 
+        @JsonCreator
         public ConnectionInitMessage() {
             this(Map.of());
+        }
+
+        @Override
+        @Nullable
+        public Map<String, Object> getPayload() {
+            return super.getPayload();
+        }
+
+        @Override
+        public boolean equals(@Nullable Object other) {
+            return super.equals(other);
+        }
+
+        @Override
+        @NotNull
+        public String toString() {
+            return super.toString();
+        }
+
+        @Nullable
+        public Map<String, Object> component1() {
+            return getPayload();
+        }
+
+        @NotNull
+        public ConnectionInitMessage copy(@Nullable Map<String, ? extends Object> payload) {
+            return new ConnectionInitMessage(asMap(payload));
         }
     }
 
     public static final class ConnectionAckMessage extends PayloadOnlyMessage {
-        @JsonCreator
-        public ConnectionAckMessage(@JsonProperty("payload") Map<String, Object> payload) {
+        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+        public ConnectionAckMessage(@Nullable Map<String, ? extends Object> payload) {
             super(MessageType.CONNECTION_ACK, payload);
         }
 
+        @JsonCreator
         public ConnectionAckMessage() {
             this(Map.of());
+        }
+
+        @Override
+        @Nullable
+        public Map<String, Object> getPayload() {
+            return super.getPayload();
+        }
+
+        @Override
+        public boolean equals(@Nullable Object other) {
+            return super.equals(other);
+        }
+
+        @Override
+        @NotNull
+        public String toString() {
+            return super.toString();
+        }
+
+        @Nullable
+        public Map<String, Object> component1() {
+            return getPayload();
+        }
+
+        @NotNull
+        public ConnectionAckMessage copy(@Nullable Map<String, ? extends Object> payload) {
+            return new ConnectionAckMessage(asMap(payload));
         }
     }
 
     public static final class PingMessage extends PayloadOnlyMessage {
-        @JsonCreator
-        public PingMessage(@JsonProperty("payload") Map<String, Object> payload) {
+        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+        public PingMessage(@Nullable Map<String, ? extends Object> payload) {
             super(MessageType.PING, payload);
         }
 
+        @JsonCreator
         public PingMessage() {
             this(Map.of());
+        }
+
+        @Override
+        @Nullable
+        public Map<String, Object> getPayload() {
+            return super.getPayload();
+        }
+
+        @Override
+        public boolean equals(@Nullable Object other) {
+            return super.equals(other);
+        }
+
+        @Override
+        @NotNull
+        public String toString() {
+            return super.toString();
+        }
+
+        @Nullable
+        public Map<String, Object> component1() {
+            return getPayload();
+        }
+
+        @NotNull
+        public PingMessage copy(@Nullable Map<String, ? extends Object> payload) {
+            return new PingMessage(asMap(payload));
         }
     }
 
     public static final class PongMessage extends PayloadOnlyMessage {
-        @JsonCreator
-        public PongMessage(@JsonProperty("payload") Map<String, Object> payload) {
+        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+        public PongMessage(@Nullable Map<String, ? extends Object> payload) {
             super(MessageType.PONG, payload);
         }
 
+        @JsonCreator
         public PongMessage() {
             this(Map.of());
+        }
+
+        @Override
+        @Nullable
+        public Map<String, Object> getPayload() {
+            return super.getPayload();
+        }
+
+        @Override
+        public boolean equals(@Nullable Object other) {
+            return super.equals(other);
+        }
+
+        @Override
+        @NotNull
+        public String toString() {
+            return super.toString();
+        }
+
+        @Nullable
+        public Map<String, Object> component1() {
+            return getPayload();
+        }
+
+        @NotNull
+        public PongMessage copy(@Nullable Map<String, ? extends Object> payload) {
+            return new PongMessage(asMap(payload));
         }
     }
 
@@ -136,23 +262,41 @@ public abstract sealed class Message {
 
         @JsonCreator
         public SubscribeMessage(
-                @JsonProperty("id") String id,
-                @JsonProperty("payload") Payload payload) {
+                @NotNull @JsonProperty("id") String id,
+                @NotNull @JsonProperty("payload") Payload payload) {
             super(MessageType.SUBSCRIBE);
             this.id = id;
             this.payload = payload;
         }
 
+        @NotNull
         public String getId() {
             return id;
         }
 
+        @NotNull
         public Payload getPayload() {
             return payload;
         }
 
+        @NotNull
+        public String component1() {
+            return id;
+        }
+
+        @NotNull
+        public Payload component2() {
+            return payload;
+        }
+
+        @NotNull
+        public SubscribeMessage copy(@NotNull String id, @NotNull Payload payload) {
+            return new SubscribeMessage(
+                    Objects.requireNonNull(id, "id"), Objects.requireNonNull(payload, "payload"));
+        }
+
         @Override
-        public boolean equals(Object other) {
+        public boolean equals(@Nullable Object other) {
             if (this == other) {
                 return true;
             }
@@ -163,9 +307,12 @@ public abstract sealed class Message {
 
         @Override
         public int hashCode() {
-            return Objects.hash(id, payload);
+            int result = Objects.hashCode(id);
+            result = 31 * result + Objects.hashCode(payload);
+            return result;
         }
 
+        @NotNull
         @Override
         public String toString() {
             return "SubscribeMessage(id=" + id + ", payload=" + payload + ")";
@@ -179,38 +326,75 @@ public abstract sealed class Message {
 
             @JsonCreator
             public Payload(
-                    @JsonProperty("operationName") String operationName,
-                    @JsonProperty(value = "query", required = true) @Language("graphql") String query,
-                    @JsonProperty("variables") Map<String, Object> variables,
-                    @JsonProperty("extensions") Map<String, Object> extensions) {
+                    @Nullable @JsonProperty("operationName") String operationName,
+                    @NotNull @JsonProperty(value = "query", required = true) @Language("graphql") String query,
+                    @Nullable @JsonProperty("variables") Map<String, ? extends Object> variables,
+                    @Nullable @JsonProperty("extensions") Map<String, ? extends Object> extensions) {
                 this.operationName = operationName;
                 this.query = query;
-                this.variables = variables;
-                this.extensions = extensions;
+                this.variables = asMap(variables);
+                this.extensions = asMap(extensions);
             }
 
-            public Payload(@Language("graphql") String query) {
+            public Payload(@NotNull @Language("graphql") String query) {
                 this(null, query, null, null);
             }
 
+            @Nullable
             public String getOperationName() {
                 return operationName;
             }
 
+            @NotNull
             public String getQuery() {
                 return query;
             }
 
+            @Nullable
             public Map<String, Object> getVariables() {
                 return variables;
             }
 
+            @Nullable
             public Map<String, Object> getExtensions() {
                 return extensions;
             }
 
+            @Nullable
+            public String component1() {
+                return operationName;
+            }
+
+            @NotNull
+            public String component2() {
+                return query;
+            }
+
+            @Nullable
+            public Map<String, Object> component3() {
+                return variables;
+            }
+
+            @Nullable
+            public Map<String, Object> component4() {
+                return extensions;
+            }
+
+            @NotNull
+            public Payload copy(
+                    @Nullable String operationName,
+                    @NotNull String query,
+                    @Nullable Map<String, ? extends Object> variables,
+                    @Nullable Map<String, ? extends Object> extensions) {
+                return new Payload(
+                        operationName,
+                        Objects.requireNonNull(query, "query"),
+                        asMap(variables),
+                        asMap(extensions));
+            }
+
             @Override
-            public boolean equals(Object other) {
+            public boolean equals(@Nullable Object other) {
                 if (this == other) {
                     return true;
                 }
@@ -223,9 +407,14 @@ public abstract sealed class Message {
 
             @Override
             public int hashCode() {
-                return Objects.hash(operationName, query, variables, extensions);
+                int result = Objects.hashCode(operationName);
+                result = 31 * result + Objects.hashCode(query);
+                result = 31 * result + Objects.hashCode(variables);
+                result = 31 * result + Objects.hashCode(extensions);
+                return result;
             }
 
+            @NotNull
             @Override
             public String toString() {
                 return "Payload(operationName=" + operationName + ", query=" + query
@@ -240,23 +429,40 @@ public abstract sealed class Message {
 
         @JsonCreator
         public NextMessage(
-                @JsonProperty("id") String id,
-                @JsonProperty("payload") ExecutionResult payload) {
+                @NotNull @JsonProperty("id") String id,
+                @NotNull @JsonProperty("payload") ExecutionResult payload) {
             super(MessageType.NEXT);
             this.id = id;
             this.payload = payload;
         }
 
+        @NotNull
         public String getId() {
             return id;
         }
 
+        @NotNull
         public ExecutionResult getPayload() {
             return payload;
         }
 
+        @NotNull
+        public String component1() {
+            return id;
+        }
+
+        @NotNull
+        public ExecutionResult component2() {
+            return payload;
+        }
+
+        @NotNull
+        public NextMessage copy(@NotNull String id, @NotNull ExecutionResult payload) {
+            return new NextMessage(Objects.requireNonNull(id, "id"), Objects.requireNonNull(payload, "payload"));
+        }
+
         @Override
-        public boolean equals(Object other) {
+        public boolean equals(@Nullable Object other) {
             if (this == other) {
                 return true;
             }
@@ -267,9 +473,12 @@ public abstract sealed class Message {
 
         @Override
         public int hashCode() {
-            return Objects.hash(id, payload);
+            int result = Objects.hashCode(id);
+            result = 31 * result + Objects.hashCode(payload);
+            return result;
         }
 
+        @NotNull
         @Override
         public String toString() {
             return "NextMessage(id=" + id + ", payload=" + payload + ")";
@@ -282,23 +491,41 @@ public abstract sealed class Message {
 
         @JsonCreator
         public ErrorMessage(
-                @JsonProperty("id") String id,
-                @JsonProperty("payload") List<Object> payload) {
+                @NotNull @JsonProperty("id") String id,
+                @NotNull @JsonProperty("payload") List<? extends Object> payload) {
             super(MessageType.ERROR);
             this.id = id;
-            this.payload = payload;
+            this.payload = asList(payload);
         }
 
+        @NotNull
         public String getId() {
             return id;
         }
 
+        @NotNull
         public List<Object> getPayload() {
             return payload;
         }
 
+        @NotNull
+        public String component1() {
+            return id;
+        }
+
+        @NotNull
+        public List<Object> component2() {
+            return payload;
+        }
+
+        @NotNull
+        public ErrorMessage copy(@NotNull String id, @NotNull List<? extends Object> payload) {
+            return new ErrorMessage(
+                    Objects.requireNonNull(id, "id"), asList(Objects.requireNonNull(payload, "payload")));
+        }
+
         @Override
-        public boolean equals(Object other) {
+        public boolean equals(@Nullable Object other) {
             if (this == other) {
                 return true;
             }
@@ -309,9 +536,12 @@ public abstract sealed class Message {
 
         @Override
         public int hashCode() {
-            return Objects.hash(id, payload);
+            int result = Objects.hashCode(id);
+            result = 31 * result + Objects.hashCode(payload);
+            return result;
         }
 
+        @NotNull
         @Override
         public String toString() {
             return "ErrorMessage(id=" + id + ", payload=" + payload + ")";
@@ -322,17 +552,28 @@ public abstract sealed class Message {
         private final String id;
 
         @JsonCreator
-        public CompleteMessage(@JsonProperty("id") String id) {
+        public CompleteMessage(@NotNull @JsonProperty("id") String id) {
             super(MessageType.COMPLETE);
             this.id = id;
         }
 
+        @NotNull
         public String getId() {
             return id;
         }
 
+        @NotNull
+        public String component1() {
+            return id;
+        }
+
+        @NotNull
+        public CompleteMessage copy(@NotNull String id) {
+            return new CompleteMessage(Objects.requireNonNull(id, "id"));
+        }
+
         @Override
-        public boolean equals(Object other) {
+        public boolean equals(@Nullable Object other) {
             if (this == other) {
                 return true;
             }
@@ -341,9 +582,10 @@ public abstract sealed class Message {
 
         @Override
         public int hashCode() {
-            return Objects.hash(id);
+            return Objects.hashCode(id);
         }
 
+        @NotNull
         @Override
         public String toString() {
             return "CompleteMessage(id=" + id + ")";

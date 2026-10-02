@@ -38,9 +38,10 @@ import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
 public class DgsDataLoaderInstrumentationDataLoaderCustomizer implements DgsDataLoaderCustomizer {
-    private final List<DgsDataLoaderInstrumentation> instrumentations;
+    private final List<? extends DgsDataLoaderInstrumentation> instrumentations;
 
-    public DgsDataLoaderInstrumentationDataLoaderCustomizer(List<DgsDataLoaderInstrumentation> instrumentations) {
+    public DgsDataLoaderInstrumentationDataLoaderCustomizer(
+            List<? extends DgsDataLoaderInstrumentation> instrumentations) {
         this.instrumentations = instrumentations;
     }
 
@@ -68,12 +69,12 @@ public class DgsDataLoaderInstrumentationDataLoaderCustomizer implements DgsData
             implements BatchLoaderWithContext<K, V>, DgsDataLoaderRegistryConsumer {
         private final BatchLoaderWithContext<K, V> original;
         private final String name;
-        private final List<DgsDataLoaderInstrumentation> instrumentations;
+        private final List<? extends DgsDataLoaderInstrumentation> instrumentations;
 
         BatchLoaderWithContextInstrumentationDriver(
                 BatchLoaderWithContext<K, V> original,
                 String name,
-                List<DgsDataLoaderInstrumentation> instrumentations) {
+                List<? extends DgsDataLoaderInstrumentation> instrumentations) {
             this.original = original;
             this.name = name;
             this.instrumentations = instrumentations;
@@ -115,12 +116,12 @@ public class DgsDataLoaderInstrumentationDataLoaderCustomizer implements DgsData
             implements MappedBatchLoaderWithContext<K, V>, DgsDataLoaderRegistryConsumer {
         private final MappedBatchLoaderWithContext<K, V> original;
         private final String name;
-        private final List<DgsDataLoaderInstrumentation> instrumentations;
+        private final List<? extends DgsDataLoaderInstrumentation> instrumentations;
 
         MappedBatchLoaderWithContextInstrumentationDriver(
                 MappedBatchLoaderWithContext<K, V> original,
                 String name,
-                List<DgsDataLoaderInstrumentation> instrumentations) {
+                List<? extends DgsDataLoaderInstrumentation> instrumentations) {
             this.original = original;
             this.name = name;
             this.instrumentations = instrumentations;

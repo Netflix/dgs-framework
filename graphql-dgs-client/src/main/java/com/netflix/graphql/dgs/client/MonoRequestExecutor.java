@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.client;
 
+import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -34,5 +35,6 @@ public interface MonoRequestExecutor {
      * @return {@code Mono<HttpResponse>} which is a representation of the HTTP status code and the response body as a
      *         String.
      */
-    Mono<HttpResponse> execute(String url, Map<String, ? extends List<String>> headers, String body);
+    @NotNull
+    Mono<HttpResponse> execute(@NotNull String url, @NotNull Map<String, ? extends List<String>> headers, @NotNull String body);
 }

@@ -18,6 +18,8 @@ package com.netflix.graphql.dgs.internal;
 
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -25,21 +27,38 @@ public final class SchemaProviderResult {
     private final GraphQLSchema graphQLSchema;
     private final RuntimeWiring runtimeWiring;
 
-    public SchemaProviderResult(GraphQLSchema graphQLSchema, RuntimeWiring runtimeWiring) {
+    public SchemaProviderResult(@NotNull GraphQLSchema graphQLSchema, @NotNull RuntimeWiring runtimeWiring) {
         this.graphQLSchema = graphQLSchema;
         this.runtimeWiring = runtimeWiring;
     }
 
+    @NotNull
     public GraphQLSchema getGraphQLSchema() {
         return graphQLSchema;
     }
 
+    @NotNull
     public RuntimeWiring getRuntimeWiring() {
         return runtimeWiring;
     }
 
+    @NotNull
+    public GraphQLSchema component1() {
+        return graphQLSchema;
+    }
+
+    @NotNull
+    public RuntimeWiring component2() {
+        return runtimeWiring;
+    }
+
+    @NotNull
+    public SchemaProviderResult copy(@NotNull GraphQLSchema graphQLSchema, @NotNull RuntimeWiring runtimeWiring) {
+        return new SchemaProviderResult(graphQLSchema, runtimeWiring);
+    }
+
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         if (this == other) {
             return true;
         }
@@ -50,9 +69,12 @@ public final class SchemaProviderResult {
 
     @Override
     public int hashCode() {
-        return Objects.hash(graphQLSchema, runtimeWiring);
+        int result = Objects.hashCode(graphQLSchema);
+        result = 31 * result + Objects.hashCode(runtimeWiring);
+        return result;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "SchemaProviderResult(graphQLSchema=" + graphQLSchema + ", runtimeWiring=" + runtimeWiring + ")";

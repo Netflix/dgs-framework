@@ -24,6 +24,8 @@ import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.FieldCoordinates;
 import kotlinx.coroutines.CoroutineDispatcher;
 import kotlinx.coroutines.Dispatchers;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.DefaultParameterNameDiscoverer;
@@ -49,10 +51,10 @@ public class MethodDataFetcherFactory {
     private final ArgumentResolverComposite resolvers;
 
     public MethodDataFetcherFactory(
-            List<ArgumentResolver> argumentResolvers,
-            ParameterNameDiscoverer parameterNameDiscoverer,
-            AsyncTaskExecutor asyncTaskExecutor,
-            CoroutineDispatcher coroutineDispatcher) {
+            @NotNull List<? extends ArgumentResolver> argumentResolvers,
+            @NotNull ParameterNameDiscoverer parameterNameDiscoverer,
+            @Nullable AsyncTaskExecutor asyncTaskExecutor,
+            @NotNull CoroutineDispatcher coroutineDispatcher) {
         this.parameterNameDiscoverer = parameterNameDiscoverer;
         this.asyncTaskExecutor = asyncTaskExecutor;
         this.coroutineDispatcher = coroutineDispatcher;
@@ -60,14 +62,14 @@ public class MethodDataFetcherFactory {
     }
 
     public MethodDataFetcherFactory(
-            List<ArgumentResolver> argumentResolvers,
-            ParameterNameDiscoverer parameterNameDiscoverer,
-            AsyncTaskExecutor asyncTaskExecutor) {
+            @NotNull List<? extends ArgumentResolver> argumentResolvers,
+            @NotNull ParameterNameDiscoverer parameterNameDiscoverer,
+            @Nullable AsyncTaskExecutor asyncTaskExecutor) {
         this(argumentResolvers, parameterNameDiscoverer, asyncTaskExecutor, Dispatchers.getUnconfined());
     }
 
     public MethodDataFetcherFactory(
-            List<ArgumentResolver> argumentResolvers, ParameterNameDiscoverer parameterNameDiscoverer) {
+            @NotNull List<? extends ArgumentResolver> argumentResolvers, @NotNull ParameterNameDiscoverer parameterNameDiscoverer) {
         this(argumentResolvers, parameterNameDiscoverer, null, Dispatchers.getUnconfined());
     }
 
@@ -78,7 +80,7 @@ public class MethodDataFetcherFactory {
                 Dispatchers.getUnconfined());
     }
 
-    public MethodDataFetcherFactory(List<ArgumentResolver> argumentResolvers) {
+    public MethodDataFetcherFactory(@NotNull List<? extends ArgumentResolver> argumentResolvers) {
         this(argumentResolvers, new DefaultParameterNameDiscoverer(), null, Dispatchers.getUnconfined());
     }
 
@@ -86,7 +88,8 @@ public class MethodDataFetcherFactory {
         return parameterNameDiscoverer;
     }
 
-    public DataFetcher<Object> createDataFetcher(Object bean, Method method, FieldCoordinates fieldCoordinates) {
+    @NotNull
+    public DataFetcher<Object> createDataFetcher(@NotNull Object bean, @NotNull Method method, @NotNull FieldCoordinates fieldCoordinates) {
         if (isTrivial(method, fieldCoordinates)) {
             DataFetcherInvoker methodDataFetcher = new DataFetcherInvoker(
                     bean, method, resolvers, parameterNameDiscoverer, null, coroutineDispatcher);

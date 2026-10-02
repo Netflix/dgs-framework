@@ -21,6 +21,7 @@ import graphql.execution.preparsed.PreparsedDocumentEntry;
 import graphql.execution.preparsed.PreparsedDocumentProvider;
 import graphql.execution.preparsed.persisted.ApolloPersistedQuerySupport;
 import graphql.execution.preparsed.persisted.PersistedQueryCache;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -30,14 +31,15 @@ public class DgsAPQPreParsedDocumentProviderWrapper extends ApolloPersistedQuery
     private final Optional<PreparsedDocumentProvider> preparsedDocumentProvider;
 
     public DgsAPQPreParsedDocumentProviderWrapper(
-            PersistedQueryCache persistedQueryCache, Optional<PreparsedDocumentProvider> preparsedDocumentProvider) {
+            @NotNull PersistedQueryCache persistedQueryCache, @NotNull Optional<PreparsedDocumentProvider> preparsedDocumentProvider) {
         super(persistedQueryCache);
         this.preparsedDocumentProvider = preparsedDocumentProvider;
     }
 
+    @NotNull
     @Override
     public CompletableFuture<PreparsedDocumentEntry> getDocumentAsync(
-            ExecutionInput executionInput, Function<ExecutionInput, PreparsedDocumentEntry> parseAndValidateFunction) {
+            @NotNull ExecutionInput executionInput, @NotNull Function<ExecutionInput, PreparsedDocumentEntry> parseAndValidateFunction) {
         Optional<Object> queryId = getPersistedQueryId(executionInput);
         if (queryId.isPresent()) {
             return super.getDocumentAsync(executionInput, parseAndValidateFunction);

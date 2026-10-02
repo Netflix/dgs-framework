@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.internal.utils;
 
 import com.netflix.graphql.dgs.DgsDataLoader;
 import com.netflix.graphql.dgs.Internal;
+import org.jetbrains.annotations.NotNull;
 
 @Internal
 public final class DataLoaderNameUtil {
@@ -31,7 +32,8 @@ public final class DataLoaderNameUtil {
      *
      * <p>This method does not verify that {@code annotation} belongs to {@code clazz} for performance reasons.
      */
-    public static String getDataLoaderName(Class<?> clazz, DgsDataLoader annotation) {
+    @NotNull
+    public static String getDataLoaderName(@NotNull Class<?> clazz, @NotNull DgsDataLoader annotation) {
         return DgsDataLoader.GENERATE_DATA_LOADER_NAME.equals(annotation.name())
                 ? clazz.getSimpleName()
                 : annotation.name();

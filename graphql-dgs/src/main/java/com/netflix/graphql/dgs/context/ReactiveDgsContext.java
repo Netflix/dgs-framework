@@ -19,35 +19,43 @@ package com.netflix.graphql.dgs.context;
 import com.netflix.graphql.dgs.internal.DgsRequestData;
 import graphql.GraphQLContext;
 import graphql.schema.DataFetchingEnvironment;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import reactor.util.context.Context;
 import reactor.util.context.ContextView;
 
 public class ReactiveDgsContext extends DgsContext {
     private final ContextView reactorContext;
 
-    public ReactiveDgsContext(Object customContext, DgsRequestData requestData, ContextView reactorContext) {
+    public ReactiveDgsContext(
+            @Nullable Object customContext,
+            @Nullable DgsRequestData requestData,
+            @Nullable ContextView reactorContext) {
         super(customContext, requestData);
         this.reactorContext = reactorContext;
     }
 
-    public ReactiveDgsContext(Object customContext, DgsRequestData requestData) {
+    public ReactiveDgsContext(@Nullable Object customContext, @Nullable DgsRequestData requestData) {
         this(customContext, requestData, Context.empty());
     }
 
-    public ReactiveDgsContext(DgsRequestData requestData) {
+    public ReactiveDgsContext(@Nullable DgsRequestData requestData) {
         this(null, requestData, Context.empty());
     }
 
+    @Nullable
     public ContextView getReactorContext() {
         return reactorContext;
     }
 
-    public static ReactiveDgsContext from(GraphQLContext graphQLContext) {
+    @Nullable
+    public static ReactiveDgsContext from(@NotNull GraphQLContext graphQLContext) {
         DgsContext dgsContext = DgsContext.from(graphQLContext);
         return dgsContext instanceof ReactiveDgsContext reactiveDgsContext ? reactiveDgsContext : null;
     }
 
-    public static ReactiveDgsContext from(DataFetchingEnvironment dfe) {
+    @Nullable
+    public static ReactiveDgsContext from(@NotNull DataFetchingEnvironment dfe) {
         return from(dfe.getGraphQlContext());
     }
 }

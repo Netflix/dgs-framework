@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.springgraphql.autoconfig;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.EnvironmentPostProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
@@ -53,7 +54,7 @@ public class ExcludeAutoConfigurationsEnvironmentPostProcessor implements Enviro
     }
 
     @Override
-    public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+    public void postProcessEnvironment(@NotNull ConfigurableEnvironment environment, @NotNull SpringApplication application) {
         String existingExcludes = extractAllExcludes(environment.getPropertySources());
         List<String> values = new ArrayList<>();
         DISABLE_AUTOCONFIG_PROPERTIES.forEach((property, autoConfiguration) -> {

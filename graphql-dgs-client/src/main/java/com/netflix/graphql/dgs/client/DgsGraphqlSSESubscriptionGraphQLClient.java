@@ -19,6 +19,8 @@ package com.netflix.graphql.dgs.client;
 import com.netflix.graphql.dgs.json.DgsJsonMapper;
 import com.netflix.graphql.types.subscription.QueryPayload;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.Disposable;
@@ -40,31 +42,33 @@ public class DgsGraphqlSSESubscriptionGraphQLClient implements DgsReactiveGraphQ
     private final WebClient webClient;
     private final DgsJsonMapper mapper;
 
-    public DgsGraphqlSSESubscriptionGraphQLClient(String url, WebClient webClient, DgsJsonMapper mapper) {
+    public DgsGraphqlSSESubscriptionGraphQLClient(@NotNull String url, @NotNull WebClient webClient, @NotNull DgsJsonMapper mapper) {
         this.url = url;
         this.webClient = webClient;
         this.mapper = mapper;
     }
 
-    public DgsGraphqlSSESubscriptionGraphQLClient(String url, WebClient webClient) {
+    public DgsGraphqlSSESubscriptionGraphQLClient(@NotNull String url, @NotNull WebClient webClient) {
         this(url, webClient, Jackson3DgsJsonMapperAdapter.defaultMapper());
     }
 
     public DgsGraphqlSSESubscriptionGraphQLClient(
-            String url, WebClient webClient, DgsGraphQLRequestOptions options) {
+            @NotNull String url, @NotNull WebClient webClient, @NotNull DgsGraphQLRequestOptions options) {
         this(url, webClient, Jackson3DgsJsonMapperAdapter.fromOptions(options));
     }
 
+    @NotNull
     @Override
     public Flux<? extends DgsGraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query, Map<String, Object> variables) {
+            @NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables) {
         return reactiveExecuteQuery(query, variables, null);
     }
 
+    @NotNull
     @Override
     @SuppressWarnings("unchecked")
     public Flux<? extends DgsGraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query, Map<String, Object> variables, String operationName) {
+            @NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables, @Nullable String operationName) {
         QueryPayload queryPayload =
                 new QueryPayload(variables, Map.of(), operationName, query);
         String jsonPayload = mapper.writeValueAsString(queryPayload);

@@ -23,6 +23,7 @@ import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider;
 import com.netflix.graphql.dgs.internal.DgsWebMvcRequestData;
 import com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLConfigurationProperties;
 import org.dataloader.DataLoaderRegistry;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.graphql.server.WebGraphQlInterceptor;
 import org.springframework.graphql.server.WebGraphQlRequest;
 import org.springframework.graphql.server.WebGraphQlResponse;
@@ -40,21 +41,22 @@ public class DgsWebMvcGraphQLInterceptor implements WebGraphQlInterceptor {
     private final DgsDataLoaderProvider dgsDataLoaderProvider;
     private final DefaultDgsGraphQLContextBuilder dgsContextBuilder;
     private final DgsSpringGraphQLConfigurationProperties dgsSpringConfigurationProperties;
-    private final List<GraphQLContextContributor> graphQLContextContributors;
+    private final List<? extends GraphQLContextContributor> graphQLContextContributors;
 
     public DgsWebMvcGraphQLInterceptor(
-            DgsDataLoaderProvider dgsDataLoaderProvider,
-            DefaultDgsGraphQLContextBuilder dgsContextBuilder,
-            DgsSpringGraphQLConfigurationProperties dgsSpringConfigurationProperties,
-            List<GraphQLContextContributor> graphQLContextContributors) {
+            @NotNull DgsDataLoaderProvider dgsDataLoaderProvider,
+            @NotNull DefaultDgsGraphQLContextBuilder dgsContextBuilder,
+            @NotNull DgsSpringGraphQLConfigurationProperties dgsSpringConfigurationProperties,
+            @NotNull List<? extends GraphQLContextContributor> graphQLContextContributors) {
         this.dgsDataLoaderProvider = dgsDataLoaderProvider;
         this.dgsContextBuilder = dgsContextBuilder;
         this.dgsSpringConfigurationProperties = dgsSpringConfigurationProperties;
         this.graphQLContextContributors = graphQLContextContributors;
     }
 
+    @NotNull
     @Override
-    public Mono<WebGraphQlResponse> intercept(WebGraphQlRequest request, Chain chain) {
+    public Mono<WebGraphQlResponse> intercept(@NotNull WebGraphQlRequest request, @NotNull Chain chain) {
         // We need to pass in the original server request for the dgs context
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes servletRequestAttributes =

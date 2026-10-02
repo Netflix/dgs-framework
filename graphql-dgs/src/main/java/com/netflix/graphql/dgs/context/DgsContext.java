@@ -29,6 +29,8 @@ import graphql.execution.instrumentation.parameters.InstrumentationFieldParamete
 import graphql.execution.instrumentation.parameters.InstrumentationValidationParameters;
 import graphql.schema.DataFetchingEnvironment;
 import org.dataloader.BatchLoaderEnvironment;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
@@ -44,64 +46,66 @@ public class DgsContext implements Consumer<GraphQLContext.Builder> {
     private final Object customContext;
     private final DgsRequestData requestData;
 
-    public DgsContext(Object customContext, DgsRequestData requestData) {
+    public DgsContext(@Nullable Object customContext, @Nullable DgsRequestData requestData) {
         this.customContext = customContext;
         this.requestData = requestData;
     }
 
+    @Nullable
     public Object getCustomContext() {
         return customContext;
     }
 
+    @Nullable
     public DgsRequestData getRequestData() {
         return requestData;
     }
 
-    public static DgsContext from(GraphQLContext graphQLContext) {
+    public static @NotNull DgsContext from(@NotNull GraphQLContext graphQLContext) {
         return graphQLContext.get(GraphQLContextKey.DGS_CONTEXT_KEY);
     }
 
-    public static DgsContext from(DataFetchingEnvironment dfe) {
+    public static @NotNull DgsContext from(@NotNull DataFetchingEnvironment dfe) {
         return from(dfe.getGraphQlContext());
     }
 
-    public static DgsContext from(ExecutionInput ei) {
+    public static @NotNull DgsContext from(@NotNull ExecutionInput ei) {
         return from(ei.getGraphQLContext());
     }
 
-    public static DgsContext from(InstrumentationCreateStateParameters p) {
+    public static @NotNull DgsContext from(@NotNull InstrumentationCreateStateParameters p) {
         return from(p.getExecutionInput().getGraphQLContext());
     }
 
-    public static DgsContext from(InstrumentationExecuteOperationParameters p) {
+    public static @NotNull DgsContext from(@NotNull InstrumentationExecuteOperationParameters p) {
         return from(p.getExecutionContext().getGraphQLContext());
     }
 
-    public static DgsContext from(InstrumentationExecutionParameters p) {
+    public static @NotNull DgsContext from(@NotNull InstrumentationExecutionParameters p) {
         return from(p.getGraphQLContext());
     }
 
-    public static DgsContext from(InstrumentationExecutionStrategyParameters p) {
+    public static @NotNull DgsContext from(@NotNull InstrumentationExecutionStrategyParameters p) {
         return from(p.getExecutionContext().getGraphQLContext());
     }
 
-    public static DgsContext from(InstrumentationFieldCompleteParameters p) {
+    public static @NotNull DgsContext from(@NotNull InstrumentationFieldCompleteParameters p) {
         return from(p.getExecutionContext().getGraphQLContext());
     }
 
-    public static DgsContext from(InstrumentationFieldFetchParameters p) {
+    public static @NotNull DgsContext from(@NotNull InstrumentationFieldFetchParameters p) {
         return from(p.getExecutionContext().getGraphQLContext());
     }
 
-    public static DgsContext from(InstrumentationFieldParameters p) {
+    public static @NotNull DgsContext from(@NotNull InstrumentationFieldParameters p) {
         return from(p.getExecutionContext().getGraphQLContext());
     }
 
-    public static DgsContext from(InstrumentationValidationParameters p) {
+    public static @NotNull DgsContext from(@NotNull InstrumentationValidationParameters p) {
         return from(p.getGraphQLContext());
     }
 
-    public static DgsContext from(BatchLoaderEnvironment batchLoaderEnvironment) {
+    public static @NotNull DgsContext from(@NotNull BatchLoaderEnvironment batchLoaderEnvironment) {
         Object context = batchLoaderEnvironment.getContext();
         if (context instanceof GraphQLContext graphQLContext) {
             return from(graphQLContext);
@@ -114,7 +118,7 @@ public class DgsContext implements Consumer<GraphQLContext.Builder> {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T getCustomContext(Object context) {
+    public static <T> T getCustomContext(@NotNull Object context) {
         if (context instanceof DgsContext dgsContext) {
             return (T) dgsContext.getCustomContext();
         }
@@ -125,12 +129,12 @@ public class DgsContext implements Consumer<GraphQLContext.Builder> {
                 + context.getClass().getName() + " instead.");
     }
 
-    public static <T> T getCustomContext(DataFetchingEnvironment dataFetchingEnvironment) {
+    public static <T> T getCustomContext(@NotNull DataFetchingEnvironment dataFetchingEnvironment) {
         DgsContext dgsContext = from(dataFetchingEnvironment);
         return getCustomContext(dgsContext);
     }
 
-    public static <T> T getCustomContext(BatchLoaderEnvironment batchLoaderEnvironment) {
+    public static <T> T getCustomContext(@NotNull BatchLoaderEnvironment batchLoaderEnvironment) {
         Object context = batchLoaderEnvironment.getContext();
         if (context == null) {
             throw new RuntimeException("BatchLoaderEnvironment context is null");
@@ -138,16 +142,18 @@ public class DgsContext implements Consumer<GraphQLContext.Builder> {
         return getCustomContext(context);
     }
 
-    public static DgsRequestData getRequestData(DataFetchingEnvironment dataFetchingEnvironment) {
+    @Nullable
+    public static DgsRequestData getRequestData(@NotNull DataFetchingEnvironment dataFetchingEnvironment) {
         return from(dataFetchingEnvironment).getRequestData();
     }
 
-    public static DgsRequestData getRequestData(BatchLoaderEnvironment batchLoaderEnvironment) {
+    @Nullable
+    public static DgsRequestData getRequestData(@NotNull BatchLoaderEnvironment batchLoaderEnvironment) {
         return from(batchLoaderEnvironment).getRequestData();
     }
 
     @Override
-    public void accept(GraphQLContext.Builder contextBuilder) {
+    public void accept(@NotNull GraphQLContext.Builder contextBuilder) {
         contextBuilder.put(GraphQLContextKey.DGS_CONTEXT_KEY, this);
     }
 }

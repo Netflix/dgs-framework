@@ -40,6 +40,7 @@ import graphql.schema.GraphQLObjectType;
 import graphql.schema.TypeResolver;
 import kotlin.Pair;
 import org.dataloader.Try;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,38 +89,42 @@ public class DefaultDgsFederationResolver implements DgsFederationResolver {
      * This is the most common use case.
      */
     public DefaultDgsFederationResolver(
-            EntityFetcherRegistry entityFetcherRegistry,
-            Optional<DataFetcherExceptionHandler> dataFetcherExceptionHandler,
-            ApplicationContext applicationContext) {
+            @NotNull EntityFetcherRegistry entityFetcherRegistry,
+            @NotNull Optional<DataFetcherExceptionHandler> dataFetcherExceptionHandler,
+            @NotNull ApplicationContext applicationContext) {
         this.entityFetcherRegistry = entityFetcherRegistry;
         this.dgsExceptionHandler = dataFetcherExceptionHandler;
         this.applicationContext = applicationContext;
     }
 
+    @NotNull
     public EntityFetcherRegistry getEntityFetcherRegistry() {
         return entityFetcherRegistry;
     }
 
-    public void setEntityFetcherRegistry(EntityFetcherRegistry entityFetcherRegistry) {
+    public void setEntityFetcherRegistry(@NotNull EntityFetcherRegistry entityFetcherRegistry) {
         this.entityFetcherRegistry = entityFetcherRegistry;
     }
 
+    @NotNull
     public Optional<DataFetcherExceptionHandler> getDgsExceptionHandler() {
         return dgsExceptionHandler;
     }
 
-    public void setDgsExceptionHandler(Optional<DataFetcherExceptionHandler> dgsExceptionHandler) {
+    public void setDgsExceptionHandler(@NotNull Optional<DataFetcherExceptionHandler> dgsExceptionHandler) {
         this.dgsExceptionHandler = dgsExceptionHandler;
     }
 
+    @NotNull
     public ApplicationContext getApplicationContext() {
         return applicationContext;
     }
 
-    public void setApplicationContext(ApplicationContext applicationContext) {
+    public void setApplicationContext(@NotNull ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
+    @NotNull
     @Override
     public DataFetcher<Object> entitiesFetcher() {
         return entitiesDataFetcher;
@@ -293,8 +298,9 @@ public class DefaultDgsFederationResolver implements DgsFederationResolver {
                 .build());
     }
 
+    @NotNull
     public DgsDataFetchingEnvironment createDataFetchingEnvironmentWithPath(
-            DataFetchingEnvironment env, int pathIndex) {
+            @NotNull DataFetchingEnvironment env, int pathIndex) {
         ResultPath pathWithIndex = env.getExecutionStepInfo().getPath().segment(pathIndex);
         ExecutionStepInfo executionStepInfoWithPath = ExecutionStepInfo
                 .newExecutionStepInfo(env.getExecutionStepInfo())
@@ -309,10 +315,12 @@ public class DefaultDgsFederationResolver implements DgsFederationResolver {
                 applicationContext);
     }
 
+    @NotNull
     public Map<Class<?>, String> typeMapping() {
         return Map.of();
     }
 
+    @NotNull
     @Override
     public TypeResolver typeResolver() {
         return env -> {

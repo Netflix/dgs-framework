@@ -21,26 +21,31 @@ import graphql.ExecutionResult;
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters;
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters;
 import io.micrometer.core.instrument.Tag;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public interface DgsGraphQLMetricsTagsProvider {
+    @NotNull
     default Iterable<Tag> getContextualTags() {
         return List.of();
     }
 
+    @NotNull
     default Iterable<Tag> getExecutionTags(
-            DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState state,
-            InstrumentationExecutionParameters parameters,
-            ExecutionResult result,
-            Throwable exception) {
+            @NotNull DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState state,
+            @NotNull InstrumentationExecutionParameters parameters,
+            @NotNull ExecutionResult result,
+            @Nullable Throwable exception) {
         return List.of();
     }
 
+    @NotNull
     default Iterable<Tag> getFieldFetchTags(
-            DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState state,
-            InstrumentationFieldFetchParameters parameters,
-            Throwable exception) {
+            @NotNull DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState state,
+            @NotNull InstrumentationFieldFetchParameters parameters,
+            @Nullable Throwable exception) {
         return List.of();
     }
 }

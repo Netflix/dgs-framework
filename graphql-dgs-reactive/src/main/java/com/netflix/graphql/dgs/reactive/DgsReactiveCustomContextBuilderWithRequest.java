@@ -16,6 +16,8 @@
 
 package com.netflix.graphql.dgs.reactive;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import reactor.core.publisher.Mono;
@@ -23,5 +25,9 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 
 public interface DgsReactiveCustomContextBuilderWithRequest<T> {
-    Mono<T> build(Map<String, ?> extensions, HttpHeaders headers, ServerRequest serverRequest);
+    @NotNull
+    Mono<T> build(
+            @Nullable Map<String, ? extends Object> extensions,
+            @Nullable HttpHeaders headers,
+            @Nullable ServerRequest serverRequest);
 }

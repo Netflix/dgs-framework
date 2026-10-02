@@ -17,8 +17,10 @@
 package com.netflix.graphql.dgs.metrics.micrometer.tagging;
 
 import io.micrometer.core.instrument.Tag;
+import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface
 public interface DgsContextualTagCustomizer {
+    @NotNull
     Iterable<Tag> getContextualTags();
 }

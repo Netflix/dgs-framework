@@ -37,6 +37,8 @@ import graphql.schema.GraphQLSchema;
 import graphql.schema.GraphQLType;
 import org.dataloader.DataLoader;
 import org.dataloader.DataLoaderRegistry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -52,15 +54,17 @@ public class DgsDataFetchingEnvironment implements DataFetchingEnvironment {
     private final DataFetchingEnvironment dfe;
     private final ApplicationContext ctx;
 
-    public DgsDataFetchingEnvironment(DataFetchingEnvironment dfe, ApplicationContext ctx) {
+    public DgsDataFetchingEnvironment(@NotNull DataFetchingEnvironment dfe, @NotNull ApplicationContext ctx) {
         this.dfe = dfe;
         this.ctx = ctx;
     }
 
+    @NotNull
     public DataFetchingEnvironment getDfe() {
         return this.dfe;
     }
 
+    @NotNull
     public DgsContext getDgsContext() {
         return DgsContext.from(this);
     }
@@ -78,7 +82,8 @@ public class DgsDataFetchingEnvironment implements DataFetchingEnvironment {
         return source;
     }
 
-    public <K, V> DataLoader<K, V> getDataLoader(Class<?> loaderClass) {
+    @NotNull
+    public <K, V> DataLoader<K, V> getDataLoader(@NotNull Class<?> loaderClass) {
         DgsDataLoader annotation = loaderClass.getAnnotation(DgsDataLoader.class);
         String loaderName;
         if (annotation != null) {
@@ -131,7 +136,7 @@ public class DgsDataFetchingEnvironment implements DataFetchingEnvironment {
      * syntax. Note that this requires String splitting which is expensive for hot code paths.
      * Use {@link #isArgumentSet(String...)} as a faster alternative.
      */
-    public boolean isNestedArgumentSet(String path) {
+    public boolean isNestedArgumentSet(@NotNull String path) {
         String[] pathParts = Arrays.stream(path.split("\\.|->")).map(String::trim).toArray(String[]::new);
         return isArgumentSet(pathParts);
     }
@@ -141,7 +146,7 @@ public class DgsDataFetchingEnvironment implements DataFetchingEnvironment {
      * For complex object arguments, use the isArgumentSet("root", "nested", "property") syntax.
      */
     @SuppressWarnings("unchecked")
-    public boolean isArgumentSet(String... path) {
+    public boolean isArgumentSet(@NotNull String... path) {
         Map<String, Object> args = dfe.getExecutionStepInfo().getArguments();
         for (String key : path) {
             // Explicitly check contains to support explicit null values
@@ -157,143 +162,170 @@ public class DgsDataFetchingEnvironment implements DataFetchingEnvironment {
         return true;
     }
 
+    @Nullable
     @Override
     public <T> T getSource() {
         return dfe.getSource();
     }
 
+    @NotNull
     @Override
     public Map<String, Object> getArguments() {
         return dfe.getArguments();
     }
 
     @Override
-    public boolean containsArgument(String name) {
+    public boolean containsArgument(@NotNull String name) {
         return dfe.containsArgument(name);
     }
 
+    @Nullable
     @Override
-    public <T> T getArgument(String name) {
+    public <T> T getArgument(@NotNull String name) {
         return dfe.getArgument(name);
     }
 
+    @NotNull
     @Override
-    public <T> T getArgumentOrDefault(String name, T defaultValue) {
+    public <T> T getArgumentOrDefault(@NotNull String name, @NotNull T defaultValue) {
         return dfe.getArgumentOrDefault(name, defaultValue);
     }
 
+    @Nullable
     @Override
     @SuppressWarnings("deprecation")
     public <T> T getContext() {
         return dfe.getContext();
     }
 
+    @NotNull
     @Override
     public GraphQLContext getGraphQlContext() {
         return dfe.getGraphQlContext();
     }
 
+    @Nullable
     @Override
     public <T> T getLocalContext() {
         return dfe.getLocalContext();
     }
 
+    @Nullable
     @Override
     public <T> T getRoot() {
         return dfe.getRoot();
     }
 
+    @NotNull
     @Override
     public GraphQLFieldDefinition getFieldDefinition() {
         return dfe.getFieldDefinition();
     }
 
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
     public List<Field> getFields() {
         return dfe.getFields();
     }
 
+    @NotNull
     @Override
     public MergedField getMergedField() {
         return dfe.getMergedField();
     }
 
+    @NotNull
     @Override
     public Field getField() {
         return dfe.getField();
     }
 
+    @NotNull
     @Override
     public GraphQLOutputType getFieldType() {
         return dfe.getFieldType();
     }
 
+    @NotNull
     @Override
     public ExecutionStepInfo getExecutionStepInfo() {
         return dfe.getExecutionStepInfo();
     }
 
+    @NotNull
     @Override
     public GraphQLType getParentType() {
         return dfe.getParentType();
     }
 
+    @NotNull
     @Override
     public GraphQLSchema getGraphQLSchema() {
         return dfe.getGraphQLSchema();
     }
 
+    @NotNull
     @Override
     public Map<String, FragmentDefinition> getFragmentsByName() {
         return dfe.getFragmentsByName();
     }
 
+    @NotNull
     @Override
     public ExecutionId getExecutionId() {
         return dfe.getExecutionId();
     }
 
+    @NotNull
     @Override
     public DataFetchingFieldSelectionSet getSelectionSet() {
         return dfe.getSelectionSet();
     }
 
+    @NotNull
     @Override
     public QueryDirectives getQueryDirectives() {
         return dfe.getQueryDirectives();
     }
 
+    @Nullable
     @Override
-    public <K, V> DataLoader<K, V> getDataLoader(String dataLoaderName) {
+    public <K, V> DataLoader<K, V> getDataLoader(@NotNull String dataLoaderName) {
         return dfe.getDataLoader(dataLoaderName);
     }
 
+    @NotNull
     @Override
     public DataLoaderRegistry getDataLoaderRegistry() {
         return dfe.getDataLoaderRegistry();
     }
 
+    @NotNull
     @Override
     public Locale getLocale() {
         return dfe.getLocale();
     }
 
+    @NotNull
     @Override
     public OperationDefinition getOperationDefinition() {
         return dfe.getOperationDefinition();
     }
 
+    @NotNull
     @Override
     public Document getDocument() {
         return dfe.getDocument();
     }
 
+    @NotNull
     @Override
     public Map<String, Object> getVariables() {
         return dfe.getVariables();
     }
 
+    @NotNull
     @Override
     public Object toInternal() {
         return dfe.toInternal();

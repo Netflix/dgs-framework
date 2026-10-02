@@ -22,6 +22,7 @@ import org.dataloader.BatchLoader;
 import org.dataloader.BatchLoaderWithContext;
 import org.dataloader.MappedBatchLoader;
 import org.dataloader.MappedBatchLoaderWithContext;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Proxy;
 import java.util.Map;
@@ -36,30 +37,34 @@ public class DgsDataLoaderInstrumentationProvider implements DataLoaderInstrumen
     private final Map<String, MappedBatchLoaderWithContext<?, ?>> mappedBatchLoaderWithContextClasses =
             new ConcurrentHashMap<>();
 
-    public DgsDataLoaderInstrumentationProvider(DgsMeterRegistrySupplier meterRegistrySupplier) {
+    public DgsDataLoaderInstrumentationProvider(@NotNull DgsMeterRegistrySupplier meterRegistrySupplier) {
         this.meterRegistrySupplier = meterRegistrySupplier;
     }
 
+    @NotNull
     @Override
-    public BatchLoader<?, ?> provide(BatchLoader<?, ?> original, String name) {
+    public BatchLoader<?, ?> provide(@NotNull BatchLoader<?, ?> original, @NotNull String name) {
         return batchLoaderClasses.computeIfAbsent(
                 name, key -> (BatchLoader<?, ?>) newProxy(BatchLoader.class, original, key));
     }
 
+    @NotNull
     @Override
-    public BatchLoaderWithContext<?, ?> provide(BatchLoaderWithContext<?, ?> original, String name) {
+    public BatchLoaderWithContext<?, ?> provide(@NotNull BatchLoaderWithContext<?, ?> original, @NotNull String name) {
         return batchLoaderWithContextClasses.computeIfAbsent(
                 name, key -> (BatchLoaderWithContext<?, ?>) newProxy(BatchLoaderWithContext.class, original, key));
     }
 
+    @NotNull
     @Override
-    public MappedBatchLoader<?, ?> provide(MappedBatchLoader<?, ?> original, String name) {
+    public MappedBatchLoader<?, ?> provide(@NotNull MappedBatchLoader<?, ?> original, @NotNull String name) {
         return mappedBatchLoaderClasses.computeIfAbsent(
                 name, key -> (MappedBatchLoader<?, ?>) newProxy(MappedBatchLoader.class, original, key));
     }
 
+    @NotNull
     @Override
-    public MappedBatchLoaderWithContext<?, ?> provide(MappedBatchLoaderWithContext<?, ?> original, String name) {
+    public MappedBatchLoaderWithContext<?, ?> provide(@NotNull MappedBatchLoaderWithContext<?, ?> original, @NotNull String name) {
         return mappedBatchLoaderWithContextClasses.computeIfAbsent(
                 name,
                 key -> (MappedBatchLoaderWithContext<?, ?>)

@@ -18,6 +18,8 @@ package com.netflix.graphql.dgs.client;
 
 import com.netflix.graphql.dgs.json.DgsJsonMapper;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpStatusCode;
 import reactor.core.publisher.Mono;
 
@@ -34,35 +36,38 @@ public class DgsCustomMonoGraphQLClient implements DgsMonoGraphQLClient {
     private final DgsJsonMapper mapper;
 
     public DgsCustomMonoGraphQLClient(
-            String url, MonoRequestExecutor monoRequestExecutor, DgsJsonMapper mapper) {
+            @NotNull String url, @NotNull MonoRequestExecutor monoRequestExecutor, @NotNull DgsJsonMapper mapper) {
         this.url = url;
         this.monoRequestExecutor = monoRequestExecutor;
         this.mapper = mapper;
     }
 
-    public DgsCustomMonoGraphQLClient(String url, MonoRequestExecutor monoRequestExecutor) {
+    public DgsCustomMonoGraphQLClient(@NotNull String url, @NotNull MonoRequestExecutor monoRequestExecutor) {
         this(url, monoRequestExecutor, Jackson3DgsJsonMapperAdapter.defaultMapper());
     }
 
     public DgsCustomMonoGraphQLClient(
-            String url, MonoRequestExecutor monoRequestExecutor, DgsGraphQLRequestOptions options) {
+            @NotNull String url, @NotNull MonoRequestExecutor monoRequestExecutor, @NotNull DgsGraphQLRequestOptions options) {
         this(url, monoRequestExecutor, Jackson3DgsJsonMapperAdapter.fromOptions(options));
     }
 
+    @NotNull
     @Override
-    public Mono<DgsGraphQLResponse> reactiveExecuteQuery(@Language("graphql") String query) {
+    public Mono<DgsGraphQLResponse> reactiveExecuteQuery(@NotNull @Language("graphql") String query) {
         return reactiveExecuteQuery(query, Map.of(), null);
     }
 
+    @NotNull
     @Override
     public Mono<DgsGraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query, Map<String, Object> variables) {
+            @NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables) {
         return reactiveExecuteQuery(query, variables, null);
     }
 
+    @NotNull
     @Override
     public Mono<DgsGraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query, Map<String, Object> variables, String operationName) {
+            @NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables, @Nullable String operationName) {
         String serializedRequest = mapper.writeValueAsString(GraphQLClients.toRequestMap(query, operationName, variables));
         return monoRequestExecutor
                 .execute(url, GraphQLClients.defaultHeaders, serializedRequest)

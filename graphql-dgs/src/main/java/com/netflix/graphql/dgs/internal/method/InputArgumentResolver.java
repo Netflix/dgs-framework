@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.internal.method;
 
 import com.netflix.graphql.dgs.InputArgument;
 import com.netflix.graphql.dgs.internal.InputObjectMapper;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.MergedAnnotation;
 
@@ -27,12 +28,12 @@ import org.springframework.core.annotation.MergedAnnotation;
  * <p>Argument conversion responsibilities are handled by the supplied {@link InputObjectMapper}.
  */
 public class InputArgumentResolver extends AbstractInputArgumentResolver {
-    public InputArgumentResolver(InputObjectMapper inputObjectMapper) {
+    public InputArgumentResolver(@NotNull InputObjectMapper inputObjectMapper) {
         super(inputObjectMapper);
     }
 
     @Override
-    public boolean supportsParameter(MethodParameter parameter) {
+    public boolean supportsParameter(@NotNull MethodParameter parameter) {
         return parameter.hasParameterAnnotation(InputArgument.class);
     }
 

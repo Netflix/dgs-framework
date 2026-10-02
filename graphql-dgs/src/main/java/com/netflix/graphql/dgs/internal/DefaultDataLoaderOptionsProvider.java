@@ -19,10 +19,12 @@ package com.netflix.graphql.dgs.internal;
 import com.netflix.graphql.dgs.DgsDataLoader;
 import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider;
 import org.dataloader.DataLoaderOptions;
+import org.jetbrains.annotations.NotNull;
 
 public class DefaultDataLoaderOptionsProvider implements DgsDataLoaderOptionsProvider {
+    @NotNull
     @Override
-    public DataLoaderOptions.Builder getOptions(String dataLoaderName, DgsDataLoader annotation) {
+    public DataLoaderOptions.Builder getOptions(@NotNull String dataLoaderName, @NotNull DgsDataLoader annotation) {
         DataLoaderOptions.Builder options = DataLoaderOptions
                 .newOptions()
                 .setBatchingEnabled(annotation.batching())

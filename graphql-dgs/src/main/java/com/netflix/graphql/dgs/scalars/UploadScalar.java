@@ -27,6 +27,7 @@ import graphql.schema.CoercingParseValueException;
 import graphql.schema.CoercingSerializeException;
 import graphql.schema.GraphQLScalarType;
 import graphql.schema.idl.RuntimeWiring;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Locale;
@@ -40,47 +41,55 @@ public class UploadScalar {
             .coercing(MultipartFileCoercing.INSTANCE)
             .build();
 
+    @NotNull
     public GraphQLScalarType getUpload() {
         return upload;
     }
 
     public static final class MultipartFileCoercing implements Coercing<MultipartFile, Void> {
+        @NotNull
         public static final MultipartFileCoercing INSTANCE = new MultipartFileCoercing();
 
         private MultipartFileCoercing() {
         }
 
+        @NotNull
         @Override
         @Deprecated
-        public Void serialize(Object dataFetcherResult) throws CoercingSerializeException {
+        public Void serialize(@NotNull Object dataFetcherResult) throws CoercingSerializeException {
             throw new CoercingSerializeException("Upload is an input-only type");
         }
 
+        @NotNull
         @Override
-        public Void serialize(Object dataFetcherResult, GraphQLContext graphQLContext, Locale locale) {
+        public Void serialize(@NotNull Object dataFetcherResult, @NotNull GraphQLContext graphQLContext, @NotNull Locale locale) {
             throw new CoercingSerializeException("Upload is an input-only type");
         }
 
+        @NotNull
         @Override
         @Deprecated
-        public MultipartFile parseValue(Object input) throws CoercingParseValueException {
+        public MultipartFile parseValue(@NotNull Object input) throws CoercingParseValueException {
             return asMultipartFile(input);
         }
 
+        @NotNull
         @Override
-        public MultipartFile parseValue(Object input, GraphQLContext graphQLContext, Locale locale) {
+        public MultipartFile parseValue(@NotNull Object input, @NotNull GraphQLContext graphQLContext, @NotNull Locale locale) {
             return asMultipartFile(input);
         }
 
+        @NotNull
         @Override
         @Deprecated
-        public MultipartFile parseLiteral(Object input) {
+        public MultipartFile parseLiteral(@NotNull Object input) {
             throw new CoercingParseLiteralException("Must use variables to specify Upload values");
         }
 
+        @NotNull
         @Override
         public MultipartFile parseLiteral(
-                Value<?> input, CoercedVariables variables, GraphQLContext graphQLContext, Locale locale) {
+                @NotNull Value<?> input, @NotNull CoercedVariables variables, @NotNull GraphQLContext graphQLContext, @NotNull Locale locale) {
             throw new CoercingParseLiteralException("Must use variables to specify Upload values");
         }
 
@@ -94,8 +103,9 @@ public class UploadScalar {
     }
 
     // add the scalar manually since we can't use @DgsScalar in the framework
+    @NotNull
     @DgsRuntimeWiring
-    public RuntimeWiring.Builder addScalar(RuntimeWiring.Builder builder) {
+    public RuntimeWiring.Builder addScalar(@NotNull RuntimeWiring.Builder builder) {
         return builder.scalar(upload);
     }
 }

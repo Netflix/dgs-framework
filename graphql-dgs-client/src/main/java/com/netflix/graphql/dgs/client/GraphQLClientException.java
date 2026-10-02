@@ -16,13 +16,14 @@
 
 package com.netflix.graphql.dgs.client;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 public class GraphQLClientException extends ResponseStatusException {
     private static final long serialVersionUID = 1L;
 
-    public GraphQLClientException(int statusCode, String url, String response, String request) {
+    public GraphQLClientException(int statusCode, @NotNull String url, @NotNull String response, @NotNull String request) {
         super(
                 HttpStatus.valueOf(statusCode),
                 "GraphQL server " + url + " responded with status code " + statusCode + ": '" + response

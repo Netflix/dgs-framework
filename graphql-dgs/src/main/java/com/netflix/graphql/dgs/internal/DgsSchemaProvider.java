@@ -75,7 +75,10 @@ import graphql.schema.idl.TypeRuntimeWiring;
 import graphql.schema.visibility.DefaultGraphqlFieldVisibility;
 import graphql.schema.visibility.GraphqlFieldVisibility;
 import kotlin.Pair;
+import kotlin.jvm.functions.Function1;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;
@@ -116,6 +119,7 @@ import java.util.stream.Collectors;
 
 /** Main framework class that scans for components and configures a runtime executable schema. */
 public class DgsSchemaProvider {
+    @NotNull
     public static final String DEFAULT_SCHEMA_LOCATION = "classpath*:schema/**/*.graphql*";
 
     private static final Logger logger = LoggerFactory.getLogger(DgsSchemaProvider.class);
@@ -124,7 +128,7 @@ public class DgsSchemaProvider {
     private final Optional<DgsFederationResolver> federationResolver;
     private final Optional<TypeDefinitionRegistry> existingTypeDefinitionRegistry;
     private final List<String> schemaLocations;
-    private final List<DataFetcherResultProcessor> dataFetcherResultProcessors;
+    private final List<? extends DataFetcherResultProcessor> dataFetcherResultProcessors;
     private final Optional<DataFetcherExceptionHandler> dataFetcherExceptionHandler;
     private final EntityFetcherRegistry entityFetcherRegistry;
     private final Optional<DataFetcherFactory<?>> defaultDataFetcherFactory;
@@ -139,20 +143,20 @@ public class DgsSchemaProvider {
     private final AtomicReference<DataFetcherInfo> dataFetcherInfo =
             new AtomicReference<>(new DataFetcherInfo(List.of(), Set.of(), Set.of()));
 
-    public DgsSchemaProvider(
-            ApplicationContext applicationContext,
-            Optional<DgsFederationResolver> federationResolver,
-            Optional<TypeDefinitionRegistry> existingTypeDefinitionRegistry,
-            List<String> schemaLocations,
-            List<DataFetcherResultProcessor> dataFetcherResultProcessors,
-            Optional<DataFetcherExceptionHandler> dataFetcherExceptionHandler,
-            EntityFetcherRegistry entityFetcherRegistry,
-            Optional<DataFetcherFactory<?>> defaultDataFetcherFactory,
-            MethodDataFetcherFactory methodDataFetcherFactory,
+    private DgsSchemaProvider(
+            @NotNull ApplicationContext applicationContext,
+            @NotNull Optional<DgsFederationResolver> federationResolver,
+            @NotNull Optional<TypeDefinitionRegistry> existingTypeDefinitionRegistry,
+            @NotNull List<String> schemaLocations,
+            @NotNull List<? extends DataFetcherResultProcessor> dataFetcherResultProcessors,
+            @NotNull Optional<DataFetcherExceptionHandler> dataFetcherExceptionHandler,
+            @NotNull EntityFetcherRegistry entityFetcherRegistry,
+            @NotNull Optional<DataFetcherFactory<?>> defaultDataFetcherFactory,
+            @NotNull MethodDataFetcherFactory methodDataFetcherFactory,
             Predicate<Object> componentFilter,
             boolean schemaWiringValidationEnabled,
             boolean enableEntityFetcherCustomScalarParsing,
-            TypeResolver fallbackTypeResolver,
+            @Nullable TypeResolver fallbackTypeResolver,
             boolean enableStrictMode,
             boolean federationEnabled) {
         this.applicationContext = applicationContext;
@@ -172,17 +176,97 @@ public class DgsSchemaProvider {
         this.federationEnabled = federationEnabled;
     }
 
+    /**
+     * Compatibility constructor for callers compiled against the former Kotlin API, whose predicate
+     * parameter was exposed as {@link Function1}.
+     */
+    public DgsSchemaProvider(
+            @NotNull ApplicationContext applicationContext,
+            @NotNull Optional<DgsFederationResolver> federationResolver,
+            @NotNull Optional<TypeDefinitionRegistry> existingTypeDefinitionRegistry,
+            @NotNull List<String> schemaLocations,
+            @NotNull List<? extends DataFetcherResultProcessor> dataFetcherResultProcessors,
+            @NotNull Optional<DataFetcherExceptionHandler> dataFetcherExceptionHandler,
+            @NotNull EntityFetcherRegistry entityFetcherRegistry,
+            @NotNull Optional<DataFetcherFactory<?>> defaultDataFetcherFactory,
+            @NotNull MethodDataFetcherFactory methodDataFetcherFactory,
+            @Nullable Function1<Object, Boolean> componentFilter,
+            boolean schemaWiringValidationEnabled,
+            boolean enableEntityFetcherCustomScalarParsing,
+            @Nullable TypeResolver fallbackTypeResolver,
+            boolean enableStrictMode,
+            boolean federationEnabled) {
+        this(
+                applicationContext,
+                federationResolver,
+                existingTypeDefinitionRegistry,
+                schemaLocations,
+                dataFetcherResultProcessors,
+                dataFetcherExceptionHandler,
+                entityFetcherRegistry,
+                defaultDataFetcherFactory,
+                methodDataFetcherFactory,
+                toPredicate(componentFilter),
+                schemaWiringValidationEnabled,
+                enableEntityFetcherCustomScalarParsing,
+                fallbackTypeResolver,
+                enableStrictMode,
+                federationEnabled);
+    }
+
+    private static Predicate<Object> toPredicate(Function1<Object, Boolean> componentFilter) {
+        if (componentFilter == null) {
+            return null;
+        }
+        Predicate<Object> predicate = componentFilter::invoke;
+        return predicate;
+    }
+
+    /** @deprecated The mockProviders argument is no longer supported. */
+    @Deprecated
+    public DgsSchemaProvider(
+            @NotNull ApplicationContext applicationContext,
+            @NotNull Optional<DgsFederationResolver> federationResolver,
+            @NotNull Optional<TypeDefinitionRegistry> existingTypeDefinitionRegistry,
+            @NotNull Set<? extends Object> mockProviders,
+            @NotNull List<String> schemaLocations,
+            @NotNull List<? extends DataFetcherResultProcessor> dataFetcherResultProcessors,
+            @NotNull Optional<DataFetcherExceptionHandler> dataFetcherExceptionHandler,
+            @NotNull EntityFetcherRegistry entityFetcherRegistry,
+            @NotNull Optional<DataFetcherFactory<?>> defaultDataFetcherFactory,
+            @NotNull MethodDataFetcherFactory methodDataFetcherFactory,
+            @Nullable Function1<Object, Boolean> componentFilter,
+            boolean schemaWiringValidationEnabled,
+            boolean enableEntityFetcherCustomScalarParsing) {
+        this(
+                applicationContext,
+                federationResolver,
+                existingTypeDefinitionRegistry,
+                schemaLocations,
+                dataFetcherResultProcessors,
+                dataFetcherExceptionHandler,
+                entityFetcherRegistry,
+                defaultDataFetcherFactory,
+                methodDataFetcherFactory,
+                componentFilter,
+                schemaWiringValidationEnabled,
+                enableEntityFetcherCustomScalarParsing,
+                (TypeResolver) null,
+                true,
+                true);
+    }
+
     /** Constructor used by Spring; optional collaborators fall back to their defaults when no bean is present. */
     @Autowired
     public DgsSchemaProvider(
-            ApplicationContext applicationContext,
-            Optional<DgsFederationResolver> federationResolver,
-            Optional<TypeDefinitionRegistry> existingTypeDefinitionRegistry,
+            @NotNull ApplicationContext applicationContext,
+            @NotNull Optional<DgsFederationResolver> federationResolver,
+            @NotNull Optional<TypeDefinitionRegistry> existingTypeDefinitionRegistry,
             ObjectProvider<DataFetcherResultProcessor> dataFetcherResultProcessors,
-            Optional<DataFetcherExceptionHandler> dataFetcherExceptionHandler,
+            @NotNull Optional<DataFetcherExceptionHandler> dataFetcherExceptionHandler,
             ObjectProvider<EntityFetcherRegistry> entityFetcherRegistry,
-            Optional<DataFetcherFactory<?>> defaultDataFetcherFactory,
-            MethodDataFetcherFactory methodDataFetcherFactory,
+            @NotNull Optional<DataFetcherFactory<?>> defaultDataFetcherFactory,
+            @NotNull MethodDataFetcherFactory methodDataFetcherFactory,
             ObjectProvider<TypeResolver> fallbackTypeResolver) {
         this(
                 applicationContext,
@@ -194,7 +278,7 @@ public class DgsSchemaProvider {
                 entityFetcherRegistry.getIfAvailable(EntityFetcherRegistry::new),
                 defaultDataFetcherFactory,
                 methodDataFetcherFactory,
-                null,
+                (Predicate<Object>) null,
                 true,
                 false,
                 fallbackTypeResolver.getIfAvailable(),
@@ -203,10 +287,10 @@ public class DgsSchemaProvider {
     }
 
     public DgsSchemaProvider(
-            ApplicationContext applicationContext,
-            Optional<DgsFederationResolver> federationResolver,
-            Optional<TypeDefinitionRegistry> existingTypeDefinitionRegistry,
-            MethodDataFetcherFactory methodDataFetcherFactory) {
+            @NotNull ApplicationContext applicationContext,
+            @NotNull Optional<DgsFederationResolver> federationResolver,
+            @NotNull Optional<TypeDefinitionRegistry> existingTypeDefinitionRegistry,
+            @NotNull MethodDataFetcherFactory methodDataFetcherFactory) {
         this(
                 applicationContext,
                 federationResolver,
@@ -217,7 +301,7 @@ public class DgsSchemaProvider {
                 new EntityFetcherRegistry(),
                 Optional.empty(),
                 methodDataFetcherFactory,
-                null,
+                (Predicate<Object>) null,
                 true,
                 false,
                 null,
@@ -236,7 +320,7 @@ public class DgsSchemaProvider {
         private Optional<DgsFederationResolver> federationResolver = Optional.empty();
         private Optional<TypeDefinitionRegistry> existingTypeDefinitionRegistry = Optional.empty();
         private List<String> schemaLocations = List.of(DEFAULT_SCHEMA_LOCATION);
-        private List<DataFetcherResultProcessor> dataFetcherResultProcessors = List.of();
+        private List<? extends DataFetcherResultProcessor> dataFetcherResultProcessors = List.of();
         private Optional<DataFetcherExceptionHandler> dataFetcherExceptionHandler = Optional.empty();
         private EntityFetcherRegistry entityFetcherRegistry = new EntityFetcherRegistry();
         private Optional<DataFetcherFactory<?>> defaultDataFetcherFactory = Optional.empty();
@@ -271,7 +355,8 @@ public class DgsSchemaProvider {
             return this;
         }
 
-        public Builder dataFetcherResultProcessors(List<DataFetcherResultProcessor> dataFetcherResultProcessors) {
+        public Builder dataFetcherResultProcessors(
+                List<? extends DataFetcherResultProcessor> dataFetcherResultProcessors) {
             this.dataFetcherResultProcessors = dataFetcherResultProcessors;
             return this;
         }
@@ -350,6 +435,7 @@ public class DgsSchemaProvider {
      * Returns an immutable list of {@link DataFetcherReference}s that were identified after the schema was loaded.
      * The returned list will be unstable until the schema is fully loaded.
      */
+    @NotNull
     public List<DataFetcherReference> resolvedDataFetchers() {
         return dataFetcherInfo.get().dataFetchers();
     }
@@ -361,7 +447,7 @@ public class DgsSchemaProvider {
      *
      * <p>The method should be considered unstable until the schema is fully loaded.
      */
-    public boolean isFieldTracingInstrumentationEnabled(String field) {
+    public boolean isFieldTracingInstrumentationEnabled(@NotNull String field) {
         return dataFetcherInfo.get().tracingEnabled().contains(field);
     }
 
@@ -372,7 +458,7 @@ public class DgsSchemaProvider {
      *
      * <p>The method should be considered unstable until the schema is fully loaded.
      */
-    public boolean isFieldMetricsInstrumentationEnabled(String field) {
+    public boolean isFieldMetricsInstrumentationEnabled(@NotNull String field) {
         return dataFetcherInfo.get().metricsEnabled().contains(field);
     }
 
@@ -389,14 +475,17 @@ public class DgsSchemaProvider {
     }
 
     public SchemaProviderResult schema(
-            @Language("GraphQL") String schema, GraphqlFieldVisibility fieldVisibility, Set<Resource> schemaResources) {
+            @Language("GraphQL") String schema,
+            GraphqlFieldVisibility fieldVisibility,
+            Set<? extends Resource> schemaResources) {
         return schema(schema, fieldVisibility, schemaResources, true);
     }
 
+    @NotNull
     public SchemaProviderResult schema(
-            @Language("GraphQL") String schema,
-            GraphqlFieldVisibility fieldVisibility,
-            Set<Resource> schemaResources,
+            @Nullable @Language("GraphQL") String schema,
+            @NotNull GraphqlFieldVisibility fieldVisibility,
+            @NotNull Set<? extends Resource> schemaResources,
             boolean showSdlComments) {
         MutableDataFetcherInfo mutableDataFetcherInfo = new MutableDataFetcherInfo();
         SchemaProviderResult result = computeSchema(schema, fieldVisibility, schemaResources, showSdlComments,
@@ -408,7 +497,7 @@ public class DgsSchemaProvider {
     private SchemaProviderResult computeSchema(
             String schema,
             GraphqlFieldVisibility fieldVisibility,
-            Set<Resource> schemaResources,
+            Set<? extends Resource> schemaResources,
             boolean showSdlComments,
             MutableDataFetcherInfo dataFetcherInfo) {
         long startTime = System.currentTimeMillis();

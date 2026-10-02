@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.exceptions;
 
 import com.netflix.graphql.types.errors.ErrorType;
+import org.jetbrains.annotations.NotNull;
 
 public class DgsBadRequestException extends DgsException {
     private static final long serialVersionUID = 1L;
@@ -24,7 +25,7 @@ public class DgsBadRequestException extends DgsException {
     public static final DgsBadRequestException NULL_OR_EMPTY_QUERY_EXCEPTION =
             new DgsBadRequestException("GraphQL operations must contain a non-empty `query`.");
 
-    public DgsBadRequestException(String message) {
+    public DgsBadRequestException(@NotNull String message) {
         super(message, ErrorType.BAD_REQUEST);
     }
 

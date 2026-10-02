@@ -20,13 +20,18 @@ import org.dataloader.BatchLoader;
 import org.dataloader.BatchLoaderWithContext;
 import org.dataloader.MappedBatchLoader;
 import org.dataloader.MappedBatchLoaderWithContext;
+import org.jetbrains.annotations.NotNull;
 
 public interface DataLoaderInstrumentationExtensionProvider {
-    BatchLoader<?, ?> provide(BatchLoader<?, ?> original, String name);
+    @NotNull
+    BatchLoader<?, ?> provide(@NotNull BatchLoader<?, ?> original, @NotNull String name);
 
-    BatchLoaderWithContext<?, ?> provide(BatchLoaderWithContext<?, ?> original, String name);
+    @NotNull
+    BatchLoaderWithContext<?, ?> provide(@NotNull BatchLoaderWithContext<?, ?> original, @NotNull String name);
 
-    MappedBatchLoader<?, ?> provide(MappedBatchLoader<?, ?> original, String name);
+    @NotNull
+    MappedBatchLoader<?, ?> provide(@NotNull MappedBatchLoader<?, ?> original, @NotNull String name);
 
-    MappedBatchLoaderWithContext<?, ?> provide(MappedBatchLoaderWithContext<?, ?> original, String name);
+    @NotNull
+    MappedBatchLoaderWithContext<?, ?> provide(@NotNull MappedBatchLoaderWithContext<?, ?> original, @NotNull String name);
 }

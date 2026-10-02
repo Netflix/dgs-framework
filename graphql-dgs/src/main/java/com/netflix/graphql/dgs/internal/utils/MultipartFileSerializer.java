@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.internal.utils;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -32,7 +33,7 @@ public class MultipartFileSerializer extends StdSerializer<MultipartFile> {
     }
 
     @Override
-    public void serialize(MultipartFile value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+    public void serialize(@NotNull MultipartFile value, @NotNull JsonGenerator jgen, @NotNull SerializerProvider provider) throws IOException {
         jgen.writeStartObject();
         jgen.writeStringField("name", value.getOriginalFilename());
         jgen.writeEndObject();

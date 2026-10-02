@@ -18,14 +18,21 @@ package com.netflix.graphql.types.subscription;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
 public final class OperationMessage {
+    @JsonProperty(value = "type", required = true)
+    @JsonSetter(nulls = Nulls.FAIL)
     private final String type;
 
+    @JsonProperty("payload")
     @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION, defaultImpl = EmptyPayload.class)
     @JsonSubTypes({
             @JsonSubTypes.Type(value = EmptyPayload.class),
@@ -34,40 +41,65 @@ public final class OperationMessage {
     })
     private final Object payload;
 
+    @JsonProperty("id")
     private final String id;
 
-    @JsonCreator
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     public OperationMessage(
-            @JsonProperty(value = "type", required = true) String type,
-            @JsonProperty("payload") Object payload,
-            @JsonProperty(value = "id", required = false) String id) {
-        this.type = type;
+            @NotNull String type,
+            @Nullable Object payload,
+            @Nullable String id) {
+        this.type = Objects.requireNonNull(type, "type");
         this.payload = payload;
-        this.id = id == null ? "" : id;
+        this.id = id;
     }
 
-    public OperationMessage(String type, Object payload) {
-        this(type, payload, "");
-    }
-
-    public OperationMessage(String type) {
+    @JsonCreator
+    public OperationMessage(@NotNull @JsonProperty(value = "type", required = true) String type) {
         this(type, null, "");
     }
 
+    public OperationMessage(@NotNull String type, @Nullable Object payload) {
+        this(type, payload, "");
+    }
+
+    @NotNull
     public String getType() {
         return type;
     }
 
+    @Nullable
     public Object getPayload() {
         return payload;
     }
 
+    @Nullable
     public String getId() {
         return id;
     }
 
+    @NotNull
+    public String component1() {
+        return type;
+    }
+
+    @Nullable
+    public Object component2() {
+        return payload;
+    }
+
+    @Nullable
+    public String component3() {
+        return id;
+    }
+
+    @NotNull
+    public OperationMessage copy(@NotNull String type, @Nullable Object payload, @Nullable String id) {
+        return new OperationMessage(Objects.requireNonNull(type, "type"), payload, id);
+    }
+
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         if (this == other) {
             return true;
         }
@@ -79,9 +111,13 @@ public final class OperationMessage {
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, payload, id);
+        int result = Objects.hashCode(type);
+        result = 31 * result + Objects.hashCode(payload);
+        result = 31 * result + Objects.hashCode(id);
+        return result;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "OperationMessage(type=" + type + ", payload=" + payload + ", id=" + id + ")";

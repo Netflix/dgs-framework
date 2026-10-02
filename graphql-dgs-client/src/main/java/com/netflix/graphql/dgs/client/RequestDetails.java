@@ -19,6 +19,8 @@ package com.netflix.graphql.dgs.client;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -29,22 +31,39 @@ public final class RequestDetails {
 
     @JsonCreator
     public RequestDetails(
-            @JsonProperty("requestId") String requestId,
-            @JsonProperty("edgarLink") String edgarLink) {
+            @Nullable @JsonProperty("requestId") String requestId,
+            @Nullable @JsonProperty("edgarLink") String edgarLink) {
         this.requestId = requestId;
         this.edgarLink = edgarLink;
     }
 
+    @Nullable
     public String getRequestId() {
         return requestId;
     }
 
+    @Nullable
     public String getEdgarLink() {
         return edgarLink;
     }
 
+    @Nullable
+    public String component1() {
+        return requestId;
+    }
+
+    @Nullable
+    public String component2() {
+        return edgarLink;
+    }
+
+    @NotNull
+    public RequestDetails copy(@Nullable String requestId, @Nullable String edgarLink) {
+        return new RequestDetails(requestId, edgarLink);
+    }
+
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         if (this == other) {
             return true;
         }
@@ -55,9 +74,12 @@ public final class RequestDetails {
 
     @Override
     public int hashCode() {
-        return Objects.hash(requestId, edgarLink);
+        int result = Objects.hashCode(requestId);
+        result = 31 * result + Objects.hashCode(edgarLink);
+        return result;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "RequestDetails(requestId=" + requestId + ", edgarLink=" + edgarLink + ")";

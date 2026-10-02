@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs;
 
 import org.dataloader.BatchLoaderEnvironment;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -35,6 +36,7 @@ public interface DgsDataLoaderInstrumentation {
      * @param batchLoaderEnvironment the batchLoaderEnvironment for the current execution
      * @return context object that also contains the other hooks
      */
+    @NotNull
     DgsDataLoaderInstrumentationContext onDispatch(
-            String name, List<Object> keys, BatchLoaderEnvironment batchLoaderEnvironment);
+            @NotNull String name, @NotNull List<? extends Object> keys, @NotNull BatchLoaderEnvironment batchLoaderEnvironment);
 }

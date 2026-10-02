@@ -21,6 +21,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.TypeRef;
 import com.netflix.graphql.dgs.json.DgsJsonMapper;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -36,9 +37,9 @@ public class DefaultDgsGraphQLResponse implements DgsGraphQLResponse {
     private final List<GraphQLError> errors;
 
     public DefaultDgsGraphQLResponse(
-            @Language("json") String json, Map<String, List<String>> headers, DgsJsonMapper mapper) {
+            @NotNull @Language("json") String json, @NotNull Map<String, ? extends List<String>> headers, @NotNull DgsJsonMapper mapper) {
         this.json = json;
-        this.headers = headers;
+        this.headers = asHeaders(headers);
         this.mapper = mapper;
         this.parsed = JsonPath.using(mapper.jsonPathConfiguration()).parse(json);
 
@@ -48,33 +49,43 @@ public class DefaultDgsGraphQLResponse implements DgsGraphQLResponse {
         this.errors = readErrors != null ? readErrors : List.of();
     }
 
+    @NotNull
     @Override
     public String getJson() {
         return json;
     }
 
+    @NotNull
     @Override
     public Map<String, List<String>> getHeaders() {
         return headers;
     }
 
+    @NotNull
     @Override
     public DocumentContext getParsed() {
         return parsed;
     }
 
+    @NotNull
     @Override
     public Map<String, Object> getData() {
         return data;
     }
 
+    @NotNull
     @Override
     public List<GraphQLError> getErrors() {
         return errors;
     }
 
     @Override
-    public <T> T dataAsObject(Class<T> clazz) {
+    public <T> T dataAsObject(@NotNull Class<T> clazz) {
         return mapper.convertValue(data, clazz);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, List<String>> asHeaders(Map<String, ? extends List<String>> headers) {
+        return (Map<String, List<String>>) (Map<?, ?>) headers;
     }
 }

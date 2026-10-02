@@ -27,6 +27,8 @@ import graphql.execution.instrumentation.SimplePerformantInstrumentation;
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters;
 import graphql.validation.ValidationError;
 import graphql.validation.ValidationErrorType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,11 +37,12 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class GraphQLJavaErrorInstrumentation extends SimplePerformantInstrumentation {
+    @NotNull
     @Override
     public CompletableFuture<ExecutionResult> instrumentExecutionResult(
-            ExecutionResult executionResult,
-            InstrumentationExecutionParameters parameters,
-            InstrumentationState state) {
+            @NotNull ExecutionResult executionResult,
+            @Nullable InstrumentationExecutionParameters parameters,
+            @Nullable InstrumentationState state) {
         if (!executionResult.getErrors().isEmpty()) {
             ExecutionResult.Builder<?> newExecutionResult = ExecutionResult.newExecutionResult().from(executionResult);
             List<GraphQLError> graphqlErrors = new ArrayList<>();

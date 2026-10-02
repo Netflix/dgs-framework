@@ -28,6 +28,7 @@ import com.netflix.graphql.dgs.metrics.micrometer.utils.QuerySignatureRepository
 import com.netflix.graphql.dgs.metrics.micrometer.utils.SimpleQuerySignatureRepository;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -58,10 +59,14 @@ import java.util.Optional;
         havingValue = "true",
         matchIfMissing = true)
 public class DgsGraphQLMicrometerAutoConfiguration {
+    @NotNull
     public static final String AUTO_CONF_PREFIX = "management.metrics.dgs-graphql";
+    @NotNull
     public static final String AUTO_CONF_QUERY_SIG_PREFIX = AUTO_CONF_PREFIX + ".query-signature";
+    @NotNull
     public static final String AUTO_CONF_TAG_CUSTOMIZERS = AUTO_CONF_PREFIX + ".tag-customizers";
 
+    @NotNull
     @Bean
     @Order(Ordered.LOWEST_PRECEDENCE)
     @ConditionalOnProperty(
@@ -70,12 +75,12 @@ public class DgsGraphQLMicrometerAutoConfiguration {
             havingValue = "true",
             matchIfMissing = true)
     public DgsGraphQLMetricsInstrumentation metricsInstrumentation(
-            DgsSchemaProvider dgsSchemaProvider,
-            DgsMeterRegistrySupplier meterRegistrySupplier,
-            DgsGraphQLMetricsTagsProvider tagsProvider,
-            DgsGraphQLMetricsProperties properties,
-            LimitedTagMetricResolver limitedTagMetricResolver,
-            Optional<QuerySignatureRepository> optQuerySignatureRepository) {
+            @NotNull DgsSchemaProvider dgsSchemaProvider,
+            @NotNull DgsMeterRegistrySupplier meterRegistrySupplier,
+            @NotNull DgsGraphQLMetricsTagsProvider tagsProvider,
+            @NotNull DgsGraphQLMetricsProperties properties,
+            @NotNull LimitedTagMetricResolver limitedTagMetricResolver,
+            @NotNull Optional<QuerySignatureRepository> optQuerySignatureRepository) {
         return new DgsGraphQLMetricsInstrumentation(
                 dgsSchemaProvider,
                 meterRegistrySupplier,
@@ -86,6 +91,7 @@ public class DgsGraphQLMicrometerAutoConfiguration {
                 new PropertiesAutoTimer(properties.getAutotime()));
     }
 
+    @NotNull
     @Bean
     @ConditionalOnProperty(
             prefix = AUTO_CONF_PREFIX + ".data-loader-instrumentation",
@@ -93,22 +99,24 @@ public class DgsGraphQLMicrometerAutoConfiguration {
             havingValue = "true",
             matchIfMissing = true)
     public DgsDataLoaderInstrumentationProvider dataLoaderInstrumentationProvider(
-            DgsMeterRegistrySupplier meterRegistrySupplier) {
+            @NotNull DgsMeterRegistrySupplier meterRegistrySupplier) {
         return new DgsDataLoaderInstrumentationProvider(meterRegistrySupplier);
     }
 
+    @NotNull
     @Bean
     public DgsGraphQLMetricsTagsProvider collatedMetricsTagsProvider(
-            Collection<DgsContextualTagCustomizer> contextualTagCustomizer,
-            Collection<DgsExecutionTagCustomizer> executionTagCustomizer,
-            Collection<DgsFieldFetchTagCustomizer> fieldFetchTagCustomizer) {
+            @NotNull Collection<? extends DgsContextualTagCustomizer> contextualTagCustomizer,
+            @NotNull Collection<? extends DgsExecutionTagCustomizer> executionTagCustomizer,
+            @NotNull Collection<? extends DgsFieldFetchTagCustomizer> fieldFetchTagCustomizer) {
         return new DgsGraphQLCollatedMetricsTagsProvider(
                 contextualTagCustomizer, executionTagCustomizer, fieldFetchTagCustomizer);
     }
 
+    @NotNull
     @Bean
     @ConditionalOnMissingBean
-    public LimitedTagMetricResolver spectatorLimitedTagMetricResolve(DgsGraphQLMetricsProperties properties) {
+    public LimitedTagMetricResolver spectatorLimitedTagMetricResolve(@NotNull DgsGraphQLMetricsProperties properties) {
         return new SpectatorLimitedTagMetricResolver(properties.getTags());
     }
 
@@ -124,8 +132,10 @@ public class DgsGraphQLMicrometerAutoConfiguration {
             havingValue = "true",
             matchIfMissing = true)
     public static class QuerySignatureRepositoryConfiguration {
+        @NotNull
         public static final String AUTO_CONF_QUERY_SIG_CACHING_PREFIX = AUTO_CONF_QUERY_SIG_PREFIX + ".caching";
 
+        @NotNull
         @Bean
         @ConditionalOnMissingBean(QuerySignatureRepository.class)
         @ConditionalOnProperty(
@@ -134,17 +144,18 @@ public class DgsGraphQLMicrometerAutoConfiguration {
                 havingValue = "true",
                 matchIfMissing = true)
         public QuerySignatureRepository querySignatureCacheableRepository(
-                DgsGraphQLMetricsProperties properties,
-                DgsMeterRegistrySupplier meterRegistrySupplier,
-                Optional<CacheManager> optCacheManager) {
+                @NotNull DgsGraphQLMetricsProperties properties,
+                @NotNull DgsMeterRegistrySupplier meterRegistrySupplier,
+                @NotNull Optional<CacheManager> optCacheManager) {
             return new CacheableQuerySignatureRepository(
                     new PropertiesAutoTimer(properties.getAutotime()), meterRegistrySupplier, optCacheManager);
         }
 
+        @NotNull
         @Bean
         @ConditionalOnMissingBean(QuerySignatureRepository.class)
         public QuerySignatureRepository simpleQuerySignatureRepository(
-                DgsGraphQLMetricsProperties properties, DgsMeterRegistrySupplier meterRegistrySupplier) {
+                @NotNull DgsGraphQLMetricsProperties properties, @NotNull DgsMeterRegistrySupplier meterRegistrySupplier) {
             return new SimpleQuerySignatureRepository(
                     new PropertiesAutoTimer(properties.getAutotime()), meterRegistrySupplier);
         }
@@ -152,15 +163,17 @@ public class DgsGraphQLMicrometerAutoConfiguration {
 
     @Configuration(proxyBeanMethods = false)
     public static class MeterRegistryConfiguration {
+        @NotNull
         @Bean
         @ConditionalOnMissingBean
-        public DgsMeterRegistrySupplier meterRegistrySupplier(ObjectProvider<MeterRegistry> meterRegistryProvider) {
+        public DgsMeterRegistrySupplier meterRegistrySupplier(@NotNull ObjectProvider<MeterRegistry> meterRegistryProvider) {
             return new DefaultMeterRegistrySupplier(meterRegistryProvider);
         }
     }
 
     @Configuration(proxyBeanMethods = false)
     public static class OptionalTagCustomizersConfiguration {
+        @NotNull
         @Bean
         @ConditionalOnProperty(
                 prefix = AUTO_CONF_TAG_CUSTOMIZERS + ".outcome",
@@ -180,10 +193,11 @@ public class DgsGraphQLMicrometerAutoConfiguration {
 
         private volatile MeterRegistry registry;
 
-        DefaultMeterRegistrySupplier(ObjectProvider<MeterRegistry> meterRegistryProvider) {
+        DefaultMeterRegistrySupplier(@NotNull ObjectProvider<MeterRegistry> meterRegistryProvider) {
             this.meterRegistryProvider = meterRegistryProvider;
         }
 
+        @NotNull
         @Override
         public MeterRegistry get() {
             MeterRegistry resolved = registry;

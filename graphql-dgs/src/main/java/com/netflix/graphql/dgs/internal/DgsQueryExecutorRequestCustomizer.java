@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.internal;
 
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.context.request.WebRequest;
 
@@ -26,6 +27,7 @@ public interface DgsQueryExecutorRequestCustomizer extends BiFunction<WebRequest
     /** Default no-op implementation. */
     DgsQueryExecutorRequestCustomizer DEFAULT_REQUEST_CUSTOMIZER = (request, headers) -> request;
 
+    @Nullable
     @Override
-    WebRequest apply(WebRequest request, HttpHeaders headers);
+    WebRequest apply(@Nullable WebRequest request, @Nullable HttpHeaders headers);
 }

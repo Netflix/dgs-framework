@@ -19,6 +19,8 @@ package com.netflix.graphql.dgs.reactive.internal;
 import com.netflix.graphql.dgs.context.DgsContext;
 import com.netflix.graphql.dgs.context.ReactiveDgsContext;
 import com.netflix.graphql.dgs.reactive.DgsReactiveCustomContextBuilderWithRequest;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import reactor.core.publisher.Mono;
 
@@ -29,7 +31,7 @@ public class DefaultDgsReactiveGraphQLContextBuilder {
     private final Optional<DgsReactiveCustomContextBuilderWithRequest<?>> dgsReactiveCustomContextBuilderWithRequest;
 
     public DefaultDgsReactiveGraphQLContextBuilder(
-            Optional<DgsReactiveCustomContextBuilderWithRequest<?>> dgsReactiveCustomContextBuilderWithRequest) {
+            @NotNull Optional<DgsReactiveCustomContextBuilderWithRequest<?>> dgsReactiveCustomContextBuilderWithRequest) {
         this.dgsReactiveCustomContextBuilderWithRequest = dgsReactiveCustomContextBuilderWithRequest;
     }
 
@@ -37,7 +39,8 @@ public class DefaultDgsReactiveGraphQLContextBuilder {
         this(Optional.empty());
     }
 
-    public Mono<DgsContext> build(DgsReactiveRequestData dgsRequestData) {
+    @NotNull
+    public Mono<DgsContext> build(@Nullable DgsReactiveRequestData dgsRequestData) {
         Mono<?> customContext;
         if (dgsReactiveCustomContextBuilderWithRequest.isPresent()) {
             Map<String, Object> extensions =

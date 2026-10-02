@@ -7,6 +7,7 @@
 package com.netflix.graphql.dgs.json;
 
 import com.jayway.jsonpath.Configuration;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Stable, Jackson-agnostic JSON mapping contract used across the DGS framework and its client.
@@ -16,15 +17,17 @@ import com.jayway.jsonpath.Configuration;
  * change without breaking callers.
  */
 public interface DgsJsonMapper {
-    String writeValueAsString(Object value);
+    @NotNull
+    String writeValueAsString(@NotNull Object value);
 
-    <T> T readValue(String content, Class<T> clazz);
+    <T> T readValue(@NotNull String content, @NotNull Class<T> clazz);
 
-    <T> T convertValue(Object fromValue, Class<T> toClass);
+    <T> T convertValue(@NotNull Object fromValue, @NotNull Class<T> toClass);
 
     /**
      * JsonPath configuration backed by this mapper. Used by clients that parse response bodies
      * with JsonPath.
      */
+    @NotNull
     Configuration jsonPathConfiguration();
 }

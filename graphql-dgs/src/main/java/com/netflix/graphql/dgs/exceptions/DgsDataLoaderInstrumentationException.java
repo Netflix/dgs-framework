@@ -16,10 +16,12 @@
 
 package com.netflix.graphql.dgs.exceptions;
 
+import org.jetbrains.annotations.NotNull;
+
 public class DgsDataLoaderInstrumentationException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public DgsDataLoaderInstrumentationException(String name) {
+    public DgsDataLoaderInstrumentationException(@NotNull String name) {
         super("data loader `" + name + "` is not a MappedBatchLoaderWithContext or BatchLoaderWithContext. "
                 + "Is dgs.graphql.convertAllDataLoadersToWithContext.enabled set to false?");
     }

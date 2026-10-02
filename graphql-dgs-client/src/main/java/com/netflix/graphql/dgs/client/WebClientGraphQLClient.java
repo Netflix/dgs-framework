@@ -18,10 +18,12 @@ package com.netflix.graphql.dgs.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodySpec;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
@@ -43,46 +45,49 @@ public class WebClientGraphQLClient implements MonoGraphQLClient {
     private final ObjectMapper mapper;
 
     public WebClientGraphQLClient(
-            WebClient webclient, Consumer<HttpHeaders> headersConsumer, ObjectMapper mapper) {
+            @NotNull WebClient webclient, @NotNull Consumer<HttpHeaders> headersConsumer, @NotNull ObjectMapper mapper) {
         this.webclient = webclient;
         this.headersConsumer = headersConsumer;
         this.mapper = mapper;
     }
 
-    public WebClientGraphQLClient(WebClient webclient) {
+    public WebClientGraphQLClient(@NotNull WebClient webclient) {
         this(webclient, headers -> { });
     }
 
-    public WebClientGraphQLClient(WebClient webclient, Consumer<HttpHeaders> headersConsumer) {
+    public WebClientGraphQLClient(@NotNull WebClient webclient, @NotNull Consumer<HttpHeaders> headersConsumer) {
         this(webclient, headersConsumer, GraphQLRequestOptions.createCustomObjectMapper());
     }
 
-    public WebClientGraphQLClient(WebClient webclient, GraphQLRequestOptions options) {
+    public WebClientGraphQLClient(@NotNull WebClient webclient, @NotNull GraphQLRequestOptions options) {
         this(webclient, headers -> { }, GraphQLRequestOptions.createCustomObjectMapper(options));
     }
 
-    public WebClientGraphQLClient(WebClient webclient, ObjectMapper mapper) {
+    public WebClientGraphQLClient(@NotNull WebClient webclient, @NotNull ObjectMapper mapper) {
         this(webclient, headers -> { }, mapper);
     }
 
     public WebClientGraphQLClient(
-            WebClient webclient, Consumer<HttpHeaders> headersConsumer, GraphQLRequestOptions options) {
+            @NotNull WebClient webclient, @NotNull Consumer<HttpHeaders> headersConsumer, @NotNull GraphQLRequestOptions options) {
         this(webclient, headersConsumer, GraphQLRequestOptions.createCustomObjectMapper(options));
     }
 
+    @NotNull
     @Override
-    public Mono<GraphQLResponse> reactiveExecuteQuery(@Language("graphql") String query) {
+    public Mono<GraphQLResponse> reactiveExecuteQuery(@NotNull @Language("graphql") String query) {
         return reactiveExecuteQuery(query, Map.of(), (String) null);
     }
 
+    @NotNull
     @Override
-    public Mono<GraphQLResponse> reactiveExecuteQuery(@Language("graphql") String query, Map<String, Object> variables) {
+    public Mono<GraphQLResponse> reactiveExecuteQuery(@NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables) {
         return reactiveExecuteQuery(query, variables, (String) null);
     }
 
+    @NotNull
     @Override
     public Mono<GraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query, Map<String, Object> variables, String operationName) {
+            @NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables, @Nullable String operationName) {
         return reactiveExecuteQuery(query, variables, operationName, REQUEST_BODY_URI_CUSTOMIZER_IDENTITY);
     }
 
@@ -91,8 +96,9 @@ public class WebClientGraphQLClient implements MonoGraphQLClient {
      *                                 headers consumer and serialization of the GraphQL request to the body occurs.
      *                                 In other words, the headers consumer will take precedence.
      */
+    @NotNull
     public Mono<GraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query, RequestBodyUriCustomizer requestBodyUriCustomizer) {
+            @NotNull @Language("graphql") String query, @NotNull RequestBodyUriCustomizer requestBodyUriCustomizer) {
         return reactiveExecuteQuery(query, Map.of(), null, requestBodyUriCustomizer);
     }
 
@@ -101,11 +107,12 @@ public class WebClientGraphQLClient implements MonoGraphQLClient {
      *                                 headers consumer and serialization of the GraphQL request to the body occurs.
      *                                 In other words, the headers consumer will take precedence.
      */
+    @NotNull
     public Mono<GraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query,
-            Map<String, Object> variables,
-            String operationName,
-            RequestBodyUriCustomizer requestBodyUriCustomizer) {
+            @NotNull @Language("graphql") String query,
+            @NotNull Map<String, ? extends Object> variables,
+            @Nullable String operationName,
+            @NotNull RequestBodyUriCustomizer requestBodyUriCustomizer) {
         String serializedRequest = ClientRequests.serialize(mapper, query, operationName, variables);
 
         return requestBodyUriCustomizer
@@ -139,6 +146,7 @@ public class WebClientGraphQLClient implements MonoGraphQLClient {
      */
     @FunctionalInterface
     public interface RequestBodyUriCustomizer {
-        RequestBodySpec apply(WebClient.RequestBodyUriSpec spec);
+        @NotNull
+        RequestBodySpec apply(@NotNull WebClient.RequestBodyUriSpec spec);
     }
 }

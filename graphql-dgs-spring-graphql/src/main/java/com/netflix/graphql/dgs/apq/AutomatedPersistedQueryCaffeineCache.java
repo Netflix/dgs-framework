@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.apq;
 import com.github.benmanes.caffeine.cache.Cache;
 import graphql.execution.preparsed.PreparsedDocumentEntry;
 import graphql.execution.preparsed.persisted.PersistedQueryCache;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
@@ -26,17 +27,19 @@ import java.util.function.Supplier;
 public class AutomatedPersistedQueryCaffeineCache extends AutomatedPersistedQueryCacheAdapter {
     private final Cache<String, PreparsedDocumentEntry> cache;
 
-    public AutomatedPersistedQueryCaffeineCache(Cache<String, PreparsedDocumentEntry> cache) {
+    public AutomatedPersistedQueryCaffeineCache(@NotNull Cache<String, PreparsedDocumentEntry> cache) {
         this.cache = cache;
     }
 
+    @NotNull
     public Cache<String, PreparsedDocumentEntry> getCache() {
         return cache;
     }
 
+    @NotNull
     @Override
     protected PreparsedDocumentEntry getFromCache(
-            String key, Supplier<PreparsedDocumentEntry> documentEntrySupplier) {
+            @NotNull String key, @NotNull Supplier<PreparsedDocumentEntry> documentEntrySupplier) {
         return cache.get(key, ignored -> documentEntrySupplier.get());
     }
 }

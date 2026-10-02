@@ -18,16 +18,18 @@ package com.netflix.graphql.dgs.internal.method;
 
 import com.netflix.graphql.dgs.Source;
 import graphql.schema.DataFetchingEnvironment;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.MethodParameter;
 
 public class SourceArgumentResolver implements ArgumentResolver {
     @Override
-    public boolean supportsParameter(MethodParameter parameter) {
+    public boolean supportsParameter(@NotNull MethodParameter parameter) {
         return parameter.hasParameterAnnotation(Source.class);
     }
 
+    @NotNull
     @Override
-    public Object resolveArgument(MethodParameter parameter, DataFetchingEnvironment dfe) {
+    public Object resolveArgument(@NotNull MethodParameter parameter, @NotNull DataFetchingEnvironment dfe) {
         Object source = dfe.getSource();
         if (source == null) {
             throw new IllegalArgumentException(

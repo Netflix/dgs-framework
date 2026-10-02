@@ -23,13 +23,14 @@ import com.netflix.graphql.types.subscription.OperationMessageType;
 import com.netflix.graphql.types.subscription.QueryPayload;
 import graphql.GraphQLException;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.web.reactive.socket.client.ReactorNettyWebSocketClient;
 import org.springframework.web.reactive.socket.client.WebSocketClient;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.io.UncheckedIOException;
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -61,7 +62,7 @@ public class WebSocketGraphQLClient implements ReactiveGraphQLClient {
     private final AtomicReference<Disposable> connection = new AtomicReference<>(null);
     private final Mono<Void> handshake;
 
-    public WebSocketGraphQLClient(OperationMessageWebSocketClient client, Duration acknowledgementTimeout) {
+    public WebSocketGraphQLClient(@NotNull OperationMessageWebSocketClient client, @NotNull Duration acknowledgementTimeout) {
         this.client = client;
         this.acknowledgementTimeout = acknowledgementTimeout;
         this.handshake = Mono.defer(() -> {
@@ -72,33 +73,35 @@ public class WebSocketGraphQLClient implements ReactiveGraphQLClient {
         });
     }
 
-    public WebSocketGraphQLClient(String url, WebSocketClient client, Duration acknowledgementTimeout) {
+    public WebSocketGraphQLClient(@NotNull String url, @NotNull WebSocketClient client, @NotNull Duration acknowledgementTimeout) {
         this(new OperationMessageWebSocketClient(url, client), acknowledgementTimeout);
     }
 
-    public WebSocketGraphQLClient(String url, WebSocketClient client) {
+    public WebSocketGraphQLClient(@NotNull String url, @NotNull WebSocketClient client) {
         this(new OperationMessageWebSocketClient(url, client), DEFAULT_ACKNOWLEDGEMENT_TIMEOUT);
     }
 
-    public WebSocketGraphQLClient(String url) {
+    public WebSocketGraphQLClient(@NotNull String url) {
         this(new OperationMessageWebSocketClient(url, new ReactorNettyWebSocketClient()),
                 DEFAULT_ACKNOWLEDGEMENT_TIMEOUT);
     }
 
-    public WebSocketGraphQLClient(OperationMessageWebSocketClient client) {
+    public WebSocketGraphQLClient(@NotNull OperationMessageWebSocketClient client) {
         this(client, DEFAULT_ACKNOWLEDGEMENT_TIMEOUT);
     }
 
+    @NotNull
     @Override
     public Flux<GraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query, Map<String, Object> variables) {
+            @NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables) {
         return reactiveExecuteQuery(query, variables, null);
     }
 
+    @NotNull
     @Override
     @SuppressWarnings("unchecked")
     public Flux<GraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query, Map<String, Object> variables, String operationName) {
+            @NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables, @Nullable String operationName) {
         // Generate a unique number for each subscription in the same session.
         String subscriptionId = String.valueOf(subscriptionCount.incrementAndGet());
         OperationMessage queryMessage =
@@ -158,7 +161,7 @@ public class WebSocketGraphQLClient implements ReactiveGraphQLClient {
             try {
                 return Flux.just(new GraphQLResponse(MAPPER.writeValueAsString(payload)));
             } catch (JsonProcessingException e) {
-                throw new UncheckedIOException(e);
+                throw Jackson2ExceptionSupport.rethrow(e);
             }
         }
         // Convert errors received from the server into exceptions, does not include GraphQL execution errors which

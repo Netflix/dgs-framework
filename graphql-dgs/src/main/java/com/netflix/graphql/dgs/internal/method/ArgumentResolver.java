@@ -17,6 +17,8 @@
 package com.netflix.graphql.dgs.internal.method;
 
 import graphql.schema.DataFetchingEnvironment;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -34,7 +36,7 @@ public interface ArgumentResolver {
      * @param parameter the method parameter to check
      * @return boolean indicating if this resolver supports the supplied parameter
      */
-    boolean supportsParameter(MethodParameter parameter);
+    boolean supportsParameter(@NotNull MethodParameter parameter);
 
     /**
      * Resolves a method parameter into an argument value for a @DgsData annotated method.
@@ -44,5 +46,6 @@ public interface ArgumentResolver {
      * @param dfe the associated {@link DataFetchingEnvironment} for the current request
      * @return the resolved argument value
      */
-    Object resolveArgument(MethodParameter parameter, DataFetchingEnvironment dfe);
+    @Nullable
+    Object resolveArgument(@NotNull MethodParameter parameter, @NotNull DataFetchingEnvironment dfe);
 }

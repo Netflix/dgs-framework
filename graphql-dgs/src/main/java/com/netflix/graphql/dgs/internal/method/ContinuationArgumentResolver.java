@@ -18,6 +18,8 @@ package com.netflix.graphql.dgs.internal.method;
 
 import graphql.schema.DataFetchingEnvironment;
 import kotlin.coroutines.Continuation;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.core.CoroutinesUtils;
 import org.springframework.core.MethodParameter;
 
@@ -28,12 +30,13 @@ import org.springframework.core.MethodParameter;
  */
 public class ContinuationArgumentResolver implements ArgumentResolver {
     @Override
-    public boolean supportsParameter(MethodParameter parameter) {
+    public boolean supportsParameter(@NotNull MethodParameter parameter) {
         return parameter.getParameterType() == Continuation.class;
     }
 
+    @Nullable
     @Override
-    public Object resolveArgument(MethodParameter parameter, DataFetchingEnvironment dfe) {
+    public Object resolveArgument(@NotNull MethodParameter parameter, @NotNull DataFetchingEnvironment dfe) {
         return null;
     }
 }

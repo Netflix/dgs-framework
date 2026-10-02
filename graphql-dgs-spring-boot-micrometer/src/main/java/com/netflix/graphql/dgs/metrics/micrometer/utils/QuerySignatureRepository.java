@@ -23,6 +23,8 @@ import graphql.language.AstSignature;
 import graphql.language.Document;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -57,27 +59,45 @@ public interface QuerySignatureRepository {
         return new QuerySignature(querySignature, querySigHash);
     }
 
-    Optional<QuerySignature> get(Document document, InstrumentationExecutionParameters parameters);
+    @NotNull
+    Optional<QuerySignature> get(@NotNull Document document, @NotNull InstrumentationExecutionParameters parameters);
 
     final class QuerySignature {
         private final String value;
         private final String hash;
 
-        public QuerySignature(String value, String hash) {
+        public QuerySignature(@NotNull String value, @NotNull String hash) {
             this.value = value;
             this.hash = hash;
         }
 
+        @NotNull
         public String getValue() {
             return value;
         }
 
+        @NotNull
         public String getHash() {
             return hash;
         }
 
+        @NotNull
+        public String component1() {
+            return value;
+        }
+
+        @NotNull
+        public String component2() {
+            return hash;
+        }
+
+        @NotNull
+        public QuerySignature copy(@NotNull String value, @NotNull String hash) {
+            return new QuerySignature(value, hash);
+        }
+
         @Override
-        public boolean equals(Object other) {
+        public boolean equals(@Nullable Object other) {
             if (this == other) {
                 return true;
             }
@@ -88,9 +108,12 @@ public interface QuerySignatureRepository {
 
         @Override
         public int hashCode() {
-            return Objects.hash(value, hash);
+            int result = Objects.hashCode(value);
+            result = 31 * result + Objects.hashCode(hash);
+            return result;
         }
 
+        @NotNull
         @Override
         public String toString() {
             return "QuerySignature(value=" + value + ", hash=" + hash + ")";

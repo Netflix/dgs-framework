@@ -16,10 +16,12 @@
 
 package com.netflix.graphql.dgs.exceptions;
 
+import org.jetbrains.annotations.NotNull;
+
 public class MissingDgsEntityFetcherException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public MissingDgsEntityFetcherException(String type) {
+    public MissingDgsEntityFetcherException(@NotNull String type) {
         super("Missing @DgsEntityFetcher for type " + type);
     }
 }

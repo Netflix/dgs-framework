@@ -30,7 +30,7 @@ final class GraphQLClients {
     private GraphQLClients() {
     }
 
-    static Map<String, Object> toRequestMap(String query, String operationName, Map<String, Object> variables) {
+    static Map<String, Object> toRequestMap(String query, String operationName, Map<String, ? extends Object> variables) {
         Map<String, Object> request = new HashMap<>();
         request.put("query", query);
         request.put("operationName", operationName);

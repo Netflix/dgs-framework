@@ -16,6 +16,8 @@
 
 package com.netflix.graphql.dgs.client;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.Map;
 
@@ -31,5 +33,6 @@ public interface RequestExecutor {
      * @param body The request body
      * @return HttpResponse which is a representation of the HTTP status code and the response body as a String.
      */
-    HttpResponse execute(String url, Map<String, ? extends List<String>> headers, String body);
+    @NotNull
+    HttpResponse execute(@NotNull String url, @NotNull Map<String, ? extends List<String>> headers, @NotNull String body);
 }

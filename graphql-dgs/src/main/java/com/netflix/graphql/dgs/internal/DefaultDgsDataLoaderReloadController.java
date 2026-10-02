@@ -17,6 +17,8 @@
 package com.netflix.graphql.dgs.internal;
 
 import com.netflix.graphql.dgs.DgsDataLoaderReloadController;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -43,7 +45,7 @@ public class DefaultDgsDataLoaderReloadController implements DgsDataLoaderReload
     private volatile Long lastReloadDuration;
     private final AtomicLong totalReloads = new AtomicLong(0);
 
-    public DefaultDgsDataLoaderReloadController(ReloadableDgsDataLoaderProvider reloadableProvider) {
+    public DefaultDgsDataLoaderReloadController(@NotNull ReloadableDgsDataLoaderProvider reloadableProvider) {
         this.reloadableProvider = reloadableProvider;
     }
 
@@ -83,7 +85,7 @@ public class DefaultDgsDataLoaderReloadController implements DgsDataLoaderReload
      * @return true if reload was successful, false if an error occurred
      */
     @Override
-    public boolean reloadDataLoaders(ApplicationContext applicationContext) {
+    public boolean reloadDataLoaders(@NotNull ApplicationContext applicationContext) {
         logger.info(
                 "Programmatic data loader reload requested for application context {}:{}.",
                 applicationContext.getId(),
@@ -142,6 +144,7 @@ public class DefaultDgsDataLoaderReloadController implements DgsDataLoaderReload
      *
      * @return Instant of last reload, or null if no reloads have been performed
      */
+    @Nullable
     @Override
     public Instant getLastReloadTime() {
         return lastReloadTime;
@@ -152,6 +155,7 @@ public class DefaultDgsDataLoaderReloadController implements DgsDataLoaderReload
      *
      * @return DgsDataLoaderReloadStats containing current reload information
      */
+    @NotNull
     @Override
     public DgsDataLoaderReloadStats getReloadStats() {
         return new DgsDataLoaderReloadStats(totalReloads.get(), lastReloadTime, lastReloadDuration, true);

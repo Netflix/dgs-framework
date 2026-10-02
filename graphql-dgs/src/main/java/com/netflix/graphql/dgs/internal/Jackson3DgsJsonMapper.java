@@ -21,6 +21,7 @@ import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.spi.json.Jackson3JsonProvider;
 import com.jayway.jsonpath.spi.mapper.Jackson3MappingProvider;
 import com.netflix.graphql.dgs.json.DgsJsonMapper;
+import org.jetbrains.annotations.NotNull;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
@@ -40,21 +41,23 @@ public class Jackson3DgsJsonMapper implements DgsJsonMapper {
             .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
             .build();
 
+    @NotNull
     @Override
-    public String writeValueAsString(Object value) {
+    public String writeValueAsString(@NotNull Object value) {
         return mapper.writeValueAsString(value);
     }
 
     @Override
-    public <T> T readValue(String content, Class<T> clazz) {
+    public <T> T readValue(@NotNull String content, @NotNull Class<T> clazz) {
         return mapper.readValue(content, clazz);
     }
 
     @Override
-    public <T> T convertValue(Object fromValue, Class<T> toClass) {
+    public <T> T convertValue(@NotNull Object fromValue, @NotNull Class<T> toClass) {
         return mapper.convertValue(fromValue, toClass);
     }
 
+    @NotNull
     @Override
     public Configuration jsonPathConfiguration() {
         return Configuration

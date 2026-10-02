@@ -17,6 +17,7 @@
 package com.netflix.graphql.types.subscription;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
@@ -24,11 +25,13 @@ import java.util.HashMap;
 public final class EmptyPayload extends HashMap<String, Object> implements MessagePayload {
     private static final long serialVersionUID = 1L;
 
+    @NotNull
     public static final EmptyPayload INSTANCE = new EmptyPayload();
 
     private EmptyPayload() {
     }
 
+    @NotNull
     @JsonCreator
     public static EmptyPayload emptyPayload() {
         return INSTANCE;

@@ -46,8 +46,8 @@ import graphql.language.Document;
 import graphql.language.Field;
 import graphql.language.FragmentSpread;
 import graphql.language.InlineFragment;
-import graphql.language.OperationDefinition;
 import graphql.language.OperationDefinition.Operation;
+import graphql.language.OperationDefinition;
 import graphql.language.Selection;
 import graphql.schema.DataFetcher;
 import graphql.schema.GraphQLNamedType;
@@ -56,6 +56,8 @@ import graphql.validation.ValidationError;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Timer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.data.metrics.AutoTimer;
@@ -83,13 +85,13 @@ public class DgsGraphQLMetricsInstrumentation extends SimplePerformantInstrument
     private final AutoTimer autoTimer;
 
     public DgsGraphQLMetricsInstrumentation(
-            DgsSchemaProvider schemaProvider,
-            DgsMeterRegistrySupplier registrySupplier,
-            DgsGraphQLMetricsTagsProvider tagsProvider,
-            DgsGraphQLMetricsProperties properties,
-            LimitedTagMetricResolver limitedTagMetricResolver,
-            Optional<QuerySignatureRepository> optQuerySignatureRepository,
-            AutoTimer autoTimer) {
+            @NotNull DgsSchemaProvider schemaProvider,
+            @NotNull DgsMeterRegistrySupplier registrySupplier,
+            @NotNull DgsGraphQLMetricsTagsProvider tagsProvider,
+            @NotNull DgsGraphQLMetricsProperties properties,
+            @NotNull LimitedTagMetricResolver limitedTagMetricResolver,
+            @NotNull Optional<QuerySignatureRepository> optQuerySignatureRepository,
+            @NotNull AutoTimer autoTimer) {
         this.schemaProvider = schemaProvider;
         this.registrySupplier = registrySupplier;
         this.tagsProvider = tagsProvider;
@@ -100,12 +102,12 @@ public class DgsGraphQLMetricsInstrumentation extends SimplePerformantInstrument
     }
 
     public DgsGraphQLMetricsInstrumentation(
-            DgsSchemaProvider schemaProvider,
-            DgsMeterRegistrySupplier registrySupplier,
-            DgsGraphQLMetricsTagsProvider tagsProvider,
-            DgsGraphQLMetricsProperties properties,
-            LimitedTagMetricResolver limitedTagMetricResolver,
-            AutoTimer autoTimer) {
+            @NotNull DgsSchemaProvider schemaProvider,
+            @NotNull DgsMeterRegistrySupplier registrySupplier,
+            @NotNull DgsGraphQLMetricsTagsProvider tagsProvider,
+            @NotNull DgsGraphQLMetricsProperties properties,
+            @NotNull LimitedTagMetricResolver limitedTagMetricResolver,
+            @NotNull AutoTimer autoTimer) {
         this(
                 schemaProvider,
                 registrySupplier,
@@ -116,15 +118,17 @@ public class DgsGraphQLMetricsInstrumentation extends SimplePerformantInstrument
                 autoTimer);
     }
 
+    @NotNull
     @Deprecated
     @Override
-    public InstrumentationState createState(InstrumentationCreateStateParameters parameters) {
+    public InstrumentationState createState(@NotNull InstrumentationCreateStateParameters parameters) {
         return new MetricsInstrumentationState(registrySupplier.get(), limitedTagMetricResolver);
     }
 
+    @NotNull
     @Override
     public InstrumentationContext<ExecutionResult> beginExecution(
-            InstrumentationExecutionParameters parameters, InstrumentationState state) {
+            @NotNull InstrumentationExecutionParameters parameters, @NotNull InstrumentationState state) {
         if (!properties.getQuery().isEnabled()) {
             return SimpleInstrumentationContext.noOp();
         }
@@ -144,9 +148,10 @@ public class DgsGraphQLMetricsInstrumentation extends SimplePerformantInstrument
         });
     }
 
+    @NotNull
     @Override
     public CompletableFuture<ExecutionResult> instrumentExecutionResult(
-            ExecutionResult executionResult, InstrumentationExecutionParameters parameters, InstrumentationState state) {
+            @NotNull ExecutionResult executionResult, @NotNull InstrumentationExecutionParameters parameters, @NotNull InstrumentationState state) {
         MetricsInstrumentationState metricsState = requireMetricsState(state);
 
         // if this is an error due to PersistedQueryNotFound, we exclude from the gql.error metric
@@ -190,9 +195,10 @@ public class DgsGraphQLMetricsInstrumentation extends SimplePerformantInstrument
         return CompletableFuture.completedFuture(executionResult);
     }
 
+    @NotNull
     @Override
     public DataFetcher<?> instrumentDataFetcher(
-            DataFetcher<?> dataFetcher, InstrumentationFieldFetchParameters parameters, InstrumentationState state) {
+            @NotNull DataFetcher<?> dataFetcher, @NotNull InstrumentationFieldFetchParameters parameters, @NotNull InstrumentationState state) {
         MetricsInstrumentationState metricsState = requireMetricsState(state);
         String gqlField = TagUtils.resolveDataFetcherTagValue(parameters);
 
@@ -248,9 +254,10 @@ public class DgsGraphQLMetricsInstrumentation extends SimplePerformantInstrument
      * Port the implementation from MaxQueryComplexityInstrumentation in graphql-java and store the computed complexity
      * in the MetricsInstrumentationState for access to add tags to metrics.
      */
+    @NotNull
     @Override
     public InstrumentationContext<List<ValidationError>> beginValidation(
-            InstrumentationValidationParameters parameters, InstrumentationState state) {
+            @NotNull InstrumentationValidationParameters parameters, @NotNull InstrumentationState state) {
         MetricsInstrumentationState metricsState = requireMetricsState(state);
         Document document = parameters.getDocument();
         if (document == null) {
@@ -269,9 +276,10 @@ public class DgsGraphQLMetricsInstrumentation extends SimplePerformantInstrument
         });
     }
 
+    @Nullable
     @Override
     public InstrumentationContext<ExecutionResult> beginExecuteOperation(
-            InstrumentationExecuteOperationParameters parameters, InstrumentationState state) {
+            @NotNull InstrumentationExecuteOperationParameters parameters, @NotNull InstrumentationState state) {
         MetricsInstrumentationState metricsState = requireMetricsState(state);
         if (parameters.getExecutionContext().getRoot() == null) {
             metricsState.operationValue =
@@ -373,7 +381,7 @@ public class DgsGraphQLMetricsInstrumentation extends SimplePerformantInstrument
         String queryTypeValue = PersistedQueryType.NOT_APQ.name();
 
         public MetricsInstrumentationState(
-                MeterRegistry registry, LimitedTagMetricResolver limitedTagMetricResolver) {
+                @NotNull MeterRegistry registry, @NotNull LimitedTagMetricResolver limitedTagMetricResolver) {
             this.registry = registry;
             this.limitedTagMetricResolver = limitedTagMetricResolver;
         }
@@ -386,18 +394,22 @@ public class DgsGraphQLMetricsInstrumentation extends SimplePerformantInstrument
             this.isIntrospectionQuery = introspectionQuery;
         }
 
+        @NotNull
         public Optional<Integer> getQueryComplexity() {
             return Optional.ofNullable(queryComplexityValue);
         }
 
+        @NotNull
         public Optional<String> getOperation() {
             return Optional.ofNullable(operationValue).map(Enum::name);
         }
 
+        @NotNull
         public Optional<String> getOperationName() {
             return Optional.ofNullable(operationNameValue);
         }
 
+        @NotNull
         public Optional<QuerySignatureRepository.QuerySignature> getQuerySignature() {
             return Optional.ofNullable(querySignatureValue);
         }
@@ -406,12 +418,13 @@ public class DgsGraphQLMetricsInstrumentation extends SimplePerformantInstrument
             this.timerSample = Timer.start(this.registry);
         }
 
-        public void stopTimer(Timer.Builder timer) {
+        public void stopTimer(@NotNull Timer.Builder timer) {
             if (this.timerSample != null) {
                 this.timerSample.stop(timer.register(this.registry));
             }
         }
 
+        @NotNull
         @Internal
         public Iterable<Tag> tags() {
             List<Tag> tags = new ArrayList<>();
@@ -446,7 +459,7 @@ public class DgsGraphQLMetricsInstrumentation extends SimplePerformantInstrument
         private QueryUtils() {
         }
 
-        static boolean isIntrospectionQuery(ExecutionInput input) {
+        static boolean isIntrospectionQuery(@NotNull ExecutionInput input) {
             return input.getQuery().contains("query IntrospectionQuery")
                     || "IntrospectionQuery".equals(input.getOperationName());
         }
@@ -462,7 +475,8 @@ public class DgsGraphQLMetricsInstrumentation extends SimplePerformantInstrument
         private ComplexityUtils() {
         }
 
-        static Integer resolveComplexity(InstrumentationExecuteOperationParameters parameters) {
+        @Nullable
+        static Integer resolveComplexity(@NotNull InstrumentationExecuteOperationParameters parameters) {
             ExecutionContext executionContext = parameters.getExecutionContext();
             QueryComplexityCalculator complexityCalculator =
                     QueryComplexityCalculator
@@ -492,21 +506,24 @@ public class DgsGraphQLMetricsInstrumentation extends SimplePerformantInstrument
     static final class TagUtils {
         private static final Set<String> INSTRUMENTATION_IGNORES = Set.of("__typename", "__Schema", "__Type");
 
+        @NotNull
         static final String TAG_VALUE_ANONYMOUS = "anonymous";
+        @NotNull
         static final String TAG_VALUE_NONE = "none";
         static final String TAG_VALUE_UNKNOWN = ErrorType.UNKNOWN.name();
 
         private TagUtils() {
         }
 
-        static String resolveDataFetcherTagValue(InstrumentationFieldFetchParameters parameters) {
+        @NotNull
+        static String resolveDataFetcherTagValue(@NotNull InstrumentationFieldFetchParameters parameters) {
             var type = parameters.getExecutionStepInfo().getParent().getType();
             GraphQLNamedType parentType = GraphQLTypeUtil.unwrapNonNullAs(type);
             return parentType.getName() + "."
                     + parameters.getExecutionStepInfo().getField().getSingleField().getName();
         }
 
-        static boolean shouldIgnoreTag(String tag) {
+        static boolean shouldIgnoreTag(@NotNull String tag) {
             return INSTRUMENTATION_IGNORES.stream().anyMatch(tag::contains);
         }
     }
@@ -515,7 +532,8 @@ public class DgsGraphQLMetricsInstrumentation extends SimplePerformantInstrument
         private ErrorUtils() {
         }
 
-        static Collection<ErrorTagValues> sanitizeErrorPaths(List<GraphQLError> errors) {
+        @NotNull
+        static Collection<ErrorTagValues> sanitizeErrorPaths(@NotNull List<GraphQLError> errors) {
             Map<String, ErrorTagValues> dedupeErrorPaths = new LinkedHashMap<>();
             for (GraphQLError error : errors) {
                 List<Object> errorPath;
@@ -570,7 +588,63 @@ public class DgsGraphQLMetricsInstrumentation extends SimplePerformantInstrument
             return value != null ? value.toString() : defaultValue;
         }
 
-        record ErrorTagValues(String path, String type, String detail) {
+        public record ErrorTagValues(@NotNull String path, @NotNull String type, @NotNull String detail) {
+            @NotNull
+            public String getPath() {
+                return path;
+            }
+
+            @NotNull
+            public String getType() {
+                return type;
+            }
+
+            @NotNull
+            public String getDetail() {
+                return detail;
+            }
+
+            @NotNull
+            public String component1() {
+                return path;
+            }
+
+            @NotNull
+            public String component2() {
+                return type;
+            }
+
+            @NotNull
+            public String component3() {
+                return detail;
+            }
+
+            @NotNull
+            public ErrorTagValues copy(@NotNull String path, @NotNull String type, @NotNull String detail) {
+                return new ErrorTagValues(path, type, detail);
+            }
+
+            @Override
+            public boolean equals(@Nullable Object other) {
+                return this == other || other instanceof ErrorTagValues that
+                        && java.util.Objects.equals(path, that.path)
+                        && java.util.Objects.equals(type, that.type)
+                        && java.util.Objects.equals(detail, that.detail);
+            }
+
+            @Override
+            public int hashCode() {
+                int result = java.util.Objects.hashCode(path);
+                result = 31 * result + java.util.Objects.hashCode(type);
+                result = 31 * result + java.util.Objects.hashCode(detail);
+                return result;
+            }
+
+            @NotNull
+            @Override
+            public String toString() {
+                return "ErrorTagValues(path=" + path + ", type=" + type + ", detail=" + detail + ")";
+            }
         }
     }
 }

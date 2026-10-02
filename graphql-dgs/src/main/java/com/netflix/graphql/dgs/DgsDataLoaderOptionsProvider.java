@@ -17,8 +17,10 @@
 package com.netflix.graphql.dgs;
 
 import org.dataloader.DataLoaderOptions;
+import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface
 public interface DgsDataLoaderOptionsProvider {
-    DataLoaderOptions.Builder getOptions(String dataLoaderName, DgsDataLoader annotation);
+    @NotNull
+    DataLoaderOptions.Builder getOptions(@NotNull String dataLoaderName, @NotNull DgsDataLoader annotation);
 }

@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.internal.method;
 
 import com.netflix.graphql.dgs.DgsDataFetchingEnvironment;
 import graphql.schema.DataFetchingEnvironment;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.MethodParameter;
 
@@ -28,18 +29,19 @@ import org.springframework.core.MethodParameter;
 public class DataFetchingEnvironmentArgumentResolver implements ArgumentResolver {
     private final ApplicationContext ctx;
 
-    public DataFetchingEnvironmentArgumentResolver(ApplicationContext ctx) {
+    public DataFetchingEnvironmentArgumentResolver(@NotNull ApplicationContext ctx) {
         this.ctx = ctx;
     }
 
     @Override
-    public boolean supportsParameter(MethodParameter parameter) {
+    public boolean supportsParameter(@NotNull MethodParameter parameter) {
         return parameter.getParameterType() == DgsDataFetchingEnvironment.class
                 || parameter.getParameterType() == DataFetchingEnvironment.class;
     }
 
+    @NotNull
     @Override
-    public Object resolveArgument(MethodParameter parameter, DataFetchingEnvironment dfe) {
+    public Object resolveArgument(@NotNull MethodParameter parameter, @NotNull DataFetchingEnvironment dfe) {
         if (parameter.getParameterType() == DgsDataFetchingEnvironment.class
                 && !(dfe instanceof DgsDataFetchingEnvironment)) {
             return new DgsDataFetchingEnvironment(dfe, ctx);

@@ -18,6 +18,8 @@ package com.netflix.graphql.dgs.client;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.TypeRef;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -31,23 +33,28 @@ public interface DgsGraphQLResponse {
         return GraphQLResponseSupport.dataPath(path);
     }
 
+    @NotNull
     String getJson();
 
+    @NotNull
     Map<String, List<String>> getHeaders();
 
+    @NotNull
     DocumentContext getParsed();
 
+    @NotNull
     Map<String, Object> getData();
 
+    @NotNull
     List<GraphQLError> getErrors();
 
-    <T> T dataAsObject(Class<T> clazz);
+    <T> T dataAsObject(@NotNull Class<T> clazz);
 
     /**
      * Extract a value at {@code path}. Returns whatever type the caller binds to — for JSON objects
      * this is a Map. Use {@link #extractValueAsObject} to deserialize into a specific class instead.
      */
-    default <T> T extractValue(String path) {
+    default <T> T extractValue(@NotNull String path) {
         String dataPath = getDataPath(path);
         try {
             return getParsed().read(dataPath);
@@ -57,7 +64,7 @@ public interface DgsGraphQLResponse {
         }
     }
 
-    default <T> T extractValueAsObject(String path, Class<T> clazz) {
+    default <T> T extractValueAsObject(@NotNull String path, @NotNull Class<T> clazz) {
         String dataPath = getDataPath(path);
         try {
             return getParsed().read(dataPath, clazz);
@@ -68,7 +75,7 @@ public interface DgsGraphQLResponse {
     }
 
     /** Use this overload for generic types like {@code List<Foo>}. */
-    default <T> T extractValueAsObject(String path, TypeRef<T> typeRef) {
+    default <T> T extractValueAsObject(@NotNull String path, @NotNull TypeRef<T> typeRef) {
         String dataPath = getDataPath(path);
         try {
             return getParsed().read(dataPath, typeRef);
@@ -78,6 +85,7 @@ public interface DgsGraphQLResponse {
         }
     }
 
+    @Nullable
     default RequestDetails getRequestDetails() {
         return extractValueAsObject("gatewayRequestDetails", RequestDetails.class);
     }

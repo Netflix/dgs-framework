@@ -18,16 +18,18 @@ package com.netflix.graphql.dgs.internal;
 
 import com.netflix.graphql.dgs.DgsDataFetchingEnvironment;
 import graphql.language.OperationDefinition;
+import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Flux;
 
 public class FluxDataFetcherResultProcessor implements DataFetcherResultProcessor {
     @Override
-    public boolean supportsType(Object originalResult) {
+    public boolean supportsType(@NotNull Object originalResult) {
         return originalResult instanceof Flux<?>;
     }
 
+    @NotNull
     @Override
-    public Object process(Object originalResult, DgsDataFetchingEnvironment dfe) {
+    public Object process(@NotNull Object originalResult, @NotNull DgsDataFetchingEnvironment dfe) {
         if (!(originalResult instanceof Flux<?> flux)) {
             throw new IllegalArgumentException("Instance passed to " + getClass().getName()
                     + " was not a Flux<*>. It was a " + originalResult.getClass().getName() + " instead");

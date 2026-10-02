@@ -18,6 +18,8 @@ package com.netflix.graphql.dgs.client;
 
 import com.netflix.graphql.dgs.json.DgsJsonMapper;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
@@ -36,37 +38,40 @@ public class DgsRestClientGraphQLClient implements DgsGraphQLClient {
     private final DgsJsonMapper mapper;
 
     public DgsRestClientGraphQLClient(
-            RestClient restClient, Consumer<HttpHeaders> headersConsumer, DgsJsonMapper mapper) {
+            @NotNull RestClient restClient, @NotNull Consumer<HttpHeaders> headersConsumer, @NotNull DgsJsonMapper mapper) {
         this.restClient = restClient;
         this.headersConsumer = headersConsumer;
         this.mapper = mapper;
     }
 
-    public DgsRestClientGraphQLClient(RestClient restClient) {
+    public DgsRestClientGraphQLClient(@NotNull RestClient restClient) {
         this(restClient, headers -> { });
     }
 
-    public DgsRestClientGraphQLClient(RestClient restClient, Consumer<HttpHeaders> headersConsumer) {
+    public DgsRestClientGraphQLClient(@NotNull RestClient restClient, @NotNull Consumer<HttpHeaders> headersConsumer) {
         this(restClient, headersConsumer, Jackson3DgsJsonMapperAdapter.defaultMapper());
     }
 
-    public DgsRestClientGraphQLClient(RestClient restClient, DgsGraphQLRequestOptions options) {
+    public DgsRestClientGraphQLClient(@NotNull RestClient restClient, @NotNull DgsGraphQLRequestOptions options) {
         this(restClient, headers -> { }, Jackson3DgsJsonMapperAdapter.fromOptions(options));
     }
 
+    @NotNull
     @Override
-    public DgsGraphQLResponse executeQuery(@Language("graphql") String query) {
+    public DgsGraphQLResponse executeQuery(@NotNull @Language("graphql") String query) {
         return executeQuery(query, Map.of(), null);
     }
 
+    @NotNull
     @Override
-    public DgsGraphQLResponse executeQuery(@Language("graphql") String query, Map<String, Object> variables) {
+    public DgsGraphQLResponse executeQuery(@NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables) {
         return executeQuery(query, variables, null);
     }
 
+    @NotNull
     @Override
     public DgsGraphQLResponse executeQuery(
-            @Language("graphql") String query, Map<String, Object> variables, String operationName) {
+            @NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables, @Nullable String operationName) {
         String serializedRequest = mapper.writeValueAsString(GraphQLClients.toRequestMap(query, operationName, variables));
 
         ResponseEntity<String> responseEntity =

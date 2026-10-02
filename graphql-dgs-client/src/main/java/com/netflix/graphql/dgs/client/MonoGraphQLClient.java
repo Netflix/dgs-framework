@@ -18,6 +18,8 @@ package com.netflix.graphql.dgs.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -37,23 +39,27 @@ public interface MonoGraphQLClient extends DgsMonoGraphQLClient {
      * A reactive call to execute a query and parse its result.
      * Don't forget to subscribe() to actually send the query!
      */
+    @NotNull
     @Override
-    Mono<GraphQLResponse> reactiveExecuteQuery(@Language("graphql") String query);
+    Mono<GraphQLResponse> reactiveExecuteQuery(@NotNull @Language("graphql") String query);
 
+    @NotNull
     @Override
-    Mono<GraphQLResponse> reactiveExecuteQuery(@Language("graphql") String query, Map<String, Object> variables);
+    Mono<GraphQLResponse> reactiveExecuteQuery(@NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables);
 
+    @NotNull
     @Override
     Mono<GraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query, Map<String, Object> variables, String operationName);
+            @NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables, @Nullable String operationName);
 
     /**
      * @deprecated The RequestExecutor should be provided while creating the implementation.
      *             Use CustomGraphQLClient/CustomMonoGraphQLClient instead.
      */
+    @NotNull
     @Deprecated
     default Mono<GraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query, Map<String, Object> variables, MonoRequestExecutor requestExecutor) {
+            @NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables, @NotNull MonoRequestExecutor requestExecutor) {
         throw new UnsupportedOperationException();
     }
 
@@ -61,43 +67,51 @@ public interface MonoGraphQLClient extends DgsMonoGraphQLClient {
      * @deprecated The RequestExecutor should be provided while creating the implementation.
      *             Use CustomGraphQLClient/CustomMonoGraphQLClient instead.
      */
+    @NotNull
     @Deprecated
     default Mono<GraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query,
-            Map<String, Object> variables,
-            String operationName,
-            MonoRequestExecutor requestExecutor) {
+            @NotNull @Language("graphql") String query,
+            @NotNull Map<String, ? extends Object> variables,
+            @Nullable String operationName,
+            @NotNull MonoRequestExecutor requestExecutor) {
         throw new UnsupportedOperationException();
     }
 
+    @NotNull
     static CustomMonoGraphQLClient createCustomReactive(
-            @Language("url") String url, MonoRequestExecutor requestExecutor) {
+            @NotNull @Language("url") String url, @NotNull MonoRequestExecutor requestExecutor) {
         return new CustomMonoGraphQLClient(url, requestExecutor);
     }
 
+    @NotNull
     static CustomMonoGraphQLClient createCustomReactive(
-            @Language("url") String url, MonoRequestExecutor requestExecutor, GraphQLRequestOptions options) {
+            @NotNull @Language("url") String url, @NotNull MonoRequestExecutor requestExecutor, @NotNull GraphQLRequestOptions options) {
         return new CustomMonoGraphQLClient(url, requestExecutor, options);
     }
 
-    static WebClientGraphQLClient createWithWebClient(WebClient webClient) {
+    @NotNull
+    static WebClientGraphQLClient createWithWebClient(@NotNull WebClient webClient) {
         return new WebClientGraphQLClient(webClient);
     }
 
-    static WebClientGraphQLClient createWithWebClient(WebClient webClient, ObjectMapper objectMapper) {
+    @NotNull
+    static WebClientGraphQLClient createWithWebClient(@NotNull WebClient webClient, @NotNull ObjectMapper objectMapper) {
         return new WebClientGraphQLClient(webClient, objectMapper);
     }
 
-    static WebClientGraphQLClient createWithWebClient(WebClient webClient, Consumer<HttpHeaders> headersConsumer) {
+    @NotNull
+    static WebClientGraphQLClient createWithWebClient(@NotNull WebClient webClient, @NotNull Consumer<HttpHeaders> headersConsumer) {
         return new WebClientGraphQLClient(webClient, headersConsumer);
     }
 
-    static WebClientGraphQLClient createWithWebClient(WebClient webClient, GraphQLRequestOptions options) {
+    @NotNull
+    static WebClientGraphQLClient createWithWebClient(@NotNull WebClient webClient, @NotNull GraphQLRequestOptions options) {
         return new WebClientGraphQLClient(webClient, headers -> { }, options);
     }
 
+    @NotNull
     static WebClientGraphQLClient createWithWebClient(
-            WebClient webClient, Consumer<HttpHeaders> headersConsumer, GraphQLRequestOptions options) {
+            @NotNull WebClient webClient, @NotNull Consumer<HttpHeaders> headersConsumer, @NotNull GraphQLRequestOptions options) {
         return new WebClientGraphQLClient(webClient, headersConsumer, options);
     }
 }

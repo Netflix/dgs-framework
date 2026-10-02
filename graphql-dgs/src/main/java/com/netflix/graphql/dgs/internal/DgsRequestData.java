@@ -17,11 +17,14 @@
 package com.netflix.graphql.dgs.internal;
 
 import org.springframework.http.HttpHeaders;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
 public interface DgsRequestData {
+    @Nullable
     Map<String, Object> getExtensions();
 
+    @Nullable
     HttpHeaders getHeaders();
 }

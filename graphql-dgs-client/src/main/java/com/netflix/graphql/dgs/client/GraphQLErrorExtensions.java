@@ -19,6 +19,8 @@ package com.netflix.graphql.dgs.client;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -32,11 +34,11 @@ public final class GraphQLErrorExtensions {
 
     @JsonCreator
     public GraphQLErrorExtensions(
-            @JsonProperty("errorType") ErrorType errorType,
-            @JsonProperty("errorDetail") String errorDetail,
-            @JsonProperty("origin") String origin,
-            @JsonProperty("debugInfo") GraphQLErrorDebugInfo debugInfo,
-            @JsonProperty("classification") Object classification) {
+            @Nullable @JsonProperty("errorType") ErrorType errorType,
+            @Nullable @JsonProperty("errorDetail") String errorDetail,
+            @NotNull @JsonProperty("origin") String origin,
+            @NotNull @JsonProperty("debugInfo") GraphQLErrorDebugInfo debugInfo,
+            @NotNull @JsonProperty("classification") Object classification) {
         this.errorType = errorType;
         this.errorDetail = errorDetail;
         this.origin = origin == null ? "" : origin;
@@ -44,7 +46,7 @@ public final class GraphQLErrorExtensions {
         this.classification = classification == null ? "" : classification;
     }
 
-    public GraphQLErrorExtensions(ErrorType errorType) {
+    public GraphQLErrorExtensions(@Nullable ErrorType errorType) {
         this(errorType, null, "", new GraphQLErrorDebugInfo(), "");
     }
 
@@ -52,28 +54,73 @@ public final class GraphQLErrorExtensions {
         this(null, null, "", new GraphQLErrorDebugInfo(), "");
     }
 
+    @Nullable
     public ErrorType getErrorType() {
         return errorType;
     }
 
+    @Nullable
     public String getErrorDetail() {
         return errorDetail;
     }
 
+    @NotNull
     public String getOrigin() {
         return origin;
     }
 
+    @NotNull
     public GraphQLErrorDebugInfo getDebugInfo() {
         return debugInfo;
     }
 
+    @NotNull
     public Object getClassification() {
         return classification;
     }
 
+    @Nullable
+    public ErrorType component1() {
+        return errorType;
+    }
+
+    @Nullable
+    public String component2() {
+        return errorDetail;
+    }
+
+    @NotNull
+    public String component3() {
+        return origin;
+    }
+
+    @NotNull
+    public GraphQLErrorDebugInfo component4() {
+        return debugInfo;
+    }
+
+    @NotNull
+    public Object component5() {
+        return classification;
+    }
+
+    @NotNull
+    public GraphQLErrorExtensions copy(
+            @Nullable ErrorType errorType,
+            @Nullable String errorDetail,
+            @NotNull String origin,
+            @NotNull GraphQLErrorDebugInfo debugInfo,
+            @NotNull Object classification) {
+        return new GraphQLErrorExtensions(
+                errorType,
+                errorDetail,
+                Objects.requireNonNull(origin, "origin"),
+                Objects.requireNonNull(debugInfo, "debugInfo"),
+                Objects.requireNonNull(classification, "classification"));
+    }
+
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         if (this == other) {
             return true;
         }
@@ -87,9 +134,15 @@ public final class GraphQLErrorExtensions {
 
     @Override
     public int hashCode() {
-        return Objects.hash(errorType, errorDetail, origin, debugInfo, classification);
+        int result = Objects.hashCode(errorType);
+        result = 31 * result + Objects.hashCode(errorDetail);
+        result = 31 * result + Objects.hashCode(origin);
+        result = 31 * result + Objects.hashCode(debugInfo);
+        result = 31 * result + Objects.hashCode(classification);
+        return result;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "GraphQLErrorExtensions(errorType=" + errorType + ", errorDetail=" + errorDetail

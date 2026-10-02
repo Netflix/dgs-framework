@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.internal;
 import com.netflix.graphql.dgs.context.DgsContext;
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder;
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -33,17 +34,18 @@ public class DefaultDgsGraphQLContextBuilder {
     private final Optional<DgsCustomContextBuilderWithRequest<?>> dgsCustomContextBuilderWithRequest;
 
     public DefaultDgsGraphQLContextBuilder(
-            Optional<DgsCustomContextBuilder<?>> dgsCustomContextBuilder,
-            Optional<DgsCustomContextBuilderWithRequest<?>> dgsCustomContextBuilderWithRequest) {
+            @NotNull Optional<DgsCustomContextBuilder<?>> dgsCustomContextBuilder,
+            @NotNull Optional<DgsCustomContextBuilderWithRequest<?>> dgsCustomContextBuilderWithRequest) {
         this.dgsCustomContextBuilder = dgsCustomContextBuilder;
         this.dgsCustomContextBuilderWithRequest = dgsCustomContextBuilderWithRequest;
     }
 
-    public DefaultDgsGraphQLContextBuilder(Optional<DgsCustomContextBuilder<?>> dgsCustomContextBuilder) {
+    public DefaultDgsGraphQLContextBuilder(@NotNull Optional<DgsCustomContextBuilder<?>> dgsCustomContextBuilder) {
         this(dgsCustomContextBuilder, Optional.empty());
     }
 
-    public DgsContext build(DgsWebMvcRequestData dgsRequestData) {
+    @NotNull
+    public DgsContext build(@NotNull DgsWebMvcRequestData dgsRequestData) {
         long start = System.currentTimeMillis();
         DgsContext context = buildDgsContext(dgsRequestData);
         logger.debug("Created DGS context in {}ms", System.currentTimeMillis() - start);

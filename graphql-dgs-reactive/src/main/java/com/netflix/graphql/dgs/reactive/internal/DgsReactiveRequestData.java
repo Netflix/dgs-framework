@@ -17,6 +17,8 @@
 package com.netflix.graphql.dgs.reactive.internal;
 
 import com.netflix.graphql.dgs.internal.DgsRequestData;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -40,17 +42,26 @@ public final class DgsReactiveRequestData implements DgsRequestData {
      * @param serverRequest Spring reactive {@link ServerHttpRequest}. This will only be available when deployed in a
      *                      WebFlux (non-Servlet) environment.
      */
-    public DgsReactiveRequestData(Map<String, Object> extensions, HttpHeaders headers, ServerRequest serverRequest) {
-        this.extensions = extensions;
+    public DgsReactiveRequestData(
+            @Nullable Map<String, ? extends Object> extensions,
+            @Nullable HttpHeaders headers,
+            @Nullable ServerRequest serverRequest) {
+        this.extensions = castExtensions(extensions);
         this.headers = headers;
         this.serverRequest = serverRequest;
     }
 
-    public DgsReactiveRequestData(Map<String, Object> extensions, HttpHeaders headers) {
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> castExtensions(Map<String, ? extends Object> extensions) {
+        return (Map<String, Object>) (Map<?, ?>) extensions;
+    }
+
+    public DgsReactiveRequestData(
+            @Nullable Map<String, ? extends Object> extensions, @Nullable HttpHeaders headers) {
         this(extensions, headers, null);
     }
 
-    public DgsReactiveRequestData(Map<String, Object> extensions) {
+    public DgsReactiveRequestData(@Nullable Map<String, ? extends Object> extensions) {
         this(extensions, HttpHeaders.readOnlyHttpHeaders(new HttpHeaders()), null);
     }
 
@@ -59,21 +70,47 @@ public final class DgsReactiveRequestData implements DgsRequestData {
     }
 
     @Override
+    @Nullable
     public Map<String, Object> getExtensions() {
         return extensions;
     }
 
     @Override
+    @Nullable
     public HttpHeaders getHeaders() {
         return headers;
     }
 
+    @Nullable
     public ServerRequest getServerRequest() {
         return serverRequest;
     }
 
+    @Nullable
+    public Map<String, Object> component1() {
+        return extensions;
+    }
+
+    @Nullable
+    public HttpHeaders component2() {
+        return headers;
+    }
+
+    @Nullable
+    public ServerRequest component3() {
+        return serverRequest;
+    }
+
+    @NotNull
+    public DgsReactiveRequestData copy(
+            @Nullable Map<String, ? extends Object> extensions,
+            @Nullable HttpHeaders headers,
+            @Nullable ServerRequest serverRequest) {
+        return new DgsReactiveRequestData(extensions, headers, serverRequest);
+    }
+
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         if (this == other) {
             return true;
         }
@@ -85,9 +122,13 @@ public final class DgsReactiveRequestData implements DgsRequestData {
 
     @Override
     public int hashCode() {
-        return Objects.hash(extensions, headers, serverRequest);
+        int result = Objects.hashCode(extensions);
+        result = 31 * result + Objects.hashCode(headers);
+        result = 31 * result + Objects.hashCode(serverRequest);
+        return result;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "DgsReactiveRequestData(extensions=" + extensions + ", headers=" + headers

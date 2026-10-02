@@ -20,51 +20,95 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public final class GraphQLErrorDebugInfo {
+    @JsonProperty("subquery")
+    @JsonSetter(nulls = Nulls.FAIL)
     private final String subquery;
+
+    @JsonProperty("variables")
+    @JsonSetter(nulls = Nulls.FAIL)
     private final Map<String, Object> variables;
 
     @JsonAnySetter
     private final Map<String, Object> additionalInformation;
 
-    @JsonCreator
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     public GraphQLErrorDebugInfo(
-            @JsonProperty("subquery") String subquery,
-            @JsonProperty("variables") Map<String, Object> variables,
-            Map<String, Object> additionalInformation) {
-        this.subquery = subquery == null ? "" : subquery;
-        this.variables = variables == null ? Map.of() : variables;
-        this.additionalInformation = additionalInformation == null ? new HashMap<>() : additionalInformation;
+            @NotNull String subquery,
+            @NotNull Map<String, ? extends Object> variables,
+            @NotNull Map<String, ? extends Object> additionalInformation) {
+        this.subquery = Objects.requireNonNull(subquery, "subquery");
+        this.variables = asMap(Objects.requireNonNull(variables, "variables"));
+        this.additionalInformation = asMap(Objects.requireNonNull(additionalInformation, "additionalInformation"));
     }
 
-    public GraphQLErrorDebugInfo(String subquery, Map<String, Object> variables) {
+    public GraphQLErrorDebugInfo(@NotNull String subquery, @NotNull Map<String, ? extends Object> variables) {
         this(subquery, variables, new HashMap<>());
     }
 
+    @JsonCreator
     public GraphQLErrorDebugInfo() {
         this("", Map.of(), new HashMap<>());
     }
 
+    @NotNull
     public String getSubquery() {
         return subquery;
     }
 
+    @NotNull
     public Map<String, Object> getVariables() {
         return variables;
     }
 
+    @NotNull
     @JsonAnyGetter
     public Map<String, Object> getAdditionalInformation() {
         return additionalInformation;
     }
 
+    @NotNull
+    public String component1() {
+        return subquery;
+    }
+
+    @NotNull
+    public Map<String, Object> component2() {
+        return variables;
+    }
+
+    @NotNull
+    public Map<String, Object> component3() {
+        return additionalInformation;
+    }
+
+    @NotNull
+    public GraphQLErrorDebugInfo copy(
+            @NotNull String subquery,
+            @NotNull Map<String, ? extends Object> variables,
+            @NotNull Map<String, ? extends Object> additionalInformation) {
+        return new GraphQLErrorDebugInfo(
+                Objects.requireNonNull(subquery, "subquery"),
+                asMap(Objects.requireNonNull(variables, "variables")),
+                asMap(Objects.requireNonNull(additionalInformation, "additionalInformation")));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> Map<String, T> asMap(Map<String, ? extends T> map) {
+        return (Map<String, T>) map;
+    }
+
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         if (this == other) {
             return true;
         }
@@ -76,9 +120,13 @@ public final class GraphQLErrorDebugInfo {
 
     @Override
     public int hashCode() {
-        return Objects.hash(subquery, variables, additionalInformation);
+        int result = Objects.hashCode(subquery);
+        result = 31 * result + Objects.hashCode(variables);
+        result = 31 * result + Objects.hashCode(additionalInformation);
+        return result;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "GraphQLErrorDebugInfo(subquery=" + subquery + ", variables=" + variables

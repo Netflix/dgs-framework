@@ -16,6 +16,8 @@
 
 package com.netflix.graphql.dgs;
 
+import org.jetbrains.annotations.Nullable;
+
 public interface DgsDataLoaderInstrumentationContext {
     /**
      * onComplete will run in a whenComplete attached to the data loader's returned CompletableFuture.
@@ -30,5 +32,5 @@ public interface DgsDataLoaderInstrumentationContext {
      * @param result the actual results of the data loader. Will be a Map or List depending on the type of data loader.
      * @param exception any exception thrown by the data loader
      */
-    void onComplete(Object result, Object exception);
+    void onComplete(@Nullable Object result, @Nullable Object exception);
 }

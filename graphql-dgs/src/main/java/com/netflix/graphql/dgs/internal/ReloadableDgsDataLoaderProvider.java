@@ -20,6 +20,8 @@ import com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider;
 import com.netflix.graphql.dgs.DgsDataLoaderCustomizer;
 import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider;
 import org.dataloader.DataLoaderRegistry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -43,8 +45,8 @@ public class ReloadableDgsDataLoaderProvider implements DgsDataLoaderProvider {
 
     private volatile ApplicationContext applicationContext;
     private final ScheduledExecutorService scheduledExecutorService;
-    private final List<DataLoaderInstrumentationExtensionProvider> extensionProviders;
-    private final List<DgsDataLoaderCustomizer> customizers;
+    private final List<? extends DataLoaderInstrumentationExtensionProvider> extensionProviders;
+    private final List<? extends DgsDataLoaderCustomizer> customizers;
     private final DgsDataLoaderOptionsProvider dataLoaderOptionsProvider;
     private final Duration scheduleDuration;
     private final boolean enableTickerMode;
@@ -62,12 +64,12 @@ public class ReloadableDgsDataLoaderProvider implements DgsDataLoaderProvider {
      * @param enableTickerMode Whether to enable ticker mode for the registry
      */
     public ReloadableDgsDataLoaderProvider(
-            ApplicationContext applicationContext,
-            ScheduledExecutorService scheduledExecutorService,
-            List<DataLoaderInstrumentationExtensionProvider> extensionProviders,
-            List<DgsDataLoaderCustomizer> customizers,
-            DgsDataLoaderOptionsProvider dataLoaderOptionsProvider,
-            Duration scheduleDuration,
+            @NotNull ApplicationContext applicationContext,
+            @NotNull ScheduledExecutorService scheduledExecutorService,
+            @NotNull List<? extends DataLoaderInstrumentationExtensionProvider> extensionProviders,
+            @NotNull List<? extends DgsDataLoaderCustomizer> customizers,
+            @NotNull DgsDataLoaderOptionsProvider dataLoaderOptionsProvider,
+            @NotNull Duration scheduleDuration,
             boolean enableTickerMode) {
         this.applicationContext = applicationContext;
         this.scheduledExecutorService = scheduledExecutorService;
@@ -79,7 +81,7 @@ public class ReloadableDgsDataLoaderProvider implements DgsDataLoaderProvider {
     }
 
     public ReloadableDgsDataLoaderProvider(
-            ApplicationContext applicationContext, ScheduledExecutorService scheduledExecutorService) {
+            @NotNull ApplicationContext applicationContext, @NotNull ScheduledExecutorService scheduledExecutorService) {
         this(
                 applicationContext,
                 scheduledExecutorService,
@@ -95,6 +97,7 @@ public class ReloadableDgsDataLoaderProvider implements DgsDataLoaderProvider {
      *
      * @return Instant of last reload, or null if never reloaded
      */
+    @Nullable
     public Instant getLastReloadTime() {
         return lastReloadTime;
     }
@@ -108,13 +111,15 @@ public class ReloadableDgsDataLoaderProvider implements DgsDataLoaderProvider {
         return currentProvider != null;
     }
 
+    @NotNull
     @Override
     public DataLoaderRegistry buildRegistry() {
         return getOrCreateProvider().buildRegistry();
     }
 
+    @NotNull
     @Override
-    public <T> DataLoaderRegistry buildRegistryWithContextSupplier(Supplier<T> contextSupplier) {
+    public <T> DataLoaderRegistry buildRegistryWithContextSupplier(@NotNull Supplier<T> contextSupplier) {
         return getOrCreateProvider().buildRegistryWithContextSupplier(contextSupplier);
     }
 
@@ -166,7 +171,7 @@ public class ReloadableDgsDataLoaderProvider implements DgsDataLoaderProvider {
      *
      * @return true if reload was successful, false otherwise
      */
-    public boolean forceReload(ApplicationContext applicationContext) {
+    public boolean forceReload(@NotNull ApplicationContext applicationContext) {
         try {
             logger.info(
                     "Forcing reload data loaders for application context {},{}",

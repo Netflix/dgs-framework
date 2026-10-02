@@ -21,6 +21,8 @@ import com.netflix.graphql.dgs.internal.DgsRequestData;
 import com.netflix.graphql.dgs.internal.DgsWebMvcRequestData;
 import com.netflix.graphql.dgs.internal.method.ArgumentResolver;
 import graphql.schema.DataFetchingEnvironment;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -35,22 +37,23 @@ public class HandlerMethodArgumentResolverAdapter implements ArgumentResolver {
     private final WebDataBinderFactory webDataBinderFactory;
 
     public HandlerMethodArgumentResolverAdapter(
-            HandlerMethodArgumentResolver delegate, WebDataBinderFactory webDataBinderFactory) {
+            @NotNull HandlerMethodArgumentResolver delegate, @Nullable WebDataBinderFactory webDataBinderFactory) {
         this.delegate = delegate;
         this.webDataBinderFactory = webDataBinderFactory;
     }
 
-    public HandlerMethodArgumentResolverAdapter(HandlerMethodArgumentResolver delegate) {
+    public HandlerMethodArgumentResolverAdapter(@NotNull HandlerMethodArgumentResolver delegate) {
         this(delegate, null);
     }
 
     @Override
-    public boolean supportsParameter(MethodParameter parameter) {
+    public boolean supportsParameter(@NotNull MethodParameter parameter) {
         return delegate.supportsParameter(parameter);
     }
 
+    @Nullable
     @Override
-    public Object resolveArgument(MethodParameter parameter, DataFetchingEnvironment dfe) {
+    public Object resolveArgument(@NotNull MethodParameter parameter, @NotNull DataFetchingEnvironment dfe) {
         try {
             return delegate.resolveArgument(parameter, null, getRequest(dfe), webDataBinderFactory);
         } catch (Exception ex) {

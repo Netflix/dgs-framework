@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.graphql.types.subscription.OperationMessage;
 import com.netflix.graphql.types.subscription.Protocol;
 import graphql.GraphQLException;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.WebSocketSession;
@@ -30,7 +31,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
 import reactor.util.concurrent.Queues;
 
-import java.io.UncheckedIOException;
 import java.net.URI;
 import java.util.List;
 
@@ -51,11 +51,12 @@ public class OperationMessageWebSocketClient {
     private final Sinks.Many<GraphQLException> errorSink =
             Sinks.many().multicast().onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, false);
 
-    public OperationMessageWebSocketClient(String url, WebSocketClient client) {
+    public OperationMessageWebSocketClient(@NotNull String url, @NotNull WebSocketClient client) {
         this.url = url;
         this.client = client;
     }
 
+    @NotNull
     public Mono<Void> connect() {
         return Mono.defer(() -> client.execute(
                 URI.create(url),
@@ -77,7 +78,7 @@ public class OperationMessageWebSocketClient {
      *
      * @param message The OperationMessage to send
      */
-    public void send(OperationMessage message) {
+    public void send(@NotNull OperationMessage message) {
         outgoingSink.tryEmitNext(message).orThrow();
     }
 
@@ -86,6 +87,7 @@ public class OperationMessageWebSocketClient {
      *
      * @return Flux of OperationMessages
      */
+    @NotNull
     public Flux<OperationMessage> receive() {
         return incomingSink.asFlux().mergeWith(errorSink.asFlux().map(error -> {
             throw error;
@@ -114,7 +116,7 @@ public class OperationMessageWebSocketClient {
         try {
             return session.textMessage(MAPPER.writeValueAsString(message));
         } catch (JsonProcessingException e) {
-            throw new UncheckedIOException(e);
+            throw Jackson2ExceptionSupport.rethrow(e);
         }
     }
 
@@ -122,7 +124,7 @@ public class OperationMessageWebSocketClient {
         try {
             return MAPPER.readValue(message.getPayloadAsText(), OperationMessage.class);
         } catch (JsonProcessingException e) {
-            throw new UncheckedIOException(e);
+            throw Jackson2ExceptionSupport.rethrow(e);
         }
     }
 }

@@ -40,6 +40,8 @@ import graphql.execution.preparsed.PreparsedDocumentProvider;
 import graphql.schema.GraphQLSchema;
 import org.dataloader.DataLoaderRegistry;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -109,21 +111,22 @@ public final class BaseDgsQueryExecutor {
         return Jackson2Holder.PARSE_CONTEXT;
     }
 
+    @NotNull
     @SuppressWarnings("deprecation")
     public static CompletableFuture<ExecutionResult> baseExecute(
-            @Language("graphql") String query,
-            Map<String, Object> variables,
-            Map<String, Object> extensions,
-            String operationName,
-            DgsContext dgsContext,
-            GraphQLSchema graphQLSchema,
-            DgsDataLoaderProvider dataLoaderProvider,
-            Instrumentation instrumentation,
-            ExecutionStrategy queryExecutionStrategy,
-            ExecutionStrategy mutationExecutionStrategy,
-            Optional<ExecutionIdProvider> idProvider,
-            PreparsedDocumentProvider preparsedDocumentProvider) {
-        Map<String, Object> inputVariables = variables != null ? variables : Map.of();
+            @Nullable @Language("graphql") String query,
+            @Nullable Map<String, ? extends Object> variables,
+            @Nullable Map<String, ? extends Object> extensions,
+            @Nullable String operationName,
+            @NotNull DgsContext dgsContext,
+            @NotNull GraphQLSchema graphQLSchema,
+            @NotNull DgsDataLoaderProvider dataLoaderProvider,
+            @Nullable Instrumentation instrumentation,
+            @NotNull ExecutionStrategy queryExecutionStrategy,
+            @NotNull ExecutionStrategy mutationExecutionStrategy,
+            @NotNull Optional<ExecutionIdProvider> idProvider,
+            @Nullable PreparsedDocumentProvider preparsedDocumentProvider) {
+        Map<String, Object> inputVariables = variables != null ? castMap(variables) : Map.of();
 
         if (!StringUtils.hasText(query)) {
             return CompletableFuture.completedFuture(DgsExecutionResult
@@ -163,7 +166,7 @@ public final class BaseDgsQueryExecutor {
                 .dataLoaderRegistry(dataLoaderRegistry)
                 .context(dgsContext)
                 .graphQLContext(dgsContext)
-                .extensions(extensions != null ? extensions : Map.of())
+                .extensions(extensions != null ? castMap(extensions) : Map.of())
                 .build();
         executionInputRef.set(executionInput);
 
@@ -210,5 +213,10 @@ public final class BaseDgsQueryExecutor {
             }
             return CompletableFuture.completedFuture(executionResult.build());
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> castMap(Map<String, ? extends Object> map) {
+        return (Map<String, Object>) (Map<?, ?>) map;
     }
 }

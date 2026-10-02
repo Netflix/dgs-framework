@@ -20,6 +20,8 @@ import graphql.GraphQLContext;
 import graphql.execution.instrumentation.InstrumentationState;
 import graphql.execution.instrumentation.SimplePerformantInstrumentation;
 import graphql.execution.instrumentation.parameters.InstrumentationCreateStateParameters;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -32,9 +34,10 @@ import java.util.Map;
  * @see GraphQLContextContributor#contribute
  */
 public class GraphQLContextContributorInstrumentation extends SimplePerformantInstrumentation {
-    private final List<GraphQLContextContributor> graphQLContextContributors;
+    private final List<? extends GraphQLContextContributor> graphQLContextContributors;
 
-    public GraphQLContextContributorInstrumentation(List<GraphQLContextContributor> graphQLContextContributors) {
+    public GraphQLContextContributorInstrumentation(
+            @NotNull List<? extends GraphQLContextContributor> graphQLContextContributors) {
         this.graphQLContextContributors = graphQLContextContributors;
     }
 
@@ -42,8 +45,9 @@ public class GraphQLContextContributorInstrumentation extends SimplePerformantIn
      * createState is the very first method invoked in an Instrumentation, and thus is where this logic is placed to
      * contribute to the GraphQLContext as early as possible.
      */
+    @Nullable
     @Override
-    public InstrumentationState createState(InstrumentationCreateStateParameters parameters) {
+    public InstrumentationState createState(@NotNull InstrumentationCreateStateParameters parameters) {
         GraphQLContext graphqlContext = parameters.getExecutionInput().getGraphQLContext();
         if (!graphQLContextContributors.isEmpty()) {
             Map<String, Object> extensions = parameters.getExecutionInput().getExtensions();

@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.internal;
 
 import kotlin.reflect.KClass;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -45,7 +46,8 @@ public interface InputObjectMapper {
      * @param targetClass The class to convert to.
      * @return The converted object
      */
-    <T> T mapToKotlinObject(Map<String, ?> inputMap, KClass<T> targetClass);
+    @NotNull
+    <T> T mapToKotlinObject(@NotNull Map<String, ?> inputMap, @NotNull KClass<T> targetClass);
 
     /**
      * Convert a map of input values to a Java object.
@@ -56,5 +58,5 @@ public interface InputObjectMapper {
      * @param targetClass The class to convert to.
      * @return The converted object
      */
-    <T> T mapToJavaObject(Map<String, ?> inputMap, Class<T> targetClass);
+    <T> T mapToJavaObject(@NotNull Map<String, ?> inputMap, @NotNull Class<T> targetClass);
 }

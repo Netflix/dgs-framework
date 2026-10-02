@@ -16,10 +16,12 @@
 
 package com.netflix.graphql.dgs.exceptions;
 
+import org.jetbrains.annotations.NotNull;
+
 public class DgsMissingCookieException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public DgsMissingCookieException(String cookieName) {
+    public DgsMissingCookieException(@NotNull String cookieName) {
         super("Required cookie '" + cookieName + "' was not provided");
     }
 }

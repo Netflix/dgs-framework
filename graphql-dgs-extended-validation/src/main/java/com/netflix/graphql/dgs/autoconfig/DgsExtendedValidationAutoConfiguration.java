@@ -21,6 +21,7 @@ import com.netflix.graphql.dgs.DgsRuntimeWiring;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.validation.rules.ValidationRules;
 import graphql.validation.schemawiring.ValidationSchemaWiring;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -35,29 +36,32 @@ import org.springframework.context.annotation.Bean;
         matchIfMissing = true)
 @AutoConfiguration
 public class DgsExtendedValidationAutoConfiguration {
+    @NotNull
     @Bean
     public ExtendedValidationRegistrar defaultExtendedValidationRegistrar(
-            ObjectProvider<ValidationRulesBuilderCustomizer> validationRulesCustomizerProvider) {
+            @NotNull ObjectProvider<ValidationRulesBuilderCustomizer> validationRulesCustomizerProvider) {
         return new DefaultExtendedValidationRegistrar(validationRulesCustomizerProvider);
     }
 
     @DgsComponent
     @FunctionalInterface
     public interface ExtendedValidationRegistrar {
-        RuntimeWiring.Builder addValidationRules(RuntimeWiring.Builder builder);
+        @NotNull
+        RuntimeWiring.Builder addValidationRules(@NotNull RuntimeWiring.Builder builder);
     }
 
     public static class DefaultExtendedValidationRegistrar implements ExtendedValidationRegistrar {
         private final ObjectProvider<ValidationRulesBuilderCustomizer> validationRulesCustomizerProvider;
 
         public DefaultExtendedValidationRegistrar(
-                ObjectProvider<ValidationRulesBuilderCustomizer> validationRulesCustomizerProvider) {
+                @NotNull ObjectProvider<ValidationRulesBuilderCustomizer> validationRulesCustomizerProvider) {
             this.validationRulesCustomizerProvider = validationRulesCustomizerProvider;
         }
 
+        @NotNull
         @DgsRuntimeWiring
         @Override
-        public RuntimeWiring.Builder addValidationRules(RuntimeWiring.Builder builder) {
+        public RuntimeWiring.Builder addValidationRules(@NotNull RuntimeWiring.Builder builder) {
             ValidationRules.Builder validationRulesBuilder = ValidationRules.newValidationRules();
             validationRulesCustomizerProvider.ifAvailable(customizer -> customizer.customize(validationRulesBuilder));
 

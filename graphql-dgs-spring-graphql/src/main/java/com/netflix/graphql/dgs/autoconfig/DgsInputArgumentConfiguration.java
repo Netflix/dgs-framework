@@ -24,6 +24,7 @@ import com.netflix.graphql.dgs.internal.method.DataFetchingEnvironmentArgumentRe
 import com.netflix.graphql.dgs.internal.method.FallbackEnvironmentArgumentResolver;
 import com.netflix.graphql.dgs.internal.method.InputArgumentResolver;
 import com.netflix.graphql.dgs.internal.method.SourceArgumentResolver;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -33,33 +34,39 @@ import org.springframework.core.annotation.Order;
 
 @Configuration(proxyBeanMethods = false)
 public class DgsInputArgumentConfiguration {
+    @NotNull
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    public ArgumentResolver inputArgumentResolver(InputObjectMapper inputObjectMapper) {
+    public ArgumentResolver inputArgumentResolver(@NotNull InputObjectMapper inputObjectMapper) {
         return new InputArgumentResolver(inputObjectMapper);
     }
 
+    @NotNull
     @Bean
-    public ArgumentResolver dataFetchingEnvironmentArgumentResolver(ApplicationContext context) {
+    public ArgumentResolver dataFetchingEnvironmentArgumentResolver(@NotNull ApplicationContext context) {
         return new DataFetchingEnvironmentArgumentResolver(context);
     }
 
+    @NotNull
     @Bean
     public ArgumentResolver coroutineArgumentResolver() {
         return new ContinuationArgumentResolver();
     }
 
+    @NotNull
     @Bean
-    public ArgumentResolver fallbackEnvironmentArgumentResolver(InputObjectMapper inputObjectMapper) {
+    public ArgumentResolver fallbackEnvironmentArgumentResolver(@NotNull InputObjectMapper inputObjectMapper) {
         return new FallbackEnvironmentArgumentResolver(inputObjectMapper);
     }
 
+    @NotNull
     @Bean
     @ConditionalOnMissingBean
     public InputObjectMapper defaultInputObjectMapper() {
         return new DefaultInputObjectMapper();
     }
 
+    @NotNull
     @Bean
     public ArgumentResolver sourceArgumentResolver() {
         return new SourceArgumentResolver();

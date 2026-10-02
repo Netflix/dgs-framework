@@ -16,14 +16,18 @@
 
 package com.netflix.graphql.dgs.autoconfig;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.Duration;
+import java.util.Objects;
 
 /** Configuration properties for DGS framework. */
 @ConfigurationProperties(prefix = "dgs.graphql.dataloader")
 public class DgsDataloaderConfigurationProperties {
+    @NotNull
     public static final String DATALOADER_DEFAULT_SCHEDULE_DURATION = "10ms";
 
     private final boolean tickerModeEnabled;
@@ -31,16 +35,55 @@ public class DgsDataloaderConfigurationProperties {
 
     public DgsDataloaderConfigurationProperties(
             @DefaultValue("false") boolean tickerModeEnabled,
-            @DefaultValue(DATALOADER_DEFAULT_SCHEDULE_DURATION) Duration scheduleDuration) {
+            @NotNull @DefaultValue(DATALOADER_DEFAULT_SCHEDULE_DURATION) Duration scheduleDuration) {
         this.tickerModeEnabled = tickerModeEnabled;
-        this.scheduleDuration = scheduleDuration;
+        this.scheduleDuration = Objects.requireNonNull(scheduleDuration, "scheduleDuration");
     }
 
     public boolean isTickerModeEnabled() {
         return tickerModeEnabled;
     }
 
+    /** Retained for compatibility with the former Kotlin property getter. */
+    public boolean getTickerModeEnabled() {
+        return tickerModeEnabled;
+    }
+
+    @NotNull
     public Duration getScheduleDuration() {
         return scheduleDuration;
+    }
+
+    public boolean component1() {
+        return tickerModeEnabled;
+    }
+
+    @NotNull
+    public Duration component2() {
+        return scheduleDuration;
+    }
+
+    @NotNull
+    public DgsDataloaderConfigurationProperties copy(boolean tickerModeEnabled, @NotNull Duration scheduleDuration) {
+        return new DgsDataloaderConfigurationProperties(tickerModeEnabled, scheduleDuration);
+    }
+
+    @Override
+    public boolean equals(@Nullable Object other) {
+        return this == other || other instanceof DgsDataloaderConfigurationProperties that
+                && tickerModeEnabled == that.tickerModeEnabled
+                && scheduleDuration.equals(that.scheduleDuration);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * Boolean.hashCode(tickerModeEnabled) + scheduleDuration.hashCode();
+    }
+
+    @NotNull
+    @Override
+    public String toString() {
+        return "DgsDataloaderConfigurationProperties(tickerModeEnabled=" + tickerModeEnabled
+                + ", scheduleDuration=" + scheduleDuration + ")";
     }
 }

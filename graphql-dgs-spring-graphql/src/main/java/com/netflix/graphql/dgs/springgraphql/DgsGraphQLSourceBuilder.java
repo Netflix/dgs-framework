@@ -26,6 +26,8 @@ import graphql.schema.GraphQLSchema;
 import graphql.schema.TypeResolver;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.TypeDefinitionRegistry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.io.Resource;
 import org.springframework.graphql.execution.AbstractGraphQlSourceBuilder;
@@ -63,11 +65,12 @@ public class DgsGraphQLSourceBuilder extends AbstractGraphQlSourceBuilder<Schema
 
     private Consumer<SchemaMappingInspector.Initializer> initializerConsumer;
 
-    public DgsGraphQLSourceBuilder(DgsSchemaProvider dgsSchemaProvider, boolean showSdlComments) {
+    public DgsGraphQLSourceBuilder(@NotNull DgsSchemaProvider dgsSchemaProvider, boolean showSdlComments) {
         this.dgsSchemaProvider = dgsSchemaProvider;
         this.showSdlComments = showSdlComments;
     }
 
+    @NotNull
     @Override
     protected GraphQLSchema initGraphQlSchema() {
         SchemaProviderResult schema = dgsSchemaProvider.schema(
@@ -79,75 +82,87 @@ public class DgsGraphQLSourceBuilder extends AbstractGraphQlSourceBuilder<Schema
         return schema.getGraphQLSchema();
     }
 
+    @NotNull
     @Override
-    public SchemaResourceBuilder schemaResources(Resource... resources) {
+    public SchemaResourceBuilder schemaResources(@NotNull Resource... resources) {
         return this;
     }
 
+    @NotNull
     @Override
-    public SchemaResourceBuilder configureTypeDefinitions(TypeDefinitionConfigurer configurer) {
+    public SchemaResourceBuilder configureTypeDefinitions(@NotNull TypeDefinitionConfigurer configurer) {
         this.typeDefinitionConfigurers.add(configurer);
         return this;
     }
 
+    @NotNull
     @Override
-    public SchemaResourceBuilder configureRuntimeWiring(RuntimeWiringConfigurer configurer) {
+    public SchemaResourceBuilder configureRuntimeWiring(@NotNull RuntimeWiringConfigurer configurer) {
         this.runtimeWiringConfigurers.add(configurer);
         return this;
     }
 
+    @NotNull
     @Override
-    public SchemaResourceBuilder defaultTypeResolver(TypeResolver typeResolver) {
+    public SchemaResourceBuilder defaultTypeResolver(@NotNull TypeResolver typeResolver) {
         this.typeResolver = typeResolver;
         return this;
     }
 
+    @NotNull
     @Override
-    public SchemaResourceBuilder inspectSchemaMappings(Consumer<SchemaReport> reportConsumer) {
+    public SchemaResourceBuilder inspectSchemaMappings(@NotNull Consumer<SchemaReport> reportConsumer) {
         this.schemaReportConsumer = reportConsumer;
         return this;
     }
 
+    @NotNull
     @Override
     public SchemaResourceBuilder inspectSchemaMappings(
-            Consumer<SchemaMappingInspector.Initializer> initializerConsumer, Consumer<SchemaReport> reportConsumer) {
+            @NotNull Consumer<SchemaMappingInspector.Initializer> initializerConsumer, @NotNull Consumer<SchemaReport> reportConsumer) {
         this.schemaReportConsumer = reportConsumer;
         this.initializerConsumer = initializerConsumer;
         return this;
     }
 
+    @NotNull
     @Override
     public SchemaResourceBuilder schemaFactory(
-            BiFunction<TypeDefinitionRegistry, RuntimeWiring, GraphQLSchema> schemaFactory) {
+            @NotNull BiFunction<TypeDefinitionRegistry, RuntimeWiring, GraphQLSchema> schemaFactory) {
         throw new IllegalStateException("Overriding the schema factory is not supported in this builder");
     }
 
     public static class DgsSelfDescribingDataFetcher implements SelfDescribingDataFetcher<Object> {
         private final DataFetcherReference dataFetcher;
 
-        public DgsSelfDescribingDataFetcher(DataFetcherReference dataFetcher) {
+        public DgsSelfDescribingDataFetcher(@NotNull DataFetcherReference dataFetcher) {
             this.dataFetcher = dataFetcher;
         }
 
+        @NotNull
         public DataFetcherReference getDataFetcher() {
             return dataFetcher;
         }
 
+        @NotNull
         @Override
-        public Object get(DataFetchingEnvironment environment) {
+        public Object get(@Nullable DataFetchingEnvironment environment) {
             throw new UnsupportedOperationException("Not yet implemented");
         }
 
+        @NotNull
         @Override
         public String getDescription() {
             return dataFetcher.getField();
         }
 
+        @NotNull
         @Override
         public ResolvableType getReturnType() {
             return ResolvableType.forMethodReturnType(dataFetcher.getMethod());
         }
 
+        @NotNull
         @Override
         public Map<String, ResolvableType> getArguments() {
             Map<String, ResolvableType> arguments = new LinkedHashMap<>();

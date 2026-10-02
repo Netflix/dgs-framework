@@ -20,6 +20,8 @@ import graphql.GraphQLError;
 import graphql.execution.DataFetcherExceptionHandler;
 import graphql.execution.DataFetcherExceptionHandlerParameters;
 import graphql.schema.DataFetchingEnvironment;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.graphql.execution.DataFetcherExceptionResolverAdapter;
 
 import java.util.List;
@@ -27,12 +29,13 @@ import java.util.List;
 public class ExceptionHandlerResolverAdapter extends DataFetcherExceptionResolverAdapter {
     private final DataFetcherExceptionHandler dataFetcherExceptionHandler;
 
-    public ExceptionHandlerResolverAdapter(DataFetcherExceptionHandler dataFetcherExceptionHandler) {
+    public ExceptionHandlerResolverAdapter(@NotNull DataFetcherExceptionHandler dataFetcherExceptionHandler) {
         this.dataFetcherExceptionHandler = dataFetcherExceptionHandler;
     }
 
+    @Nullable
     @Override
-    protected List<GraphQLError> resolveToMultipleErrors(Throwable ex, DataFetchingEnvironment env) {
+    protected List<GraphQLError> resolveToMultipleErrors(@NotNull Throwable ex, @NotNull DataFetchingEnvironment env) {
         DataFetcherExceptionHandlerParameters exceptionHandlerParameters = DataFetcherExceptionHandlerParameters
                 .newExceptionParameters()
                 .exception(ex)

@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.client;
 
 import graphql.GraphQLContext;
 import graphql.schema.Coercing;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -30,12 +31,13 @@ public class DgsGraphQLRequestOptions {
     private final Map<Class<?>, Coercing<?, ?>> scalars;
     private final GraphQLContext graphQLContext;
 
-    public DgsGraphQLRequestOptions(Map<Class<?>, Coercing<?, ?>> scalars, GraphQLContext graphQLContext) {
-        this.scalars = scalars;
+    public DgsGraphQLRequestOptions(
+            @NotNull Map<Class<?>, ? extends Coercing<?, ?>> scalars, @NotNull GraphQLContext graphQLContext) {
+        this.scalars = castScalars(scalars);
         this.graphQLContext = graphQLContext;
     }
 
-    public DgsGraphQLRequestOptions(Map<Class<?>, Coercing<?, ?>> scalars) {
+    public DgsGraphQLRequestOptions(@NotNull Map<Class<?>, ? extends Coercing<?, ?>> scalars) {
         this(scalars, GraphQLContext.getDefault());
     }
 
@@ -43,10 +45,18 @@ public class DgsGraphQLRequestOptions {
         this(Map.of(), GraphQLContext.getDefault());
     }
 
+    @NotNull
     public Map<Class<?>, Coercing<?, ?>> getScalars() {
         return scalars;
     }
 
+    @SuppressWarnings("unchecked")
+    private static Map<Class<?>, Coercing<?, ?>> castScalars(
+            Map<Class<?>, ? extends Coercing<?, ?>> scalars) {
+        return (Map<Class<?>, Coercing<?, ?>>) (Map<?, ?>) scalars;
+    }
+
+    @NotNull
     public GraphQLContext getGraphQLContext() {
         return graphQLContext;
     }

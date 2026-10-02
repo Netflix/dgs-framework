@@ -16,10 +16,12 @@
 
 package com.netflix.graphql.dgs.exceptions;
 
+import org.jetbrains.annotations.NotNull;
+
 public class InvalidDataLoaderTypeException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public InvalidDataLoaderTypeException(Class<?> clazz) {
+    public InvalidDataLoaderTypeException(@NotNull Class<?> clazz) {
         super("@DgsDataLoader found that doesn't implement BatchLoader: " + clazz.getName() + ".");
     }
 }

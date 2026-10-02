@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.springgraphql.conditions;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.context.annotation.ConditionContext;
@@ -31,8 +32,9 @@ public class OnDgsReloadCondition extends SpringBootCondition {
         return environment.getProperty("dgs.reload", Boolean.class, isLaptopProfile);
     }
 
+    @NotNull
     @Override
-    public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
+    public ConditionOutcome getMatchOutcome(@NotNull ConditionContext context, @NotNull AnnotatedTypeMetadata metadata) {
         boolean reloadEnabled = evaluate(context.getEnvironment());
         return reloadEnabled
                 ? ConditionOutcome.match("DgsReload enabled.")

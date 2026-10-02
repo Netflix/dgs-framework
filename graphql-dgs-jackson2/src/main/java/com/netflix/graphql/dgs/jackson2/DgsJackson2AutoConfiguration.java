@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.jackson2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.graphql.dgs.json.DgsJsonMapper;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -42,6 +43,7 @@ import org.springframework.context.annotation.Bean;
         havingValue = "jackson2",
         matchIfMissing = true)
 public class DgsJackson2AutoConfiguration {
+    @NotNull
     @Bean
     @ConditionalOnMissingBean(DgsJsonMapper.class)
     public DgsJsonMapper dgsJsonMapper() {

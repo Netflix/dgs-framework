@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.internal;
 
 import graphql.schema.Coercing;
 import kotlin.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
@@ -28,10 +29,12 @@ public class EntityFetcherRegistry {
     private final Map<String, Pair<Object, Method>> entityFetchers = new LinkedHashMap<>();
     private final Map<String, Map<List<String>, Coercing<?, ?>>> entityFetcherInputMappings = new LinkedHashMap<>();
 
+    @NotNull
     public Map<String, Pair<Object, Method>> getEntityFetchers() {
         return entityFetchers;
     }
 
+    @NotNull
     public Map<String, Map<List<String>, Coercing<?, ?>>> getEntityFetcherInputMappings() {
         return entityFetcherInputMappings;
     }

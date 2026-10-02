@@ -25,6 +25,8 @@ import kotlin.reflect.KType;
 import kotlin.reflect.full.KClasses;
 import kotlin.reflect.jvm.KTypesJvm;
 import kotlin.reflect.jvm.ReflectJvmMapping;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.ConfigurablePropertyAccessor;
@@ -50,7 +52,7 @@ public class DefaultInputObjectMapper implements InputObjectMapper {
 
     private final DefaultConversionService conversionService = new DefaultConversionService();
 
-    public DefaultInputObjectMapper(InputObjectMapper customInputObjectMapper) {
+    public DefaultInputObjectMapper(@Nullable InputObjectMapper customInputObjectMapper) {
         conversionService.addConverter(
                 new Converter(customInputObjectMapper != null ? customInputObjectMapper : this));
     }
@@ -62,17 +64,18 @@ public class DefaultInputObjectMapper implements InputObjectMapper {
     private static class Converter implements ConditionalGenericConverter {
         private final InputObjectMapper mapper;
 
-        Converter(InputObjectMapper mapper) {
+        Converter(@NotNull InputObjectMapper mapper) {
             this.mapper = mapper;
         }
 
+        @NotNull
         @Override
         public Set<ConvertiblePair> getConvertibleTypes() {
             return Set.of(new ConvertiblePair(Map.class, Object.class));
         }
 
         @Override
-        public boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType) {
+        public boolean matches(@NotNull TypeDescriptor sourceType, @NotNull TypeDescriptor targetType) {
             if (targetType.getType() == Optional.class) {
                 // Let Spring's ObjectToOptionalConverter handle it
                 return false;
@@ -84,9 +87,10 @@ public class DefaultInputObjectMapper implements InputObjectMapper {
             return false;
         }
 
+        @Nullable
         @Override
         @SuppressWarnings("unchecked")
-        public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
+        public Object convert(@Nullable Object source, @NotNull TypeDescriptor sourceType, @NotNull TypeDescriptor targetType) {
             Map<String, ?> sourceMap = (Map<String, ?>) source;
             if (KotlinDetector.isKotlinType(targetType.getType())) {
                 return mapper.mapToKotlinObject(sourceMap, JvmClassMappingKt.getKotlinClass(targetType.getType()));
@@ -95,8 +99,9 @@ public class DefaultInputObjectMapper implements InputObjectMapper {
         }
     }
 
+    @NotNull
     @Override
-    public <T> T mapToKotlinObject(Map<String, ?> inputMap, KClass<T> targetClass) {
+    public <T> T mapToKotlinObject(@NotNull Map<String, ?> inputMap, @NotNull KClass<T> targetClass) {
         KFunction<T> constructor = KClasses.getPrimaryConstructor(targetClass);
         if (constructor == null) {
             throw new DgsInvalidInputArgumentException("No primary constructor found for class " + targetClass);
@@ -162,7 +167,7 @@ public class DefaultInputObjectMapper implements InputObjectMapper {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T mapToJavaObject(Map<String, ?> inputMap, Class<T> targetClass) {
+    public <T> T mapToJavaObject(@NotNull Map<String, ?> inputMap, @NotNull Class<T> targetClass) {
         if (targetClass.isAssignableFrom(inputMap.getClass())) {
             return (T) inputMap;
         }

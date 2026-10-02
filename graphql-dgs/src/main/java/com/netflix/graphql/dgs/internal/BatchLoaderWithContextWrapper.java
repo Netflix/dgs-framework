@@ -21,6 +21,8 @@ import org.dataloader.BatchLoader;
 import org.dataloader.BatchLoaderEnvironment;
 import org.dataloader.BatchLoaderWithContext;
 import org.dataloader.DataLoaderRegistry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
@@ -28,17 +30,18 @@ import java.util.concurrent.CompletionStage;
 class BatchLoaderWithContextWrapper<K, V> implements BatchLoaderWithContext<K, V>, DgsDataLoaderRegistryConsumer {
     private final BatchLoader<K, V> original;
 
-    BatchLoaderWithContextWrapper(BatchLoader<K, V> original) {
+    BatchLoaderWithContextWrapper(@NotNull BatchLoader<K, V> original) {
         this.original = original;
     }
 
+    @NotNull
     @Override
-    public CompletionStage<List<V>> load(List<K> keys, BatchLoaderEnvironment environment) {
+    public CompletionStage<List<V>> load(@NotNull List<K> keys, @NotNull BatchLoaderEnvironment environment) {
         return original.load(keys);
     }
 
     @Override
-    public void setDataLoaderRegistry(DataLoaderRegistry dataLoaderRegistry) {
+    public void setDataLoaderRegistry(@Nullable DataLoaderRegistry dataLoaderRegistry) {
         if (original instanceof DgsDataLoaderRegistryConsumer consumer) {
             consumer.setDataLoaderRegistry(dataLoaderRegistry);
         }

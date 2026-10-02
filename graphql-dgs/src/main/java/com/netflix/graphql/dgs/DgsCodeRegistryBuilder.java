@@ -24,6 +24,7 @@ import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.FieldCoordinates;
 import graphql.schema.GraphQLCodeRegistry;
 import graphql.schema.GraphQLFieldDefinition;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationContext;
 
 import java.util.List;
@@ -34,20 +35,21 @@ import java.util.List;
  * Can be used as a first parameter of a {@link DgsCodeRegistry} annotated method.
  */
 public class DgsCodeRegistryBuilder {
-    private final List<DataFetcherResultProcessor> dataFetcherResultProcessors;
+    private final List<? extends DataFetcherResultProcessor> dataFetcherResultProcessors;
     private final GraphQLCodeRegistry.Builder graphQLCodeRegistry;
     private final ApplicationContext ctx;
 
     public DgsCodeRegistryBuilder(
-            List<DataFetcherResultProcessor> dataFetcherResultProcessors,
-            GraphQLCodeRegistry.Builder graphQLCodeRegistry,
-            ApplicationContext ctx) {
+            @NotNull List<? extends DataFetcherResultProcessor> dataFetcherResultProcessors,
+            @NotNull GraphQLCodeRegistry.Builder graphQLCodeRegistry,
+            @NotNull ApplicationContext ctx) {
         this.dataFetcherResultProcessors = dataFetcherResultProcessors;
         this.graphQLCodeRegistry = graphQLCodeRegistry;
         this.ctx = ctx;
     }
 
-    public DgsCodeRegistryBuilder dataFetcher(FieldCoordinates coordinates, DataFetcher<?> dataFetcher) {
+    @NotNull
+    public DgsCodeRegistryBuilder dataFetcher(@NotNull FieldCoordinates coordinates, @NotNull DataFetcher<?> dataFetcher) {
         DataFetcher<?> fetcher =
                 !dataFetcherResultProcessors.isEmpty() && !(dataFetcher instanceof TrivialDataFetcher)
                         ? DataFetcherFactories.wrapDataFetcher(dataFetcher, this::convertResult)
@@ -57,11 +59,12 @@ public class DgsCodeRegistryBuilder {
         return this;
     }
 
-    public boolean hasDataFetcher(FieldCoordinates coordinates) {
+    public boolean hasDataFetcher(@NotNull FieldCoordinates coordinates) {
         return graphQLCodeRegistry.hasDataFetcher(coordinates);
     }
 
-    public DataFetcher<?> getDataFetcher(FieldCoordinates coordinates, GraphQLFieldDefinition fieldDefinition) {
+    @NotNull
+    public DataFetcher<?> getDataFetcher(@NotNull FieldCoordinates coordinates, @NotNull GraphQLFieldDefinition fieldDefinition) {
         return graphQLCodeRegistry.getDataFetcher(coordinates, fieldDefinition);
     }
 

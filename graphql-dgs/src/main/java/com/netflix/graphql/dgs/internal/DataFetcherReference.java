@@ -16,6 +16,8 @@
 
 package com.netflix.graphql.dgs.internal;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.core.annotation.MergedAnnotations;
 
 import java.lang.reflect.Method;
@@ -29,7 +31,7 @@ public final class DataFetcherReference {
     private final String field;
 
     public DataFetcherReference(
-            Object instance, Method method, MergedAnnotations annotations, String parentType, String field) {
+            @NotNull Object instance, @NotNull Method method, @NotNull MergedAnnotations annotations, @NotNull String parentType, @NotNull String field) {
         this.instance = instance;
         this.method = method;
         this.annotations = annotations;
@@ -37,28 +39,64 @@ public final class DataFetcherReference {
         this.field = field;
     }
 
+    @NotNull
     public Object getInstance() {
         return instance;
     }
 
+    @NotNull
     public Method getMethod() {
         return method;
     }
 
+    @NotNull
     public MergedAnnotations getAnnotations() {
         return annotations;
     }
 
+    @NotNull
     public String getParentType() {
         return parentType;
     }
 
+    @NotNull
     public String getField() {
         return field;
     }
 
+    @NotNull
+    public Object component1() {
+        return instance;
+    }
+
+    @NotNull
+    public Method component2() {
+        return method;
+    }
+
+    @NotNull
+    public MergedAnnotations component3() {
+        return annotations;
+    }
+
+    @NotNull
+    public String component4() {
+        return parentType;
+    }
+
+    @NotNull
+    public String component5() {
+        return field;
+    }
+
+    @NotNull
+    public DataFetcherReference copy(
+            @NotNull Object instance, @NotNull Method method, @NotNull MergedAnnotations annotations, @NotNull String parentType, @NotNull String field) {
+        return new DataFetcherReference(instance, method, annotations, parentType, field);
+    }
+
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         if (this == other) {
             return true;
         }
@@ -72,9 +110,15 @@ public final class DataFetcherReference {
 
     @Override
     public int hashCode() {
-        return Objects.hash(instance, method, annotations, parentType, field);
+        int result = Objects.hashCode(instance);
+        result = 31 * result + Objects.hashCode(method);
+        result = 31 * result + Objects.hashCode(annotations);
+        result = 31 * result + Objects.hashCode(parentType);
+        result = 31 * result + Objects.hashCode(field);
+        return result;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "DataFetcherReference(instance=" + instance + ", method=" + method + ", annotations=" + annotations

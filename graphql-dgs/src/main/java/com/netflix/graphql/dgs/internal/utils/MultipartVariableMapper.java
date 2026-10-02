@@ -16,6 +16,8 @@
 
 package com.netflix.graphql.dgs.internal.utils;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -68,13 +70,15 @@ public final class MultipartVariableMapper {
     }
 
     interface Mapper<T> {
-        Object set(T location, String target, MultipartFile value);
+        @Nullable
+        Object set(T location, @NotNull String target, @NotNull MultipartFile value);
 
-        Object recurse(T location, String target);
+        @NotNull
+        Object recurse(T location, @NotNull String target);
     }
 
     @SuppressWarnings("unchecked")
-    public static void mapVariable(String objectPath, Map<String, Object> variables, MultipartFile part) {
+    public static void mapVariable(@NotNull String objectPath, @NotNull Map<String, Object> variables, @NotNull MultipartFile part) {
         String[] segments = PERIOD.split(objectPath);
 
         if (segments.length < 2) {

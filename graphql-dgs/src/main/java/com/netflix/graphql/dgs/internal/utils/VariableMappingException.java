@@ -16,10 +16,12 @@
 
 package com.netflix.graphql.dgs.internal.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 public class VariableMappingException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public VariableMappingException(String message) {
+    public VariableMappingException(@NotNull String message) {
         super(message);
     }
 }

@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs;
 import graphql.ExecutionResult;
 import graphql.ExecutionResultImpl;
 import graphql.GraphQLError;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
@@ -31,24 +32,27 @@ public class DgsExecutionResult implements ExecutionResult {
     private final HttpHeaders headers;
     private final HttpStatus status;
 
-    public DgsExecutionResult(ExecutionResult executionResult, HttpHeaders headers, HttpStatus status) {
+    public DgsExecutionResult(@NotNull ExecutionResult executionResult, @NotNull HttpHeaders headers, @NotNull HttpStatus status) {
         this.executionResult = executionResult;
         this.headers = headers;
         this.status = status;
     }
 
-    public DgsExecutionResult(ExecutionResult executionResult, HttpHeaders headers) {
+    public DgsExecutionResult(@NotNull ExecutionResult executionResult, @NotNull HttpHeaders headers) {
         this(executionResult, headers, HttpStatus.OK);
     }
 
+    @NotNull
     public HttpHeaders getHeaders() {
         return headers;
     }
 
+    @NotNull
     public HttpStatus getStatus() {
         return status;
     }
 
+    @NotNull
     public static Builder builder() {
         return new Builder();
     }
@@ -62,38 +66,46 @@ public class DgsExecutionResult implements ExecutionResult {
         private HttpHeaders headers = HttpHeaders.EMPTY;
         private HttpStatus status = HttpStatus.OK;
 
+        @NotNull
         public ExecutionResult getExecutionResult() {
             return executionResult;
         }
 
-        public Builder executionResult(ExecutionResult executionResult) {
+        @NotNull
+        public Builder executionResult(@NotNull ExecutionResult executionResult) {
             this.executionResult = executionResult;
             return this;
         }
 
-        public Builder executionResult(ExecutionResultImpl.Builder<?> executionResultBuilder) {
+        @NotNull
+        public Builder executionResult(@NotNull ExecutionResultImpl.Builder<?> executionResultBuilder) {
             this.executionResult = executionResultBuilder.build();
             return this;
         }
 
+        @NotNull
         public HttpHeaders getHeaders() {
             return headers;
         }
 
-        public Builder headers(HttpHeaders headers) {
+        @NotNull
+        public Builder headers(@NotNull HttpHeaders headers) {
             this.headers = headers;
             return this;
         }
 
+        @NotNull
         public HttpStatus getStatus() {
             return status;
         }
 
-        public Builder status(HttpStatus status) {
+        @NotNull
+        public Builder status(@NotNull HttpStatus status) {
             this.status = status;
             return this;
         }
 
+        @NotNull
         public DgsExecutionResult build() {
             return new DgsExecutionResult(executionResult, headers, status);
         }
@@ -124,8 +136,9 @@ public class DgsExecutionResult implements ExecutionResult {
         return executionResult.toSpecification();
     }
 
+    @NotNull
     @Override
-    public ExecutionResult transform(Consumer<ExecutionResult.Builder<?>> builderConsumer) {
+    public ExecutionResult transform(@NotNull Consumer<ExecutionResult.Builder<?>> builderConsumer) {
         return executionResult.transform(builderConsumer);
     }
 }

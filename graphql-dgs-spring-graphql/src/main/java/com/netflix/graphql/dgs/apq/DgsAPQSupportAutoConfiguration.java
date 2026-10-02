@@ -25,6 +25,7 @@ import graphql.execution.preparsed.PreparsedDocumentProvider;
 import graphql.execution.preparsed.persisted.PersistedQueryCache;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.binder.cache.CaffeineCacheMetrics;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -52,12 +53,14 @@ import java.util.Optional;
         matchIfMissing = false)
 @EnableConfigurationProperties(DgsAPQSupportProperties.class)
 public class DgsAPQSupportAutoConfiguration {
+    @NotNull
     public static final String BEAN_APQ_CAFFEINE_CACHE_NAME = "apqCaffeineCache";
 
+    @NotNull
     @Bean
     public GraphQlSourceBuilderCustomizer apqSourceBuilderCustomizer(
-            Optional<PreparsedDocumentProvider> preparsedDocumentProvider,
-            Optional<PersistedQueryCache> persistedQueryCache) {
+            @NotNull Optional<PreparsedDocumentProvider> preparsedDocumentProvider,
+            @NotNull Optional<PersistedQueryCache> persistedQueryCache) {
         return builder -> builder.configureGraphQl(graphQlBuilder -> {
             // For non-APQ queries, the user specified PreparsedDocumentProvider should be used, so we configure the
             // DgsAPQPreparsedDocumentProvider to wrap the user specified one and delegate appropriately since we can
@@ -76,9 +79,10 @@ public class DgsAPQSupportAutoConfiguration {
             havingValue = "true",
             matchIfMissing = DgsAPQSupportProperties.DEFAULT_CACHE_CAFFEINE_ENABLED)
     public static class APQCaffeineCacheConfiguration {
+        @NotNull
         @Bean(name = BEAN_APQ_CAFFEINE_CACHE_NAME)
         @ConditionalOnMissingBean(name = BEAN_APQ_CAFFEINE_CACHE_NAME)
-        public Cache<String, PreparsedDocumentEntry> apqCaffeineCache(DgsAPQSupportProperties properties) {
+        public Cache<String, PreparsedDocumentEntry> apqCaffeineCache(@NotNull DgsAPQSupportProperties properties) {
             if (!properties.getDefaultCache().getCaffeineSpec().isBlank()) {
                 return Caffeine.from(CaffeineSpec.parse(
                                 properties.getDefaultCache().getCaffeineSpec()))
@@ -96,11 +100,12 @@ public class DgsAPQSupportAutoConfiguration {
     @ConditionalOnClass(name = "com.github.benmanes.caffeine.cache.Cache")
     @ConditionalOnBean(MeterRegistry.class)
     public static class APQMicrometerMeteredCaffeineCacheConfiguration {
+        @NotNull
         @Bean
         @ConditionalOnMissingBean(PersistedQueryCache.class)
         public PersistedQueryCache meteredPersistedQueryCache(
-                @Qualifier(BEAN_APQ_CAFFEINE_CACHE_NAME) Cache<String, PreparsedDocumentEntry> appCaffeine,
-                MeterRegistry meterRegistry) {
+                @NotNull @Qualifier(BEAN_APQ_CAFFEINE_CACHE_NAME) Cache<String, PreparsedDocumentEntry> appCaffeine,
+                @NotNull MeterRegistry meterRegistry) {
             Cache<String, PreparsedDocumentEntry> monitoredCache =
                     CaffeineCacheMetrics.monitor(meterRegistry, appCaffeine, BEAN_APQ_CAFFEINE_CACHE_NAME);
             return new AutomatedPersistedQueryCaffeineCache(monitoredCache);
@@ -115,10 +120,11 @@ public class DgsAPQSupportAutoConfiguration {
     @ConditionalOnMissingClass("io.micrometer.core.instrument.MeterRegistry::class")
     @ConditionalOnClass(name = "com.github.benmanes.caffeine.cache.Cache")
     public static class APQBasicCaffeineCacheConfiguration {
+        @NotNull
         @Bean
         @ConditionalOnMissingBean(PersistedQueryCache.class)
         public PersistedQueryCache meteredPersistedQueryCache(
-                @Qualifier(BEAN_APQ_CAFFEINE_CACHE_NAME) Cache<String, PreparsedDocumentEntry> cache) {
+                @NotNull @Qualifier(BEAN_APQ_CAFFEINE_CACHE_NAME) Cache<String, PreparsedDocumentEntry> cache) {
             return new AutomatedPersistedQueryCaffeineCache(cache);
         }
     }

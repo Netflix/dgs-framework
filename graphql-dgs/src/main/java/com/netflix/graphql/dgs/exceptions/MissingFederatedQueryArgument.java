@@ -16,13 +16,15 @@
 
 package com.netflix.graphql.dgs.exceptions;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class MissingFederatedQueryArgument extends DgsBadRequestException {
     private static final long serialVersionUID = 1L;
 
-    public MissingFederatedQueryArgument(String... fields) {
+    public MissingFederatedQueryArgument(@NotNull String... fields) {
         super("The federated query is missing field(s) "
                 + Arrays.stream(fields).collect(Collectors.joining(", ")));
     }

@@ -20,6 +20,7 @@ import com.netflix.graphql.dgs.internal.DgsDataLoaderProvider;
 import com.netflix.graphql.dgs.reactive.internal.DefaultDgsReactiveGraphQLContextBuilder;
 import com.netflix.graphql.dgs.reactive.internal.DgsReactiveRequestData;
 import org.dataloader.DataLoaderRegistry;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.graphql.server.WebGraphQlInterceptor;
 import org.springframework.graphql.server.WebGraphQlRequest;
 import org.springframework.graphql.server.WebGraphQlResponse;
@@ -36,14 +37,15 @@ public class DgsWebFluxGraphQLInterceptor implements WebGraphQlInterceptor {
     private final DefaultDgsReactiveGraphQLContextBuilder dgsReactiveGraphQLContextBuilder;
 
     public DgsWebFluxGraphQLInterceptor(
-            DgsDataLoaderProvider dgsDataLoaderProvider,
-            DefaultDgsReactiveGraphQLContextBuilder dgsReactiveGraphQLContextBuilder) {
+            @NotNull DgsDataLoaderProvider dgsDataLoaderProvider,
+            @NotNull DefaultDgsReactiveGraphQLContextBuilder dgsReactiveGraphQLContextBuilder) {
         this.dgsDataLoaderProvider = dgsDataLoaderProvider;
         this.dgsReactiveGraphQLContextBuilder = dgsReactiveGraphQLContextBuilder;
     }
 
+    @NotNull
     @Override
-    public Mono<WebGraphQlResponse> intercept(WebGraphQlRequest request, Chain chain) {
+    public Mono<WebGraphQlResponse> intercept(@NotNull WebGraphQlRequest request, @NotNull Chain chain) {
         return Mono.deferContextual(ctx -> {
                     ServerWebExchange webExchange =
                             ServerWebExchangeContextFilter.getExchange(ctx).get();

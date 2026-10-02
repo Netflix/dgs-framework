@@ -16,6 +16,8 @@
 
 package com.netflix.graphql.dgs;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 
 import java.time.Instant;
@@ -49,7 +51,7 @@ public interface DgsDataLoaderReloadController {
      *                           should provide the Data Loaders.
      * @return true if reload was successful, false if an error occurred
      */
-    boolean reloadDataLoaders(ApplicationContext applicationContext);
+    boolean reloadDataLoaders(@NotNull ApplicationContext applicationContext);
 
     /**
      * Check if data loader reloading is currently enabled.
@@ -63,6 +65,7 @@ public interface DgsDataLoaderReloadController {
      *
      * @return Instant of last reload, or null if never reloaded
      */
+    @Nullable
     Instant getLastReloadTime();
 
     /**
@@ -70,6 +73,7 @@ public interface DgsDataLoaderReloadController {
      *
      * @return DgsDataLoaderReloadStats containing reload information
      */
+    @NotNull
     DgsDataLoaderReloadStats getReloadStats();
 
     /** Statistics about data loader reloading operations. */
@@ -80,7 +84,7 @@ public interface DgsDataLoaderReloadController {
         private final boolean isEnabled;
 
         public DgsDataLoaderReloadStats(
-                long totalReloads, Instant lastReloadTime, Long lastReloadDuration, boolean isEnabled) {
+                long totalReloads, @Nullable Instant lastReloadTime, @Nullable Long lastReloadDuration, boolean isEnabled) {
             this.totalReloads = totalReloads;
             this.lastReloadTime = lastReloadTime;
             this.lastReloadDuration = lastReloadDuration;
@@ -93,11 +97,13 @@ public interface DgsDataLoaderReloadController {
         }
 
         /** Timestamp of the last reload operation. */
+        @Nullable
         public Instant getLastReloadTime() {
             return lastReloadTime;
         }
 
         /** Duration of the last reload operation in milliseconds. */
+        @Nullable
         public Long getLastReloadDuration() {
             return lastReloadDuration;
         }
@@ -107,8 +113,32 @@ public interface DgsDataLoaderReloadController {
             return isEnabled;
         }
 
+        public long component1() {
+            return totalReloads;
+        }
+
+        @Nullable
+        public Instant component2() {
+            return lastReloadTime;
+        }
+
+        @Nullable
+        public Long component3() {
+            return lastReloadDuration;
+        }
+
+        public boolean component4() {
+            return isEnabled;
+        }
+
+        @NotNull
+        public DgsDataLoaderReloadStats copy(
+                long totalReloads, @Nullable Instant lastReloadTime, @Nullable Long lastReloadDuration, boolean isEnabled) {
+            return new DgsDataLoaderReloadStats(totalReloads, lastReloadTime, lastReloadDuration, isEnabled);
+        }
+
         @Override
-        public boolean equals(Object other) {
+        public boolean equals(@Nullable Object other) {
             if (this == other) {
                 return true;
             }
@@ -121,9 +151,14 @@ public interface DgsDataLoaderReloadController {
 
         @Override
         public int hashCode() {
-            return Objects.hash(totalReloads, lastReloadTime, lastReloadDuration, isEnabled);
+            int result = Long.hashCode(totalReloads);
+            result = 31 * result + Objects.hashCode(lastReloadTime);
+            result = 31 * result + Objects.hashCode(lastReloadDuration);
+            result = 31 * result + Boolean.hashCode(isEnabled);
+            return result;
         }
 
+        @NotNull
         @Override
         public String toString() {
             return "DgsDataLoaderReloadStats(totalReloads=" + totalReloads + ", lastReloadTime=" + lastReloadTime

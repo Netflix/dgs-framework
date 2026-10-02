@@ -17,6 +17,8 @@
 package com.netflix.graphql.dgs.internal.method;
 
 import graphql.schema.DataFetchingEnvironment;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.core.MethodParameter;
 
 import java.util.List;
@@ -28,20 +30,21 @@ import java.util.concurrent.ConcurrentMap;
  * Previously resolved method parameters are cached.
  */
 public class ArgumentResolverComposite implements ArgumentResolver {
-    private final List<ArgumentResolver> argumentResolvers;
+    private final List<? extends ArgumentResolver> argumentResolvers;
     private final ConcurrentMap<MethodParameter, ArgumentResolver> argumentResolverCache = new ConcurrentHashMap<>();
 
-    public ArgumentResolverComposite(List<ArgumentResolver> argumentResolvers) {
+    public ArgumentResolverComposite(@NotNull List<? extends ArgumentResolver> argumentResolvers) {
         this.argumentResolvers = argumentResolvers;
     }
 
     @Override
-    public boolean supportsParameter(MethodParameter parameter) {
+    public boolean supportsParameter(@NotNull MethodParameter parameter) {
         return getArgumentResolver(parameter) != null;
     }
 
+    @Nullable
     @Override
-    public Object resolveArgument(MethodParameter parameter, DataFetchingEnvironment dfe) {
+    public Object resolveArgument(@NotNull MethodParameter parameter, @NotNull DataFetchingEnvironment dfe) {
         ArgumentResolver resolver = getArgumentResolver(parameter);
         if (resolver == null) {
             throw new IllegalArgumentException("Unsupported parameter type [" + parameter.getParameterType().getName()

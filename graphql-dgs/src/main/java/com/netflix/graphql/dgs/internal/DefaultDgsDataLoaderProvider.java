@@ -39,6 +39,8 @@ import org.dataloader.MappedBatchLoader;
 import org.dataloader.MappedBatchLoaderWithContext;
 import org.dataloader.registries.DispatchPredicate;
 import org.dataloader.registries.ScheduledDataLoaderRegistry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;
@@ -68,8 +70,8 @@ public class DefaultDgsDataLoaderProvider implements DgsDataLoaderProvider {
     private static final Logger logger = LoggerFactory.getLogger(DefaultDgsDataLoaderProvider.class);
 
     private final ApplicationContext applicationContext;
-    private final List<DataLoaderInstrumentationExtensionProvider> extensionProviders;
-    private final List<DgsDataLoaderCustomizer> customizers;
+    private final List<? extends DataLoaderInstrumentationExtensionProvider> extensionProviders;
+    private final List<? extends DgsDataLoaderCustomizer> customizers;
     private final DgsDataLoaderOptionsProvider dataLoaderOptionsProvider;
     private final ScheduledExecutorService scheduledExecutorService;
     private final Duration scheduleDuration;
@@ -83,12 +85,12 @@ public class DefaultDgsDataLoaderProvider implements DgsDataLoaderProvider {
             new ArrayList<>();
 
     public DefaultDgsDataLoaderProvider(
-            ApplicationContext applicationContext,
-            List<DataLoaderInstrumentationExtensionProvider> extensionProviders,
-            List<DgsDataLoaderCustomizer> customizers,
-            DgsDataLoaderOptionsProvider dataLoaderOptionsProvider,
-            ScheduledExecutorService scheduledExecutorService,
-            Duration scheduleDuration,
+            @NotNull ApplicationContext applicationContext,
+            @NotNull List<? extends DataLoaderInstrumentationExtensionProvider> extensionProviders,
+            @NotNull List<? extends DgsDataLoaderCustomizer> customizers,
+            @NotNull DgsDataLoaderOptionsProvider dataLoaderOptionsProvider,
+            @NotNull ScheduledExecutorService scheduledExecutorService,
+            @NotNull Duration scheduleDuration,
             boolean enableTickerMode) {
         this.applicationContext = applicationContext;
         this.extensionProviders = extensionProviders;
@@ -102,7 +104,7 @@ public class DefaultDgsDataLoaderProvider implements DgsDataLoaderProvider {
     /** Constructor used by Spring to autowire the provider; discovered beans are injected lazily. */
     @Autowired
     public DefaultDgsDataLoaderProvider(
-            ApplicationContext applicationContext,
+            @NotNull ApplicationContext applicationContext,
             ObjectProvider<DataLoaderInstrumentationExtensionProvider> extensionProviders,
             ObjectProvider<DgsDataLoaderCustomizer> customizers,
             ObjectProvider<DgsDataLoaderOptionsProvider> dataLoaderOptionsProvider) {
@@ -117,8 +119,8 @@ public class DefaultDgsDataLoaderProvider implements DgsDataLoaderProvider {
     }
 
     public DefaultDgsDataLoaderProvider(
-            ApplicationContext applicationContext,
-            List<DataLoaderInstrumentationExtensionProvider> extensionProviders) {
+            @NotNull ApplicationContext applicationContext,
+            @NotNull List<? extends DataLoaderInstrumentationExtensionProvider> extensionProviders) {
         this(
                 applicationContext,
                 extensionProviders,
@@ -129,7 +131,7 @@ public class DefaultDgsDataLoaderProvider implements DgsDataLoaderProvider {
                 false);
     }
 
-    public DefaultDgsDataLoaderProvider(ApplicationContext applicationContext) {
+    public DefaultDgsDataLoaderProvider(@NotNull ApplicationContext applicationContext) {
         this(
                 applicationContext,
                 List.of(),
@@ -140,17 +142,19 @@ public class DefaultDgsDataLoaderProvider implements DgsDataLoaderProvider {
                 false);
     }
 
-    private record LoaderHolder<T>(T theLoader, DgsDataLoader annotation, String name,
-            DispatchPredicate dispatchPredicate) {
+    private record LoaderHolder<T>(T theLoader, @NotNull DgsDataLoader annotation, @NotNull String name,
+            @Nullable DispatchPredicate dispatchPredicate) {
     }
 
+    @NotNull
     @Override
     public DataLoaderRegistry buildRegistry() {
         return buildRegistryWithContextSupplier(() -> null);
     }
 
+    @NotNull
     @Override
-    public <T> DataLoaderRegistry buildRegistryWithContextSupplier(Supplier<T> contextSupplier) {
+    public <T> DataLoaderRegistry buildRegistryWithContextSupplier(@NotNull Supplier<T> contextSupplier) {
         // We need to set the default predicate to 20ms and individually override with DISPATCH_ALWAYS or the custom
         // dispatch predicate, if specified. The data loader ends up applying the overall dispatch predicate when the
         // custom dispatch predicate is not true otherwise.
@@ -303,7 +307,7 @@ public class DefaultDgsDataLoaderProvider implements DgsDataLoaderProvider {
             DgsDataLoader dgsDataLoader,
             String dataLoaderName,
             DataLoaderRegistry dataLoaderRegistry,
-            Iterable<DataLoaderInstrumentationExtensionProvider> extensionProviders) {
+            Iterable<? extends DataLoaderInstrumentationExtensionProvider> extensionProviders) {
         DataLoaderOptions.Builder options = dataLoaderOptionsProvider.getOptions(dataLoaderName, dgsDataLoader);
 
         if (batchLoader instanceof DgsDataLoaderRegistryConsumer consumer) {
@@ -319,7 +323,7 @@ public class DefaultDgsDataLoaderProvider implements DgsDataLoaderProvider {
             DgsDataLoader dgsDataLoader,
             String dataLoaderName,
             DataLoaderRegistry dataLoaderRegistry,
-            Iterable<DataLoaderInstrumentationExtensionProvider> extensionProviders) {
+            Iterable<? extends DataLoaderInstrumentationExtensionProvider> extensionProviders) {
         DataLoaderOptions.Builder options = dataLoaderOptionsProvider.getOptions(dataLoaderName, dgsDataLoader);
 
         if (batchLoader instanceof DgsDataLoaderRegistryConsumer consumer) {
@@ -337,7 +341,7 @@ public class DefaultDgsDataLoaderProvider implements DgsDataLoaderProvider {
             String dataLoaderName,
             Supplier<T> supplier,
             DataLoaderRegistry dataLoaderRegistry,
-            Iterable<DataLoaderInstrumentationExtensionProvider> extensionProviders) {
+            Iterable<? extends DataLoaderInstrumentationExtensionProvider> extensionProviders) {
         DataLoaderOptions.Builder options = dataLoaderOptionsProvider
                 .getOptions(dataLoaderName, dgsDataLoader)
                 .setBatchLoaderContextProvider(supplier::get);
@@ -357,7 +361,7 @@ public class DefaultDgsDataLoaderProvider implements DgsDataLoaderProvider {
             String dataLoaderName,
             Supplier<T> supplier,
             DataLoaderRegistry dataLoaderRegistry,
-            Iterable<DataLoaderInstrumentationExtensionProvider> extensionProviders) {
+            Iterable<? extends DataLoaderInstrumentationExtensionProvider> extensionProviders) {
         DataLoaderOptions.Builder options = dataLoaderOptionsProvider
                 .getOptions(dataLoaderName, dgsDataLoader)
                 .setBatchLoaderContextProvider(supplier::get);
@@ -375,7 +379,7 @@ public class DefaultDgsDataLoaderProvider implements DgsDataLoaderProvider {
             LoaderHolder<?> holder,
             ScheduledDataLoaderRegistry registry,
             Supplier<?> contextSupplier,
-            Iterable<DataLoaderInstrumentationExtensionProvider> extensionProviders) {
+            Iterable<? extends DataLoaderInstrumentationExtensionProvider> extensionProviders) {
         DataLoader<?, ?> loader;
         Object theLoader = holder.theLoader();
         if (theLoader instanceof BatchLoader<?, ?> batchLoader) {
@@ -405,7 +409,7 @@ public class DefaultDgsDataLoaderProvider implements DgsDataLoaderProvider {
     private BatchLoader<?, ?> wrapBatchLoader(
             BatchLoader<?, ?> loader,
             String name,
-            Iterable<DataLoaderInstrumentationExtensionProvider> extensionProviders) {
+            Iterable<? extends DataLoaderInstrumentationExtensionProvider> extensionProviders) {
         try {
             BatchLoader<?, ?> wrapped = loader;
             for (DataLoaderInstrumentationExtensionProvider provider : extensionProviders) {
@@ -421,7 +425,7 @@ public class DefaultDgsDataLoaderProvider implements DgsDataLoaderProvider {
     private BatchLoaderWithContext<?, ?> wrapBatchLoaderWithContext(
             BatchLoaderWithContext<?, ?> loader,
             String name,
-            Iterable<DataLoaderInstrumentationExtensionProvider> extensionProviders) {
+            Iterable<? extends DataLoaderInstrumentationExtensionProvider> extensionProviders) {
         try {
             BatchLoaderWithContext<?, ?> wrapped = loader;
             for (DataLoaderInstrumentationExtensionProvider provider : extensionProviders) {
@@ -437,7 +441,7 @@ public class DefaultDgsDataLoaderProvider implements DgsDataLoaderProvider {
     private MappedBatchLoader<?, ?> wrapMappedBatchLoader(
             MappedBatchLoader<?, ?> loader,
             String name,
-            Iterable<DataLoaderInstrumentationExtensionProvider> extensionProviders) {
+            Iterable<? extends DataLoaderInstrumentationExtensionProvider> extensionProviders) {
         try {
             MappedBatchLoader<?, ?> wrapped = loader;
             for (DataLoaderInstrumentationExtensionProvider provider : extensionProviders) {
@@ -453,7 +457,7 @@ public class DefaultDgsDataLoaderProvider implements DgsDataLoaderProvider {
     private MappedBatchLoaderWithContext<?, ?> wrapMappedBatchLoaderWithContext(
             MappedBatchLoaderWithContext<?, ?> loader,
             String name,
-            Iterable<DataLoaderInstrumentationExtensionProvider> extensionProviders) {
+            Iterable<? extends DataLoaderInstrumentationExtensionProvider> extensionProviders) {
         try {
             MappedBatchLoaderWithContext<?, ?> wrapped = loader;
             for (DataLoaderInstrumentationExtensionProvider provider : extensionProviders) {

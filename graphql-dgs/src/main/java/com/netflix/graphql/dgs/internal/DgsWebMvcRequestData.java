@@ -16,6 +16,8 @@
 
 package com.netflix.graphql.dgs.internal;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.context.request.WebRequest;
 
@@ -35,17 +37,26 @@ public final class DgsWebMvcRequestData implements DgsRequestData {
      * @param webRequest Spring {@link WebRequest}. This will only be available when deployed in a WebMVC
      *                   (Servlet based) environment.
      */
-    public DgsWebMvcRequestData(Map<String, Object> extensions, HttpHeaders headers, WebRequest webRequest) {
-        this.extensions = extensions;
+    public DgsWebMvcRequestData(
+            @Nullable Map<String, ? extends Object> extensions,
+            @Nullable HttpHeaders headers,
+            @Nullable WebRequest webRequest) {
+        this.extensions = castExtensions(extensions);
         this.headers = headers;
         this.webRequest = webRequest;
     }
 
-    public DgsWebMvcRequestData(Map<String, Object> extensions, HttpHeaders headers) {
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> castExtensions(Map<String, ? extends Object> extensions) {
+        return (Map<String, Object>) (Map<?, ?>) extensions;
+    }
+
+    public DgsWebMvcRequestData(
+            @Nullable Map<String, ? extends Object> extensions, @Nullable HttpHeaders headers) {
         this(extensions, headers, null);
     }
 
-    public DgsWebMvcRequestData(Map<String, Object> extensions) {
+    public DgsWebMvcRequestData(@Nullable Map<String, ? extends Object> extensions) {
         this(extensions, null, null);
     }
 
@@ -54,21 +65,47 @@ public final class DgsWebMvcRequestData implements DgsRequestData {
     }
 
     @Override
+    @Nullable
     public Map<String, Object> getExtensions() {
         return extensions;
     }
 
     @Override
+    @Nullable
     public HttpHeaders getHeaders() {
         return headers;
     }
 
+    @Nullable
     public WebRequest getWebRequest() {
         return webRequest;
     }
 
+    @Nullable
+    public Map<String, Object> component1() {
+        return extensions;
+    }
+
+    @Nullable
+    public HttpHeaders component2() {
+        return headers;
+    }
+
+    @Nullable
+    public WebRequest component3() {
+        return webRequest;
+    }
+
+    @NotNull
+    public DgsWebMvcRequestData copy(
+            @Nullable Map<String, ? extends Object> extensions,
+            @Nullable HttpHeaders headers,
+            @Nullable WebRequest webRequest) {
+        return new DgsWebMvcRequestData(extensions, headers, webRequest);
+    }
+
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         if (this == other) {
             return true;
         }
@@ -80,9 +117,13 @@ public final class DgsWebMvcRequestData implements DgsRequestData {
 
     @Override
     public int hashCode() {
-        return Objects.hash(extensions, headers, webRequest);
+        int result = Objects.hashCode(extensions);
+        result = 31 * result + Objects.hashCode(headers);
+        result = 31 * result + Objects.hashCode(webRequest);
+        return result;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "DgsWebMvcRequestData(extensions=" + extensions + ", headers=" + headers

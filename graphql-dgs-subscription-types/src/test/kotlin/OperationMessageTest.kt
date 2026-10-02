@@ -26,6 +26,8 @@ import com.netflix.graphql.types.subscription.OperationMessageType.GQL_DATA
 import com.netflix.graphql.types.subscription.OperationMessageType.GQL_START
 import com.netflix.graphql.types.subscription.OperationMessageType.GQL_STOP
 import com.netflix.graphql.types.subscription.QueryPayload
+import com.netflix.graphql.types.subscription.SSEDataPayload
+import com.netflix.graphql.types.subscription.websockets.Message as WebSocketMessage
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -62,6 +64,42 @@ class OperationMessageTest {
              "id": "2"}
             """.trimIndent(),
         )
+    }
+
+    @Test
+    fun preservesOmittedDefaultsAndExplicitNulls() {
+        val omittedOptionalFields = deserialize("""{"type":"stop"}""")
+        assertThat(omittedOptionalFields).isEqualTo(OperationMessage(GQL_STOP, null, ""))
+
+        val explicitNulls = deserialize("""{"type":"stop","payload":null,"id":null}""")
+        assertThat(explicitNulls).isEqualTo(OperationMessage(GQL_STOP, null, null))
+
+        val dataWithNullErrors = MAPPER.readValue("""{"data":null,"errors":null}""", DataPayload::class.java)
+        assertThat(dataWithNullErrors).isEqualTo(DataPayload(null, null))
+
+        val queryWithNullMaps = MAPPER.readValue(
+            """{"query":"query","variables":null,"extensions":null}""",
+            QueryPayload::class.java,
+        )
+        assertThat(queryWithNullMaps).isEqualTo(QueryPayload(null, null, null, "query", ""))
+
+        val sseData = MAPPER.readValue(
+            """{"data":{"value":"event"},"subId":"subscription-1"}""",
+            SSEDataPayload::class.java,
+        )
+        assertThat(sseData).isEqualTo(SSEDataPayload(mapOf("value" to "event"), "subscription-1"))
+
+        val initWithoutPayload = MAPPER.readValue(
+            """{"type":"connection_init"}""",
+            WebSocketMessage::class.java,
+        )
+        assertThat(initWithoutPayload).isEqualTo(WebSocketMessage.ConnectionInitMessage(emptyMap()))
+
+        val initWithNullPayload = MAPPER.readValue(
+            """{"type":"connection_init","payload":null}""",
+            WebSocketMessage::class.java,
+        )
+        assertThat(initWithNullPayload).isEqualTo(WebSocketMessage.ConnectionInitMessage(null))
     }
 
     private inline fun <reified E : Throwable> assertFailsToDeserialize(message: String) {

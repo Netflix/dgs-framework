@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.springgraphql.autoconfig;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.EnvironmentPostProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootVersion;
@@ -31,7 +32,7 @@ public class DgsSpringGraphQLEnvironmentPostProcessor implements EnvironmentPost
     private static final String DGS_GRAPHQL_INTROSPECTION_ENABLED = "dgs.graphql.introspection.enabled";
 
     @Override
-    public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+    public void postProcessEnvironment(@NotNull ConfigurableEnvironment environment, @NotNull SpringApplication application) {
         springBootVersionCheck();
 
         Map<String, Object> properties = new HashMap<>();

@@ -18,27 +18,45 @@ package com.netflix.graphql.types.subscription;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
 public final class Error {
+    @JsonProperty("message")
+    @JsonSetter(nulls = Nulls.FAIL)
     private final String message;
 
-    @JsonCreator
-    public Error(@JsonProperty("message") String message) {
-        this.message = message == null ? "" : message;
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    public Error(@NotNull String message) {
+        this.message = Objects.requireNonNull(message, "message");
     }
 
+    @JsonCreator
     public Error() {
         this("");
     }
 
+    @NotNull
     public String getMessage() {
         return message;
     }
 
+    @NotNull
+    public String component1() {
+        return message;
+    }
+
+    @NotNull
+    public Error copy(@NotNull String message) {
+        return new Error(Objects.requireNonNull(message, "message"));
+    }
+
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         if (this == other) {
             return true;
         }
@@ -47,9 +65,10 @@ public final class Error {
 
     @Override
     public int hashCode() {
-        return Objects.hash(message);
+        return Objects.hashCode(message);
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "Error(message=" + message + ")";

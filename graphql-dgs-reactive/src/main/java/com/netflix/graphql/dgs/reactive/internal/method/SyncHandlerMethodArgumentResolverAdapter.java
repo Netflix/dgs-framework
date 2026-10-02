@@ -20,6 +20,8 @@ import com.netflix.graphql.dgs.context.DgsContext;
 import com.netflix.graphql.dgs.internal.method.ArgumentResolver;
 import com.netflix.graphql.dgs.reactive.internal.DgsReactiveRequestData;
 import graphql.schema.DataFetchingEnvironment;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.reactive.BindingContext;
 import org.springframework.web.reactive.result.method.SyncHandlerMethodArgumentResolver;
@@ -34,18 +36,19 @@ public class SyncHandlerMethodArgumentResolverAdapter implements ArgumentResolve
     private final BindingContext bindingContext;
 
     public SyncHandlerMethodArgumentResolverAdapter(
-            SyncHandlerMethodArgumentResolver delegate, BindingContext bindingContext) {
+            @NotNull SyncHandlerMethodArgumentResolver delegate, @NotNull BindingContext bindingContext) {
         this.delegate = delegate;
         this.bindingContext = bindingContext;
     }
 
     @Override
-    public boolean supportsParameter(MethodParameter parameter) {
+    public boolean supportsParameter(@NotNull MethodParameter parameter) {
         return delegate.supportsParameter(parameter);
     }
 
+    @Nullable
     @Override
-    public Object resolveArgument(MethodParameter parameter, DataFetchingEnvironment dfe) {
+    public Object resolveArgument(@NotNull MethodParameter parameter, @NotNull DataFetchingEnvironment dfe) {
         if (!(DgsContext.getRequestData(dfe) instanceof DgsReactiveRequestData requestData)) {
             throw new IllegalStateException("DgsReactiveRequestData not found");
         }

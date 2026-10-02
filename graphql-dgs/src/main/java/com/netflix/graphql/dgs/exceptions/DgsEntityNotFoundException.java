@@ -17,11 +17,12 @@
 package com.netflix.graphql.dgs.exceptions;
 
 import com.netflix.graphql.types.errors.ErrorType;
+import org.jetbrains.annotations.NotNull;
 
 public class DgsEntityNotFoundException extends DgsException {
     private static final long serialVersionUID = 1L;
 
-    public DgsEntityNotFoundException(String message) {
+    public DgsEntityNotFoundException(@NotNull String message) {
         super(message, ErrorType.NOT_FOUND);
     }
 

@@ -16,6 +16,8 @@
 
 package com.netflix.graphql.dgs.exceptions;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Method;
 
 public class DuplicateEntityFetcherException extends RuntimeException {
@@ -28,11 +30,11 @@ public class DuplicateEntityFetcherException extends RuntimeException {
     private final Method secondEntityFetcherMethod;
 
     public DuplicateEntityFetcherException(
-            String entityType,
-            Class<?> firstEntityFetcherClass,
-            Method firstEntityFetcherMethod,
-            Class<?> secondEntityFetcherClass,
-            Method secondEntityFetcherMethod) {
+            @NotNull String entityType,
+            @NotNull Class<?> firstEntityFetcherClass,
+            @NotNull Method firstEntityFetcherMethod,
+            @NotNull Class<?> secondEntityFetcherClass,
+            @NotNull Method secondEntityFetcherMethod) {
         super("Duplicate EntityFetcherResolver found for entity type " + entityType + ", defined by "
                 + firstEntityFetcherClass.getName() + "." + firstEntityFetcherMethod.getName() + " and "
                 + secondEntityFetcherClass.getName() + "." + secondEntityFetcherMethod.getName());
@@ -43,22 +45,27 @@ public class DuplicateEntityFetcherException extends RuntimeException {
         this.secondEntityFetcherMethod = secondEntityFetcherMethod;
     }
 
+    @NotNull
     public String getEntityType() {
         return entityType;
     }
 
+    @NotNull
     public Class<?> getFirstEntityFetcherClass() {
         return firstEntityFetcherClass;
     }
 
+    @NotNull
     public Method getFirstEntityFetcherMethod() {
         return firstEntityFetcherMethod;
     }
 
+    @NotNull
     public Class<?> getSecondEntityFetcherClass() {
         return secondEntityFetcherClass;
     }
 
+    @NotNull
     public Method getSecondEntityFetcherMethod() {
         return secondEntityFetcherMethod;
     }

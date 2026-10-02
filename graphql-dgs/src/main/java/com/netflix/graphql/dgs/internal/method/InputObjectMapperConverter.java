@@ -18,6 +18,8 @@ package com.netflix.graphql.dgs.internal.method;
 
 import com.netflix.graphql.dgs.internal.InputObjectMapper;
 import kotlin.jvm.JvmClassMappingKt;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.core.KotlinDetector;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.ConditionalGenericConverter;
@@ -29,25 +31,27 @@ import java.util.Set;
 class InputObjectMapperConverter implements ConditionalGenericConverter {
     private final InputObjectMapper inputObjectMapper;
 
-    InputObjectMapperConverter(InputObjectMapper inputObjectMapper) {
+    InputObjectMapperConverter(@NotNull InputObjectMapper inputObjectMapper) {
         this.inputObjectMapper = inputObjectMapper;
     }
 
+    @NotNull
     @Override
     public Set<ConvertiblePair> getConvertibleTypes() {
         return Set.of(new ConvertiblePair(Map.class, Object.class));
     }
 
     @Override
-    public boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType) {
+    public boolean matches(@NotNull TypeDescriptor sourceType, @NotNull TypeDescriptor targetType) {
         return sourceType.isMap()
                 && !targetType.isMap()
                 && !targetType.getType().isAssignableFrom(Optional.class);
     }
 
+    @NotNull
     @Override
     @SuppressWarnings("unchecked")
-    public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
+    public Object convert(@Nullable Object source, @NotNull TypeDescriptor sourceType, @NotNull TypeDescriptor targetType) {
         Map<String, ?> mapInput = (Map<String, ?>) source;
         if (KotlinDetector.isKotlinType(targetType.getType())) {
             return inputObjectMapper.mapToKotlinObject(

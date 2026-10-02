@@ -29,6 +29,8 @@ import com.jayway.jsonpath.TypeRef;
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,9 +67,9 @@ public class GraphQLResponse implements DgsGraphQLResponse {
     private final List<GraphQLError> errors;
 
     public GraphQLResponse(
-            @Language("json") String json, Map<String, List<String>> headers, ObjectMapper mapper) {
+            @NotNull @Language("json") String json, @NotNull Map<String, ? extends List<String>> headers, @NotNull ObjectMapper mapper) {
         this.json = json;
-        this.headers = headers;
+        this.headers = asHeaders(headers);
         this.mapper = mapper;
         this.parsed =
                 JsonPath
@@ -85,41 +87,46 @@ public class GraphQLResponse implements DgsGraphQLResponse {
         this.errors = readErrors != null ? readErrors : List.of();
     }
 
-    public GraphQLResponse(@Language("json") String json) {
+    public GraphQLResponse(@NotNull @Language("json") String json) {
         this(json, Map.of());
     }
 
-    public GraphQLResponse(@Language("json") String json, Map<String, List<String>> headers) {
+    public GraphQLResponse(@NotNull @Language("json") String json, @NotNull Map<String, ? extends List<String>> headers) {
         this(json, headers, GraphQLRequestOptions.createCustomObjectMapper());
     }
 
     public GraphQLResponse(
-            @Language("json") String json, Map<String, List<String>> headers, GraphQLRequestOptions options) {
+            @NotNull @Language("json") String json, @NotNull Map<String, ? extends List<String>> headers, @Nullable GraphQLRequestOptions options) {
         this(json, headers, GraphQLRequestOptions.createCustomObjectMapper(options));
     }
 
+    @NotNull
     @Override
     public String getJson() {
         return json;
     }
 
+    @NotNull
     @Override
     public Map<String, List<String>> getHeaders() {
         return headers;
     }
 
     /** A JsonPath DocumentContext. Typically, only used internally. */
+    @NotNull
     @Override
     public DocumentContext getParsed() {
         return parsed;
     }
 
     /** Map representation of data. */
+    @NotNull
     @Override
     public Map<String, Object> getData() {
         return data;
     }
 
+    @NotNull
     @Override
     public List<GraphQLError> getErrors() {
         return errors;
@@ -130,7 +137,7 @@ public class GraphQLResponse implements DgsGraphQLResponse {
      * The class may need Jackson annotations for correct mapping.
      */
     @Override
-    public <T> T dataAsObject(Class<T> clazz) {
+    public <T> T dataAsObject(@NotNull Class<T> clazz) {
         return mapper.convertValue(data, clazz);
     }
 
@@ -141,7 +148,7 @@ public class GraphQLResponse implements DgsGraphQLResponse {
      * {@link #extractValueAsObject} instead.
      */
     @Override
-    public <T> T extractValue(String path) {
+    public <T> T extractValue(@NotNull String path) {
         String dataPath = getDataPath(path);
         try {
             return parsed.read(dataPath);
@@ -153,7 +160,7 @@ public class GraphQLResponse implements DgsGraphQLResponse {
 
     /** Extract values given a JsonPath and deserialize into the given class. */
     @Override
-    public <T> T extractValueAsObject(String path, Class<T> clazz) {
+    public <T> T extractValueAsObject(@NotNull String path, @NotNull Class<T> clazz) {
         String dataPath = getDataPath(path);
         try {
             return parsed.read(dataPath, clazz);
@@ -168,7 +175,7 @@ public class GraphQLResponse implements DgsGraphQLResponse {
      * Use this for Lists of a specific type.
      */
     @Override
-    public <T> T extractValueAsObject(String path, TypeRef<T> typeRef) {
+    public <T> T extractValueAsObject(@NotNull String path, @NotNull TypeRef<T> typeRef) {
         String dataPath = getDataPath(path);
         try {
             return parsed.read(dataPath, typeRef);
@@ -182,6 +189,7 @@ public class GraphQLResponse implements DgsGraphQLResponse {
      * Extracts RequestDetails from the response if available.
      * Returns null otherwise.
      */
+    @Nullable
     @Override
     public RequestDetails getRequestDetails() {
         return extractValueAsObject("gatewayRequestDetails", RequestDetails.class);
@@ -200,8 +208,32 @@ public class GraphQLResponse implements DgsGraphQLResponse {
         return DgsGraphQLResponse.getDataPath(path);
     }
 
+    @NotNull
+    public String component1() {
+        return json;
+    }
+
+    @NotNull
+    public Map<String, List<String>> component2() {
+        return headers;
+    }
+
+    @NotNull
+    public GraphQLResponse copy(
+            @NotNull String json, @NotNull Map<String, ? extends List<String>> headers, @NotNull ObjectMapper mapper) {
+        return new GraphQLResponse(
+                Objects.requireNonNull(json, "json"),
+                asHeaders(Objects.requireNonNull(headers, "headers")),
+                Objects.requireNonNull(mapper, "mapper"));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, List<String>> asHeaders(Map<String, ? extends List<String>> headers) {
+        return (Map<String, List<String>>) (Map<?, ?>) headers;
+    }
+
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         if (this == other) {
             return true;
         }
@@ -213,11 +245,15 @@ public class GraphQLResponse implements DgsGraphQLResponse {
 
     @Override
     public int hashCode() {
-        return Objects.hash(json, headers, mapper);
+        int result = Objects.hashCode(json);
+        result = 31 * result + Objects.hashCode(headers);
+        result = 31 * result + Objects.hashCode(mapper);
+        return result;
     }
 
+    @NotNull
     @Override
     public String toString() {
-        return "GraphQLResponse(json=" + json + ", headers=" + headers + ")";
+        return "GraphQLResponse(json=" + json + ", headers=" + headers + ", mapper=" + mapper + ")";
     }
 }

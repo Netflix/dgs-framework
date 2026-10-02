@@ -21,6 +21,7 @@ import com.netflix.graphql.dgs.metrics.DgsMetrics.GqlTag;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Timer;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,14 +40,15 @@ class BatchLoaderWithContextInterceptor implements InvocationHandler {
     private final String name;
     private final MeterRegistry registry;
 
-    BatchLoaderWithContextInterceptor(Object batchLoaderWithContext, String name, MeterRegistry registry) {
+    BatchLoaderWithContextInterceptor(@NotNull Object batchLoaderWithContext, @NotNull String name, @NotNull MeterRegistry registry) {
         this.batchLoaderWithContext = batchLoaderWithContext;
         this.name = name;
         this.registry = registry;
     }
 
+    @NotNull
     @Override
-    public CompletionStage<?> invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public CompletionStage<?> invoke(@NotNull Object proxy, @NotNull Method method, @NotNull Object[] args) throws Throwable {
         if ("load".equals(method.getName())) {
             logger.debug("Starting metered timer[{}] for {}.", ID, getClass().getSimpleName());
             Timer.Sample timerSampler = Timer.start(registry);

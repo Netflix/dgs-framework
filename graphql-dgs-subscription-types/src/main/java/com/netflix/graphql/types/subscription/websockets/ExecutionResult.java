@@ -19,6 +19,8 @@ package com.netflix.graphql.types.subscription.websockets;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import graphql.GraphQLError;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -29,22 +31,44 @@ public final class ExecutionResult {
 
     @JsonCreator
     public ExecutionResult(
-            @JsonProperty("data") Object data,
-            @JsonProperty("errors") List<GraphQLError> errors) {
+            @Nullable @JsonProperty("data") Object data,
+            @NotNull @JsonProperty("errors") List<? extends GraphQLError> errors) {
         this.data = data;
-        this.errors = errors;
+        this.errors = asList(errors);
     }
 
+    @Nullable
     public Object getData() {
         return data;
     }
 
+    @NotNull
     public List<GraphQLError> getErrors() {
         return errors;
     }
 
+    @Nullable
+    public Object component1() {
+        return data;
+    }
+
+    @NotNull
+    public List<GraphQLError> component2() {
+        return errors;
+    }
+
+    @NotNull
+    public ExecutionResult copy(@Nullable Object data, @NotNull List<? extends GraphQLError> errors) {
+        return new ExecutionResult(data, asList(Objects.requireNonNull(errors, "errors")));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> List<T> asList(List<? extends T> list) {
+        return (List<T>) list;
+    }
+
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         if (this == other) {
             return true;
         }
@@ -55,9 +79,12 @@ public final class ExecutionResult {
 
     @Override
     public int hashCode() {
-        return Objects.hash(data, errors);
+        int result = Objects.hashCode(data);
+        result = 31 * result + Objects.hashCode(errors);
+        return result;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "ExecutionResult(data=" + data + ", errors=" + errors + ")";

@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.exceptions;
 
 import graphql.GraphQLError;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,11 +27,17 @@ public class QueryException extends RuntimeException {
 
     private final transient List<GraphQLError> errors;
 
-    public QueryException(List<GraphQLError> errors) {
+    public QueryException(@NotNull List<? extends GraphQLError> errors) {
         super(errors.stream().map(GraphQLError::getMessage).collect(Collectors.joining(", ")));
-        this.errors = errors;
+        this.errors = castErrors(errors);
     }
 
+    @SuppressWarnings("unchecked")
+    private static List<GraphQLError> castErrors(List<? extends GraphQLError> errors) {
+        return (List<GraphQLError>) (List<?>) errors;
+    }
+
+    @NotNull
     public List<GraphQLError> getErrors() {
         return errors;
     }

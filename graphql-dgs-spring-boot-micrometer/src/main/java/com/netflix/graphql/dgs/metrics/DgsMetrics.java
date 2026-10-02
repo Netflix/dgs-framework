@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.metrics;
 
 import com.netflix.graphql.dgs.Internal;
 import io.micrometer.core.instrument.Tag;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +57,7 @@ public final class DgsMetrics {
             this.key = key;
         }
 
+        @NotNull
         public String getKey() {
             return key;
         }
@@ -119,6 +121,7 @@ public final class DgsMetrics {
             this.key = key;
         }
 
+        @NotNull
         public String getKey() {
             return key;
         }
@@ -135,6 +138,7 @@ public final class DgsMetrics {
             this.key = key;
         }
 
+        @NotNull
         public String getKey() {
             return key;
         }
@@ -187,15 +191,18 @@ public final class DgsMetrics {
             this.tag = Tag.of(key, defaultValue);
         }
 
+        @NotNull
         public String getKey() {
             return key;
         }
 
+        @NotNull
         public Tag getTag() {
             return tag;
         }
 
-        public abstract <T> Iterable<Tag> tags(T v);
+        @NotNull
+        public abstract <T> Iterable<Tag> tags(@NotNull T v);
 
         private static Iterable<Tag> withTag(Iterable<Tag> tags, Tag extra) {
             List<Tag> result = new ArrayList<>();

@@ -37,9 +37,10 @@ import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.netflix.graphql.dgs.json.DgsJsonMapper;
 import graphql.GraphQLContext;
 import graphql.schema.Coercing;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.Locale;
 
 /**
@@ -50,37 +51,40 @@ import java.util.Locale;
 public class Jackson2DgsJsonMapperAdapter implements DgsJsonMapper {
     private final ObjectMapper objectMapper;
 
-    public Jackson2DgsJsonMapperAdapter(ObjectMapper objectMapper) {
+    public Jackson2DgsJsonMapperAdapter(@NotNull ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
+    @NotNull
     public ObjectMapper getObjectMapper() {
         return objectMapper;
     }
 
+    @NotNull
     @Override
-    public String writeValueAsString(Object value) {
+    public String writeValueAsString(@NotNull Object value) {
         try {
             return objectMapper.writeValueAsString(value);
         } catch (JsonProcessingException e) {
-            throw new UncheckedIOException(e);
+            throw Jackson2ExceptionSupport.rethrow(e);
         }
     }
 
     @Override
-    public <T> T readValue(String content, Class<T> clazz) {
+    public <T> T readValue(@NotNull String content, @NotNull Class<T> clazz) {
         try {
             return objectMapper.readValue(content, clazz);
         } catch (JsonProcessingException e) {
-            throw new UncheckedIOException(e);
+            throw Jackson2ExceptionSupport.rethrow(e);
         }
     }
 
     @Override
-    public <T> T convertValue(Object fromValue, Class<T> toClass) {
+    public <T> T convertValue(@NotNull Object fromValue, @NotNull Class<T> toClass) {
         return objectMapper.convertValue(fromValue, toClass);
     }
 
+    @NotNull
     @Override
     public Configuration jsonPathConfiguration() {
         return Configuration
@@ -91,10 +95,12 @@ public class Jackson2DgsJsonMapperAdapter implements DgsJsonMapper {
                 .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
     }
 
-    public static Jackson2DgsJsonMapperAdapter fromOptions(DgsGraphQLRequestOptions options) {
+    @NotNull
+    public static Jackson2DgsJsonMapperAdapter fromOptions(@Nullable DgsGraphQLRequestOptions options) {
         return new Jackson2DgsJsonMapperAdapter(buildObjectMapper(options));
     }
 
+    @NotNull
     public static Jackson2DgsJsonMapperAdapter fromOptions() {
         return fromOptions(null);
     }

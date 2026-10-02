@@ -16,12 +16,14 @@
 
 package com.netflix.graphql.dgs.diagnostics;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.diagnostics.AbstractFailureAnalyzer;
 import org.springframework.boot.diagnostics.FailureAnalysis;
 
 public class DgsMapperFailureAnalyzer extends AbstractFailureAnalyzer<DgsJsonMapperMissingException> {
+    @NotNull
     @Override
-    protected FailureAnalysis analyze(Throwable rootFailure, DgsJsonMapperMissingException cause) {
+    protected FailureAnalysis analyze(@NotNull Throwable rootFailure, @NotNull DgsJsonMapperMissingException cause) {
         return new FailureAnalysis(
                 "No DgsJsonMapper bean found.",
                 "Add 'tools.jackson.core:jackson-databind' (Jackson 3) or 'graphql-dgs-jackson2' to your classpath.",

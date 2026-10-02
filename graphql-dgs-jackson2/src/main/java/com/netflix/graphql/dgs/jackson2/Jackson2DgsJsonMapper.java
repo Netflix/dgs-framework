@@ -29,15 +29,15 @@ import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.netflix.graphql.dgs.json.DgsJsonMapper;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.UncheckedIOException;
 
 /**
  * Jackson 2 implementation of {@link DgsJsonMapper}.
  * Used when consumers opt back into Jackson 2 via the {@code graphql-dgs-jackson2} module.
  */
 class Jackson2DgsJsonMapper implements DgsJsonMapper {
-    private final ObjectMapper objectMapper =
+    private final ObjectMapper objectMapper = Jackson2DgsDefaultsSupport.addTo(
             new ObjectMapper()
                     .registerModule(new KotlinModule.Builder().enable(KotlinFeature.NullIsSameAsDefault).build())
                     .registerModule(new JavaTimeModule())
@@ -45,31 +45,33 @@ class Jackson2DgsJsonMapper implements DgsJsonMapper {
                     .registerModule(new Jdk8Module())
                     .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
                     .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                    .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES);
+                    .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES));
 
+    @NotNull
     @Override
-    public String writeValueAsString(Object value) {
+    public String writeValueAsString(@NotNull Object value) {
         try {
             return objectMapper.writeValueAsString(value);
         } catch (JsonProcessingException e) {
-            throw new UncheckedIOException(e);
+            throw rethrow(e);
         }
     }
 
     @Override
-    public <T> T readValue(String content, Class<T> clazz) {
+    public <T> T readValue(@NotNull String content, @NotNull Class<T> clazz) {
         try {
             return objectMapper.readValue(content, clazz);
         } catch (JsonProcessingException e) {
-            throw new UncheckedIOException(e);
+            throw rethrow(e);
         }
     }
 
     @Override
-    public <T> T convertValue(Object fromValue, Class<T> toClass) {
+    public <T> T convertValue(@NotNull Object fromValue, @NotNull Class<T> toClass) {
         return objectMapper.convertValue(fromValue, toClass);
     }
 
+    @NotNull
     @Override
     public Configuration jsonPathConfiguration() {
         return Configuration.builder()
@@ -77,5 +79,15 @@ class Jackson2DgsJsonMapper implements DgsJsonMapper {
                 .mappingProvider(new JacksonMappingProvider(objectMapper))
                 .build()
                 .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
+    }
+
+    private static RuntimeException rethrow(JsonProcessingException exception) {
+        Jackson2DgsJsonMapper.<RuntimeException>sneakyThrow(exception);
+        throw new AssertionError("unreachable");
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <E extends Throwable> void sneakyThrow(Throwable throwable) throws E {
+        throw (E) throwable;
     }
 }

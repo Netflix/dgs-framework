@@ -16,6 +16,8 @@
 
 package com.netflix.graphql.dgs.internal;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 
 import java.util.Map;
@@ -29,15 +31,22 @@ public final class DefaultRequestData {
     private final Map<String, Object> extensions;
     private final HttpHeaders headers;
 
-    public DefaultRequestData(Map<String, Object> extensions, HttpHeaders headers) {
-        this.extensions = extensions;
+    public DefaultRequestData(
+            @NotNull Map<String, ? extends Object> extensions, @NotNull HttpHeaders headers) {
+        this.extensions = castExtensions(extensions);
         this.headers = headers;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> castExtensions(Map<String, ? extends Object> extensions) {
+        return (Map<String, Object>) (Map<?, ?>) extensions;
     }
 
     /**
      * @deprecated Use {@link com.netflix.graphql.dgs.context.DgsContext#getRequestData} instead.
      */
     @Deprecated
+    @NotNull
     public Map<String, Object> getExtensions() {
         return extensions;
     }
@@ -46,12 +55,28 @@ public final class DefaultRequestData {
      * @deprecated Use {@link com.netflix.graphql.dgs.context.DgsContext#getRequestData} instead.
      */
     @Deprecated
+    @NotNull
     public HttpHeaders getHeaders() {
         return headers;
     }
 
+    @NotNull
+    public Map<String, Object> component1() {
+        return extensions;
+    }
+
+    @NotNull
+    public HttpHeaders component2() {
+        return headers;
+    }
+
+    @NotNull
+    public DefaultRequestData copy(@NotNull Map<String, ? extends Object> extensions, @NotNull HttpHeaders headers) {
+        return new DefaultRequestData(extensions, headers);
+    }
+
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         if (this == other) {
             return true;
         }
@@ -62,9 +87,12 @@ public final class DefaultRequestData {
 
     @Override
     public int hashCode() {
-        return Objects.hash(extensions, headers);
+        int result = Objects.hashCode(extensions);
+        result = 31 * result + Objects.hashCode(headers);
+        return result;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "DefaultRequestData(extensions=" + extensions + ", headers=" + headers + ")";

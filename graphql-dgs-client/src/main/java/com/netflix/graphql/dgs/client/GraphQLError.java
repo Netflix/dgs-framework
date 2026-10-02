@@ -19,6 +19,8 @@ package com.netflix.graphql.dgs.client;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -34,47 +36,90 @@ public final class GraphQLError {
 
     @JsonCreator
     public GraphQLError(
-            @JsonProperty("message") String message,
-            @JsonProperty("path") List<Object> path,
-            @JsonProperty("locations") List<Object> locations,
-            @JsonProperty("extensions") GraphQLErrorExtensions extensions) {
+            @NotNull @JsonProperty("message") String message,
+            @NotNull @JsonProperty("path") List<? extends Object> path,
+            @NotNull @JsonProperty("locations") List<? extends Object> locations,
+            @Nullable @JsonProperty("extensions") GraphQLErrorExtensions extensions) {
         this.message = message == null ? "" : message;
-        this.path = path == null ? List.of() : path;
-        this.locations = locations == null ? List.of() : locations;
+        this.path = path == null ? List.of() : asList(path);
+        this.locations = locations == null ? List.of() : asList(locations);
         this.extensions = extensions;
         this.pathAsString = this.path.stream().map(String::valueOf).collect(Collectors.joining("."));
     }
 
-    public GraphQLError(String message, GraphQLErrorExtensions extensions) {
+    public GraphQLError(@NotNull String message, @Nullable GraphQLErrorExtensions extensions) {
         this(message, List.of(), List.of(), extensions);
     }
 
-    public GraphQLError(String message) {
+    public GraphQLError(@NotNull String message) {
         this(message, List.of(), List.of(), null);
     }
 
+    @NotNull
     public String getMessage() {
         return message;
     }
 
+    @NotNull
     public List<Object> getPath() {
         return path;
     }
 
+    @NotNull
     public List<Object> getLocations() {
         return locations;
     }
 
+    @Nullable
     public GraphQLErrorExtensions getExtensions() {
         return extensions;
     }
 
+    @NotNull
     public String getPathAsString() {
         return pathAsString;
     }
 
+    @NotNull
+    public String component1() {
+        return message;
+    }
+
+    @NotNull
+    public List<Object> component2() {
+        return path;
+    }
+
+    @NotNull
+    public List<Object> component3() {
+        return locations;
+    }
+
+    @Nullable
+    public GraphQLErrorExtensions component4() {
+        return extensions;
+    }
+
+    @NotNull
+    public GraphQLError copy(
+            @NotNull String message,
+            @NotNull List<? extends Object> path,
+            @NotNull List<? extends Object> locations,
+            @Nullable GraphQLErrorExtensions extensions) {
+        return new GraphQLError(
+                Objects.requireNonNull(message, "message"),
+                asList(Objects.requireNonNull(path, "path")),
+                asList(Objects.requireNonNull(locations, "locations")),
+                extensions);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> List<T> asList(List<? extends T> list) {
+        return (List<T>) list;
+    }
+
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         if (this == other) {
             return true;
         }
@@ -87,9 +132,14 @@ public final class GraphQLError {
 
     @Override
     public int hashCode() {
-        return Objects.hash(message, path, locations, extensions);
+        int result = Objects.hashCode(message);
+        result = 31 * result + Objects.hashCode(path);
+        result = 31 * result + Objects.hashCode(locations);
+        result = 31 * result + Objects.hashCode(extensions);
+        return result;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "GraphQLError(message=" + message + ", path=" + path + ", locations=" + locations

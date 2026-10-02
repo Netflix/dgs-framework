@@ -29,6 +29,8 @@ import kotlin.reflect.jvm.ReflectJvmMapping;
 import kotlinx.coroutines.CoroutineDispatcher;
 import kotlinx.coroutines.Dispatchers;
 import kotlinx.coroutines.reactor.MonoKt;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.core.KotlinDetector;
 import org.springframework.core.MethodParameter;
@@ -58,12 +60,12 @@ public class DataFetcherInvoker implements DataFetcher<Object> {
     private final List<MethodParameter> methodParameters;
 
     public DataFetcherInvoker(
-            Object dgsComponent,
-            Method method,
-            ArgumentResolverComposite resolvers,
-            ParameterNameDiscoverer parameterNameDiscoverer,
-            AsyncTaskExecutor taskExecutor,
-            CoroutineDispatcher coroutineDispatcher) {
+            @NotNull Object dgsComponent,
+            @NotNull Method method,
+            @NotNull ArgumentResolverComposite resolvers,
+            @NotNull ParameterNameDiscoverer parameterNameDiscoverer,
+            @Nullable AsyncTaskExecutor taskExecutor,
+            @NotNull CoroutineDispatcher coroutineDispatcher) {
         this.dgsComponent = dgsComponent;
         this.resolvers = resolvers;
         this.coroutineDispatcher = coroutineDispatcher;
@@ -85,16 +87,17 @@ public class DataFetcherInvoker implements DataFetcher<Object> {
     }
 
     public DataFetcherInvoker(
-            Object dgsComponent,
-            Method method,
-            ArgumentResolverComposite resolvers,
-            ParameterNameDiscoverer parameterNameDiscoverer,
-            AsyncTaskExecutor taskExecutor) {
+            @NotNull Object dgsComponent,
+            @NotNull Method method,
+            @NotNull ArgumentResolverComposite resolvers,
+            @NotNull ParameterNameDiscoverer parameterNameDiscoverer,
+            @Nullable AsyncTaskExecutor taskExecutor) {
         this(dgsComponent, method, resolvers, parameterNameDiscoverer, taskExecutor, Dispatchers.getUnconfined());
     }
 
+    @Nullable
     @Override
-    public Object get(DataFetchingEnvironment environment) throws Exception {
+    public Object get(@NotNull DataFetchingEnvironment environment) throws Exception {
         if (methodParameters.isEmpty()) {
             if (completableFutureWrapper.shouldWrapInCompletableFuture(bridgedMethod)) {
                 return completableFutureWrapper.wrapInCompletableFuture(

@@ -18,6 +18,8 @@ package com.netflix.graphql.dgs.exceptions;
 
 import com.jayway.jsonpath.TypeRef;
 import com.jayway.jsonpath.spi.mapper.MappingException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -30,7 +32,7 @@ public class DgsQueryExecutionDataExtractionException extends RuntimeException {
     private final String targetClass;
 
     public DgsQueryExecutionDataExtractionException(
-            Exception ex, String jsonResult, String jsonPath, String targetClass) {
+            @NotNull Exception ex, @NotNull String jsonResult, @NotNull String jsonPath, @NotNull String targetClass) {
         super(
                 String.format(
                         "Error deserializing data from '%s' with JsonPath '%s' and target class %s",
@@ -43,33 +45,63 @@ public class DgsQueryExecutionDataExtractionException extends RuntimeException {
     }
 
     public DgsQueryExecutionDataExtractionException(
-            MappingException ex, String jsonResult, String jsonPath, TypeRef<?> targetClass) {
+            @NotNull MappingException ex, @NotNull String jsonResult, @NotNull String jsonPath, @NotNull TypeRef<?> targetClass) {
         this(ex, jsonResult, jsonPath, targetClass.getType().getTypeName());
     }
 
     public DgsQueryExecutionDataExtractionException(
-            MappingException ex, String jsonResult, String jsonPath, Class<?> targetClass) {
+            @NotNull MappingException ex, @NotNull String jsonResult, @NotNull String jsonPath, @NotNull Class<?> targetClass) {
         this(ex, jsonResult, jsonPath, targetClass.getName());
     }
 
+    @NotNull
     public Exception getEx() {
         return ex;
     }
 
+    @NotNull
     public String getJsonResult() {
         return jsonResult;
     }
 
+    @NotNull
     public String getJsonPath() {
         return jsonPath;
     }
 
+    @NotNull
     public String getTargetClass() {
         return targetClass;
     }
 
+    @NotNull
+    public Exception component1() {
+        return ex;
+    }
+
+    @NotNull
+    public String component2() {
+        return jsonResult;
+    }
+
+    @NotNull
+    public String component3() {
+        return jsonPath;
+    }
+
+    @NotNull
+    public String component4() {
+        return targetClass;
+    }
+
+    @NotNull
+    public DgsQueryExecutionDataExtractionException copy(
+            @NotNull Exception ex, @NotNull String jsonResult, @NotNull String jsonPath, @NotNull String targetClass) {
+        return new DgsQueryExecutionDataExtractionException(ex, jsonResult, jsonPath, targetClass);
+    }
+
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         if (this == other) {
             return true;
         }
@@ -82,6 +114,17 @@ public class DgsQueryExecutionDataExtractionException extends RuntimeException {
 
     @Override
     public int hashCode() {
-        return Objects.hash(ex, jsonResult, jsonPath, targetClass);
+        int result = Objects.hashCode(ex);
+        result = 31 * result + Objects.hashCode(jsonResult);
+        result = 31 * result + Objects.hashCode(jsonPath);
+        result = 31 * result + Objects.hashCode(targetClass);
+        return result;
+    }
+
+    @NotNull
+    @Override
+    public String toString() {
+        return "DgsQueryExecutionDataExtractionException(ex=" + ex + ", jsonResult=" + jsonResult
+                + ", jsonPath=" + jsonPath + ", targetClass=" + targetClass + ")";
     }
 }

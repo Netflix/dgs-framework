@@ -21,6 +21,8 @@ import org.dataloader.BatchLoaderEnvironment;
 import org.dataloader.DataLoaderRegistry;
 import org.dataloader.MappedBatchLoader;
 import org.dataloader.MappedBatchLoaderWithContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Set;
@@ -30,17 +32,18 @@ class MappedBatchLoaderWithContextWrapper<K, V>
         implements MappedBatchLoaderWithContext<K, V>, DgsDataLoaderRegistryConsumer {
     private final MappedBatchLoader<K, V> original;
 
-    MappedBatchLoaderWithContextWrapper(MappedBatchLoader<K, V> original) {
+    MappedBatchLoaderWithContextWrapper(@NotNull MappedBatchLoader<K, V> original) {
         this.original = original;
     }
 
+    @NotNull
     @Override
-    public CompletionStage<Map<K, V>> load(Set<K> keys, BatchLoaderEnvironment environment) {
+    public CompletionStage<Map<K, V>> load(@NotNull Set<K> keys, @NotNull BatchLoaderEnvironment environment) {
         return original.load(keys);
     }
 
     @Override
-    public void setDataLoaderRegistry(DataLoaderRegistry dataLoaderRegistry) {
+    public void setDataLoaderRegistry(@Nullable DataLoaderRegistry dataLoaderRegistry) {
         if (original instanceof DgsDataLoaderRegistryConsumer consumer) {
             consumer.setDataLoaderRegistry(dataLoaderRegistry);
         }

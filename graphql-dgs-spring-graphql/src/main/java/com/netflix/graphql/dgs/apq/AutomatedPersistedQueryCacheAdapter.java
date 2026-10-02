@@ -22,6 +22,8 @@ import graphql.execution.preparsed.persisted.PersistedQueryCache;
 import graphql.execution.preparsed.persisted.PersistedQueryCacheMiss;
 import graphql.execution.preparsed.persisted.PersistedQueryNotFound;
 import graphql.execution.preparsed.persisted.PersistedQuerySupport;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -33,9 +35,10 @@ import java.util.function.Supplier;
  * @see DgsAPQSupportAutoConfiguration
  */
 public abstract class AutomatedPersistedQueryCacheAdapter implements PersistedQueryCache {
+    @NotNull
     @Override
     public CompletableFuture<PreparsedDocumentEntry> getPersistedQueryDocumentAsync(
-            Object persistedQueryId, ExecutionInput executionInput, PersistedQueryCacheMiss onCacheMiss) {
+            @NotNull Object persistedQueryId, @NotNull ExecutionInput executionInput, @NotNull PersistedQueryCacheMiss onCacheMiss) {
         String key = persistedQueryId instanceof String stringId ? stringId : persistedQueryId.toString();
         return CompletableFuture.completedFuture(getFromCache(key, () -> {
             // Get the query from the execution input. Make sure it's not null, empty or the APQ marker.
@@ -55,6 +58,7 @@ public abstract class AutomatedPersistedQueryCacheAdapter implements PersistedQu
      * @param key The hash of the requested query.
      * @param documentEntrySupplier function that will supply the document in case there is a cache miss.
      */
+    @Nullable
     protected abstract PreparsedDocumentEntry getFromCache(
-            String key, Supplier<PreparsedDocumentEntry> documentEntrySupplier);
+            @NotNull String key, @NotNull Supplier<PreparsedDocumentEntry> documentEntrySupplier);
 }

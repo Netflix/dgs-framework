@@ -18,6 +18,8 @@ package com.netflix.graphql.dgs.internal;
 
 import kotlin.reflect.KFunction;
 import kotlin.reflect.jvm.ReflectJvmMapping;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.reactivestreams.Publisher;
 import org.springframework.core.task.AsyncTaskExecutor;
 
@@ -31,7 +33,7 @@ class CompletableFutureWrapper {
 
     private final boolean supportsReactor;
 
-    CompletableFutureWrapper(AsyncTaskExecutor taskExecutor) {
+    CompletableFutureWrapper(@Nullable AsyncTaskExecutor taskExecutor) {
         this.taskExecutor = taskExecutor;
         boolean reactorAvailable;
         try {
@@ -56,7 +58,7 @@ class CompletableFutureWrapper {
      * This is only done when a taskExecutor is available, and if the data fetcher doesn't explicitly return
      * CompletableFuture already. Used when virtual threads are enabled.
      */
-    boolean shouldWrapInCompletableFuture(KFunction<?> kFunc) {
+    boolean shouldWrapInCompletableFuture(@NotNull KFunction<?> kFunc) {
         if (taskExecutor == null) {
             return false;
         }
@@ -72,7 +74,7 @@ class CompletableFutureWrapper {
      * This is only done when a taskExecutor is available, and if the data fetcher doesn't explicitly return
      * CompletableFuture already. Used when virtual threads are enabled.
      */
-    boolean shouldWrapInCompletableFuture(Method method) {
+    boolean shouldWrapInCompletableFuture(@NotNull Method method) {
         return taskExecutor != null
                 && !CompletionStage.class.isAssignableFrom(method.getReturnType())
                 && !isReactive(method.getReturnType());

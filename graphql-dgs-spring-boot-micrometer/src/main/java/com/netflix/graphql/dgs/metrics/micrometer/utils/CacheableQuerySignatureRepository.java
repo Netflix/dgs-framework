@@ -21,6 +21,8 @@ import com.netflix.graphql.dgs.Internal;
 import com.netflix.graphql.dgs.metrics.micrometer.DgsMeterRegistrySupplier;
 import graphql.language.Document;
 import io.micrometer.core.instrument.binder.cache.CaffeineCacheMetrics;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.data.metrics.AutoTimer;
@@ -55,6 +57,7 @@ public class CacheableQuerySignatureRepository extends SimpleQuerySignatureRepos
     private static final Logger log = LoggerFactory.getLogger(CacheableQuerySignatureRepository.class);
 
     public static final long DEFAULT_MAX_CACHE_SIZE = 100L;
+    @NotNull
     public static final String QUERY_SIG_CACHE = "dgsQuerySignatureCache";
 
     private final Optional<CacheManager> optionalCacheManager;
@@ -62,15 +65,16 @@ public class CacheableQuerySignatureRepository extends SimpleQuerySignatureRepos
     private Cache cache;
 
     public CacheableQuerySignatureRepository(
-            AutoTimer autoTimer,
-            DgsMeterRegistrySupplier meterRegistrySupplier,
-            Optional<CacheManager> optionalCacheManager) {
+            @NotNull AutoTimer autoTimer,
+            @NotNull DgsMeterRegistrySupplier meterRegistrySupplier,
+            @NotNull Optional<CacheManager> optionalCacheManager) {
         super(autoTimer, meterRegistrySupplier);
         this.optionalCacheManager = optionalCacheManager;
     }
 
+    @NotNull
     @Override
-    protected QuerySignature computeQuerySignature(String queryHash, String queryName, Document document) {
+    protected QuerySignature computeQuerySignature(@NotNull String queryHash, @Nullable String queryName, @NotNull Document document) {
         CacheKey key = new CacheKey(queryHash, queryName);
         log.debug("Computing query signature for query with cache key: {}.", key);
         return cache.get(key, () -> super.computeQuerySignature(queryHash, queryName, document));
@@ -111,21 +115,38 @@ public class CacheableQuerySignatureRepository extends SimpleQuerySignatureRepos
         private final String hash;
         private final String name;
 
-        public CacheKey(String hash, String name) {
+        public CacheKey(@NotNull String hash, @Nullable String name) {
             this.hash = hash;
             this.name = name;
         }
 
+        @NotNull
         public String getHash() {
             return hash;
         }
 
+        @Nullable
         public String getName() {
             return name;
         }
 
+        @NotNull
+        public String component1() {
+            return hash;
+        }
+
+        @Nullable
+        public String component2() {
+            return name;
+        }
+
+        @NotNull
+        public CacheKey copy(@NotNull String hash, @Nullable String name) {
+            return new CacheKey(hash, name);
+        }
+
         @Override
-        public boolean equals(Object other) {
+        public boolean equals(@Nullable Object other) {
             if (this == other) {
                 return true;
             }
@@ -136,9 +157,12 @@ public class CacheableQuerySignatureRepository extends SimpleQuerySignatureRepos
 
         @Override
         public int hashCode() {
-            return Objects.hash(hash, name);
+            int result = Objects.hashCode(hash);
+            result = 31 * result + Objects.hashCode(name);
+            return result;
         }
 
+        @NotNull
         @Override
         public String toString() {
             return "CacheKey(hash=" + hash + ", name=" + name + ")";

@@ -19,7 +19,6 @@ package com.netflix.graphql.dgs.client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.UncheckedIOException;
 import java.util.Map;
 
 /** Internal helper for serializing GraphQL requests. */
@@ -28,11 +27,11 @@ final class ClientRequests {
     }
 
     static String serialize(
-            ObjectMapper mapper, String query, String operationName, Map<String, Object> variables) {
+            ObjectMapper mapper, String query, String operationName, Map<String, ? extends Object> variables) {
         try {
             return mapper.writeValueAsString(GraphQLClients.toRequestMap(query, operationName, variables));
         } catch (JsonProcessingException e) {
-            throw new UncheckedIOException(e);
+            throw Jackson2ExceptionSupport.rethrow(e);
         }
     }
 }

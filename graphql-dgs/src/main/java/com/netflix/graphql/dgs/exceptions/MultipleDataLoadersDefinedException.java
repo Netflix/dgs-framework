@@ -16,13 +16,15 @@
 
 package com.netflix.graphql.dgs.exceptions;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class MultipleDataLoadersDefinedException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public MultipleDataLoadersDefinedException(Class<?>... classes) {
+    public MultipleDataLoadersDefinedException(@NotNull Class<?>... classes) {
         super("Multiple data loaders found, unable to disambiguate. ["
                 + Arrays.stream(classes).map(Class::getName).collect(Collectors.joining(", ")) + "].");
     }

@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs.internal;
 
 import org.dataloader.DataLoaderRegistry;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -37,6 +38,7 @@ public interface DgsDataLoaderProvider {
      *
      * @return DataLoaderRegistry instance containing all registered data loaders
      */
+    @NotNull
     DataLoaderRegistry buildRegistry();
 
     /**
@@ -46,7 +48,8 @@ public interface DgsDataLoaderProvider {
      * @param contextSupplier Supplier that provides GraphQL context
      * @return DataLoaderRegistry instance containing all registered data loaders
      */
-    <T> DataLoaderRegistry buildRegistryWithContextSupplier(Supplier<T> contextSupplier);
+    @NotNull
+    <T> DataLoaderRegistry buildRegistryWithContextSupplier(@NotNull Supplier<T> contextSupplier);
 
     final class ScheduledExecutors {
         private ScheduledExecutors() {
@@ -57,7 +60,8 @@ public interface DgsDataLoaderProvider {
          *
          * @return ScheduledExecutorService instance
          */
-        public static ScheduledExecutorService createService(String qualifier) {
+        @NotNull
+        public static ScheduledExecutorService createService(@NotNull String qualifier) {
             return Executors.newSingleThreadScheduledExecutor(runnable -> {
                 Thread thread = new Thread(runnable, "dgs-dataloader-" + qualifier);
                 thread.setDaemon(true);

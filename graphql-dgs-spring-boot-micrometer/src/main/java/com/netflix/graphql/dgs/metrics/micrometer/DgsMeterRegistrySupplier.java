@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.metrics.micrometer;
 
 import com.netflix.graphql.dgs.Internal;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A supplier of a {@link MeterRegistry} that should guarantee a none-null reference is returned.
@@ -28,5 +29,6 @@ import io.micrometer.core.instrument.MeterRegistry;
 @Internal
 @FunctionalInterface
 public interface DgsMeterRegistrySupplier {
+    @NotNull
     MeterRegistry get();
 }

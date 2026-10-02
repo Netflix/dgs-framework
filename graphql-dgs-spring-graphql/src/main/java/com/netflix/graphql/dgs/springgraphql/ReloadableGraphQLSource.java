@@ -19,6 +19,7 @@ package com.netflix.graphql.dgs.springgraphql;
 import com.netflix.graphql.dgs.ReloadSchemaIndicator;
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.graphql.execution.GraphQlSource;
@@ -32,16 +33,18 @@ public class ReloadableGraphQLSource implements GraphQlSource {
     private GraphQlSource graphQlSource;
 
     public ReloadableGraphQLSource(
-            GraphQlSource.Builder<?> graphQlSourceBuilder, ReloadSchemaIndicator reloadSchemaIndicator) {
+            @NotNull GraphQlSource.Builder<?> graphQlSourceBuilder, @NotNull ReloadSchemaIndicator reloadSchemaIndicator) {
         this.graphQlSourceBuilder = graphQlSourceBuilder;
         this.reloadSchemaIndicator = reloadSchemaIndicator;
     }
 
+    @NotNull
     @Override
     public GraphQL graphQl() {
         return getSource().graphQl();
     }
 
+    @NotNull
     @Override
     public GraphQLSchema schema() {
         return getSource().schema();

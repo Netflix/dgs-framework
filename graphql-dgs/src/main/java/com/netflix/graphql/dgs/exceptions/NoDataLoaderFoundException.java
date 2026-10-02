@@ -16,14 +16,16 @@
 
 package com.netflix.graphql.dgs.exceptions;
 
+import org.jetbrains.annotations.NotNull;
+
 public class NoDataLoaderFoundException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public NoDataLoaderFoundException(String message) {
+    public NoDataLoaderFoundException(@NotNull String message) {
         super(message);
     }
 
-    public NoDataLoaderFoundException(Class<?> dataLoaderClass) {
+    public NoDataLoaderFoundException(@NotNull Class<?> dataLoaderClass) {
         this("No data loader found. Missing @DgsDataLoader for " + dataLoaderClass.getName() + ".");
     }
 }

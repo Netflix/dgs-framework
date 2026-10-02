@@ -19,6 +19,8 @@ package com.netflix.graphql.dgs.exceptions;
 import com.netflix.graphql.types.errors.ErrorType;
 import com.netflix.graphql.types.errors.TypedGraphQLError;
 import graphql.execution.ResultPath;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.event.Level;
 
 import java.util.Map;
@@ -26,38 +28,54 @@ import java.util.Map;
 public abstract class DgsException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
+    @NotNull
     public static final String EXTENSION_CLASS_KEY = "class";
 
     private final ErrorType errorType;
     private final Level logLevel;
 
-    protected DgsException(String message, Exception cause, ErrorType errorType, Level logLevel) {
+    public DgsException(@NotNull String message, @Nullable Exception cause, @NotNull ErrorType errorType, @NotNull Level logLevel) {
         super(message, cause);
         this.errorType = errorType;
         this.logLevel = logLevel;
     }
 
-    protected DgsException(String message, Exception cause, ErrorType errorType) {
+    public DgsException(@NotNull String message, @Nullable Exception cause, @NotNull ErrorType errorType) {
         this(message, cause, errorType, Level.ERROR);
     }
 
-    protected DgsException(String message, ErrorType errorType) {
+    protected DgsException(@NotNull String message, @NotNull ErrorType errorType) {
         this(message, null, errorType, Level.ERROR);
     }
 
-    protected DgsException(String message) {
+    protected DgsException(@NotNull String message) {
         this(message, null, ErrorType.UNKNOWN, Level.ERROR);
     }
 
+    @NotNull
     public ErrorType getErrorType() {
         return errorType;
     }
 
+    @NotNull
     public Level getLogLevel() {
         return logLevel;
     }
 
-    public TypedGraphQLError toGraphQlError(ResultPath path) {
+    @Override
+    @NotNull
+    public String getMessage() {
+        return super.getMessage();
+    }
+
+    @Override
+    @Nullable
+    public Exception getCause() {
+        return (Exception) super.getCause();
+    }
+
+    @NotNull
+    public TypedGraphQLError toGraphQlError(@Nullable ResultPath path) {
         TypedGraphQLError.Builder builder = TypedGraphQLError.newBuilder();
         if (path != null) {
             builder.path(path);

@@ -20,12 +20,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.graphql.types.subscription.QueryPayload;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
-import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
@@ -44,27 +45,29 @@ public class SSESubscriptionGraphQLClient implements ReactiveGraphQLClient {
     private final WebClient webClient;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public SSESubscriptionGraphQLClient(String url, WebClient webClient) {
+    public SSESubscriptionGraphQLClient(@NotNull String url, @NotNull WebClient webClient) {
         this.url = url;
         this.webClient = webClient;
     }
 
+    @NotNull
     @Override
     public Flux<GraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query, Map<String, Object> variables) {
+            @NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables) {
         return reactiveExecuteQuery(query, variables, null);
     }
 
+    @NotNull
     @Override
     public Flux<GraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query, Map<String, Object> variables, String operationName) {
+            @NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables, @Nullable String operationName) {
         QueryPayload queryPayload = new QueryPayload(variables, Map.of(), operationName, query);
 
         String jsonPayload;
         try {
             jsonPayload = mapper.writeValueAsString(queryPayload);
         } catch (JsonProcessingException e) {
-            throw new UncheckedIOException(e);
+            throw Jackson2ExceptionSupport.rethrow(e);
         }
 
         return webClient
@@ -84,8 +87,8 @@ public class SSESubscriptionGraphQLClient implements ReactiveGraphQLClient {
     }
 
     @SuppressWarnings("unchecked")
-    private static Map<String, Object> castVariables(Map<String, Object> variables) {
-        return variables;
+    private static Map<String, Object> castVariables(Map<String, ? extends Object> variables) {
+        return (Map<String, Object>) (Map<?, ?>) variables;
     }
 
     private String encodeQuery(@Language("graphql") String query) {

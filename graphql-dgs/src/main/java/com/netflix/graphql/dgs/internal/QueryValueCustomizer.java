@@ -17,8 +17,10 @@
 package com.netflix.graphql.dgs.internal;
 
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.Nullable;
 
 @FunctionalInterface
 public interface QueryValueCustomizer {
-    String apply(@Language("graphql") String query);
+    @Nullable
+    String apply(@Nullable @Language("graphql") String query);
 }

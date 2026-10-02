@@ -21,27 +21,32 @@ import org.dataloader.BatchLoader;
 import org.dataloader.BatchLoaderWithContext;
 import org.dataloader.MappedBatchLoader;
 import org.dataloader.MappedBatchLoaderWithContext;
+import org.jetbrains.annotations.NotNull;
 
 public class DgsWrapWithContextDataLoaderCustomizer implements DgsDataLoaderCustomizer {
+    @NotNull
     @Override
     @SuppressWarnings("unchecked")
-    public Object provide(BatchLoader<?, ?> original, String name) {
+    public Object provide(@NotNull BatchLoader<?, ?> original, @NotNull String name) {
         return new BatchLoaderWithContextWrapper<>((BatchLoader<Object, Object>) original);
     }
 
+    @NotNull
     @Override
-    public Object provide(BatchLoaderWithContext<?, ?> original, String name) {
+    public Object provide(@NotNull BatchLoaderWithContext<?, ?> original, @NotNull String name) {
         return original;
     }
 
+    @NotNull
     @Override
     @SuppressWarnings("unchecked")
-    public Object provide(MappedBatchLoader<?, ?> original, String name) {
+    public Object provide(@NotNull MappedBatchLoader<?, ?> original, @NotNull String name) {
         return new MappedBatchLoaderWithContextWrapper<>((MappedBatchLoader<Object, Object>) original);
     }
 
+    @NotNull
     @Override
-    public Object provide(MappedBatchLoaderWithContext<?, ?> original, String name) {
+    public Object provide(@NotNull MappedBatchLoaderWithContext<?, ?> original, @NotNull String name) {
         return original;
     }
 }

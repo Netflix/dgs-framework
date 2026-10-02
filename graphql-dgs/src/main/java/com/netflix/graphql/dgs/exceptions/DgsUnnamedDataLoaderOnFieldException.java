@@ -16,12 +16,14 @@
 
 package com.netflix.graphql.dgs.exceptions;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Field;
 
 public class DgsUnnamedDataLoaderOnFieldException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public DgsUnnamedDataLoaderOnFieldException(Field field) {
+    public DgsUnnamedDataLoaderOnFieldException(@NotNull Field field) {
         super("Field `" + field.getName() + "` in class `" + field.getDeclaringClass().getName()
                 + "` was annotated with @DgsDataLoader, but the data loader was not given a proper name");
     }

@@ -17,6 +17,8 @@
 package com.netflix.graphql.dgs.client;
 
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import reactor.core.publisher.Flux;
 
 import java.util.Map;
@@ -29,10 +31,12 @@ import java.util.Map;
  */
 @Deprecated
 public interface ReactiveGraphQLClient extends DgsReactiveGraphQLClient {
+    @NotNull
     @Override
-    Flux<GraphQLResponse> reactiveExecuteQuery(@Language("graphql") String query, Map<String, Object> variables);
+    Flux<GraphQLResponse> reactiveExecuteQuery(@NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables);
 
+    @NotNull
     @Override
     Flux<GraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query, Map<String, Object> variables, String operationName);
+            @NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables, @Nullable String operationName);
 }

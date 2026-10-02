@@ -1,4 +1,5 @@
 module com.netflix.graphql.dgs.pagination {
+    requires static org.jetbrains.annotations;
     requires com.netflix.graphql.dgs.core;
     requires com.graphqljava;
     requires spring.beans;

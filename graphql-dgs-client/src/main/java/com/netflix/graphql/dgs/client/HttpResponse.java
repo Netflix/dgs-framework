@@ -16,6 +16,9 @@
 
 package com.netflix.graphql.dgs.client;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -25,13 +28,13 @@ public final class HttpResponse {
     private final String body;
     private final Map<String, List<String>> headers;
 
-    public HttpResponse(int statusCode, String body, Map<String, List<String>> headers) {
+    public HttpResponse(int statusCode, @Nullable String body, @NotNull Map<String, ? extends List<String>> headers) {
         this.statusCode = statusCode;
         this.body = body;
-        this.headers = headers;
+        this.headers = asHeaders(headers);
     }
 
-    public HttpResponse(int statusCode, String body) {
+    public HttpResponse(int statusCode, @Nullable String body) {
         this(statusCode, body, Map.of());
     }
 
@@ -39,16 +42,42 @@ public final class HttpResponse {
         return statusCode;
     }
 
+    @Nullable
     public String getBody() {
         return body;
     }
 
+    @NotNull
     public Map<String, List<String>> getHeaders() {
         return headers;
     }
 
+    public int component1() {
+        return statusCode;
+    }
+
+    @Nullable
+    public String component2() {
+        return body;
+    }
+
+    @NotNull
+    public Map<String, List<String>> component3() {
+        return headers;
+    }
+
+    @NotNull
+    public HttpResponse copy(int statusCode, @Nullable String body, @NotNull Map<String, ? extends List<String>> headers) {
+        return new HttpResponse(statusCode, body, asHeaders(Objects.requireNonNull(headers, "headers")));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, List<String>> asHeaders(Map<String, ? extends List<String>> headers) {
+        return (Map<String, List<String>>) (Map<?, ?>) headers;
+    }
+
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         if (this == other) {
             return true;
         }
@@ -60,9 +89,13 @@ public final class HttpResponse {
 
     @Override
     public int hashCode() {
-        return Objects.hash(statusCode, body, headers);
+        int result = Integer.hashCode(statusCode);
+        result = 31 * result + Objects.hashCode(body);
+        result = 31 * result + Objects.hashCode(headers);
+        return result;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "HttpResponse(statusCode=" + statusCode + ", body=" + body + ", headers=" + headers + ")";

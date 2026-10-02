@@ -20,12 +20,15 @@ import com.netflix.graphql.dgs.metrics.micrometer.DgsGraphQLMetricsInstrumentati
 import graphql.ExecutionResult;
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters;
 import io.micrometer.core.instrument.Tag;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @FunctionalInterface
 public interface DgsExecutionTagCustomizer {
+    @NotNull
     Iterable<Tag> getExecutionTags(
-            DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState state,
-            InstrumentationExecutionParameters parameters,
-            ExecutionResult result,
-            Throwable exception);
+            @NotNull DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState state,
+            @NotNull InstrumentationExecutionParameters parameters,
+            @NotNull ExecutionResult result,
+            @Nullable Throwable exception);
 }

@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.pagination;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.EnvironmentPostProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -26,7 +27,7 @@ import java.util.Map;
 
 public class DgsPaginationEnvironmentPostProcessor implements EnvironmentPostProcessor {
     @Override
-    public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+    public void postProcessEnvironment(@NotNull ConfigurableEnvironment environment, @NotNull SpringApplication application) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("dgs.springgraphql.pagination.enabled", false);
         environment.getPropertySources().addLast(new MapPropertySource("dgs-pagination-defaults", properties));

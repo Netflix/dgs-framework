@@ -18,28 +18,31 @@ package com.netflix.graphql.dgs.internal;
 
 import com.netflix.graphql.dgs.DgsDataFetchingEnvironment;
 import graphql.language.OperationDefinition;
+import kotlinx.coroutines.Dispatchers;
 import kotlinx.coroutines.flow.Flow;
 import kotlinx.coroutines.reactive.ReactiveFlowKt;
+import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Flux;
-
-import kotlin.coroutines.EmptyCoroutineContext;
 
 public class FlowDataFetcherResultProcessor implements DataFetcherResultProcessor {
     @Override
-    public boolean supportsType(Object originalResult) {
+    public boolean supportsType(@NotNull Object originalResult) {
         return originalResult instanceof Flow<?>;
     }
 
+    @NotNull
     @Override
-    public Object process(Object originalResult, DgsDataFetchingEnvironment dfe) {
+    public Object process(@NotNull Object originalResult, @NotNull DgsDataFetchingEnvironment dfe) {
         if (!(originalResult instanceof Flow<?> flow)) {
             throw new IllegalArgumentException("Instance passed to " + getClass().getName()
                     + " was not a Flow<*>. It was a " + originalResult.getClass().getName() + " instead");
         }
-        var publisher = ReactiveFlowKt.asPublisher(flow, EmptyCoroutineContext.INSTANCE);
         if (dfe.getOperationDefinition().getOperation() == OperationDefinition.Operation.SUBSCRIPTION) {
-            return publisher;
+            return ReactiveFlowKt.asPublisher(flow, kotlin.coroutines.EmptyCoroutineContext.INSTANCE);
         }
+        // Keep query and mutation collection off the request thread, matching the former
+        // CoroutineScope(Dispatchers.Default).future { flow.toList() } implementation.
+        var publisher = ReactiveFlowKt.asPublisher(flow, Dispatchers.getDefault());
         return Flux.from(publisher).collectList().toFuture();
     }
 }

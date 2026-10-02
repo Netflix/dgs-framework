@@ -19,18 +19,20 @@ package com.netflix.graphql.dgs.internal;
 import com.netflix.graphql.dgs.DgsDataFetchingEnvironment;
 import com.netflix.graphql.dgs.context.ReactiveDgsContext;
 import graphql.language.OperationDefinition;
+import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 import reactor.util.context.Context;
 import reactor.util.context.ContextView;
 
 public class MonoDataFetcherResultProcessor implements DataFetcherResultProcessor {
     @Override
-    public boolean supportsType(Object originalResult) {
+    public boolean supportsType(@NotNull Object originalResult) {
         return originalResult instanceof Mono<?>;
     }
 
+    @NotNull
     @Override
-    public Object process(Object originalResult, DgsDataFetchingEnvironment dfe) {
+    public Object process(@NotNull Object originalResult, @NotNull DgsDataFetchingEnvironment dfe) {
         if (!(originalResult instanceof Mono<?> mono)) {
             throw new IllegalArgumentException("Instance passed to " + getClass().getName()
                     + " was not a Mono<*>. It was a " + originalResult.getClass().getName() + " instead");

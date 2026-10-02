@@ -16,10 +16,12 @@
 
 package com.netflix.graphql.dgs.exceptions;
 
+import org.jetbrains.annotations.NotNull;
+
 public class InvalidDgsEntityFetcher extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public InvalidDgsEntityFetcher(String message) {
+    public InvalidDgsEntityFetcher(@NotNull String message) {
         super(message);
     }
 }

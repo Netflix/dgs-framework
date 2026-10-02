@@ -18,15 +18,18 @@ package com.netflix.graphql.dgs.metrics.micrometer;
 
 import com.netflix.graphql.dgs.Internal;
 import io.micrometer.core.instrument.Tag;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
 
 @Internal
 public interface LimitedTagMetricResolver {
-    default Iterable<Tag> tags(String key, String value) {
+    @NotNull
+    default Iterable<Tag> tags(@NotNull String key, @NotNull String value) {
         return tag(key, value).<Iterable<Tag>>map(List::of).orElse(List.of());
     }
 
-    Optional<Tag> tag(String key, String value);
+    @NotNull
+    Optional<Tag> tag(@NotNull String key, @NotNull String value);
 }

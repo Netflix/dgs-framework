@@ -3,6 +3,7 @@ module com.netflix.graphql.dgs.micrometer {
     requires com.netflix.graphql.dgs.errortypes;
     requires com.graphqljava;
     requires micrometer.core;
+    requires static kotlin.stdlib;
     requires com.github.benmanes.caffeine;
     requires org.apache.commons.codec;
     requires com.netflix.spectator.api;

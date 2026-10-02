@@ -16,10 +16,12 @@
 
 package com.netflix.graphql.dgs.exceptions;
 
+import org.jetbrains.annotations.NotNull;
+
 public class DataFetcherInputArgumentSchemaMismatchException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public DataFetcherInputArgumentSchemaMismatchException(String message) {
+    public DataFetcherInputArgumentSchemaMismatchException(@NotNull String message) {
         super(message);
     }
 }

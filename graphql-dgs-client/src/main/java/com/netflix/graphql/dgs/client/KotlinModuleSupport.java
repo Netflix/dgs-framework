@@ -44,6 +44,7 @@ final class KotlinModuleSupport {
      * {@code mapper} either way so this can be chained onto a {@code new ObjectMapper()}.
      */
     static ObjectMapper registerIfAvailable(ObjectMapper mapper) {
+        DgsJacksonMixins.addTo(mapper);
         try {
             return Jackson2Registrar.register(mapper);
         } catch (NoClassDefFoundError | ExceptionInInitializerError e) {
@@ -56,6 +57,7 @@ final class KotlinModuleSupport {
      * {@code builder} either way.
      */
     static JsonMapper.Builder addIfAvailable(JsonMapper.Builder builder) {
+        DgsJacksonMixins.addTo(builder);
         try {
             return Jackson3Registrar.add(builder);
         } catch (NoClassDefFoundError | ExceptionInInitializerError e) {

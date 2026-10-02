@@ -20,6 +20,7 @@ import org.dataloader.BatchLoader;
 import org.dataloader.BatchLoaderWithContext;
 import org.dataloader.MappedBatchLoader;
 import org.dataloader.MappedBatchLoaderWithContext;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Beans that implement this interface will be called during the component scan
@@ -39,19 +40,23 @@ import org.dataloader.MappedBatchLoaderWithContext;
  * </ul>
  */
 public interface DgsDataLoaderCustomizer {
-    default Object provide(BatchLoader<?, ?> original, String name) {
+    @NotNull
+    default Object provide(@NotNull BatchLoader<?, ?> original, @NotNull String name) {
         return original;
     }
 
-    default Object provide(BatchLoaderWithContext<?, ?> original, String name) {
+    @NotNull
+    default Object provide(@NotNull BatchLoaderWithContext<?, ?> original, @NotNull String name) {
         return original;
     }
 
-    default Object provide(MappedBatchLoader<?, ?> original, String name) {
+    @NotNull
+    default Object provide(@NotNull MappedBatchLoader<?, ?> original, @NotNull String name) {
         return original;
     }
 
-    default Object provide(MappedBatchLoaderWithContext<?, ?> original, String name) {
+    @NotNull
+    default Object provide(@NotNull MappedBatchLoaderWithContext<?, ?> original, @NotNull String name) {
         return original;
     }
 }

@@ -22,27 +22,31 @@ import graphql.ExecutionResult;
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters;
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters;
 import io.micrometer.core.instrument.Tag;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class SimpleGqlOutcomeTagCustomizer implements DgsExecutionTagCustomizer, DgsFieldFetchTagCustomizer {
+    @NotNull
     @Override
     public Iterable<Tag> getExecutionTags(
-            DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState state,
-            InstrumentationExecutionParameters parameters,
-            ExecutionResult result,
-            Throwable exception) {
+            @NotNull DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState state,
+            @NotNull InstrumentationExecutionParameters parameters,
+            @NotNull ExecutionResult result,
+            @Nullable Throwable exception) {
         if (!result.getErrors().isEmpty() || exception != null) {
             return List.of(DgsMetrics.CommonTags.FAILURE.getTag());
         }
         return List.of(DgsMetrics.CommonTags.SUCCESS.getTag());
     }
 
+    @NotNull
     @Override
     public Iterable<Tag> getFieldFetchTags(
-            DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState state,
-            InstrumentationFieldFetchParameters parameters,
-            Throwable error) {
+            @NotNull DgsGraphQLMetricsInstrumentation.MetricsInstrumentationState state,
+            @NotNull InstrumentationFieldFetchParameters parameters,
+            @Nullable Throwable error) {
         if (error == null) {
             return List.of(DgsMetrics.CommonTags.SUCCESS.getTag());
         }

@@ -18,10 +18,12 @@ package com.netflix.graphql.dgs.client;
 
 import com.netflix.graphql.dgs.json.DgsJsonMapper;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodySpec;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
@@ -40,56 +42,61 @@ public class DgsWebClientGraphQLClient implements DgsMonoGraphQLClient {
     private final DgsJsonMapper mapper;
 
     public DgsWebClientGraphQLClient(
-            WebClient webclient, Consumer<HttpHeaders> headersConsumer, DgsJsonMapper mapper) {
+            @NotNull WebClient webclient, @NotNull Consumer<HttpHeaders> headersConsumer, @NotNull DgsJsonMapper mapper) {
         this.webclient = webclient;
         this.headersConsumer = headersConsumer;
         this.mapper = mapper;
     }
 
-    public DgsWebClientGraphQLClient(WebClient webclient) {
+    public DgsWebClientGraphQLClient(@NotNull WebClient webclient) {
         this(webclient, headers -> { });
     }
 
-    public DgsWebClientGraphQLClient(WebClient webclient, Consumer<HttpHeaders> headersConsumer) {
+    public DgsWebClientGraphQLClient(@NotNull WebClient webclient, @NotNull Consumer<HttpHeaders> headersConsumer) {
         this(webclient, headersConsumer, Jackson3DgsJsonMapperAdapter.defaultMapper());
     }
 
-    public DgsWebClientGraphQLClient(WebClient webclient, DgsGraphQLRequestOptions options) {
+    public DgsWebClientGraphQLClient(@NotNull WebClient webclient, @NotNull DgsGraphQLRequestOptions options) {
         this(webclient, headers -> { }, Jackson3DgsJsonMapperAdapter.fromOptions(options));
     }
 
     public DgsWebClientGraphQLClient(
-            WebClient webclient, Consumer<HttpHeaders> headersConsumer, DgsGraphQLRequestOptions options) {
+            @NotNull WebClient webclient, @NotNull Consumer<HttpHeaders> headersConsumer, @NotNull DgsGraphQLRequestOptions options) {
         this(webclient, headersConsumer, Jackson3DgsJsonMapperAdapter.fromOptions(options));
     }
 
+    @NotNull
     @Override
-    public Mono<DgsGraphQLResponse> reactiveExecuteQuery(@Language("graphql") String query) {
+    public Mono<DgsGraphQLResponse> reactiveExecuteQuery(@NotNull @Language("graphql") String query) {
         return reactiveExecuteQuery(query, Map.of(), null);
     }
 
+    @NotNull
     @Override
     public Mono<DgsGraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query, Map<String, Object> variables) {
+            @NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables) {
         return reactiveExecuteQuery(query, variables, null);
     }
 
+    @NotNull
     @Override
     public Mono<DgsGraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query, Map<String, Object> variables, String operationName) {
+            @NotNull @Language("graphql") String query, @NotNull Map<String, ? extends Object> variables, @Nullable String operationName) {
         return reactiveExecuteQuery(query, variables, operationName, REQUEST_BODY_URI_CUSTOMIZER_IDENTITY);
     }
 
+    @NotNull
     public Mono<DgsGraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query, RequestBodyUriCustomizer requestBodyUriCustomizer) {
+            @NotNull @Language("graphql") String query, @NotNull RequestBodyUriCustomizer requestBodyUriCustomizer) {
         return reactiveExecuteQuery(query, Map.of(), null, requestBodyUriCustomizer);
     }
 
+    @NotNull
     public Mono<DgsGraphQLResponse> reactiveExecuteQuery(
-            @Language("graphql") String query,
-            Map<String, Object> variables,
-            String operationName,
-            RequestBodyUriCustomizer requestBodyUriCustomizer) {
+            @NotNull @Language("graphql") String query,
+            @NotNull Map<String, ? extends Object> variables,
+            @Nullable String operationName,
+            @NotNull RequestBodyUriCustomizer requestBodyUriCustomizer) {
         String serializedRequest = mapper.writeValueAsString(GraphQLClients.toRequestMap(query, operationName, variables));
 
         return requestBodyUriCustomizer
@@ -118,6 +125,7 @@ public class DgsWebClientGraphQLClient implements DgsMonoGraphQLClient {
 
     @FunctionalInterface
     public interface RequestBodyUriCustomizer {
-        RequestBodySpec apply(WebClient.RequestBodyUriSpec spec);
+        @NotNull
+        RequestBodySpec apply(@NotNull WebClient.RequestBodyUriSpec spec);
     }
 }

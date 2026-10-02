@@ -16,15 +16,25 @@
 
 package com.netflix.graphql.types.subscription.websockets;
 
+import org.jetbrains.annotations.NotNull;
+
 /** Message types of the {@code graphql-transport-ws} protocol. */
 public final class MessageType {
+    @NotNull
     public static final String CONNECTION_INIT = "connection_init";
+    @NotNull
     public static final String CONNECTION_ACK = "connection_ack";
+    @NotNull
     public static final String PING = "ping";
+    @NotNull
     public static final String PONG = "pong";
+    @NotNull
     public static final String SUBSCRIBE = "subscribe";
+    @NotNull
     public static final String NEXT = "next";
+    @NotNull
     public static final String ERROR = "error";
+    @NotNull
     public static final String COMPLETE = "complete";
 
     private MessageType() {

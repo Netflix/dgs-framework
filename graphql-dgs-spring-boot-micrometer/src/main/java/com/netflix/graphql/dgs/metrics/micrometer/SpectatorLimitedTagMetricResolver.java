@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.metrics.micrometer;
 
 import com.netflix.spectator.api.patterns.CardinalityLimiters;
 import io.micrometer.core.instrument.Tag;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,12 +29,13 @@ public class SpectatorLimitedTagMetricResolver implements LimitedTagMetricResolv
     private final DgsGraphQLMetricsProperties.TagsProperties tagsProperties;
     private final ConcurrentHashMap<String, Function<String, String>> dynamicTags = new ConcurrentHashMap<>();
 
-    public SpectatorLimitedTagMetricResolver(DgsGraphQLMetricsProperties.TagsProperties tagsProperties) {
+    public SpectatorLimitedTagMetricResolver(@NotNull DgsGraphQLMetricsProperties.TagsProperties tagsProperties) {
         this.tagsProperties = tagsProperties;
     }
 
+    @NotNull
     @Override
-    public Optional<Tag> tag(String key, String value) {
+    public Optional<Tag> tag(@NotNull String key, @NotNull String value) {
         DgsGraphQLMetricsProperties.CardinalityLimiterProperties prop = tagsProperties.getLimiter();
         Function<String, String> limiter =
                 dynamicTags.computeIfAbsent(key, ignored -> resolveCardinalityLimiter(prop));
@@ -49,6 +51,7 @@ public class SpectatorLimitedTagMetricResolver implements LimitedTagMetricResolv
         };
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "SpectatorLimitedTagMetricResolver(tagsProperties=" + tagsProperties + ", dynamicTags=" + dynamicTags + ")";

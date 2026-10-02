@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.context;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.context.request.WebRequest;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -28,5 +29,8 @@ import java.util.Map;
  * DataFetchingEnvironment or batchLoaderEnvironment.
  */
 public interface DgsCustomContextBuilderWithRequest<T> {
-    T build(Map<String, ?> extensions, HttpHeaders headers, WebRequest webRequest);
+    T build(
+            @Nullable Map<String, ? extends Object> extensions,
+            @Nullable HttpHeaders headers,
+            @Nullable WebRequest webRequest);
 }

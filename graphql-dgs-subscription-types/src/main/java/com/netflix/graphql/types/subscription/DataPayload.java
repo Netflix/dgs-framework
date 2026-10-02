@@ -18,36 +18,64 @@ package com.netflix.graphql.types.subscription;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
 
 public final class DataPayload implements MessagePayload {
+    @JsonProperty("data")
     private final Object data;
+
+    @JsonProperty("errors")
     private final List<Object> errors;
 
-    @JsonCreator
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     public DataPayload(
-            @JsonProperty("data") Object data,
-            @JsonProperty("errors") List<Object> errors) {
+            @Nullable Object data,
+            @Nullable List<? extends Object> errors) {
         this.data = data;
-        this.errors = errors == null ? List.of() : errors;
+        this.errors = asList(errors);
     }
 
-    public DataPayload(Object data) {
+    @JsonCreator
+    public DataPayload(@Nullable @JsonProperty("data") Object data) {
         this(data, List.of());
     }
 
+    @Nullable
     public Object getData() {
         return data;
     }
 
+    @Nullable
     public List<Object> getErrors() {
         return errors;
     }
 
+    @Nullable
+    public Object component1() {
+        return data;
+    }
+
+    @Nullable
+    public List<Object> component2() {
+        return errors;
+    }
+
+    @NotNull
+    public DataPayload copy(@Nullable Object data, @Nullable List<? extends Object> errors) {
+        return new DataPayload(data, asList(errors));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> List<T> asList(List<? extends T> list) {
+        return (List<T>) list;
+    }
+
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         if (this == other) {
             return true;
         }
@@ -58,9 +86,12 @@ public final class DataPayload implements MessagePayload {
 
     @Override
     public int hashCode() {
-        return Objects.hash(data, errors);
+        int result = Objects.hashCode(data);
+        result = 31 * result + Objects.hashCode(errors);
+        return result;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "DataPayload(data=" + data + ", errors=" + errors + ")";

@@ -23,6 +23,8 @@ import com.jayway.jsonpath.spi.mapper.Jackson3MappingProvider;
 import com.netflix.graphql.dgs.json.DgsJsonMapper;
 import graphql.GraphQLContext;
 import graphql.schema.Coercing;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.JsonParser;
 import tools.jackson.databind.DeserializationContext;
@@ -41,29 +43,32 @@ import java.util.Locale;
 public class Jackson3DgsJsonMapperAdapter implements DgsJsonMapper {
     private final JsonMapper jsonMapper;
 
-    public Jackson3DgsJsonMapperAdapter(JsonMapper jsonMapper) {
+    public Jackson3DgsJsonMapperAdapter(@NotNull JsonMapper jsonMapper) {
         this.jsonMapper = jsonMapper;
     }
 
+    @NotNull
     public JsonMapper getJsonMapper() {
         return jsonMapper;
     }
 
+    @NotNull
     @Override
-    public String writeValueAsString(Object value) {
+    public String writeValueAsString(@NotNull Object value) {
         return jsonMapper.writeValueAsString(value);
     }
 
     @Override
-    public <T> T readValue(String content, Class<T> clazz) {
+    public <T> T readValue(@NotNull String content, @NotNull Class<T> clazz) {
         return jsonMapper.readValue(content, clazz);
     }
 
     @Override
-    public <T> T convertValue(Object fromValue, Class<T> toClass) {
+    public <T> T convertValue(@NotNull Object fromValue, @NotNull Class<T> toClass) {
         return jsonMapper.convertValue(fromValue, toClass);
     }
 
+    @NotNull
     @Override
     public Configuration jsonPathConfiguration() {
         return Configuration
@@ -74,10 +79,12 @@ public class Jackson3DgsJsonMapperAdapter implements DgsJsonMapper {
                 .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
     }
 
-    public static Jackson3DgsJsonMapperAdapter fromOptions(DgsGraphQLRequestOptions options) {
+    @NotNull
+    public static Jackson3DgsJsonMapperAdapter fromOptions(@Nullable DgsGraphQLRequestOptions options) {
         return new Jackson3DgsJsonMapperAdapter(buildJsonMapper(options));
     }
 
+    @NotNull
     public static Jackson3DgsJsonMapperAdapter fromOptions() {
         return fromOptions(null);
     }
