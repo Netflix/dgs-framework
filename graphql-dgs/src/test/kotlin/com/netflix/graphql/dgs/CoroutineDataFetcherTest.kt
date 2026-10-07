@@ -141,7 +141,7 @@ class CoroutineDataFetcherTest {
                             ).build(),
                     )
 
-                assertThat(executionResult.getData<Map<String, Int>>()!!)
+                assertThat(executionResult.getData<Map<String, Int>>())
                     .containsExactlyInAnyOrderEntriesOf(
                         mapOf(
                             "first" to 10,
@@ -168,7 +168,7 @@ class CoroutineDataFetcherTest {
                             ).build(),
                     )
 
-                assertThat(executionResult.getData<Map<String, Int>>()!!)
+                assertThat(executionResult.getData<Map<String, Int>>())
                     .containsExactlyInAnyOrderEntriesOf(mapOf("first" to 10))
             }
 

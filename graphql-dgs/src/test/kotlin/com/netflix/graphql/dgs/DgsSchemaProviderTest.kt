@@ -1237,7 +1237,7 @@ internal class DgsSchemaProviderTest {
             .create(data)
             .expectSubscription()
             .assertNext { result ->
-                assertThat(result.getData<Map<String, String>>()!!)
+                assertThat(result.getData<Map<String, String>>())
                     .hasEntrySatisfying("messages") { value -> assertThat(value).isEqualTo("hello") }
             }.verifyComplete()
     }
