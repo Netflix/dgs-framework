@@ -240,7 +240,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
                 // Check expected results.
                 assertThat(context).getBean(DgsQueryExecutor::class.java).extracting {
                     val response =
-                        requireNotNull(it).execute(
+                        it.execute(
                             " query availableQueries {\n" +
                                 "  __schema {\n" +
                                 "    queryType {\n" +
@@ -277,7 +277,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
                 // Check expected results.
                 assertThat(context).getBean(DgsQueryExecutor::class.java).extracting {
                     val response =
-                        requireNotNull(it).execute(
+                        it.execute(
                             " query availableQueries {\n" +
                                 "  __schema {\n" +
                                 "    queryType {\n" +
@@ -314,7 +314,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
                 // Check expected results.
                 assertThat(context).getBean(DgsQueryExecutor::class.java).extracting {
                     val response =
-                        requireNotNull(it).execute(
+                        it.execute(
                             " query availableQueries {\n" +
                                 "  __schema {\n" +
                                 "    queryType {\n" +
@@ -351,7 +351,7 @@ class DgsSpringGraphQlAutoConfigurationTest {
                 // Check expected results.
                 assertThat(context).getBean(DgsQueryExecutor::class.java).extracting {
                     val response =
-                        requireNotNull(it).execute(
+                        it.execute(
                             " query availableQueries {\n" +
                                 "  __schema {\n" +
                                 "    queryType {\n" +

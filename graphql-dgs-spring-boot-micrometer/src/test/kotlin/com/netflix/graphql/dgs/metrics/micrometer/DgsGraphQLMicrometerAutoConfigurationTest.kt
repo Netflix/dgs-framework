@@ -64,7 +64,7 @@ internal class DgsGraphQLMicrometerAutoConfigurationTest {
             assertThat(ctx)
                 .hasSingleBean(DgsMeterRegistrySupplier::class.java)
                 .getBean(DgsMeterRegistrySupplier::class.java)
-                .extracting { assertThat(it?.get()).isNotNull }
+                .extracting { assertThat(it.get()).isNotNull }
 
             assertThat(ctx)
                 .hasSingleBean(DgsGraphQLMetricsTagsProvider::class.java)
