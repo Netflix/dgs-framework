@@ -223,7 +223,7 @@ class CoroutineDataFetcherTest {
             )
 
         assertThat(executionResult.isDataPresent).isTrue()
-        assertThat(executionResult.getData<Map<String, Int>>()["concurrent"]).isEqualTo(42)
+        assertThat(executionResult.getData<Map<String, Int>>()!!["concurrent"]).isEqualTo(42)
     }
 
     @Test

@@ -40,11 +40,12 @@ class SelectionSetUtil {
 
             for (selection in selectionSet.selections) {
                 if (selection is Field) {
-                    if (selection.selectionSet == null) {
+                    val childSelectionSet = selection.selectionSet
+                    if (childSelectionSet == null) {
                         results.add(Stream.concat(nesting.stream(), Stream.of(selection.name)).toList())
                     } else {
                         nesting.add(selection.name)
-                        results.addAll(toPaths(selection.selectionSet, nesting))
+                        results.addAll(toPaths(childSelectionSet, nesting))
                         nesting.removeLast()
                     }
                 }
