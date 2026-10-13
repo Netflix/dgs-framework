@@ -408,10 +408,10 @@ class DgsGraphQLMetricsInstrumentation(
 
         fun resolveDataFetcherTagValue(parameters: InstrumentationFieldFetchParameters): String {
             val executionStepInfo = parameters.executionStepInfo ?: return TAG_VALUE_UNKNOWN
-            val parent = executionStepInfo.parent ?: return TAG_VALUE_UNKNOWN
-            val type = parent.type
-            val parentType = GraphQLTypeUtil.unwrapNonNullAs<GraphQLNamedType>(type)
             val field = executionStepInfo.field ?: return TAG_VALUE_UNKNOWN
+            val parentType =
+                executionStepInfo.parent?.type?.let { GraphQLTypeUtil.unwrapNonNullAs<GraphQLNamedType>(it) }
+                    ?: return TAG_VALUE_UNKNOWN
             return "${parentType.name}.${field.singleField.name}"
         }
 

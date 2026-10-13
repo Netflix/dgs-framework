@@ -23,10 +23,19 @@ import com.netflix.graphql.dgs.metrics.micrometer.tagging.DgsGraphQLMetricsTagsP
 import com.netflix.graphql.dgs.metrics.micrometer.tagging.SimpleGqlOutcomeTagCustomizer
 import com.netflix.graphql.dgs.metrics.micrometer.utils.QuerySignatureRepository
 import com.netflix.graphql.dgs.springgraphql.autoconfig.DgsSpringGraphQLAutoConfiguration
+import graphql.Scalars
+import graphql.execution.ExecutionStepInfo
+import graphql.execution.MergedField
+import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
+import graphql.language.Field
+import graphql.schema.GraphQLFieldDefinition
+import graphql.schema.GraphQLObjectType
 import graphql.schema.idl.SchemaParser
 import graphql.schema.idl.TypeDefinitionRegistry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 import org.springframework.boot.autoconfigure.AutoConfigurations
 import org.springframework.boot.context.annotation.UserConfigurations
 import org.springframework.boot.graphql.autoconfigure.GraphQlAutoConfiguration
@@ -123,6 +132,40 @@ internal class DgsGraphQLMicrometerAutoConfigurationTest {
                     .doesNotHaveBean(QuerySignatureRepository::class.java)
             }
     }
+
+    @Test
+    fun `uses parent type for field metric coordinate`() {
+        val queryType =
+            GraphQLObjectType
+                .newObject()
+                .name("Query")
+                .field(GraphQLFieldDefinition.newFieldDefinition().name("ping").type(Scalars.GraphQLString))
+                .build()
+        val parent = mock(ExecutionStepInfo::class.java)
+        `when`(parent.type).thenReturn(queryType)
+
+        assertThat(DgsGraphQLMetricsInstrumentation.TagUtils.resolveDataFetcherTagValue(parameters(stepInfo(parent))))
+            .isEqualTo("Query.ping")
+    }
+
+    @Test
+    fun `uses unknown when parent type for field metric is missing`() {
+        val parent = mock(ExecutionStepInfo::class.java)
+
+        assertThat(DgsGraphQLMetricsInstrumentation.TagUtils.resolveDataFetcherTagValue(parameters(stepInfo(parent))))
+            .isEqualTo(DgsGraphQLMetricsInstrumentation.TagUtils.TAG_VALUE_UNKNOWN)
+    }
+
+    private fun stepInfo(parent: ExecutionStepInfo): ExecutionStepInfo =
+        mock(ExecutionStepInfo::class.java).also { step ->
+            `when`(step.parent).thenReturn(parent)
+            `when`(step.field).thenReturn(MergedField.newMergedField(Field.newField("ping").build()).build())
+        }
+
+    private fun parameters(step: ExecutionStepInfo): InstrumentationFieldFetchParameters =
+        mock(InstrumentationFieldFetchParameters::class.java).also { parameters ->
+            `when`(parameters.executionStepInfo).thenReturn(step)
+        }
 
     @TestConfiguration(proxyBeanMethods = false)
     open class LocalTestConfiguration {
