@@ -12,7 +12,7 @@
     },
     "compileClasspath": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.20"
+            "locked": "2.21"
         },
         "com.graphql-java:graphql-java": {
             "locked": "25.0"
@@ -27,12 +27,12 @@
             "locked": "26.1.0"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.17"
+            "locked": "2.0.19"
         }
     },
     "compileOnlyDependenciesMetadata": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.20"
+            "locked": "2.21"
         }
     },
     "implementationDependenciesMetadata": {
@@ -49,7 +49,7 @@
             "locked": "26.1.0"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.17"
+            "locked": "2.0.19"
         }
     },
     "jmh": {
@@ -76,7 +76,7 @@
     },
     "jmhCompileClasspath": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.20"
+            "locked": "2.21"
         },
         "com.graphql-java:graphql-java": {
             "locked": "25.0"
@@ -100,12 +100,12 @@
             "locked": "1.36"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.17"
+            "locked": "2.0.19"
         }
     },
     "jmhCompileOnlyDependenciesMetadata": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.20"
+            "locked": "2.21"
         }
     },
     "jmhImplementationDependenciesMetadata": {
@@ -131,7 +131,7 @@
             "locked": "1.36"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.17"
+            "locked": "2.0.19"
         }
     },
     "jmhRuntimeClasspath": {
@@ -142,7 +142,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.9"
+            "locked": "1.14.11"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"
@@ -151,13 +151,13 @@
             "locked": "26.1.0"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "6.0.1"
+            "locked": "6.0.3"
         },
         "org.junit.platform:junit-platform-launcher": {
-            "locked": "6.0.1"
+            "locked": "6.0.3"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.4"
+            "locked": "6.1.3"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.37"
@@ -169,10 +169,10 @@
             "locked": "1.36"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.17"
+            "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0"
+            "locked": "4.1.1"
         }
     },
     "kotlinBouncyCastleConfiguration": {
@@ -228,117 +228,21 @@
         "com.pinterest.ktlint:ktlint-cli-reporter-baseline": {
             "locked": "1.5.0"
         },
-        "com.pinterest.ktlint:ktlint-cli-reporter-core": {
-            "locked": "1.5.0"
-        },
-        "com.pinterest.ktlint:ktlint-logger": {
-            "locked": "1.5.0"
-        },
-        "com.pinterest.ktlint:ktlint-rule-engine-core": {
-            "locked": "1.5.0"
-        },
-        "dev.drewhamilton.poko:poko-annotations": {
-            "locked": "0.18.0"
-        },
-        "dev.drewhamilton.poko:poko-annotations-jvm": {
-            "locked": "0.18.0"
-        },
         "io.github.oshai:kotlin-logging": {
             "locked": "5.1.0"
-        },
-        "io.github.oshai:kotlin-logging-jvm": {
-            "locked": "7.0.3"
-        },
-        "org.ec4j.core:ec4j-core": {
-            "locked": "1.1.0"
-        },
-        "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "2.2.20"
-        },
-        "org.jetbrains.kotlin:kotlin-daemon-embeddable": {
-            "locked": "2.2.20"
-        },
-        "org.jetbrains.kotlin:kotlin-reflect": {
-            "locked": "2.2.20"
-        },
-        "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "2.2.20"
-        },
-        "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "2.2.20"
-        },
-        "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm": {
-            "locked": "1.10.2"
-        },
-        "org.jetbrains:annotations": {
-            "locked": "13.0"
         }
     },
     "ktlintReporter": {
         "io.github.detekt.sarif4k:sarif4k": {
             "locked": "0.5.0"
         },
-        "io.github.detekt.sarif4k:sarif4k-jvm": {
-            "locked": "0.5.0"
-        },
         "io.github.oshai:kotlin-logging": {
             "locked": "5.1.0"
-        },
-        "io.github.oshai:kotlin-logging-jvm": {
-            "locked": "7.0.3"
-        },
-        "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "2.2.20"
-        },
-        "org.jetbrains:annotations": {
-            "locked": "13.0"
         }
     },
     "ktlintRuleset": {
-        "com.pinterest.ktlint:ktlint-cli-ruleset-core": {
-            "locked": "1.5.0"
-        },
-        "com.pinterest.ktlint:ktlint-logger": {
-            "locked": "1.5.0"
-        },
-        "com.pinterest.ktlint:ktlint-rule-engine-core": {
-            "locked": "1.5.0"
-        },
         "com.pinterest.ktlint:ktlint-ruleset-standard": {
             "locked": "1.5.0"
-        },
-        "dev.drewhamilton.poko:poko-annotations": {
-            "locked": "0.18.0"
-        },
-        "dev.drewhamilton.poko:poko-annotations-jvm": {
-            "locked": "0.18.0"
-        },
-        "io.github.oshai:kotlin-logging-jvm": {
-            "locked": "7.0.3"
-        },
-        "org.ec4j.core:ec4j-core": {
-            "locked": "1.1.0"
-        },
-        "org.jetbrains.kotlin:kotlin-compiler-embeddable": {
-            "locked": "2.2.20"
-        },
-        "org.jetbrains.kotlin:kotlin-daemon-embeddable": {
-            "locked": "2.2.20"
-        },
-        "org.jetbrains.kotlin:kotlin-reflect": {
-            "locked": "2.2.20"
-        },
-        "org.jetbrains.kotlin:kotlin-script-runtime": {
-            "locked": "2.2.20"
-        },
-        "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "2.2.20"
-        },
-        "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm": {
-            "locked": "1.10.2"
-        },
-        "org.jetbrains:annotations": {
-            "locked": "13.0"
         }
     },
     "runtimeClasspath": {
@@ -355,7 +259,7 @@
             "locked": "26.1.0"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.17"
+            "locked": "2.0.19"
         }
     },
     "swiftExportClasspathResolvable": {
@@ -371,7 +275,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.9"
+            "locked": "1.14.11"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"
@@ -380,16 +284,16 @@
             "locked": "26.1.0"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "6.0.1"
+            "locked": "6.0.3"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.4"
+            "locked": "6.1.3"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.17"
+            "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0"
+            "locked": "4.1.1"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -400,7 +304,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.9"
+            "locked": "1.14.11"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"
@@ -409,16 +313,16 @@
             "locked": "26.1.0"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "6.0.1"
+            "locked": "6.0.3"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.4"
+            "locked": "6.1.3"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.17"
+            "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0"
+            "locked": "4.1.1"
         }
     },
     "testRuntimeClasspath": {
@@ -429,7 +333,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.9"
+            "locked": "1.14.11"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"
@@ -438,19 +342,19 @@
             "locked": "26.1.0"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "6.0.1"
+            "locked": "6.0.3"
         },
         "org.junit.platform:junit-platform-launcher": {
-            "locked": "6.0.1"
+            "locked": "6.0.3"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.4"
+            "locked": "6.1.3"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.17"
+            "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0"
+            "locked": "4.1.1"
         }
     }
 }
