@@ -95,7 +95,7 @@ class DgsDataFetchingEnvironmentIsArgumentSet {
                     ).build()
             val executionResult = build.execute(executionInput)
             assertTrue(executionResult.isDataPresent)
-            val result = executionResult.getData() as Map<String, Any?>
+            val result = executionResult.getData<Map<String, Any?>>()!!
             assertEquals(true, result["providedTopLevel"], "Explicitly provided top level argument")
             assertEquals(false, result["notProvidedTopLevel"], "Not provided top level argument")
             assertEquals(true, result["explicitNullTopLevel"], "Explicitly null value provided for top level argument")

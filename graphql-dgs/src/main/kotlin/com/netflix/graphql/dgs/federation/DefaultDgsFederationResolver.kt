@@ -245,14 +245,9 @@ open class DefaultDgsFederationResolver() : DgsFederationResolver {
 
     override fun typeResolver(): TypeResolver =
         TypeResolver { env ->
-            val src: Any = env.getObject()
+            val src: Any = requireNotNull(env.getObject())
 
-            val typeName =
-                if (typeMapping().containsKey(src::class.java)) {
-                    typeMapping()[src::class.java]
-                } else {
-                    src::class.java.simpleName
-                }
+            val typeName = typeMapping()[src::class.java] ?: src::class.java.simpleName
 
             val type = env.schema.getObjectType(typeName)
             if (type == null) {

@@ -74,7 +74,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val result = DefaultDataFetcherExceptionHandler().handleException(handlerParameters).get()
         assertThat(result.errors.size).isEqualTo(1)
 
-        val extensions = result.errors[0].extensions
+        val extensions = result.errors[0].extensions!!
         assertThat(extensions["errorType"]).isEqualTo("PERMISSION_DENIED")
 
         assertThat(result.errors[0].errorType).isEqualTo(ErrorType.PERMISSION_DENIED)
@@ -91,7 +91,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val result = DefaultDataFetcherExceptionHandler().handleException(handlerParameters).get()
         assertThat(result.errors.size).isEqualTo(1)
 
-        val extensions = result.errors[0].extensions
+        val extensions = result.errors[0].extensions!!
         assertThat(extensions["errorType"]).isEqualTo("INTERNAL")
 
         assertThat(result.errors[0].errorType).isEqualTo(ErrorType.INTERNAL)
@@ -111,7 +111,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val result = DefaultDataFetcherExceptionHandler().handleException(handlerParameters).get()
         assertThat(result.errors.size).isEqualTo(1)
 
-        val extensions = result.errors[0].extensions
+        val extensions = result.errors[0].extensions!!
         assertThat(extensions["errorType"]).isEqualTo("INTERNAL")
 
         assertThat(result.errors[0].errorType).isEqualTo(ErrorType.INTERNAL)
@@ -129,7 +129,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val result = DefaultDataFetcherExceptionHandler().handleException(handlerParameters).get()
         assertThat(result.errors.size).isEqualTo(1)
 
-        val extensions = result.errors[0].extensions
+        val extensions = result.errors[0].extensions!!
         assertThat(extensions["errorType"]).isEqualTo("NOT_FOUND")
 
         assertThat(result.errors[0].errorType).isEqualTo(ErrorType.NOT_FOUND)
@@ -147,7 +147,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val result = DefaultDataFetcherExceptionHandler().handleException(handlerParameters).get()
         assertThat(result.errors.size).isEqualTo(1)
 
-        val extensions = result.errors[0].extensions
+        val extensions = result.errors[0].extensions!!
         assertThat(extensions["errorType"]).isEqualTo("BAD_REQUEST")
 
         assertThat(result.errors[0].errorType).isEqualTo(ErrorType.BAD_REQUEST)
@@ -170,7 +170,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val result = DefaultDataFetcherExceptionHandler().handleException(handlerParameters).get()
         assertThat(result.errors.size).isEqualTo(1)
 
-        val extensions = result.errors[0].extensions
+        val extensions = result.errors[0].extensions!!
         assertThat(extensions["errorType"]).isEqualTo(customDgsExceptionType.name)
 
         assertThat(result.errors[0].errorType).isEqualTo(customDgsExceptionType)
@@ -194,7 +194,7 @@ class DefaultDataFetcherExceptionHandlerTest {
         val result = DefaultDataFetcherExceptionHandler().handleException(handlerParameters).get()
         assertThat(result.errors.size).isEqualTo(1)
 
-        val extensions = result.errors[0].extensions
+        val extensions = result.errors[0].extensions!!
         assertThat(extensions["errorType"]).isEqualTo("NOT_FOUND")
 
         assertThat(result.errors[0].errorType).isEqualTo(ErrorType.NOT_FOUND)

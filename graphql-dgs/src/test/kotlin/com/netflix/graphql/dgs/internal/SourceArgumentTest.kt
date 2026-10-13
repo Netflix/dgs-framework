@@ -89,7 +89,7 @@ internal class SourceArgumentTest {
 
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
 
             @Suppress("UNCHECKED_CAST")
             val showData = (data["shows"] as List<Map<*, *>>)[0]
@@ -129,7 +129,7 @@ internal class SourceArgumentTest {
 
             assertThat(executionResult.errors).isEmpty()
             assertThat(executionResult.isDataPresent).isTrue
-            val data = executionResult.getData<Map<String, *>>()
+            val data = executionResult.getData<Map<String, *>>()!!
 
             @Suppress("UNCHECKED_CAST")
             val showData = (data["shows"] as List<Map<*, *>>)[0]

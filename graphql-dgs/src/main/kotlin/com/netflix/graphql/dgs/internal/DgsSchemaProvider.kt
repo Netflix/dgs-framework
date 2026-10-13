@@ -770,7 +770,8 @@ class DgsSchemaProvider
             val fieldDefinitionType = fieldDefinition?.type
 
             if (fieldDefinitionType is TypeName) {
-                val fieldType = registry.getType(fieldDefinitionType.name).getOrNull()
+                val fieldTypeName = fieldDefinitionType.name ?: return null
+                val fieldType = registry.getType(fieldTypeName).getOrNull()
 
                 if (fieldType != null) {
                     return when (fieldType) {
@@ -884,7 +885,7 @@ class DgsSchemaProvider
                     TypeRuntimeWiring
                         .newTypeWiring(it)
                         .typeResolver { env: TypeResolutionEnvironment ->
-                            val instance = env.getObject<Any>()
+                            val instance = requireNotNull(env.getObject<Any>())
                             val resolvedType = env.schema.getObjectType(instance::class.java.simpleName)
                             resolvedType ?: fallbackTypeResolver?.getType(env)
                                 ?: throw InvalidTypeResolverException(

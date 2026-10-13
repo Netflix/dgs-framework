@@ -87,7 +87,7 @@ class DgsTypeRegistryDefinitionTest {
                     """.trimIndent(),
                 )
 
-            val data = result.getData<Map<String, Any>>()
+            val data = result.getData<Map<String, Any>>()!!
             assertThat(data["dynamicField"]).isEqualTo("hello from dgs")
         }
     }
@@ -181,7 +181,7 @@ class DgsTypeRegistryDefinitionTest {
                         """.trimIndent(),
                     )
 
-                val data = result.getData<Map<String, Any>>()
+                val data = result.getData<Map<String, Any>>()!!
                 assertThat(data["dynamicField"]).isEqualTo("hello from dgs")
                 assertThat(data["number"]).isEqualTo(1)
             }

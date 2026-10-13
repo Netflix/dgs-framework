@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture
 class GraphQLJavaErrorInstrumentation : SimplePerformantInstrumentation() {
     override fun instrumentExecutionResult(
         executionResult: ExecutionResult,
-        parameters: InstrumentationExecutionParameters?,
+        parameters: InstrumentationExecutionParameters,
         state: InstrumentationState?,
     ): CompletableFuture<ExecutionResult> {
         if (executionResult.errors.isNotEmpty()) {

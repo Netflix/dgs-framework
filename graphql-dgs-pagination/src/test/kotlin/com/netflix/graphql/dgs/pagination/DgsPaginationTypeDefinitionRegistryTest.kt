@@ -48,8 +48,7 @@ class DgsPaginationTypeDefinitionRegistryTest {
         val graphqlSchema = SchemaGenerator().makeExecutableSchema(typeRegistry.merge(paginatedTypeRegistry), RuntimeWiring.MOCKED_WIRING)
         assertThat(SchemaValidator().validateSchema(graphqlSchema)).isEmpty()
 
-        val addedDirective = graphqlSchema.getDirective("connection")
-        assertThat(addedDirective).isNotNull
+        val addedDirective = graphqlSchema.getDirective("connection") ?: fail("connection directive not found")
         assertThat(addedDirective.validLocations())
             .isEqualTo(
                 setOf(
@@ -59,14 +58,14 @@ class DgsPaginationTypeDefinitionRegistryTest {
                 ),
             )
 
-        val movieConnectionType = graphqlSchema.getObjectType("MovieConnection")
-        assertThat(movieConnectionType).isNotNull.extracting { it.description }.isNotNull
-        val movieEdgeType = graphqlSchema.getObjectType("MovieEdge")
-        assertThat(movieEdgeType).isNotNull.extracting { it.description }.isNotNull
-        val pageInfoType = graphqlSchema.getObjectType("PageInfo")
-        assertThat(pageInfoType).isNotNull.extracting { it.description }.isNotNull
+        val movieConnectionType = graphqlSchema.getObjectType("MovieConnection") ?: fail("MovieConnection type not found")
+        assertThat(movieConnectionType.description).isNotNull
+        val movieEdgeType = graphqlSchema.getObjectType("MovieEdge") ?: fail("MovieEdge type not found")
+        assertThat(movieEdgeType.description).isNotNull
+        val pageInfoType = graphqlSchema.getObjectType("PageInfo") ?: fail("PageInfo type not found")
+        assertThat(pageInfoType.description).isNotNull
 
-        val movieConnection = graphqlSchema.getObjectType("MovieConnection")
+        val movieConnection = graphqlSchema.getObjectType("MovieConnection") ?: fail("MovieConnection type not found")
         val edgesField =
             movieConnection.getFieldDefinition("edges")
                 ?: fail("edges field not found on $movieConnection")
@@ -76,7 +75,7 @@ class DgsPaginationTypeDefinitionRegistryTest {
                 ?: fail("pageInfo field not found on $movieConnection")
         assertThat(simplePrint(pageInfoField.type)).isEqualTo("PageInfo!")
 
-        val movieEdge = graphqlSchema.getObjectType("MovieEdge")
+        val movieEdge = graphqlSchema.getObjectType("MovieEdge") ?: fail("MovieEdge type not found")
         val cursorField =
             movieEdge.getFieldDefinition("cursor")
                 ?: fail("cursor field not found on $movieEdge")
@@ -86,7 +85,7 @@ class DgsPaginationTypeDefinitionRegistryTest {
                 ?: fail("node field not found on $movieEdge")
         assertThat(simplePrint(nodeField.type)).isEqualTo("Movie")
 
-        val pageInfo = graphqlSchema.getObjectType("PageInfo")
+        val pageInfo = graphqlSchema.getObjectType("PageInfo") ?: fail("PageInfo type not found")
         val hasPreviousPageField =
             pageInfo.getFieldDefinition("hasPreviousPage")
                 ?: fail("hasPreviousPage field not found on $pageInfo")
@@ -131,10 +130,10 @@ class DgsPaginationTypeDefinitionRegistryTest {
         val graphqlSchema = SchemaGenerator().makeExecutableSchema(typeRegistry.merge(paginatedTypeRegistry), RuntimeWiring.MOCKED_WIRING)
         assertThat(SchemaValidator().validateSchema(graphqlSchema)).isEmpty()
 
-        val movieConnectionType = graphqlSchema.getObjectType("MovieConnection")
-        assertThat(movieConnectionType).isNotNull.extracting { it.description }.isNotNull
-        val movieEdgeType = graphqlSchema.getObjectType("MovieEdge")
-        assertThat(movieEdgeType).isNotNull.extracting { it.description }.isNotNull
+        val movieConnectionType = graphqlSchema.getObjectType("MovieConnection") ?: fail("MovieConnection type not found")
+        assertThat(movieConnectionType.description).isNotNull
+        val movieEdgeType = graphqlSchema.getObjectType("MovieEdge") ?: fail("MovieEdge type not found")
+        assertThat(movieEdgeType.description).isNotNull
         assertThat(paginatedTypeRegistry.types()["PageInfo"]).isNull()
     }
 
@@ -163,16 +162,17 @@ class DgsPaginationTypeDefinitionRegistryTest {
         val graphqlSchema = SchemaGenerator().makeExecutableSchema(typeRegistry.merge(paginatedTypeRegistry), RuntimeWiring.MOCKED_WIRING)
         assertThat(SchemaValidator().validateSchema(graphqlSchema)).isEmpty()
 
-        val movieConnectionType = graphqlSchema.getObjectType("IMovieConnection")
-        assertThat(movieConnectionType).isNotNull.extracting { it.description }.isNotNull
-        val movieEdgeType = graphqlSchema.getObjectType("IMovieEdge")
-        assertThat(movieEdgeType).isNotNull.extracting { it.description }.isNotNull
-        val scaryMovieConnectionType = graphqlSchema.getObjectType("ScaryMovieConnection")
-        assertThat(scaryMovieConnectionType).isNotNull.extracting { it.description }.isNotNull
-        val scaryMovieEdgeType = graphqlSchema.getObjectType("ScaryMovieEdge")
-        assertThat(scaryMovieEdgeType).isNotNull.extracting { it.description }.isNotNull
-        val pageInfoType = graphqlSchema.getObjectType("PageInfo")
-        assertThat(pageInfoType).isNotNull.extracting { it.description }.isNotNull
+        val movieConnectionType = graphqlSchema.getObjectType("IMovieConnection") ?: fail("IMovieConnection type not found")
+        assertThat(movieConnectionType.description).isNotNull
+        val movieEdgeType = graphqlSchema.getObjectType("IMovieEdge") ?: fail("IMovieEdge type not found")
+        assertThat(movieEdgeType.description).isNotNull
+        val scaryMovieConnectionType =
+            graphqlSchema.getObjectType("ScaryMovieConnection") ?: fail("ScaryMovieConnection type not found")
+        assertThat(scaryMovieConnectionType.description).isNotNull
+        val scaryMovieEdgeType = graphqlSchema.getObjectType("ScaryMovieEdge") ?: fail("ScaryMovieEdge type not found")
+        assertThat(scaryMovieEdgeType.description).isNotNull
+        val pageInfoType = graphqlSchema.getObjectType("PageInfo") ?: fail("PageInfo type not found")
+        assertThat(pageInfoType.description).isNotNull
     }
 
     @Test
@@ -215,15 +215,16 @@ class DgsPaginationTypeDefinitionRegistryTest {
         val graphqlSchema = SchemaGenerator().makeExecutableSchema(typeRegistry.merge(paginatedTypeRegistry), RuntimeWiring.MOCKED_WIRING)
         assertThat(SchemaValidator().validateSchema(graphqlSchema)).isEmpty()
 
-        val movieConnectionType = graphqlSchema.getObjectType("IMovieConnection")
-        assertThat(movieConnectionType).isNotNull.extracting { it.description }.isNotNull
-        val movieEdgeType = graphqlSchema.getObjectType("IMovieEdge")
-        assertThat(movieEdgeType).isNotNull.extracting { it.description }.isNotNull
-        val scaryMovieConnectionType = graphqlSchema.getObjectType("ScaryMovieConnection")
-        assertThat(scaryMovieConnectionType).isNotNull.extracting { it.description }.isNotNull
-        val scaryMovieEdgeType = graphqlSchema.getObjectType("ScaryMovieEdge")
-        assertThat(scaryMovieEdgeType).isNotNull.extracting { it.description }.isNotNull
-        val pageInfoType = graphqlSchema.getObjectType("PageInfo")
-        assertThat(pageInfoType).isNotNull.extracting { it.description }.isNotNull
+        val movieConnectionType = graphqlSchema.getObjectType("IMovieConnection") ?: fail("IMovieConnection type not found")
+        assertThat(movieConnectionType.description).isNotNull
+        val movieEdgeType = graphqlSchema.getObjectType("IMovieEdge") ?: fail("IMovieEdge type not found")
+        assertThat(movieEdgeType.description).isNotNull
+        val scaryMovieConnectionType =
+            graphqlSchema.getObjectType("ScaryMovieConnection") ?: fail("ScaryMovieConnection type not found")
+        assertThat(scaryMovieConnectionType.description).isNotNull
+        val scaryMovieEdgeType = graphqlSchema.getObjectType("ScaryMovieEdge") ?: fail("ScaryMovieEdge type not found")
+        assertThat(scaryMovieEdgeType.description).isNotNull
+        val pageInfoType = graphqlSchema.getObjectType("PageInfo") ?: fail("PageInfo type not found")
+        assertThat(pageInfoType.description).isNotNull
     }
 }

@@ -68,7 +68,7 @@ internal class BeanValidationSizeSmokeTest {
         val executionResult = queryExecutor.execute(query, variables)
         assertThat(executionResult.errors).isEmpty()
         assertThat(executionResult.getData<Map<String, Any>>()).isNotNull()
-        assertThat(executionResult.getData<Map<String, Any>>()["createPost"]).isNotNull()
+        assertThat(executionResult.getData<Map<String, Any>>()!!["createPost"]).isNotNull()
     }
 
     @SpringBootConfiguration(proxyBeanMethods = false)
