@@ -127,7 +127,7 @@
             "locked": "3.8.7"
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "2.0.0"
+            "locked": "2.1.0"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -291,7 +291,7 @@
             "locked": "3.8.7"
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "2.0.0"
+            "locked": "2.1.0"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -474,7 +474,7 @@
             "locked": "3.8.7"
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "2.0.0"
+            "locked": "2.1.0"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -647,7 +647,7 @@
             "locked": "3.8.7"
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "2.0.0"
+            "locked": "2.1.0"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -918,7 +918,7 @@
             "locked": "3.8.7"
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "2.0.0"
+            "locked": "2.1.0"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "firstLevelTransitive": [
@@ -1383,7 +1383,7 @@
             "locked": "3.8.7"
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "2.0.0"
+            "locked": "2.1.0"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "firstLevelTransitive": [
@@ -1676,7 +1676,7 @@
             "locked": "3.8.7"
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "2.0.0"
+            "locked": "2.1.0"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -1855,7 +1855,7 @@
             "locked": "3.8.7"
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "2.0.0"
+            "locked": "2.1.0"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -2126,7 +2126,7 @@
             "locked": "3.8.7"
         },
         "name.nkonev.multipart-spring-graphql:multipart-spring-graphql": {
-            "locked": "2.0.0"
+            "locked": "2.1.0"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "firstLevelTransitive": [
