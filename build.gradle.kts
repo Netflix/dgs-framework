@@ -51,7 +51,8 @@ allprojects {
     // and suggest an upgrade. The only exception currently are those defined
     // in buildSrc, most likely because the variables are used in plugins as well
     // as dependencies. e.g. KOTLIN_VERSION
-    extra["sb.version"] = "4.0.0"
+    extra["sb.version"] = "4.1.1"
+    extra["multi-part-gql-version"] = "2.1.0"
     extra["kotlin.version"] = Versions.KOTLIN_VERSION
     extra["json-path.version"] = "3.0.0"
 }
@@ -73,12 +74,19 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     }
 
     val springBootVersion = extra["sb.version"] as String
+    val multiPartGqlVersion = extra["multi-part-gql-version"] as String
     val jmhVersion = "1.37"
 
     dependencyManagement {
         imports {
             mavenBom("org.jetbrains.kotlin:kotlin-bom:${Versions.KOTLIN_VERSION}")
             mavenBom("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
+        }
+
+        dependencies {
+            // Only consumed by the example modules, so this is managed here rather than in the
+            // published graphql-dgs-platform BOM.
+            dependency("name.nkonev.multipart-spring-graphql:multipart-spring-graphql:$multiPartGqlVersion")
         }
     }
 
