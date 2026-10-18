@@ -217,8 +217,7 @@ class DefaultInputObjectMapper(
                 args[index] = maybeConvert(inputMap[component.name], component.genericType)
             }
         }
-        @Suppress("UNCHECKED_CAST")
-        val ctor = targetClass.declaredConstructors.first() as Constructor<T>
+        val ctor = targetClass.getDeclaredConstructor(*recordComponents.map { it.type }.toTypedArray())
         ctor.trySetAccessible()
         try {
             return ctor.newInstance(*args)
