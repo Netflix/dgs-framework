@@ -81,8 +81,6 @@ class DefaultDgsDataLoaderProvider(
     override fun buildRegistry(): DataLoaderRegistry = buildRegistryWithContextSupplier { null }
 
     override fun <T> buildRegistryWithContextSupplier(contextSupplier: Supplier<T>): DataLoaderRegistry {
-        // We need to set the default predicate to 20ms and individually override with DISPATCH_ALWAYS or the custom dispatch predicate, if specified
-        // The data loader ends up applying the overall dispatch predicate when the custom dispatch predicate is not true otherwise.
         val registry =
             ScheduledDataLoaderRegistry
                 .newScheduledRegistry()
@@ -90,7 +88,6 @@ class DefaultDgsDataLoaderProvider(
                     scheduledExecutorService,
                 ).tickerMode(enableTickerMode)
                 .schedule(scheduleDuration)
-                .dispatchPredicate(DispatchPredicate.DISPATCH_NEVER)
                 .build()
 
         val totalTime =
