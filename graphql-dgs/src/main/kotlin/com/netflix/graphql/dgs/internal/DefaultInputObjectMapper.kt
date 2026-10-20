@@ -215,6 +215,12 @@ class DefaultInputObjectMapper(
         for ((index, component) in recordComponents.withIndex()) {
             if (component.name in inputMap) {
                 args[index] = maybeConvert(inputMap[component.name], component.genericType)
+            } else if (component.type.isPrimitive) {
+                // A missing value would be passed as null, which the canonical constructor rejects
+                // for primitive components with an IllegalArgumentException.
+                throw DgsInvalidInputArgumentException(
+                    "No value specified for primitive record component `${component.name}` of class `${targetClass.name}`",
+                )
             }
         }
         val ctor = targetClass.getDeclaredConstructor(*recordComponents.map { it.type }.toTypedArray())
