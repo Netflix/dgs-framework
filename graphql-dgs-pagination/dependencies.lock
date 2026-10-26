@@ -111,7 +111,7 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.2.0-M2"
+            "locked": "4.2.0-RC1"
         }
     },
     "implementationDependenciesMetadata": {
@@ -173,7 +173,7 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.2.0-M2"
+            "locked": "4.2.0-RC1"
         }
     },
     "jmh": {
@@ -308,7 +308,7 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.2.0-M2"
+            "locked": "4.2.0-RC1"
         }
     },
     "jmhImplementationDependenciesMetadata": {
@@ -379,7 +379,7 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.2.0-M2"
+            "locked": "4.2.0-RC1"
         }
     },
     "jmhRuntimeClasspath": {
@@ -502,22 +502,22 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.2.0-M2"
+            "locked": "4.2.0-RC1"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-M2"
+            "locked": "4.2.0-RC1"
         },
         "org.springframework:spring-context": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         }
     },
     "kotlinBouncyCastleConfiguration": {
@@ -689,19 +689,19 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.2.0-M2"
+            "locked": "4.2.0-RC1"
         },
         "org.springframework:spring-context": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         }
     },
     "swiftExportClasspathResolvable": {
@@ -777,10 +777,10 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.2.0-M2"
+            "locked": "4.2.0-RC1"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-M2"
+            "locked": "4.2.0-RC1"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -851,10 +851,10 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.2.0-M2"
+            "locked": "4.2.0-RC1"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-M2"
+            "locked": "4.2.0-RC1"
         }
     },
     "testRuntimeClasspath": {
@@ -968,22 +968,22 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.2.0-M2"
+            "locked": "4.2.0-RC1"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-M2"
+            "locked": "4.2.0-RC1"
         },
         "org.springframework:spring-context": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         }
     }
 }

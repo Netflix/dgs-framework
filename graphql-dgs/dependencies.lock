@@ -41,16 +41,16 @@
             "locked": "7.0.0"
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.21.6"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.21.6"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.21.6"
+            "locked": "2.21.7"
         },
         "com.github.ben-manes.caffeine:caffeine": {
-            "locked": "3.2.4"
+            "locked": "3.3.1"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -84,7 +84,7 @@
             "locked": "1.2.1"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.8.7"
+            "locked": "3.9.0-RC1"
         },
         "jakarta.annotation:jakarta.annotation-api": {
             "locked": "3.0.0"
@@ -115,36 +115,36 @@
             "locked": "2.0.19"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "7.2.0-M2"
+            "locked": "7.2.0-RC1"
         },
         "org.springframework:spring-context": {
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         },
         "org.springframework:spring-web": {
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         },
         "tools.jackson.core:jackson-databind": {
-            "locked": "3.1.6"
+            "locked": "3.1.7"
         },
         "tools.jackson.module:jackson-module-kotlin": {
-            "locked": "3.1.6"
+            "locked": "3.1.7"
         }
     },
     "compileOnlyDependenciesMetadata": {
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.21.6"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.21.6"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.21.6"
+            "locked": "2.21.7"
         },
         "com.github.ben-manes.caffeine:caffeine": {
-            "locked": "3.2.4"
+            "locked": "3.3.1"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.8.7"
+            "locked": "3.9.0-RC1"
         },
         "jakarta.annotation:jakarta.annotation-api": {
             "locked": "3.0.0"
@@ -153,13 +153,13 @@
             "locked": "1.0.1"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "7.2.0-M2"
+            "locked": "7.2.0-RC1"
         },
         "tools.jackson.core:jackson-databind": {
-            "locked": "3.1.6"
+            "locked": "3.1.7"
         },
         "tools.jackson.module:jackson-module-kotlin": {
-            "locked": "3.1.6"
+            "locked": "3.1.7"
         }
     },
     "implementationDependenciesMetadata": {
@@ -220,10 +220,10 @@
             "locked": "2.0.19"
         },
         "org.springframework:spring-context": {
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         },
         "org.springframework:spring-web": {
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         }
     },
     "jmh": {
@@ -279,16 +279,16 @@
             "locked": "7.0.0"
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.21.6"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.21.6"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.21.6"
+            "locked": "2.21.7"
         },
         "com.github.ben-manes.caffeine:caffeine": {
-            "locked": "3.2.4"
+            "locked": "3.3.1"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -322,7 +322,7 @@
             "locked": "1.2.1"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.8.7"
+            "locked": "3.9.0-RC1"
         },
         "jakarta.annotation:jakarta.annotation-api": {
             "locked": "3.0.0"
@@ -362,36 +362,36 @@
             "locked": "2.0.19"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "7.2.0-M2"
+            "locked": "7.2.0-RC1"
         },
         "org.springframework:spring-context": {
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         },
         "org.springframework:spring-web": {
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         },
         "tools.jackson.core:jackson-databind": {
-            "locked": "3.1.6"
+            "locked": "3.1.7"
         },
         "tools.jackson.module:jackson-module-kotlin": {
-            "locked": "3.1.6"
+            "locked": "3.1.7"
         }
     },
     "jmhCompileOnlyDependenciesMetadata": {
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.21.6"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.21.6"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.21.6"
+            "locked": "2.21.7"
         },
         "com.github.ben-manes.caffeine:caffeine": {
-            "locked": "3.2.4"
+            "locked": "3.3.1"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.8.7"
+            "locked": "3.9.0-RC1"
         },
         "jakarta.annotation:jakarta.annotation-api": {
             "locked": "3.0.0"
@@ -400,13 +400,13 @@
             "locked": "1.0.1"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "7.2.0-M2"
+            "locked": "7.2.0-RC1"
         },
         "tools.jackson.core:jackson-databind": {
-            "locked": "3.1.6"
+            "locked": "3.1.7"
         },
         "tools.jackson.module:jackson-module-kotlin": {
-            "locked": "3.1.6"
+            "locked": "3.1.7"
         }
     },
     "jmhImplementationDependenciesMetadata": {
@@ -476,10 +476,10 @@
             "locked": "2.0.19"
         },
         "org.springframework:spring-context": {
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         },
         "org.springframework:spring-web": {
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         }
     },
     "jmhRuntimeClasspath": {
@@ -524,10 +524,10 @@
             "locked": "1.14.11"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.8.7"
+            "locked": "3.9.0-RC1"
         },
         "io.projectreactor:reactor-test": {
-            "locked": "3.8.7"
+            "locked": "3.9.0-RC1"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "locked": "2.2.20"
@@ -581,22 +581,22 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-M2"
+            "locked": "4.2.0-RC1"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "7.2.0-M2"
+            "locked": "7.2.0-RC1"
         },
         "org.springframework:spring-context": {
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         },
         "org.springframework:spring-web": {
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         },
         "tools.jackson.core:jackson-databind": {
-            "locked": "3.1.6"
+            "locked": "3.1.7"
         },
         "tools.jackson.module:jackson-module-kotlin": {
-            "locked": "3.1.6"
+            "locked": "3.1.7"
         }
     },
     "kotlinBouncyCastleConfiguration": {
@@ -735,10 +735,10 @@
             "locked": "2.0.19"
         },
         "org.springframework:spring-context": {
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         },
         "org.springframework:spring-web": {
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         }
     },
     "swiftExportClasspathResolvable": {
@@ -788,10 +788,10 @@
             "locked": "1.14.11"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.8.7"
+            "locked": "3.9.0-RC1"
         },
         "io.projectreactor:reactor-test": {
-            "locked": "3.8.7"
+            "locked": "3.9.0-RC1"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "locked": "2.2.20"
@@ -825,22 +825,22 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-M2"
+            "locked": "4.2.0-RC1"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "7.2.0-M2"
+            "locked": "7.2.0-RC1"
         },
         "org.springframework:spring-context": {
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         },
         "org.springframework:spring-web": {
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         },
         "tools.jackson.core:jackson-databind": {
-            "locked": "3.1.6"
+            "locked": "3.1.7"
         },
         "tools.jackson.module:jackson-module-kotlin": {
-            "locked": "3.1.6"
+            "locked": "3.1.7"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -885,10 +885,10 @@
             "locked": "1.14.11"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.8.7"
+            "locked": "3.9.0-RC1"
         },
         "io.projectreactor:reactor-test": {
-            "locked": "3.8.7"
+            "locked": "3.9.0-RC1"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "locked": "2.2.20"
@@ -922,22 +922,22 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-M2"
+            "locked": "4.2.0-RC1"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "7.2.0-M2"
+            "locked": "7.2.0-RC1"
         },
         "org.springframework:spring-context": {
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         },
         "org.springframework:spring-web": {
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         },
         "tools.jackson.core:jackson-databind": {
-            "locked": "3.1.6"
+            "locked": "3.1.7"
         },
         "tools.jackson.module:jackson-module-kotlin": {
-            "locked": "3.1.6"
+            "locked": "3.1.7"
         }
     },
     "testRuntimeClasspath": {
@@ -982,10 +982,10 @@
             "locked": "1.14.11"
         },
         "io.projectreactor:reactor-core": {
-            "locked": "3.8.7"
+            "locked": "3.9.0-RC1"
         },
         "io.projectreactor:reactor-test": {
-            "locked": "3.8.7"
+            "locked": "3.9.0-RC1"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "locked": "2.2.20"
@@ -1030,22 +1030,22 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-M2"
+            "locked": "4.2.0-RC1"
         },
         "org.springframework.security:spring-security-core": {
-            "locked": "7.2.0-M2"
+            "locked": "7.2.0-RC1"
         },
         "org.springframework:spring-context": {
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         },
         "org.springframework:spring-web": {
-            "locked": "7.1.0-M2"
+            "locked": "7.1.0-RC1"
         },
         "tools.jackson.core:jackson-databind": {
-            "locked": "3.1.6"
+            "locked": "3.1.7"
         },
         "tools.jackson.module:jackson-module-kotlin": {
-            "locked": "3.1.6"
+            "locked": "3.1.7"
         }
     }
 }
