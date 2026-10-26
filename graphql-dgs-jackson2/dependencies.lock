@@ -5,7 +5,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "26.1"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -54,23 +54,23 @@
     },
     "compileClasspath": {
         "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-parameter-names": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "26.1"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -123,28 +123,28 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.1.1"
+            "locked": "4.2.0-RC1"
         }
     },
     "implementationDependenciesMetadata": {
         "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-parameter-names": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "26.1"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -197,7 +197,7 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.1.1"
+            "locked": "4.2.0-RC1"
         }
     },
     "jmh": {
@@ -217,7 +217,7 @@
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "26.1"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -266,23 +266,23 @@
     },
     "jmhCompileClasspath": {
         "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-parameter-names": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "26.1"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -344,28 +344,28 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.1.1"
+            "locked": "4.2.0-RC1"
         }
     },
     "jmhImplementationDependenciesMetadata": {
         "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-parameter-names": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "26.1"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -427,7 +427,7 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.1.1"
+            "locked": "4.2.0-RC1"
         }
     },
     "jmhRuntimeClasspath": {
@@ -435,26 +435,26 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "5.3.0"
+            "locked": "7.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-parameter-names": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "26.1"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -519,13 +519,13 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "1.10.2"
+            "locked": "1.11.0"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-reactor": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "1.10.2"
+            "locked": "1.11.0"
         },
         "org.jetbrains:annotations": {
             "firstLevelTransitive": [
@@ -536,10 +536,10 @@
             "locked": "26.1.0"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "6.0.3"
+            "locked": "6.1.3"
         },
         "org.junit.platform:junit-platform-launcher": {
-            "locked": "6.0.3"
+            "locked": "6.1.3"
         },
         "org.junit:junit-bom": {
             "locked": "6.1.3"
@@ -562,22 +562,22 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.1.1"
+            "locked": "4.2.0-RC1"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.1.1"
+            "locked": "4.2.0-RC1"
         },
         "org.springframework:spring-context": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.0.9"
+            "locked": "7.1.0-RC1"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.0.9"
+            "locked": "7.1.0-RC1"
         }
     },
     "kotlinBouncyCastleConfiguration": {
@@ -655,26 +655,26 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "5.3.0"
+            "locked": "7.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-parameter-names": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "26.1"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -736,13 +736,13 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "1.10.2"
+            "locked": "1.11.0"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-reactor": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "1.10.2"
+            "locked": "1.11.0"
         },
         "org.jetbrains:annotations": {
             "firstLevelTransitive": [
@@ -761,19 +761,19 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.1.1"
+            "locked": "4.2.0-RC1"
         },
         "org.springframework:spring-context": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.0.9"
+            "locked": "7.1.0-RC1"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.0.9"
+            "locked": "7.1.0-RC1"
         }
     },
     "swiftExportClasspathResolvable": {
@@ -783,23 +783,23 @@
     },
     "testCompileClasspath": {
         "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-parameter-names": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "26.1"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -852,7 +852,7 @@
             "locked": "26.1.0"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "6.0.3"
+            "locked": "6.1.3"
         },
         "org.junit:junit-bom": {
             "locked": "6.1.3"
@@ -861,31 +861,31 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.1.1"
+            "locked": "4.2.0-RC1"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.1.1"
+            "locked": "4.2.0-RC1"
         }
     },
     "testImplementationDependenciesMetadata": {
         "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-parameter-names": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "26.1"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -938,7 +938,7 @@
             "locked": "26.1.0"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "6.0.3"
+            "locked": "6.1.3"
         },
         "org.junit:junit-bom": {
             "locked": "6.1.3"
@@ -947,10 +947,10 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.1.1"
+            "locked": "4.2.0-RC1"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.1.1"
+            "locked": "4.2.0-RC1"
         }
     },
     "testRuntimeClasspath": {
@@ -958,26 +958,26 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "5.3.0"
+            "locked": "7.0.0"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jdk8": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.fasterxml.jackson.module:jackson-module-parameter-names": {
-            "locked": "2.21.5"
+            "locked": "2.21.7"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs",
                 "com.netflix.graphql.dgs:graphql-error-types"
             ],
-            "locked": "25.0"
+            "locked": "26.1"
         },
         "com.graphql-java:java-dataloader": {
             "firstLevelTransitive": [
@@ -1042,13 +1042,13 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "1.10.2"
+            "locked": "1.11.0"
         },
         "org.jetbrains.kotlinx:kotlinx-coroutines-reactor": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "1.10.2"
+            "locked": "1.11.0"
         },
         "org.jetbrains:annotations": {
             "firstLevelTransitive": [
@@ -1059,10 +1059,10 @@
             "locked": "26.1.0"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "6.0.3"
+            "locked": "6.1.3"
         },
         "org.junit.platform:junit-platform-launcher": {
-            "locked": "6.0.3"
+            "locked": "6.1.3"
         },
         "org.junit:junit-bom": {
             "locked": "6.1.3"
@@ -1076,22 +1076,22 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.1.1"
+            "locked": "4.2.0-RC1"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.1.1"
+            "locked": "4.2.0-RC1"
         },
         "org.springframework:spring-context": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.0.9"
+            "locked": "7.1.0-RC1"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.0.9"
+            "locked": "7.1.0-RC1"
         }
     }
 }

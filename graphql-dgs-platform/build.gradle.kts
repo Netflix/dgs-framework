@@ -40,7 +40,7 @@ dependencies {
         // GraphQL Platform
         api("com.graphql-java:graphql-java") {
             version {
-                require("25.0")
+                require("26.1")
             }
 
         }
@@ -58,11 +58,11 @@ dependencies {
             }
         }
         api("com.graphql-java:graphql-java-extended-validation") {
-            version { require("22.0") }
+            version { require("24.0") }
         }
         api("com.apollographql.federation:federation-graphql-java-support") {
             version {
-                require("5.3.0")
+                require("7.0.0")
             }
         }
         // ---
