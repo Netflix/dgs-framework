@@ -18,10 +18,10 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
-      - name: Set up Python 3.8
+      - name: Set up Python 3.13
         uses: actions/setup-python@v7
         with:
-          python-version: 3.8
+          python-version: '3.13'
 
       - name: Install Python modules
         run: |
