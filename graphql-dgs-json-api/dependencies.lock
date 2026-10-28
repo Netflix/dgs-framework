@@ -156,7 +156,7 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.1.1"
+            "locked": "4.1.2"
         }
     },
     "kotlinBouncyCastleConfiguration": {
@@ -277,7 +277,7 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.1.1"
+            "locked": "4.1.2"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -306,7 +306,7 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.1.1"
+            "locked": "4.1.2"
         }
     },
     "testRuntimeClasspath": {
@@ -338,7 +338,7 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.1.1"
+            "locked": "4.1.2"
         }
     }
 }
