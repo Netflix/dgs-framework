@@ -38,7 +38,7 @@
     },
     "compileClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.21.5"
@@ -164,7 +164,7 @@
     },
     "implementationDependenciesMetadata": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -276,7 +276,7 @@
     },
     "jmhCompileClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.21.5"
@@ -411,7 +411,7 @@
     },
     "jmhImplementationDependenciesMetadata": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -484,7 +484,7 @@
     },
     "jmhRuntimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -671,7 +671,7 @@
     },
     "runtimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -748,7 +748,7 @@
     },
     "testCompileClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -845,7 +845,7 @@
     },
     "testImplementationDependenciesMetadata": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -942,7 +942,7 @@
     },
     "testRuntimeClasspath": {
         "com.apollographql.federation:federation-graphql-java-support": {
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
