@@ -100,6 +100,22 @@ class CompletableFutureWrappedDataFetcherTest {
         )
     }
 
+    @Test
+    fun `Throw the cause of InvocationTargetException for a checked exception`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsQuery
+            fun checkedException(): Int = throw CheckedException(MESSAGE)
+        }
+
+        context.beanFactory.registerSingleton("checkedExceptionFetcher", Fetcher())
+
+        assertSingleError(
+            schema = "type Query { checkedException: Int }",
+            query = "{ result: checkedException }",
+        )
+    }
+
     private fun assertSingleError(
         schema: String,
         query: String,
@@ -124,12 +140,13 @@ class CompletableFutureWrappedDataFetcherTest {
         assertThat(executionResult.errors[0].message).isEqualTo("Exception while fetching data (/result) : $MESSAGE")
     }
 
-    // Deliberately unchecked: Spring's ReflectionUtils.invokeMethod, used by the no-argument
-    // branch, converts checked exceptions into UndeclaredThrowableException, which would obscure
-    // what this test is about.
     private class CustomException(
         message: String?,
     ) : RuntimeException(message)
+
+    private class CheckedException(
+        message: String?,
+    ) : Exception(message)
 
     private companion object {
         const val MESSAGE = "Exception from wrapped data fetcher"
