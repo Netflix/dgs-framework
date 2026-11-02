@@ -427,7 +427,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -638,7 +638,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -917,7 +917,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "5.3.0"
+            "locked": "6.1.0"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
