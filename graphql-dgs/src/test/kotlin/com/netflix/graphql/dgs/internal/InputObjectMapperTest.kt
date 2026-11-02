@@ -326,6 +326,27 @@ internal class InputObjectMapperTest {
     }
 
     @Test
+    fun `mapping to a Java record with a missing primitive component throws DgsInvalidInputArgumentException`() {
+        assertThatThrownBy {
+            inputObjectMapper.mapToJavaObject(
+                mapOf("foo" to "foo-value", "baz" to 42),
+                RecordInput::class.java,
+            )
+        }.isInstanceOf(DgsInvalidInputArgumentException::class.java)
+            .hasMessageContaining("bar")
+    }
+
+    @Test
+    fun `mapping to a Java record with a missing boxed component passes null`() {
+        val result =
+            inputObjectMapper.mapToJavaObject(
+                mapOf("foo" to "foo-value", "bar" to true),
+                RecordInput::class.java,
+            )
+        assertThat(result).isEqualTo(RecordInput("foo-value", true, null))
+    }
+
+    @Test
     fun `mapping to a Java record with an additional constructor uses the canonical constructor`() {
         val result =
             inputObjectMapper.mapToJavaObject(
