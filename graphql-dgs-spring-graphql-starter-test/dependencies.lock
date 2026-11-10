@@ -256,7 +256,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -301,34 +301,34 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-restclient": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-webmvc-test": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.graphql:spring-graphql-test": {
             "firstLevelTransitive": [
@@ -449,31 +449,31 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-restclient": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-webmvc-test": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.graphql:spring-graphql-test": {
             "firstLevelTransitive": [
@@ -505,7 +505,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -527,7 +527,7 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.graphql:spring-graphql-test": {
             "firstLevelTransitive": [
@@ -554,7 +554,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -576,7 +576,7 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.graphql:spring-graphql-test": {
             "firstLevelTransitive": [
@@ -603,7 +603,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -639,34 +639,34 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-restclient": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-webmvc-test": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.graphql:spring-graphql-test": {
             "firstLevelTransitive": [

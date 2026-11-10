@@ -33,7 +33,7 @@
             "locked": "2.0.19"
         },
         "org.springframework:spring-websocket": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         }
     },
     "implementationDependenciesMetadata": {
@@ -56,7 +56,7 @@
             "locked": "2.0.19"
         },
         "org.springframework:spring-websocket": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         }
     },
     "jmh": {
@@ -113,7 +113,7 @@
             "locked": "2.0.19"
         },
         "org.springframework:spring-websocket": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         }
     },
     "jmhImplementationDependenciesMetadata": {
@@ -145,7 +145,7 @@
             "locked": "2.0.19"
         },
         "org.springframework:spring-websocket": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         }
     },
     "jmhRuntimeClasspath": {
@@ -153,7 +153,7 @@
             "locked": "2.21"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.21.7"
+            "locked": "2.21.8"
         },
         "com.graphql-java:graphql-java": {
             "locked": "26.1"
@@ -162,7 +162,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"
@@ -192,10 +192,10 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework:spring-websocket": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         }
     },
     "kotlinBouncyCastleConfiguration": {
@@ -288,7 +288,7 @@
             "locked": "2.0.19"
         },
         "org.springframework:spring-websocket": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         }
     },
     "swiftExportClasspathResolvable": {
@@ -301,7 +301,7 @@
             "locked": "2.21"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.21.7"
+            "locked": "2.21.8"
         },
         "com.graphql-java:graphql-java": {
             "locked": "26.1"
@@ -310,7 +310,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"
@@ -328,10 +328,10 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework:spring-websocket": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -339,7 +339,7 @@
             "locked": "2.21"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.21.7"
+            "locked": "2.21.8"
         },
         "com.graphql-java:graphql-java": {
             "locked": "26.1"
@@ -348,7 +348,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"
@@ -366,10 +366,10 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework:spring-websocket": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         }
     },
     "testRuntimeClasspath": {
@@ -377,7 +377,7 @@
             "locked": "2.21"
         },
         "com.fasterxml.jackson.module:jackson-module-kotlin": {
-            "locked": "2.21.7"
+            "locked": "2.21.8"
         },
         "com.graphql-java:graphql-java": {
             "locked": "26.1"
@@ -386,7 +386,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"
@@ -407,10 +407,10 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework:spring-websocket": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         }
     }
 }

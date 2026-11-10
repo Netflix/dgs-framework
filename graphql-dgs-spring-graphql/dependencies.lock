@@ -65,7 +65,7 @@
             "locked": "1.2.1"
         },
         "io.micrometer:micrometer-core": {
-            "locked": "1.18.0-RC1"
+            "locked": "1.18.0-RC2"
         },
         "jakarta.servlet:jakarta.servlet-api": {
             "locked": "6.1.0"
@@ -89,31 +89,31 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.graphql:spring-graphql": {
             "locked": "2.1.0-RC1"
         },
         "org.springframework:spring-test": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-web": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-webflux": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-webmvc": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "tools.jackson.core:jackson-databind": {
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         },
         "tools.jackson.module:jackson-module-kotlin": {
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         }
     },
     "compileOnlyDependenciesMetadata": {
@@ -121,25 +121,25 @@
             "locked": "3.3.1"
         },
         "io.micrometer:micrometer-core": {
-            "locked": "1.18.0-RC1"
+            "locked": "1.18.0-RC2"
         },
         "jakarta.servlet:jakarta.servlet-api": {
             "locked": "6.1.0"
         },
         "org.springframework:spring-test": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-webflux": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-webmvc": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "tools.jackson.core:jackson-databind": {
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         },
         "tools.jackson.module:jackson-module-kotlin": {
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         }
     },
     "implementationDependenciesMetadata": {
@@ -215,16 +215,16 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.graphql:spring-graphql": {
             "locked": "2.1.0-RC1"
         },
         "org.springframework:spring-web": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         }
     },
     "jmh": {
@@ -304,7 +304,7 @@
             "locked": "1.2.1"
         },
         "io.micrometer:micrometer-core": {
-            "locked": "1.18.0-RC1"
+            "locked": "1.18.0-RC2"
         },
         "jakarta.servlet:jakarta.servlet-api": {
             "locked": "6.1.0"
@@ -337,31 +337,31 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.graphql:spring-graphql": {
             "locked": "2.1.0-RC1"
         },
         "org.springframework:spring-test": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-web": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-webflux": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-webmvc": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "tools.jackson.core:jackson-databind": {
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         },
         "tools.jackson.module:jackson-module-kotlin": {
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         }
     },
     "jmhCompileOnlyDependenciesMetadata": {
@@ -369,25 +369,25 @@
             "locked": "3.3.1"
         },
         "io.micrometer:micrometer-core": {
-            "locked": "1.18.0-RC1"
+            "locked": "1.18.0-RC2"
         },
         "jakarta.servlet:jakarta.servlet-api": {
             "locked": "6.1.0"
         },
         "org.springframework:spring-test": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-webflux": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-webmvc": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "tools.jackson.core:jackson-databind": {
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         },
         "tools.jackson.module:jackson-module-kotlin": {
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         }
     },
     "jmhImplementationDependenciesMetadata": {
@@ -472,16 +472,16 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.graphql:spring-graphql": {
             "locked": "2.1.0-RC1"
         },
         "org.springframework:spring-web": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         }
     },
     "jmhRuntimeClasspath": {
@@ -569,7 +569,7 @@
             "locked": "1.2.1"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "io.projectreactor.kotlin:reactor-kotlin-extensions": {
             "firstLevelTransitive": [
@@ -654,37 +654,37 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-restclient": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-webmvc-test": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.graphql:spring-graphql": {
             "locked": "2.1.0-RC1"
@@ -699,22 +699,22 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-webflux": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "tools.jackson.core:jackson-databind": {
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         },
         "tools.jackson.module:jackson-module-kotlin": {
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         }
     },
     "kotlinBouncyCastleConfiguration": {
@@ -903,10 +903,10 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.graphql:spring-graphql": {
             "locked": "2.1.0-RC1"
@@ -915,13 +915,13 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         }
     },
     "swiftExportClasspathResolvable": {
@@ -1005,7 +1005,7 @@
             "locked": "1.2.1"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -1035,19 +1035,19 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-webmvc-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.graphql:spring-graphql": {
             "locked": "2.1.0-RC1"
@@ -1059,16 +1059,16 @@
             "locked": "2.1.0-RC1"
         },
         "org.springframework:spring-web": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-webflux": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "tools.jackson.core:jackson-databind": {
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         },
         "tools.jackson.module:jackson-module-kotlin": {
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -1147,7 +1147,7 @@
             "locked": "1.2.1"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -1177,19 +1177,19 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-webmvc-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.graphql:spring-graphql": {
             "locked": "2.1.0-RC1"
@@ -1201,16 +1201,16 @@
             "locked": "2.1.0-RC1"
         },
         "org.springframework:spring-web": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-webflux": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "tools.jackson.core:jackson-databind": {
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         },
         "tools.jackson.module:jackson-module-kotlin": {
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         }
     },
     "testRuntimeClasspath": {
@@ -1298,7 +1298,7 @@
             "locked": "1.2.1"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "io.projectreactor.kotlin:reactor-kotlin-extensions": {
             "firstLevelTransitive": [
@@ -1374,37 +1374,37 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-restclient": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-test-autoconfigure": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-webmvc-test": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql-test"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.graphql:spring-graphql": {
             "locked": "2.1.0-RC1"
@@ -1419,22 +1419,22 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-webflux": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "tools.jackson.core:jackson-databind": {
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         },
         "tools.jackson.module:jackson-module-kotlin": {
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         }
     }
 }

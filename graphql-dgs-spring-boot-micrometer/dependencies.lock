@@ -106,7 +106,7 @@
             "locked": "1.22.1"
         },
         "io.micrometer:micrometer-core": {
-            "locked": "1.18.0-RC1"
+            "locked": "1.18.0-RC2"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -123,30 +123,30 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-actuator-autoconfigure": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-cache": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-data-commons": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-micrometer-metrics": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework:spring-context-support": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         }
     },
     "compileOnlyDependenciesMetadata": {
         "org.springframework.boot:spring-boot-actuator-autoconfigure": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         }
     },
     "implementationDependenciesMetadata": {
@@ -203,7 +203,7 @@
             "locked": "1.22.1"
         },
         "io.micrometer:micrometer-core": {
-            "locked": "1.18.0-RC1"
+            "locked": "1.18.0-RC2"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -220,16 +220,16 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-cache": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-data-commons": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-micrometer-metrics": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework:spring-context-support": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         }
     },
     "jmh": {
@@ -350,7 +350,7 @@
             "locked": "1.22.1"
         },
         "io.micrometer:micrometer-core": {
-            "locked": "1.18.0-RC1"
+            "locked": "1.18.0-RC2"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -376,30 +376,30 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-actuator-autoconfigure": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-cache": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-data-commons": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-micrometer-metrics": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework:spring-context-support": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         }
     },
     "jmhCompileOnlyDependenciesMetadata": {
         "org.springframework.boot:spring-boot-actuator-autoconfigure": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         }
     },
     "jmhImplementationDependenciesMetadata": {
@@ -456,7 +456,7 @@
             "locked": "1.22.1"
         },
         "io.micrometer:micrometer-core": {
-            "locked": "1.18.0-RC1"
+            "locked": "1.18.0-RC2"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "firstLevelTransitive": [
@@ -482,16 +482,16 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-cache": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-data-commons": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-micrometer-metrics": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework:spring-context-support": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         }
     },
     "jmhRuntimeClasspath": {
@@ -616,10 +616,10 @@
             "locked": "1.2.1"
         },
         "io.micrometer:micrometer-core": {
-            "locked": "1.18.0-RC1"
+            "locked": "1.18.0-RC2"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "io.projectreactor.kotlin:reactor-kotlin-extensions": {
             "firstLevelTransitive": [
@@ -714,41 +714,41 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-actuator-autoconfigure": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-cache": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-data-commons": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-micrometer-metrics": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-actuator-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-webmvc-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.graphql:spring-graphql": {
             "firstLevelTransitive": [
@@ -760,10 +760,10 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-context-support": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
@@ -771,19 +771,19 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
             ],
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-websocket": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "tools.jackson.module:jackson-module-kotlin": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter"
             ],
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         }
     },
     "kotlinBouncyCastleConfiguration": {
@@ -922,7 +922,7 @@
             "locked": "1.2.1"
         },
         "io.micrometer:micrometer-core": {
-            "locked": "1.18.0-RC1"
+            "locked": "1.18.0-RC2"
         },
         "org.jetbrains.kotlin:kotlin-reflect": {
             "firstLevelTransitive": [
@@ -967,28 +967,28 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-cache": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-data-commons": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-micrometer-metrics": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework:spring-context": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-context-support": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         }
     },
     "swiftExportClasspathResolvable": {
@@ -1102,10 +1102,10 @@
             "locked": "1.22.1"
         },
         "io.micrometer:micrometer-core": {
-            "locked": "1.18.0-RC1"
+            "locked": "1.18.0-RC2"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -1140,43 +1140,43 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-actuator-autoconfigure": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-cache": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-data-commons": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-micrometer-metrics": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-actuator-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-webmvc-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework:spring-context-support": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "tools.jackson.module:jackson-module-kotlin": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter"
             ],
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -1285,10 +1285,10 @@
             "locked": "1.22.1"
         },
         "io.micrometer:micrometer-core": {
-            "locked": "1.18.0-RC1"
+            "locked": "1.18.0-RC2"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "io.projectreactor:reactor-core": {
             "firstLevelTransitive": [
@@ -1323,43 +1323,43 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-actuator-autoconfigure": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-cache": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-data-commons": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-micrometer-metrics": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-actuator-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-webmvc-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework:spring-context-support": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "tools.jackson.module:jackson-module-kotlin": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter"
             ],
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         }
     },
     "testRuntimeClasspath": {
@@ -1484,10 +1484,10 @@
             "locked": "1.2.1"
         },
         "io.micrometer:micrometer-core": {
-            "locked": "1.18.0-RC1"
+            "locked": "1.18.0-RC2"
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "io.projectreactor.kotlin:reactor-kotlin-extensions": {
             "firstLevelTransitive": [
@@ -1573,41 +1573,41 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-actuator-autoconfigure": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-autoconfigure": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-cache": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-data-commons": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-micrometer-metrics": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-actuator-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-graphql": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
             ],
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-web": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.boot:spring-boot-starter-webmvc-test": {
-            "locked": "4.2.0-RC1"
+            "locked": "4.2.0-RC2"
         },
         "org.springframework.graphql:spring-graphql": {
             "firstLevelTransitive": [
@@ -1619,10 +1619,10 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-context-support": {
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-web": {
             "firstLevelTransitive": [
@@ -1630,19 +1630,19 @@
                 "com.netflix.graphql.dgs:graphql-dgs-client",
                 "com.netflix.graphql.dgs:graphql-dgs-spring-graphql"
             ],
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "org.springframework:spring-websocket": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs-subscription-types"
             ],
-            "locked": "7.1.0-RC1"
+            "locked": "7.1.0-RC2"
         },
         "tools.jackson.module:jackson-module-kotlin": {
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:dgs-starter"
             ],
-            "locked": "3.1.7"
+            "locked": "3.1.8"
         }
     }
 }
