@@ -12,7 +12,7 @@
     },
     "compileClasspath": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.20"
+            "locked": "2.21"
         },
         "com.graphql-java:graphql-java": {
             "locked": "25.0"
@@ -24,15 +24,15 @@
             "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2-1"
+            "locked": "26.1.0"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.17"
+            "locked": "2.0.19"
         }
     },
     "compileOnlyDependenciesMetadata": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.20"
+            "locked": "2.21"
         }
     },
     "implementationDependenciesMetadata": {
@@ -46,10 +46,10 @@
             "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2-1"
+            "locked": "26.1.0"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.17"
+            "locked": "2.0.19"
         }
     },
     "jmh": {
@@ -76,7 +76,7 @@
     },
     "jmhCompileClasspath": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.20"
+            "locked": "2.21"
         },
         "com.graphql-java:graphql-java": {
             "locked": "25.0"
@@ -88,7 +88,7 @@
             "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2-1"
+            "locked": "26.1.0"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.37"
@@ -100,12 +100,12 @@
             "locked": "1.36"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.17"
+            "locked": "2.0.19"
         }
     },
     "jmhCompileOnlyDependenciesMetadata": {
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.20"
+            "locked": "2.21"
         }
     },
     "jmhImplementationDependenciesMetadata": {
@@ -119,7 +119,7 @@
             "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2-1"
+            "locked": "26.1.0"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.37"
@@ -131,7 +131,7 @@
             "locked": "1.36"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.17"
+            "locked": "2.0.19"
         }
     },
     "jmhRuntimeClasspath": {
@@ -142,22 +142,22 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.6"
+            "locked": "1.14.11"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2-1"
+            "locked": "26.1.0"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "6.0.1"
+            "locked": "6.0.3"
         },
         "org.junit.platform:junit-platform-launcher": {
-            "locked": "6.0.1"
+            "locked": "6.0.3"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.4"
+            "locked": "6.1.3"
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.37"
@@ -169,10 +169,10 @@
             "locked": "1.36"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.17"
+            "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0"
+            "locked": "4.1.1"
         }
     },
     "kotlinBouncyCastleConfiguration": {
@@ -256,10 +256,10 @@
             "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2-1"
+            "locked": "26.1.0"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.17"
+            "locked": "2.0.19"
         }
     },
     "swiftExportClasspathResolvable": {
@@ -275,25 +275,25 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.6"
+            "locked": "1.14.11"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2-1"
+            "locked": "26.1.0"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "6.0.1"
+            "locked": "6.0.3"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.4"
+            "locked": "6.1.3"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.17"
+            "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0"
+            "locked": "4.1.1"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -304,25 +304,25 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.6"
+            "locked": "1.14.11"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2-1"
+            "locked": "26.1.0"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "6.0.1"
+            "locked": "6.0.3"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.4"
+            "locked": "6.1.3"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.17"
+            "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0"
+            "locked": "4.1.1"
         }
     },
     "testRuntimeClasspath": {
@@ -333,28 +333,28 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.6"
+            "locked": "1.14.11"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"
         },
         "org.jetbrains:annotations": {
-            "locked": "26.0.2-1"
+            "locked": "26.1.0"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "6.0.1"
+            "locked": "6.0.3"
         },
         "org.junit.platform:junit-platform-launcher": {
-            "locked": "6.0.1"
+            "locked": "6.0.3"
         },
         "org.junit:junit-bom": {
-            "locked": "5.13.4"
+            "locked": "6.1.3"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.17"
+            "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.0.0"
+            "locked": "4.1.1"
         }
     }
 }

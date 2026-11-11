@@ -57,6 +57,11 @@ open class DgsExtendedScalarsAutoConfiguration {
                         ExtendedScalars.Date,
                         ExtendedScalars.Time,
                         ExtendedScalars.LocalTime,
+                        ExtendedScalars.YearMonth,
+                        ExtendedScalars.Year,
+                        ExtendedScalars.AccurateDuration,
+                        ExtendedScalars.NominalDuration,
+                        ExtendedScalars.SecondsSinceEpoch,
                     )
             }
     }
@@ -200,6 +205,21 @@ open class DgsExtendedScalarsAutoConfiguration {
         open fun countryCodeExtendedScalarsRegistrar(): ExtendedScalarRegistrar =
             object : AbstractExtendedScalarRegistrar() {
                 override fun getScalars(): List<GraphQLScalarType> = listOf(ExtendedScalars.CountryCode)
+            }
+    }
+
+    @ConditionalOnProperty(
+        prefix = "dgs.graphql.extensions.scalars.colors",
+        name = ["enabled"],
+        havingValue = "true",
+        matchIfMissing = true,
+    )
+    @Configuration(proxyBeanMethods = false)
+    open class ColorsExtendedScalarsRegistrar {
+        @Bean
+        open fun colorsExtendedScalarsRegistrar(): ExtendedScalarRegistrar =
+            object : AbstractExtendedScalarRegistrar() {
+                override fun getScalars(): List<GraphQLScalarType> = listOf(ExtendedScalars.HexColorCode)
             }
     }
 

@@ -20,4 +20,5 @@ dependencies {
     api(project(":graphql-dgs-reactive"))
     api(project(":graphql-error-types"))
     api("org.springframework.boot:spring-boot-starter-graphql")
+    api("tools.jackson.module:jackson-module-kotlin")
 }

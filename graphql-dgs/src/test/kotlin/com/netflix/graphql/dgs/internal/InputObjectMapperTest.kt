@@ -24,6 +24,8 @@ import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithK
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithMap
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithOptional
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithSet
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.RecordInput
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.RecordInputWithSecondaryConstructor
 import org.assertj.core.api.Assertions.COLLECTION
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -311,6 +313,26 @@ internal class InputObjectMapperTest {
             )
         assertThat(result.foo).get().isEqualTo("foo-value")
         assertThat(result.bar).isNotPresent
+    }
+
+    @Test
+    fun `mapping to a Java record works`() {
+        val result =
+            inputObjectMapper.mapToJavaObject(
+                mapOf("foo" to "foo-value", "bar" to true, "baz" to 42),
+                RecordInput::class.java,
+            )
+        assertThat(result).isEqualTo(RecordInput("foo-value", true, 42))
+    }
+
+    @Test
+    fun `mapping to a Java record with an additional constructor uses the canonical constructor`() {
+        val result =
+            inputObjectMapper.mapToJavaObject(
+                mapOf("foo" to "foo-value", "bar" to 42),
+                RecordInputWithSecondaryConstructor::class.java,
+            )
+        assertThat(result).isEqualTo(RecordInputWithSecondaryConstructor("foo-value", 42))
     }
 
     @Test

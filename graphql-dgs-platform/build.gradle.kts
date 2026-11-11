@@ -53,7 +53,7 @@ dependencies {
         }
         api("com.graphql-java:graphql-java-extended-scalars") {
             version {
-                require("22.0")
+                require("24.0")
                  reject("20.2")
             }
         }
@@ -67,19 +67,21 @@ dependencies {
         }
         // ---
         api("com.jayway.jsonpath:json-path") {
-            version { require("2.9.0") }
+            version {
+                strictly("3.0.0")
+            }
         }
         api("io.projectreactor:reactor-core") {
-            version { require("3.6.1") }
+            version { require("3.8.0") }
         }
         api("io.projectreactor:reactor-test"){
-            version { require("3.6.1") }
+            version { require("3.8.0") }
         }
         // CVEs
-        api("org.apache.logging.log4j:log4j-to-slf4j:2.25.3") {
+        api("org.apache.logging.log4j:log4j-to-slf4j:2.26.1") {
             because("Refer to CVE-2021-44228; https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228")
          }
-         api("org.apache.logging.log4j:log4j-api:2.25.3") {
+         api("org.apache.logging.log4j:log4j-api:2.26.1") {
             because("Refer to CVE-2021-44228; https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228")
          }
         api("io.micrometer:context-propagation") {
@@ -97,6 +99,9 @@ val ignoreInternalModules by extra(
         project(":graphql-dgs-example-shared"),
         project(":graphql-dgs-spring-graphql-example-java"),
         project(":graphql-dgs-spring-graphql-example-java-webflux"),
+        project(":graphql-dgs-example-jackson3-only"),
+        project(":graphql-dgs-example-jackson2-only"),
+        project(":graphql-dgs-example-jackson-both"),
         project(":graphql-dgs-platform-dependencies")
     )
 )

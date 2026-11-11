@@ -28,12 +28,18 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
+import java.awt.Color
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.net.URL
+import java.time.Duration
+import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.OffsetTime
+import java.time.Period
+import java.time.Year
+import java.time.YearMonth
 import java.time.ZoneOffset
 import java.util.Locale
 
@@ -118,6 +124,24 @@ internal class DgsExtendedScalarsSmokeTest {
         assertThat(data).containsAllEntriesOf(mapOf("aChar" to "A"))
     }
 
+    @Test
+    fun `Newer Date, Duration, and Color scalars are available`() {
+        val data =
+            executeQueryExtractingData<Map<String, Any>>(
+                "{ aYearMonth aYear anAccurateDuration aNominalDuration aSecondsSinceEpoch aHexColorCode }",
+            )
+        assertThat(data).containsAllEntriesOf(
+            mapOf(
+                "aYearMonth" to "2021-07",
+                "aYear" to "2021",
+                "anAccurateDuration" to "PT1H30M",
+                "aNominalDuration" to "P1Y2M3D",
+                "aSecondsSinceEpoch" to 1000,
+                "aHexColorCode" to "#00ff00",
+            ),
+        )
+    }
+
     private fun <T> executeQueryExtractingData(query: String): T = queryExecutor.executeAndExtractJsonPath(query, "data")
 
     @SpringBootConfiguration(proxyBeanMethods = false)
@@ -153,6 +177,12 @@ internal class DgsExtendedScalarsSmokeTest {
                 |   aBigDecimal: BigDecimal
                 |   aBigInteger: BigInteger
                 |   aChar: Char
+                |   aYearMonth: YearMonth
+                |   aYear: Year
+                |   anAccurateDuration: AccurateDuration
+                |   aNominalDuration: NominalDuration
+                |   aSecondsSinceEpoch: SecondsSinceEpoch
+                |   aHexColorCode: HexColorCode
                 | }
                 | 
                 | scalar Date
@@ -176,6 +206,12 @@ internal class DgsExtendedScalarsSmokeTest {
                 | scalar BigDecimal
                 | scalar BigInteger
                 | scalar Char
+                | scalar YearMonth
+                | scalar Year
+                | scalar AccurateDuration
+                | scalar NominalDuration
+                | scalar SecondsSinceEpoch
+                | scalar HexColorCode
                     """.trimMargin()
                 return schemaParser.parse(gqlSchema)
             }
@@ -242,6 +278,24 @@ internal class DgsExtendedScalarsSmokeTest {
 
             @DgsQuery
             fun aChar(): Char = 'A'
+
+            @DgsQuery
+            fun aYearMonth(): YearMonth = YearMonth.of(2021, 7)
+
+            @DgsQuery
+            fun aYear(): Year = Year.of(2021)
+
+            @DgsQuery
+            fun anAccurateDuration(): Duration = Duration.ofHours(1).plusMinutes(30)
+
+            @DgsQuery
+            fun aNominalDuration(): Period = Period.of(1, 2, 3)
+
+            @DgsQuery
+            fun aSecondsSinceEpoch(): Instant = Instant.ofEpochSecond(1000)
+
+            @DgsQuery
+            fun aHexColorCode(): Color = Color(0, 255, 0)
 
             data class SomeData(
                 val name: String,

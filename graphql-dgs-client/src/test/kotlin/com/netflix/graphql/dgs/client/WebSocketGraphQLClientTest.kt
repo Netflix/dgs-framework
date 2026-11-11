@@ -34,7 +34,9 @@ package com.netflix.graphql.dgs.client
 import com.netflix.graphql.types.subscription.DataPayload
 import com.netflix.graphql.types.subscription.GQL_COMPLETE
 import com.netflix.graphql.types.subscription.GQL_CONNECTION_ACK
+import com.netflix.graphql.types.subscription.GQL_CONNECTION_ERROR
 import com.netflix.graphql.types.subscription.GQL_CONNECTION_INIT
+import com.netflix.graphql.types.subscription.GQL_CONNECTION_KEEP_ALIVE
 import com.netflix.graphql.types.subscription.GQL_DATA
 import com.netflix.graphql.types.subscription.GQL_ERROR
 import com.netflix.graphql.types.subscription.GQL_START
@@ -67,6 +69,7 @@ class WebSocketGraphQLClientTest {
     companion object {
         private val VERIFY_TIMEOUT = Duration.ofSeconds(10)
         private val CONNECTION_ACK_MESSAGE = OperationMessage(GQL_CONNECTION_ACK, null, null)
+        private val CONNECTION_KEEP_ALIVE_MESSAGE = OperationMessage(GQL_CONNECTION_KEEP_ALIVE, null, null)
         private val TEST_DATA_A = mapOf("a" to 1, "b" to "hello", "c" to false)
         private val TEST_DATA_B = mapOf("a" to 2, "b" to null, "c" to true)
         private val TEST_DATA_C = mapOf("a" to 3, "b" to "world", "c" to false)
@@ -101,8 +104,48 @@ class WebSocketGraphQLClientTest {
     }
 
     @Test
-    fun errorsIfMessageOtherThanAckFromServer() {
+    fun skipsKeepAliveMessageBeforeAck() {
+        // Servers like Hasura emit a keep-alive right after connecting, before the ack.
+        // The handshake must wait for the ack instead of failing on the keep-alive.
+        server.next(CONNECTION_KEEP_ALIVE_MESSAGE)
+        server.next(CONNECTION_ACK_MESSAGE)
         server.next(dataMessage(TEST_DATA_A, "1"))
+        server.next(completeMessage("1"))
+
+        val responses = client.reactiveExecuteQuery("", emptyMap())
+        StepVerifier
+            .create(responses)
+            .expectSubscription()
+            .expectNextMatches { it.extractValue<Int>("a") == 1 }
+            .expectComplete()
+            .verify(VERIFY_TIMEOUT)
+
+        verify { subscriptionsClient.send(OperationMessage(GQL_CONNECTION_INIT, null, null)) }
+    }
+
+    @Test
+    fun skipsStrayDataMessageBeforeAck() {
+        // No subscription has been started before the ack, so any data received first
+        // cannot belong to this client and gets skipped while waiting for the ack.
+        server.next(dataMessage(TEST_DATA_A, "99"))
+        server.next(CONNECTION_ACK_MESSAGE)
+        server.next(dataMessage(TEST_DATA_B, "1"))
+        server.next(completeMessage("1"))
+
+        val responses = client.reactiveExecuteQuery("", emptyMap())
+        StepVerifier
+            .create(responses)
+            .expectSubscription()
+            .expectNextMatches { it.extractValue<Int>("a") == 2 }
+            .expectComplete()
+            .verify(VERIFY_TIMEOUT)
+    }
+
+    @Test
+    fun errorsOnConnectionErrorBeforeAck() {
+        // A connection error rejects the connection init, so the handshake fails right away
+        // instead of skipping it and waiting for an ack that will never come.
+        server.next(OperationMessage(GQL_CONNECTION_ERROR, "Authentication error", null))
 
         val responses = client.reactiveExecuteQuery("", emptyMap())
         StepVerifier

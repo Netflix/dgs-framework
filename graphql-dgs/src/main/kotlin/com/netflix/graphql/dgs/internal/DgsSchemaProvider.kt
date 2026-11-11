@@ -91,7 +91,7 @@ import java.util.concurrent.CompletionStage
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.jvm.optionals.getOrNull
 import java.util.List.copyOf as immutableListOf
-import java.util.Set.copyOf as immutableSetOf
+import java.util.Map.copyOf as immutableMapOf
 
 /**
  * Main framework class that scans for components and configures a runtime executable schema.
@@ -146,7 +146,7 @@ class DgsSchemaProvider
             enableEntityFetcherCustomScalarParsing,
         )
 
-        private val dataFetcherInfo = AtomicReference(DataFetcherInfo(emptyList(), emptySet(), emptySet()))
+        private val dataFetcherInfo = AtomicReference(DataFetcherInfo(emptyList(), emptyMap(), emptyMap()))
 
         /**
          * Returns an immutable list of [DataFetcherReference]s that were identified after the schema was loaded.
@@ -161,7 +161,7 @@ class DgsSchemaProvider
          *
          * The method should be considered unstable until the [schema] is fully loaded.
          */
-        fun isFieldTracingInstrumentationEnabled(field: String): Boolean = field in dataFetcherInfo.get().tracingEnabled
+        fun isFieldTracingInstrumentationEnabled(field: String): Boolean = dataFetcherInfo.get().tracingEnabled[field] ?: true
 
         /**
          * Given a field, expressed as a GraphQL `<Type>.<field name>` tuple, return...
@@ -170,7 +170,7 @@ class DgsSchemaProvider
          *
          * The method should be considered unstable until the [schema] is fully loaded.
          */
-        fun isFieldMetricsInstrumentationEnabled(field: String): Boolean = field in dataFetcherInfo.get().metricsEnabled
+        fun isFieldMetricsInstrumentationEnabled(field: String): Boolean = dataFetcherInfo.get().metricsEnabled[field] ?: true
 
         fun schema(
             @Language("GraphQL") schema: String? = null,
@@ -443,29 +443,16 @@ class DgsSchemaProvider
                     field,
                 )
 
+            val instrumentationOverride = method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)?.value
             val enableTracingInstrumentation =
-                if (method.isAnnotationPresent(DgsEnableDataFetcherInstrumentation::class.java)) {
-                    val dgsEnableDataFetcherInstrumentation =
-                        method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)
-                    dgsEnableDataFetcherInstrumentation.value
-                } else {
-                    method.returnType != CompletionStage::class.java && method.returnType != CompletableFuture::class.java
-                }
-            if (enableTracingInstrumentation) {
-                dataFetcherInfo.tracingEnabled += "$parentType.$field"
-            }
-
-            val enableMetricsInstrumentation =
-                if (method.isAnnotationPresent(DgsEnableDataFetcherInstrumentation::class.java)) {
-                    val dgsEnableDataFetcherInstrumentation =
-                        method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)
-                    dgsEnableDataFetcherInstrumentation.value
-                } else {
-                    true
-                }
-            if (enableMetricsInstrumentation) {
-                dataFetcherInfo.metricsEnabled += "$parentType.$field"
-            }
+                instrumentationOverride
+                    ?: (method.returnType != CompletionStage::class.java && method.returnType != CompletableFuture::class.java)
+            val enableMetricsInstrumentation = instrumentationOverride ?: true
+            dataFetcherInfo.setInstrumentation(
+                "$parentType.$field",
+                tracingEnabled = enableTracingInstrumentation,
+                metricsEnabled = enableMetricsInstrumentation,
+            )
 
             val methodClassName = method.declaringClass.name
             try {
@@ -506,12 +493,11 @@ class DgsSchemaProvider
                                 val dataFetcher =
                                     methodDataFetcherFactory.createDataFetcher(dgsComponent.instance, method, coordinates)
                                 codeRegistryBuilder.dataFetcher(coordinates, dataFetcher)
-                                if (enableTracingInstrumentation) {
-                                    dataFetcherInfo.tracingEnabled += coordinates.toString()
-                                }
-                                if (enableMetricsInstrumentation) {
-                                    dataFetcherInfo.metricsEnabled += coordinates.toString()
-                                }
+                                dataFetcherInfo.setInstrumentation(
+                                    coordinates.toString(),
+                                    tracingEnabled = enableTracingInstrumentation,
+                                    metricsEnabled = enableMetricsInstrumentation,
+                                )
                             }
                         }
                     }
@@ -522,12 +508,11 @@ class DgsSchemaProvider
                             val dataFetcher =
                                 methodDataFetcherFactory.createDataFetcher(dgsComponent.instance, method, coordinates)
                             codeRegistryBuilder.dataFetcher(coordinates, dataFetcher)
-                            if (enableTracingInstrumentation) {
-                                dataFetcherInfo.tracingEnabled += coordinates.toString()
-                            }
-                            if (enableMetricsInstrumentation) {
-                                dataFetcherInfo.metricsEnabled += coordinates.toString()
-                            }
+                            dataFetcherInfo.setInstrumentation(
+                                coordinates.toString(),
+                                tracingEnabled = enableTracingInstrumentation,
+                                metricsEnabled = enableMetricsInstrumentation,
+                            )
                         }
                     }
 
@@ -693,10 +678,11 @@ class DgsSchemaProvider
                         val enableInstrumentation =
                             method.getAnnotation(DgsEnableDataFetcherInstrumentation::class.java)?.value
                                 ?: false
-                        if (enableInstrumentation) {
-                            dataFetcherInfo.tracingEnabled += coordinateName
-                            dataFetcherInfo.metricsEnabled += coordinateName
-                        }
+                        dataFetcherInfo.setInstrumentation(
+                            coordinateName,
+                            tracingEnabled = enableInstrumentation,
+                            metricsEnabled = enableInstrumentation,
+                        )
 
                         // Throw if an entity fetcher for the same type was already registered
                         if (entityFetcherRegistry.entityFetchers.contains(entityFetcherTypeName)) {
@@ -770,7 +756,8 @@ class DgsSchemaProvider
             val fieldDefinitionType = fieldDefinition?.type
 
             if (fieldDefinitionType is TypeName) {
-                val fieldType = registry.getType(fieldDefinitionType.name).getOrNull()
+                val fieldTypeName = fieldDefinitionType.name ?: return null
+                val fieldType = registry.getType(fieldTypeName).getOrNull()
 
                 if (fieldType != null) {
                     return when (fieldType) {
@@ -884,7 +871,7 @@ class DgsSchemaProvider
                     TypeRuntimeWiring
                         .newTypeWiring(it)
                         .typeResolver { env: TypeResolutionEnvironment ->
-                            val instance = env.getObject<Any>()
+                            val instance = requireNotNull(env.getObject<Any>())
                             val resolvedType = env.schema.getObjectType(instance::class.java.simpleName)
                             resolvedType ?: fallbackTypeResolver?.getType(env)
                                 ?: throw InvalidTypeResolverException(
@@ -990,22 +977,31 @@ class DgsSchemaProvider
 
             private class MutableDataFetcherInfo(
                 val dataFetchers: MutableList<DataFetcherReference> = mutableListOf(),
-                val tracingEnabled: MutableSet<String> = mutableSetOf(),
-                val metricsEnabled: MutableSet<String> = mutableSetOf(),
+                private val tracingEnabled: MutableMap<String, Boolean> = mutableMapOf(),
+                private val metricsEnabled: MutableMap<String, Boolean> = mutableMapOf(),
             ) {
+                fun setInstrumentation(
+                    field: String,
+                    tracingEnabled: Boolean,
+                    metricsEnabled: Boolean,
+                ) {
+                    this.tracingEnabled[field] = tracingEnabled
+                    this.metricsEnabled[field] = metricsEnabled
+                }
+
                 fun toImmutable(): DataFetcherInfo =
                     DataFetcherInfo(
                         dataFetchers = immutableListOf(dataFetchers),
-                        tracingEnabled = immutableSetOf(tracingEnabled),
-                        metricsEnabled = immutableSetOf(metricsEnabled),
+                        tracingEnabled = immutableMapOf(tracingEnabled),
+                        metricsEnabled = immutableMapOf(metricsEnabled),
                     )
             }
 
             @JvmRecord
             private data class DataFetcherInfo(
                 val dataFetchers: List<DataFetcherReference>,
-                val tracingEnabled: Set<String>,
-                val metricsEnabled: Set<String>,
+                val tracingEnabled: Map<String, Boolean>,
+                val metricsEnabled: Map<String, Boolean>,
             )
         }
     }

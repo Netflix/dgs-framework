@@ -94,7 +94,7 @@ class CustomDirectivesTest {
             )
 
         assertEquals(0, executionResult.errors.size)
-        val data = executionResult.getData<Map<String, String>>()
+        val data = executionResult.getData<Map<String, String>>()!!
         assertThat(data["hello"]).isEqualTo("HELLO")
 
         // test global directive
@@ -108,7 +108,7 @@ class CustomDirectivesTest {
             )
 
         assertEquals(0, wordExecutionResult.errors.size)
-        val wordData = wordExecutionResult.getData<Map<String, String>>()
+        val wordData = wordExecutionResult.getData<Map<String, String>>()!!
         assertThat(wordData["word"]).contains("xxx")
     }
 

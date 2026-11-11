@@ -9,7 +9,7 @@
     {
       "name": "dgs.graphql.extensions.scalars.time-dates.enabled",
       "type": "java.lang.Boolean",
-      "description": "Enabled by default, if dgs.graphql.extensions.scalars.enabled is enabled, will register the DateTime, Date, and Time scalar extensions."
+      "description": "Enabled by default, if dgs.graphql.extensions.scalars.enabled is enabled, will register the DateTime, Date, Time, LocalTime, YearMonth, Year, AccurateDuration, NominalDuration, and SecondsSinceEpoch scalar extensions."
     },
     {
       "name": "dgs.graphql.extensions.scalars.objects.enabled",
@@ -35,6 +35,11 @@
       "name": "dgs.graphql.extensions.scalars.chars.enabled",
       "type": "java.lang.Boolean",
       "description": "Enabled by default, if dgs.graphql.extensions.scalars.enabled is enabled, will register the GraphQLChar extension."
+    },
+    {
+      "name": "dgs.graphql.extensions.scalars.colors.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enabled by default, if dgs.graphql.extensions.scalars.enabled is enabled, will register the HexColorCode extension."
     },
     {
       "name": "dgs.graphql.extensions.scalars.strict-mode.enabled",

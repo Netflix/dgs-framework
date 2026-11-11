@@ -43,7 +43,8 @@ open class DgsContext(
 
     companion object {
         @JvmStatic
-        fun from(graphQLContext: GraphQLContext): DgsContext = graphQLContext[GraphQLContextKey.DGS_CONTEXT_KEY]
+        fun from(graphQLContext: GraphQLContext): DgsContext =
+            requireNotNull(graphQLContext.get<DgsContext>(GraphQLContextKey.DGS_CONTEXT_KEY))
 
         @JvmStatic
         fun from(dfe: DataFetchingEnvironment): DgsContext = from(dfe.graphQlContext)

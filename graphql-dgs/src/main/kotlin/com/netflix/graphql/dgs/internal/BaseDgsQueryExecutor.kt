@@ -16,16 +16,10 @@
 
 package com.netflix.graphql.dgs.internal
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.jayway.jsonpath.Configuration
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.ParseContext
-import com.jayway.jsonpath.spi.json.JacksonJsonProvider
-import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
 import com.netflix.graphql.dgs.DgsExecutionResult
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.exceptions.DgsBadRequestException
@@ -51,21 +45,56 @@ import java.util.concurrent.CompletionException
 object BaseDgsQueryExecutor {
     private val logger: Logger = LoggerFactory.getLogger(BaseDgsQueryExecutor::class.java)
 
-    val objectMapper: ObjectMapper =
-        jacksonObjectMapper()
-            .registerModule(JavaTimeModule())
-            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
-            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+    private val jackson2ObjectMapper: com.fasterxml.jackson.databind.ObjectMapper by lazy {
+        try {
+            com.fasterxml.jackson.module.kotlin
+                .jacksonObjectMapper()
+                .registerModule(
+                    com.fasterxml.jackson.datatype.jsr310
+                        .JavaTimeModule(),
+                ).enable(com.fasterxml.jackson.databind.DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+                .disable(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        } catch (e: NoClassDefFoundError) {
+            throw IllegalStateException(
+                "BaseDgsQueryExecutor.objectMapper requires Jackson 2 on the classpath. " +
+                    "Add the graphql-dgs-jackson2 module or use DgsJsonMapper instead.",
+                e,
+            )
+        }
+    }
 
-    val parseContext: ParseContext =
-        JsonPath.using(
-            Configuration
-                .builder()
-                .jsonProvider(JacksonJsonProvider(jacksonObjectMapper()))
-                .mappingProvider(JacksonMappingProvider(objectMapper))
-                .build()
-                .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL),
-        )
+    @Deprecated(
+        message = "Use DgsJsonMapper instead. This field requires Jackson 2 on the classpath.",
+        level = DeprecationLevel.HIDDEN,
+    )
+    val objectMapper: com.fasterxml.jackson.databind.ObjectMapper by lazy { jackson2ObjectMapper }
+
+    @Deprecated(
+        message = "Use DgsJsonMapper.jsonPathConfiguration() instead. This field requires Jackson 2 on the classpath.",
+        level = DeprecationLevel.HIDDEN,
+    )
+    val parseContext: ParseContext by lazy {
+        try {
+            JsonPath.using(
+                Configuration
+                    .builder()
+                    .jsonProvider(
+                        com.jayway.jsonpath.spi.json
+                            .JacksonJsonProvider(jackson2ObjectMapper),
+                    ).mappingProvider(
+                        com.jayway.jsonpath.spi.mapper
+                            .JacksonMappingProvider(jackson2ObjectMapper),
+                    ).build()
+                    .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL),
+            )
+        } catch (e: NoClassDefFoundError) {
+            throw IllegalStateException(
+                "BaseDgsQueryExecutor.parseContext requires Jackson 2 on the classpath. " +
+                    "Add the graphql-dgs-jackson2 module or use DgsJsonMapper instead.",
+                e,
+            )
+        }
+    }
 
     fun baseExecute(
         @Language("graphql") query: String?,

@@ -94,7 +94,7 @@ class DataFetcherWithDirectivesTest {
 
         val build = GraphQL.newGraphQL(schema).build()
         val executionResult = build.execute("{ hello }")
-        val data: Map<String, String> = executionResult.getData()
+        val data: Map<String, String> = executionResult.getData()!!
         assertThat(data["hello"]).isEqualTo("hello some name")
     }
 }

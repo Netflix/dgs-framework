@@ -41,6 +41,7 @@ internal class DgsExtendedScalarsAutoConfigurationTests {
                 ).hasSingleBean(DgsExtendedScalarsAutoConfiguration.ObjectsExtendedScalarsAutoConfiguration::class.java)
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration.TimeExtendedScalarsAutoConfiguration::class.java)
                 .hasSingleBean(DgsExtendedScalarsAutoConfiguration.IDsExtendedScalarsAutoConfiguration::class.java)
+                .hasSingleBean(DgsExtendedScalarsAutoConfiguration.ColorsExtendedScalarsRegistrar::class.java)
         }
     }
 
@@ -186,6 +187,19 @@ internal class DgsExtendedScalarsAutoConfigurationTests {
                     .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
                 assertThat(context)
                     .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.CurrencyExtendedScalarsRegistrar::class.java)
+            }
+    }
+
+    @Test
+    fun `Color scalars can be disabled`() {
+        context
+            .withPropertyValues(
+                "dgs.graphql.extensions.scalars.colors.enabled=false",
+            ).run { context ->
+                assertThat(context)
+                    .hasSingleBean(DgsExtendedScalarsAutoConfiguration::class.java)
+                assertThat(context)
+                    .doesNotHaveBean(DgsExtendedScalarsAutoConfiguration.ColorsExtendedScalarsRegistrar::class.java)
             }
     }
 }

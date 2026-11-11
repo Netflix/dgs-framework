@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.intellij.lang.annotations.Language
+import org.springframework.http.HttpStatusCode
 import reactor.core.publisher.Mono
 
 /**
@@ -25,6 +26,10 @@ import reactor.core.publisher.Mono
  * The user is responsible for doing the actual HTTP request, making this pluggable with any HTTP client.
  * For a more convenient option, use [WebClientGraphQLClient] instead.
  */
+@Deprecated(
+    "Tied to Jackson 2. Migrate to DgsCustomMonoGraphQLClient, which accepts any DgsJsonMapper (defaulting to Jackson 3). This class will be removed in a future release.",
+    ReplaceWith("DgsCustomMonoGraphQLClient", "com.netflix.graphql.dgs.client.DgsCustomMonoGraphQLClient"),
+)
 class CustomMonoGraphQLClient(
     private val url: String,
     private val monoRequestExecutor: MonoRequestExecutor,
@@ -60,7 +65,10 @@ class CustomMonoGraphQLClient(
                 GraphQLClients.toRequestMap(query = query, operationName = operationName, variables = variables),
             )
         return monoRequestExecutor.execute(url, GraphQLClients.defaultHeaders, serializedRequest).map { response ->
-            GraphQLClients.handleResponse(response, serializedRequest, url, mapper)
+            if (HttpStatusCode.valueOf(response.statusCode).isError) {
+                throw GraphQLClientException(response.statusCode, url, response.body ?: "", serializedRequest)
+            }
+            GraphQLResponse(response.body ?: "", response.headers, mapper)
         }
     }
 }
