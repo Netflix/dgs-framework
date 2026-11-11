@@ -126,7 +126,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"
@@ -135,10 +135,10 @@
             "locked": "26.1.0"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "6.0.3"
+            "locked": "6.1.3"
         },
         "org.junit.platform:junit-platform-launcher": {
-            "locked": "6.0.3"
+            "locked": "6.1.3"
         },
         "org.junit:junit-bom": {
             "locked": "6.1.3"
@@ -156,7 +156,7 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.1.1"
+            "locked": "4.2.0-RC2"
         }
     },
     "kotlinBouncyCastleConfiguration": {
@@ -259,7 +259,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"
@@ -268,7 +268,7 @@
             "locked": "26.1.0"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "6.0.3"
+            "locked": "6.1.3"
         },
         "org.junit:junit-bom": {
             "locked": "6.1.3"
@@ -277,7 +277,7 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.1.1"
+            "locked": "4.2.0-RC2"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -288,7 +288,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"
@@ -297,7 +297,7 @@
             "locked": "26.1.0"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "6.0.3"
+            "locked": "6.1.3"
         },
         "org.junit:junit-bom": {
             "locked": "6.1.3"
@@ -306,7 +306,7 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.1.1"
+            "locked": "4.2.0-RC2"
         }
     },
     "testRuntimeClasspath": {
@@ -317,7 +317,7 @@
             "project": true
         },
         "io.mockk:mockk": {
-            "locked": "1.14.11"
+            "locked": "1.14.12"
         },
         "org.jetbrains.kotlin:kotlin-stdlib": {
             "locked": "2.2.20"
@@ -326,10 +326,10 @@
             "locked": "26.1.0"
         },
         "org.junit.jupiter:junit-jupiter": {
-            "locked": "6.0.3"
+            "locked": "6.1.3"
         },
         "org.junit.platform:junit-platform-launcher": {
-            "locked": "6.0.3"
+            "locked": "6.1.3"
         },
         "org.junit:junit-bom": {
             "locked": "6.1.3"
@@ -338,7 +338,7 @@
             "locked": "2.0.19"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.1.1"
+            "locked": "4.2.0-RC2"
         }
     }
 }
