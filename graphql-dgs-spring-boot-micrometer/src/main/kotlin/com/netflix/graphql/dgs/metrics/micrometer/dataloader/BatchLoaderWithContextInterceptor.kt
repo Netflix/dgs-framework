@@ -19,13 +19,22 @@ internal class BatchLoaderWithContextInterceptor(
     override fun invoke(
         proxy: Any,
         method: Method,
-        args: Array<out Any>,
-    ): CompletionStage<*> {
+        args: Array<out Any?>?,
+    ): Any? {
+        if (method.declaringClass == Any::class.java) {
+            return when (method.name) {
+                "toString" -> batchLoaderWithContext.toString()
+                "hashCode" -> System.identityHashCode(proxy)
+                "equals" -> proxy === args?.firstOrNull()
+                else -> throw UnsupportedOperationException("Unsupported method: ${method.name}")
+            }
+        }
+        val arguments = args ?: emptyArray()
         if (method.name == "load") {
             logger.debug("Starting metered timer[{}] for {}.", ID, javaClass.simpleName)
             val timerSampler = Timer.start(registry)
             return try {
-                val future = method.invoke(batchLoaderWithContext, *(args)) as CompletionStage<*>
+                val future = method.invoke(batchLoaderWithContext, *arguments) as CompletionStage<*>
                 future.whenComplete { result, _ ->
                     logger.debug("Stopping timer[{}] for {}", ID, javaClass.simpleName)
 
@@ -56,7 +65,7 @@ internal class BatchLoaderWithContextInterceptor(
             } catch (exception: Exception) {
                 logger.warn("Error creating timer interceptor '{}' for {} with exception {}", ID, javaClass.simpleName, exception.message)
                 @Suppress("UNCHECKED_CAST")
-                method.invoke(batchLoaderWithContext, *(args)) as CompletionStage<List<*>>
+                method.invoke(batchLoaderWithContext, *arguments) as CompletionStage<List<*>>
             }
         }
         throw UnsupportedOperationException("Unsupported method: ${method.name}")
