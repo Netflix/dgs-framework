@@ -88,6 +88,7 @@ internal class DgsSchemaProviderTest {
         fallbackTypeResolver: TypeResolver? = null,
         strictMode: Boolean = true,
         federationEnabled: Boolean = true,
+        componentSources: List<DgsComponentSource> = emptyList(),
     ): DgsSchemaProvider =
         DgsSchemaProvider(
             applicationContext = applicationContext,
@@ -107,6 +108,7 @@ internal class DgsSchemaProviderTest {
             fallbackTypeResolver = fallbackTypeResolver,
             enableStrictMode = strictMode,
             federationEnabled = federationEnabled,
+            componentSources = componentSources,
         )
 
     @DgsComponent
@@ -1516,6 +1518,106 @@ internal class DgsSchemaProviderTest {
 
             val serviceResult = build.execute("{_service { sdl }}")
             assertThat(serviceResult.errors).isNotEmpty
+        }
+    }
+
+    @Test
+    fun `reads components from a component source context`() {
+        contextRunner.run { primary ->
+            contextRunner.withBeans(HelloFetcher::class).run { other ->
+                val source =
+                    object : DgsComponentSource {
+                        override val applicationContext = other
+                    }
+                val provider = schemaProvider(applicationContext = primary, componentSources = listOf(source))
+                val result = GraphQL.newGraphQL(provider.schema().graphQLSchema).build().execute("{hello}")
+                assertThat(result.errors).isEmpty()
+                assertThat(result.getData<Map<String, Any>>()["hello"]).isEqualTo("Hello")
+                assertThat(provider.isFieldMetricsInstrumentationEnabled("Query.hello")).isTrue
+            }
+        }
+    }
+
+    @Test
+    fun `component source can select its own components and the filter applies`() {
+        contextRunner.run { primary ->
+            val source =
+                object : DgsComponentSource {
+                    override val applicationContext = primary
+
+                    override fun components(): Collection<Any> = listOf(HelloFetcher())
+                }
+            val provider = schemaProvider(applicationContext = primary, componentSources = listOf(source))
+            assertThat(
+                provider
+                    .schema()
+                    .graphQLSchema.queryType
+                    .getFieldDefinition("hello"),
+            ).isNotNull
+
+            val filtered =
+                schemaProvider(
+                    applicationContext = primary,
+                    componentSources = listOf(source),
+                    componentFilter = { it !is HelloFetcher },
+                    schemaWiringValidationEnabled = false,
+                    strictMode = false,
+                )
+            val data =
+                GraphQL
+                    .newGraphQL(filtered.schema().graphQLSchema)
+                    .build()
+                    .execute("{hello}")
+                    .getData<Map<String, Any?>>()
+            assertThat(data["hello"]).isNull()
+        }
+    }
+
+    @DgsComponent
+    class MethodlessFetcherRegistration {
+        @DgsCodeRegistry
+        fun registry(
+            builder: DgsCodeRegistryBuilder,
+            registry: TypeDefinitionRegistry,
+        ): DgsCodeRegistryBuilder {
+            val coordinates = FieldCoordinates.coordinates("Query", "hello")
+            return builder
+                .dataFetcher(coordinates, DataFetcher { CompletableFuture.completedFuture("Hello") })
+                .enableInstrumentation(coordinates)
+        }
+    }
+
+    @Test
+    fun `enableInstrumentation turns on metrics and tracing for fetchers without a method`() {
+        contextRunner.withBeans(MethodlessFetcherRegistration::class).run { context ->
+            val provider = schemaProvider(applicationContext = context)
+            provider.schema()
+            assertThat(provider.isFieldMetricsInstrumentationEnabled("Query.hello")).isTrue
+            assertThat(provider.isFieldTracingInstrumentationEnabled("Query.hello")).isTrue
+        }
+    }
+
+    @DgsComponent
+    class MethodlessAsyncFetcherRegistration {
+        @DgsCodeRegistry
+        fun registry(
+            builder: DgsCodeRegistryBuilder,
+            registry: TypeDefinitionRegistry,
+        ): DgsCodeRegistryBuilder {
+            val coordinates = FieldCoordinates.coordinates("Query", "hello")
+            return builder
+                .dataFetcher(coordinates, DataFetcher { CompletableFuture.completedFuture("Hello") })
+                .enableInstrumentation(coordinates, tracing = false)
+        }
+    }
+
+    @Test
+    fun `enableInstrumentation allows disabling tracing while keeping metrics`() {
+        contextRunner.withBeans(MethodlessAsyncFetcherRegistration::class).run { context ->
+            val provider = schemaProvider(applicationContext = context)
+            provider.schema()
+            assertThat(provider.isFieldMetricsInstrumentationEnabled("Query.hello")).isTrue
+            assertThat(provider.isFieldTracingInstrumentationEnabled("Query.hello")).isFalse
         }
     }
 }

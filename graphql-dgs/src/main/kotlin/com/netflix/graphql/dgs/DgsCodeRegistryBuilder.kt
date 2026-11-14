@@ -30,43 +30,80 @@ import org.springframework.context.ApplicationContext
  * a consistent registration mechanism of DataFetchers similar to the annotation-based approach.
  * Can be used as a first parameter of a [DgsCodeRegistry] annotated method.
  */
-class DgsCodeRegistryBuilder(
-    private val dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
-    private val graphQLCodeRegistry: GraphQLCodeRegistry.Builder,
-    private val ctx: ApplicationContext,
-) {
-    fun dataFetcher(
-        coordinates: FieldCoordinates,
-        dataFetcher: DataFetcher<*>,
-    ): DgsCodeRegistryBuilder {
-        val fetcher =
-            if (dataFetcherResultProcessors.isNotEmpty() && dataFetcher !is TrivialDataFetcher) {
-                DataFetcherFactories.wrapDataFetcher(dataFetcher) { dfe, result -> convertResult(dfe, result) }
-            } else {
-                dataFetcher
-            }
-
-        graphQLCodeRegistry.dataFetcher(coordinates, fetcher)
-        return this
-    }
-
-    fun hasDataFetcher(coordinates: FieldCoordinates): Boolean = graphQLCodeRegistry.hasDataFetcher(coordinates)
-
-    fun getDataFetcher(
-        coordinates: FieldCoordinates,
-        fieldDefinition: GraphQLFieldDefinition,
-    ): DataFetcher<*> = graphQLCodeRegistry.getDataFetcher(coordinates, fieldDefinition)
-
-    private fun convertResult(
-        dfe: DataFetchingEnvironment,
-        result: Any?,
-    ): Any? {
-        if (result == null) {
-            return null
+class DgsCodeRegistryBuilder
+    @JvmOverloads
+    constructor(
+        private val dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
+        private val graphQLCodeRegistry: GraphQLCodeRegistry.Builder,
+        private val ctx: ApplicationContext,
+        private val instrumentationEnabler: (coordinates: FieldCoordinates, tracing: Boolean, metrics: Boolean) -> Unit =
+            { _, _, _ -> },
+    ) {
+        /**
+         * Enables the DGS instrumentation for the data fetcher at the given [coordinates].
+         *
+         * Intended for data fetchers registered without a `@DgsData` method. For those, DGS cannot read
+         * [DgsEnableDataFetcherInstrumentation] nor inspect the method return type, so the caller declares
+         * the settings explicitly. Calling this method is the only way to instrument such a data fetcher.
+         *
+         * Behavior of each flag:
+         *
+         * - [tracing] (defaults to `true`): a tracing span is created around each invocation of the data fetcher. The span ends
+         *   when `DataFetcher.get` returns, it does not wait for a returned `CompletionStage` or
+         *   `CompletableFuture` to complete. For an asynchronous data fetcher the span therefore measures only
+         *   the synchronous portion (typically task submission), not the time to produce the value, and
+         *   under-reports latency. Pass `tracing = false` for data fetchers that return a `CompletionStage`
+         *   or `CompletableFuture`. This mirrors the default DGS applies to `@DgsData` methods, where tracing
+         *   is disabled for those return types unless [DgsEnableDataFetcherInstrumentation] overrides it.
+         * - [metrics] (defaults to `true`): the data fetcher is included in the DGS metrics instrumentation.
+         *   For `@DgsData` methods this is `true` by default regardless of return type.
+         *
+         * Each instrumented coordinate adds per-invocation overhead and a tag value to the emitted
+         * metrics and spans. The number of distinct values is bounded by the number of schema fields.
+         */
+        @JvmOverloads
+        @Internal
+        fun enableInstrumentation(
+            coordinates: FieldCoordinates,
+            tracing: Boolean = true,
+            metrics: Boolean = true,
+        ): DgsCodeRegistryBuilder {
+            instrumentationEnabler(coordinates, tracing, metrics)
+            return this
         }
-        val processor = dataFetcherResultProcessors.find { it.supportsType(result) } ?: return result
-        val env =
-            dfe as? DgsDataFetchingEnvironment ?: DgsDataFetchingEnvironment(dfe, ctx)
-        return processor.process(result, env)
+
+        fun dataFetcher(
+            coordinates: FieldCoordinates,
+            dataFetcher: DataFetcher<*>,
+        ): DgsCodeRegistryBuilder {
+            val fetcher =
+                if (dataFetcherResultProcessors.isNotEmpty() && dataFetcher !is TrivialDataFetcher) {
+                    DataFetcherFactories.wrapDataFetcher(dataFetcher) { dfe, result -> convertResult(dfe, result) }
+                } else {
+                    dataFetcher
+                }
+
+            graphQLCodeRegistry.dataFetcher(coordinates, fetcher)
+            return this
+        }
+
+        fun hasDataFetcher(coordinates: FieldCoordinates): Boolean = graphQLCodeRegistry.hasDataFetcher(coordinates)
+
+        fun getDataFetcher(
+            coordinates: FieldCoordinates,
+            fieldDefinition: GraphQLFieldDefinition,
+        ): DataFetcher<*> = graphQLCodeRegistry.getDataFetcher(coordinates, fieldDefinition)
+
+        private fun convertResult(
+            dfe: DataFetchingEnvironment,
+            result: Any?,
+        ): Any? {
+            if (result == null) {
+                return null
+            }
+            val processor = dataFetcherResultProcessors.find { it.supportsType(result) } ?: return result
+            val env =
+                dfe as? DgsDataFetchingEnvironment ?: DgsDataFetchingEnvironment(dfe, ctx)
+            return processor.process(result, env)
+        }
     }
-}

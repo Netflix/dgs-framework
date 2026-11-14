@@ -43,7 +43,7 @@ import java.time.LocalTime
 import java.util.UUID
 
 /**
- * A test for running E2E graphQL request/response tests using the DGS framework in kotlin
+ * A test for running E2E GraphQL request/response tests using the DGS framework in kotlin
  * This test is to explicitly validate that scalar maps and variables passed in as inputs
  * are serialized and deserialized correctly in the request and response using our provided
  * clients.

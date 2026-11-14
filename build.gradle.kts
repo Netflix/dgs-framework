@@ -90,6 +90,16 @@ configure(subprojects.filterNot { it in internalBomModules }) {
         }
     }
 
+    // Create a configuration that allows to define the `byte-byddy-agent` artifacts such that
+    // we can attach the agent to the test execution. Mock instruments classes through ByteBuddy require this and,
+    // by default, it self-attaches to the running JVM. This fails when dynamic agent attach is unavailable.
+    // Loading the agent at JVM startup avoids the post-startup attach.
+    // See the `test` task below.
+    val byteBuddyAgent =
+        configurations.create("byteBuddyAgent") {
+            isTransitive = false
+        }
+
     dependencies {
         // Apply the BOM to applicable subprojects.
         api(platform(project(":graphql-dgs-platform")))
@@ -107,8 +117,11 @@ configure(subprojects.filterNot { it in internalBomModules }) {
 
         implementation("org.slf4j:slf4j-api:2.0.20")
         implementation("org.jetbrains:annotations:26.1.0")
-        testImplementation("io.mockk:mockk:1.+")
 
+        // Loaded with -javaagent at test JVM startup, see the test task below.
+        byteBuddyAgent("net.bytebuddy:byte-buddy-agent")
+
+        testImplementation("io.mockk:mockk:1.+")
         // JUnit 5 dependencies
         testImplementation(platform("org.junit:junit-bom:6.1.3"))
         testImplementation("org.junit.jupiter:junit-jupiter")
@@ -136,6 +149,8 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     tasks {
         test {
             useJUnitPlatform()
+            val agentJar: FileCollection = byteBuddyAgent
+            doFirst { jvmArgs("-javaagent:${agentJar.singleFile.absolutePath}") }
         }
     }
 

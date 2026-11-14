@@ -18,6 +18,7 @@ package com.netflix.graphql.dgs.springgraphql.autoconfig
 
 import com.netflix.graphql.dgs.DataLoaderInstrumentationExtensionProvider
 import com.netflix.graphql.dgs.DgsComponent
+import com.netflix.graphql.dgs.DgsComponentSource
 import com.netflix.graphql.dgs.DgsDataLoaderCustomizer
 import com.netflix.graphql.dgs.DgsDataLoaderInstrumentation
 import com.netflix.graphql.dgs.DgsDataLoaderOptionsProvider
@@ -389,6 +390,7 @@ open class DgsSpringGraphQLAutoConfiguration(
         defaultDataFetcherFactory: Optional<DataFetcherFactory<*>> = Optional.empty(),
         methodDataFetcherFactory: MethodDataFetcherFactory,
         fallbackTypeResolver: TypeResolver? = null,
+        componentSources: ObjectProvider<DgsComponentSource>,
     ): DgsSchemaProvider =
         DgsSchemaProvider(
             applicationContext = applicationContext,
@@ -405,6 +407,7 @@ open class DgsSpringGraphQLAutoConfiguration(
             fallbackTypeResolver = fallbackTypeResolver,
             enableStrictMode = configProps.strictMode.enabled,
             federationEnabled = configProps.federation.enabled,
+            componentSources = componentSources.orderedStream().toList(),
         )
 
     @Bean

@@ -19,7 +19,7 @@ package com.netflix.graphql.dgs.internal
 import com.apollographql.federation.graphqljava.Federation
 import com.netflix.graphql.dgs.DgsCodeRegistry
 import com.netflix.graphql.dgs.DgsCodeRegistryBuilder
-import com.netflix.graphql.dgs.DgsComponent
+import com.netflix.graphql.dgs.DgsComponentSource
 import com.netflix.graphql.dgs.DgsData
 import com.netflix.graphql.dgs.DgsDataFetchingEnvironment
 import com.netflix.graphql.dgs.DgsDefaultTypeResolver
@@ -114,6 +114,7 @@ class DgsSchemaProvider
         private val fallbackTypeResolver: TypeResolver? = null,
         private val enableStrictMode: Boolean = true,
         private val federationEnabled: Boolean = true,
+        private val componentSources: List<DgsComponentSource> = emptyList(),
     ) {
         @Suppress("UNUSED_PARAMETER")
         @Deprecated("The mockProviders argument is no longer supported")
@@ -190,14 +191,9 @@ class DgsSchemaProvider
             showSdlComments: Boolean,
         ): Pair<SchemaProviderResult, DataFetcherInfo> {
             val startTime = System.currentTimeMillis()
-            val dgsComponents =
-                applicationContext
-                    .getBeansWithAnnotation<DgsComponent>()
-                    .values
-                    .asSequence()
-                    .let { beans -> if (componentFilter != null) beans.filter(componentFilter) else beans }
-                    .map { bean -> DgsBean(bean) }
-                    .toList()
+            val discovery = DgsComponentDiscovery(applicationContext, componentSources, componentFilter)
+            val dgsComponents = discovery.components()
+            val componentContexts = discovery.contexts()
 
             var mergedRegistry =
                 if (schema == null) {
@@ -238,18 +234,18 @@ class DgsSchemaProvider
                     .codeRegistry(codeRegistryBuilder)
                     .fieldVisibility(fieldVisibility)
 
-            val dgsCodeRegistryBuilder =
-                DgsCodeRegistryBuilder(dataFetcherResultProcessors, codeRegistryBuilder, applicationContext)
+            val dataFetcherInfo = MutableDataFetcherInfo()
 
             dgsComponents
                 .asSequence()
                 .mapNotNull { dgsComponent -> invokeDgsTypeDefinitionRegistry(dgsComponent, mergedRegistry) }
                 .fold(mergedRegistry) { a, b -> a.merge(b) }
-            findScalars(applicationContext, runtimeWiringBuilder)
-            findDirectives(applicationContext, runtimeWiringBuilder)
+            componentContexts.forEach { context ->
+                findScalars(context, runtimeWiringBuilder)
+                findDirectives(context, runtimeWiringBuilder)
+            }
 
-            val dataFetcherInfo = MutableDataFetcherInfo()
-            findDataFetchers(dgsComponents, dgsCodeRegistryBuilder, mergedRegistry, dataFetcherInfo)
+            findDataFetchers(dgsComponents, codeRegistryBuilder, mergedRegistry, dataFetcherInfo)
             findTypeResolvers(dgsComponents, runtimeWiringBuilder, mergedRegistry)
 
             dgsComponents.forEach { dgsComponent ->
@@ -257,6 +253,7 @@ class DgsSchemaProvider
                     dgsComponent,
                     codeRegistryBuilder,
                     mergedRegistry,
+                    dataFetcherInfo,
                 )
             }
 
@@ -324,9 +321,9 @@ class DgsSchemaProvider
             dgsComponent: DgsBean,
             codeRegistryBuilder: GraphQLCodeRegistry.Builder,
             registry: TypeDefinitionRegistry,
+            dataFetcherInfo: MutableDataFetcherInfo,
         ) {
-            val dgsCodeRegistryBuilder =
-                DgsCodeRegistryBuilder(dataFetcherResultProcessors, codeRegistryBuilder, applicationContext)
+            val dgsCodeRegistryBuilder = dgsCodeRegistryBuilder(codeRegistryBuilder, dgsComponent.context, dataFetcherInfo)
 
             dgsComponent
                 .annotatedMethods<DgsCodeRegistry>()
@@ -380,13 +377,23 @@ class DgsSchemaProvider
                 }
         }
 
+        private fun dgsCodeRegistryBuilder(
+            codeRegistryBuilder: GraphQLCodeRegistry.Builder,
+            context: ApplicationContext,
+            dataFetcherInfo: MutableDataFetcherInfo,
+        ): DgsCodeRegistryBuilder =
+            DgsCodeRegistryBuilder(dataFetcherResultProcessors, codeRegistryBuilder, context) { coordinates, tracing, metrics ->
+                dataFetcherInfo.setInstrumentation(coordinates.toString(), tracingEnabled = tracing, metricsEnabled = metrics)
+            }
+
         private fun findDataFetchers(
             dgsComponents: Collection<DgsBean>,
-            codeRegistryBuilder: DgsCodeRegistryBuilder,
+            graphQLCodeRegistryBuilder: GraphQLCodeRegistry.Builder,
             typeDefinitionRegistry: TypeDefinitionRegistry,
             dataFetcherInfo: MutableDataFetcherInfo,
         ) {
             dgsComponents.forEach { dgsComponent ->
+                val codeRegistryBuilder = dgsCodeRegistryBuilder(graphQLCodeRegistryBuilder, dgsComponent.context, dataFetcherInfo)
                 dgsComponent.methods
                     .map { method ->
                         val mergedAnnotations =
@@ -962,18 +969,6 @@ class DgsSchemaProvider
         companion object {
             const val DEFAULT_SCHEMA_LOCATION = "classpath*:schema/**/*.graphql*"
             private val logger: Logger = LoggerFactory.getLogger(DgsSchemaProvider::class.java)
-
-            private data class DgsBean(
-                val instance: Any,
-                val targetClass: Class<*> = AopUtils.getTargetClass(instance),
-            ) {
-                private val cachedMethods =
-                    ReflectionUtils.getUniqueDeclaredMethods(targetClass, ReflectionUtils.USER_DECLARED_METHODS)
-                val methods: Sequence<Method> get() = cachedMethods.asSequence()
-
-                inline fun <reified T : Annotation> annotatedMethods(): Sequence<Method> =
-                    methods.filter { it.isAnnotationPresent(T::class.java) }
-            }
 
             private class MutableDataFetcherInfo(
                 val dataFetchers: MutableList<DataFetcherReference> = mutableListOf(),
