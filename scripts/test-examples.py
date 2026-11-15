@@ -86,9 +86,12 @@ def clone_repos(config, target):
     if not git_uris:
         Out.error("The repositories to clone are missing, make sure the config file defines a repos section.")
         exit(-2)
-    for g_uri in git_uris:
+    for repo in git_uris:
+        # An entry is either a plain URI or a mapping with "uri" and an optional "branch".
+        g_uri = repo["uri"] if isinstance(repo, dict) else repo
+        branch = repo.get("branch") if isinstance(repo, dict) else None
         try:
-            cloned_repo = git.Git(target).clone(g_uri)
+            cloned_repo = git.Git(target).clone(g_uri, branch=branch) if branch else git.Git(target).clone(g_uri)
             if cloned_repo:
                 cloned_repos.append(cloned_repo)
                 Out.info(f"Repository [{g_uri}] cloned to [{target}].")

@@ -49,3 +49,6 @@ bin/
 # VS Code
 .vscode/
 scripts/__pycache__
+
+# Python virtual environment for scripts/
+.venv/
