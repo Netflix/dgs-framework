@@ -152,6 +152,13 @@ configure(subprojects.filterNot { it in internalBomModules }) {
             val agentJar: FileCollection = byteBuddyAgent
             doFirst { jvmArgs("-javaagent:${agentJar.singleFile.absolutePath}") }
         }
+
+        // Prints the resolved agent jar.
+        // Used by the Makefile to establish the path to the bytebuddy binary.
+        register("byteBuddyAgentPath") {
+            val agentJar: FileCollection = byteBuddyAgent
+            doLast { println(agentJar.singleFile.absolutePath) }
+        }
     }
 
     tasks.withType<Javadoc>().configureEach {

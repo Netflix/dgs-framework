@@ -55,7 +55,12 @@ publish-local: jdk ## Clans, bulds, and publishes the Codegen artifacts to maven
 	$(GW_CMD) $(GW_OPT_DISABLE_LOCAL) clean build publishToMavenLocal
 
 test-examples_py: jdk $(VENV)/.installed # Modify the examples to use the latest Codegen SNAPSHOT, publishes the snapshot locally, and builds the examples.
-	$(VENV_PY) scripts/test-examples.py -v -g -k --path=build/examples
+	@# The example builds run their own tests (Mockito), so their JVMs get the Byte Buddy agent at startup too.
+	@# JAVA_TOOL_OPTIONS is inherited by the Gradle daemon and the forked test JVMs.
+	@agent=$$($(GW) -q :graphql-dgs:byteBuddyAgentPath | tail -1) && test -f "$$agent" \
+		&& mkdir -p $(dir $(BB_ATTACH_DUMP)) \
+		&& JAVA_TOOL_OPTIONS="$$JAVA_TOOL_OPTIONS -javaagent:$$agent -Dnet.bytebuddy.agent.attacher.dump=$(BB_ATTACH_DUMP)" \
+			$(VENV_PY) scripts/test-examples.py -v -g -k --path=build/examples
 
 test-examples: ## Modify the examples to use the latest Codegen SNAPSHOT, publishes the snapshot locally, and builds the examples.
 	$(MAKE) publish-local
