@@ -6,4 +6,4 @@ expose as part of their _API_. If you are looking for a BOM that will not only p
 but additional recommendations that the DGS Framework uses internally, you need the `graphql-dgs-platform-dependencies` BOM.
 
 [Maven]:      https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Importing_Dependencies
-[Gradle]:     https://docs.gradle.org/current/userguide/managing_transitive_dependencies.html#sec:bom_import
+[Gradle]:     https://docs.gradle.org/current/userguide/platforms.html#sec:bom-import
