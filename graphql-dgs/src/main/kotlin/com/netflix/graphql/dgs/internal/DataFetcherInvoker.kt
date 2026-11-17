@@ -73,7 +73,13 @@ class DataFetcherInvoker internal constructor(
     override fun get(environment: DataFetchingEnvironment): Any? {
         if (methodParameters.isEmpty()) {
             if (completableFutureWrapper.shouldWrapInCompletableFuture(bridgedMethod)) {
-                return completableFutureWrapper.wrapInCompletableFuture { ReflectionUtils.invokeMethod(bridgedMethod, dgsComponent) }
+                return completableFutureWrapper.wrapInCompletableFuture {
+                    try {
+                        bridgedMethod.invoke(dgsComponent)
+                    } catch (exc: Exception) {
+                        handleReflectionException(exc)
+                    }
+                }
             }
             return try {
                 bridgedMethod.invoke(dgsComponent)
@@ -96,7 +102,13 @@ class DataFetcherInvoker internal constructor(
         }
 
         return if (completableFutureWrapper.shouldWrapInCompletableFuture(bridgedMethod)) {
-            completableFutureWrapper.wrapInCompletableFuture { ReflectionUtils.invokeMethod(bridgedMethod, dgsComponent, *args) }
+            completableFutureWrapper.wrapInCompletableFuture {
+                try {
+                    bridgedMethod.invoke(dgsComponent, *args)
+                } catch (exc: Exception) {
+                    handleReflectionException(exc)
+                }
+            }
         } else {
             try {
                 bridgedMethod.invoke(dgsComponent, *args)
@@ -138,7 +150,13 @@ class DataFetcherInvoker internal constructor(
             }.onErrorMap(InvocationTargetException::class.java) { it.targetException }
         }
         return if (completableFutureWrapper.shouldWrapInCompletableFuture(kFunc)) {
-            completableFutureWrapper.wrapInCompletableFuture { kFunc.callBy(argsByName) }
+            completableFutureWrapper.wrapInCompletableFuture {
+                try {
+                    kFunc.callBy(argsByName)
+                } catch (exc: Exception) {
+                    handleReflectionException(exc)
+                }
+            }
         } else {
             try {
                 kFunc.callBy(argsByName)
