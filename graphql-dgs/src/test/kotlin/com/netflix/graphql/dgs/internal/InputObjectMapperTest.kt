@@ -20,6 +20,7 @@ import com.netflix.graphql.dgs.exceptions.DgsInvalidInputArgumentException
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JGenericInputObjectTwoTypeParams
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JGenericSubInputObject
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObject
+import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithFieldFallback
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithKotlinProperty
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithMap
 import com.netflix.graphql.dgs.internal.java.test.inputobjects.JInputObjectWithOptional
@@ -66,6 +67,24 @@ internal class InputObjectMapperTest {
         assertThat(mapToObject.someObject.key1).isEqualTo("value1")
         assertThat(mapToObject.someObject.key2).isEqualTo(currentDate)
         assertThat(mapToObject.someObject.key3?.subkey1).isEqualTo("hi")
+    }
+
+    @Test
+    fun mapToJavaObject_givenSetterAndField_usesSetter() {
+        val result = inputObjectMapper.mapToJavaObject(mapOf("value" to "hello"), JInputObjectWithFieldFallback::class.java)
+
+        assertThat(result.value).isEqualTo("setter:hello")
+    }
+
+    @Test
+    fun mapToJavaObject_givenFieldFallback_convertsFieldsAndStillUsesSetters() {
+        val input = mapOf("count" to "7", "value" to "hello", "child" to mapOf("simpleString" to "nested"))
+
+        val result = inputObjectMapper.mapToJavaObject(input, JInputObjectWithFieldFallback::class.java)
+
+        assertThat(result.count).isEqualTo(7)
+        assertThat(result.value).isEqualTo("setter:hello")
+        assertThat(result.child.simpleString).isEqualTo("nested")
     }
 
     @Test
