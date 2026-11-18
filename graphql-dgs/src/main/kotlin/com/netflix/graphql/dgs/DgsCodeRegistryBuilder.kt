@@ -24,17 +24,32 @@ import graphql.schema.FieldCoordinates
 import graphql.schema.GraphQLCodeRegistry
 import graphql.schema.GraphQLFieldDefinition
 import org.springframework.context.ApplicationContext
+import java.lang.reflect.Method
 
 /**
  * Utility wrapper for [GraphQLCodeRegistry.Builder] which provides
  * a consistent registration mechanism of DataFetchers similar to the annotation-based approach.
  * Can be used as a first parameter of a [DgsCodeRegistry] annotated method.
  */
-class DgsCodeRegistryBuilder(
+class DgsCodeRegistryBuilder @JvmOverloads constructor(
     private val dataFetcherResultProcessors: List<DataFetcherResultProcessor>,
     private val graphQLCodeRegistry: GraphQLCodeRegistry.Builder,
     private val ctx: ApplicationContext,
+    private val methodDataFetcherRegistrar: MethodDataFetcherRegistrar? = null,
 ) {
+    /**
+     * Strategy used to register a method as a data fetcher with the same behavior as a [DgsData] annotated method:
+     * argument resolution (e.g. `@InputArgument`), schema validation, and instrumentation settings.
+     */
+    fun interface MethodDataFetcherRegistrar {
+        fun register(
+            builder: DgsCodeRegistryBuilder,
+            bean: Any,
+            method: Method,
+            coordinates: FieldCoordinates,
+        )
+    }
+
     fun dataFetcher(
         coordinates: FieldCoordinates,
         dataFetcher: DataFetcher<*>,
@@ -47,6 +62,29 @@ class DgsCodeRegistryBuilder(
             }
 
         graphQLCodeRegistry.dataFetcher(coordinates, fetcher)
+        return this
+    }
+
+    /**
+     * Registers [method] on [bean] as the data fetcher for [coordinates], as if it was annotated with [DgsData].
+     * Method arguments are resolved the same way (`@InputArgument`, [DataFetchingEnvironment], etc.), the
+     * method is validated against the schema when schema wiring validation is enabled, and tracing/metrics
+     * instrumentation settings (including [DgsEnableDataFetcherInstrumentation]) are honored.
+     *
+     * Only available when this builder is provided by DGS to a [DgsCodeRegistry] annotated method.
+     */
+    fun dataFetcher(
+        coordinates: FieldCoordinates,
+        bean: Any,
+        method: Method,
+    ): DgsCodeRegistryBuilder {
+        require(method.declaringClass.isInstance(bean)) {
+            "Method ${method.declaringClass.name}.${method.name} cannot be invoked on a bean of type ${bean.javaClass.name}"
+        }
+        val registrar =
+            methodDataFetcherRegistrar
+                ?: throw IllegalStateException("This DgsCodeRegistryBuilder does not support registering method data fetchers")
+        registrar.register(this, bean, method, coordinates)
         return this
     }
 

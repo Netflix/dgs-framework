@@ -17,6 +17,7 @@
 package com.netflix.graphql.dgs
 
 import com.netflix.graphql.dgs.exceptions.DataFetcherSchemaMismatchException
+import com.netflix.graphql.dgs.exceptions.DataFetcherInputArgumentSchemaMismatchException
 import com.netflix.graphql.dgs.exceptions.InvalidDgsConfigurationException
 import com.netflix.graphql.dgs.exceptions.InvalidTypeResolverException
 import com.netflix.graphql.dgs.exceptions.NoSchemaFoundException
@@ -31,8 +32,10 @@ import com.netflix.graphql.dgs.internal.method.MethodDataFetcherFactory
 import graphql.ExecutionResult
 import graphql.GraphQL
 import graphql.language.FieldDefinition
+import graphql.language.InputValueDefinition
 import graphql.language.ObjectTypeExtensionDefinition
 import graphql.language.TypeName
+import graphql.schema.idl.SchemaParser
 import graphql.schema.DataFetcher
 import graphql.schema.FieldCoordinates
 import graphql.schema.GraphQLCodeRegistry
@@ -43,6 +46,7 @@ import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.idl.errors.StrictModeWiringException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatNoException
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -572,6 +576,239 @@ internal class DgsSchemaProviderTest {
             val schema = schemaProvider(applicationContext = context).schema().graphQLSchema
             val build = GraphQL.newGraphQL(schema).build()
             assertHello(build)
+        }
+    }
+
+    @DgsComponent
+    class MethodReferenceCodeRegistryComponent {
+        @DgsCodeRegistry
+        fun registry(
+            builder: DgsCodeRegistryBuilder,
+            @Suppress("unused_parameter") registry: TypeDefinitionRegistry?,
+        ): DgsCodeRegistryBuilder =
+            builder.dataFetcher(
+                FieldCoordinates.coordinates("Query", "greeting"),
+                this,
+                this::class.java.getMethod("greeting", String::class.java),
+            )
+
+        fun greeting(
+            @InputArgument name: String,
+        ): String = "Hello $name"
+    }
+
+    @DgsComponent
+    class MismatchedMethodReferenceCodeRegistryComponent {
+        @DgsCodeRegistry
+        fun registry(
+            builder: DgsCodeRegistryBuilder,
+            @Suppress("unused_parameter") registry: TypeDefinitionRegistry?,
+        ): DgsCodeRegistryBuilder =
+            builder.dataFetcher(
+                FieldCoordinates.coordinates("Query", "greeting"),
+                this,
+                this::class.java.getMethod("greeting", String::class.java),
+            )
+
+        fun greeting(
+            @InputArgument nope: String,
+        ): String = "Hello $nope"
+    }
+
+    private fun greetingExtension(): TypeDefinitionRegistry =
+        TypeDefinitionRegistry().apply {
+            add(
+                ObjectTypeExtensionDefinition
+                    .newObjectTypeExtensionDefinition()
+                    .name("Query")
+                    .fieldDefinition(
+                        FieldDefinition
+                            .newFieldDefinition()
+                            .name("greeting")
+                            .inputValueDefinition(InputValueDefinition("name", TypeName("String")))
+                            .type(TypeName("String"))
+                            .build(),
+                    ).build(),
+            )
+        }
+
+    @Test
+    fun `DgsCodeRegistryBuilder registers a method data fetcher that resolves InputArgument`() {
+        contextRunner.withBeans(HelloFetcher::class, MethodReferenceCodeRegistryComponent::class).run { context ->
+            val schema =
+                schemaProvider(applicationContext = context, typeDefinitionRegistry = greetingExtension())
+                    .schema()
+                    .graphQLSchema
+            val result = GraphQL.newGraphQL(schema).build().execute("""{greeting(name: "DGS")}""")
+            assertEquals("Hello DGS", result.getData<Map<String, *>>()!!["greeting"])
+        }
+    }
+
+    @Test
+    fun `DgsCodeRegistryBuilder method data fetcher is validated against the schema arguments`() {
+        contextRunner.withBeans(HelloFetcher::class, MismatchedMethodReferenceCodeRegistryComponent::class).run { context ->
+            assertThrows<DataFetcherInputArgumentSchemaMismatchException> {
+                schemaProvider(applicationContext = context, typeDefinitionRegistry = greetingExtension())
+                    .schema()
+            }
+        }
+    }
+
+    @DgsComponent
+    class ProgrammaticMethodFetchers {
+        @DgsCodeRegistry
+        fun registry(
+            builder: DgsCodeRegistryBuilder,
+            @Suppress("unused_parameter") registry: TypeDefinitionRegistry?,
+        ): DgsCodeRegistryBuilder =
+            builder
+                .dataFetcher(FieldCoordinates.coordinates("Query", "futureField"), this, javaClass.getMethod("futureField"))
+                .dataFetcher(FieldCoordinates.coordinates("Query", "noInstrumentation"), this, javaClass.getMethod("noInstrumentation"))
+                .dataFetcher(FieldCoordinates.coordinates("Query", "hidden"), this, javaClass.getDeclaredMethod("hidden"))
+
+        fun futureField(): CompletableFuture<String> = CompletableFuture.completedFuture("future")
+
+        @DgsEnableDataFetcherInstrumentation(false)
+        fun noInstrumentation(): String = "plain"
+
+        @Suppress("unused")
+        private fun hidden(): String = "private"
+    }
+
+    @DgsComponent
+    class DuplicateProgrammaticFetcher {
+        @DgsCodeRegistry
+        fun registry(
+            builder: DgsCodeRegistryBuilder,
+            @Suppress("unused_parameter") registry: TypeDefinitionRegistry?,
+        ): DgsCodeRegistryBuilder =
+            builder.dataFetcher(FieldCoordinates.coordinates("Query", "hello"), this, javaClass.getMethod("hello"))
+
+        fun hello(): String = "Duplicate"
+    }
+
+    @DgsComponent
+    class ForeignMethodFetcher {
+        @DgsCodeRegistry
+        fun registry(
+            builder: DgsCodeRegistryBuilder,
+            @Suppress("unused_parameter") registry: TypeDefinitionRegistry?,
+        ): DgsCodeRegistryBuilder =
+            builder.dataFetcher(FieldCoordinates.coordinates("Query", "hello"), this, HelloFetcher::class.java.getMethod("someFetcher"))
+    }
+
+    @DgsComponent
+    class InterfaceFetcher {
+        @DgsData(parentType = "Node", field = "id")
+        fun id(): String = "from-interface"
+
+        @DgsCodeRegistry
+        fun registry(
+            builder: DgsCodeRegistryBuilder,
+            @Suppress("unused_parameter") registry: TypeDefinitionRegistry?,
+        ): DgsCodeRegistryBuilder =
+            builder
+                .dataFetcher(FieldCoordinates.coordinates("Query", "foo"), DataFetcher { Any() })
+                .dataFetcher(FieldCoordinates.coordinates("Foo", "id"), this, javaClass.getMethod("programmaticId"))
+
+        fun programmaticId(): String = "from-programmatic"
+    }
+
+    private fun fieldsExtension(vararg names: String): TypeDefinitionRegistry =
+        TypeDefinitionRegistry().apply {
+            add(
+                ObjectTypeExtensionDefinition
+                    .newObjectTypeExtensionDefinition()
+                    .name("Query")
+                    .fieldDefinitions(names.map { FieldDefinition.newFieldDefinition().name(it).type(TypeName("String")).build() })
+                    .build(),
+            )
+        }
+
+    @Test
+    fun `DgsCodeRegistryBuilder method data fetchers honor instrumentation, result processors and are reported`() {
+        contextRunner.withBeans(HelloFetcher::class, ProgrammaticMethodFetchers::class).run { context ->
+            val processor =
+                object : DataFetcherResultProcessor {
+                    override fun supportsType(originalResult: Any): Boolean = originalResult == "plain"
+
+                    override fun process(
+                        originalResult: Any,
+                        dfe: DgsDataFetchingEnvironment,
+                    ): Any = "$originalResult+processed"
+                }
+            val provider =
+                schemaProvider(
+                    applicationContext = context,
+                    typeDefinitionRegistry = fieldsExtension("futureField", "noInstrumentation", "hidden"),
+                    dataFetcherResultProcessors = listOf(processor),
+                )
+            val schema = provider.schema().graphQLSchema
+
+            // CompletableFuture return type: tracing off, metrics on (same as @DgsData)
+            assertFalse(provider.isFieldTracingInstrumentationEnabled("Query.futureField"))
+            assertTrue(provider.isFieldMetricsInstrumentationEnabled("Query.futureField"))
+            // @DgsEnableDataFetcherInstrumentation(false) is honored
+            assertFalse(provider.isFieldTracingInstrumentationEnabled("Query.noInstrumentation"))
+            assertFalse(provider.isFieldMetricsInstrumentationEnabled("Query.noInstrumentation"))
+
+            val reported = provider.resolvedDataFetchers().map { "${it.parentType}.${it.field}" }
+            assertTrue(reported.containsAll(listOf("Query.futureField", "Query.noInstrumentation", "Query.hidden")))
+
+            val data =
+                GraphQL
+                    .newGraphQL(schema)
+                    .build()
+                    .execute("{futureField noInstrumentation hidden}")
+                    .getData<Map<String, *>>()!!
+            assertEquals("future", data["futureField"])
+            assertEquals("plain+processed", data["noInstrumentation"])
+            assertEquals("private", data["hidden"])
+        }
+    }
+
+    @Test
+    fun `DgsCodeRegistryBuilder method data fetcher colliding with a DgsData fetcher is rejected`() {
+        contextRunner.withBeans(HelloFetcher::class, DuplicateProgrammaticFetcher::class).run { context ->
+            assertThrows<InvalidDgsConfigurationException> { schemaProvider(applicationContext = context).schema() }
+        }
+    }
+
+    @Test
+    fun `DgsCodeRegistryBuilder rejects a method that does not belong to the bean`() {
+        contextRunner.withBeans(HelloFetcher::class, ForeignMethodFetcher::class).run { context ->
+            assertThrows<IllegalArgumentException> { schemaProvider(applicationContext = context).schema() }
+        }
+    }
+
+    @Test
+    fun `DgsCodeRegistryBuilder method data fetcher skips argument validation when schema wiring validation is disabled`() {
+        contextRunner.withBeans(HelloFetcher::class, MismatchedMethodReferenceCodeRegistryComponent::class).run { context ->
+            schemaProvider(
+                applicationContext = context,
+                typeDefinitionRegistry = greetingExtension(),
+                schemaWiringValidationEnabled = false,
+            ).schema()
+        }
+    }
+
+    @Test
+    fun `DgsCodeRegistryBuilder method data fetcher for an implementing type overrides the interface fetcher`() {
+        contextRunner.withBeans(InterfaceFetcher::class).run { context ->
+            val registry =
+                SchemaParser().parse(
+                    """
+                    extend type Query { foo: Foo }
+                    interface Node { id: String }
+                    type Foo implements Node { id: String }
+                    """.trimIndent(),
+                )
+            val schema =
+                schemaProvider(applicationContext = context, typeDefinitionRegistry = registry, strictMode = false)
+                    .schema()
+                    .graphQLSchema
+            val data = GraphQL.newGraphQL(schema).build().execute("{foo{id}}").getData<Map<String, Map<String, *>>>()!!
+            assertEquals("from-programmatic", data["foo"]!!["id"])
         }
     }
 
