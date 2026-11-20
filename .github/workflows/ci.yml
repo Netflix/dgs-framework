@@ -18,15 +18,15 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
-      - name: Set up Python 3.13
-        uses: actions/setup-python@v7
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
         with:
           python-version: '3.13'
+          enable-cache: true
+          cache-dependency-glob: scripts/requirements.txt
 
       - name: Install Python modules
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f scripts/requirements.txt ]; then pip install -r scripts/requirements.txt; fi
+        run: make install-py-libs
 
       - uses: actions/cache@v6.1.0
         id: gradle-wrapper-cache
@@ -76,7 +76,7 @@ jobs:
       - name: Build Examples
         run: |
           find /home/runner/.m2/repository/ -type f -name "*graphql-dgs-codegen-gradle*"
-          ./scripts/test-examples.py -v -k --path=./build/examples
+          .venv/bin/python scripts/test-examples.py -v -k --path=./build/examples
 
       - name: Upload JUnit Tests
         uses: actions/upload-artifact@v7  # upload test results

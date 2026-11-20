@@ -1,3 +1,4 @@
 # Enable auto-env through the sdkman_auto_env config
 # Add key=value pairs of SDKs to use below
-java=17.0.7-zulu
+# The Makefile derives its JDK major version from the java= line, so this is the only place to bump it.
+java=17.0.16-zulu
