@@ -27,7 +27,7 @@
             "locked": "26.1.0"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.19"
+            "locked": "2.0.20"
         }
     },
     "compileOnlyDependenciesMetadata": {
@@ -49,7 +49,7 @@
             "locked": "26.1.0"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.19"
+            "locked": "2.0.20"
         }
     },
     "jmh": {
@@ -60,7 +60,7 @@
             "locked": "1.37"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
-            "locked": "1.36"
+            "locked": "1.37"
         }
     },
     "jmhApiDependenciesMetadata": {
@@ -97,10 +97,10 @@
             "locked": "1.37"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
-            "locked": "1.36"
+            "locked": "1.37"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.19"
+            "locked": "2.0.20"
         }
     },
     "jmhCompileOnlyDependenciesMetadata": {
@@ -128,10 +128,10 @@
             "locked": "1.37"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
-            "locked": "1.36"
+            "locked": "1.37"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.19"
+            "locked": "2.0.20"
         }
     },
     "jmhRuntimeClasspath": {
@@ -166,13 +166,13 @@
             "locked": "1.37"
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
-            "locked": "1.36"
+            "locked": "1.37"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.19"
+            "locked": "2.0.20"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC2"
+            "locked": "4.2.0"
         }
     },
     "kotlinBouncyCastleConfiguration": {
@@ -259,7 +259,7 @@
             "locked": "26.1.0"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.19"
+            "locked": "2.0.20"
         }
     },
     "swiftExportClasspathResolvable": {
@@ -290,10 +290,10 @@
             "locked": "6.1.3"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.19"
+            "locked": "2.0.20"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC2"
+            "locked": "4.2.0"
         }
     },
     "testImplementationDependenciesMetadata": {
@@ -319,10 +319,10 @@
             "locked": "6.1.3"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.19"
+            "locked": "2.0.20"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC2"
+            "locked": "4.2.0"
         }
     },
     "testRuntimeClasspath": {
@@ -351,10 +351,10 @@
             "locked": "6.1.3"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "2.0.19"
+            "locked": "2.0.20"
         },
         "org.springframework.boot:spring-boot-starter-test": {
-            "locked": "4.2.0-RC2"
+            "locked": "4.2.0"
         }
     }
 }
