@@ -257,8 +257,10 @@ class DgsSchemaProvider
                     dgsComponent,
                     codeRegistryBuilder,
                     mergedRegistry,
+                    dataFetcherInfo,
                 )
             }
+            dataFetcherInfo.finalize()
 
             runtimeWiringBuilder.codeRegistry(codeRegistryBuilder.build())
 
@@ -324,9 +326,42 @@ class DgsSchemaProvider
             dgsComponent: DgsBean,
             codeRegistryBuilder: GraphQLCodeRegistry.Builder,
             registry: TypeDefinitionRegistry,
+            dataFetcherInfo: MutableDataFetcherInfo,
         ) {
             val dgsCodeRegistryBuilder =
-                DgsCodeRegistryBuilder(dataFetcherResultProcessors, codeRegistryBuilder, applicationContext)
+                DgsCodeRegistryBuilder(
+                    dataFetcherResultProcessors,
+                    codeRegistryBuilder,
+                    applicationContext,
+                    { builder, bean, method, coordinates, context ->
+                        check(!dataFetcherInfo.finalized) {
+                            "Data fetchers can only be registered while @DgsCodeRegistry methods are invoked, the schema has already been built."
+                        }
+                        val targetBuilder =
+                            if (context == null) {
+                                builder
+                            } else {
+                                DgsCodeRegistryBuilder(dataFetcherResultProcessors, codeRegistryBuilder, context)
+                                    .bindingEnvironmentToContext()
+                            }
+                        registerMethodDataFetcher(
+                            registry,
+                            targetBuilder,
+                            DgsBean(bean),
+                            method,
+                            coordinates.typeName,
+                            coordinates.fieldName,
+                            MergedAnnotations.from(method, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY),
+                            dataFetcherInfo,
+                        )
+                    },
+                    { coordinates, tracing, metrics ->
+                        check(!dataFetcherInfo.finalized) {
+                            "Instrumentation can only be set while @DgsCodeRegistry methods are invoked, the schema has already been built."
+                        }
+                        dataFetcherInfo.setInstrumentation(coordinates.toString(), tracingEnabled = tracing, metricsEnabled = metrics)
+                    },
+                )
 
             dgsComponent
                 .annotatedMethods<DgsCodeRegistry>()
@@ -428,7 +463,33 @@ class DgsSchemaProvider
         ) {
             val field = dgsDataAnnotation.getString("field").ifEmpty { method.name }
             val parentType = dgsDataAnnotation.getString("parentType")
+            registerMethodDataFetcher(
+                typeDefinitionRegistry,
+                codeRegistryBuilder,
+                dgsComponent,
+                method,
+                parentType,
+                field,
+                mergedAnnotations,
+                dataFetcherInfo,
+            )
+        }
 
+        /**
+         * Registers a method as a data fetcher for the given parent type and field, applying duplicate detection,
+         * schema validation and instrumentation settings. Shared by the `@DgsData` path and
+         * [DgsCodeRegistryBuilder.dataFetcher] with a method reference.
+         */
+        private fun registerMethodDataFetcher(
+            typeDefinitionRegistry: TypeDefinitionRegistry,
+            codeRegistryBuilder: DgsCodeRegistryBuilder,
+            dgsComponent: DgsBean,
+            method: Method,
+            parentType: String,
+            field: String,
+            mergedAnnotations: MergedAnnotations,
+            dataFetcherInfo: MutableDataFetcherInfo,
+        ) {
             if (dataFetcherInfo.dataFetchers.any { it.parentType == parentType && it.field == field }) {
                 logger.error("Duplicate data fetchers registered for {}.{}", parentType, field)
                 throw InvalidDgsConfigurationException("Duplicate data fetchers registered for $parentType.$field")
@@ -456,7 +517,10 @@ class DgsSchemaProvider
 
             val methodClassName = method.declaringClass.name
             try {
-                val typeDefinition = typeDefinitionRegistry.getType(parentType).getOrNull()
+                val typeDefinition =
+                    typeDefinitionRegistry.getTypeOrNull(parentType)
+                        ?: typeDefinitionRegistry.objectTypeExtensions()[parentType]?.firstOrNull()
+                        ?: typeDefinitionRegistry.interfaceTypeExtensions()[parentType]?.firstOrNull()
                 if (typeDefinition == null) {
                     logger.error(
                         "Parent type {} not found, but it was referenced in {} in @DgsData annotation for field {}",
@@ -967,8 +1031,9 @@ class DgsSchemaProvider
                 val instance: Any,
                 val targetClass: Class<*> = AopUtils.getTargetClass(instance),
             ) {
-                private val cachedMethods =
+                private val cachedMethods by lazy(LazyThreadSafetyMode.NONE) {
                     ReflectionUtils.getUniqueDeclaredMethods(targetClass, ReflectionUtils.USER_DECLARED_METHODS)
+                }
                 val methods: Sequence<Method> get() = cachedMethods.asSequence()
 
                 inline fun <reified T : Annotation> annotatedMethods(): Sequence<Method> =
@@ -980,6 +1045,15 @@ class DgsSchemaProvider
                 private val tracingEnabled: MutableMap<String, Boolean> = mutableMapOf(),
                 private val metricsEnabled: MutableMap<String, Boolean> = mutableMapOf(),
             ) {
+                /** Set once data fetcher registration is over; see [DgsCodeRegistryBuilder.MethodDataFetcherRegistrar]. */
+                @Volatile
+                var finalized = false
+                    private set
+
+                fun finalize() {
+                    finalized = true
+                }
+
                 fun setInstrumentation(
                     field: String,
                     tracingEnabled: Boolean,
