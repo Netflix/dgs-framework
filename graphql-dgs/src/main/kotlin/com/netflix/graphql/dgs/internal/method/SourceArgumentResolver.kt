@@ -17,10 +17,28 @@
 package com.netflix.graphql.dgs.internal.method
 
 import com.netflix.graphql.dgs.Source
+import com.netflix.graphql.dgs.internal.DefaultInputObjectMapper
+import com.netflix.graphql.dgs.internal.InputObjectMapper
 import graphql.schema.DataFetchingEnvironment
 import org.springframework.core.MethodParameter
+import org.springframework.core.convert.TypeDescriptor
 
-class SourceArgumentResolver : ArgumentResolver {
+/**
+ * Resolves a parameter annotated with [Source] to the source object of the field.
+ *
+ * Use it for a data fetcher on a non-root field that needs the parent object.
+ *
+ * - A source that is an instance of the parameter type is passed as is.
+ * - A source that is a [Map] is converted to the parameter type with [InputObjectMapper].
+ *   A parent data fetcher can return a [Map] for an object type.
+ * - Any other source fails with an [IllegalArgumentException].
+ * - A `null` source fails, because graphql-java gives a `null` source only to a root field.
+ */
+class SourceArgumentResolver(
+    inputObjectMapper: InputObjectMapper = DefaultInputObjectMapper(),
+) : ArgumentResolver {
+    private val mapConverter = InputObjectMapperConverter(inputObjectMapper)
+
     override fun supportsParameter(parameter: MethodParameter): Boolean = parameter.hasParameterAnnotation(Source::class.java)
 
     override fun resolveArgument(
@@ -33,10 +51,16 @@ class SourceArgumentResolver : ArgumentResolver {
 
         if (parameter.parameterType.isAssignableFrom(source.javaClass)) {
             return source
-        } else {
-            throw IllegalArgumentException(
-                "Invalid source type '${source.javaClass.name}'. Expected type '${parameter.parameterType.name}'",
-            )
         }
+
+        val sourceType = TypeDescriptor.valueOf(source.javaClass)
+        val targetType = TypeDescriptor(parameter)
+        if (mapConverter.matches(sourceType, targetType)) {
+            return mapConverter.convert(source, sourceType, targetType)
+        }
+
+        throw IllegalArgumentException(
+            "Invalid source type '${source.javaClass.name}'. Expected type '${parameter.parameterType.name}'",
+        )
     }
 }
