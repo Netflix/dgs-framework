@@ -405,7 +405,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.0.0"
+            "locked": "7.1.1"
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "firstLevelTransitive": [
@@ -734,7 +734,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.0.0"
+            "locked": "7.1.1"
         },
         "com.graphql-java:graphql-java": {
             "firstLevelTransitive": [
@@ -1162,7 +1162,7 @@
             "firstLevelTransitive": [
                 "com.netflix.graphql.dgs:graphql-dgs"
             ],
-            "locked": "7.0.0"
+            "locked": "7.1.1"
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "firstLevelTransitive": [
