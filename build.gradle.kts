@@ -24,7 +24,7 @@ group = "com.netflix.graphql.dgs"
 
 plugins {
     `java-library`
-    id("com.netflix.nebula.dependency-recommender") version "14.3.0"
+    id("com.netflix.nebula.dependency-recommender") version "14.4.1"
 
     id("nebula.netflixoss") version "13.0.0"
     id("io.spring.dependency-management") version "1.1.7"
