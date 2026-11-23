@@ -53,5 +53,5 @@ open class DgsInputArgumentConfiguration {
     open fun defaultInputObjectMapper(): InputObjectMapper = DefaultInputObjectMapper()
 
     @Bean
-    open fun sourceArgumentResolver(): ArgumentResolver = SourceArgumentResolver()
+    open fun sourceArgumentResolver(inputObjectMapper: InputObjectMapper): ArgumentResolver = SourceArgumentResolver(inputObjectMapper)
 }

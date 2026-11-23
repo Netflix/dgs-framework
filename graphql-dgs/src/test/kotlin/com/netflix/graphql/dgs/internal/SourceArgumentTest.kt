@@ -20,6 +20,7 @@ import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsData
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.Source
+import com.netflix.graphql.dgs.internal.java.test.source.JShow
 import com.netflix.graphql.dgs.internal.method.DataFetchingEnvironmentArgumentResolver
 import com.netflix.graphql.dgs.internal.method.FallbackEnvironmentArgumentResolver
 import com.netflix.graphql.dgs.internal.method.InputArgumentResolver
@@ -203,6 +204,84 @@ internal class SourceArgumentTest {
             assertThat(
                 executionResult.errors[0].message,
             ).contains("Source is null. Are you trying to use @Source on a root field (e.g. @DgsQuery)?")
+        }
+    }
+
+    @Test
+    fun `Map source converts to a Kotlin data class`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsQuery
+            fun shows(): List<Map<String, Any>> = listOf(mapOf("title" to "Stranger Things"))
+
+            @DgsData(parentType = "Show")
+            fun description(
+                @Source show: Show,
+            ): String = "Description of ${show.title}"
+        }
+
+        assertDescription(Fetcher::class.java)
+    }
+
+    @Test
+    fun `Map source converts to a Java class`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsQuery
+            fun shows(): List<Map<String, Any>> = listOf(mapOf("title" to "Stranger Things"))
+
+            @DgsData(parentType = "Show")
+            fun description(
+                @Source show: JShow,
+            ): String = "Description of ${show.title}"
+        }
+
+        assertDescription(Fetcher::class.java)
+    }
+
+    @Test
+    fun `Map source with __typename converts`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsQuery
+            fun shows(): List<Map<String, Any>> = listOf(mapOf("__typename" to "Show", "title" to "Stranger Things"))
+
+            @DgsData(parentType = "Show")
+            fun description(
+                @Source show: JShow,
+            ): String = "Description of ${show.title}"
+        }
+
+        assertDescription(Fetcher::class.java)
+    }
+
+    @Test
+    fun `Map source goes to a Map parameter as is`() {
+        @DgsComponent
+        class Fetcher {
+            @DgsQuery
+            fun shows(): List<Map<String, Any>> = listOf(mapOf("title" to "Stranger Things"))
+
+            @DgsData(parentType = "Show")
+            fun description(
+                @Source show: Map<String, Any>,
+            ): String = "Description of ${show["title"]}"
+        }
+
+        assertDescription(Fetcher::class.java)
+    }
+
+    private fun assertDescription(fetcher: Class<*>) {
+        contextRunner.withBean(fetcher).run { context ->
+            val schema = schemaProvider(context).schema().graphQLSchema
+            val executionResult = GraphQL.newGraphQL(schema).build().execute("{ shows { title description } }")
+
+            assertThat(executionResult.errors).isEmpty()
+            val data = executionResult.getData<Map<String, *>>()!!
+
+            @Suppress("UNCHECKED_CAST")
+            val showData = (data["shows"] as List<Map<*, *>>)[0]
+            assertThat(showData["description"]).isEqualTo("Description of Stranger Things")
         }
     }
 }
