@@ -1,0 +1,3 @@
+extend type Query {
+    springBatchLoaderGreeting(name: String): String
+}

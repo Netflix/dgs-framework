@@ -24,12 +24,12 @@ group = "com.netflix.graphql.dgs"
 
 plugins {
     `java-library`
-    id("com.netflix.nebula.dependency-recommender") version "14.1.0"
+    id("com.netflix.nebula.dependency-recommender") version "14.3.0"
 
     id("nebula.netflixoss") version "13.0.0"
     id("io.spring.dependency-management") version "1.1.7"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
-    id("me.champeau.jmh") version "0.7.3"
+    id("me.champeau.jmh") version "0.7.4"
 
     kotlin("jvm") version Versions.KOTLIN_VERSION
     idea
@@ -105,7 +105,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         }
 
-        implementation("org.slf4j:slf4j-api:2.0.19")
+        implementation("org.slf4j:slf4j-api:2.0.20")
         implementation("org.jetbrains:annotations:26.1.0")
         testImplementation("io.mockk:mockk:1.+")
 

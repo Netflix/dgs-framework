@@ -50,6 +50,7 @@ import io.micrometer.core.instrument.Tags
 import io.micrometer.core.instrument.cumulative.CumulativeCounter
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import org.assertj.core.api.Assertions.assertThat
+import org.awaitility.Awaitility.await
 import org.dataloader.BatchLoader
 import org.dataloader.DataLoaderRegistry
 import org.dataloader.MappedBatchLoader
@@ -76,6 +77,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.util.CollectionUtils
+import java.time.Duration
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
@@ -703,6 +705,10 @@ class MicrometerServletSmokeTest {
                 ),
             )
 
+        // GraphQL can complete before the resolver's completion callback records its timer.
+        await().atMost(Duration.ofSeconds(5)).untilAsserted {
+            assertThat(fetchMeters("gql.")).containsKey("gql.resolver")
+        }
         val meters = fetchMeters("gql.")
 
         assertThat(meters).containsOnlyKeys("gql.error", "gql.query", "gql.resolver")

@@ -1,0 +1,18 @@
+changelog:
+  categories:
+    - title: "⭐ Improvements"
+      labels:
+        - enhancement
+        - performance-improvement
+        - Refactor
+    - title: "🐞 Bug Fixes"
+      labels:
+        - bug
+    - title: "🔨 Dependency Upgrades"
+      labels:
+        - dependencies
+        - dependency-upgrade
+        - gradle-wrapper
+    - title: "Other Changes"
+      labels:
+        - "*"

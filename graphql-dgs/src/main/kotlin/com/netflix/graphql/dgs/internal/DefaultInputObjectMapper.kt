@@ -173,18 +173,21 @@ class DefaultInputObjectMapper(
         ctor.trySetAccessible()
         val instance = ctor.newInstance()
         val setterAccessor = setterAccessor(instance)
-        val fieldAccessor = fieldAccessor(instance)
+        var fieldAccessor: ConfigurablePropertyAccessor? = null
         var nrOfPropertyErrors = 0
 
         for ((name, value) in inputMap.entries) {
             try {
                 if (setterAccessor.isWritableProperty(name)) {
                     setterAccessor.setPropertyValue(name, value)
-                } else if (fieldAccessor.isWritableProperty(name)) {
-                    fieldAccessor.setPropertyValue(name, value)
                 } else {
-                    nrOfPropertyErrors++
-                    logger.warn("Field or property '{}' was not found on Input object of type '{}'", name, targetClass)
+                    val accessor = fieldAccessor ?: fieldAccessor(instance).also { fieldAccessor = it }
+                    if (accessor.isWritableProperty(name)) {
+                        accessor.setPropertyValue(name, value)
+                    } else {
+                        nrOfPropertyErrors++
+                        logger.warn("Field or property '{}' was not found on Input object of type '{}'", name, targetClass)
+                    }
                 }
             } catch (ex: Exception) {
                 throw DgsInvalidInputArgumentException(
