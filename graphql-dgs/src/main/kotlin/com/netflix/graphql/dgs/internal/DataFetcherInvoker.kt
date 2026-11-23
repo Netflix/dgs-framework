@@ -73,13 +73,9 @@ class DataFetcherInvoker internal constructor(
     override fun get(environment: DataFetchingEnvironment): Any? {
         if (methodParameters.isEmpty()) {
             if (completableFutureWrapper.shouldWrapInCompletableFuture(bridgedMethod)) {
-                return completableFutureWrapper.wrapInCompletableFuture { ReflectionUtils.invokeMethod(bridgedMethod, dgsComponent) }
+                return completableFutureWrapper.wrapInCompletableFuture { invokeReflectively { bridgedMethod.invoke(dgsComponent) } }
             }
-            return try {
-                bridgedMethod.invoke(dgsComponent)
-            } catch (exc: Exception) {
-                handleReflectionException(exc)
-            }
+            return invokeReflectively { bridgedMethod.invoke(dgsComponent) }
         }
 
         if (kotlinFunction != null) {
@@ -96,13 +92,9 @@ class DataFetcherInvoker internal constructor(
         }
 
         return if (completableFutureWrapper.shouldWrapInCompletableFuture(bridgedMethod)) {
-            completableFutureWrapper.wrapInCompletableFuture { ReflectionUtils.invokeMethod(bridgedMethod, dgsComponent, *args) }
+            completableFutureWrapper.wrapInCompletableFuture { invokeReflectively { bridgedMethod.invoke(dgsComponent, *args) } }
         } else {
-            try {
-                bridgedMethod.invoke(dgsComponent, *args)
-            } catch (exc: Exception) {
-                handleReflectionException(exc)
-            }
+            invokeReflectively { bridgedMethod.invoke(dgsComponent, *args) }
         }
     }
 
@@ -138,13 +130,9 @@ class DataFetcherInvoker internal constructor(
             }.onErrorMap(InvocationTargetException::class.java) { it.targetException }
         }
         return if (completableFutureWrapper.shouldWrapInCompletableFuture(kFunc)) {
-            completableFutureWrapper.wrapInCompletableFuture { kFunc.callBy(argsByName) }
+            completableFutureWrapper.wrapInCompletableFuture { invokeReflectively { kFunc.callBy(argsByName) } }
         } else {
-            try {
-                kFunc.callBy(argsByName)
-            } catch (exc: Exception) {
-                handleReflectionException(exc)
-            }
+            invokeReflectively { kFunc.callBy(argsByName) }
         }
     }
 
@@ -154,6 +142,13 @@ class DataFetcherInvoker internal constructor(
     ): String =
         "Could not resolve parameter [${param.parameterIndex}] in " +
             param.executable.toGenericString() + if (message.isNotEmpty()) ": $message" else ""
+
+    private inline fun invokeReflectively(invocation: () -> Any?): Any? =
+        try {
+            invocation()
+        } catch (exc: Exception) {
+            handleReflectionException(exc)
+        }
 
     /**
      * Handle the given reflection exception.
